@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# SpecStory explanation file
+.specstory/.what-is-this.md
+
+*storybook.log
+
+## Panda
+styled-system
+styled-system-studio
+
+.specstory
