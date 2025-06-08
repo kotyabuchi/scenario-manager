@@ -51,53 +51,13 @@ export const alert = defineSlotRecipe({
     variant: {
       solid: {},
       subtle: {},
-      outline: {
-        root: {
-          bg: 'transparent',
-        },
-      },
+      outline: {},
     },
     status: {
-      info: {
-        root: {
-          color: '{colors.info.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.info.800}',
-          },
-        },
-      },
-      success: {
-        root: {
-          color: '{colors.success.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.success.800}',
-          },
-        },
-      },
-      warning: {
-        root: {
-          color: '{colors.warning.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.warning.800}',
-          },
-        },
-      },
-      danger: {
-        root: {
-          color: '{colors.danger.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.danger.800}',
-          },
-        },
-      },
+      info: {},
+      success: {},
+      warning: {},
+      danger: {},
     },
   },
   compoundVariants: [
@@ -109,6 +69,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.info.500}',
           bg: '{colors.info.50}',
+          color: '{colors.info.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.info.800}',
+          },
         },
       },
     },
@@ -119,6 +85,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.success.500}',
           bg: '{colors.success.50}',
+          color: '{colors.success.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.success.800}',
+          },
         },
       },
     },
@@ -129,6 +101,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.warning.500}',
           bg: '{colors.warning.50}',
+          color: '{colors.warning.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.warning.800}',
+          },
         },
       },
     },
@@ -139,6 +117,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.danger.500}',
           bg: '{colors.danger.50}',
+          color: '{colors.danger.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.danger.800}',
+          },
         },
       },
     },
@@ -150,6 +134,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.info.50}',
           bg: '{colors.info.50}',
+          color: '{colors.info.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.info.800}',
+          },
         },
       },
     },
@@ -160,6 +150,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.success.50}',
           bg: '{colors.success.50}',
+          color: '{colors.success.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.success.800}',
+          },
         },
       },
     },
@@ -170,6 +166,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.warning.50}',
           bg: '{colors.warning.50}',
+          color: '{colors.warning.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.warning.800}',
+          },
         },
       },
     },
@@ -180,6 +182,12 @@ export const alert = defineSlotRecipe({
         root: {
           borderColor: '{colors.danger.50}',
           bg: '{colors.danger.50}',
+          color: '{colors.danger.700}',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.danger.800}',
+          },
         },
       },
     },
@@ -190,6 +198,13 @@ export const alert = defineSlotRecipe({
       css: {
         root: {
           borderColor: '{colors.info.500}',
+          color: '{colors.info.700}',
+          bg: 'transparent',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.info.800}',
+          },
         },
       },
     },
@@ -199,6 +214,13 @@ export const alert = defineSlotRecipe({
       css: {
         root: {
           borderColor: '{colors.success.500}',
+          color: '{colors.success.700}',
+          bg: 'transparent',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.success.800}',
+          },
         },
       },
     },
@@ -208,6 +230,13 @@ export const alert = defineSlotRecipe({
       css: {
         root: {
           borderColor: '{colors.warning.500}',
+          color: '{colors.warning.700}',
+          bg: 'transparent',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.warning.800}',
+          },
         },
       },
     },
@@ -217,6 +246,13 @@ export const alert = defineSlotRecipe({
       css: {
         root: {
           borderColor: '{colors.danger.500}',
+          color: '{colors.danger.700}',
+          bg: 'transparent',
+        },
+        actionButton: {
+          _hover: {
+            color: '{colors.danger.800}',
+          },
         },
       },
     },
