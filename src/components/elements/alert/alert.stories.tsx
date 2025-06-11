@@ -20,6 +20,9 @@ const meta = {
     description: {
       control: 'text',
     },
+    onClick: {
+      control: false,
+    },
   },
 } satisfies Meta<typeof Alert>;
 
@@ -34,6 +37,9 @@ export const Info: Story = {
     title: 'Browser Update available',
     description:
       'A new version of your browser is available. Please update to continue.',
+    onClick: () => {
+      console.log('clicked');
+    },
   },
   render: (args) => <Alert {...args} />,
 };

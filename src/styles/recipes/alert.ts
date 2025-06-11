@@ -59,6 +59,13 @@ export const alert = defineSlotRecipe({
       warning: {},
       danger: {},
     },
+    hasAction: {
+      true: {
+        root: {
+          cursor: 'pointer',
+        },
+      },
+    },
   },
   compoundVariants: [
     // Solid variants

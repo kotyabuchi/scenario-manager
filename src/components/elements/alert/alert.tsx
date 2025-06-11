@@ -34,7 +34,7 @@ export const Alert = ({
   onActionClick,
   ...props
 }: Props) => {
-  const recipe = alert({ variant, status });
+  const recipe = alert({ variant, status, hasAction: !!onClick });
 
   return (
     <ark.div
