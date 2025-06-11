@@ -16,8 +16,8 @@ export const alert = defineSlotRecipe({
       borderWidth: '2px',
       borderRadius: 'lg',
       display: 'flex',
-      gap: '3',
-      p: '4',
+      gap: 'md',
+      p: 'md',
       width: 'full',
     },
     icon: {
@@ -29,7 +29,7 @@ export const alert = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'column',
       flexGrow: '1',
-      gap: '1',
+      gap: 'xs',
     },
     title: {
       fontWeight: 'semibold',
