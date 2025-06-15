@@ -3,6 +3,7 @@ import { animations } from './animations';
 import { colors } from './colors';
 import { durations } from './durations';
 import { easings } from './easing';
+import { sizes } from './sizes';
 import { spacing } from './spacing';
 
 export const tokens = defineTokens({
@@ -10,5 +11,6 @@ export const tokens = defineTokens({
   colors,
   durations,
   easings,
+  sizes,
   spacing,
 });
