@@ -1,4 +1,6 @@
-export const colors = {
+import { defineTokens } from '@pandacss/dev';
+
+export const colors = defineTokens.colors({
   primary: {
     50: { value: 'oklch(0.97 0.07 65)' },
     100: { value: 'oklch(0.93 0.09 65)' },
@@ -79,4 +81,4 @@ export const colors = {
   backdrop: {
     500: { value: 'oklch(0.20 0.01 270 / 0.25)' },
   },
-};
+});
