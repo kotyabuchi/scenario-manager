@@ -7,4 +7,7 @@ export default defineConfig({
   include: ['./src/**/*.{js,jsx,ts,tsx}', './stories/**/*.{js,jsx,ts,tsx}'],
   jsxFramework: 'react', // or 'solid' or 'vue'
   outdir: 'styled-system',
+  staticCss: {
+    recipes: '*',
+  },
 });

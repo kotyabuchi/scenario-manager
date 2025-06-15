@@ -46,7 +46,12 @@ export const Alert = ({
       className={recipe.root}
       {...props}
     >
-      <ark.svg role="img" aria-label={`${status} icon`} className={recipe.icon}>
+      <ark.svg
+        role="img"
+        aria-label={`${status} icon`}
+        className={recipe.icon}
+        asChild
+      >
         {match(status)
           .with('info', () => <InfoIcon />)
           .with('success', () => <CheckIcon />)
