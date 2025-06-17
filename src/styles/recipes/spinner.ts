@@ -5,13 +5,9 @@ export const spinner = defineRecipe({
   base: {
     width: 'var(--size)',
     height: 'var(--size)',
-    borderRadius: 'full',
-    display: 'inline-block',
-    border: 'var(--border-width) solid',
-    borderColor: 'gray.300',
-    borderTopColor: 'gray.700',
+    color: 'gray.700',
     animation: 'spin',
-    animationDuration: '1s',
+    animationDuration: '1.5s',
   },
   defaultVariants: {
     size: 'md',
