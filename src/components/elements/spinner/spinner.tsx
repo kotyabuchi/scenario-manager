@@ -12,5 +12,11 @@ export const Spinner = ({
   size = 'md',
   loadingLabel = 'Loading...',
 }: SpinnerProps) => {
-  return <Loader aria-label={loadingLabel} className={spinner({ size })} />;
+  return (
+    <Loader
+      aria-label={loadingLabel}
+      className={spinner({ size })}
+      strokeWidth={3}
+    />
+  );
 };

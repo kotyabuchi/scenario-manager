@@ -5,7 +5,6 @@ export const spinner = defineRecipe({
   base: {
     width: 'var(--size)',
     height: 'var(--size)',
-    color: 'gray.700',
     animation: 'spin',
     animationDuration: '1.5s',
   },
