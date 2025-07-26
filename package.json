@@ -51,7 +51,7 @@
     "onlyBuiltDependencies": [
       "lefthook"
     ],
-    "ignoredBuiltDependencies": [
+    "neverBuiltDependencies": [
       "esbuild",
       "sharp"
     ]
