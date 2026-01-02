@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import type { StorybookConfig } from '@storybook/experimental-nextjs-vite';
 
 const config: StorybookConfig = {
@@ -22,9 +23,15 @@ const config: StorybookConfig = {
         alias: {
           ...config.resolve?.alias,
           'styled-system': path.resolve(__dirname, '../styled-system'),
-          '@styled-system/css': path.resolve(__dirname, '../styled-system/css'),
-          '@styled-system/jsx': path.resolve(__dirname, '../styled-system/jsx'),
-          '@styled-system/recipes': path.resolve(
+          '@/styled-system/css': path.resolve(
+            __dirname,
+            '../styled-system/css',
+          ),
+          '@/styled-system/jsx': path.resolve(
+            __dirname,
+            '../styled-system/jsx',
+          ),
+          '@/styled-system/recipes': path.resolve(
             __dirname,
             '../styled-system/recipes',
           ),

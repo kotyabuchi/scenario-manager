@@ -21,7 +21,7 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@styled-system/*": ["./styled-system/*"],
+      "@/styled-system/*": ["./styled-system/*"],
       "@/*": ["./src/*"]
     }
   },

@@ -6,8 +6,14 @@ export const semanticTokens = {
         description: 'プライマリカラー（通常）',
       },
       foreground: {
-        value: '{colors.white}',
-        description: 'プライマリカラー上のテキスト',
+        white: {
+          value: '{colors.white}',
+          description: 'プライマリカラー上のテキスト',
+        },
+        dark: {
+          value: '{colors.primary.950}',
+          description: 'プライマリカラー上のテキスト',
+        },
       },
       emphasized: {
         value: '{colors.primary.700}',
