@@ -10,7 +10,7 @@ import { VStack } from '@/styled-system/jsx';
 
 const menuItems = [
   {
-    href: '/',
+    href: '/home',
     icon: House,
     text: 'Home',
   },
