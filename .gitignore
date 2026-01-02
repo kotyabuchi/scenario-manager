@@ -49,3 +49,9 @@ styled-system
 styled-system-studio
 
 .specstory
+
+# Build output
+dist
+
+# Database migrations
+src/lib/db/migrations

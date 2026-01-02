@@ -1,30 +1,57 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
-  "files": {
-    "ignoreUnknown": false
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space"
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedVariables": "warn"
-      }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single"
-    }
-  }
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "warn"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single"
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							{ "type": false, "source": ["react*", "react/**"] },
+
+							{ "type": false, "source": ":PACKAGE:" },
+							":BLANK_LINE:",
+
+							{ "type": false, "source": "./lib/**" },
+
+							{ "type": false, "source": ":PATH:" },
+							":BLANK_LINE:",
+
+							{ "type": false },
+							":BLANK_LINE:",
+
+							{ "type": true }
+						]
+					}
+				}
+			}
+		}
+	}
 }
