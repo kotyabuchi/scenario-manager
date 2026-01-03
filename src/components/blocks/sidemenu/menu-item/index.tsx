@@ -1,26 +1,37 @@
-import Link from 'next/link';
-
 import * as styles from './styles';
 
 import type { LucideIcon } from 'lucide-react';
 
 interface MenuItemProps {
-  href: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   text: string;
+  active?: boolean;
+  onClick: () => void;
 }
 
-export function MenuItem({ href, icon, text }: MenuItemProps) {
-  const Icon = icon;
+export function MenuItem({
+  icon,
+  text,
+  active = false,
+  onClick,
+}: MenuItemProps) {
+  const IconComponent = icon;
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    onClick();
   };
 
   return (
-    <Link href={href} className={styles.menuItem} onClick={handleClick}>
-      <Icon size={32} className={styles.menuItemIcon} />
+    <button
+      type="button"
+      className={styles.menuItem({ active })}
+      onClick={handleClick}
+    >
+      {IconComponent && (
+        <IconComponent size={32} className={styles.menuItemIcon} />
+      )}
       <p className={styles.menuItemText}>{text}</p>
-    </Link>
+    </button>
   );
 }

@@ -1,7 +1,9 @@
-import { cva } from '@/styled-system/css';
+import { css, cva } from '@/styled-system/css';
 
 export const sideMenu = cva({
   base: {
+    display: 'flex',
+    flexDirection: 'row',
     height: '100%',
     padding: '6px',
     rounded: 'lg',
@@ -23,4 +25,10 @@ export const sideMenu = cva({
       },
     },
   },
+});
+
+export const mainPages = css({
+  width: '100%',
+  gap: '6px',
+  overflow: 'hidden',
 });

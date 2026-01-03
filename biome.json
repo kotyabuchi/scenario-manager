@@ -19,6 +19,9 @@
 			"correctness": {
 				"noUnusedImports": "error",
 				"noUnusedVariables": "warn"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "off"
 			}
 		}
 	},
