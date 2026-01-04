@@ -1,9 +1,12 @@
-import { ark } from '@ark-ui/react/factory';
-import { button } from '@styled-system/recipes';
 import { forwardRef } from 'react';
+import { ark } from '@ark-ui/react/factory';
 import { styled } from 'styled-system/jsx';
-import type { ComponentProps } from 'styled-system/types';
+
 import { Spinner } from '../spinner/spinner';
+
+import { button } from '@/styled-system/recipes';
+
+import type { ComponentProps } from 'styled-system/types';
 
 type ButtonProps = {
   loading?: boolean;

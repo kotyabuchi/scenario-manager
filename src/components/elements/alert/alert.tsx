@@ -1,7 +1,6 @@
 'use client';
 
 import { ark } from '@ark-ui/react/factory';
-import { alert } from '@styled-system/recipes';
 import {
   CheckIcon,
   CircleAlert,
@@ -9,8 +8,11 @@ import {
   TriangleAlert,
   X,
 } from 'lucide-react';
-import type { ComponentProps } from 'react';
 import { match } from 'ts-pattern';
+
+import { alert } from '@/styled-system/recipes';
+
+import type { ComponentProps } from 'react';
 
 export type AlertVariant = 'solid' | 'subtle' | 'outline';
 export type AlertStatus = 'info' | 'success' | 'warning' | 'danger';

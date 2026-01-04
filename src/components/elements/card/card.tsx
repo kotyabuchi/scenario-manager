@@ -1,7 +1,8 @@
-import { ark } from '@ark-ui/react';
-import { styled } from '@styled-system/jsx';
-import { card } from '@styled-system/recipes';
 import { type ComponentProps, forwardRef, type PropsWithChildren } from 'react';
+import { ark } from '@ark-ui/react';
+
+import { styled } from '@/styled-system/jsx';
+import { card } from '@/styled-system/recipes';
 
 type CardProps = ComponentProps<typeof StyledCard>;
 

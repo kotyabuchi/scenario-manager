@@ -1,7 +1,8 @@
 'use client';
 
-import { spinner } from '@styled-system/recipes/spinner';
 import { Loader } from 'lucide-react';
+
+import { spinner } from '@/styled-system/recipes/spinner';
 
 type SpinnerProps = {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
