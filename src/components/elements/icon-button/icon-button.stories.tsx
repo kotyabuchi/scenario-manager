@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Heart } from 'lucide-react';
+
 import { IconButton } from './icon-button';
+
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'UI/IconButton',

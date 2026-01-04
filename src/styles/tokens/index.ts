@@ -1,4 +1,5 @@
 import { defineTokens } from '@pandacss/dev';
+
 import { animations } from './animations';
 import { colors } from './colors';
 import { durations } from './durations';

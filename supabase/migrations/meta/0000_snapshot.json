@@ -65,12 +65,8 @@
           "name": "game_schedules_session_id_game_sessions_game_session_id_fk",
           "tableFrom": "game_schedules",
           "tableTo": "game_sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "game_session_id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["game_session_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -163,12 +159,8 @@
           "name": "game_sessions_scenario_id_scenarios_scenario_id_fk",
           "tableFrom": "game_sessions",
           "tableTo": "scenarios",
-          "columnsFrom": [
-            "scenario_id"
-          ],
-          "columnsTo": [
-            "scenario_id"
-          ],
+          "columnsFrom": ["scenario_id"],
+          "columnsTo": ["scenario_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -176,12 +168,8 @@
           "name": "game_sessions_keeper_id_users_user_id_fk",
           "tableFrom": "game_sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "keeper_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["keeper_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -230,9 +218,7 @@
         "scenario_systems_name_unique": {
           "name": "scenario_systems_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -262,12 +248,8 @@
           "name": "scenario_tags_scenario_id_scenarios_scenario_id_fk",
           "tableFrom": "scenario_tags",
           "tableTo": "scenarios",
-          "columnsFrom": [
-            "scenario_id"
-          ],
-          "columnsTo": [
-            "scenario_id"
-          ],
+          "columnsFrom": ["scenario_id"],
+          "columnsTo": ["scenario_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -275,12 +257,8 @@
           "name": "scenario_tags_tag_id_tags_tag_id_fk",
           "tableFrom": "scenario_tags",
           "tableTo": "tags",
-          "columnsFrom": [
-            "tag_id"
-          ],
-          "columnsTo": [
-            "tag_id"
-          ],
+          "columnsFrom": ["tag_id"],
+          "columnsTo": ["tag_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -288,10 +266,7 @@
       "compositePrimaryKeys": {
         "scenario_tags_scenario_id_tag_id_pk": {
           "name": "scenario_tags_scenario_id_tag_id_pk",
-          "columns": [
-            "scenario_id",
-            "tag_id"
-          ]
+          "columns": ["scenario_id", "tag_id"]
         }
       },
       "uniqueConstraints": {},
@@ -435,12 +410,8 @@
           "name": "scenarios_scenario_system_id_scenario_systems_system_id_fk",
           "tableFrom": "scenarios",
           "tableTo": "scenario_systems",
-          "columnsFrom": [
-            "scenario_system_id"
-          ],
-          "columnsTo": [
-            "system_id"
-          ],
+          "columnsFrom": ["scenario_system_id"],
+          "columnsTo": ["system_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -448,12 +419,8 @@
           "name": "scenarios_created_by_id_users_user_id_fk",
           "tableFrom": "scenarios",
           "tableTo": "users",
-          "columnsFrom": [
-            "created_by_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["created_by_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -523,12 +490,8 @@
           "name": "session_participants_session_id_game_sessions_game_session_id_fk",
           "tableFrom": "session_participants",
           "tableTo": "game_sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "game_session_id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["game_session_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -536,12 +499,8 @@
           "name": "session_participants_user_id_users_user_id_fk",
           "tableFrom": "session_participants",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -549,10 +508,7 @@
       "compositePrimaryKeys": {
         "session_participants_session_id_user_id_pk": {
           "name": "session_participants_session_id_user_id_pk",
-          "columns": [
-            "session_id",
-            "user_id"
-          ]
+          "columns": ["session_id", "user_id"]
         }
       },
       "uniqueConstraints": {},
@@ -604,9 +560,7 @@
         "tags_name_unique": {
           "name": "tags_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -711,12 +665,8 @@
           "name": "user_reviews_user_id_users_user_id_fk",
           "tableFrom": "user_reviews",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -724,12 +674,8 @@
           "name": "user_reviews_scenario_id_scenarios_scenario_id_fk",
           "tableFrom": "user_reviews",
           "tableTo": "scenarios",
-          "columnsFrom": [
-            "scenario_id"
-          ],
-          "columnsTo": [
-            "scenario_id"
-          ],
+          "columnsFrom": ["scenario_id"],
+          "columnsTo": ["scenario_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -737,12 +683,8 @@
           "name": "user_reviews_session_id_game_sessions_game_session_id_fk",
           "tableFrom": "user_reviews",
           "tableTo": "game_sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "game_session_id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["game_session_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -752,10 +694,7 @@
         "user_reviews_scenario_id_user_id_unique": {
           "name": "user_reviews_scenario_id_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "scenario_id",
-            "user_id"
-          ]
+          "columns": ["scenario_id", "user_id"]
         }
       },
       "policies": {},
@@ -851,12 +790,8 @@
           "name": "user_scenario_preferences_scenario_id_scenarios_scenario_id_fk",
           "tableFrom": "user_scenario_preferences",
           "tableTo": "scenarios",
-          "columnsFrom": [
-            "scenario_id"
-          ],
-          "columnsTo": [
-            "scenario_id"
-          ],
+          "columnsFrom": ["scenario_id"],
+          "columnsTo": ["scenario_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -864,12 +799,8 @@
           "name": "user_scenario_preferences_user_id_users_user_id_fk",
           "tableFrom": "user_scenario_preferences",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -877,12 +808,8 @@
           "name": "user_scenario_preferences_session_id_game_sessions_game_session_id_fk",
           "tableFrom": "user_scenario_preferences",
           "tableTo": "game_sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "game_session_id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["game_session_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -890,10 +817,7 @@
       "compositePrimaryKeys": {
         "user_scenario_preferences_scenario_id_user_id_pk": {
           "name": "user_scenario_preferences_scenario_id_user_id_pk",
-          "columns": [
-            "scenario_id",
-            "user_id"
-          ]
+          "columns": ["scenario_id", "user_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1023,16 +947,12 @@
         "users_discord_id_unique": {
           "name": "users_discord_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "discord_id"
-          ]
+          "columns": ["discord_id"]
         },
         "users_user_name_unique": {
           "name": "users_user_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_name"
-          ]
+          "columns": ["user_name"]
         }
       },
       "policies": {},
@@ -1125,12 +1045,8 @@
           "name": "video_links_scenario_id_scenarios_scenario_id_fk",
           "tableFrom": "video_links",
           "tableTo": "scenarios",
-          "columnsFrom": [
-            "scenario_id"
-          ],
-          "columnsTo": [
-            "scenario_id"
-          ],
+          "columnsFrom": ["scenario_id"],
+          "columnsTo": ["scenario_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1138,12 +1054,8 @@
           "name": "video_links_session_id_game_sessions_game_session_id_fk",
           "tableFrom": "video_links",
           "tableTo": "game_sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "game_session_id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["game_session_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1151,12 +1063,8 @@
           "name": "video_links_created_by_id_users_user_id_fk",
           "tableFrom": "video_links",
           "tableTo": "users",
-          "columnsFrom": [
-            "created_by_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["created_by_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1166,9 +1074,7 @@
         "video_links_video_url_unique": {
           "name": "video_links_video_url_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "video_url"
-          ]
+          "columns": ["video_url"]
         }
       },
       "policies": {},
@@ -1180,43 +1086,27 @@
     "public.handout_type": {
       "name": "handout_type",
       "schema": "public",
-      "values": [
-        "NONE",
-        "PUBLIC",
-        "SECRET"
-      ]
+      "values": ["NONE", "PUBLIC", "SECRET"]
     },
     "public.participant_status": {
       "name": "participant_status",
       "schema": "public",
-      "values": [
-        "PENDING",
-        "CONFIRMED"
-      ]
+      "values": ["PENDING", "CONFIRMED"]
     },
     "public.participant_type": {
       "name": "participant_type",
       "schema": "public",
-      "values": [
-        "PLAYER",
-        "SPECTATOR"
-      ]
+      "values": ["PLAYER", "SPECTATOR"]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "MODERATOR",
-        "MEMBER"
-      ]
+      "values": ["MODERATOR", "MEMBER"]
     },
     "public.schedule_phase": {
       "name": "schedule_phase",
       "schema": "public",
-      "values": [
-        "ADJUSTING",
-        "CONFIRMED"
-      ]
+      "values": ["ADJUSTING", "CONFIRMED"]
     },
     "public.session_phase": {
       "name": "session_phase",

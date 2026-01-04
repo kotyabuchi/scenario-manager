@@ -1,4 +1,5 @@
 import { defineConfig } from '@pandacss/dev';
+
 import customPreset from '@/styles/preset';
 
 export default defineConfig({
