@@ -102,8 +102,14 @@ export const semanticTokens = {
         description: '危険・エラー状態',
       },
       foreground: {
-        value: '{colors.white}',
-        description: 'エラーメッセージなどの文字色',
+        white: {
+          value: '{colors.white}',
+          description: 'エラーメッセージなどの文字色',
+        },
+        dark: {
+          value: '{colors.danger.950}',
+          description: 'エラーメッセージなどの文字色',
+        },
       },
       emphasized: {
         value: '{colors.danger.700}',

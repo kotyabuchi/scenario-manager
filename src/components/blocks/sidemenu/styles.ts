@@ -3,7 +3,8 @@ import { css, cva } from '@/styled-system/css';
 export const sideMenu = cva({
   base: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     height: '100%',
     padding: '6px',
     rounded: 'lg',
@@ -27,7 +28,13 @@ export const sideMenu = cva({
   },
 });
 
-export const mainPages = css({
+export const pageMenuButtons = css({
+  width: '100%',
+  gap: '6px',
+  overflow: 'hidden',
+});
+
+export const authButtons = css({
   width: '100%',
   gap: '6px',
   overflow: 'hidden',

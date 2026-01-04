@@ -11,16 +11,9 @@ export const menuItem = cva({
     textAlign: 'left',
     gap: '8px',
     outlineOffset: '-2px',
-    color: 'primary.foreground.dark',
     transition:
       'color {durations.normal} ease-in-out, background {durations.normal} ease-in-out',
-    _hover: {
-      background: 'primary.default',
-      color: 'primary.foreground.white',
-    },
-    _focus: {
-      outline: '2px solid {colors.primary.focusRing}',
-    },
+    cursor: 'pointer',
   },
   variants: {
     active: {
@@ -32,10 +25,46 @@ export const menuItem = cva({
     variant: {
       default: {
         color: 'primary.foreground.dark',
+        _hover: {
+          background: 'primary.default',
+          color: 'primary.foreground.white',
+        },
+        _focus: {
+          outline: '2px solid {colors.primary.focusRing}',
+        },
       },
-      active: {
-        background: 'primary.default',
-        color: 'primary.foreground.white',
+      login: {
+        color: 'primary.foreground.dark',
+        background: 'primary.300',
+        _hover: {
+          background: 'primary.default',
+          color: 'primary.foreground.white',
+        },
+        _focus: {
+          outline: '2px solid {colors.primary.focusRing}',
+        },
+      },
+      signup: {
+        color: 'primary.foreground.dark',
+        background: 'background.default',
+        _hover: {
+          background: 'primary.default',
+          color: 'primary.foreground.white',
+        },
+        _focus: {
+          outline: '2px solid {colors.primary.focusRing}',
+        },
+      },
+      logout: {
+        background: 'danger.subtle',
+        color: 'danger.emphasized',
+        _hover: {
+          background: 'danger.default',
+          color: 'danger.foreground.white',
+        },
+        _focus: {
+          outline: '2px solid {colors.danger.focusRing}',
+        },
       },
     },
   },

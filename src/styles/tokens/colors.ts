@@ -2,17 +2,17 @@ import { defineTokens } from '@pandacss/dev';
 
 export const colors = defineTokens.colors({
   primary: {
-    50: { value: 'oklch(0.97 0.07 65)' },
-    100: { value: 'oklch(0.93 0.09 65)' },
-    200: { value: 'oklch(0.87 0.11 65)' },
-    300: { value: 'oklch(0.81 0.13 65)' },
-    400: { value: 'oklch(0.78 0.15 65)' },
-    500: { value: 'oklch(0.75 0.17 65)' },
-    600: { value: 'oklch(0.68 0.16 65)' },
-    700: { value: 'oklch(0.58 0.14 65)' },
-    800: { value: 'oklch(0.48 0.12 65)' },
-    900: { value: 'oklch(0.38 0.10 65)' },
-    950: { value: 'oklch(0.28 0.08 65)' },
+    50: { value: 'oklch(0.96 0.05 145)' },
+    100: { value: 'oklch(0.92 0.08 145)' },
+    200: { value: 'oklch(0.86 0.10 145)' },
+    300: { value: 'oklch(0.80 0.12 145)' },
+    400: { value: 'oklch(0.77 0.14 145)' },
+    500: { value: 'oklch(0.75 0.15 145)' },
+    600: { value: 'oklch(0.68 0.14 145)' },
+    700: { value: 'oklch(0.58 0.12 145)' },
+    800: { value: 'oklch(0.48 0.10 145)' },
+    900: { value: 'oklch(0.38 0.08 145)' },
+    950: { value: 'oklch(0.28 0.06 145)' },
   },
   success: {
     50: { value: 'oklch(0.96 0.05 145)' },
