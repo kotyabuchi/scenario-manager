@@ -1,17 +1,15 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import type { StorybookConfig } from '@storybook/experimental-nextjs-vite';
+import type { StorybookConfig } from '@storybook/nextjs-vite';
+
+// ESMモードでの__dirnameの代替
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-onboarding',
-    '@chromatic-com/storybook',
-    '@storybook/experimental-addon-test',
-  ],
   framework: {
-    name: '@storybook/experimental-nextjs-vite',
+    name: '@storybook/nextjs-vite',
     options: {},
   },
   // staticDirs: ['..\\public'],
@@ -40,4 +38,5 @@ const config: StorybookConfig = {
     };
   },
 };
+
 export default config;
