@@ -1,6 +1,14 @@
 'use client';
 
-import { BookOpen, House, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
+import {
+  BookOpen,
+  House,
+  LogIn,
+  LogOut,
+  type LucideIcon,
+  UserPlus,
+  Users,
+} from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { MenuItem } from './menu-item';
@@ -9,7 +17,15 @@ import * as styles from './styles';
 import { useToggleState } from '@/hooks/use-toggle-state';
 import { VStack } from '@/styled-system/jsx';
 
-const menuItems = [
+import type { Route } from 'next';
+
+interface MenuItemType {
+  href: Route<string>;
+  icon: LucideIcon;
+  text: string;
+}
+
+const menuItems: MenuItemType[] = [
   {
     href: '/home',
     icon: House,
@@ -36,7 +52,7 @@ export function SideMenu() {
     toggleOpen();
   };
 
-  const handleClickMenuItem = (href: string) => {
+  const handleClickMenuItem = (href: Route<string>) => {
     router.push(href);
   };
 
@@ -48,9 +64,7 @@ export function SideMenu() {
     router.push('/signup');
   };
 
-  const handleClickLogout = () => {
-    router.push('/logout');
-  };
+  const handleClickLogout = () => {};
 
   return (
     <aside className={styles.sideMenu({ open })} onClick={handleToggle}>
