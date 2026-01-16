@@ -4,11 +4,8 @@ import type { users } from '@/db/schema';
 // Drizzleスキーマから型を導出
 type User = InferSelectModel<typeof users>;
 
-// プロフィール更新用の入力型
-type UpdateProfileInput = {
-  nickname: string;
-  bio?: string | undefined;
-};
+// プロフィール更新用の入力型（サーバー送信用）
+export type { ProfileSubmitValues as UpdateProfileInput } from './_components/schema';
 
 // コンポーネントProps
 type ProfileCardProps = {
@@ -19,9 +16,4 @@ type ProfileEditFormProps = {
   user: User;
 };
 
-export type {
-  User,
-  UpdateProfileInput,
-  ProfileCardProps,
-  ProfileEditFormProps,
-};
+export type { User, ProfileCardProps, ProfileEditFormProps };

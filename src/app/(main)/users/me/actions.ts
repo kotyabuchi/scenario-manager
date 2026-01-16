@@ -3,12 +3,14 @@
 import { revalidatePath } from 'next/cache';
 import { isNil } from 'ramda';
 
+import {
+  type ProfileFormValues,
+  profileFormSchema,
+} from './_components/schema';
 import { getUserByDiscordId, updateUserProfile } from './adapter';
 
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
-
-import type { UpdateProfileInput } from './interface';
 
 /**
  * ユーザープロフィールを更新する
@@ -16,7 +18,7 @@ import type { UpdateProfileInput } from './interface';
  * @returns 更新結果（成功時はvoid、失敗時はエラー）
  */
 export const updateProfile = async (
-  input: UpdateProfileInput,
+  input: ProfileFormValues,
 ): Promise<Result<void>> => {
   const supabase = await createClient();
   const {
@@ -37,21 +39,19 @@ export const updateProfile = async (
     return err(new Error('ユーザーが見つかりません'));
   }
 
-  // バリデーション
-  if (isNil(input.nickname) || input.nickname.trim() === '') {
-    return err(new Error('表示名を入力してください'));
+  // Zodスキーマでバリデーション
+  const parsed = profileFormSchema.safeParse(input);
+  if (!parsed.success) {
+    return err(
+      new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
+    );
   }
 
-  if (input.nickname.length > 50) {
-    return err(new Error('表示名は50文字以内で入力してください'));
-  }
-
-  if (!isNil(input.bio) && input.bio.length > 500) {
-    return err(new Error('自己紹介は500文字以内で入力してください'));
-  }
-
-  // プロフィール更新
-  const updateResult = await updateUserProfile(userResult.data.userId, input);
+  // プロフィール更新（空文字はundefinedに変換）
+  const updateResult = await updateUserProfile(userResult.data.userId, {
+    nickname: parsed.data.nickname,
+    bio: parsed.data.bio || undefined,
+  });
   if (!updateResult.success) {
     return err(updateResult.error);
   }

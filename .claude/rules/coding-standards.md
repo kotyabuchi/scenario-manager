@@ -227,6 +227,22 @@ export const button = cva({
 })
 ```
 
+### CSS関数の命名規則
+- **camelCaseを使用する**
+- 複数の要素がある場合は `コンポーネント名_要素名` の形式でアンダースコア区切り
+
+```typescript
+// OK - camelCase + アンダースコア区切り
+export const editForm_container = css({ ... })
+export const editForm_title = css({ ... })
+export const editForm_submitButton = css({ ... })
+export const card_header = css({ ... })
+
+// NG - kebab-case
+export const edit_form_container = css({ ... })
+export const editFormContainer = css({ ... })  // 要素の区切りが不明瞭
+```
+
 **使用側**:
 ```typescript
 import * as styles from './styles'
@@ -641,7 +657,95 @@ if (!isNil(name)) {
 
 ---
 
-## 13. 禁止事項
+## 13. フォーム
+
+### フォームライブラリ
+- **React Hook Form**を使用してフォームの状態管理を行う
+- 標準のReact state (`useState`) でフォームを管理しない
+
+### バリデーション
+- **必ずZodでバリデーションスキーマを定義する**
+- `@hookform/resolvers/zod`を使用してReact Hook Formと連携する
+- バリデーションスキーマはフォームコンポーネントと同階層に配置
+
+### ファイル構成
+- **Zodスキーマは必ず別ファイル（`schema.ts`）に分離する**
+- スキーマファイルはフォームコンポーネントと同階層に配置
+
+```
+src/app/(main)/users/me/
+├── page.tsx
+├── _components/
+│   ├── ProfileEditForm.tsx    # フォームコンポーネント
+│   └── schema.ts              # Zodスキーマ定義
+```
+
+### 実装例
+
+**schema.ts**:
+```typescript
+import { z } from 'zod'
+
+export const profileFormSchema = z.object({
+  name: z.string().min(1, '名前は必須です'),
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  age: z.number().min(0, '年齢は0以上で入力してください').optional(),
+})
+
+// スキーマから型を導出してエクスポート
+export type ProfileFormValues = z.infer<typeof profileFormSchema>
+```
+
+**ProfileEditForm.tsx**:
+```typescript
+'use client'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { profileFormSchema, type ProfileFormValues } from './schema'
+
+export const ProfileEditForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+    },
+  })
+
+  const onSubmit = async (data: ProfileFormValues) => {
+    // フォーム送信処理
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('name')} />
+      {errors.name && <span>{errors.name.message}</span>}
+
+      <input {...register('email')} />
+      {errors.email && <span>{errors.email.message}</span>}
+
+      <button type="submit" disabled={isSubmitting}>
+        送信
+      </button>
+    </form>
+  )
+}
+```
+
+### 注意事項
+- フォームの型は`z.infer<typeof schema>`でスキーマから導出する
+- スキーマと型は`schema.ts`からエクスポートして使用する
+- Server Actionsと組み合わせる場合も、クライアント側でZodバリデーションを行う
+- エラーメッセージは日本語で記述する
+
+---
+
+## 14. 禁止事項
 
 - `any`型の使用
 - `!`（Non-null assertion）の使用
@@ -651,3 +755,5 @@ if (!isNil(name)) {
 - `var`の使用
 - `==`による比較（`===`を使用）
 - 未使用のimport・変数（Biomeで自動検出）
+- フォームの状態管理に`useState`を使用すること（React Hook Formを使用）
+- Zodを使用しないフォームバリデーション

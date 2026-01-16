@@ -1,49 +1,44 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { isNil } from 'ramda';
 
 import { updateProfile } from '../actions';
+import { type ProfileFormValues, profileFormSchema } from './schema';
 import * as styles from './styles';
+
+import { FieldError } from '@/components/elements';
 
 import type { ProfileEditFormProps } from '../interface';
 
 export const ProfileEditForm = ({ user }: ProfileEditFormProps) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (formData: FormData) => {
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      nickname: user.nickname,
+      bio: user.bio ?? '',
+    },
+  });
+
+  const onSubmit = (data: ProfileFormValues) => {
+    setServerError(null);
     setSuccess(false);
 
-    const nickname = formData.get('nickname') as string;
-    const bio = formData.get('bio') as string;
-
-    // バリデーション
-    if (isNil(nickname) || nickname.trim() === '') {
-      setError('表示名を入力してください');
-      return;
-    }
-
-    if (nickname.length > 50) {
-      setError('表示名は50文字以内で入力してください');
-      return;
-    }
-
-    if (!isNil(bio) && bio.length > 500) {
-      setError('自己紹介は500文字以内で入力してください');
-      return;
-    }
-
     startTransition(async () => {
-      const result = await updateProfile({
-        nickname,
-        bio: bio || undefined,
-      });
+      const result = await updateProfile(data);
 
       if (!result.success) {
-        setError(result.error.message);
+        setServerError(result.error.message);
       } else {
         setSuccess(true);
       }
@@ -54,14 +49,16 @@ export const ProfileEditForm = ({ user }: ProfileEditFormProps) => {
     <div className={styles.editForm_container}>
       <h2 className={styles.editForm_title}>プロフィール編集</h2>
 
-      {!isNil(error) && <div className={styles.editForm_error}>{error}</div>}
+      {!isNil(serverError) && (
+        <div className={styles.editForm_error}>{serverError}</div>
+      )}
       {success && (
         <div className={styles.editForm_success}>
           プロフィールを更新しました
         </div>
       )}
 
-      <form action={handleSubmit} className={styles.editForm_form}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.editForm_form}>
         <div className={styles.editForm_field}>
           <label htmlFor="userName" className={styles.editForm_label}>
             ユーザー名
@@ -84,12 +81,11 @@ export const ProfileEditForm = ({ user }: ProfileEditFormProps) => {
           <input
             type="text"
             id="nickname"
-            name="nickname"
-            defaultValue={user.nickname}
+            {...register('nickname')}
             className={styles.editForm_input}
             maxLength={50}
-            required
           />
+          <FieldError error={errors.nickname} />
           <p className={styles.editForm_hint}>
             他のユーザーに表示される名前です（50文字以内）
           </p>
@@ -101,13 +97,13 @@ export const ProfileEditForm = ({ user }: ProfileEditFormProps) => {
           </label>
           <textarea
             id="bio"
-            name="bio"
-            defaultValue={user.bio ?? ''}
+            {...register('bio')}
             className={styles.editForm_textarea}
             maxLength={500}
             rows={4}
             placeholder="自己紹介を入力してください..."
           />
+          <FieldError error={errors.bio} />
           <p className={styles.editForm_hint}>500文字以内</p>
         </div>
 
