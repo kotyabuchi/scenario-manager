@@ -93,17 +93,18 @@ const name = user?.name ?? 'Unknown'
 ## 4. Reactコンポーネント
 
 ### 定義スタイル
-アロー関数で定義する（`function`宣言は使用しない）
+- **一般コンポーネント**: アロー関数 + `export const` で定義
+- **Next.js固有ファイル** (`page.tsx`, `layout.tsx`等): `export default function` で定義
 
 ```typescript
-// OK
-const Button = ({ variant, onClick }: ButtonProps) => {
+// 一般コンポーネント（アロー関数）
+export const Button = ({ variant, onClick }: ButtonProps) => {
   return <button onClick={onClick}>{/* ... */}</button>
 }
 
-// NG
-function Button({ variant, onClick }: ButtonProps) {
-  return <button onClick={onClick}>{/* ... */}</button>
+// Next.js固有ファイル（function宣言）
+export default function HomePage() {
+  return <main>...</main>
 }
 ```
 
@@ -111,6 +112,7 @@ function Button({ variant, onClick }: ButtonProps) {
 ```
 src/components/elements/Button/
 ├── Button.tsx           # コンポーネント本体
+├── styles.ts            # スタイル定義
 ├── Button.stories.tsx   # Storybook
 ├── Button.test.tsx      # テスト（必要な場合）
 └── index.ts             # エクスポート
@@ -120,6 +122,36 @@ src/components/elements/Button/
 ```typescript
 export { Button } from './Button'
 export type { ButtonProps } from './Button'
+```
+
+### エクスポート形式
+- **ファイル末尾での`export default`は禁止**
+- Next.js固有ファイル: `export default function 関数名()` で直接定義
+- その他のファイル: `export const` で直接定義
+
+```typescript
+// NG - ファイル末尾でのexport default
+const MyComponent = () => { ... }
+export default MyComponent  // ❌
+
+// OK - 定義時に直接export
+export const MyComponent = () => { ... }  // ✅
+export default function PageComponent() { ... }  // ✅（page.tsx等のみ）
+```
+
+### コンポーネントの分離
+- **1ファイル1コンポーネントを原則とする**
+- 複数のコンポーネントを同一ファイルに定義しない
+- 関連するコンポーネントは`_components/`ディレクトリに分離
+
+```
+src/app/(auth)/login/
+├── page.tsx              # メインのページコンポーネントのみ
+├── styles.ts             # ページのスタイル定義
+└── _components/
+    ├── LoginContent.tsx  # ログインフォーム本体
+    ├── LoginFallback.tsx # ローディング表示
+    └── DiscordIcon.tsx   # アイコンコンポーネント
 ```
 
 ### Server Components / Client Components
@@ -133,7 +165,7 @@ export type { ButtonProps } from './Button'
 
 import { useState } from 'react'
 
-const Counter = () => {
+export const Counter = () => {
   const [count, setCount] = useState(0)
   // ...
 }
@@ -142,7 +174,7 @@ const Counter = () => {
 ### Propsの受け取り
 ```typescript
 // 分割代入で受け取る
-const Button = ({ variant, size = 'md', children }: ButtonProps) => {
+export const Button = ({ variant, size = 'md', children }: ButtonProps) => {
   // ...
 }
 
@@ -156,17 +188,52 @@ type ButtonProps = {
 
 ## 5. スタイリング (PandaCSS)
 
-### 基本パターン
+### スタイル定義ファイル
+- **CSSスタイルは同階層の`styles.ts`に定義し、インポートして使用する**
+- コンポーネントファイル内にスタイル定義を書かない
+
+```
+src/components/elements/Button/
+├── Button.tsx       # コンポーネント本体
+├── styles.ts        # スタイル定義
+└── index.ts
+
+src/app/(main)/users/me/
+├── page.tsx         # ページコンポーネント
+├── styles.ts        # ページのスタイル
+└── _components/
+```
+
+**styles.ts**:
 ```typescript
-import { css } from '@/styled-system/css'
+import { css, cva } from '@/styled-system/css'
 
-// インラインスタイル
-<div className={css({ display: 'flex', gap: '4' })}>
+// 静的スタイル
+export const container = css({
+  maxW: '800px',
+  mx: 'auto',
+  px: '4',
+})
 
-// 条件付きスタイル
-<div className={css({
-  color: isActive ? 'primary' : 'gray.500'
-})}>
+// バリアント付きスタイル
+export const button = cva({
+  base: { padding: '4', rounded: 'md' },
+  variants: {
+    variant: {
+      primary: { bg: 'blue.500' },
+      secondary: { bg: 'gray.500' },
+    },
+  },
+})
+```
+
+**使用側**:
+```typescript
+import * as styles from './styles'
+
+export const MyComponent = () => {
+  return <div className={styles.container}>...</div>
+}
 ```
 
 ### レシピの使用
@@ -397,6 +464,7 @@ src/
 ```
 src/app/(main)/scenarios/
 ├── page.tsx           # ページコンポーネント（Server Component）
+├── styles.ts          # ページのスタイル定義
 ├── interface.ts       # ページで扱う型定義
 ├── adapter.ts         # DB操作関数
 ├── _components/       # ページ固有のコンポーネント
@@ -404,6 +472,7 @@ src/app/(main)/scenarios/
 │   └── ScenarioList.tsx
 └── [id]/              # 動的ルート
     ├── page.tsx
+    ├── styles.ts
     ├── interface.ts
     └── adapter.ts
 ```
@@ -521,6 +590,7 @@ export const getScenarioById = async (
 | ファイル | 責務 |
 |----------|------|
 | `page.tsx` | UIレンダリング、Server Component |
+| `styles.ts` | スタイル定義（css, cva） |
 | `interface.ts` | 型定義（Drizzleから導出） |
 | `adapter.ts` | DB操作（クエリ、ミューテーション） |
 | `_components/` | ページ固有のUIコンポーネント |
