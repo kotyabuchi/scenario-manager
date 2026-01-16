@@ -1,46 +1,12 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
 
+import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
+
 import type { ScenarioCardProps } from '../interface';
-
-/**
- * プレイ時間を表示用にフォーマット
- */
-const formatPlaytime = (
-  minMinutes?: number | null,
-  maxMinutes?: number | null,
-): string => {
-  if (isNil(minMinutes) && isNil(maxMinutes)) return '-';
-
-  const formatHours = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (mins === 0) return `${hours}時間`;
-    return `${hours}時間${mins}分`;
-  };
-
-  if (isNil(minMinutes)) return formatHours(maxMinutes!);
-  if (isNil(maxMinutes)) return formatHours(minMinutes);
-  if (minMinutes === maxMinutes) return formatHours(minMinutes);
-
-  return `${formatHours(minMinutes)}〜${formatHours(maxMinutes)}`;
-};
-
-/**
- * プレイ人数を表示用にフォーマット
- */
-const formatPlayerCount = (
-  min?: number | null,
-  max?: number | null,
-): string => {
-  if (isNil(min) && isNil(max)) return '-';
-  if (isNil(min)) return `〜${max}人`;
-  if (isNil(max)) return `${min}人〜`;
-  if (min === max) return `${min}人`;
-  return `${min}〜${max}人`;
-};
 
 export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
   const tags = scenario.scenarioTags.map((st) => st.tag).slice(0, 2);
@@ -53,10 +19,12 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
       {/* サムネイル */}
       <div className={styles.cardThumbnail}>
         {!isNil(scenario.scenarioImageUrl) ? (
-          <img
+          <Image
             src={scenario.scenarioImageUrl}
             alt={scenario.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            fill
+            sizes="(max-width: 768px) 100vw, 280px"
+            style={{ objectFit: 'cover' }}
           />
         ) : (
           <div className={styles.cardThumbnailPlaceholder}>No Image</div>
