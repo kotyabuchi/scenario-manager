@@ -5,7 +5,8 @@
       "mcp__context7__query-docs",
       "Bash(ls:*)",
       "WebSearch",
-      "Bash(powershell.exe -Command \"Get-ChildItem -Path ''C:\\\\Program Files\\\\'' -Recurse -Filter ''uv.exe'' -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName\")"
+      "Bash(powershell.exe -Command \"Get-ChildItem -Path ''C:\\\\Program Files\\\\'' -Recurse -Filter ''uv.exe'' -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName\")",
+      "mcp__serena__list_dir"
     ]
   },
   "enableAllProjectMcpServers": true,
