@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
+import { isNil } from 'ramda';
 
 import { SignupForm } from './_components/SignupForm';
 
@@ -7,7 +8,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 
-const SignupPage = async () => {
+export default async function SignupPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -27,11 +28,12 @@ const SignupPage = async () => {
     redirect('/home');
   }
 
-  const discordName =
-    user.user_metadata['full_name'] ?? user.user_metadata['name'] ?? '';
-  const avatarUrl = user.user_metadata['avatar_url'] ?? '';
+  const discordName = !isNil(user.user_metadata)
+    ? (user.user_metadata['full_name'] ?? user.user_metadata['name'] ?? '')
+    : '';
+  const avatarUrl = !isNil(user.user_metadata)
+    ? (user.user_metadata['avatar_url'] ?? '')
+    : '';
 
   return <SignupForm defaultNickname={discordName} avatarUrl={avatarUrl} />;
-};
-
-export default SignupPage;
+}

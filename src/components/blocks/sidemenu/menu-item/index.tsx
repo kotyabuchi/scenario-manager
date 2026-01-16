@@ -12,13 +12,13 @@ interface MenuItemProps {
   onClick: () => void;
 }
 
-export function MenuItem({
+export const MenuItem = ({
   icon,
   text,
   active = false,
   variant = 'default',
   onClick,
-}: MenuItemProps) {
+}: MenuItemProps) => {
   const IconComponent = icon;
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,4 +38,4 @@ export function MenuItem({
       <p className={styles.menuItemText}>{text}</p>
     </button>
   );
-}
+};

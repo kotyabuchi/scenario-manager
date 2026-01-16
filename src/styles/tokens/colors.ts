@@ -81,4 +81,8 @@ export const colors = defineTokens.colors({
   backdrop: {
     500: { value: 'oklch(0.20 0.01 270 / 0.25)' },
   },
+  discord: {
+    default: { value: '#5865F2' },
+    hover: { value: '#4752C4' },
+  },
 });

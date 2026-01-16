@@ -19,11 +19,11 @@ import { VStack } from '@/styled-system/jsx';
 
 import type { Route } from 'next';
 
-interface MenuItemType {
+type MenuItemType = {
   href: Route<string>;
   icon: LucideIcon;
   text: string;
-}
+};
 
 const menuItems: MenuItemType[] = [
   {
@@ -43,7 +43,7 @@ const menuItems: MenuItemType[] = [
   },
 ];
 
-export function SideMenu() {
+export const SideMenu = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [open, toggleOpen] = useToggleState(false);
@@ -101,4 +101,4 @@ export function SideMenu() {
       </VStack>
     </aside>
   );
-}
+};

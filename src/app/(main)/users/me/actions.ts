@@ -8,11 +8,13 @@ import { getUserByDiscordId, updateUserProfile } from './adapter';
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
-type UpdateProfileInput = {
-  nickname: string;
-  bio?: string | undefined;
-};
+import type { UpdateProfileInput } from './interface';
 
+/**
+ * ユーザープロフィールを更新する
+ * @param input - 更新内容（表示名、自己紹介）
+ * @returns 更新結果（成功時はvoid、失敗時はエラー）
+ */
 export const updateProfile = async (
   input: UpdateProfileInput,
 ): Promise<Result<void>> => {
