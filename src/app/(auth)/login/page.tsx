@@ -1,11 +1,12 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/client';
 import { css } from '@/styled-system/css';
 
-const LoginPage = () => {
+const LoginContent = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
 
@@ -48,6 +49,24 @@ const LoginPage = () => {
     </div>
   );
 };
+
+const LoginPage = () => {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginContent />
+    </Suspense>
+  );
+};
+
+const LoginFallback = () => (
+  <div className={styles.container}>
+    <div className={styles.card}>
+      <h1 className={styles.title}>シナプレ管理くん</h1>
+      <p className={styles.subtitle}>TRPGシナリオ・セッション管理</p>
+      <div className={styles.loading}>読み込み中...</div>
+    </div>
+  </div>
+);
 
 const DiscordIcon = () => (
   <svg
@@ -99,6 +118,11 @@ const styles = {
     borderRadius: 'md',
     fontSize: 'sm',
     mb: '4',
+  }),
+  loading: css({
+    color: 'gray.400',
+    fontSize: 'sm',
+    py: '4',
   }),
   discordButton: css({
     display: 'flex',
