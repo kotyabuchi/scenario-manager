@@ -55,3 +55,7 @@ dist
 
 # Database migrations
 src/lib/db/migrations
+
+# Playwright screenshots
+/screenshots/*.png
+/screenshots/*.jpeg
