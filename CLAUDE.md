@@ -44,20 +44,29 @@ pnpm prepare
 ### Directory Structure
 ```
 src/
-├── app/
-│   ├── (auth)/           # 認証関連ページ（login, signup）
-│   └── (main)/           # メインページ（home, scenarios, users）
+├── app/                    # Next.js App Router
+│   ├── (auth)/             # 認証グループ（login, signup）
+│   └── (main)/             # メイングループ（home, scenarios, users）
+│       └── [feature]/
+│           ├── page.tsx        # ページコンポーネント（Server Component）
+│           ├── styles.ts       # ページのスタイル定義
+│           ├── interface.ts    # ページ用型定義（Drizzleから導出）
+│           ├── adapter.ts      # DB操作関数（Drizzle）
+│           └── _components/    # ページ固有コンポーネント
 ├── components/
-│   ├── elements/         # 基本コンポーネント（Button, Card, Alert等）
-│   └── blocks/           # 複合コンポーネント（SideMenu等）
+│   ├── elements/           # 基本コンポーネント（Button, Card等）
+│   └── blocks/             # 複合コンポーネント（Header, SideMenu等）
 ├── db/
-│   ├── schema.ts         # Drizzle スキーマ定義
-│   └── enum.ts           # DB用Enum定義
-├── hooks/                # カスタムフック
+│   ├── schema.ts           # Drizzle スキーマ定義
+│   └── enum.ts             # DB用Enum定義
+├── hooks/                  # カスタムフック
+├── lib/                    # ユーティリティ（db接続等）
+├── types/                  # 共通型定義
+│   └── result.ts           # Result型（ok, err, isOk, isErr）
 └── styles/
-    ├── preset.ts         # PandaCSS プリセット
-    ├── recipes/          # コンポーネントレシピ
-    └── tokens/           # デザイントークン
+    ├── preset.ts           # PandaCSS プリセット
+    ├── recipes/            # コンポーネントレシピ
+    └── tokens/             # デザイントークン
 ```
 
 ### Database Schema
@@ -72,3 +81,22 @@ src/
 - **パスエイリアス**: `@/*` → `src/*`, `@/styled-system/*` → `styled-system/*`
 - **Storybook**: コンポーネントと同階層に `.stories.tsx` を配置
 - **Git Hooks**: pre-commit で Biome check、pre-push で型チェック
+- **Result型**: エラーハンドリングは `@/types/result` の `ok`, `err` を使用
+- **Null/Undefinedチェック**: `ramda` の `isNil` を使用（`null === x` は禁止）
+- **スタイル分離**: CSSは同階層の `styles.ts` に定義しインポート
+- **ページ構成**: `page.tsx` + `interface.ts`（型） + `adapter.ts`（DB操作） + `_components/`
+
+## Agent Strategy
+
+### タスク実行方針
+- **タスクの細分化**: 複雑なタスクは小さなサブタスクに分解する
+- **サブエージェントの活用**: 各サブタスクに最適なサブエージェントを選定して実行
+  - `Explore`: コードベース探索・検索
+  - `Plan`: 実装計画の設計
+  - `code-reviewer`: コードレビュー
+  - `serena-expert`: 構造化されたアプリ開発
+  - `ui-expert` / `ui-implementer`: UI実装・改善
+
+### 継続的最適化
+- 永続的・基盤的な指示を受けた場合、CLAUDE.mdに追記して知識を蓄積
+- プロジェクト固有のパターンや方針を学習し、より効率的な開発を目指す
