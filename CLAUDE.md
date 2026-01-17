@@ -97,6 +97,11 @@ src/
   - `serena-expert`: 構造化されたアプリ開発
   - `ui-expert` / `ui-implementer`: UI実装・改善
 
+### タスク完了時のコミット
+- **タスク完了後は必ずコミットを作成する**
+- コミットメッセージはConventional Commits形式（`feat`, `fix`, `style`, `refactor`等）
+- Co-Authored-Byを付与
+
 ### 継続的最適化
 - 永続的・基盤的な指示を受けた場合、CLAUDE.mdに追記して知識を蓄積
 - プロジェクト固有のパターンや方針を学習し、より効率的な開発を目指す
