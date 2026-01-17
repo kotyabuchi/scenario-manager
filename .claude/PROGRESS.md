@@ -91,12 +91,12 @@
 - [x] 人数・時間範囲検索
 
 ### 3.3 検索パネルUI
-- [ ] SearchPanel コンポーネント
-- [ ] システム選択（マルチセレクト）
-- [ ] プレイ人数入力
-- [ ] プレイ時間入力
-- [ ] タグ選択
-- [ ] シナリオ名検索
+- [x] SearchPanel コンポーネント
+- [x] システム選択（マルチセレクト）
+- [x] プレイ人数入力
+- [x] プレイ時間入力
+- [x] タグ選択
+- [x] シナリオ名検索
 
 ### 3.4 シナリオカード・リスト
 - [x] ScenarioCard完成
@@ -106,9 +106,9 @@
 - [x] styles.ts（PandaCSSスタイル定義）
 
 ### 3.5 URL同期
-- [ ] useSearchParams活用
-- [ ] クエリパラメータ ↔ 状態同期
-- [ ] URLからの復元
+- [x] useSearchParams活用
+- [x] クエリパラメータ ↔ 状態同期
+- [x] URLからの復元
 
 ### 3.6 ソート機能
 - [x] 新着順（adapter.ts実装済み）
@@ -116,8 +116,8 @@
 - [x] プレイ時間順（adapter.ts実装済み）
 
 ### 3.7 シナリオ詳細画面
-- [ ] `/scenarios/[id]/page.tsx`
-- [ ] 基本情報表示
+- [x] `/scenarios/[id]/page.tsx`
+- [x] 基本情報表示
 - [ ] レビュー一覧（後で実装）
 - [ ] 関連動画（後で実装）
 
@@ -146,6 +146,10 @@
 | 2026-01-17 | Claude | Phase 3.1, 3.2 型定義・検索クエリ完了 |
 | 2026-01-17 | Claude | Phase 3.4, 3.6 シナリオカード・リスト・ソート完了 |
 | 2026-01-17 | Claude | lib/formatters.ts作成（汎用フォーマット関数） |
+| 2026-01-17 | Claude | Phase 3.3 検索パネルUI完了（SearchPanel, ScenariosContent） |
+| 2026-01-17 | Claude | Phase 3.5 URL同期完了（クエリパラメータ同期） |
+| 2026-01-17 | Claude | Phase 3.7 シナリオ詳細画面（基本情報表示）完了 |
+| 2026-01-17 | Claude | /api/scenarios/search APIルート作成 |
 
 ---
 

@@ -136,6 +136,9 @@ export const searchPanelField = css({
   gap: 'xs',
   minW: '200px',
   flex: 1,
+  border: 'none',
+  padding: 0,
+  margin: 0,
 });
 
 export const searchPanelLabel = css({
