@@ -211,8 +211,8 @@ const styles = {
     outline: 'none',
     transition: 'border-color 0.2s',
     _focus: {
-      borderColor: 'blue.500',
-      boxShadow: '0 0 0 1px var(--colors-blue-500)',
+      borderColor: 'primary.500',
+      boxShadow: '0 0 0 1px var(--colors-primary-500)',
     },
     _placeholder: {
       color: 'gray.400',
@@ -226,7 +226,7 @@ const styles = {
     w: 'full',
     py: '3',
     px: '4',
-    bg: 'blue.600',
+    bg: 'primary.600',
     color: 'white',
     borderRadius: 'lg',
     fontWeight: 'medium',
@@ -236,7 +236,7 @@ const styles = {
     fontSize: 'md',
     mt: '2',
     _hover: {
-      bg: 'blue.700',
+      bg: 'primary.700',
     },
     _disabled: {
       bg: 'gray.400',
