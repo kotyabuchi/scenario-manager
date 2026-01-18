@@ -60,7 +60,7 @@ export const SessionSection = ({
       </div>
       {sessions.length === 0 ? (
         <div className={styles.section_empty}>
-          <p>このシナリオのセッションはまだありません</p>
+          <p>🎲 このシナリオで初めてのセッションを開催してみませんか？</p>
           <Link
             href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
             className={styles.section_ctaButton}

@@ -124,9 +124,6 @@ export const scenarioInfo_metaGrid = css({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
   gap: 'md',
-  p: 'md',
-  bg: 'bg.subtle',
-  borderRadius: 'lg',
 });
 
 export const scenarioInfo_metaItem = css({
@@ -188,7 +185,7 @@ export const description_text = css({
 });
 
 export const description_collapsed = css({
-  maxHeight: '4.5em', // 3行分（lineHeight 1.5 × 3）
+  maxHeight: '5.4em', // 3行分（lineHeight 1.8 × 3）
   overflow: 'hidden',
 });
 
@@ -197,8 +194,9 @@ export const description_fadeout = css({
   bottom: 0,
   left: 0,
   right: 0,
-  height: '2em',
-  background: 'linear-gradient(transparent, token(colors.bg.default))',
+  height: '3em',
+  background:
+    'linear-gradient(to bottom, transparent, token(colors.bg.default))',
   pointerEvents: 'none',
 });
 
@@ -283,6 +281,31 @@ export const section_ctaButton = css({
   _hover: {
     bg: 'primary.600',
     transform: 'translateY(-1px)',
+  },
+});
+
+export const section_headerActions = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'md',
+});
+
+export const section_actionButton = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 'xs',
+  px: 'md',
+  py: 'xs',
+  bg: 'primary.500',
+  color: 'white',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  borderRadius: 'md',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  _hover: {
+    bg: 'primary.600',
   },
 });
 

@@ -251,6 +251,8 @@ export const ReviewSection = ({
     }
   });
 
+  const isLoggedIn = !isNil(currentUserId);
+
   return (
     <section className={styles.section}>
       <div className={styles.section_header}>
@@ -258,6 +260,13 @@ export const ReviewSection = ({
           レビュー
           <span className={styles.section_count}>({totalCount}件)</span>
         </h2>
+        {isLoggedIn && (
+          <div className={styles.section_headerActions}>
+            <button type="button" className={styles.section_actionButton}>
+              + レビューを書く
+            </button>
+          </div>
+        )}
       </div>
 
       {/* フィルタパネル */}
@@ -286,7 +295,16 @@ export const ReviewSection = ({
 
       {/* レビュー一覧 */}
       {sortedReviews.length === 0 ? (
-        <p className={styles.section_empty}>まだレビューがありません</p>
+        <div className={styles.section_empty}>
+          <p>
+            ✨ 最初のレビュアーになりませんか？あなたの感想を共有してください！
+          </p>
+          {isLoggedIn && (
+            <button type="button" className={styles.section_ctaButton}>
+              レビューを書く
+            </button>
+          )}
+        </div>
       ) : (
         <div className={styles.reviewList}>
           {sortedReviews.map((review) => (

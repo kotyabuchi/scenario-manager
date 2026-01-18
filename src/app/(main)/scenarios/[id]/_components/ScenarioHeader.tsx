@@ -3,19 +3,13 @@
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
-import { ActionMenu } from './ActionMenu';
-
 import { css } from '@/styled-system/css';
 
 type ScenarioHeaderProps = {
-  scenarioId: string;
   scenarioName: string;
   currentUserId?: string;
-  createdById?: string | null;
   isFavorite: boolean;
-  isPlayed: boolean;
   onToggleFavorite: () => Promise<void>;
-  onTogglePlayed: () => Promise<void>;
 };
 
 const header = css({
@@ -87,17 +81,12 @@ const favoriteButton_inactive = css({
 });
 
 export const ScenarioHeader = ({
-  scenarioId,
   scenarioName,
   currentUserId,
-  createdById,
   isFavorite,
-  isPlayed,
   onToggleFavorite,
-  onTogglePlayed,
 }: ScenarioHeaderProps) => {
   const isLoggedIn = !isNil(currentUserId);
-  const canEdit = isLoggedIn && currentUserId === createdById;
 
   return (
     <header className={header}>
@@ -121,13 +110,6 @@ export const ScenarioHeader = ({
           >
             {isFavorite ? '★' : '☆'}
           </button>
-
-          <ActionMenu
-            scenarioId={scenarioId}
-            isPlayed={isPlayed}
-            canEdit={canEdit}
-            onTogglePlayed={onTogglePlayed}
-          />
         </div>
       )}
     </header>

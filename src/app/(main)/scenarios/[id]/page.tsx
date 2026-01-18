@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation';
 import { isNil } from 'ramda';
 
 import {
-  FavoriteButton,
   ReviewSection,
+  ScenarioFAB,
   ScenarioHeader,
   ScenarioInfo,
   SessionSection,
@@ -72,6 +72,8 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
 
   const isFavorite = userPreference?.isLike ?? false;
   const isPlayed = userPreference?.isPlayed ?? false;
+  const canEdit =
+    !isNil(currentUserId) && currentUserId === scenario.createdById;
 
   // お気に入りトグルのServer Action
   const handleToggleFavorite = async () => {
@@ -91,14 +93,10 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
     <main className={styles.pageContainer}>
       {/* ヘッダー */}
       <ScenarioHeader
-        scenarioId={scenario.scenarioId}
         scenarioName={scenario.name}
         {...(currentUserId ? { currentUserId } : {})}
-        createdById={scenario.createdById}
         isFavorite={isFavorite}
-        isPlayed={isPlayed}
         onToggleFavorite={handleToggleFavorite}
-        onTogglePlayed={handleTogglePlayed}
       />
 
       {/* ファーストビュー: シナリオ基本情報 */}
@@ -122,11 +120,15 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
         scenarioId={id}
       />
 
-      {/* お気に入りFAB */}
+      {/* FAB（お気に入り + メニュー） */}
       {!isNil(currentUserId) && (
-        <FavoriteButton
+        <ScenarioFAB
+          scenarioId={id}
           isFavorite={isFavorite}
-          onToggle={handleToggleFavorite}
+          isPlayed={isPlayed}
+          canEdit={canEdit}
+          onToggleFavorite={handleToggleFavorite}
+          onTogglePlayed={handleTogglePlayed}
         />
       )}
     </main>

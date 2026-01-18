@@ -159,20 +159,27 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
           プレイ動画
           <span className={styles.section_count}>({videos.length}件)</span>
         </h2>
-        {hasSpoilerVideos && (
-          <label className={styles.spoilerToggle}>
-            <input
-              type="checkbox"
-              checked={allSpoilersRevealed}
-              onChange={handleToggleSpoiler}
-            />
-            <span>ネタバレ表示</span>
-          </label>
-        )}
+        <div className={styles.section_headerActions}>
+          {hasSpoilerVideos && (
+            <label className={styles.spoilerToggle}>
+              <input
+                type="checkbox"
+                checked={allSpoilersRevealed}
+                onChange={handleToggleSpoiler}
+              />
+              <span>ネタバレ表示</span>
+            </label>
+          )}
+          {isPlayed && (
+            <button type="button" className={styles.section_actionButton}>
+              + 動画を登録
+            </button>
+          )}
+        </div>
       </div>
       {videos.length === 0 ? (
         <div className={styles.section_empty}>
-          <p>このシナリオのプレイ動画はまだありません</p>
+          <p>🎬 プレイ動画を投稿して、セッションの思い出を共有しましょう！</p>
           {isPlayed && (
             <button type="button" className={styles.section_ctaButton}>
               動画を登録する
