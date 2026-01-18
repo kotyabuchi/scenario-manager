@@ -319,7 +319,7 @@ export const ReviewSection = ({
         <div className={styles.section_empty}>
           {isPlayed ? (
             <>
-              <p>
+              <p className={styles.section_emptyText}>
                 <Sparkles size={16} />
                 最初のレビュアーになりませんか？あなたの感想を共有してください！
               </p>
@@ -328,7 +328,7 @@ export const ReviewSection = ({
               </button>
             </>
           ) : (
-            <p>
+            <p className={styles.section_emptyText}>
               <FileText size={16} />
               まだレビューがありません。プレイしたら感想を書いてみましょう！
             </p>

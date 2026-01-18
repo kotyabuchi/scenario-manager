@@ -61,7 +61,7 @@ export const SessionSection = ({
       </div>
       {sessions.length === 0 ? (
         <div className={styles.section_empty}>
-          <p>
+          <p className={styles.section_emptyText}>
             <Dices size={16} />
             このシナリオで初めてのセッションを開催してみませんか？
           </p>

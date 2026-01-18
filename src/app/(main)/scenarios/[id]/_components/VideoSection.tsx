@@ -200,7 +200,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
         <div className={styles.section_empty}>
           {isPlayed ? (
             <>
-              <p>
+              <p className={styles.section_emptyText}>
                 <Video size={16} />
                 プレイ動画を投稿して、セッションの思い出を共有しましょう！
               </p>
@@ -209,7 +209,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
               </button>
             </>
           ) : (
-            <p>
+            <p className={styles.section_emptyText}>
               <Video size={16} /> まだプレイ動画がありません
             </p>
           )}

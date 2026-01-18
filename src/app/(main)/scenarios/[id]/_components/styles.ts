@@ -265,6 +265,12 @@ export const section_empty = css({
   fontSize: 'sm',
 });
 
+export const section_emptyText = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'xs',
+});
+
 export const section_ctaButton = css({
   display: 'inline-flex',
   alignItems: 'center',
@@ -419,14 +425,13 @@ export const videoCard_info = css({
 });
 
 export const videoCard_title = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'xs',
   fontSize: 'sm',
   fontWeight: 'medium',
   color: 'text.primary',
   lineHeight: 'tight',
-  display: '-webkit-box',
-  WebkitLineClamp: '2',
-  overflow: 'hidden',
-  lineClamp: 2,
 });
 
 export const videoCard_meta = css({
