@@ -1,13 +1,25 @@
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { isNil } from 'ramda';
 
-import { getScenarioById } from '../adapter';
+import {
+  FavoriteButton,
+  ReviewSection,
+  ScenarioHeader,
+  ScenarioInfo,
+  SessionSection,
+  VideoSection,
+} from './_components';
+import { toggleFavoriteAction, togglePlayedAction } from './actions';
+import {
+  getScenarioDetail,
+  getScenarioReviews,
+  getScenarioSessions,
+  getScenarioVideoLinks,
+  getUserScenarioPreference,
+} from './adapter';
 import * as styles from './styles';
 
-import { Button } from '@/components/elements/button/button';
-import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata = {
   title: 'シナリオ詳細',
@@ -20,124 +32,111 @@ type PageProps = {
 
 export default async function ScenarioDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const result = await getScenarioById(id);
 
-  if (!result.success || isNil(result.data)) {
+  // 認証情報の取得
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const currentUserId = user?.id ?? undefined;
+
+  // データ取得
+  const [scenarioResult, reviewsResult, sessionsResult, videosResult] =
+    await Promise.all([
+      getScenarioDetail(id),
+      getScenarioReviews(id, 'newest', 10, 0),
+      getScenarioSessions(id, 10),
+      getScenarioVideoLinks(id, 20),
+    ]);
+
+  if (!scenarioResult.success || isNil(scenarioResult.data)) {
     notFound();
   }
 
-  const scenario = result.data;
-  const tags = scenario.scenarioTags.map((st) => st.tag);
+  const scenario = scenarioResult.data;
+  const reviews = reviewsResult.success ? reviewsResult.data.reviews : [];
+  const reviewTotalCount = reviewsResult.success
+    ? reviewsResult.data.totalCount
+    : 0;
+  const sessions = sessionsResult.success ? sessionsResult.data : [];
+  const videos = videosResult.success ? videosResult.data : [];
+
+  // ユーザーの経験情報を取得
+  let userPreference = null;
+  if (!isNil(currentUserId)) {
+    const prefResult = await getUserScenarioPreference(id, currentUserId);
+    if (prefResult.success) {
+      userPreference = prefResult.data;
+    }
+  }
+
+  const isFavorite = userPreference?.isLike ?? false;
+  const isPlayed = userPreference?.isPlayed ?? false;
+
+  // お気に入りトグルのServer Action
+  const handleToggleFavorite = async () => {
+    'use server';
+    if (isNil(currentUserId)) return;
+    await toggleFavoriteAction(id, currentUserId);
+  };
+
+  // プレイ済みトグルのServer Action
+  const handleTogglePlayed = async () => {
+    'use server';
+    if (isNil(currentUserId)) return;
+    await togglePlayedAction(id, currentUserId);
+  };
 
   return (
     <main className={styles.pageContainer}>
-      <div className={styles.header}>
-        <Link href="/scenarios">
-          <Button variant="ghost">← シナリオ一覧に戻る</Button>
-        </Link>
-      </div>
+      {/* ヘッダー */}
+      <ScenarioHeader
+        scenarioId={scenario.scenarioId}
+        scenarioName={scenario.name}
+        currentUserId={currentUserId}
+        createdById={scenario.createdById}
+        isFavorite={isFavorite}
+        isPlayed={isPlayed}
+        onToggleFavorite={handleToggleFavorite}
+        onTogglePlayed={handleTogglePlayed}
+      />
 
-      <article className={styles.article}>
-        {/* サムネイル */}
-        <div className={styles.thumbnailSection}>
-          {!isNil(scenario.scenarioImageUrl) ? (
-            <div className={styles.thumbnail}>
-              <Image
-                src={scenario.scenarioImageUrl}
-                alt={scenario.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 400px"
-                style={{ objectFit: 'cover' }}
-              />
-            </div>
-          ) : (
-            <div className={styles.thumbnailPlaceholder}>No Image</div>
-          )}
-        </div>
+      {/* ファーストビュー: シナリオ基本情報 */}
+      <ScenarioInfo scenario={scenario} />
 
-        {/* 情報セクション */}
-        <div className={styles.infoSection}>
-          {/* システム名 */}
-          <span className={styles.system}>{scenario.system.name}</span>
+      <hr className={styles.divider} />
 
-          {/* シナリオ名 */}
-          <h1 className={styles.title}>{scenario.name}</h1>
+      {/* 関連セッションセクション */}
+      {sessions.length > 0 && (
+        <>
+          <SessionSection sessions={sessions} />
+          <hr className={styles.divider} />
+        </>
+      )}
 
-          {/* 作者 */}
-          {!isNil(scenario.author) && (
-            <p className={styles.author}>作者: {scenario.author}</p>
-          )}
+      {/* プレイ動画セクション */}
+      {videos.length > 0 && (
+        <>
+          <VideoSection videos={videos} />
+          <hr className={styles.divider} />
+        </>
+      )}
 
-          {/* メタ情報 */}
-          <div className={styles.metaGrid}>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>プレイ人数</span>
-              <span className={styles.metaValue}>
-                {formatPlayerCount(scenario.minPlayer, scenario.maxPlayer)}
-              </span>
-            </div>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>プレイ時間</span>
-              <span className={styles.metaValue}>
-                {formatPlaytime(scenario.minPlaytime, scenario.maxPlaytime)}
-              </span>
-            </div>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>ハンドアウト</span>
-              <span className={styles.metaValue}>
-                {scenario.handoutType === 'NONE' && 'なし'}
-                {scenario.handoutType === 'PUBLIC' && '公開'}
-                {scenario.handoutType === 'SECRET' && '秘匿'}
-              </span>
-            </div>
-          </div>
+      {/* レビューセクション */}
+      <ReviewSection
+        reviews={reviews}
+        totalCount={reviewTotalCount}
+        {...(currentUserId ? { currentUserId } : {})}
+        scenarioId={id}
+      />
 
-          {/* タグ */}
-          {tags.length > 0 && (
-            <div className={styles.tags}>
-              {tags.map((tag) => (
-                <span key={tag.tagId} className={styles.tag}>
-                  {tag.name}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* 概要 */}
-          {!isNil(scenario.description) && (
-            <div className={styles.descriptionSection}>
-              <h2 className={styles.sectionTitle}>概要</h2>
-              <p className={styles.description}>{scenario.description}</p>
-            </div>
-          )}
-
-          {/* 配布URL */}
-          {!isNil(scenario.distributeUrl) && (
-            <div className={styles.linkSection}>
-              <h2 className={styles.sectionTitle}>配布ページ</h2>
-              <a
-                href={scenario.distributeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.externalLink}
-              >
-                {scenario.distributeUrl}
-              </a>
-            </div>
-          )}
-
-          {/* アクションボタン */}
-          <div className={styles.actions}>
-            <Link
-              href={
-                `/sessions/new?scenarioId=${scenario.scenarioId}` as '/sessions/new'
-              }
-            >
-              <Button status="primary">このシナリオでセッションを作成</Button>
-            </Link>
-          </div>
-        </div>
-      </article>
+      {/* お気に入りFAB */}
+      {!isNil(currentUserId) && (
+        <FavoriteButton
+          isFavorite={isFavorite}
+          onToggle={handleToggleFavorite}
+        />
+      )}
     </main>
   );
 }
