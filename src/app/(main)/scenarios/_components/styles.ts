@@ -4,17 +4,15 @@ import { css, cva } from '@/styled-system/css';
 export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'sm',
-  p: 'md',
   bg: 'bg.card',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'md',
+  borderRadius: 'lg',
+  overflow: 'hidden',
   cursor: 'pointer',
   transition: 'all 0.2s',
+  shadow: 'sm',
   _hover: {
-    borderColor: 'primary.500',
     shadow: 'md',
+    transform: 'translateY(-2px)',
   },
 });
 
@@ -22,7 +20,6 @@ export const cardThumbnail = css({
   position: 'relative',
   aspectRatio: '16/9',
   bg: 'bg.subtle',
-  borderRadius: 'sm',
   overflow: 'hidden',
 });
 
@@ -36,10 +33,52 @@ export const cardThumbnailPlaceholder = css({
   fontSize: 'sm',
 });
 
+export const cardOverlay = css({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  p: 'sm',
+  zIndex: 1,
+});
+
+export const cardSystemLabel = css({
+  px: 'sm',
+  py: 'xs',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  bg: 'rgba(0, 0, 0, 0.6)',
+  color: 'white',
+  borderRadius: 'sm',
+  backdropFilter: 'blur(4px)',
+});
+
+export const cardRating = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2px',
+  px: 'sm',
+  py: 'xs',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  bg: 'rgba(0, 0, 0, 0.6)',
+  color: 'white',
+  borderRadius: 'sm',
+  backdropFilter: 'blur(4px)',
+});
+
+export const cardRatingStar = css({
+  color: 'yellow.400',
+});
+
 export const cardContent = css({
   display: 'flex',
   flexDirection: 'column',
   gap: 'xs',
+  p: 'md',
   flex: 1,
 });
 
@@ -47,7 +86,7 @@ export const cardTitle = css({
   fontSize: 'md',
   fontWeight: 'bold',
   color: 'text.primary',
-  lineClamp: 2,
+  lineClamp: 1,
 });
 
 export const cardSystem = css({
@@ -66,7 +105,12 @@ export const cardMeta = css({
 export const cardMetaItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'xs',
+  gap: '2px',
+});
+
+export const cardMetaIcon = css({
+  fontSize: 'sm',
+  color: 'text.muted',
 });
 
 export const cardTags = css({
@@ -80,8 +124,16 @@ export const cardTag = css({
   py: 'xs',
   fontSize: 'xs',
   bg: 'bg.subtle',
-  borderRadius: 'full',
+  borderRadius: 'sm',
   color: 'text.secondary',
+});
+
+export const cardDescription = css({
+  fontSize: 'sm',
+  color: 'text.secondary',
+  lineClamp: 2,
+  lineHeight: '1.5',
+  mt: 'xs',
 });
 
 // ScenarioList スタイル

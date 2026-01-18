@@ -9,7 +9,7 @@ import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 import type { ScenarioCardProps } from '../interface';
 
 export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
-  const tags = scenario.scenarioTags.map((st) => st.tag).slice(0, 2);
+  const tags = scenario.scenarioTags.map((st) => st.tag).slice(0, 3);
 
   return (
     <Link
@@ -29,22 +29,29 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
         ) : (
           <div className={styles.cardThumbnailPlaceholder}>No Image</div>
         )}
+        {/* オーバーレイ: システム名と評価 */}
+        <div className={styles.cardOverlay}>
+          <span className={styles.cardSystemLabel}>{scenario.system.name}</span>
+          <span className={styles.cardRating}>
+            <span className={styles.cardRatingStar}>★</span>
+            {/* TODO: 実際の評価データと連携 */}-
+          </span>
+        </div>
       </div>
 
       {/* コンテンツ */}
       <div className={styles.cardContent}>
-        {/* システム名 */}
-        <span className={styles.cardSystem}>{scenario.system.name}</span>
-
         {/* シナリオ名 */}
         <h3 className={styles.cardTitle}>{scenario.name}</h3>
 
         {/* メタ情報 */}
         <div className={styles.cardMeta}>
           <span className={styles.cardMetaItem}>
+            <span className={styles.cardMetaIcon}>👤</span>
             {formatPlayerCount(scenario.minPlayer, scenario.maxPlayer)}
           </span>
           <span className={styles.cardMetaItem}>
+            <span className={styles.cardMetaIcon}>⏱</span>
             {formatPlaytime(scenario.minPlaytime, scenario.maxPlaytime)}
           </span>
         </div>
@@ -58,6 +65,11 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
               </span>
             ))}
           </div>
+        )}
+
+        {/* 概要 */}
+        {!isNil(scenario.description) && (
+          <p className={styles.cardDescription}>{scenario.description}</p>
         )}
       </div>
     </Link>
