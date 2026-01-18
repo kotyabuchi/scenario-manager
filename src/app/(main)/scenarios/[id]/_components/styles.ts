@@ -221,6 +221,7 @@ export const distributeUrl_link = css({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 'xs',
+  width: 'fit-content',
   color: 'primary.600',
   fontSize: 'sm',
   _hover: {
