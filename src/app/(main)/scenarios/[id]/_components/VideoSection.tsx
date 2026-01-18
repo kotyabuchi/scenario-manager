@@ -170,7 +170,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
               <span>ネタバレ表示</span>
             </label>
           )}
-          {isPlayed && (
+          {isPlayed && videos.length > 0 && (
             <button type="button" className={styles.section_actionButton}>
               + 動画を登録
             </button>
@@ -179,11 +179,17 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
       </div>
       {videos.length === 0 ? (
         <div className={styles.section_empty}>
-          <p>🎬 プレイ動画を投稿して、セッションの思い出を共有しましょう！</p>
-          {isPlayed && (
-            <button type="button" className={styles.section_ctaButton}>
-              動画を登録する
-            </button>
+          {isPlayed ? (
+            <>
+              <p>
+                🎬 プレイ動画を投稿して、セッションの思い出を共有しましょう！
+              </p>
+              <button type="button" className={styles.section_ctaButton}>
+                動画を登録する
+              </button>
+            </>
+          ) : (
+            <p>🎬 まだプレイ動画がありません</p>
           )}
         </div>
       ) : (

@@ -118,6 +118,7 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
         totalCount={reviewTotalCount}
         {...(currentUserId ? { currentUserId } : {})}
         scenarioId={id}
+        isPlayed={isPlayed}
       />
 
       {/* FAB（お気に入り + メニュー） */}

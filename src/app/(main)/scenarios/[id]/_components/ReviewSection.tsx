@@ -15,6 +15,7 @@ type ReviewSectionProps = {
   totalCount: number;
   currentUserId?: string;
   scenarioId: string;
+  isPlayed: boolean;
 };
 
 const STORAGE_KEY_PREFIX = 'hiddenReviews_';
@@ -194,6 +195,7 @@ export const ReviewSection = ({
   totalCount,
   currentUserId,
   scenarioId,
+  isPlayed,
 }: ReviewSectionProps) => {
   const [sortOption, setSortOption] = useState<ReviewSortOption>('newest');
   const [showHidden, setShowHidden] = useState(false);
@@ -251,8 +253,6 @@ export const ReviewSection = ({
     }
   });
 
-  const isLoggedIn = !isNil(currentUserId);
-
   return (
     <section className={styles.section}>
       <div className={styles.section_header}>
@@ -260,7 +260,7 @@ export const ReviewSection = ({
           レビュー
           <span className={styles.section_count}>({totalCount}件)</span>
         </h2>
-        {isLoggedIn && (
+        {isPlayed && sortedReviews.length > 0 && (
           <div className={styles.section_headerActions}>
             <button type="button" className={styles.section_actionButton}>
               + レビューを書く
@@ -296,13 +296,20 @@ export const ReviewSection = ({
       {/* レビュー一覧 */}
       {sortedReviews.length === 0 ? (
         <div className={styles.section_empty}>
-          <p>
-            ✨ 最初のレビュアーになりませんか？あなたの感想を共有してください！
-          </p>
-          {isLoggedIn && (
-            <button type="button" className={styles.section_ctaButton}>
-              レビューを書く
-            </button>
+          {isPlayed ? (
+            <>
+              <p>
+                ✨
+                最初のレビュアーになりませんか？あなたの感想を共有してください！
+              </p>
+              <button type="button" className={styles.section_ctaButton}>
+                レビューを書く
+              </button>
+            </>
+          ) : (
+            <p>
+              📝 まだレビューがありません。プレイしたら感想を書いてみましょう！
+            </p>
           )}
         </div>
       ) : (
