@@ -1,6 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  AlertTriangle,
+  Link as LinkIcon,
+  Monitor,
+  Plus,
+  Video,
+} from 'lucide-react';
 import Image from 'next/image';
 
 import * as styles from './styles';
@@ -102,21 +109,33 @@ const VideoCard = ({
               onReveal();
             }}
           >
-            <span>⚠️</span>
+            <AlertTriangle size={24} />
             <span>ネタバレを含む可能性があります</span>
             <span style={{ fontSize: '12px' }}>クリックで表示</span>
           </button>
         ) : (
           <div className={styles.videoCard_placeholder}>
-            <span>📺</span>
+            <Monitor size={32} />
           </div>
         )}
       </div>
       <div className={styles.videoCard_info}>
         <div className={styles.videoCard_title}>
-          {platform === 'youtube' && '🎬 YouTube動画'}
-          {platform === 'niconico' && '📺 ニコニコ動画'}
-          {platform === 'unknown' && '🔗 動画リンク'}
+          {platform === 'youtube' && (
+            <>
+              <Video size={14} /> YouTube動画
+            </>
+          )}
+          {platform === 'niconico' && (
+            <>
+              <Monitor size={14} /> ニコニコ動画
+            </>
+          )}
+          {platform === 'unknown' && (
+            <>
+              <LinkIcon size={14} /> 動画リンク
+            </>
+          )}
         </div>
         <div className={styles.videoCard_meta}>
           投稿者: {video.user.nickname}
@@ -172,7 +191,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
           )}
           {isPlayed && videos.length > 0 && (
             <button type="button" className={styles.section_actionButton}>
-              + 動画を登録
+              <Plus size={14} /> 動画を登録
             </button>
           )}
         </div>
@@ -182,14 +201,17 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
           {isPlayed ? (
             <>
               <p>
-                🎬 プレイ動画を投稿して、セッションの思い出を共有しましょう！
+                <Video size={16} />
+                プレイ動画を投稿して、セッションの思い出を共有しましょう！
               </p>
               <button type="button" className={styles.section_ctaButton}>
                 動画を登録する
               </button>
             </>
           ) : (
-            <p>🎬 まだプレイ動画がありません</p>
+            <p>
+              <Video size={16} /> まだプレイ動画がありません
+            </p>
           )}
         </div>
       ) : (

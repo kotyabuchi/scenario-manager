@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ExternalLink, Star } from 'lucide-react';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -25,9 +26,12 @@ const StarRating = ({ rating }: { rating: number | null }) => {
   return (
     <div className={styles.scenarioInfo_ratingStars}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} style={{ opacity: star <= rating ? 1 : 0.3 }}>
-          ★
-        </span>
+        <Star
+          key={star}
+          size={16}
+          fill={star <= rating ? 'currentColor' : 'none'}
+          style={{ opacity: star <= rating ? 1 : 0.3 }}
+        />
       ))}
     </div>
   );
@@ -163,7 +167,7 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
               rel="noopener noreferrer"
               className={styles.distributeUrl_link}
             >
-              配布ページを開く →
+              配布ページを開く <ExternalLink size={14} />
             </a>
           </div>
         )}

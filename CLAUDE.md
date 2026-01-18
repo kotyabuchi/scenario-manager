@@ -87,6 +87,43 @@ src/
 - **スタイル分離**: CSSは同階層の `styles.ts` に定義しインポート
 - **ページ構成**: `page.tsx` + `interface.ts`（型） + `adapter.ts`（DB操作） + `_components/`
 - **楽観的更新（Optimistic Updates）**: 更新系UIは必ず楽観的更新を使用する（下記参照）
+- **アイコン**: 絵文字は使用禁止。必ず `lucide-react` のSVGアイコンを使用する（下記参照）
+
+### Icons（アイコン）
+**プロジェクト全体の方針**: 絵文字（emoji）は一切使用せず、`lucide-react` のSVGアイコンコンポーネントを使用する。
+
+```typescript
+// NG - 絵文字の使用
+<span>★</span>
+<span>📅</span>
+<button>✏️ 編集</button>
+
+// OK - lucide-react の使用
+import { Star, Calendar, Pencil } from 'lucide-react';
+
+<Star className={iconStyle} />
+<Calendar size={16} />
+<button><Pencil size={16} /> 編集</button>
+```
+
+**よく使うアイコン**:
+| 用途 | lucide-react |
+|------|-------------|
+| お気に入り | `Star`, `Heart` |
+| 編集 | `Pencil`, `Edit` |
+| 削除 | `Trash2`, `X` |
+| メニュー | `MoreVertical`, `Menu` |
+| カレンダー | `Calendar` |
+| 時間 | `Clock` |
+| ユーザー | `User`, `Users` |
+| チェック | `Check`, `CheckCircle` |
+| 警告 | `AlertTriangle` |
+| リンク | `Link`, `ExternalLink` |
+| 共有 | `Share2` |
+| 再生 | `Play`, `Video` |
+| 非表示 | `EyeOff` |
+| 表示 | `Eye` |
+| 戻る | `ArrowLeft`, `ChevronLeft` |
 
 ### Optimistic Updates（楽観的更新）
 **プロジェクト全体の方針**: すべての更新系操作で楽観的更新を使用する。

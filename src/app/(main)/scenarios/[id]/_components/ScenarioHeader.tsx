@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
+import { ArrowLeft, Star } from 'lucide-react';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -105,7 +106,7 @@ export const ScenarioHeader = ({
         className={header_backButton}
         aria-label="シナリオ一覧に戻る"
       >
-        ←
+        <ArrowLeft size={20} />
       </Link>
 
       <h1 className={header_title}>{scenarioName}</h1>
@@ -120,7 +121,10 @@ export const ScenarioHeader = ({
               optimisticFavorite ? 'お気に入りから削除' : 'お気に入りに追加'
             }
           >
-            {optimisticFavorite ? '★' : '☆'}
+            <Star
+              size={20}
+              fill={optimisticFavorite ? 'currentColor' : 'none'}
+            />
           </button>
         </div>
       )}

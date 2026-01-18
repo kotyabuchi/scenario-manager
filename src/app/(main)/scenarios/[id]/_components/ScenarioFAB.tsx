@@ -7,6 +7,14 @@ import {
   useState,
   useTransition,
 } from 'react';
+import {
+  Calendar,
+  Check,
+  Circle,
+  MoreVertical,
+  Pencil,
+  Share2,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import { css } from '@/styled-system/css';
@@ -161,7 +169,7 @@ export const ScenarioFAB = ({
           aria-label="メニューを開く"
           aria-expanded={isMenuOpen}
         >
-          <span style={{ fontSize: '24px' }}>⋮</span>
+          <MoreVertical size={24} />
         </button>
 
         {isMenuOpen && (
@@ -172,7 +180,7 @@ export const ScenarioFAB = ({
               role="menuitem"
               onClick={() => setIsMenuOpen(false)}
             >
-              <span>📅</span>
+              <Calendar size={16} />
               <span>セッション作成</span>
             </Link>
 
@@ -182,9 +190,9 @@ export const ScenarioFAB = ({
               role="menuitem"
               onClick={handleTogglePlayed}
             >
-              <span>{optimisticPlayed ? '✓' : '○'}</span>
+              {optimisticPlayed ? <Check size={16} /> : <Circle size={16} />}
               <span>プレイ済み登録</span>
-              {optimisticPlayed && <span className={checkMark}>✓</span>}
+              {optimisticPlayed && <Check size={16} className={checkMark} />}
             </button>
 
             {canEdit && (
@@ -194,7 +202,7 @@ export const ScenarioFAB = ({
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span>✏️</span>
+                <Pencil size={16} />
                 <span>シナリオ編集</span>
               </Link>
             )}
@@ -205,7 +213,7 @@ export const ScenarioFAB = ({
               role="menuitem"
               onClick={handleShare}
             >
-              <span>🔗</span>
+              <Share2 size={16} />
               <span>シェア</span>
             </button>
           </div>

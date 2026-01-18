@@ -1,3 +1,4 @@
+import { Dices } from 'lucide-react';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -60,7 +61,10 @@ export const SessionSection = ({
       </div>
       {sessions.length === 0 ? (
         <div className={styles.section_empty}>
-          <p>🎲 このシナリオで初めてのセッションを開催してみませんか？</p>
+          <p>
+            <Dices size={16} />
+            このシナリオで初めてのセッションを開催してみませんか？
+          </p>
           <Link
             href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
             className={styles.section_ctaButton}

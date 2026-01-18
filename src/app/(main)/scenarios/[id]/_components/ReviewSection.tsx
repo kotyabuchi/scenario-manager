@@ -1,6 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  EyeOff,
+  FileText,
+  Pencil,
+  Plus,
+  Sparkles,
+  Star,
+} from 'lucide-react';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -40,9 +52,12 @@ const StarRating = ({ rating }: { rating: number | null }) => {
   return (
     <div className={styles.reviewCard_stars}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} style={{ opacity: star <= rating ? 1 : 0.3 }}>
-          ★
-        </span>
+        <Star
+          key={star}
+          size={14}
+          fill={star <= rating ? 'currentColor' : 'none'}
+          style={{ opacity: star <= rating ? 1 : 0.3 }}
+        />
       ))}
     </div>
   );
@@ -111,7 +126,7 @@ const ReviewCard = ({
               className={styles.reviewCard_actionButton}
               aria-label="編集"
             >
-              ✏️
+              <Pencil size={16} />
             </button>
           ) : isHidden ? (
             <button
@@ -120,7 +135,7 @@ const ReviewCard = ({
               onClick={onShow}
               aria-label="再表示"
             >
-              👁️
+              <Eye size={16} />
             </button>
           ) : (
             <button
@@ -129,7 +144,7 @@ const ReviewCard = ({
               onClick={onHide}
               aria-label="非表示"
             >
-              🙈
+              <EyeOff size={16} />
             </button>
           )}
         </div>
@@ -170,12 +185,17 @@ const ReviewCard = ({
                 className={styles.reviewCard_spoilerToggle}
                 onClick={() => setIsSpoilerExpanded(!isSpoilerExpanded)}
               >
-                <span>⚠️</span>
+                <AlertTriangle size={14} />
                 <span>
                   {isSpoilerExpanded
-                    ? 'ネタバレを含む感想 ▲'
-                    : 'ネタバレを含む感想を表示 ▼'}
+                    ? 'ネタバレを含む感想'
+                    : 'ネタバレを含む感想を表示'}
                 </span>
+                {isSpoilerExpanded ? (
+                  <ChevronUp size={14} />
+                ) : (
+                  <ChevronDown size={14} />
+                )}
               </button>
               {isSpoilerExpanded && (
                 <p className={styles.reviewCard_spoilerContent}>
@@ -263,7 +283,8 @@ export const ReviewSection = ({
         {isPlayed && sortedReviews.length > 0 && (
           <div className={styles.section_headerActions}>
             <button type="button" className={styles.section_actionButton}>
-              + レビューを書く
+              <Plus size={14} />
+              レビューを書く
             </button>
           </div>
         )}
@@ -299,7 +320,7 @@ export const ReviewSection = ({
           {isPlayed ? (
             <>
               <p>
-                ✨
+                <Sparkles size={16} />
                 最初のレビュアーになりませんか？あなたの感想を共有してください！
               </p>
               <button type="button" className={styles.section_ctaButton}>
@@ -308,7 +329,8 @@ export const ReviewSection = ({
             </>
           ) : (
             <p>
-              📝 まだレビューがありません。プレイしたら感想を書いてみましょう！
+              <FileText size={16} />
+              まだレビューがありません。プレイしたら感想を書いてみましょう！
             </p>
           )}
         </div>
