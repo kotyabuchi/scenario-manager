@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import Link from 'next/link';
 
 import { css } from '@/styled-system/css';
@@ -109,6 +115,8 @@ export const ScenarioFAB = ({
 }: ScenarioFABProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [, startTransition] = useTransition();
+  const [optimisticPlayed, setOptimisticPlayed] = useOptimistic(isPlayed);
 
   // クリック外で閉じる
   useEffect(() => {
@@ -134,9 +142,12 @@ export const ScenarioFAB = ({
     // TODO: トースト通知を表示
   };
 
-  const handleTogglePlayed = async () => {
-    await onTogglePlayed();
+  const handleTogglePlayed = () => {
+    setOptimisticPlayed(!optimisticPlayed);
     setIsMenuOpen(false);
+    startTransition(async () => {
+      await onTogglePlayed();
+    });
   };
 
   return (
@@ -171,9 +182,9 @@ export const ScenarioFAB = ({
               role="menuitem"
               onClick={handleTogglePlayed}
             >
-              <span>{isPlayed ? '✓' : '○'}</span>
+              <span>{optimisticPlayed ? '✓' : '○'}</span>
               <span>プレイ済み登録</span>
-              {isPlayed && <span className={checkMark}>✓</span>}
+              {optimisticPlayed && <span className={checkMark}>✓</span>}
             </button>
 
             {canEdit && (

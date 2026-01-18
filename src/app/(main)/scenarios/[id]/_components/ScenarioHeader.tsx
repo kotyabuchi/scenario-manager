@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useOptimistic, useTransition } from 'react';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -88,9 +88,11 @@ export const ScenarioHeader = ({
   onToggleFavorite,
 }: ScenarioHeaderProps) => {
   const isLoggedIn = !isNil(currentUserId);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
 
   const handleFavoriteClick = () => {
+    setOptimisticFavorite(!optimisticFavorite);
     startTransition(async () => {
       await onToggleFavorite();
     });
@@ -112,12 +114,13 @@ export const ScenarioHeader = ({
         <div className={header_actions}>
           <button
             type="button"
-            className={`${favoriteButton} ${isFavorite ? favoriteButton_active : favoriteButton_inactive}`}
+            className={`${favoriteButton} ${optimisticFavorite ? favoriteButton_active : favoriteButton_inactive}`}
             onClick={handleFavoriteClick}
-            disabled={isPending}
-            aria-label={isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'}
+            aria-label={
+              optimisticFavorite ? 'お気に入りから削除' : 'お気に入りに追加'
+            }
           >
-            {isPending ? '⏳' : isFavorite ? '★' : '☆'}
+            {optimisticFavorite ? '★' : '☆'}
           </button>
         </div>
       )}

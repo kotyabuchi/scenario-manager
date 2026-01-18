@@ -86,6 +86,31 @@ src/
 - **Null/Undefinedチェック**: `ramda` の `isNil` を使用（`null === x` は禁止）
 - **スタイル分離**: CSSは同階層の `styles.ts` に定義しインポート
 - **ページ構成**: `page.tsx` + `interface.ts`（型） + `adapter.ts`（DB操作） + `_components/`
+- **楽観的更新（Optimistic Updates）**: 更新系UIは必ず楽観的更新を使用する（下記参照）
+
+### Optimistic Updates（楽観的更新）
+**プロジェクト全体の方針**: すべての更新系操作で楽観的更新を使用する。
+
+```typescript
+// パターン: useOptimistic + useTransition
+import { useOptimistic, useTransition } from 'react';
+
+const MyComponent = ({ value, onUpdate }: Props) => {
+  const [, startTransition] = useTransition();
+  const [optimisticValue, setOptimisticValue] = useOptimistic(value);
+
+  const handleClick = () => {
+    setOptimisticValue(!optimisticValue);  // 即座にUIを更新
+    startTransition(async () => {
+      await onUpdate();  // バックグラウンドでServer Action実行
+    });
+  };
+
+  return <button onClick={handleClick}>{optimisticValue ? 'ON' : 'OFF'}</button>;
+};
+```
+
+**理由**: ユーザーは操作の結果を即座に確認でき、UXが向上する。サーバーエラー時は自動的にロールバックされる。
 
 ### UI Design Guidelines
 プロジェクト全体のUIトーン: **モダン × ソフト × レイヤードUI**
