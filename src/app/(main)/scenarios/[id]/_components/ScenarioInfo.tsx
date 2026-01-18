@@ -76,33 +76,7 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
         <h1 className={styles.scenarioInfo_title}>{scenario.name}</h1>
 
         {/* 評価 */}
-        <button
-          type="button"
-          className={styles.scenarioInfo_rating}
-          onClick={() => {
-            const element = document.getElementById('reviews');
-            if (!element) return;
-
-            const targetY =
-              element.getBoundingClientRect().top + window.scrollY;
-            const startY = window.scrollY;
-            const diff = targetY - startY;
-            const duration = 500;
-            let start: number | null = null;
-
-            const step = (timestamp: number) => {
-              if (!start) start = timestamp;
-              const progress = Math.min((timestamp - start) / duration, 1);
-              const easeProgress = 1 - (1 - progress) ** 3;
-              window.scrollTo(0, startY + diff * easeProgress);
-              if (progress < 1) {
-                requestAnimationFrame(step);
-              }
-            };
-
-            requestAnimationFrame(step);
-          }}
-        >
+        <a href="#reviews" className={styles.scenarioInfo_rating}>
           <StarRating rating={scenario.avgRating} />
           {!isNil(scenario.avgRating) && (
             <span className={styles.scenarioInfo_ratingValue}>
@@ -112,7 +86,7 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
           <span className={styles.scenarioInfo_ratingCount}>
             ({scenario.reviewCount}件)
           </span>
-        </button>
+        </a>
 
         {/* 作者 */}
         {!isNil(scenario.author) && (
