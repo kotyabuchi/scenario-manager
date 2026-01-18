@@ -257,10 +257,33 @@ export const section_count = css({
 });
 
 export const section_empty = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 'md',
   py: 'xl',
   textAlign: 'center',
   color: 'text.muted',
   fontSize: 'sm',
+});
+
+export const section_ctaButton = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 'xs',
+  px: 'lg',
+  py: 'sm',
+  bg: 'primary.500',
+  color: 'white',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  borderRadius: 'lg',
+  textDecoration: 'none',
+  transition: 'all 0.2s',
+  _hover: {
+    bg: 'primary.600',
+    transform: 'translateY(-1px)',
+  },
 });
 
 // ========================================

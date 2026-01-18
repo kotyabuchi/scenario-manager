@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
@@ -5,6 +6,7 @@ import * as styles from './styles';
 import type { SessionWithKeeper } from '../interface';
 
 type SessionSectionProps = {
+  scenarioId: string;
   sessions: SessionWithKeeper[];
 };
 
@@ -44,11 +46,10 @@ const SessionCard = ({ session }: { session: SessionWithKeeper }) => {
   );
 };
 
-export const SessionSection = ({ sessions }: SessionSectionProps) => {
-  if (sessions.length === 0) {
-    return null;
-  }
-
+export const SessionSection = ({
+  scenarioId,
+  sessions,
+}: SessionSectionProps) => {
   return (
     <section className={styles.section}>
       <div className={styles.section_header}>
@@ -57,11 +58,23 @@ export const SessionSection = ({ sessions }: SessionSectionProps) => {
           <span className={styles.section_count}>({sessions.length}件)</span>
         </h2>
       </div>
-      <div className={styles.sessionList}>
-        {sessions.map((session) => (
-          <SessionCard key={session.gameSessionId} session={session} />
-        ))}
-      </div>
+      {sessions.length === 0 ? (
+        <div className={styles.section_empty}>
+          <p>このシナリオのセッションはまだありません</p>
+          <Link
+            href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
+            className={styles.section_ctaButton}
+          >
+            セッションを作成する
+          </Link>
+        </div>
+      ) : (
+        <div className={styles.sessionList}>
+          {sessions.map((session) => (
+            <SessionCard key={session.gameSessionId} session={session} />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

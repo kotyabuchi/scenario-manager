@@ -9,6 +9,7 @@ import type { VideoLinkWithSession } from '../interface';
 
 type VideoSectionProps = {
   videos: VideoLinkWithSession[];
+  isPlayed: boolean;
 };
 
 /**
@@ -125,12 +126,8 @@ const VideoCard = ({
   );
 };
 
-export const VideoSection = ({ videos }: VideoSectionProps) => {
+export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
   const [revealedVideos, setRevealedVideos] = useState<Set<string>>(new Set());
-
-  if (videos.length === 0) {
-    return null;
-  }
 
   // ネタバレ動画があるかどうか
   const hasSpoilerVideos = videos.some((v) => v.spoiler);
@@ -173,16 +170,27 @@ export const VideoSection = ({ videos }: VideoSectionProps) => {
           </label>
         )}
       </div>
-      <div className={styles.videoGrid}>
-        {videos.map((video) => (
-          <VideoCard
-            key={video.videoLinkId}
-            video={video}
-            isRevealed={revealedVideos.has(video.videoLinkId)}
-            onReveal={() => handleRevealVideo(video.videoLinkId)}
-          />
-        ))}
-      </div>
+      {videos.length === 0 ? (
+        <div className={styles.section_empty}>
+          <p>このシナリオのプレイ動画はまだありません</p>
+          {isPlayed && (
+            <button type="button" className={styles.section_ctaButton}>
+              動画を登録する
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className={styles.videoGrid}>
+          {videos.map((video) => (
+            <VideoCard
+              key={video.videoLinkId}
+              video={video}
+              isRevealed={revealedVideos.has(video.videoLinkId)}
+              onReveal={() => handleRevealVideo(video.videoLinkId)}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

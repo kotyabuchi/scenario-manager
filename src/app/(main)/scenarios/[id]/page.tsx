@@ -107,20 +107,12 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
       <hr className={styles.divider} />
 
       {/* 関連セッションセクション */}
-      {sessions.length > 0 && (
-        <>
-          <SessionSection sessions={sessions} />
-          <hr className={styles.divider} />
-        </>
-      )}
+      <SessionSection scenarioId={id} sessions={sessions} />
+      <hr className={styles.divider} />
 
       {/* プレイ動画セクション */}
-      {videos.length > 0 && (
-        <>
-          <VideoSection videos={videos} />
-          <hr className={styles.divider} />
-        </>
-      )}
+      <VideoSection videos={videos} isPlayed={isPlayed} />
+      <hr className={styles.divider} />
 
       {/* レビューセクション */}
       <ReviewSection
