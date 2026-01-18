@@ -117,6 +117,18 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
           </div>
         </div>
 
+        {/* 配布URL */}
+        {!isNil(scenario.distributeUrl) && (
+          <a
+            href={scenario.distributeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.distributeUrl_link}
+          >
+            配布ページを開く <ExternalLink size={14} />
+          </a>
+        )}
+
         {/* タグ */}
         {scenario.tags.length > 0 && (
           <div className={styles.scenarioInfo_tags}>
@@ -155,20 +167,6 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
                 {isDescriptionExpanded ? '閉じる' : '続きを読む'}
               </button>
             )}
-          </div>
-        )}
-
-        {/* 配布URL */}
-        {!isNil(scenario.distributeUrl) && (
-          <div className={styles.distributeUrl}>
-            <a
-              href={scenario.distributeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.distributeUrl_link}
-            >
-              配布ページを開く <ExternalLink size={14} />
-            </a>
           </div>
         )}
       </div>
