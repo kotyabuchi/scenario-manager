@@ -17,17 +17,12 @@ export const menuItem = cva({
   },
   variants: {
     active: {
-      true: {
-        background: 'primary.default',
-        color: 'white',
-      },
+      true: {},
+      false: {},
     },
     variant: {
       default: {
         color: 'foreground.default',
-        _hover: {
-          background: 'surface.hover',
-        },
         _focus: {
           outline: '2px solid {colors.primary.focusRing}',
         },
@@ -57,7 +52,7 @@ export const menuItem = cva({
         color: 'danger.emphasized',
         _hover: {
           background: 'danger.muted',
-          color: 'white',
+          color: 'danger.foreground.white',
         },
         _focus: {
           outline: '2px solid {colors.danger.focusRing}',
@@ -65,6 +60,34 @@ export const menuItem = cva({
       },
     },
   },
+  compoundVariants: [
+    // 選択中のdefaultスタイル
+    {
+      active: true,
+      variant: 'default',
+      css: {
+        background: 'primary.default',
+        color: 'primary.foreground.white',
+        _hover: {
+          background: 'primary.emphasized',
+        },
+        _focus: {
+          outline: '2px solid {colors.primary.focusRing}',
+          outlineOffset: '2px',
+        },
+      },
+    },
+    // 未選択のdefaultホバースタイル
+    {
+      active: false,
+      variant: 'default',
+      css: {
+        _hover: {
+          background: 'primary.subtle',
+        },
+      },
+    },
+  ],
 });
 
 export const menuItemIcon = css({
