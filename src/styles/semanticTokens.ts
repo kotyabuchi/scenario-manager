@@ -338,6 +338,17 @@ export const semanticTokens = {
         description: '暗いオーバーレイのホバー',
       },
     },
+    // サイドメニュー（ナビゲーションパネル）
+    sidemenu: {
+      bg: {
+        value: '#ffffff',
+        description: 'サイドメニューの背景（白で明確に面を表現）',
+      },
+      itemBg: {
+        value: 'oklch(0.97 0.008 145)',
+        description: 'メニューアイテムのホバー背景',
+      },
+    },
   },
 
   shadows: {
@@ -388,6 +399,19 @@ export const semanticTokens = {
       selectedHover: {
         value: '0 4px 8px rgba(0,0,0,0.2)',
         description: '選択されたチップホバー時の影',
+      },
+    },
+    // サイドメニュー用の影（ナビゲーションパネル）
+    sidemenu: {
+      default: {
+        value:
+          '0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03)',
+        description: 'サイドメニューの影（輪郭を明確に）',
+      },
+      hover: {
+        value:
+          '0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
+        description: 'サイドメニュー展開時の影',
       },
     },
   },

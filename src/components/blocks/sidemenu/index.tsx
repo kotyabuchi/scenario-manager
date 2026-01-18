@@ -56,6 +56,10 @@ export const SideMenu = () => {
     router.push(href);
   };
 
+  /** 現在のパスがメニューアイテムの配下かどうかを判定 */
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+
   const handleClickLogin = () => {
     router.push('/login');
   };
@@ -74,7 +78,7 @@ export const SideMenu = () => {
             key={item.href}
             icon={item.icon}
             text={item.text}
-            active={pathname === item.href}
+            active={isActive(item.href)}
             onClick={() => handleClickMenuItem(item.href)}
           />
         ))}

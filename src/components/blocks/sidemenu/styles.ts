@@ -8,8 +8,8 @@ export const sideMenu = cva({
     height: '100%',
     padding: 'sm',
     rounded: 'xl',
-    background: 'bg.muted',
-    shadow: 'lg',
+    background: 'sidemenu.bg',
+    shadow: 'sidemenu.default',
     overflow: 'hidden',
     textAlign: 'left',
     alignItems: 'flex-start',
@@ -20,6 +20,7 @@ export const sideMenu = cva({
       true: {
         minWidth: '200px',
         width: 'fit-content',
+        shadow: 'sidemenu.hover',
       },
       false: {
         minWidth: '64px',
