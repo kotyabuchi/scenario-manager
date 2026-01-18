@@ -1,15 +1,15 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { isNil } from 'ramda';
 
 import { ScenariosContent } from './_components/ScenariosContent';
 import * as styles from './_components/styles';
 import { getAllSystems, getAllTags, searchScenarios } from './adapter';
+import { searchParamsCache, toSearchParams } from './searchParams';
 
 import { Spinner } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
 
-import type { SearchParams, SortOption } from './interface';
+import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 
 export const metadata = {
   title: 'シナリオ検索',
@@ -17,61 +17,7 @@ export const metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{
-    systems?: string;
-    tags?: string;
-    minPlayer?: string;
-    maxPlayer?: string;
-    minPlaytime?: string;
-    maxPlaytime?: string;
-    q?: string;
-    sort?: string;
-  }>;
-};
-
-const parseSearchParams = async (
-  searchParamsPromise: PageProps['searchParams'],
-): Promise<{ params: SearchParams; sort: SortOption }> => {
-  const searchParams = await searchParamsPromise;
-  const params: SearchParams = {};
-
-  if (!isNil(searchParams.systems) && searchParams.systems !== '') {
-    params.systemIds = searchParams.systems.split(',');
-  }
-
-  if (!isNil(searchParams.tags) && searchParams.tags !== '') {
-    params.tagIds = searchParams.tags.split(',');
-  }
-
-  if (!isNil(searchParams.minPlayer) || !isNil(searchParams.maxPlayer)) {
-    params.playerCount = {
-      min: searchParams.minPlayer
-        ? Number.parseInt(searchParams.minPlayer, 10)
-        : 1,
-      max: searchParams.maxPlayer
-        ? Number.parseInt(searchParams.maxPlayer, 10)
-        : 20,
-    };
-  }
-
-  if (!isNil(searchParams.minPlaytime) || !isNil(searchParams.maxPlaytime)) {
-    params.playtime = {
-      min: searchParams.minPlaytime
-        ? Number.parseInt(searchParams.minPlaytime, 10)
-        : 1,
-      max: searchParams.maxPlaytime
-        ? Number.parseInt(searchParams.maxPlaytime, 10)
-        : 24,
-    };
-  }
-
-  if (!isNil(searchParams.q) && searchParams.q !== '') {
-    params.scenarioName = searchParams.q;
-  }
-
-  const sort = (searchParams.sort as SortOption) ?? 'newest';
-
-  return { params, sort };
+  searchParams: Promise<NuqsSearchParams>;
 };
 
 const ScenariosLoading = () => (
@@ -82,7 +28,10 @@ const ScenariosLoading = () => (
 );
 
 export default async function ScenariosPage({ searchParams }: PageProps) {
-  const { params, sort } = await parseSearchParams(searchParams);
+  // nuqsで型安全にパース
+  const parsed = await searchParamsCache.parse(searchParams);
+  const params = toSearchParams(parsed);
+  const sort = parsed.sort;
 
   // 並行してデータ取得
   const [systemsResult, tagsResult, scenariosResult] = await Promise.all([

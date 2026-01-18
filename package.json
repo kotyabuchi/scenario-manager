@@ -30,6 +30,7 @@
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.511.0",
     "next": "16.1.1",
+    "nuqs": "^2.8.6",
     "postgres": "^3.4.7",
     "ramda": "^0.30.1",
     "react": "19.2.3",

@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useState, useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useQueryStates } from 'nuqs';
 import { isNil } from 'ramda';
 
+import { searchParamsParsers } from '../searchParams';
 import { ScenarioList } from './ScenarioList';
 import { SearchPanel } from './SearchPanel';
 import * as styles from './styles';
@@ -42,7 +43,11 @@ const selectStyle = css({
   },
 });
 
-const buildQueryString = (params: SearchParams, sort: SortOption): string => {
+// API用のクエリ文字列を構築
+const buildApiQueryString = (
+  params: SearchParams,
+  sort: SortOption,
+): string => {
   const query = new URLSearchParams();
 
   if (!isNil(params.systemIds) && params.systemIds.length > 0) {
@@ -80,7 +85,7 @@ const buildQueryString = (params: SearchParams, sort: SortOption): string => {
   }
 
   const qs = query.toString();
-  return qs ? `?${qs}` : '';
+  return qs ? `?${qs}` : '?';
 };
 
 export const ScenariosContent = ({
@@ -89,16 +94,19 @@ export const ScenariosContent = ({
   initialResult,
   initialParams,
 }: ScenariosContentProps) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+
+  // nuqsで型安全にURL状態を管理
+  const [queryParams, setQueryParams] = useQueryStates(searchParamsParsers, {
+    history: 'push',
+    scroll: false,
+    shallow: false,
+    startTransition,
+  });
 
   const [searchResult, setSearchResult] = useState<SearchResult>(initialResult);
   const [currentParams, setCurrentParams] =
     useState<SearchParams>(initialParams);
-  const [sort, setSort] = useState<SortOption>(
-    (searchParams.get('sort') as SortOption) ?? 'newest',
-  );
   const [offset, setOffset] = useState(0);
 
   const handleSearch = useCallback(
@@ -106,16 +114,20 @@ export const ScenariosContent = ({
       setCurrentParams(params);
       setOffset(0);
 
-      // URL更新
-      const queryString = buildQueryString(params, sort);
-      startTransition(() => {
-        router.push(`/scenarios${queryString}` as '/scenarios', {
-          scroll: false,
-        });
+      // nuqsでURL更新（自動で反映される）
+      await setQueryParams({
+        systems: params.systemIds ?? [],
+        tags: params.tagIds ?? [],
+        minPlayer: params.playerCount?.min ?? null,
+        maxPlayer: params.playerCount?.max ?? null,
+        minPlaytime: params.playtime?.min ?? null,
+        maxPlaytime: params.playtime?.max ?? null,
+        q: params.scenarioName ?? '',
       });
 
       // サーバーから検索結果を取得
       try {
+        const queryString = buildApiQueryString(params, queryParams.sort);
         const response = await fetch(
           `/api/scenarios/search${queryString}&limit=20&offset=0`,
         );
@@ -127,24 +139,19 @@ export const ScenariosContent = ({
         console.error('Search failed:', error);
       }
     },
-    [router, sort],
+    [queryParams.sort, setQueryParams],
   );
 
   const handleSortChange = useCallback(
     async (newSort: SortOption) => {
-      setSort(newSort);
       setOffset(0);
 
-      // URL更新
-      const queryString = buildQueryString(currentParams, newSort);
-      startTransition(() => {
-        router.push(`/scenarios${queryString}` as '/scenarios', {
-          scroll: false,
-        });
-      });
+      // nuqsでソート更新
+      await setQueryParams({ sort: newSort });
 
       // サーバーから検索結果を取得
       try {
+        const queryString = buildApiQueryString(currentParams, newSort);
         const response = await fetch(
           `/api/scenarios/search${queryString}&limit=20&offset=0`,
         );
@@ -156,14 +163,14 @@ export const ScenariosContent = ({
         console.error('Sort failed:', error);
       }
     },
-    [router, currentParams],
+    [currentParams, setQueryParams],
   );
 
   const handleLoadMore = useCallback(async () => {
     const newOffset = offset + 20;
 
     try {
-      const queryString = buildQueryString(currentParams, sort);
+      const queryString = buildApiQueryString(currentParams, queryParams.sort);
       const response = await fetch(
         `/api/scenarios/search${queryString}&limit=20&offset=${newOffset}`,
       );
@@ -178,7 +185,7 @@ export const ScenariosContent = ({
     } catch (error) {
       console.error('Load more failed:', error);
     }
-  }, [currentParams, sort, offset]);
+  }, [currentParams, queryParams.sort, offset]);
 
   const hasMore = searchResult.scenarios.length < searchResult.totalCount;
 
@@ -198,7 +205,7 @@ export const ScenariosContent = ({
       <div className={styles.sortSelect}>
         <span>ソート:</span>
         <select
-          value={sort}
+          value={queryParams.sort}
           onChange={(e) => handleSortChange(e.target.value as SortOption)}
           className={selectStyle}
         >

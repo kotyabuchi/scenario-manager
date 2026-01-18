@@ -1,12 +1,20 @@
 import { z } from 'zod';
 
+// 空文字列をundefinedに変換するプリプロセッサ
+const optionalNumber = (min: number, max: number) =>
+  z.preprocess(
+    (val) =>
+      val === '' || val === undefined || val === null ? undefined : val,
+    z.coerce.number().min(min).max(max).optional(),
+  );
+
 export const searchFormSchema = z.object({
   systemIds: z.array(z.string()).default([]),
   tagIds: z.array(z.string()).default([]),
-  minPlayer: z.coerce.number().min(1).max(20).optional(),
-  maxPlayer: z.coerce.number().min(1).max(20).optional(),
-  minPlaytime: z.coerce.number().min(1).max(24).optional(),
-  maxPlaytime: z.coerce.number().min(1).max(24).optional(),
+  minPlayer: optionalNumber(1, 20),
+  maxPlayer: optionalNumber(1, 20),
+  minPlaytime: optionalNumber(1, 24),
+  maxPlaytime: optionalNumber(1, 24),
   scenarioName: z.string().default(''),
 });
 
