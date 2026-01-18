@@ -6,6 +6,7 @@
   "scripts": {
     "prepare": "panda codegen",
     "dev": "rm -rf .next && next dev --turbopack",
+    "dev:watch": "rm -rf .next && next dev -p 3333 --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "biome lint --write",
