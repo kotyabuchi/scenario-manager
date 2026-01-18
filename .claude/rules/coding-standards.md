@@ -799,7 +799,173 @@ export const ProfileEditForm = () => {
 
 ---
 
-## 15. 禁止事項
+## 15. URL状態管理（nuqs）
+
+### 概要
+検索・フィルタリング画面など、URLクエリパラメータと状態を同期させる場合は**nuqs**を使用する。
+`useState`でURLと状態を別々に管理しない。
+
+### 使用場面
+| 場面 | nuqs使用 | 備考 |
+|------|----------|------|
+| 検索条件 | ○ | URLで共有・ブックマーク可能にする |
+| フィルタ | ○ | ページリロードで状態を維持 |
+| ソート順 | ○ | URLで状態を表現 |
+| ページネーション | ○ | ページ番号をURLに反映 |
+| モーダル開閉 | △ | 必要に応じて |
+| フォーム入力中 | ✕ | 送信後にURLに反映する場合のみ |
+
+### ファイル構成
+ページディレクトリに`searchParams.ts`を作成してパーサーを定義する。
+
+```
+src/app/(main)/scenarios/
+├── page.tsx              # Server Component
+├── searchParams.ts       # nuqsパーサー定義
+└── _components/
+    └── ScenariosContent.tsx  # Client Component（useQueryStates使用）
+```
+
+### パーサー定義
+
+**searchParams.ts**:
+```typescript
+import {
+  createSearchParamsCache,
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+} from 'nuqs/server'
+
+// ソートオプションの型
+const sortOptions = ['newest', 'rating', 'playtime_asc', 'playtime_desc'] as const
+type SortOption = (typeof sortOptions)[number]
+
+// パーサー定義（Server/Client共通で使用）
+export const searchParamsParsers = {
+  systems: parseAsArrayOf(parseAsString).withDefault([]),
+  tags: parseAsArrayOf(parseAsString).withDefault([]),
+  minPlayer: parseAsInteger,
+  maxPlayer: parseAsInteger,
+  minPlaytime: parseAsInteger,
+  maxPlaytime: parseAsInteger,
+  q: parseAsString.withDefault(''),
+  sort: parseAsStringLiteral(sortOptions).withDefault('newest'),
+}
+
+// Server Component用キャッシュ
+export const searchParamsCache = createSearchParamsCache(searchParamsParsers)
+
+export type { SortOption }
+```
+
+### Server Componentでの使用
+
+```typescript
+// page.tsx
+import { searchParamsCache } from './searchParams'
+
+export default async function ScenariosPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  // Server側でURLパラメータをパース
+  const params = await searchParamsCache.parse(searchParams)
+
+  // パースされた型安全な値を使用
+  const { systems, tags, minPlayer, sort } = params
+
+  // データ取得...
+}
+```
+
+### Client Componentでの使用
+
+```typescript
+'use client'
+
+import { useQueryStates } from 'nuqs'
+import { useTransition } from 'react'
+import { searchParamsParsers } from '../searchParams'
+
+export const SearchContent = () => {
+  const [isPending, startTransition] = useTransition()
+
+  const [queryParams, setQueryParams] = useQueryStates(searchParamsParsers, {
+    history: 'push',        // ブラウザ履歴に追加
+    scroll: false,          // スクロール位置を維持
+    shallow: false,         // Server Componentを再実行
+    startTransition,        // トランジションでラップ
+  })
+
+  const handleSearch = async (systems: string[]) => {
+    await setQueryParams({ systems })
+  }
+
+  // ...
+}
+```
+
+### NuqsAdapterの設定
+`layout.tsx`で`NuqsAdapter`をラップする必要がある。
+
+```typescript
+// src/app/layout.tsx
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ja">
+      <body>
+        <NuqsAdapter>{children}</NuqsAdapter>
+      </body>
+    </html>
+  )
+}
+```
+
+### Zodとの連携時の注意
+フォームでnuqsと連携する場合、数値フィールドの空文字列処理に注意する。
+
+```typescript
+// NG - 空文字列がNaNに変換されてバリデーション失敗
+const schema = z.object({
+  minPlayer: z.coerce.number().min(1).max(20).optional(),
+})
+
+// OK - 空文字列をundefinedに変換してから処理
+const optionalNumber = (min: number, max: number) =>
+  z.preprocess(
+    (val) => (val === '' || val === undefined || val === null ? undefined : val),
+    z.coerce.number().min(min).max(max).optional(),
+  )
+
+const schema = z.object({
+  minPlayer: optionalNumber(1, 20),
+})
+```
+
+### パーサーの種類
+| パーサー | 用途 | 例 |
+|----------|------|-----|
+| `parseAsString` | 文字列 | 検索キーワード |
+| `parseAsInteger` | 整数 | ページ番号、件数 |
+| `parseAsBoolean` | 真偽値 | フラグ |
+| `parseAsArrayOf(...)` | 配列 | 複数選択フィルタ |
+| `parseAsStringLiteral([...])` | リテラル型 | ソート順 |
+| `parseAsJson<T>()` | JSON | 複雑なオブジェクト |
+
+### 注意事項
+- パーサーは`nuqs/server`からインポート（Server/Client両方で使用可能）
+- `useQueryStates`は`nuqs`からインポート（Client専用）
+- `shallow: false`を指定するとServer Componentが再実行される
+- デフォルト値は`.withDefault()`で設定
+
+---
+
+## 16. 禁止事項
 
 - `any`型の使用
 - `!`（Non-null assertion）の使用
@@ -812,3 +978,4 @@ export const ProfileEditForm = () => {
 - フォームの状態管理に`useState`を使用すること（React Hook Formを使用）
 - Zodを使用しないフォームバリデーション
 - セマンティックHTMLを無視した実装（`<div>`の乱用、border-topで区切り線等）
+- URLと同期すべき状態を`useState`で管理すること（nuqsを使用）
