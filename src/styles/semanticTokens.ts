@@ -1,5 +1,43 @@
 export const semanticTokens = {
   colors: {
+    bg: {
+      base: {
+        value: '{colors.layer.base}',
+        description: 'ページ全体の背景（最下層）',
+      },
+      subtle: {
+        value: '{colors.layer.1}',
+        description: 'カード・セクションの背景（第1層）',
+      },
+      muted: {
+        value: '{colors.layer.2}',
+        description: 'ネスト要素・入力フィールドの背景（第2層）',
+      },
+      emphasized: {
+        value: '{colors.layer.3}',
+        description: 'さらにネスト・ホバー状態の背景（第3層）',
+      },
+    },
+
+    surface: {
+      default: {
+        value: '{colors.layer.1}',
+        description: 'カード・パネルのデフォルト背景',
+      },
+      raised: {
+        value: '{colors.layer.1}',
+        description: '浮き上がった面の背景',
+      },
+      sunken: {
+        value: '{colors.layer.2}',
+        description: '沈んだ面の背景（入力フィールドなど）',
+      },
+      hover: {
+        value: '{colors.layer.3}',
+        description: 'ホバー時の背景',
+      },
+    },
+
     primary: {
       default: {
         value: '{colors.primary.500}',
@@ -138,19 +176,25 @@ export const semanticTokens = {
         description: '情報メッセージのベース色',
       },
       foreground: {
-        value: '{colors.white}',
-        description: '情報テキストの色',
+        white: {
+          value: '{colors.white}',
+          description: '情報テキストの色（白）',
+        },
+        dark: {
+          value: '{colors.info.950}',
+          description: '情報テキストの色（暗）',
+        },
       },
       emphasized: {
-        value: '{colors.info.700}',
+        value: '{colors.info.600}',
         description: '情報状態の強調表示',
       },
       muted: {
-        value: '{colors.info.600}',
+        value: '{colors.info.400}',
         description: '控えめな情報表示',
       },
       subtle: {
-        value: '{colors.info.100}',
+        value: '{colors.info.50}',
         description: '情報背景',
       },
       disabled: {
@@ -158,13 +202,49 @@ export const semanticTokens = {
         description: '非活性状態の情報UI',
       },
       focusRing: {
-        value: '{colors.info.500}',
+        value: '{colors.info.300}',
         description: '情報要素のフォーカスリング',
+      },
+    },
+    neutral: {
+      default: {
+        value: '{colors.neutral.500}',
+        description: 'ニュートラルカラー（デフォルト）',
+      },
+      foreground: {
+        white: {
+          value: '{colors.white}',
+          description: 'ニュートラル上のテキスト（白）',
+        },
+        dark: {
+          value: '{colors.neutral.900}',
+          description: 'ニュートラル上のテキスト（暗）',
+        },
+      },
+      emphasized: {
+        value: '{colors.neutral.600}',
+        description: '強調表示',
+      },
+      muted: {
+        value: '{colors.neutral.400}',
+        description: '控えめな表示',
+      },
+      subtle: {
+        value: '{colors.neutral.100}',
+        description: '背景用の淡い色',
+      },
+      disabled: {
+        value: '{colors.neutral.200}',
+        description: '非活性状態',
+      },
+      focusRing: {
+        value: '{colors.neutral.300}',
+        description: 'フォーカスリング',
       },
     },
     background: {
       default: {
-        value: '{colors.background.500}',
+        value: '{colors.layer.base}',
         description: 'ページ背景全体',
       },
     },
@@ -173,11 +253,19 @@ export const semanticTokens = {
         value: '{colors.foreground.500}',
         description: '通常のテキストカラー',
       },
+      muted: {
+        value: '{colors.neutral.500}',
+        description: '控えめなテキストカラー',
+      },
     },
     border: {
       default: {
         value: '{colors.border.500}',
         description: '境界線などの色',
+      },
+      subtle: {
+        value: '{colors.neutral.200}',
+        description: '控えめな境界線',
       },
     },
     placeholder: {
@@ -191,6 +279,28 @@ export const semanticTokens = {
         value: '{colors.backdrop.500}',
         description: 'モーダル背景などの半透明黒',
       },
+    },
+  },
+
+  shadows: {
+    sm: {
+      value: '0 1px 2px 0 oklch(0.20 0.01 270 / 0.05)',
+      description: '小さな影',
+    },
+    md: {
+      value:
+        '0 4px 6px -1px oklch(0.20 0.01 270 / 0.07), 0 2px 4px -2px oklch(0.20 0.01 270 / 0.05)',
+      description: '中程度の影',
+    },
+    lg: {
+      value:
+        '0 10px 15px -3px oklch(0.20 0.01 270 / 0.08), 0 4px 6px -4px oklch(0.20 0.01 270 / 0.05)',
+      description: '大きな影',
+    },
+    xl: {
+      value:
+        '0 20px 25px -5px oklch(0.20 0.01 270 / 0.10), 0 8px 10px -6px oklch(0.20 0.01 270 / 0.05)',
+      description: '特大の影',
     },
   },
 };

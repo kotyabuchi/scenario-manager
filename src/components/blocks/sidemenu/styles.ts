@@ -6,9 +6,10 @@ export const sideMenu = cva({
     flexDirection: 'column',
     justifyContent: 'space-between',
     height: '100%',
-    padding: '6px',
-    rounded: 'lg',
-    background: 'primary.subtle',
+    padding: 'md',
+    rounded: 'xl',
+    background: 'surface.default',
+    shadow: 'sm',
     overflow: 'hidden',
     textAlign: 'left',
     alignItems: 'flex-start',
@@ -30,12 +31,16 @@ export const sideMenu = cva({
 
 export const pageMenuButtons = css({
   width: '100%',
-  gap: '6px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'xs',
   overflow: 'hidden',
 });
 
 export const authButtons = css({
   width: '100%',
-  gap: '6px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'xs',
   overflow: 'hidden',
 });

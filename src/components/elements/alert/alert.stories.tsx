@@ -9,7 +9,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['solid', 'subtle', 'outline'],
+      options: ['soft', 'subtle', 'outline'],
     },
     status: {
       control: 'select',
@@ -33,7 +33,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Info: Story = {
   args: {
-    variant: 'solid',
+    variant: 'soft',
     status: 'info',
     title: 'Browser Update available',
     description:
@@ -47,7 +47,7 @@ export const Info: Story = {
 
 export const Success: Story = {
   args: {
-    variant: 'solid',
+    variant: 'soft',
     status: 'success',
     title: 'Success',
     description: 'Your changes have been saved successfully.',
@@ -57,7 +57,7 @@ export const Success: Story = {
 
 export const Warning: Story = {
   args: {
-    variant: 'solid',
+    variant: 'soft',
     status: 'warning',
     title: 'Warning',
     description:
@@ -68,11 +68,31 @@ export const Warning: Story = {
 
 export const Danger: Story = {
   args: {
-    variant: 'solid',
+    variant: 'soft',
     status: 'danger',
     title: 'Danger',
     description:
       'Your session will expire in 5 minutes. Please save your work.',
+  },
+  render: (args) => <Alert {...args} />,
+};
+
+export const Subtle: Story = {
+  args: {
+    variant: 'subtle',
+    status: 'info',
+    title: 'Information',
+    description: 'This is a subtle alert variant.',
+  },
+  render: (args) => <Alert {...args} />,
+};
+
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+    status: 'success',
+    title: 'Saved',
+    description: 'This is an outline alert with left border accent.',
   },
   render: (args) => <Alert {...args} />,
 };

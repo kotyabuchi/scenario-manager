@@ -14,7 +14,7 @@ import { alert } from '@/styled-system/recipes';
 
 import type { ComponentProps } from 'react';
 
-export type AlertVariant = 'solid' | 'subtle' | 'outline';
+export type AlertVariant = 'soft' | 'subtle' | 'outline';
 export type AlertStatus = 'info' | 'success' | 'warning' | 'danger';
 
 type Props = {
@@ -27,7 +27,7 @@ type Props = {
 } & ComponentProps<typeof ark.div>;
 
 export const Alert = ({
-  variant = 'solid',
+  variant = 'soft',
   status = 'info',
   title,
   description,

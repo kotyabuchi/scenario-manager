@@ -6,10 +6,10 @@ export const menuItem = cva({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    padding: '6px',
+    padding: 'sm',
     rounded: 'md',
     textAlign: 'left',
-    gap: '8px',
+    gap: 'sm',
     outlineOffset: '-2px',
     transition:
       'color {durations.normal} ease-in-out, background {durations.normal} ease-in-out',
@@ -19,15 +19,14 @@ export const menuItem = cva({
     active: {
       true: {
         background: 'primary.default',
-        color: 'primary.foreground.white',
+        color: 'white',
       },
     },
     variant: {
       default: {
-        color: 'primary.foreground.dark',
+        color: 'foreground.default',
         _hover: {
-          background: 'primary.default',
-          color: 'primary.foreground.white',
+          background: 'surface.hover',
         },
         _focus: {
           outline: '2px solid {colors.primary.focusRing}',
@@ -35,10 +34,9 @@ export const menuItem = cva({
       },
       login: {
         color: 'primary.foreground.dark',
-        background: 'primary.300',
+        background: 'primary.subtle',
         _hover: {
-          background: 'primary.default',
-          color: 'primary.foreground.white',
+          background: 'primary.muted',
         },
         _focus: {
           outline: '2px solid {colors.primary.focusRing}',
@@ -46,10 +44,9 @@ export const menuItem = cva({
       },
       signup: {
         color: 'primary.foreground.dark',
-        background: 'background.default',
+        background: 'bg.muted',
         _hover: {
-          background: 'primary.default',
-          color: 'primary.foreground.white',
+          background: 'primary.subtle',
         },
         _focus: {
           outline: '2px solid {colors.primary.focusRing}',
@@ -59,8 +56,8 @@ export const menuItem = cva({
         background: 'danger.subtle',
         color: 'danger.emphasized',
         _hover: {
-          background: 'danger.default',
-          color: 'danger.foreground.white',
+          background: 'danger.muted',
+          color: 'white',
         },
         _focus: {
           outline: '2px solid {colors.danger.focusRing}',

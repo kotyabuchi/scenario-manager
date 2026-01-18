@@ -6,9 +6,7 @@ export const button = defineRecipe({
   base: {
     alignItems: 'center',
     appearance: 'none',
-    borderRadius: 'sm',
-    borderWidth: '2px',
-    borderColor: 'transparent',
+    borderRadius: 'md',
     cursor: 'pointer',
     display: 'inline-flex',
     fontWeight: 'semibold',
@@ -25,7 +23,7 @@ export const button = defineRecipe({
     whiteSpace: 'nowrap',
     _focusVisible: {
       outline: '2px solid',
-      outlineColor: 'var(--button-color-main)',
+      outlineColor: 'var(--button-color-focus)',
       outlineOffset: '2px',
     },
     _disabled: {
@@ -44,40 +42,46 @@ export const button = defineRecipe({
   variants: {
     status: {
       default: {
-        '--button-color-main': '{colors.stone.500}',
-        '--button-color-hover': '{colors.stone.600}',
-        '--button-color-subtle': '{colors.stone.300}',
-        '--button-color-foreground': '{colors.stone.800}',
+        '--button-color-main': '{colors.neutral.default}',
+        '--button-color-hover': '{colors.neutral.emphasized}',
+        '--button-color-subtle': '{colors.neutral.subtle}',
+        '--button-color-foreground': '{colors.neutral.foreground.dark}',
+        '--button-color-focus': '{colors.neutral.focusRing}',
       },
       primary: {
         '--button-color-main': '{colors.primary.default}',
         '--button-color-hover': '{colors.primary.emphasized}',
         '--button-color-subtle': '{colors.primary.subtle}',
-        '--button-color-foreground': '{colors.primary.800}',
+        '--button-color-foreground': '{colors.primary.foreground.dark}',
+        '--button-color-focus': '{colors.primary.focusRing}',
       },
       success: {
         '--button-color-main': '{colors.success.default}',
         '--button-color-hover': '{colors.success.emphasized}',
         '--button-color-subtle': '{colors.success.subtle}',
-        '--button-color-foreground': '{colors.success.800}',
+        '--button-color-foreground': '{colors.success.foreground.dark}',
+        '--button-color-focus': '{colors.success.focusRing}',
       },
       warning: {
         '--button-color-main': '{colors.warning.default}',
         '--button-color-hover': '{colors.warning.emphasized}',
         '--button-color-subtle': '{colors.warning.subtle}',
-        '--button-color-foreground': '{colors.warning.800}',
+        '--button-color-foreground': '{colors.warning.foreground.dark}',
+        '--button-color-focus': '{colors.warning.focusRing}',
       },
       danger: {
         '--button-color-main': '{colors.danger.default}',
         '--button-color-hover': '{colors.danger.emphasized}',
         '--button-color-subtle': '{colors.danger.subtle}',
-        '--button-color-foreground': '{colors.danger.800}',
+        '--button-color-foreground': '{colors.danger.foreground.dark}',
+        '--button-color-focus': '{colors.danger.focusRing}',
       },
       info: {
         '--button-color-main': '{colors.info.default}',
         '--button-color-hover': '{colors.info.emphasized}',
         '--button-color-subtle': '{colors.info.subtle}',
-        '--button-color-foreground': '{colors.info.800}',
+        '--button-color-foreground': '{colors.info.foreground.dark}',
+        '--button-color-focus': '{colors.info.focusRing}',
       },
     },
     variant: {
@@ -91,17 +95,19 @@ export const button = defineRecipe({
         },
       },
       outline: {
+        border: '1.5px solid',
         borderColor: 'var(--button-color-main)',
         color: 'var(--button-color-foreground)',
+        background: 'transparent',
         _hover: {
           '&:not([disabled])': {
-            background: 'var(--button-color-main)',
-            color: '{colors.white}',
+            background: 'var(--button-color-subtle)',
           },
         },
       },
       ghost: {
         color: 'var(--button-color-foreground)',
+        background: 'transparent',
         _hover: {
           '&:not([disabled])': {
             background: 'var(--button-color-subtle)',

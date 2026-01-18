@@ -61,4 +61,4 @@ src/lib/db/migrations
 /screenshots/*.jpeg
 
 # Cursor IDE
-.cursor
+.cursor.claude/settings.local.json

@@ -13,17 +13,17 @@ export const alert = defineSlotRecipe({
   ],
   base: {
     root: {
-      borderWidth: '2px',
       borderRadius: 'lg',
       display: 'flex',
       gap: 'md',
-      p: 'md',
+      p: 'lg',
       width: 'full',
     },
     icon: {
       flexShrink: '0',
-      width: '6',
-      height: '6',
+      width: '5',
+      height: '5',
+      mt: '0.5',
     },
     content: {
       display: 'flex',
@@ -36,21 +36,28 @@ export const alert = defineSlotRecipe({
       textStyle: 'sm',
     },
     description: {
-      color: 'fg.muted',
       textStyle: 'sm',
+      opacity: '0.9',
     },
     actionButton: {
       flexShrink: '0',
-      width: '6',
-      height: '6',
+      width: '5',
+      height: '5',
       cursor: 'pointer',
-      transition: 'all .2s ease-in-out',
+      transition: 'opacity 0.2s ease-in-out',
+      opacity: '0.7',
+      _hover: {
+        opacity: '1',
+      },
     },
   },
   variants: {
     variant: {
-      solid: {},
+      // ソフト: 背景色で表現（ボーダーなし）
+      soft: {},
+      // サブトル: より薄い背景（ボーダーなし）
       subtle: {},
+      // アウトライン: 背景なし + 左ボーダー
       outline: {},
     },
     status: {
@@ -68,204 +75,188 @@ export const alert = defineSlotRecipe({
     },
   },
   compoundVariants: [
-    // Solid variants
+    // Soft variants - 背景色 + テキスト色
     {
-      variant: 'solid',
+      variant: 'soft',
       status: 'info',
       css: {
         root: {
-          borderColor: '{colors.info.500}',
+          bg: '{colors.info.100}',
+          color: '{colors.info.700}',
+        },
+        icon: {
+          color: '{colors.info.500}',
+        },
+      },
+    },
+    {
+      variant: 'soft',
+      status: 'success',
+      css: {
+        root: {
+          bg: '{colors.success.100}',
+          color: '{colors.success.700}',
+        },
+        icon: {
+          color: '{colors.success.500}',
+        },
+      },
+    },
+    {
+      variant: 'soft',
+      status: 'warning',
+      css: {
+        root: {
+          bg: '{colors.warning.100}',
+          color: '{colors.warning.700}',
+        },
+        icon: {
+          color: '{colors.warning.500}',
+        },
+      },
+    },
+    {
+      variant: 'soft',
+      status: 'danger',
+      css: {
+        root: {
+          bg: '{colors.danger.100}',
+          color: '{colors.danger.700}',
+        },
+        icon: {
+          color: '{colors.danger.500}',
+        },
+      },
+    },
+    // Subtle variants - より薄い背景
+    {
+      variant: 'subtle',
+      status: 'info',
+      css: {
+        root: {
           bg: '{colors.info.50}',
           color: '{colors.info.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.info.800}',
-          },
+        icon: {
+          color: '{colors.info.400}',
         },
       },
     },
     {
-      variant: 'solid',
+      variant: 'subtle',
       status: 'success',
       css: {
         root: {
-          borderColor: '{colors.success.500}',
           bg: '{colors.success.50}',
           color: '{colors.success.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.success.800}',
-          },
+        icon: {
+          color: '{colors.success.400}',
         },
       },
     },
     {
-      variant: 'solid',
+      variant: 'subtle',
       status: 'warning',
       css: {
         root: {
-          borderColor: '{colors.warning.500}',
           bg: '{colors.warning.50}',
           color: '{colors.warning.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.warning.800}',
-          },
+        icon: {
+          color: '{colors.warning.400}',
         },
       },
     },
     {
-      variant: 'solid',
+      variant: 'subtle',
       status: 'danger',
       css: {
         root: {
-          borderColor: '{colors.danger.500}',
           bg: '{colors.danger.50}',
           color: '{colors.danger.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.danger.800}',
-          },
+        icon: {
+          color: '{colors.danger.400}',
         },
       },
     },
-    // Subtle variants
+    // Outline variants - 左ボーダーのみ
     {
-      variant: 'subtle',
+      variant: 'outline',
       status: 'info',
       css: {
         root: {
-          borderColor: '{colors.info.50}',
           bg: '{colors.info.50}',
+          borderLeft: '3px solid',
+          borderColor: '{colors.info.400}',
+          borderRadius: 'none',
+          borderTopRightRadius: 'md',
+          borderBottomRightRadius: 'md',
           color: '{colors.info.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.info.800}',
-          },
+        icon: {
+          color: '{colors.info.500}',
         },
       },
     },
     {
-      variant: 'subtle',
+      variant: 'outline',
       status: 'success',
       css: {
         root: {
-          borderColor: '{colors.success.50}',
           bg: '{colors.success.50}',
+          borderLeft: '3px solid',
+          borderColor: '{colors.success.400}',
+          borderRadius: 'none',
+          borderTopRightRadius: 'md',
+          borderBottomRightRadius: 'md',
           color: '{colors.success.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.success.800}',
-          },
+        icon: {
+          color: '{colors.success.500}',
         },
       },
     },
     {
-      variant: 'subtle',
+      variant: 'outline',
       status: 'warning',
       css: {
         root: {
-          borderColor: '{colors.warning.50}',
           bg: '{colors.warning.50}',
+          borderLeft: '3px solid',
+          borderColor: '{colors.warning.400}',
+          borderRadius: 'none',
+          borderTopRightRadius: 'md',
+          borderBottomRightRadius: 'md',
           color: '{colors.warning.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.warning.800}',
-          },
+        icon: {
+          color: '{colors.warning.500}',
         },
       },
     },
     {
-      variant: 'subtle',
+      variant: 'outline',
       status: 'danger',
       css: {
         root: {
-          borderColor: '{colors.danger.50}',
           bg: '{colors.danger.50}',
+          borderLeft: '3px solid',
+          borderColor: '{colors.danger.400}',
+          borderRadius: 'none',
+          borderTopRightRadius: 'md',
+          borderBottomRightRadius: 'md',
           color: '{colors.danger.700}',
         },
-        actionButton: {
-          _hover: {
-            color: '{colors.danger.800}',
-          },
-        },
-      },
-    },
-    // Outline variants
-    {
-      variant: 'outline',
-      status: 'info',
-      css: {
-        root: {
-          borderColor: '{colors.info.500}',
-          bg: 'transparent',
-          color: '{colors.info.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.info.800}',
-          },
-        },
-      },
-    },
-    {
-      variant: 'outline',
-      status: 'success',
-      css: {
-        root: {
-          borderColor: '{colors.success.500}',
-          bg: 'transparent',
-          color: '{colors.success.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.success.800}',
-          },
-        },
-      },
-    },
-    {
-      variant: 'outline',
-      status: 'warning',
-      css: {
-        root: {
-          borderColor: '{colors.warning.500}',
-          bg: 'transparent',
-          color: '{colors.warning.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.warning.800}',
-          },
-        },
-      },
-    },
-    {
-      variant: 'outline',
-      status: 'danger',
-      css: {
-        root: {
-          borderColor: '{colors.danger.500}',
-          bg: 'transparent',
-          color: '{colors.danger.700}',
-        },
-        actionButton: {
-          _hover: {
-            color: '{colors.danger.800}',
-          },
+        icon: {
+          color: '{colors.danger.500}',
         },
       },
     },
   ],
   defaultVariants: {
-    variant: 'solid',
+    variant: 'soft',
     status: 'info',
   },
 });

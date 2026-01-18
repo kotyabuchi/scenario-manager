@@ -8,7 +8,6 @@ export default defineConfig({
   include: ['./src/**/*.{js,jsx,ts,tsx}', './stories/**/*.{js,jsx,ts,tsx}'],
   jsxFramework: 'react', // or 'solid' or 'vue'
   outdir: 'styled-system',
-  staticCss: {
-    recipes: '*',
-  },
+  // staticCss は本当に必要なバリアントのみ指定
+  // recipes: '*' は全組み合わせを生成し処理が重くなるため削除
 });
