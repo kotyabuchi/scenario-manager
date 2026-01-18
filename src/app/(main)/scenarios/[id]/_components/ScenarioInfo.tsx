@@ -80,9 +80,11 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
           type="button"
           className={styles.scenarioInfo_rating}
           onClick={() => {
-            document
-              .getElementById('reviews')
-              ?.scrollIntoView({ behavior: 'smooth' });
+            const element = document.getElementById('reviews');
+            if (element) {
+              const top = element.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
           }}
         >
           <StarRating rating={scenario.avgRating} />
