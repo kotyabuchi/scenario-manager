@@ -33,7 +33,7 @@ export const MenuItem = ({
       onClick={handleClick}
     >
       {IconComponent && (
-        <IconComponent size={32} className={styles.menuItemIcon} />
+        <IconComponent size={24} className={styles.menuItemIcon} />
       )}
       <p className={styles.menuItemText}>{text}</p>
     </button>
