@@ -59,6 +59,8 @@ src/lib/db/migrations
 # Playwright screenshots
 /screenshots/*.png
 /screenshots/*.jpeg
+.playwright-mcp/
 
 # Cursor IDE
-.cursor.claude/settings.local.json
+.cursor
+.claude/settings.local.json
