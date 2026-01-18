@@ -12,18 +12,24 @@ import { css } from '@/styled-system/css';
 
 import type { SearchPanelProps, SearchParams } from '../interface';
 
+// 入力フィールドのスタイル（ボーダーレス、背景色で区別）
 const inputStyle = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
+  px: 'md',
+  py: 'sm',
+  border: 'none',
+  borderRadius: 'md',
+  bg: 'bg.muted',
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
+  transition: 'all 0.2s',
+  shadow: 'sm',
+  _hover: {
+    bg: 'bg.emphasized',
+  },
   _focus: {
-    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    shadow: '0 0 0 2px {colors.primary.focusRing}',
   },
   _placeholder: {
     color: 'text.muted',
