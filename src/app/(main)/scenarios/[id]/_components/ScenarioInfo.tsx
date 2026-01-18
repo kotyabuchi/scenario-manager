@@ -81,10 +81,26 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
           className={styles.scenarioInfo_rating}
           onClick={() => {
             const element = document.getElementById('reviews');
-            if (element) {
-              const top = element.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({ top, behavior: 'smooth' });
-            }
+            if (!element) return;
+
+            const targetY =
+              element.getBoundingClientRect().top + window.scrollY;
+            const startY = window.scrollY;
+            const diff = targetY - startY;
+            const duration = 500;
+            let start: number | null = null;
+
+            const step = (timestamp: number) => {
+              if (!start) start = timestamp;
+              const progress = Math.min((timestamp - start) / duration, 1);
+              const easeProgress = 1 - (1 - progress) ** 3;
+              window.scrollTo(0, startY + diff * easeProgress);
+              if (progress < 1) {
+                requestAnimationFrame(step);
+              }
+            };
+
+            requestAnimationFrame(step);
           }}
         >
           <StarRating rating={scenario.avgRating} />
