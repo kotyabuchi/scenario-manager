@@ -333,8 +333,6 @@ export const chipRemove = css({
   ml: 'xs',
   borderRadius: 'full',
   bg: 'primary.foreground.white/20',
-  fontSize: 'xs',
-  lineHeight: 1,
   transition: 'background 0.15s',
   _hover: {
     bg: 'primary.foreground.white/40',
