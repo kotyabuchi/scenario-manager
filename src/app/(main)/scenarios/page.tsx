@@ -92,6 +92,13 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
   ]);
 
   if (!systemsResult.success || !tagsResult.success) {
+    // エラーの詳細をログ出力
+    if (!systemsResult.success) {
+      console.error('Systems fetch error:', systemsResult.error);
+    }
+    if (!tagsResult.success) {
+      console.error('Tags fetch error:', tagsResult.error);
+    }
     return (
       <main className={styles.pageContainer}>
         <div className={styles.scenarioListEmpty}>
