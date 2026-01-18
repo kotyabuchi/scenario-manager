@@ -149,18 +149,14 @@ export const getScenarioSessions = async (
     const sessionsData = await db
       .select({
         gameSessionId: gameSessions.gameSessionId,
+        sessionName: gameSessions.sessionName,
         scenarioId: gameSessions.scenarioId,
         sessionPhase: gameSessions.sessionPhase,
-        keeperId: gameSessions.keeperId,
         createdAt: gameSessions.createdAt,
         updatedAt: gameSessions.updatedAt,
-        keeperUserId: users.userId,
-        keeperNickname: users.nickname,
-        keeperImage: users.image,
         scheduleDate: gameSchedules.scheduleDate,
       })
       .from(gameSessions)
-      .leftJoin(users, eq(gameSessions.keeperId, users.userId))
       .leftJoin(
         gameSchedules,
         eq(gameSessions.gameSessionId, gameSchedules.sessionId),
@@ -174,24 +170,53 @@ export const getScenarioSessions = async (
       .orderBy(desc(gameSchedules.scheduleDate))
       .limit(limit);
 
-    // 参加者数を取得
     const sessionIds = sessionsData.map((s) => s.gameSessionId);
-    const participantCounts =
-      sessionIds.length > 0
-        ? await db
-            .select({
-              sessionId: sessionParticipants.sessionId,
-              count: count(sessionParticipants.userId),
-            })
-            .from(sessionParticipants)
-            .where(
-              sql`${sessionParticipants.sessionId} IN (${sql.join(
-                sessionIds.map((id) => sql`${id}`),
-                sql`, `,
-              )})`,
-            )
-            .groupBy(sessionParticipants.sessionId)
-        : [];
+
+    if (sessionIds.length === 0) {
+      return ok([]);
+    }
+
+    // GMを取得（sessionParticipants から KEEPER を探す）
+    const keepers = await db
+      .select({
+        sessionId: sessionParticipants.sessionId,
+        userId: users.userId,
+        nickname: users.nickname,
+        image: users.image,
+      })
+      .from(sessionParticipants)
+      .innerJoin(users, eq(sessionParticipants.userId, users.userId))
+      .where(
+        and(
+          sql`${sessionParticipants.sessionId} IN (${sql.join(
+            sessionIds.map((id) => sql`${id}`),
+            sql`, `,
+          )})`,
+          eq(sessionParticipants.participantType, 'KEEPER'),
+        ),
+      );
+
+    const keeperMap = new Map(
+      keepers.map((k) => [
+        k.sessionId,
+        { userId: k.userId, nickname: k.nickname ?? '', image: k.image },
+      ]),
+    );
+
+    // 参加者数を取得
+    const participantCounts = await db
+      .select({
+        sessionId: sessionParticipants.sessionId,
+        count: count(sessionParticipants.userId),
+      })
+      .from(sessionParticipants)
+      .where(
+        sql`${sessionParticipants.sessionId} IN (${sql.join(
+          sessionIds.map((id) => sql`${id}`),
+          sql`, `,
+        )})`,
+      )
+      .groupBy(sessionParticipants.sessionId);
 
     const countMap = new Map(
       participantCounts.map((p) => [p.sessionId, Number(p.count)]),
@@ -200,18 +225,12 @@ export const getScenarioSessions = async (
     // 結果を整形
     const sessions: SessionWithKeeper[] = sessionsData.map((s) => ({
       gameSessionId: s.gameSessionId,
+      sessionName: s.sessionName,
       scenarioId: s.scenarioId,
       sessionPhase: s.sessionPhase,
-      keeperId: s.keeperId,
       createdAt: s.createdAt,
       updatedAt: s.updatedAt,
-      keeper: s.keeperUserId
-        ? {
-            userId: s.keeperUserId,
-            nickname: s.keeperNickname ?? '',
-            image: s.keeperImage,
-          }
-        : null,
+      keeper: keeperMap.get(s.gameSessionId) ?? null,
       participantCount: countMap.get(s.gameSessionId) ?? 0,
       scheduleDate: s.scheduleDate,
     }));
@@ -289,6 +308,24 @@ export const getUserScenarioPreference = async (
       canKeeper: preference.canKeeper,
       hadScenario: preference.hadScenario,
     });
+  } catch (e) {
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
+ * Discord IDでユーザーを取得する
+ */
+export const getUserByDiscordId = async (
+  discordId: string,
+): Promise<Result<{ userId: string } | null>> => {
+  try {
+    const result = await db.query.users.findFirst({
+      where: eq(users.discordId, discordId),
+      columns: { userId: true },
+    });
+
+    return ok(result ?? null);
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
