@@ -114,7 +114,8 @@ export const colors = defineTokens.colors({
     500: { value: 'oklch(0.88 0.01 270)' },
   },
   placeholder: {
-    500: { value: 'oklch(0.70 0.01 270)' },
+    // WCAG AA準拠: 背景(0.98)との明度差0.43以上を確保
+    500: { value: 'oklch(0.55 0.01 270)' },
   },
   backdrop: {
     500: { value: 'oklch(0.20 0.01 270 / 0.4)' },

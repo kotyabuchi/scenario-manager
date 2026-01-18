@@ -54,7 +54,8 @@ export const semanticTokens = {
         },
       },
       emphasized: {
-        value: '{colors.primary.700}',
+        // WCAG AA準拠: subtle背景(0.94)との明度差0.52を確保
+        value: '{colors.primary.800}',
         description: '強調表示（ボタンなど）',
       },
       muted: {
@@ -84,7 +85,8 @@ export const semanticTokens = {
         description: '成功メッセージの文字色',
       },
       emphasized: {
-        value: '{colors.success.700}',
+        // WCAG AA準拠: subtle背景(0.94)との明度差0.52を確保
+        value: '{colors.success.800}',
         description: '成功状態の強調表示',
       },
       muted: {
@@ -114,7 +116,8 @@ export const semanticTokens = {
         description: '警告テキストの色',
       },
       emphasized: {
-        value: '{colors.warning.700}',
+        // WCAG AA準拠: subtle背景(0.95)との明度差0.45を確保
+        value: '{colors.warning.800}',
         description: '警告状態の強調表示',
       },
       muted: {
@@ -150,7 +153,8 @@ export const semanticTokens = {
         },
       },
       emphasized: {
-        value: '{colors.danger.700}',
+        // WCAG AA準拠: subtle背景(0.94)との明度差0.54を確保
+        value: '{colors.danger.800}',
         description: '危険状態の強調表示',
       },
       muted: {
@@ -186,7 +190,8 @@ export const semanticTokens = {
         },
       },
       emphasized: {
-        value: '{colors.info.600}',
+        // WCAG AA準拠: subtle背景(0.97)との明度差0.55を確保
+        value: '{colors.info.800}',
         description: '情報状態の強調表示',
       },
       muted: {
@@ -254,7 +259,8 @@ export const semanticTokens = {
         description: '通常のテキストカラー',
       },
       muted: {
-        value: '{colors.neutral.500}',
+        // WCAG AA準拠: 背景(0.98)との明度差0.53を確保
+        value: '{colors.neutral.600}',
         description: '控えめなテキストカラー',
       },
     },
