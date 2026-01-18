@@ -14,6 +14,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MenuItem } from './menu-item';
 import * as styles from './styles';
 
+import { logout } from '@/app/(auth)/logout/actions';
+import { useAuth } from '@/hooks/use-auth';
 import { useToggleState } from '@/hooks/use-toggle-state';
 import { VStack } from '@/styled-system/jsx';
 
@@ -47,6 +49,9 @@ export const SideMenu = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [open, toggleOpen] = useToggleState(false);
+  const { user, isLoading } = useAuth();
+
+  const isLoggedIn = !isLoading && user !== null;
 
   const handleToggle = () => {
     toggleOpen();
@@ -68,7 +73,9 @@ export const SideMenu = () => {
     router.push('/signup');
   };
 
-  const handleClickLogout = () => {};
+  const handleClickLogout = async () => {
+    await logout();
+  };
 
   return (
     <aside className={styles.sideMenu({ open })} onClick={handleToggle}>
@@ -84,24 +91,29 @@ export const SideMenu = () => {
         ))}
       </VStack>
       <VStack className={styles.authButtons}>
-        <MenuItem
-          icon={LogIn}
-          text="Login"
-          variant="login"
-          onClick={handleClickLogin}
-        />
-        <MenuItem
-          icon={UserPlus}
-          text="Signup"
-          variant="signup"
-          onClick={handleClickSignup}
-        />
-        <MenuItem
-          icon={LogOut}
-          text="Logout"
-          variant="logout"
-          onClick={handleClickLogout}
-        />
+        {isLoggedIn ? (
+          <MenuItem
+            icon={LogOut}
+            text="Logout"
+            variant="logout"
+            onClick={handleClickLogout}
+          />
+        ) : (
+          <>
+            <MenuItem
+              icon={LogIn}
+              text="Login"
+              variant="login"
+              onClick={handleClickLogin}
+            />
+            <MenuItem
+              icon={UserPlus}
+              text="Signup"
+              variant="signup"
+              onClick={handleClickSignup}
+            />
+          </>
+        )}
       </VStack>
     </aside>
   );
