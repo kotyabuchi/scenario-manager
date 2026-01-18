@@ -745,7 +745,61 @@ export const ProfileEditForm = () => {
 
 ---
 
-## 14. 禁止事項
+## 14. セマンティックHTML
+
+### 原則
+**見た目ではなく意味に基づいてHTML要素を選択する。** CSSで見た目を変えられるからといって、意味的に不適切な要素を使わない。
+
+### 適切な要素の選択
+
+| 目的 | 正しい要素 | 誤った実装 |
+|------|-----------|-----------|
+| セクション区切り | `<hr>` | `border-top`を持つ`<div>` |
+| ナビゲーション | `<nav>` | `<div>` |
+| メインコンテンツ | `<main>` | `<div>` |
+| 記事・投稿 | `<article>` | `<div>` |
+| 補足情報 | `<aside>` | `<div>` |
+| ヘッダー | `<header>` | `<div>` |
+| フッター | `<footer>` | `<div>` |
+| リスト | `<ul>`, `<ol>` | `<div>`の繰り返し |
+| ボタン | `<button>` | クリック可能な`<div>` |
+| リンク | `<a>` | クリック可能な`<span>` |
+
+### 具体例
+
+```tsx
+// NG - border-topで視覚的に区切り線を表現
+<div className={css({ borderTop: '1px solid gray' })}>
+  <Button>送信</Button>
+</div>
+
+// OK - hrで意味的に区切りを表現
+<hr className={dividerStyle} />
+<div>
+  <Button>送信</Button>
+</div>
+```
+
+```tsx
+// NG - divにonClickを付けてボタン風に
+<div onClick={handleClick} className={buttonStyle}>
+  クリック
+</div>
+
+// OK - button要素を使用
+<button type="button" onClick={handleClick} className={buttonStyle}>
+  クリック
+</button>
+```
+
+### 見出しの階層
+- `<h1>`〜`<h6>`は階層構造を守る
+- `<h1>`の後に`<h3>`を置かない（`<h2>`を飛ばさない）
+- 見た目のサイズはCSSで調整
+
+---
+
+## 15. 禁止事項
 
 - `any`型の使用
 - `!`（Non-null assertion）の使用
@@ -757,3 +811,4 @@ export const ProfileEditForm = () => {
 - 未使用のimport・変数（Biomeで自動検出）
 - フォームの状態管理に`useState`を使用すること（React Hook Formを使用）
 - Zodを使用しないフォームバリデーション
+- セマンティックHTMLを無視した実装（`<div>`の乱用、border-topで区切り線等）
