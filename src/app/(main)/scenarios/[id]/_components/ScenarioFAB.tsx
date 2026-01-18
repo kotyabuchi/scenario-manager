@@ -151,9 +151,9 @@ export const ScenarioFAB = ({
   };
 
   const handleTogglePlayed = () => {
-    setOptimisticPlayed(!optimisticPlayed);
     setIsMenuOpen(false);
     startTransition(async () => {
+      setOptimisticPlayed(!optimisticPlayed);
       await onTogglePlayed();
     });
   };

@@ -93,8 +93,8 @@ export const ScenarioHeader = ({
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
 
   const handleFavoriteClick = () => {
-    setOptimisticFavorite(!optimisticFavorite);
     startTransition(async () => {
+      setOptimisticFavorite(!optimisticFavorite);
       await onToggleFavorite();
     });
   };
