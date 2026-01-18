@@ -5,6 +5,7 @@ import { ArrowLeft, Star } from 'lucide-react';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
+import { useSystemMessage } from '@/hooks/useSystemMessage';
 import { css } from '@/styled-system/css';
 
 type ScenarioHeaderProps = {
@@ -91,11 +92,22 @@ export const ScenarioHeader = ({
   const isLoggedIn = !isNil(currentUserId);
   const [, startTransition] = useTransition();
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
+  const { showSuccess, showError } = useSystemMessage();
 
   const handleFavoriteClick = () => {
+    const willBeFavorite = !optimisticFavorite;
     startTransition(async () => {
-      setOptimisticFavorite(!optimisticFavorite);
-      await onToggleFavorite();
+      setOptimisticFavorite(willBeFavorite);
+      try {
+        await onToggleFavorite();
+        showSuccess(
+          willBeFavorite
+            ? 'お気に入りに追加しました'
+            : 'お気に入りから削除しました',
+        );
+      } catch {
+        showError('お気に入りの更新に失敗しました');
+      }
     });
   };
 
