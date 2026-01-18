@@ -274,7 +274,7 @@ export const ReviewSection = ({
   });
 
   return (
-    <section className={styles.section}>
+    <section id="reviews" className={styles.section}>
       <div className={styles.section_header}>
         <h2 className={styles.section_title}>
           レビュー

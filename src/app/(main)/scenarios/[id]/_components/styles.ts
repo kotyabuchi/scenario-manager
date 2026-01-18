@@ -95,6 +95,17 @@ export const scenarioInfo_rating = css({
   display: 'flex',
   alignItems: 'center',
   gap: 'sm',
+  width: 'fit-content',
+  bg: 'transparent',
+  border: 'none',
+  cursor: 'pointer',
+  borderRadius: 'md',
+  p: 'xs',
+  ml: '-xs',
+  transition: 'background 0.2s',
+  _hover: {
+    bg: 'bg.subtle',
+  },
 });
 
 export const scenarioInfo_ratingStars = css({

@@ -76,7 +76,15 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
         <h1 className={styles.scenarioInfo_title}>{scenario.name}</h1>
 
         {/* 評価 */}
-        <div className={styles.scenarioInfo_rating}>
+        <button
+          type="button"
+          className={styles.scenarioInfo_rating}
+          onClick={() => {
+            document
+              .getElementById('reviews')
+              ?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
           <StarRating rating={scenario.avgRating} />
           {!isNil(scenario.avgRating) && (
             <span className={styles.scenarioInfo_ratingValue}>
@@ -86,7 +94,7 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
           <span className={styles.scenarioInfo_ratingCount}>
             ({scenario.reviewCount}件)
           </span>
-        </div>
+        </button>
 
         {/* 作者 */}
         {!isNil(scenario.author) && (
