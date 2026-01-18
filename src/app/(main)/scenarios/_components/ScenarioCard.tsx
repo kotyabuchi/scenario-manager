@@ -1,3 +1,4 @@
+import { Clock, Star, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
@@ -11,10 +12,13 @@ import type { ScenarioCardProps } from '../interface';
 export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
   const tags = scenario.scenarioTags.map((st) => st.tag).slice(0, 3);
 
+  // TODO: 実際のお気に入り数と連携
+  const favoriteCount = 0;
+
   return (
     <Link
       href={`/scenarios/${scenario.scenarioId}`}
-      className={styles.scenarioCard}
+      className={`group ${styles.scenarioCard}`}
     >
       {/* サムネイル */}
       <div className={styles.cardThumbnail}>
@@ -24,17 +28,30 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
             alt={scenario.name}
             fill
             sizes="(max-width: 768px) 100vw, 280px"
-            style={{ objectFit: 'cover' }}
+            className={styles.cardThumbnailImage}
           />
         ) : (
-          <div className={styles.cardThumbnailPlaceholder}>No Image</div>
+          <div className={styles.cardThumbnailPlaceholder} />
         )}
-        {/* オーバーレイ: システム名と評価 */}
-        <div className={styles.cardOverlay}>
-          <span className={styles.cardSystemLabel}>{scenario.system.name}</span>
-          <span className={styles.cardRating}>
-            <span className={styles.cardRatingStar}>★</span>
-            {/* TODO: 実際の評価データと連携 */}-
+
+        {/* システム名ラベル（リキッドカーブ付き） */}
+        <div className={styles.cardSystemLabelWrapper}>
+          <div className={styles.cardSystemLabel}>
+            <span className={styles.cardSystemLabelText}>
+              {scenario.system.name}
+            </span>
+          </div>
+          {/* 右側のリキッドカーブ */}
+          <div className={styles.cardSystemLabelCurveRight} />
+          {/* 下側のリキッドカーブ */}
+          <div className={styles.cardSystemLabelCurveBottom} />
+        </div>
+
+        {/* お気に入りボタン */}
+        <div className={styles.cardFavoriteButton}>
+          <Star className={styles.cardFavoriteIcon} />
+          <span className={styles.cardFavoriteCount}>
+            {favoriteCount > 0 ? favoriteCount : '-'}
           </span>
         </div>
       </div>
@@ -46,14 +63,18 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
 
         {/* メタ情報 */}
         <div className={styles.cardMeta}>
-          <span className={styles.cardMetaItem}>
-            <span className={styles.cardMetaIcon}>👤</span>
-            {formatPlayerCount(scenario.minPlayer, scenario.maxPlayer)}
-          </span>
-          <span className={styles.cardMetaItem}>
-            <span className={styles.cardMetaIcon}>⏱</span>
-            {formatPlaytime(scenario.minPlaytime, scenario.maxPlaytime)}
-          </span>
+          <div className={styles.cardMetaItem}>
+            <Users className={styles.cardMetaIcon} />
+            <span>
+              {formatPlayerCount(scenario.minPlayer, scenario.maxPlayer)}
+            </span>
+          </div>
+          <div className={styles.cardMetaItem}>
+            <Clock className={styles.cardMetaIcon} />
+            <span>
+              {formatPlaytime(scenario.minPlaytime, scenario.maxPlaytime)}
+            </span>
+          </div>
         </div>
 
         {/* タグ */}

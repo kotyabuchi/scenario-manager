@@ -5,13 +5,13 @@ export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
   bg: 'bg.card',
-  borderRadius: 'lg',
+  borderRadius: 'xl',
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all 0.2s',
-  shadow: 'sm',
+  transition: 'all 0.3s',
+  shadow: '0 1px 3px rgba(0,0,0,0.08)',
   _hover: {
-    shadow: 'md',
+    shadow: '0 4px 12px rgba(0,0,0,0.12)',
     transform: 'translateY(-2px)',
   },
 });
@@ -23,62 +23,115 @@ export const cardThumbnail = css({
   overflow: 'hidden',
 });
 
-export const cardThumbnailPlaceholder = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '100%',
-  height: '100%',
-  color: 'text.muted',
-  fontSize: 'sm',
+export const cardThumbnailImage = css({
+  objectFit: 'cover',
+  transition: 'all 0.3s',
+  _groupHover: {
+    transform: 'scale(1.03)',
+    filter: 'brightness(1.05)',
+  },
 });
 
-export const cardOverlay = css({
+export const cardThumbnailPlaceholder = css({
+  width: '100%',
+  height: '100%',
+  bg: 'bg.subtle',
+});
+
+// システム名ラベル（リキッドカーブ付き）
+export const cardSystemLabelWrapper = css({
   position: 'absolute',
   top: 0,
   left: 0,
-  right: 0,
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  p: 'sm',
+  maxW: '70%',
   zIndex: 1,
 });
 
 export const cardSystemLabel = css({
-  px: 'sm',
-  py: 'xs',
-  fontSize: 'xs',
-  fontWeight: 'medium',
-  bg: 'rgba(0, 0, 0, 0.6)',
-  color: 'white',
-  borderRadius: 'sm',
+  position: 'relative',
+  bg: 'bg.card/95',
   backdropFilter: 'blur(4px)',
-});
-
-export const cardRating = css({
+  px: 'sm',
+  py: '1.5',
+  minH: '32px',
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
-  px: 'sm',
-  py: 'xs',
-  fontSize: 'xs',
-  fontWeight: 'medium',
-  bg: 'rgba(0, 0, 0, 0.6)',
-  color: 'white',
-  borderRadius: 'sm',
-  backdropFilter: 'blur(4px)',
+  borderBottomRightRadius: '12px',
 });
 
-export const cardRatingStar = css({
-  color: 'yellow.400',
+export const cardSystemLabelText = css({
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  color: 'text.primary',
+  truncate: true,
+});
+
+// リキッドカーブ（右側）
+export const cardSystemLabelCurveRight = css({
+  position: 'absolute',
+  top: 0,
+  right: '-12px',
+  w: '12px',
+  h: '12px',
+  bg: 'bg.card/95',
+  clipPath: 'path("M 0 0 L 12 0 Q 0 0 0 12 L 0 0")',
+});
+
+// リキッドカーブ（下側）
+export const cardSystemLabelCurveBottom = css({
+  position: 'absolute',
+  bottom: '-12px',
+  left: 0,
+  w: '12px',
+  h: '12px',
+  bg: 'bg.card/95',
+  clipPath: 'path("M 0 0 L 12 0 Q 0 0 0 12 L 0 0")',
+});
+
+// お気に入りボタン
+export const cardFavoriteButton = css({
+  position: 'absolute',
+  top: '6px',
+  right: '6px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  px: 'sm',
+  py: '4px',
+  borderRadius: 'full',
+  bg: 'rgba(0, 0, 0, 0.4)',
+  backdropFilter: 'blur(4px)',
+  transition: 'background 0.2s',
+  zIndex: 1,
+  _hover: {
+    bg: 'rgba(0, 0, 0, 0.6)',
+  },
+});
+
+export const cardFavoriteIcon = css({
+  w: '14px',
+  h: '14px',
+  color: 'white/90',
+});
+
+export const cardFavoriteIconActive = css({
+  w: '14px',
+  h: '14px',
+  color: 'amber.400',
+  fill: 'amber.400',
+});
+
+export const cardFavoriteCount = css({
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  color: 'white/90',
 });
 
 export const cardContent = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'xs',
-  p: 'md',
+  gap: 'sm',
+  p: 'sm',
   flex: 1,
 });
 
@@ -86,54 +139,52 @@ export const cardTitle = css({
   fontSize: 'md',
   fontWeight: 'bold',
   color: 'text.primary',
-  lineClamp: 1,
-});
-
-export const cardSystem = css({
-  fontSize: 'sm',
-  color: 'primary.600',
-  fontWeight: 'medium',
+  lineClamp: 2,
+  lineHeight: 'tight',
+  textWrap: 'balance',
 });
 
 export const cardMeta = css({
   display: 'flex',
+  alignItems: 'center',
   gap: 'md',
   fontSize: 'sm',
-  color: 'text.secondary',
+  color: 'text.muted',
 });
 
 export const cardMetaItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
+  gap: '4px',
 });
 
 export const cardMetaIcon = css({
-  fontSize: 'sm',
-  color: 'text.muted',
+  w: '14px',
+  h: '14px',
 });
 
 export const cardTags = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'xs',
+  gap: '6px',
 });
 
 export const cardTag = css({
+  display: 'inline-flex',
+  alignItems: 'center',
   px: 'sm',
-  py: 'xs',
+  py: '2px',
   fontSize: 'xs',
   bg: 'bg.subtle',
-  borderRadius: 'sm',
-  color: 'text.secondary',
+  borderRadius: 'md',
+  color: 'text.muted',
 });
 
 export const cardDescription = css({
-  fontSize: 'sm',
-  color: 'text.secondary',
-  lineClamp: 2,
-  lineHeight: '1.5',
-  mt: 'xs',
+  fontSize: 'xs',
+  color: 'text.muted/70',
+  lineClamp: 3,
+  lineHeight: 'relaxed',
 });
 
 // ScenarioList スタイル
