@@ -121,14 +121,12 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
         isPlayed={isPlayed}
       />
 
-      {/* FAB（お気に入り + メニュー） */}
+      {/* FAB（メニュー） */}
       {!isNil(currentUserId) && (
         <ScenarioFAB
           scenarioId={id}
-          isFavorite={isFavorite}
           isPlayed={isPlayed}
           canEdit={canEdit}
-          onToggleFavorite={handleToggleFavorite}
           onTogglePlayed={handleTogglePlayed}
         />
       )}

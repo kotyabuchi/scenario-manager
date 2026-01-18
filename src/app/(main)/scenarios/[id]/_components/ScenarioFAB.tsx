@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import { css } from '@/styled-system/css';
@@ -9,10 +9,8 @@ import type { Route } from 'next';
 
 type ScenarioFABProps = {
   scenarioId: string;
-  isFavorite: boolean;
   isPlayed: boolean;
   canEdit: boolean;
-  onToggleFavorite: () => Promise<void>;
   onTogglePlayed: () => Promise<void>;
 };
 
@@ -41,19 +39,6 @@ const fabButton = css({
   _hover: {
     transform: 'scale(1.1)',
   },
-});
-
-const fabButton_favorite = css({
-  bg: 'bg.card',
-  color: 'text.secondary',
-  _hover: {
-    color: 'primary.500',
-  },
-});
-
-const fabButton_favoriteActive = css({
-  bg: 'primary.500',
-  color: 'white',
 });
 
 const fabButton_menu = css({
@@ -118,14 +103,11 @@ const checkMark = css({
 
 export const ScenarioFAB = ({
   scenarioId,
-  isFavorite,
   isPlayed,
   canEdit,
-  onToggleFavorite,
   onTogglePlayed,
 }: ScenarioFABProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
 
   // クリック外で閉じる
@@ -144,12 +126,6 @@ export const ScenarioFAB = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMenuOpen]);
-
-  const handleFavoriteClick = () => {
-    startTransition(async () => {
-      await onToggleFavorite();
-    });
-  };
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -224,24 +200,6 @@ export const ScenarioFAB = ({
           </div>
         )}
       </div>
-
-      {/* お気に入りボタン */}
-      <button
-        type="button"
-        className={`${fabButton} ${isFavorite ? fabButton_favoriteActive : fabButton_favorite}`}
-        onClick={handleFavoriteClick}
-        disabled={isPending}
-        aria-label={isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'}
-        title={isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'}
-      >
-        {isPending ? (
-          <span style={{ fontSize: '24px' }}>⏳</span>
-        ) : isFavorite ? (
-          <span style={{ fontSize: '24px' }}>★</span>
-        ) : (
-          <span style={{ fontSize: '24px' }}>☆</span>
-        )}
-      </button>
     </div>
   );
 };
