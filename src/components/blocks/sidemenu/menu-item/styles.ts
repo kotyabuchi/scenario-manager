@@ -32,6 +32,7 @@ export const menuItem = cva({
         background: 'primary.subtle',
         _hover: {
           background: 'primary.muted',
+          color: 'primary.foreground.white',
         },
         _focus: {
           outline: '2px solid {colors.primary.focusRing}',
