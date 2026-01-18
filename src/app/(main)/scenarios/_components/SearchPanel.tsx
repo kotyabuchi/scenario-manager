@@ -243,6 +243,7 @@ export const SearchPanel = ({
       </div>
 
       {/* 検索ボタン */}
+      <hr className={styles.searchDivider} />
       <div className={styles.searchActions}>
         <Button type="submit" status="primary">
           検索

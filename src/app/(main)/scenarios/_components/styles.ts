@@ -9,9 +9,9 @@ export const scenarioCard = css({
   overflow: 'hidden',
   cursor: 'pointer',
   transition: 'all 0.3s',
-  shadow: '0 1px 2px rgba(0,0,0,0.04)',
+  shadow: 'card.default',
   _hover: {
-    shadow: '0 4px 8px rgba(0,0,0,0.08)',
+    shadow: 'card.hover',
     transform: 'translateY(-2px)',
   },
 });
@@ -49,7 +49,8 @@ export const cardSystemLabelWrapper = css({
 
 export const cardSystemLabel = css({
   position: 'relative',
-  bg: 'white',
+  bg: 'overlay.light',
+  backdropFilter: 'blur(8px)',
   px: 'sm',
   py: '1.5',
   minH: '32px',
@@ -65,8 +66,7 @@ export const cardSystemLabelText = css({
   truncate: true,
 });
 
-// リキッドカーブ（右側）- radial-gradientで逆角丸を実現（アンチエイリアス付き）
-// 右下中心で右下が透明（画像側）、左上が白（カード角側）
+// リキッドカーブ（右側）- radial-gradientで逆角丸を実現（透過対応）
 export const cardSystemLabelCurveRight = css({
   position: 'absolute',
   top: 0,
@@ -74,11 +74,10 @@ export const cardSystemLabelCurveRight = css({
   w: '12px',
   h: '12px',
   background:
-    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, white 12px)',
+    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, rgba(255,255,255,0.85) 12px)',
 });
 
-// リキッドカーブ（下側）- radial-gradientで逆角丸を実現（アンチエイリアス付き）
-// 右下中心で右下が透明（画像側）、左上が白（ラベル側）
+// リキッドカーブ（下側）- radial-gradientで逆角丸を実現（透過対応）
 export const cardSystemLabelCurveBottom = css({
   position: 'absolute',
   bottom: '-12px',
@@ -86,7 +85,7 @@ export const cardSystemLabelCurveBottom = css({
   w: '12px',
   h: '12px',
   background:
-    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, white 12px)',
+    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, rgba(255,255,255,0.85) 12px)',
 });
 
 // お気に入りボタン
@@ -100,12 +99,12 @@ export const cardFavoriteButton = css({
   px: 'sm',
   py: '4px',
   borderRadius: 'full',
-  bg: 'rgba(0, 0, 0, 0.4)',
+  bg: 'overlay.dark',
   backdropFilter: 'blur(4px)',
   transition: 'background 0.2s',
   zIndex: 1,
   _hover: {
-    bg: 'rgba(0, 0, 0, 0.6)',
+    bg: 'overlay.darkHover',
   },
 });
 
@@ -217,22 +216,21 @@ export const scenarioListEmptyText = css({
 });
 
 // SearchPanel スタイル
-// ボーダーレス、影と背景色で浮遊感を表現
 export const searchPanel = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'lg',
-  p: 'xl',
+  gap: 'md',
+  p: 'lg',
   bg: 'bg.card',
   borderRadius: 'xl',
   mb: 'xl',
-  shadow: 'md',
+  shadow: 'card.default',
 });
 
 export const searchPanelRow = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'lg',
+  gap: 'md',
   alignItems: 'flex-end',
 });
 
@@ -264,7 +262,7 @@ export const searchPanelChips = css({
 });
 
 // チップ（タグ・システム選択ボタン）
-// ボーダーレスで明度差による選択状態表現
+// 背景色と影でコントラストを確保
 export const chip = cva({
   base: {
     display: 'inline-flex',
@@ -292,29 +290,30 @@ export const chip = cva({
       true: {
         bg: 'primary.default',
         color: 'primary.foreground.white',
-        shadow: 'sm',
+        shadow: 'chip.selected',
         transform: 'translateY(-1px)',
         _hover: {
           bg: 'primary.emphasized',
-          shadow: 'md',
+          shadow: 'chip.selectedHover',
         },
         _active: {
           transform: 'translateY(0)',
-          shadow: 'sm',
+          shadow: 'chip.default',
         },
       },
       false: {
-        bg: 'bg.subtle',
+        // 背景色を薄く、影で輪郭を表現
+        bg: 'chip.default',
         color: 'text.primary',
-        shadow: 'none',
+        shadow: 'chip.default',
         _hover: {
-          bg: 'bg.emphasized',
-          shadow: 'sm',
+          bg: 'chip.hover',
+          shadow: 'chip.hover',
           transform: 'translateY(-1px)',
         },
         _active: {
           transform: 'translateY(0)',
-          bg: 'bg.muted',
+          bg: 'chip.hover',
         },
       },
     },
@@ -342,13 +341,16 @@ export const chipRemove = css({
   },
 });
 
+export const searchDivider = css({
+  border: 'none',
+  borderTop: '1px solid',
+  borderColor: 'border.subtle',
+  my: 'md',
+});
+
 export const searchActions = css({
   display: 'flex',
   gap: 'sm',
-  pt: 'md',
-  borderTop: '1px solid',
-  borderColor: 'border.subtle',
-  mt: 'md',
 });
 
 export const rangeInput = css({

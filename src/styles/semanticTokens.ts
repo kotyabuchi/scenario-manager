@@ -5,6 +5,10 @@ export const semanticTokens = {
         value: '{colors.layer.base}',
         description: 'ページ全体の背景（最下層）',
       },
+      card: {
+        value: '#ffffff',
+        description: 'カードの背景色（白）',
+      },
       subtle: {
         value: '{colors.layer.1}',
         description: 'カード・セクションの背景（第1層）',
@@ -16,6 +20,10 @@ export const semanticTokens = {
       emphasized: {
         value: '{colors.layer.3}',
         description: 'さらにネスト・ホバー状態の背景（第3層）',
+      },
+      placeholder: {
+        value: '{colors.neutral.100}',
+        description: 'プレースホルダー領域の背景（サムネイルなど）',
       },
     },
 
@@ -264,6 +272,24 @@ export const semanticTokens = {
         description: '控えめなテキストカラー',
       },
     },
+    text: {
+      primary: {
+        value: '{colors.foreground.500}',
+        description: 'メインのテキスト色（タイトルなど）',
+      },
+      secondary: {
+        value: '{colors.neutral.500}',
+        description: 'サブテキスト色',
+      },
+      muted: {
+        value: '{colors.neutral.400}',
+        description: '控えめなテキスト色（メタ情報など）',
+      },
+      subtle: {
+        value: '{colors.neutral.300}',
+        description: '非常に控えめなテキスト色',
+      },
+    },
     border: {
       default: {
         value: '{colors.border.500}',
@@ -284,6 +310,32 @@ export const semanticTokens = {
       default: {
         value: '{colors.backdrop.500}',
         description: 'モーダル背景などの半透明黒',
+      },
+    },
+    // チップ（選択可能なタグ・バッジ）
+    chip: {
+      default: {
+        value: 'oklch(0.97 0 0)',
+        description: '非選択チップの背景（ほぼ白）',
+      },
+      hover: {
+        value: 'oklch(0.94 0 0)',
+        description: '非選択チップのホバー背景',
+      },
+    },
+    // オーバーレイ（サムネイル上のラベル・ボタン）
+    overlay: {
+      light: {
+        value: 'rgba(255,255,255,0.85)',
+        description: '明るいオーバーレイ（システムラベル等）',
+      },
+      dark: {
+        value: 'rgba(0,0,0,0.4)',
+        description: '暗いオーバーレイ（ボタン等）',
+      },
+      darkHover: {
+        value: 'rgba(0,0,0,0.6)',
+        description: '暗いオーバーレイのホバー',
       },
     },
   },
@@ -307,6 +359,36 @@ export const semanticTokens = {
       value:
         '0 20px 25px -5px oklch(0.20 0.01 270 / 0.10), 0 8px 10px -6px oklch(0.20 0.01 270 / 0.05)',
       description: '特大の影',
+    },
+    // カード用の影（ボーダーレスUI）
+    card: {
+      default: {
+        value: '0 2px 6px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05)',
+        description: 'カードの基本影',
+      },
+      hover: {
+        value: '0 6px 16px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.08)',
+        description: 'カードホバー時の影',
+      },
+    },
+    // チップ用の影（選択可能なタグ・バッジ）
+    chip: {
+      default: {
+        value: '0 1px 3px rgba(0,0,0,0.08)',
+        description: 'チップの基本影',
+      },
+      hover: {
+        value: '0 2px 4px rgba(0,0,0,0.12)',
+        description: 'チップホバー時の影',
+      },
+      selected: {
+        value: '0 2px 4px rgba(0,0,0,0.15)',
+        description: '選択されたチップの影',
+      },
+      selectedHover: {
+        value: '0 4px 8px rgba(0,0,0,0.2)',
+        description: '選択されたチップホバー時の影',
+      },
     },
   },
 };
