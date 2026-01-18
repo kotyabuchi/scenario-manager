@@ -349,6 +349,29 @@ export const semanticTokens = {
         description: 'メニューアイテムのホバー背景',
       },
     },
+    // ドロップダウンメニュー
+    menu: {
+      bg: {
+        value: '#ffffff',
+        description: 'メニューの背景（白）',
+      },
+      itemBg: {
+        value: 'oklch(0.97 0 0)',
+        description: 'メニューアイテムのホバー背景',
+      },
+      itemBgHighlighted: {
+        value: 'oklch(0.94 0 0)',
+        description: 'メニューアイテムのハイライト背景',
+      },
+      itemBgDanger: {
+        value: '{colors.danger.subtle}',
+        description: '危険アクションのホバー背景',
+      },
+      separator: {
+        value: '{colors.neutral.200}',
+        description: 'セパレーターの色',
+      },
+    },
   },
 
   shadows: {
@@ -412,6 +435,14 @@ export const semanticTokens = {
         value:
           '0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
         description: 'サイドメニュー展開時の影',
+      },
+    },
+    // ドロップダウンメニュー用の影
+    menu: {
+      default: {
+        value:
+          '0 10px 38px -10px rgba(22, 23, 24, 0.35), 0 10px 20px -15px rgba(22, 23, 24, 0.2)',
+        description: 'メニューの影（フローティング感）',
       },
     },
   },

@@ -1,6 +1,6 @@
 import { definePreset } from '@pandacss/dev';
 
-import { recipes } from './recipes';
+import { recipes, slotRecipes } from './recipes';
 import { semanticTokens } from './semanticTokens';
 import { tokens } from './tokens';
 
@@ -10,6 +10,7 @@ export default definePreset({
     extend: {
       tokens,
       recipes,
+      slotRecipes,
     },
     semanticTokens,
   },
