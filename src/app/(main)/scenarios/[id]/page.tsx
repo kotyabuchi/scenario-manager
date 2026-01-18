@@ -93,7 +93,7 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
       <ScenarioHeader
         scenarioId={scenario.scenarioId}
         scenarioName={scenario.name}
-        currentUserId={currentUserId}
+        {...(currentUserId ? { currentUserId } : {})}
         createdById={scenario.createdById}
         isFavorite={isFavorite}
         isPlayed={isPlayed}
