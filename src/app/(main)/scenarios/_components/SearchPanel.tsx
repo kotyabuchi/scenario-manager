@@ -253,7 +253,7 @@ export const SearchPanel = ({
         <Button type="submit" status="primary">
           検索
         </Button>
-        <Button type="button" variant="outline" onClick={handleReset}>
+        <Button type="button" variant="ghost" onClick={handleReset}>
           条件クリア
         </Button>
       </div>

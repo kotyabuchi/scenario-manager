@@ -243,6 +243,10 @@ export const searchPanelField = css({
   border: 'none',
   padding: 0,
   margin: 0,
+  // legendはflexboxのgapが効かないため明示的にマージンを設定
+  '& > legend': {
+    mb: 'sm',
+  },
 });
 
 // ラベルのスタイル改善
@@ -258,7 +262,6 @@ export const searchPanelChips = css({
   display: 'flex',
   flexWrap: 'wrap',
   gap: 'sm',
-  mt: 'xs',
 });
 
 // チップ（タグ・システム選択ボタン）
