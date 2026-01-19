@@ -64,3 +64,6 @@ src/lib/db/migrations
 # Cursor IDE
 .cursor
 .claude/settings.local.json
+
+# Local Netlify folder
+.netlify
