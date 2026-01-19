@@ -168,7 +168,7 @@ export const cardMeta = css({
   alignItems: 'center',
   gap: 'md',
   fontSize: 'sm',
-  color: 'neutral.400',
+  color: 'text.muted',
 });
 
 export const cardMetaItem = css({
@@ -196,13 +196,13 @@ export const cardTag = css({
   fontSize: 'xs',
   bg: 'neutral.50',
   borderRadius: 'md',
-  color: 'neutral.500',
+  color: 'text.secondary',
   shadow: 'sm',
 });
 
 export const cardDescription = css({
   fontSize: 'xs',
-  color: 'neutral.400',
+  color: 'text.muted',
   lineClamp: 3,
   lineHeight: 'relaxed',
 });

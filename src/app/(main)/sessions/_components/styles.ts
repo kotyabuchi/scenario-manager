@@ -260,7 +260,7 @@ export const sessionCard_roleBadge = cva({
       },
       SPECTATOR: {
         bg: 'neutral.50',
-        color: 'neutral.500',
+        color: 'text.secondary',
       },
     },
   },

@@ -278,16 +278,19 @@ export const semanticTokens = {
         description: 'メインのテキスト色（タイトルなど）',
       },
       secondary: {
-        value: '{colors.neutral.500}',
+        // WCAG AA準拠: 背景(0.98)との明度差0.53を確保
+        value: '{colors.neutral.600}',
         description: 'サブテキスト色',
       },
       muted: {
-        value: '{colors.neutral.400}',
+        // WCAG AA準拠: 背景(0.98)との明度差0.53を確保
+        value: '{colors.neutral.600}',
         description: '控えめなテキスト色（メタ情報など）',
       },
       subtle: {
-        value: '{colors.neutral.300}',
-        description: '非常に控えめなテキスト色',
+        // WCAG AA準拠: 背景(0.98)との明度差0.43（大きめのテキスト用）
+        value: '{colors.neutral.500}',
+        description: '非常に控えめなテキスト色（18pt以上の大きいテキスト用）',
       },
     },
     border: {
