@@ -10,7 +10,7 @@
 ## Phase 1: 基盤構築 ✅
 
 ### 1.1 Supabase接続設定
-- [x] 環境変数ファイル作成（`.env.local`）
+- [x] 環境変数ファイル作成（`.env`）
 - [x] Drizzle接続設定（`src/db/index.ts`）
 - [x] 接続テスト
 

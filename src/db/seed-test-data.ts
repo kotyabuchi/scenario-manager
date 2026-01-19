@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { db } from './index';
 import { scenarios, scenarioTags, tags } from './schema';
 
-config({ path: '.env.local' });
+config({ path: '.env' });
 
 /**
  * テストデータを追加するスクリプト

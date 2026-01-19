@@ -4,7 +4,7 @@ import postgres from 'postgres';
 
 import * as schema from './schema';
 
-config({ path: '.env.local' });
+config({ path: '.env' });
 
 const connectionString = process.env.DATABASE_URL ?? '';
 

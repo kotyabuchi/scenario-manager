@@ -8,7 +8,7 @@ import { scenarioSystems, scenarios, tags } from './schema';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-config({ path: '.env.local' });
+config({ path: '.env' });
 
 /**
  * JSONファイルのシナリオデータ型
