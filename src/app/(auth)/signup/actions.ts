@@ -48,7 +48,7 @@ export const createUser = async (
     discordId: authUser.id,
     userName: input.userName,
     nickname: input.nickname,
-    image: authUser.user_metadata['avatar_url'],
+    image: authUser.user_metadata.avatar_url,
   });
 
   redirect('/home');

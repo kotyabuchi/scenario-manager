@@ -29,10 +29,10 @@ export default async function SignupPage() {
   }
 
   const discordName = !isNil(user.user_metadata)
-    ? (user.user_metadata['full_name'] ?? user.user_metadata['name'] ?? '')
+    ? (user.user_metadata.full_name ?? user.user_metadata.name ?? '')
     : '';
   const avatarUrl = !isNil(user.user_metadata)
-    ? (user.user_metadata['avatar_url'] ?? '')
+    ? (user.user_metadata.avatar_url ?? '')
     : '';
 
   return <SignupForm defaultNickname={discordName} avatarUrl={avatarUrl} />;
