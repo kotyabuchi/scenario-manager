@@ -29,28 +29,6 @@ type HistoryTabProps = {
   initialSystems: string[];
 };
 
-// セレクトのスタイル（ボーダーレス、背景色で区別）
-const selectStyle = css({
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  transition: 'all 0.2s',
-  shadow: 'sm',
-  cursor: 'pointer',
-  _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focus: {
-    bg: 'bg.emphasized',
-    shadow: '0 0 0 2px {colors.primary.focusRing}',
-  },
-});
-
 export const HistoryTab = ({
   systems,
   initialResult,

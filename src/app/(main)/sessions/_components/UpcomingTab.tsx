@@ -24,22 +24,6 @@ type UpcomingTabProps = {
   initialResult: SearchResult<MySessionWithRole>;
 };
 
-const selectStyle = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  cursor: 'pointer',
-  _focus: {
-    borderColor: 'primary.500',
-  },
-});
-
 export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
   const [isPending, startTransition] = useTransition();
 
