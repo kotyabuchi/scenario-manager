@@ -284,62 +284,61 @@ export const SearchPanel = ({
         </fieldset>
       </div>
 
-      <div className={styles.searchPanelRow}>
-        <div className={styles.searchPanelField}>
-          <span className={styles.searchPanelLabel}>開催日</span>
-          <div className={styles.datePresetContainer}>
-            <div className={styles.searchPanelChips}>
-              {datePresetOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={styles.chip({
-                    selected: currentPreset === option.value,
-                  })}
-                  onClick={() => handleDatePresetChange(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-            {currentPreset === 'custom' && (
-              <div className={styles.dateInputContainer}>
-                <input
-                  type="date"
-                  {...register('dateFrom')}
-                  className={styles.dateInput}
-                  aria-label="開催日（開始）"
-                />
-                <span>〜</span>
-                <input
-                  type="date"
-                  {...register('dateTo')}
-                  className={styles.dateInput}
-                  aria-label="開催日（終了）"
-                />
-              </div>
-            )}
+      <div className={styles.searchPanelField}>
+        <span className={styles.searchPanelLabel}>開催日</span>
+        <div className={styles.datePresetContainer}>
+          <div className={styles.searchPanelChips}>
+            {datePresetOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={styles.chip({
+                  selected: currentPreset === option.value,
+                })}
+                onClick={() => handleDatePresetChange(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
-        </div>
-
-        <div className={styles.searchPanelField}>
-          <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
-            シナリオ名
-          </label>
-          <input
-            id="scenarioName"
-            {...register('q')}
-            placeholder="シナリオ名で検索"
-            className={inputStyle}
-          />
+          {currentPreset === 'custom' && (
+            <div className={styles.dateInputContainer}>
+              <input
+                type="date"
+                {...register('dateFrom')}
+                className={styles.dateInput}
+                aria-label="開催日（開始）"
+              />
+              <span>〜</span>
+              <input
+                type="date"
+                {...register('dateTo')}
+                className={styles.dateInput}
+                aria-label="開催日（終了）"
+              />
+            </div>
+          )}
         </div>
       </div>
 
+      <div className={styles.searchPanelField}>
+        <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
+          シナリオ名
+        </label>
+        <input
+          id="scenarioName"
+          {...register('q')}
+          placeholder="シナリオ名で検索..."
+          className={inputStyle}
+        />
+      </div>
+
+      <hr className={styles.searchDivider} />
       <div className={styles.searchActions}>
         <Button type="submit" status="primary">
           検索
         </Button>
-        <Button type="button" variant="outline" onClick={handleReset}>
+        <Button type="button" variant="ghost" onClick={handleReset}>
           条件クリア
         </Button>
       </div>

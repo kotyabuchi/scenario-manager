@@ -89,6 +89,13 @@ export const searchPanelField = css({
   gap: 'sm',
   minW: '200px',
   flex: 1,
+  border: 'none',
+  padding: 0,
+  margin: 0,
+  // legendはflexboxのgapが効かないため明示的にマージンを設定
+  '& > legend': {
+    mb: 'sm',
+  },
 });
 
 export const searchPanelLabel = css({
@@ -101,6 +108,13 @@ export const searchPanelChips = css({
   display: 'flex',
   flexWrap: 'wrap',
   gap: 'sm',
+});
+
+export const searchDivider = css({
+  border: 'none',
+  borderTop: '1px solid',
+  borderColor: 'border.subtle',
+  my: 'md',
 });
 
 export const searchActions = css({
@@ -366,18 +380,23 @@ export const sortSelect = css({
 });
 
 export const selectInput = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
+  px: 'md',
+  py: 'sm',
+  border: 'none',
+  borderRadius: 'md',
+  bg: 'bg.muted',
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
+  transition: 'all 0.2s',
+  shadow: 'sm',
   cursor: 'pointer',
+  _hover: {
+    bg: 'bg.emphasized',
+  },
   _focus: {
-    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    shadow: '0 0 0 2px {colors.primary.focusRing}',
   },
 });
 
@@ -422,11 +441,11 @@ export const viewToggleButton = cva({
 // フィルタパネルスタイル
 export const filterPanel = css({
   display: 'flex',
-  flexWrap: 'wrap',
+  flexDirection: 'column',
   gap: 'md',
-  p: 'md',
+  p: 'lg',
   bg: 'bg.card',
-  borderRadius: 'lg',
+  borderRadius: 'xl',
   mb: 'lg',
   shadow: 'card.default',
 });
@@ -434,26 +453,37 @@ export const filterPanel = css({
 export const filterRow = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'lg',
-  alignItems: 'center',
+  gap: 'md',
+  alignItems: 'flex-end',
 });
 
 export const filterItem = css({
   display: 'flex',
-  alignItems: 'center',
+  flexDirection: 'column',
   gap: 'sm',
+  minW: '120px',
 });
 
 export const filterField = css({
   display: 'flex',
-  alignItems: 'center',
+  flexDirection: 'column',
   gap: 'sm',
-  fontSize: 'sm',
+  minW: '200px',
+  flex: 1,
+  border: 'none',
+  padding: 0,
+  margin: 0,
+  // legendはflexboxのgapが効かないため明示的にマージンを設定
+  '& > legend': {
+    mb: 'sm',
+  },
 });
 
 export const filterLabel = css({
+  fontSize: 'sm',
+  fontWeight: 'semibold',
   color: 'text.secondary',
-  fontWeight: 'medium',
+  letterSpacing: '0.01em',
 });
 
 // 日付入力スタイル
@@ -470,17 +500,22 @@ export const dateInputContainer = css({
 });
 
 export const dateInput = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
+  px: 'md',
+  py: 'sm',
+  border: 'none',
+  borderRadius: 'md',
+  bg: 'bg.muted',
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
+  transition: 'all 0.2s',
+  shadow: 'sm',
+  _hover: {
+    bg: 'bg.emphasized',
+  },
   _focus: {
-    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    shadow: '0 0 0 2px {colors.primary.focusRing}',
   },
 });
 

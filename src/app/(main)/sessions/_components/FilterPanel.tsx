@@ -20,19 +20,25 @@ type FilterPanelProps = {
   ) => void;
 };
 
+// セレクトのスタイル（ボーダーレス、背景色で区別）
 const selectStyle = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
+  px: 'md',
+  py: 'sm',
+  border: 'none',
+  borderRadius: 'md',
+  bg: 'bg.muted',
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
+  transition: 'all 0.2s',
+  shadow: 'sm',
   cursor: 'pointer',
+  _hover: {
+    bg: 'bg.emphasized',
+  },
   _focus: {
-    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    shadow: '0 0 0 2px {colors.primary.focusRing}',
   },
 });
 
@@ -67,7 +73,7 @@ export const FilterPanel = ({
       <div className={styles.filterRow}>
         <div className={styles.filterItem}>
           <label htmlFor="role-filter" className={styles.filterLabel}>
-            役割:
+            役割
           </label>
           <select
             id="role-filter"
@@ -90,7 +96,7 @@ export const FilterPanel = ({
 
         <div className={styles.filterItem}>
           <label htmlFor="status-filter" className={styles.filterLabel}>
-            状態:
+            状態
           </label>
           <select
             id="status-filter"
@@ -111,37 +117,35 @@ export const FilterPanel = ({
         </div>
       </div>
 
-      <div className={styles.filterRow}>
-        <fieldset className={styles.filterItem}>
-          <legend className={styles.filterLabel}>システム:</legend>
-          <div className={styles.searchPanelChips}>
-            {selectedSystems.map((systemId) => (
+      <fieldset className={styles.filterField}>
+        <legend className={styles.filterLabel}>システム</legend>
+        <div className={styles.searchPanelChips}>
+          {selectedSystems.map((systemId) => (
+            <button
+              key={systemId}
+              type="button"
+              className={styles.chip({ selected: true })}
+              onClick={() => handleSystemRemove(systemId)}
+            >
+              {getSystemName(systemId)}
+              <X size={14} />
+            </button>
+          ))}
+          {systems
+            .filter((s) => !selectedSystems.includes(s.systemId))
+            .slice(0, 5)
+            .map((system) => (
               <button
-                key={systemId}
+                key={system.systemId}
                 type="button"
-                className={styles.chip({ selected: true })}
-                onClick={() => handleSystemRemove(systemId)}
+                className={styles.chip({ selected: false })}
+                onClick={() => handleSystemToggle(system.systemId)}
               >
-                {getSystemName(systemId)}
-                <X size={14} />
+                {system.name}
               </button>
             ))}
-            {systems
-              .filter((s) => !selectedSystems.includes(s.systemId))
-              .slice(0, 5)
-              .map((system) => (
-                <button
-                  key={system.systemId}
-                  type="button"
-                  className={styles.chip({ selected: false })}
-                  onClick={() => handleSystemToggle(system.systemId)}
-                >
-                  {system.name}
-                </button>
-              ))}
-          </div>
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
     </div>
   );
 };
