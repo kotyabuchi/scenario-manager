@@ -25,13 +25,17 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
       </div>
 
       {!isNil(user.bio) && user.bio !== '' && (
-        <div className={styles.card_bioSection}>
-          <h3 className={styles.card_sectionTitle}>自己紹介</h3>
-          <p className={styles.card_bio}>{user.bio}</p>
-        </div>
+        <>
+          <hr className={styles.card_divider} />
+          <div>
+            <h3 className={styles.card_sectionTitle}>自己紹介</h3>
+            <p className={styles.card_bio}>{user.bio}</p>
+          </div>
+        </>
       )}
 
-      <div className={styles.card_meta}>
+      <hr className={styles.card_divider} />
+      <div>
         <div className={styles.card_metaItem}>
           <span className={styles.card_metaLabel}>ロール</span>
           <span className={styles.card_metaValue}>

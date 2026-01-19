@@ -38,11 +38,11 @@ export const card_userName = css({
   color: 'gray.500',
 });
 
-export const card_bioSection = css({
+export const card_divider = css({
+  border: 'none',
   borderTop: '1px solid',
   borderColor: 'gray.100',
-  pt: '4',
-  mb: '4',
+  my: '4',
 });
 
 export const card_sectionTitle = css({
@@ -62,9 +62,6 @@ export const card_bio = css({
 export const card_meta = css({
   display: 'flex',
   gap: '6',
-  borderTop: '1px solid',
-  borderColor: 'gray.100',
-  pt: '4',
 });
 
 export const card_metaItem = css({
