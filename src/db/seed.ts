@@ -1,4 +1,4 @@
-import { config } from 'dotenv';
+// dotenvはimportより前に読み込む必要があるため、package.jsonのスクリプトで-r dotenv/configを指定
 import { ulid } from 'ulid';
 
 import { HandoutTypes } from './enum';
@@ -7,8 +7,6 @@ import { scenarioSystems, scenarios, tags } from './schema';
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-
-config({ path: '.env' });
 
 /**
  * JSONファイルのシナリオデータ型

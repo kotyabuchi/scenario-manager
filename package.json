@@ -8,6 +8,9 @@
     "dev": "rm -rf .next && next dev --turbopack",
     "dev:watch": "rm -rf .next && next dev -p 3333 --turbopack",
     "build": "next build",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare deploy",
     "start": "next start",
     "lint": "biome lint --write",
     "format": "biome format --write",
@@ -18,12 +21,11 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "tsx -r dotenv/config src/db/seed.ts"
   },
   "dependencies": {
     "@ark-ui/react": "^5.9.0",
     "@hookform/resolvers": "^5.2.2",
-    "@netlify/plugin-nextjs": "^5.15.5",
     "@paralleldrive/cuid2": "^3.0.6",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.1",
@@ -44,6 +46,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
+    "@opennextjs/cloudflare": "^1.14.9",
     "@pandacss/dev": "^0.53.6",
     "@storybook/addon-a11y": "10.1.11",
     "@storybook/nextjs-vite": "^10.1.11",
@@ -62,7 +65,8 @@
     "tsx": "^4.21.0",
     "typescript": "^5",
     "vite": "5.2.10",
-    "vitest": "^3.1.4"
+    "vitest": "^3.1.4",
+    "wrangler": "^4.59.2"
   },
   "pnpm": {
     "neverBuiltDependencies": [

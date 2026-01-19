@@ -1,10 +1,7 @@
-import { config } from 'dotenv';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 import * as schema from './schema';
-
-config({ path: '.env' });
 
 const connectionString = process.env.DATABASE_URL ?? '';
 
@@ -13,13 +10,14 @@ const globalForDb = globalThis as unknown as {
   client: ReturnType<typeof postgres> | undefined;
 };
 
-// コネクションプール設定
+// コネクションプール設定（Edge Runtime互換）
 const client =
   globalForDb.client ??
   postgres(connectionString, {
     max: 10, // 最大接続数（開発環境では少なめに）
     idle_timeout: 20, // アイドル接続を20秒後にクローズ
     connect_timeout: 10, // 接続タイムアウト10秒
+    prepare: false, // Edge Runtime / Serverless環境での互換性のため
   });
 
 if (process.env.NODE_ENV !== 'production') {

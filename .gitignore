@@ -65,5 +65,9 @@ src/lib/db/migrations
 .cursor
 .claude/settings.local.json
 
-# Local Netlify folder
+# OpenNext / Cloudflare build output
+.open-next
+.wrangler
+
+# Netlify build output
 .netlify
