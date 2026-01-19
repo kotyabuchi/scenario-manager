@@ -3,7 +3,6 @@
 import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { X } from 'lucide-react';
 
 import { type SearchFormValues, searchFormSchema } from './schema';
 import * as styles from './styles';
@@ -189,17 +188,6 @@ export const SearchPanel = ({
     [watchSystems, setValue],
   );
 
-  const handleSystemRemove = useCallback(
-    (systemId: string) => {
-      const current = watchSystems || [];
-      setValue(
-        'systems',
-        current.filter((id) => id !== systemId),
-      );
-    },
-    [watchSystems, setValue],
-  );
-
   const handlePhaseToggle = useCallback(
     (phase: string) => {
       const current = watchPhases || [];
@@ -226,40 +214,24 @@ export const SearchPanel = ({
     onSearch(data);
   };
 
-  const getSystemName = (systemId: string) => {
-    return systems.find((s) => s.systemId === systemId)?.name ?? systemId;
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.searchPanel}>
       <div className={styles.searchPanelRow}>
         <fieldset className={styles.searchPanelField}>
           <legend className={styles.searchPanelLabel}>システム</legend>
           <div className={styles.searchPanelChips}>
-            {watchSystems?.map((systemId) => (
+            {systems.slice(0, 5).map((system) => (
               <button
-                key={systemId}
+                key={system.systemId}
                 type="button"
-                className={styles.chip({ selected: true })}
-                onClick={() => handleSystemRemove(systemId)}
+                className={styles.chip({
+                  selected: watchSystems?.includes(system.systemId),
+                })}
+                onClick={() => handleSystemToggle(system.systemId)}
               >
-                {getSystemName(systemId)}
-                <X size={14} />
+                {system.name}
               </button>
             ))}
-            {systems
-              .filter((s) => !watchSystems?.includes(s.systemId))
-              .slice(0, 5)
-              .map((system) => (
-                <button
-                  key={system.systemId}
-                  type="button"
-                  className={styles.chip({ selected: false })}
-                  onClick={() => handleSystemToggle(system.systemId)}
-                >
-                  {system.name}
-                </button>
-              ))}
           </div>
         </fieldset>
       </div>

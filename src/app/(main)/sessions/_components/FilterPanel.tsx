@@ -1,7 +1,5 @@
 'use client';
 
-import { X } from 'lucide-react';
-
 import * as styles from './styles';
 
 import type {
@@ -47,27 +45,11 @@ export const FilterPanel = ({
     onFilterChange(newRoles, selectedStatuses, selectedSystems);
   };
 
-  const handleRoleRemove = (role: RoleFilterValue) => {
-    onFilterChange(
-      selectedRoles.filter((r) => r !== role),
-      selectedStatuses,
-      selectedSystems,
-    );
-  };
-
   const handleStatusToggle = (status: StatusFilterValue) => {
     const newStatuses = selectedStatuses.includes(status)
       ? selectedStatuses.filter((s) => s !== status)
       : [...selectedStatuses, status];
     onFilterChange(selectedRoles, newStatuses, selectedSystems);
-  };
-
-  const handleStatusRemove = (status: StatusFilterValue) => {
-    onFilterChange(
-      selectedRoles,
-      selectedStatuses.filter((s) => s !== status),
-      selectedSystems,
-    );
   };
 
   const handleSystemToggle = (systemId: string) => {
@@ -77,105 +59,59 @@ export const FilterPanel = ({
     onFilterChange(selectedRoles, selectedStatuses, newSystems);
   };
 
-  const handleSystemRemove = (systemId: string) => {
-    onFilterChange(
-      selectedRoles,
-      selectedStatuses,
-      selectedSystems.filter((id) => id !== systemId),
-    );
-  };
-
-  const getSystemName = (systemId: string) => {
-    return systems.find((s) => s.systemId === systemId)?.name ?? systemId;
-  };
-
   return (
     <div className={styles.filterPanel}>
       <fieldset className={styles.searchPanelField}>
         <legend className={styles.searchPanelLabel}>役割</legend>
         <div className={styles.searchPanelChips}>
-          {selectedRoles.map((role) => (
+          {roleOptions.map((option) => (
             <button
-              key={role}
+              key={option.value}
               type="button"
-              className={styles.chip({ selected: true })}
-              onClick={() => handleRoleRemove(role)}
+              className={styles.chip({
+                selected: selectedRoles.includes(option.value),
+              })}
+              onClick={() => handleRoleToggle(option.value)}
             >
-              {roleOptions.find((o) => o.value === role)?.label}
-              <X size={14} />
+              {option.label}
             </button>
           ))}
-          {roleOptions
-            .filter((o) => !selectedRoles.includes(o.value))
-            .map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={styles.chip({ selected: false })}
-                onClick={() => handleRoleToggle(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
         </div>
       </fieldset>
 
       <fieldset className={styles.searchPanelField}>
         <legend className={styles.searchPanelLabel}>状態</legend>
         <div className={styles.searchPanelChips}>
-          {selectedStatuses.map((status) => (
+          {statusOptions.map((option) => (
             <button
-              key={status}
+              key={option.value}
               type="button"
-              className={styles.chip({ selected: true })}
-              onClick={() => handleStatusRemove(status)}
+              className={styles.chip({
+                selected: selectedStatuses.includes(option.value),
+              })}
+              onClick={() => handleStatusToggle(option.value)}
             >
-              {statusOptions.find((o) => o.value === status)?.label}
-              <X size={14} />
+              {option.label}
             </button>
           ))}
-          {statusOptions
-            .filter((o) => !selectedStatuses.includes(o.value))
-            .map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={styles.chip({ selected: false })}
-                onClick={() => handleStatusToggle(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
         </div>
       </fieldset>
 
       <fieldset className={styles.searchPanelField}>
         <legend className={styles.searchPanelLabel}>システム</legend>
         <div className={styles.searchPanelChips}>
-          {selectedSystems.map((systemId) => (
+          {systems.slice(0, 5).map((system) => (
             <button
-              key={systemId}
+              key={system.systemId}
               type="button"
-              className={styles.chip({ selected: true })}
-              onClick={() => handleSystemRemove(systemId)}
+              className={styles.chip({
+                selected: selectedSystems.includes(system.systemId),
+              })}
+              onClick={() => handleSystemToggle(system.systemId)}
             >
-              {getSystemName(systemId)}
-              <X size={14} />
+              {system.name}
             </button>
           ))}
-          {systems
-            .filter((s) => !selectedSystems.includes(s.systemId))
-            .slice(0, 5)
-            .map((system) => (
-              <button
-                key={system.systemId}
-                type="button"
-                className={styles.chip({ selected: false })}
-                onClick={() => handleSystemToggle(system.systemId)}
-              >
-                {system.name}
-              </button>
-            ))}
         </div>
       </fieldset>
     </div>
