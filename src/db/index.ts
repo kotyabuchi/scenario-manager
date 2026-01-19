@@ -6,7 +6,6 @@ import * as schema from './schema';
 
 config({ path: '.env.local' });
 
-// biome-ignore lint/complexity/useLiteralKeys: Typescriptの型推論が効かないため
 const connectionString = process.env['DATABASE_URL'] ?? '';
 
 // グローバルシングルトンパターン（開発環境でのHMRによる接続リークを防止）

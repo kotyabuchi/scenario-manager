@@ -6,7 +6,7 @@ import { UpcomingSessions } from './_components/UpcomingSessions';
 import { getNewScenarios, getUpcomingSessions } from './adapter';
 import * as styles from './styles';
 
-import { getUser } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata = {
   title: 'ホーム',
@@ -14,7 +14,10 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const user = await getUser();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // 未ログインの場合はルートページにリダイレクト
   if (!user) {
@@ -40,7 +43,7 @@ export default async function HomePage() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>ホーム</h1>
         <p className={styles.pageSubtitle}>
-          ようこそ、{user.user_metadata?.full_name ?? user.email}さん
+          ようこそ、{user.user_metadata?.['full_name'] ?? user.email}さん
         </p>
       </div>
 

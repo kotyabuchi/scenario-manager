@@ -9,7 +9,10 @@ type Tag = InferSelectModel<typeof tags>;
 // ページ固有の型（リレーション込み）
 type ScenarioWithRelations = Scenario & {
   system: ScenarioSystem;
-  scenarioTags: { tag: Tag }[];
+  scenarioTags?: { tag: Tag }[];
+  tags?: Tag[];
+  averageRating?: number | null;
+  reviewCount?: number;
 };
 
 // 検索パラメータ

@@ -10,7 +10,6 @@ export default defineConfig({
   out: './supabase/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    // biome-ignore lint/complexity/useLiteralKeys: Typescriptの型推論が効かないため
     url: process.env['DATABASE_URL'] ?? '',
   },
 });

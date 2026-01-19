@@ -2,10 +2,12 @@ import { AlertCircle } from 'lucide-react';
 
 import * as styles from './styles';
 
-import type { FieldError as RHFFieldError } from 'react-hook-form';
-
 type Props = {
-  error: RHFFieldError | undefined;
+  error:
+    | {
+        message?: string;
+      }
+    | undefined;
 };
 
 /**

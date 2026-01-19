@@ -1,7 +1,7 @@
 import { desc, eq, inArray, or } from 'drizzle-orm';
 
+import { db } from '@/db';
 import { gameSessions, scenarios, sessionParticipants } from '@/db/schema';
-import { db } from '@/lib/db';
 import { err, ok, type Result } from '@/types/result';
 
 import type { NewScenario, UpcomingSession } from './interface';
@@ -25,7 +25,9 @@ export const getUpcomingSessions = async (
       return ok([]);
     }
 
-    const sessionIds = participantSessions.map((p) => p.sessionId);
+    const sessionIds = participantSessions.map(
+      (p: { sessionId: string }) => p.sessionId,
+    );
 
     // セッション情報を取得（RECRUITING/PREPARATION/IN_PROGRESS）
     const sessions = await db.query.gameSessions.findMany({
@@ -65,7 +67,7 @@ export const getNewScenarios = async (): Promise<Result<NewScenario[]>> => {
     const newScenarios = await db.query.scenarios.findMany({
       with: {
         system: true,
-        tags: {
+        scenarioTags: {
           with: {
             tag: true,
           },
@@ -75,7 +77,7 @@ export const getNewScenarios = async (): Promise<Result<NewScenario[]>> => {
       limit: 3,
     });
 
-    return ok(newScenarios);
+    return ok(newScenarios as NewScenario[]);
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }

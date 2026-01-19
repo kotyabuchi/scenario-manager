@@ -31,7 +31,7 @@ export type UpcomingSession = GameSession & {
 // 新着シナリオ（リレーション込み）
 export type NewScenario = Scenario & {
   system: ScenarioSystem;
-  tags: Array<{
+  scenarioTags: Array<{
     tag: Tag;
   }>;
 };

@@ -6,9 +6,7 @@ const optionalNumber = (min: number, max: number, fieldName: string) =>
     (val) =>
       val === '' || val === undefined || val === null ? undefined : val,
     z.coerce
-      .number({
-        invalid_type_error: `${fieldName}は数値で入力してください`,
-      })
+      .number()
       .min(min, `${fieldName}は${min}以上で入力してください`)
       .max(max, `${fieldName}は${max}以下で入力してください`)
       .optional(),

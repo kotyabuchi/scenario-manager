@@ -23,7 +23,7 @@ export const NewScenarios = ({ scenarios }: NewScenariosProps) => {
           key={scenario.scenarioId}
           scenario={{
             ...scenario,
-            tags: scenario.tags.map((t) => t.tag),
+            tags: scenario.scenarioTags.map((t) => t.tag),
             averageRating: null,
             reviewCount: 0,
           }}

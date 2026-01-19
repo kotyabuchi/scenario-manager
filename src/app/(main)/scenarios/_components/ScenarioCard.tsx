@@ -10,7 +10,11 @@ import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 import type { ScenarioCardProps } from '../interface';
 
 export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
-  const tags = scenario.scenarioTags.map((st) => st.tag).slice(0, 3);
+  const tags = scenario.tags
+    ? scenario.tags.slice(0, 3)
+    : scenario.scenarioTags
+      ? scenario.scenarioTags.map((st) => st.tag).slice(0, 3)
+      : [];
 
   // TODO: 実際のお気に入り数と連携
   const favoriteCount = 0;
