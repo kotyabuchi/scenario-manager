@@ -68,7 +68,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
         条件に一致するセッションが見つかりませんでした
       </p>
       <p className={styles.sessionListEmptyText}>
-        条件を緩めて再検索してみてください
+        条件を変えて、もう一度探してみませんか？
       </p>
       <div className={styles.sessionListEmptyActions}>
         {onReset && (

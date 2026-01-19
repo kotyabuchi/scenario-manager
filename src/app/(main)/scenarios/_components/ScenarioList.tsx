@@ -1,3 +1,5 @@
+import { Search } from 'lucide-react';
+
 import { ScenarioCard } from './ScenarioCard';
 import * as styles from './styles';
 
@@ -15,9 +17,12 @@ export const ScenarioList = ({ scenarios, isLoading }: ScenarioListProps) => {
   if (scenarios.length === 0) {
     return (
       <div className={styles.scenarioListEmpty}>
-        <span className={styles.scenarioListEmptyIcon}>📭</span>
+        <Search className={styles.scenarioListEmptyIcon} />
         <span className={styles.scenarioListEmptyText}>
           条件に一致するシナリオが見つかりませんでした
+        </span>
+        <span className={styles.scenarioListEmptySubtext}>
+          条件を変えて、もう一度探してみませんか？
         </span>
       </div>
     );

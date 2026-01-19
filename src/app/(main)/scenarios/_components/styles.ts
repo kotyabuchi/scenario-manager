@@ -233,6 +233,12 @@ export const scenarioListEmptyText = css({
   textAlign: 'center',
 });
 
+export const scenarioListEmptySubtext = css({
+  fontSize: 'sm',
+  textAlign: 'center',
+  color: 'text.muted',
+});
+
 // SearchPanel スタイル
 export const searchPanel = css({
   display: 'flex',
