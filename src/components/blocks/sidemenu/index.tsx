@@ -2,6 +2,7 @@
 
 import {
   BookOpen,
+  Calendar,
   House,
   LogIn,
   LogOut,
@@ -37,6 +38,11 @@ const menuItems: MenuItemType[] = [
     href: '/scenarios',
     icon: BookOpen,
     text: 'シナリオ',
+  },
+  {
+    href: '/sessions',
+    icon: Calendar,
+    text: 'セッション',
   },
   {
     href: '/users',
