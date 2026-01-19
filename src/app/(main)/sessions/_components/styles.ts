@@ -632,7 +632,7 @@ export const calendarDayNumber = cva({
         h: '24px',
         borderRadius: 'full',
         bg: 'primary.default',
-        color: 'white',
+        color: 'primary.foreground.white',
       },
     },
   },

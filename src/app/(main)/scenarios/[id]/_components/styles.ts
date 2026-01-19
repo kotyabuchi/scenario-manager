@@ -290,7 +290,7 @@ export const section_ctaButton = css({
   px: 'lg',
   py: 'sm',
   bg: 'primary.500',
-  color: 'white',
+  color: 'primary.foreground.white',
   fontSize: 'sm',
   fontWeight: 'medium',
   borderRadius: 'lg',
@@ -315,7 +315,7 @@ export const section_actionButton = css({
   px: 'md',
   py: 'xs',
   bg: 'primary.500',
-  color: 'white',
+  color: 'primary.foreground.white',
   fontSize: 'sm',
   fontWeight: 'medium',
   borderRadius: 'md',
@@ -410,7 +410,7 @@ export const videoCard_spoilerOverlay = css({
   gap: 'sm',
   bg: 'overlay.dark',
   backdropFilter: 'blur(8px)',
-  color: 'white',
+  color: 'primary.foreground.white',
   cursor: 'pointer',
   transition: 'opacity 0.2s',
   border: 'none',
@@ -689,7 +689,7 @@ export const fabButton = cva({
     active: {
       true: {
         bg: 'primary.500',
-        color: 'white',
+        color: 'primary.foreground.white',
       },
       false: {
         bg: 'bg.card',

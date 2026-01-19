@@ -199,7 +199,7 @@ export const editForm_submitButton = css({
   py: '3',
   px: '4',
   bg: 'primary.600',
-  color: 'white',
+  color: 'primary.foreground.white',
   borderRadius: 'lg',
   fontWeight: 'medium',
   cursor: 'pointer',

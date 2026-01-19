@@ -56,7 +56,7 @@ export const discordButton = css({
   py: '3',
   px: '4',
   bg: 'discord.default',
-  color: 'white',
+  color: 'primary.foreground.white',
   borderRadius: 'lg',
   fontWeight: 'medium',
   cursor: 'pointer',
