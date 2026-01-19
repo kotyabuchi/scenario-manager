@@ -146,7 +146,7 @@ export const editForm_input = css({
   fontSize: 'sm',
   outline: 'none',
   transition: 'border-color 0.2s',
-  _focus: {
+  _focusVisible: {
     borderColor: 'primary.500',
     boxShadow: '0 0 0 1px var(--colors-primary-500)',
   },
@@ -180,7 +180,7 @@ export const editForm_textarea = css({
   resize: 'vertical',
   minH: '100px',
   transition: 'border-color 0.2s',
-  _focus: {
+  _focusVisible: {
     borderColor: 'primary.500',
     boxShadow: '0 0 0 1px var(--colors-primary-500)',
   },

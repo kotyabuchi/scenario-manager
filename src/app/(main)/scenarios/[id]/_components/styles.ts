@@ -488,7 +488,8 @@ export const reviewFilter_select = css({
   border: 'none',
   color: 'text.primary',
   cursor: 'pointer',
-  _focus: {
+  outline: 'none',
+  _focusVisible: {
     outline: '2px solid',
     outlineColor: 'primary.500',
     outlineOffset: '2px',

@@ -394,7 +394,7 @@ export const selectInput = css({
   _hover: {
     bg: 'bg.emphasized',
   },
-  _focus: {
+  _focusVisible: {
     bg: 'bg.emphasized',
     shadow: '0 0 0 2px {colors.primary.focusRing}',
   },
@@ -513,7 +513,7 @@ export const dateInput = css({
   _hover: {
     bg: 'bg.emphasized',
   },
-  _focus: {
+  _focusVisible: {
     bg: 'bg.emphasized',
     shadow: '0 0 0 2px {colors.primary.focusRing}',
   },
