@@ -1,18 +1,12 @@
 'use client';
 
-import { useOptimistic, useTransition } from 'react';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { isNil } from 'ramda';
 
-import { useSystemMessage } from '@/hooks/useSystemMessage';
 import { css } from '@/styled-system/css';
 
 type ScenarioHeaderProps = {
   scenarioName: string;
-  currentUserId?: string;
-  isFavorite: boolean;
-  onToggleFavorite: () => Promise<void>;
 };
 
 const header = css({
@@ -51,66 +45,7 @@ const header_title = css({
   whiteSpace: 'nowrap',
 });
 
-const header_actions = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
-  flexShrink: 0,
-});
-
-const favoriteButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '40px',
-  height: '40px',
-  borderRadius: 'full',
-  bg: 'transparent',
-  fontSize: 'xl',
-  cursor: 'pointer',
-  transition: 'all 0.2s',
-  border: 'none',
-  _hover: {
-    bg: 'bg.subtle',
-  },
-});
-
-const favoriteButton_active = css({
-  color: 'primary.500',
-});
-
-const favoriteButton_inactive = css({
-  color: 'text.muted',
-});
-
-export const ScenarioHeader = ({
-  scenarioName,
-  currentUserId,
-  isFavorite,
-  onToggleFavorite,
-}: ScenarioHeaderProps) => {
-  const isLoggedIn = !isNil(currentUserId);
-  const [, startTransition] = useTransition();
-  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
-  const { showSuccess, showError } = useSystemMessage();
-
-  const handleFavoriteClick = () => {
-    const willBeFavorite = !optimisticFavorite;
-    startTransition(async () => {
-      setOptimisticFavorite(willBeFavorite);
-      try {
-        await onToggleFavorite();
-        showSuccess(
-          willBeFavorite
-            ? 'お気に入りに追加しました'
-            : 'お気に入りから削除しました',
-        );
-      } catch {
-        showError('お気に入りの更新に失敗しました');
-      }
-    });
-  };
-
+export const ScenarioHeader = ({ scenarioName }: ScenarioHeaderProps) => {
   return (
     <header className={header}>
       <Link
@@ -122,24 +57,6 @@ export const ScenarioHeader = ({
       </Link>
 
       <h1 className={header_title}>{scenarioName}</h1>
-
-      {isLoggedIn && (
-        <div className={header_actions}>
-          <button
-            type="button"
-            className={`${favoriteButton} ${optimisticFavorite ? favoriteButton_active : favoriteButton_inactive}`}
-            onClick={handleFavoriteClick}
-            aria-label={
-              optimisticFavorite ? 'お気に入りから削除' : 'お気に入りに追加'
-            }
-          >
-            <Star
-              size={20}
-              fill={optimisticFavorite ? 'currentColor' : 'none'}
-            />
-          </button>
-        </div>
-      )}
     </header>
   );
 };

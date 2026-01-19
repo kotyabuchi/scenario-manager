@@ -14,6 +14,7 @@ import {
   MoreVertical,
   Pencil,
   Share2,
+  Star,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -24,8 +25,10 @@ import type { Route } from 'next';
 type ScenarioFABProps = {
   scenarioId: string;
   isPlayed: boolean;
+  isFavorite: boolean;
   canEdit: boolean;
   onTogglePlayed: () => Promise<void>;
+  onToggleFavorite: () => Promise<void>;
 };
 
 const fabContainer = css({
@@ -118,13 +121,16 @@ const checkMark = css({
 export const ScenarioFAB = ({
   scenarioId,
   isPlayed,
+  isFavorite,
   canEdit,
   onTogglePlayed,
+  onToggleFavorite,
 }: ScenarioFABProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [, startTransition] = useTransition();
   const [optimisticPlayed, setOptimisticPlayed] = useOptimistic(isPlayed);
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
 
   // クリック外で閉じる
   useEffect(() => {
@@ -155,6 +161,14 @@ export const ScenarioFAB = ({
     startTransition(async () => {
       setOptimisticPlayed(!optimisticPlayed);
       await onTogglePlayed();
+    });
+  };
+
+  const handleToggleFavorite = () => {
+    setIsMenuOpen(false);
+    startTransition(async () => {
+      setOptimisticFavorite(!optimisticFavorite);
+      await onToggleFavorite();
     });
   };
 
@@ -193,6 +207,20 @@ export const ScenarioFAB = ({
               {optimisticPlayed ? <Check size={16} /> : <Circle size={16} />}
               <span>プレイ済み登録</span>
               {optimisticPlayed && <Check size={16} className={checkMark} />}
+            </button>
+
+            <button
+              type="button"
+              className={menuItem}
+              role="menuitem"
+              onClick={handleToggleFavorite}
+            >
+              <Star
+                size={16}
+                fill={optimisticFavorite ? 'currentColor' : 'none'}
+              />
+              <span>お気に入り</span>
+              {optimisticFavorite && <Check size={16} className={checkMark} />}
             </button>
 
             {canEdit && (

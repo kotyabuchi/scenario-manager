@@ -101,12 +101,7 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
   return (
     <main className={styles.pageContainer}>
       {/* ヘッダー */}
-      <ScenarioHeader
-        scenarioName={scenario.name}
-        {...(currentUserId ? { currentUserId } : {})}
-        isFavorite={isFavorite}
-        onToggleFavorite={handleToggleFavorite}
-      />
+      <ScenarioHeader scenarioName={scenario.name} />
 
       {/* ファーストビュー: シナリオ基本情報 */}
       <ScenarioInfo scenario={scenario} />
@@ -135,8 +130,10 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
         <ScenarioFAB
           scenarioId={id}
           isPlayed={isPlayed}
+          isFavorite={isFavorite}
           canEdit={canEdit}
           onTogglePlayed={handleTogglePlayed}
+          onToggleFavorite={handleToggleFavorite}
         />
       )}
     </main>
