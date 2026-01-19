@@ -118,18 +118,25 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
           })}
         >
           {currentView === 'list' && (
-            <div className={styles.sortSelect}>
-              <span>ソート:</span>
-              <select
-                value={queryParams.upcomingSort}
-                onChange={(e) =>
-                  handleSortChange(e.target.value as UpcomingSortOption)
-                }
-                className={selectStyle}
+            <div className={styles.sortTabs}>
+              <button
+                type="button"
+                onClick={() => handleSortChange('date_asc')}
+                className={styles.sortTabButton({
+                  active: queryParams.upcomingSort === 'date_asc',
+                })}
               >
-                <option value="date_asc">開催日順（近い順）</option>
-                <option value="created_desc">登録日順</option>
-              </select>
+                開催日順
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSortChange('created_desc')}
+                className={styles.sortTabButton({
+                  active: queryParams.upcomingSort === 'created_desc',
+                })}
+              >
+                登録日順
+              </button>
             </div>
           )}
 

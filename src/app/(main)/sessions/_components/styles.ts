@@ -376,10 +376,41 @@ export const resultCount = css({
   color: 'text.secondary',
 });
 
-export const sortSelect = css({
+export const sortTabs = css({
   display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
+  gap: 'xs',
+});
+
+export const sortTabButton = cva({
+  base: {
+    px: 'md',
+    py: 'xs',
+    fontSize: 'sm',
+    fontWeight: 'medium',
+    color: 'text.muted',
+    bg: 'transparent',
+    border: 'none',
+    borderRadius: 'md',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    _hover: {
+      color: 'text.primary',
+      bg: 'bg.subtle',
+    },
+  },
+  variants: {
+    active: {
+      true: {
+        color: 'primary.default',
+        bg: 'chip.default',
+        fontWeight: 'bold',
+        _hover: {
+          color: 'primary.default',
+          bg: 'chip.default',
+        },
+      },
+    },
+  },
 });
 
 export const selectInput = css({

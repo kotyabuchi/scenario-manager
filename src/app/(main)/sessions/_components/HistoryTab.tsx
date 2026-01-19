@@ -227,18 +227,25 @@ export const HistoryTab = ({
           参加履歴: {searchResult.totalCount}件
         </div>
 
-        <div className={styles.sortSelect}>
-          <span>ソート:</span>
-          <select
-            value={queryParams.historySort}
-            onChange={(e) =>
-              handleSortChange(e.target.value as HistorySortOption)
-            }
-            className={selectStyle}
+        <div className={styles.sortTabs}>
+          <button
+            type="button"
+            onClick={() => handleSortChange('date_desc')}
+            className={styles.sortTabButton({
+              active: queryParams.historySort === 'date_desc',
+            })}
           >
-            <option value="date_desc">開催日順（新しい順）</option>
-            <option value="date_asc">開催日順（古い順）</option>
-          </select>
+            新しい順
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSortChange('date_asc')}
+            className={styles.sortTabButton({
+              active: queryParams.historySort === 'date_asc',
+            })}
+          >
+            古い順
+          </button>
         </div>
       </div>
 

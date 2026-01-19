@@ -32,22 +32,6 @@ type PublicTabProps = {
   };
 };
 
-const selectStyle = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  cursor: 'pointer',
-  _focus: {
-    borderColor: 'primary.500',
-  },
-});
-
 // API用のクエリ文字列を構築
 const buildApiQueryString = (
   params: {
@@ -252,19 +236,34 @@ export const PublicTab = ({
           検索結果: {searchResult.totalCount}件
         </div>
 
-        <div className={styles.sortSelect}>
-          <span>ソート:</span>
-          <select
-            value={queryParams.publicSort}
-            onChange={(e) =>
-              handleSortChange(e.target.value as PublicSortOption)
-            }
-            className={selectStyle}
+        <div className={styles.sortTabs}>
+          <button
+            type="button"
+            onClick={() => handleSortChange('date_asc')}
+            className={styles.sortTabButton({
+              active: queryParams.publicSort === 'date_asc',
+            })}
           >
-            <option value="date_asc">開催日順（近い順）</option>
-            <option value="created_desc">新着順</option>
-            <option value="slots_desc">残り枠順</option>
-          </select>
+            開催日順
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSortChange('created_desc')}
+            className={styles.sortTabButton({
+              active: queryParams.publicSort === 'created_desc',
+            })}
+          >
+            新着順
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSortChange('slots_desc')}
+            className={styles.sortTabButton({
+              active: queryParams.publicSort === 'slots_desc',
+            })}
+          >
+            残り枠順
+          </button>
         </div>
       </div>
 

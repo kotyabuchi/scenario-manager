@@ -292,18 +292,35 @@ export const ReviewSection = ({
 
       {/* フィルタパネル */}
       <div className={styles.reviewFilter}>
-        <label className={styles.reviewFilter_label}>
-          ソート:
-          <select
-            className={styles.reviewFilter_select}
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value as ReviewSortOption)}
+        <div className={styles.reviewFilter_sortTabs}>
+          <button
+            type="button"
+            onClick={() => setSortOption('newest')}
+            className={styles.reviewFilter_sortTabButton({
+              active: sortOption === 'newest',
+            })}
           >
-            <option value="newest">新着順</option>
-            <option value="rating_high">高評価順</option>
-            <option value="rating_low">低評価順</option>
-          </select>
-        </label>
+            新着順
+          </button>
+          <button
+            type="button"
+            onClick={() => setSortOption('rating_high')}
+            className={styles.reviewFilter_sortTabButton({
+              active: sortOption === 'rating_high',
+            })}
+          >
+            高評価順
+          </button>
+          <button
+            type="button"
+            onClick={() => setSortOption('rating_low')}
+            className={styles.reviewFilter_sortTabButton({
+              active: sortOption === 'rating_low',
+            })}
+          >
+            低評価順
+          </button>
+        </div>
         <label className={styles.reviewFilter_toggle}>
           <input
             type="checkbox"

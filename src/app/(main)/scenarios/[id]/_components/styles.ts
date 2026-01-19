@@ -487,25 +487,40 @@ export const reviewFilter = css({
   borderRadius: 'lg',
 });
 
-export const reviewFilter_label = css({
-  fontSize: 'sm',
-  color: 'text.secondary',
+export const reviewFilter_sortTabs = css({
+  display: 'flex',
+  gap: 'xs',
 });
 
-export const reviewFilter_select = css({
-  px: 'md',
-  py: 'sm',
-  fontSize: 'sm',
-  bg: 'bg.card',
-  borderRadius: 'md',
-  border: 'none',
-  color: 'text.primary',
-  cursor: 'pointer',
-  outline: 'none',
-  _focusVisible: {
-    outline: '2px solid',
-    outlineColor: 'primary.500',
-    outlineOffset: '2px',
+export const reviewFilter_sortTabButton = cva({
+  base: {
+    px: 'md',
+    py: 'xs',
+    fontSize: 'sm',
+    fontWeight: 'medium',
+    color: 'text.muted',
+    bg: 'transparent',
+    border: 'none',
+    borderRadius: 'md',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    _hover: {
+      color: 'text.primary',
+      bg: 'bg.subtle',
+    },
+  },
+  variants: {
+    active: {
+      true: {
+        color: 'primary.default',
+        bg: 'chip.default',
+        fontWeight: 'bold',
+        _hover: {
+          color: 'primary.default',
+          bg: 'chip.default',
+        },
+      },
+    },
   },
 });
 
