@@ -8,16 +8,22 @@ import {
 import type { NextRequest } from 'next/server';
 import type {
   HistorySortOption,
-  RoleFilter,
-  StatusFilter,
+  RoleFilterValue,
+  StatusFilterValue,
 } from '@/app/(main)/sessions/interface';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
   const sort = (searchParams.get('sort') ?? 'date_desc') as HistorySortOption;
-  const role = (searchParams.get('role') ?? 'all') as RoleFilter;
-  const status = (searchParams.get('status') ?? 'all') as StatusFilter;
+  const rolesParam = searchParams.get('roles');
+  const roles = rolesParam
+    ? (rolesParam.split(',').filter(Boolean) as RoleFilterValue[])
+    : [];
+  const statusesParam = searchParams.get('statuses');
+  const statuses = statusesParam
+    ? (statusesParam.split(',').filter(Boolean) as StatusFilterValue[])
+    : [];
   const systemsParam = searchParams.get('systems');
   const systems = systemsParam ? systemsParam.split(',').filter(Boolean) : [];
   const limit = Number(searchParams.get('limit') ?? '20');
@@ -32,8 +38,8 @@ export async function GET(request: NextRequest) {
 
   const result = await getHistorySessions(
     userId,
-    role,
-    status,
+    roles,
+    statuses,
     systems,
     sort,
     limit,

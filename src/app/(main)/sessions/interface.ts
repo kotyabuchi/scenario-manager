@@ -71,11 +71,11 @@ type UpcomingSortOption = 'date_asc' | 'created_desc';
 // ソートオプション（履歴）
 type HistorySortOption = 'date_desc' | 'date_asc';
 
-// 役割フィルタ
-type RoleFilter = 'all' | 'keeper' | 'player' | 'spectator';
+// 役割フィルタ（複数選択）
+type RoleFilterValue = 'keeper' | 'player' | 'spectator';
 
-// ステータスフィルタ
-type StatusFilter = 'all' | 'completed' | 'cancelled';
+// ステータスフィルタ（複数選択）
+type StatusFilterValue = 'completed' | 'cancelled';
 
 // セッションフェーズ
 type SessionPhase =
@@ -134,8 +134,8 @@ export type {
   PublicSortOption,
   UpcomingSortOption,
   HistorySortOption,
-  RoleFilter,
-  StatusFilter,
+  RoleFilterValue,
+  StatusFilterValue,
   SessionPhase,
   PublicSearchParams,
   SearchResult,

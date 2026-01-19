@@ -15,17 +15,17 @@ import { css } from '@/styled-system/css';
 import type {
   HistorySortOption,
   MySessionWithRole,
-  RoleFilter,
+  RoleFilterValue,
   ScenarioSystem,
   SearchResult,
-  StatusFilter,
+  StatusFilterValue,
 } from '../interface';
 
 type HistoryTabProps = {
   systems: ScenarioSystem[];
   initialResult: SearchResult<MySessionWithRole>;
-  initialRole: RoleFilter;
-  initialStatus: StatusFilter;
+  initialRoles: RoleFilterValue[];
+  initialStatuses: StatusFilterValue[];
   initialSystems: string[];
 };
 
@@ -54,8 +54,8 @@ const selectStyle = css({
 export const HistoryTab = ({
   systems,
   initialResult,
-  initialRole,
-  initialStatus,
+  initialRoles,
+  initialStatuses,
   initialSystems,
 }: HistoryTabProps) => {
   const [isPending, startTransition] = useTransition();
@@ -69,29 +69,34 @@ export const HistoryTab = ({
 
   const [searchResult, setSearchResult] =
     useState<SearchResult<MySessionWithRole>>(initialResult);
-  const [currentRole, setCurrentRole] = useState<RoleFilter>(initialRole);
-  const [currentStatus, setCurrentStatus] =
-    useState<StatusFilter>(initialStatus);
+  const [currentRoles, setCurrentRoles] =
+    useState<RoleFilterValue[]>(initialRoles);
+  const [currentStatuses, setCurrentStatuses] =
+    useState<StatusFilterValue[]>(initialStatuses);
   const [currentSystems, setCurrentSystems] =
     useState<string[]>(initialSystems);
   const [offset, setOffset] = useState(0);
 
   const buildQueryString = useCallback(
     (
-      role: RoleFilter,
-      status: StatusFilter,
+      roles: RoleFilterValue[],
+      statuses: StatusFilterValue[],
       systemIds: string[],
       sort: HistorySortOption,
       limit: number,
       offsetVal: number,
     ) => {
       const params = new URLSearchParams({
-        role,
-        status,
         sort,
         limit: String(limit),
         offset: String(offsetVal),
       });
+      if (roles.length > 0) {
+        params.set('roles', roles.join(','));
+      }
+      if (statuses.length > 0) {
+        params.set('statuses', statuses.join(','));
+      }
       if (systemIds.length > 0) {
         params.set('systems', systemIds.join(','));
       }
@@ -101,22 +106,26 @@ export const HistoryTab = ({
   );
 
   const handleFilterChange = useCallback(
-    async (role: RoleFilter, status: StatusFilter, systemIds: string[]) => {
-      setCurrentRole(role);
-      setCurrentStatus(status);
+    async (
+      roles: RoleFilterValue[],
+      statuses: StatusFilterValue[],
+      systemIds: string[],
+    ) => {
+      setCurrentRoles(roles);
+      setCurrentStatuses(statuses);
       setCurrentSystems(systemIds);
       setOffset(0);
 
       await setQueryParams({
-        role,
-        status,
+        roles: roles.length > 0 ? roles : [],
+        statuses: statuses.length > 0 ? statuses : [],
         historySystems: systemIds.length > 0 ? systemIds : [],
       });
 
       try {
         const query = buildQueryString(
-          role,
-          status,
+          roles,
+          statuses,
           systemIds,
           queryParams.historySort,
           20,
@@ -142,8 +151,8 @@ export const HistoryTab = ({
 
       try {
         const query = buildQueryString(
-          currentRole,
-          currentStatus,
+          currentRoles,
+          currentStatuses,
           currentSystems,
           newSort,
           20,
@@ -160,8 +169,8 @@ export const HistoryTab = ({
       }
     },
     [
-      currentRole,
-      currentStatus,
+      currentRoles,
+      currentStatuses,
       currentSystems,
       setQueryParams,
       buildQueryString,
@@ -173,8 +182,8 @@ export const HistoryTab = ({
 
     try {
       const query = buildQueryString(
-        currentRole,
-        currentStatus,
+        currentRoles,
+        currentStatuses,
         currentSystems,
         queryParams.historySort,
         20,
@@ -194,8 +203,8 @@ export const HistoryTab = ({
     }
   }, [
     offset,
-    currentRole,
-    currentStatus,
+    currentRoles,
+    currentStatuses,
     currentSystems,
     queryParams.historySort,
     buildQueryString,
@@ -207,8 +216,8 @@ export const HistoryTab = ({
     <>
       <FilterPanel
         systems={systems}
-        selectedRole={currentRole}
-        selectedStatus={currentStatus}
+        selectedRoles={currentRoles}
+        selectedStatuses={currentStatuses}
         selectedSystems={currentSystems}
         onFilterChange={handleFilterChange}
       />

@@ -4,62 +4,83 @@ import { X } from 'lucide-react';
 
 import * as styles from './styles';
 
-import { css } from '@/styled-system/css';
-
-import type { RoleFilter, ScenarioSystem, StatusFilter } from '../interface';
+import type {
+  RoleFilterValue,
+  ScenarioSystem,
+  StatusFilterValue,
+} from '../interface';
 
 type FilterPanelProps = {
   systems: ScenarioSystem[];
-  selectedRole: RoleFilter;
-  selectedStatus: StatusFilter;
+  selectedRoles: RoleFilterValue[];
+  selectedStatuses: StatusFilterValue[];
   selectedSystems: string[];
   onFilterChange: (
-    role: RoleFilter,
-    status: StatusFilter,
+    roles: RoleFilterValue[],
+    statuses: StatusFilterValue[],
     systems: string[],
   ) => void;
 };
 
-// セレクトのスタイル（ボーダーレス、背景色で区別）
-const selectStyle = css({
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  transition: 'all 0.2s',
-  shadow: 'sm',
-  cursor: 'pointer',
-  _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focus: {
-    bg: 'bg.emphasized',
-    shadow: '0 0 0 2px {colors.primary.focusRing}',
-  },
-});
+const roleOptions: { value: RoleFilterValue; label: string }[] = [
+  { value: 'keeper', label: 'GM' },
+  { value: 'player', label: 'PL' },
+  { value: 'spectator', label: '観戦' },
+];
+
+const statusOptions: { value: StatusFilterValue; label: string }[] = [
+  { value: 'completed', label: '完了' },
+  { value: 'cancelled', label: 'キャンセル' },
+];
 
 export const FilterPanel = ({
   systems,
-  selectedRole,
-  selectedStatus,
+  selectedRoles,
+  selectedStatuses,
   selectedSystems,
   onFilterChange,
 }: FilterPanelProps) => {
+  const handleRoleToggle = (role: RoleFilterValue) => {
+    const newRoles = selectedRoles.includes(role)
+      ? selectedRoles.filter((r) => r !== role)
+      : [...selectedRoles, role];
+    onFilterChange(newRoles, selectedStatuses, selectedSystems);
+  };
+
+  const handleRoleRemove = (role: RoleFilterValue) => {
+    onFilterChange(
+      selectedRoles.filter((r) => r !== role),
+      selectedStatuses,
+      selectedSystems,
+    );
+  };
+
+  const handleStatusToggle = (status: StatusFilterValue) => {
+    const newStatuses = selectedStatuses.includes(status)
+      ? selectedStatuses.filter((s) => s !== status)
+      : [...selectedStatuses, status];
+    onFilterChange(selectedRoles, newStatuses, selectedSystems);
+  };
+
+  const handleStatusRemove = (status: StatusFilterValue) => {
+    onFilterChange(
+      selectedRoles,
+      selectedStatuses.filter((s) => s !== status),
+      selectedSystems,
+    );
+  };
+
   const handleSystemToggle = (systemId: string) => {
     const newSystems = selectedSystems.includes(systemId)
       ? selectedSystems.filter((id) => id !== systemId)
       : [...selectedSystems, systemId];
-    onFilterChange(selectedRole, selectedStatus, newSystems);
+    onFilterChange(selectedRoles, selectedStatuses, newSystems);
   };
 
   const handleSystemRemove = (systemId: string) => {
     onFilterChange(
-      selectedRole,
-      selectedStatus,
+      selectedRoles,
+      selectedStatuses,
       selectedSystems.filter((id) => id !== systemId),
     );
   };
@@ -70,55 +91,66 @@ export const FilterPanel = ({
 
   return (
     <div className={styles.filterPanel}>
-      <div className={styles.filterRow}>
-        <div className={styles.filterItem}>
-          <label htmlFor="role-filter" className={styles.filterLabel}>
-            役割
-          </label>
-          <select
-            id="role-filter"
-            value={selectedRole}
-            onChange={(e) =>
-              onFilterChange(
-                e.target.value as RoleFilter,
-                selectedStatus,
-                selectedSystems,
-              )
-            }
-            className={selectStyle}
-          >
-            <option value="all">すべて</option>
-            <option value="keeper">GM</option>
-            <option value="player">PL</option>
-            <option value="spectator">観戦</option>
-          </select>
+      <fieldset className={styles.searchPanelField}>
+        <legend className={styles.searchPanelLabel}>役割</legend>
+        <div className={styles.searchPanelChips}>
+          {selectedRoles.map((role) => (
+            <button
+              key={role}
+              type="button"
+              className={styles.chip({ selected: true })}
+              onClick={() => handleRoleRemove(role)}
+            >
+              {roleOptions.find((o) => o.value === role)?.label}
+              <X size={14} />
+            </button>
+          ))}
+          {roleOptions
+            .filter((o) => !selectedRoles.includes(o.value))
+            .map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={styles.chip({ selected: false })}
+                onClick={() => handleRoleToggle(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
         </div>
+      </fieldset>
 
-        <div className={styles.filterItem}>
-          <label htmlFor="status-filter" className={styles.filterLabel}>
-            状態
-          </label>
-          <select
-            id="status-filter"
-            value={selectedStatus}
-            onChange={(e) =>
-              onFilterChange(
-                selectedRole,
-                e.target.value as StatusFilter,
-                selectedSystems,
-              )
-            }
-            className={selectStyle}
-          >
-            <option value="all">すべて</option>
-            <option value="completed">完了のみ</option>
-            <option value="cancelled">キャンセルのみ</option>
-          </select>
+      <fieldset className={styles.searchPanelField}>
+        <legend className={styles.searchPanelLabel}>状態</legend>
+        <div className={styles.searchPanelChips}>
+          {selectedStatuses.map((status) => (
+            <button
+              key={status}
+              type="button"
+              className={styles.chip({ selected: true })}
+              onClick={() => handleStatusRemove(status)}
+            >
+              {statusOptions.find((o) => o.value === status)?.label}
+              <X size={14} />
+            </button>
+          ))}
+          {statusOptions
+            .filter((o) => !selectedStatuses.includes(o.value))
+            .map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={styles.chip({ selected: false })}
+                onClick={() => handleStatusToggle(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
         </div>
-      </div>
+      </fieldset>
 
-      <fieldset className={styles.filterField}>
-        <legend className={styles.filterLabel}>システム</legend>
+      <fieldset className={styles.searchPanelField}>
+        <legend className={styles.searchPanelLabel}>システム</legend>
         <div className={styles.searchPanelChips}>
           {selectedSystems.map((systemId) => (
             <button

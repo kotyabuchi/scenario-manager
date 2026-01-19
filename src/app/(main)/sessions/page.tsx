@@ -21,8 +21,8 @@ import { Button } from '@/components/elements/button/button';
 import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 import type {
   HistorySortOption,
-  RoleFilter,
-  StatusFilter,
+  RoleFilterValue,
+  StatusFilterValue,
   UpcomingSortOption,
 } from './interface';
 
@@ -50,8 +50,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
   const publicSort = parsed.publicSort;
   const upcomingSort = parsed.upcomingSort as UpcomingSortOption;
   const historySort = parsed.historySort as HistorySortOption;
-  const roleFilter = parsed.role as RoleFilter;
-  const statusFilter = parsed.status as StatusFilter;
+  const rolesFilter = (parsed.roles ?? []) as RoleFilterValue[];
+  const statusesFilter = (parsed.statuses ?? []) as StatusFilterValue[];
 
   // 現在のユーザーIDを取得
   const userId = await getCurrentUserId();
@@ -110,8 +110,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
     isLoggedIn && userId
       ? await getHistorySessions(
           userId,
-          roleFilter,
-          statusFilter,
+          rolesFilter,
+          statusesFilter,
           historySystems,
           historySort,
           20,
@@ -193,8 +193,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
           <HistoryTab
             systems={systemsResult.data}
             initialResult={historyInitialResult}
-            initialRole={roleFilter}
-            initialStatus={statusFilter}
+            initialRoles={rolesFilter}
+            initialStatuses={statusesFilter}
             initialSystems={historySystems}
           />
         )}

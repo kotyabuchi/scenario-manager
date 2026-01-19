@@ -9,9 +9,9 @@ import type {
   HistorySortOption,
   PublicSearchParams,
   PublicSortOption,
-  RoleFilter,
+  RoleFilterValue,
   SessionPhase,
-  StatusFilter,
+  StatusFilterValue,
   TabType,
   UpcomingSortOption,
   ViewType,
@@ -32,12 +32,6 @@ const upcomingSortOptions = ['date_asc', 'created_desc'] as const;
 // 履歴ソートオプション
 const historySortOptions = ['date_desc', 'date_asc'] as const;
 
-// 役割フィルタオプション
-const roleFilterOptions = ['all', 'keeper', 'player', 'spectator'] as const;
-
-// ステータスフィルタオプション
-const statusFilterOptions = ['all', 'completed', 'cancelled'] as const;
-
 // 検索パラメータのパーサー定義
 export const searchParamsParsers = {
   // 共通
@@ -49,8 +43,8 @@ export const searchParamsParsers = {
     parseAsStringLiteral(upcomingSortOptions).withDefault('date_asc'),
 
   // 履歴タブ
-  role: parseAsStringLiteral(roleFilterOptions).withDefault('all'),
-  status: parseAsStringLiteral(statusFilterOptions).withDefault('all'),
+  roles: parseAsArrayOf(parseAsString, ',').withDefault([]),
+  statuses: parseAsArrayOf(parseAsString, ',').withDefault([]),
   historySystems: parseAsArrayOf(parseAsString, ',').withDefault([]),
   historySort:
     parseAsStringLiteral(historySortOptions).withDefault('date_desc'),
@@ -109,6 +103,6 @@ export type {
   PublicSortOption,
   UpcomingSortOption,
   HistorySortOption,
-  RoleFilter,
-  StatusFilter,
+  RoleFilterValue,
+  StatusFilterValue,
 };

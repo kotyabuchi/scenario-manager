@@ -23,10 +23,10 @@ import type {
   PublicSearchParams,
   PublicSession,
   PublicSortOption,
-  RoleFilter,
+  RoleFilterValue,
   ScenarioSystem,
   SearchResult,
-  StatusFilter,
+  StatusFilterValue,
   UpcomingSortOption,
 } from './interface';
 
@@ -298,34 +298,37 @@ export const getUpcomingSessions = async (
  */
 export const getHistorySessions = async (
   userId: string,
-  roleFilter: RoleFilter = 'all',
-  statusFilter: StatusFilter = 'all',
+  roles: RoleFilterValue[] = [],
+  statuses: StatusFilterValue[] = [],
   systemIds: string[] = [],
   sort: HistorySortOption = 'date_desc',
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<MySessionWithRole>>> => {
   try {
-    // 履歴のフェーズ
+    // 履歴のフェーズ（空の場合は全て表示）
     const targetPhases =
-      statusFilter === 'completed'
-        ? [SessionPhases.COMPLETED.value]
-        : statusFilter === 'cancelled'
-          ? [SessionPhases.CANCELLED.value]
-          : [SessionPhases.COMPLETED.value, SessionPhases.CANCELLED.value];
+      statuses.length === 0
+        ? [SessionPhases.COMPLETED.value, SessionPhases.CANCELLED.value]
+        : statuses.map((s) =>
+            s === 'completed'
+              ? SessionPhases.COMPLETED.value
+              : SessionPhases.CANCELLED.value,
+          );
 
     // ユーザーが参加しているセッションを取得（役割フィルタ付き）
     const participantConditions = [eq(sessionParticipants.userId, userId)];
 
-    if (roleFilter !== 'all') {
-      const roleValue =
-        roleFilter === 'keeper'
+    if (roles.length > 0) {
+      const roleValues = roles.map((r) =>
+        r === 'keeper'
           ? ParticipantTypes.KEEPER.value
-          : roleFilter === 'player'
+          : r === 'player'
             ? ParticipantTypes.PLAYER.value
-            : ParticipantTypes.SPECTATOR.value;
+            : ParticipantTypes.SPECTATOR.value,
+      );
       participantConditions.push(
-        eq(sessionParticipants.participantType, roleValue),
+        inArray(sessionParticipants.participantType, roleValues),
       );
     }
 
