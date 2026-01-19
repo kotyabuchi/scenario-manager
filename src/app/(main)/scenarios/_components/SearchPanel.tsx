@@ -9,6 +9,7 @@ import { isNil } from 'ramda';
 import { type SearchFormValues, searchFormSchema } from './schema';
 import * as styles from './styles';
 
+import { FieldError } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
 import { Chip } from '@/components/elements/Chip';
 import { css } from '@/styled-system/css';
@@ -54,7 +55,14 @@ export const SearchPanel = ({
 
   const [isExpanded, setIsExpanded] = useState(hasInitialConditions);
 
-  const { register, handleSubmit, watch, setValue, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       systemIds: defaultParams?.systemIds ?? [],
@@ -185,6 +193,8 @@ export const SearchPanel = ({
               />
               <span>人</span>
             </div>
+            <FieldError error={errors.minPlayer} />
+            <FieldError error={errors.maxPlayer} />
           </fieldset>
 
           <fieldset className={styles.searchPanelField}>
@@ -209,6 +219,8 @@ export const SearchPanel = ({
               />
               <span>時間</span>
             </div>
+            <FieldError error={errors.minPlaytime} />
+            <FieldError error={errors.maxPlaytime} />
           </fieldset>
         </div>
 

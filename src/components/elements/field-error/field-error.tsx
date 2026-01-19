@@ -1,3 +1,5 @@
+import { AlertCircle } from 'lucide-react';
+
 import * as styles from './styles';
 
 import type { FieldError as RHFFieldError } from 'react-hook-form';
@@ -16,9 +18,10 @@ export const FieldError = ({ error }: Props) => {
   }
 
   return (
-    <p role="alert" className={styles.fieldError}>
-      {error.message}
-    </p>
+    <div role="alert" className={styles.fieldError}>
+      <AlertCircle className={styles.fieldError_icon} />
+      <span className={styles.fieldError_message}>{error.message}</span>
+    </div>
   );
 };
 

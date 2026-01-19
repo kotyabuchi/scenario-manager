@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type SearchFormValues, searchFormSchema } from './schema';
 import * as styles from './styles';
 
+import { FieldError } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
 import { Chip } from '@/components/elements/Chip';
 import { SessionPhases } from '@/db/enum';
@@ -131,17 +132,23 @@ export const SearchPanel = ({
   onSearch,
   onReset,
 }: SearchPanelProps) => {
-  const { register, handleSubmit, setValue, watch, reset } =
-    useForm<SearchFormValues>({
-      resolver: zodResolver(searchFormSchema),
-      defaultValues: {
-        systems: selectedSystems,
-        phases: selectedPhases,
-        dateFrom,
-        dateTo,
-        q: scenarioName,
-      },
-    });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<SearchFormValues>({
+    resolver: zodResolver(searchFormSchema),
+    defaultValues: {
+      systems: selectedSystems,
+      phases: selectedPhases,
+      dateFrom,
+      dateTo,
+      q: scenarioName,
+    },
+  });
 
   const watchSystems = watch('systems');
   const watchPhases = watch('phases');
@@ -279,6 +286,8 @@ export const SearchPanel = ({
               />
             </div>
           )}
+          <FieldError error={errors.dateFrom} />
+          <FieldError error={errors.dateTo} />
         </div>
       </div>
 
