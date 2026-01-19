@@ -69,7 +69,7 @@ const fabButton_menu = css({
 const menuDropdown = css({
   position: 'absolute',
   bottom: '100%',
-  right: 0,
+  left: 0,
   mb: 'sm',
   minW: '180px',
   bg: 'bg.card',
