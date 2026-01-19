@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
   const sort = (searchParams.get('sort') ?? 'date_desc') as HistorySortOption;
   const role = (searchParams.get('role') ?? 'all') as RoleFilter;
   const status = (searchParams.get('status') ?? 'all') as StatusFilter;
+  const systemsParam = searchParams.get('systems');
+  const systems = systemsParam ? systemsParam.split(',').filter(Boolean) : [];
   const limit = Number(searchParams.get('limit') ?? '20');
   const offset = Number(searchParams.get('offset') ?? '0');
 
@@ -32,6 +34,7 @@ export async function GET(request: NextRequest) {
     userId,
     role,
     status,
+    systems,
     sort,
     limit,
     offset,

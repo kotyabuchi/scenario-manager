@@ -51,6 +51,7 @@ export const searchParamsParsers = {
   // 履歴タブ
   role: parseAsStringLiteral(roleFilterOptions).withDefault('all'),
   status: parseAsStringLiteral(statusFilterOptions).withDefault('all'),
+  historySystems: parseAsArrayOf(parseAsString, ',').withDefault([]),
   historySort:
     parseAsStringLiteral(historySortOptions).withDefault('date_desc'),
 

@@ -16,14 +16,17 @@ import type {
   HistorySortOption,
   MySessionWithRole,
   RoleFilter,
+  ScenarioSystem,
   SearchResult,
   StatusFilter,
 } from '../interface';
 
 type HistoryTabProps = {
+  systems: ScenarioSystem[];
   initialResult: SearchResult<MySessionWithRole>;
   initialRole: RoleFilter;
   initialStatus: StatusFilter;
+  initialSystems: string[];
 };
 
 const selectStyle = css({
@@ -43,9 +46,11 @@ const selectStyle = css({
 });
 
 export const HistoryTab = ({
+  systems,
   initialResult,
   initialRole,
   initialStatus,
+  initialSystems,
 }: HistoryTabProps) => {
   const [isPending, startTransition] = useTransition();
 
@@ -61,23 +66,57 @@ export const HistoryTab = ({
   const [currentRole, setCurrentRole] = useState<RoleFilter>(initialRole);
   const [currentStatus, setCurrentStatus] =
     useState<StatusFilter>(initialStatus);
+  const [currentSystems, setCurrentSystems] =
+    useState<string[]>(initialSystems);
   const [offset, setOffset] = useState(0);
 
+  const buildQueryString = useCallback(
+    (
+      role: RoleFilter,
+      status: StatusFilter,
+      systemIds: string[],
+      sort: HistorySortOption,
+      limit: number,
+      offsetVal: number,
+    ) => {
+      const params = new URLSearchParams({
+        role,
+        status,
+        sort,
+        limit: String(limit),
+        offset: String(offsetVal),
+      });
+      if (systemIds.length > 0) {
+        params.set('systems', systemIds.join(','));
+      }
+      return params.toString();
+    },
+    [],
+  );
+
   const handleFilterChange = useCallback(
-    async (role: RoleFilter, status: StatusFilter) => {
+    async (role: RoleFilter, status: StatusFilter, systemIds: string[]) => {
       setCurrentRole(role);
       setCurrentStatus(status);
+      setCurrentSystems(systemIds);
       setOffset(0);
 
       await setQueryParams({
         role,
         status,
+        historySystems: systemIds.length > 0 ? systemIds : [],
       });
 
       try {
-        const response = await fetch(
-          `/api/sessions/history?role=${role}&status=${status}&sort=${queryParams.historySort}&limit=20&offset=0`,
+        const query = buildQueryString(
+          role,
+          status,
+          systemIds,
+          queryParams.historySort,
+          20,
+          0,
         );
+        const response = await fetch(`/api/sessions/history?${query}`);
         if (response.ok) {
           const data =
             (await response.json()) as SearchResult<MySessionWithRole>;
@@ -87,7 +126,7 @@ export const HistoryTab = ({
         console.error('Filter change failed:', error);
       }
     },
-    [queryParams.historySort, setQueryParams],
+    [queryParams.historySort, setQueryParams, buildQueryString],
   );
 
   const handleSortChange = useCallback(
@@ -96,9 +135,15 @@ export const HistoryTab = ({
       setOffset(0);
 
       try {
-        const response = await fetch(
-          `/api/sessions/history?role=${currentRole}&status=${currentStatus}&sort=${newSort}&limit=20&offset=0`,
+        const query = buildQueryString(
+          currentRole,
+          currentStatus,
+          currentSystems,
+          newSort,
+          20,
+          0,
         );
+        const response = await fetch(`/api/sessions/history?${query}`);
         if (response.ok) {
           const data =
             (await response.json()) as SearchResult<MySessionWithRole>;
@@ -108,16 +153,28 @@ export const HistoryTab = ({
         console.error('Sort change failed:', error);
       }
     },
-    [currentRole, currentStatus, setQueryParams],
+    [
+      currentRole,
+      currentStatus,
+      currentSystems,
+      setQueryParams,
+      buildQueryString,
+    ],
   );
 
   const handleLoadMore = useCallback(async () => {
     const newOffset = offset + 20;
 
     try {
-      const response = await fetch(
-        `/api/sessions/history?role=${currentRole}&status=${currentStatus}&sort=${queryParams.historySort}&limit=20&offset=${newOffset}`,
+      const query = buildQueryString(
+        currentRole,
+        currentStatus,
+        currentSystems,
+        queryParams.historySort,
+        20,
+        newOffset,
       );
+      const response = await fetch(`/api/sessions/history?${query}`);
       if (response.ok) {
         const data = (await response.json()) as SearchResult<MySessionWithRole>;
         setSearchResult((prev) => ({
@@ -129,15 +186,24 @@ export const HistoryTab = ({
     } catch (error) {
       console.error('Load more failed:', error);
     }
-  }, [offset, currentRole, currentStatus, queryParams.historySort]);
+  }, [
+    offset,
+    currentRole,
+    currentStatus,
+    currentSystems,
+    queryParams.historySort,
+    buildQueryString,
+  ]);
 
   const hasMore = searchResult.sessions.length < searchResult.totalCount;
 
   return (
     <>
       <FilterPanel
+        systems={systems}
         selectedRole={currentRole}
         selectedStatus={currentStatus}
+        selectedSystems={currentSystems}
         onFilterChange={handleFilterChange}
       />
 

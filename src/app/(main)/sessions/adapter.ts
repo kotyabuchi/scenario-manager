@@ -300,6 +300,7 @@ export const getHistorySessions = async (
   userId: string,
   roleFilter: RoleFilter = 'all',
   statusFilter: StatusFilter = 'all',
+  systemIds: string[] = [],
   sort: HistorySortOption = 'date_desc',
   limit = 20,
   offset = 0,
@@ -351,13 +352,42 @@ export const getHistorySessions = async (
         ? desc(gameSchedules.scheduleDate)
         : asc(gameSchedules.scheduleDate);
 
+    // システムIDフィルタ用のシナリオIDを取得
+    let filteredSessionIds = sessionIds;
+    if (systemIds.length > 0) {
+      const scenariosWithSystems = await db
+        .select({ scenarioId: scenarios.scenarioId })
+        .from(scenarios)
+        .where(inArray(scenarios.scenarioSystemId, systemIds));
+      const scenarioIdSet = new Set(
+        scenariosWithSystems.map((s) => s.scenarioId),
+      );
+
+      // セッションIDをフィルタ（シナリオIDで絞り込み）
+      const sessionsWithScenarios = await db
+        .select({
+          gameSessionId: gameSessions.gameSessionId,
+          scenarioId: gameSessions.scenarioId,
+        })
+        .from(gameSessions)
+        .where(inArray(gameSessions.gameSessionId, sessionIds));
+
+      filteredSessionIds = sessionsWithScenarios
+        .filter((s) => scenarioIdSet.has(s.scenarioId))
+        .map((s) => s.gameSessionId);
+
+      if (filteredSessionIds.length === 0) {
+        return ok({ sessions: [], totalCount: 0 });
+      }
+    }
+
     // 件数取得
     const countResult = await db
       .select({ count: sql<number>`count(*)` })
       .from(gameSessions)
       .where(
         and(
-          inArray(gameSessions.gameSessionId, sessionIds),
+          inArray(gameSessions.gameSessionId, filteredSessionIds),
           inArray(gameSessions.sessionPhase, targetPhases),
         ),
       );
@@ -367,7 +397,7 @@ export const getHistorySessions = async (
     // セッション取得
     const result = await db.query.gameSessions.findMany({
       where: and(
-        inArray(gameSessions.gameSessionId, sessionIds),
+        inArray(gameSessions.gameSessionId, filteredSessionIds),
         inArray(gameSessions.sessionPhase, targetPhases),
       ),
       with: {

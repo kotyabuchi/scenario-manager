@@ -139,6 +139,12 @@ const MySessionCard = ({
 }) => {
   const scheduleDate = session.schedule?.scheduleDate ?? null;
 
+  // GMを参加者から探す
+  const keeper = session.participants.find(
+    (p) => p.participantType === 'KEEPER',
+  );
+  const keeperName = keeper?.user?.nickname ?? null;
+
   return (
     <Link
       href={`/sessions/${session.gameSessionId}`}
@@ -178,6 +184,12 @@ const MySessionCard = ({
         </span>
 
         <div className={styles.sessionCard_meta}>
+          {keeperName && (
+            <div className={styles.sessionCard_metaItem}>
+              <User className={styles.sessionCard_metaIcon} />
+              <span>GM: {keeperName}</span>
+            </div>
+          )}
           <div className={styles.sessionCard_metaItem}>
             <Users className={styles.sessionCard_metaIcon} />
             <span>参加者: {session.participants.length}人</span>

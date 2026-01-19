@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
@@ -69,6 +69,58 @@ const phaseOptions = [
   },
 ] as const;
 
+// 日付プリセットオプション
+type DatePreset = 'none' | 'weekend' | 'nextWeek' | 'thisMonth' | 'custom';
+
+const datePresetOptions: { value: DatePreset; label: string }[] = [
+  { value: 'none', label: '指定なし' },
+  { value: 'weekend', label: '今週末' },
+  { value: 'nextWeek', label: '来週' },
+  { value: 'thisMonth', label: '今月' },
+  { value: 'custom', label: '日付指定' },
+];
+
+// 日付プリセットから範囲を計算
+const getDateRangeFromPreset = (
+  preset: DatePreset,
+): { from: string; to: string } => {
+  const today = new Date();
+  const formatDate = (d: Date): string => {
+    const result = d.toISOString().split('T')[0];
+    return result ?? '';
+  };
+
+  switch (preset) {
+    case 'weekend': {
+      // 今週の土曜〜日曜
+      const dayOfWeek = today.getDay();
+      const daysUntilSaturday = (6 - dayOfWeek + 7) % 7 || 7;
+      const saturday = new Date(today);
+      saturday.setDate(today.getDate() + daysUntilSaturday);
+      const sunday = new Date(saturday);
+      sunday.setDate(saturday.getDate() + 1);
+      return { from: formatDate(saturday), to: formatDate(sunday) };
+    }
+    case 'nextWeek': {
+      // 来週の月曜〜日曜
+      const dayOfWeek = today.getDay();
+      const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
+      const nextMonday = new Date(today);
+      nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+      const nextSunday = new Date(nextMonday);
+      nextSunday.setDate(nextMonday.getDate() + 6);
+      return { from: formatDate(nextMonday), to: formatDate(nextSunday) };
+    }
+    case 'thisMonth': {
+      // 今月の今日〜月末
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      return { from: formatDate(today), to: formatDate(endOfMonth) };
+    }
+    default:
+      return { from: '', to: '' };
+  }
+};
+
 export const SearchPanel = ({
   systems,
   selectedSystems,
@@ -93,6 +145,38 @@ export const SearchPanel = ({
 
   const watchSystems = watch('systems');
   const watchPhases = watch('phases');
+  const watchDateFrom = watch('dateFrom');
+  const watchDateTo = watch('dateTo');
+
+  // 現在の日付範囲からプリセットを推測
+  const currentPreset = useMemo((): DatePreset => {
+    if (!watchDateFrom && !watchDateTo) return 'none';
+
+    // 各プリセットの範囲と比較
+    for (const preset of ['weekend', 'nextWeek', 'thisMonth'] as const) {
+      const range = getDateRangeFromPreset(preset);
+      if (range.from === watchDateFrom && range.to === watchDateTo) {
+        return preset;
+      }
+    }
+    return 'custom';
+  }, [watchDateFrom, watchDateTo]);
+
+  const handleDatePresetChange = useCallback(
+    (preset: DatePreset) => {
+      if (preset === 'none') {
+        setValue('dateFrom', '');
+        setValue('dateTo', '');
+      } else if (preset === 'custom') {
+        // カスタム選択時は現在の値を維持
+      } else {
+        const range = getDateRangeFromPreset(preset);
+        setValue('dateFrom', range.from);
+        setValue('dateTo', range.to);
+      }
+    },
+    [setValue],
+  );
 
   const handleSystemToggle = useCallback(
     (systemId: string) => {
@@ -203,20 +287,38 @@ export const SearchPanel = ({
       <div className={styles.searchPanelRow}>
         <div className={styles.searchPanelField}>
           <span className={styles.searchPanelLabel}>開催日</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <input
-              type="date"
-              {...register('dateFrom')}
-              className={styles.dateInput}
-              aria-label="開催日（開始）"
-            />
-            <span>〜</span>
-            <input
-              type="date"
-              {...register('dateTo')}
-              className={styles.dateInput}
-              aria-label="開催日（終了）"
-            />
+          <div className={styles.datePresetContainer}>
+            <div className={styles.searchPanelChips}>
+              {datePresetOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={styles.chip({
+                    selected: currentPreset === option.value,
+                  })}
+                  onClick={() => handleDatePresetChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {currentPreset === 'custom' && (
+              <div className={styles.dateInputContainer}>
+                <input
+                  type="date"
+                  {...register('dateFrom')}
+                  className={styles.dateInput}
+                  aria-label="開催日（開始）"
+                />
+                <span>〜</span>
+                <input
+                  type="date"
+                  {...register('dateTo')}
+                  className={styles.dateInput}
+                  aria-label="開催日（終了）"
+                />
+              </div>
+            )}
           </div>
         </div>
 

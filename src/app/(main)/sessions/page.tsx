@@ -102,6 +102,9 @@ export default async function SessionsPage({ searchParams }: PageProps) {
       ? upcomingResult.data
       : { sessions: [], totalCount: 0 };
 
+  // 履歴タブのシステムフィルタ
+  const historySystems = parsed.historySystems ?? [];
+
   // 参加履歴タブの初期データ（ログイン済みの場合のみ）
   const historyResult =
     isLoggedIn && userId
@@ -109,6 +112,7 @@ export default async function SessionsPage({ searchParams }: PageProps) {
           userId,
           roleFilter,
           statusFilter,
+          historySystems,
           historySort,
           20,
           0,
@@ -187,9 +191,11 @@ export default async function SessionsPage({ searchParams }: PageProps) {
         )}
         {tab === 'history' && isLoggedIn && (
           <HistoryTab
+            systems={systemsResult.data}
             initialResult={historyInitialResult}
             initialRole={roleFilter}
             initialStatus={statusFilter}
+            initialSystems={historySystems}
           />
         )}
         {tab === 'history' && !isLoggedIn && (

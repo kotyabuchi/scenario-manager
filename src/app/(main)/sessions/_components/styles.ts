@@ -457,6 +457,18 @@ export const filterLabel = css({
 });
 
 // 日付入力スタイル
+export const datePresetContainer = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'sm',
+});
+
+export const dateInputContainer = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'sm',
+});
+
 export const dateInput = css({
   px: 'sm',
   py: 'xs',

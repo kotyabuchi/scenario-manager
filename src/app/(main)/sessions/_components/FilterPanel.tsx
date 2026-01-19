@@ -1,15 +1,23 @@
 'use client';
 
+import { X } from 'lucide-react';
+
 import * as styles from './styles';
 
 import { css } from '@/styled-system/css';
 
-import type { RoleFilter, StatusFilter } from '../interface';
+import type { RoleFilter, ScenarioSystem, StatusFilter } from '../interface';
 
 type FilterPanelProps = {
+  systems: ScenarioSystem[];
   selectedRole: RoleFilter;
   selectedStatus: StatusFilter;
-  onFilterChange: (role: RoleFilter, status: StatusFilter) => void;
+  selectedSystems: string[];
+  onFilterChange: (
+    role: RoleFilter,
+    status: StatusFilter,
+    systems: string[],
+  ) => void;
 };
 
 const selectStyle = css({
@@ -29,10 +37,31 @@ const selectStyle = css({
 });
 
 export const FilterPanel = ({
+  systems,
   selectedRole,
   selectedStatus,
+  selectedSystems,
   onFilterChange,
 }: FilterPanelProps) => {
+  const handleSystemToggle = (systemId: string) => {
+    const newSystems = selectedSystems.includes(systemId)
+      ? selectedSystems.filter((id) => id !== systemId)
+      : [...selectedSystems, systemId];
+    onFilterChange(selectedRole, selectedStatus, newSystems);
+  };
+
+  const handleSystemRemove = (systemId: string) => {
+    onFilterChange(
+      selectedRole,
+      selectedStatus,
+      selectedSystems.filter((id) => id !== systemId),
+    );
+  };
+
+  const getSystemName = (systemId: string) => {
+    return systems.find((s) => s.systemId === systemId)?.name ?? systemId;
+  };
+
   return (
     <div className={styles.filterPanel}>
       <div className={styles.filterRow}>
@@ -44,7 +73,11 @@ export const FilterPanel = ({
             id="role-filter"
             value={selectedRole}
             onChange={(e) =>
-              onFilterChange(e.target.value as RoleFilter, selectedStatus)
+              onFilterChange(
+                e.target.value as RoleFilter,
+                selectedStatus,
+                selectedSystems,
+              )
             }
             className={selectStyle}
           >
@@ -63,7 +96,11 @@ export const FilterPanel = ({
             id="status-filter"
             value={selectedStatus}
             onChange={(e) =>
-              onFilterChange(selectedRole, e.target.value as StatusFilter)
+              onFilterChange(
+                selectedRole,
+                e.target.value as StatusFilter,
+                selectedSystems,
+              )
             }
             className={selectStyle}
           >
@@ -72,6 +109,38 @@ export const FilterPanel = ({
             <option value="cancelled">キャンセルのみ</option>
           </select>
         </div>
+      </div>
+
+      <div className={styles.filterRow}>
+        <fieldset className={styles.filterItem}>
+          <legend className={styles.filterLabel}>システム:</legend>
+          <div className={styles.searchPanelChips}>
+            {selectedSystems.map((systemId) => (
+              <button
+                key={systemId}
+                type="button"
+                className={styles.chip({ selected: true })}
+                onClick={() => handleSystemRemove(systemId)}
+              >
+                {getSystemName(systemId)}
+                <X size={14} />
+              </button>
+            ))}
+            {systems
+              .filter((s) => !selectedSystems.includes(s.systemId))
+              .slice(0, 5)
+              .map((system) => (
+                <button
+                  key={system.systemId}
+                  type="button"
+                  className={styles.chip({ selected: false })}
+                  onClick={() => handleSystemToggle(system.systemId)}
+                >
+                  {system.name}
+                </button>
+              ))}
+          </div>
+        </fieldset>
       </div>
     </div>
   );
