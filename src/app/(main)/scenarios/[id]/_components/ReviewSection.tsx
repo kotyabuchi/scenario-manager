@@ -370,7 +370,9 @@ export const ReviewSection = ({
       {/* もっと見るボタン（今後のページネーション用） */}
       {totalCount > reviews.length && (
         <div className={styles.loadMore}>
-          <Button variant="outline">もっと見る</Button>
+          <Button variant="outline">
+            もっと見る <ChevronDown size={16} />
+          </Button>
         </div>
       )}
     </section>

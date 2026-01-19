@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState, useTransition } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { useQueryStates } from 'nuqs';
 
 import { searchParamsParsers } from '../searchParams';
@@ -247,7 +248,7 @@ export const HistoryTab = ({
               })}
             >
               <Button variant="outline" onClick={handleLoadMore}>
-                もっと見る
+                もっと見る <ChevronDown size={16} />
               </Button>
             </div>
           )}
