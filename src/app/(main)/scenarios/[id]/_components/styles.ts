@@ -212,12 +212,25 @@ export const description_fadeout = css({
 });
 
 export const description_toggleButton = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'xs',
   mt: 'sm',
+  px: 'md',
+  py: 'xs',
+  bg: 'bg.card',
+  borderRadius: 'md',
   color: 'primary.600',
   fontSize: 'sm',
+  fontWeight: 'medium',
   cursor: 'pointer',
+  transition: 'all 0.2s',
+  shadow: 'sm',
+  border: 'none',
   _hover: {
-    textDecoration: 'underline',
+    bg: 'primary.subtle',
+    shadow: 'md',
+    transform: 'translateY(-1px)',
   },
 });
 

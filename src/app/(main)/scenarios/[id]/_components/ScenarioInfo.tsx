@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ExternalLink, Star } from 'lucide-react';
+import { ChevronDown, ChevronUp, ExternalLink, Star } from 'lucide-react';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -164,7 +164,15 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
                 className={styles.description_toggleButton}
                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
               >
-                {isDescriptionExpanded ? '閉じる' : '続きを読む'}
+                {isDescriptionExpanded ? (
+                  <>
+                    閉じる <ChevronUp size={16} />
+                  </>
+                ) : (
+                  <>
+                    続きを読む <ChevronDown size={16} />
+                  </>
+                )}
               </button>
             )}
           </div>
