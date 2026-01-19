@@ -32,7 +32,7 @@ export default function Home() {
             </Button>
           </Link>
           <Link href="/scenarios">
-            <Button size="lg" status="primary" variant="outline">
+            <Button size="lg" status="primary" variant="ghost">
               シナリオを探す
             </Button>
           </Link>
