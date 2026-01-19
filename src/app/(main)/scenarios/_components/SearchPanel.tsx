@@ -160,23 +160,6 @@ export const SearchPanel = ({
         </div>
       </fieldset>
 
-      {/* 詳細条件の展開/折りたたみボタン */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={styles.expandButton}
-      >
-        {isExpanded ? (
-          <>
-            詳細条件を閉じる <ChevronUp size={16} />
-          </>
-        ) : (
-          <>
-            詳細条件を開く <ChevronDown size={16} />
-          </>
-        )}
-      </button>
-
       {/* プレイ人数・時間（折りたたみ可能） */}
       <div className={styles.detailedConditions({ expanded: isExpanded })}>
         <div className={styles.searchPanelRow}>
@@ -258,6 +241,23 @@ export const SearchPanel = ({
           />
         </div>
       </div>
+
+      {/* 詳細条件の展開/折りたたみボタン */}
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className={styles.expandButton}
+      >
+        {isExpanded ? (
+          <>
+            詳細条件を閉じる <ChevronUp size={16} />
+          </>
+        ) : (
+          <>
+            詳細条件を開く <ChevronDown size={16} />
+          </>
+        )}
+      </button>
 
       {/* 検索ボタン */}
       <hr className={styles.searchDivider} />
