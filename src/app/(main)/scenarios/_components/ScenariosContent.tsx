@@ -27,22 +27,6 @@ type ScenariosContentProps = {
   initialParams: SearchParams;
 };
 
-const selectStyle = css({
-  px: 'sm',
-  py: 'xs',
-  border: '1px solid',
-  borderColor: 'border.500',
-  borderRadius: 'sm',
-  bg: 'bg.primary',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  cursor: 'pointer',
-  _focus: {
-    borderColor: 'primary.500',
-  },
-});
-
 // API用のクエリ文字列を構築
 const buildApiQueryString = (
   params: SearchParams,
@@ -202,18 +186,43 @@ export const ScenariosContent = ({
         検索結果: {searchResult.totalCount}件
       </div>
 
-      <div className={styles.sortSelect}>
-        <span>ソート:</span>
-        <select
-          value={queryParams.sort}
-          onChange={(e) => handleSortChange(e.target.value as SortOption)}
-          className={selectStyle}
+      <div className={styles.sortTabs}>
+        <button
+          type="button"
+          onClick={() => handleSortChange('newest')}
+          className={styles.sortTabButton({
+            active: queryParams.sort === 'newest',
+          })}
         >
-          <option value="newest">新着順</option>
-          <option value="rating">高評価順</option>
-          <option value="playtime_asc">プレイ時間（短い順）</option>
-          <option value="playtime_desc">プレイ時間（長い順）</option>
-        </select>
+          新着順
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSortChange('rating')}
+          className={styles.sortTabButton({
+            active: queryParams.sort === 'rating',
+          })}
+        >
+          高評価順
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSortChange('playtime_asc')}
+          className={styles.sortTabButton({
+            active: queryParams.sort === 'playtime_asc',
+          })}
+        >
+          短時間順
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSortChange('playtime_desc')}
+          className={styles.sortTabButton({
+            active: queryParams.sort === 'playtime_desc',
+          })}
+        >
+          長時間順
+        </button>
       </div>
 
       <ScenarioList scenarios={searchResult.scenarios} isLoading={isPending} />
