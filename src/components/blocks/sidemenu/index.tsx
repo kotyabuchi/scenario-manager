@@ -84,7 +84,11 @@ export const SideMenu = () => {
   };
 
   return (
-    <aside className={styles.sideMenu({ open })} onClick={handleToggle}>
+    <aside
+      className={styles.sideMenu({ open })}
+      onClick={handleToggle}
+      aria-label="メインナビゲーション"
+    >
       <VStack className={styles.pageMenuButtons}>
         {menuItems.map((item) => (
           <MenuItem

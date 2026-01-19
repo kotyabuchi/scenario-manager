@@ -23,7 +23,7 @@ export const menuItem = cva({
     variant: {
       default: {
         color: 'foreground.default',
-        _focus: {
+        _focusVisible: {
           outline: '2px solid {colors.primary.focusRing}',
         },
       },
@@ -34,7 +34,7 @@ export const menuItem = cva({
           background: 'primary.muted',
           color: 'primary.foreground.white',
         },
-        _focus: {
+        _focusVisible: {
           outline: '2px solid {colors.primary.focusRing}',
         },
       },
@@ -44,7 +44,7 @@ export const menuItem = cva({
         _hover: {
           background: 'primary.subtle',
         },
-        _focus: {
+        _focusVisible: {
           outline: '2px solid {colors.primary.focusRing}',
         },
       },
@@ -72,7 +72,7 @@ export const menuItem = cva({
         _hover: {
           background: 'primary.emphasized',
         },
-        _focus: {
+        _focusVisible: {
           outline: '2px solid {colors.primary.focusRing}',
           outlineOffset: '2px',
         },

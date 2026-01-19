@@ -31,6 +31,7 @@ export const MenuItem = ({
       type="button"
       className={styles.menuItem({ active, variant })}
       onClick={handleClick}
+      aria-label={text}
     >
       {IconComponent && (
         <IconComponent size={24} className={styles.menuItemIcon} />
