@@ -33,6 +33,7 @@ export const chip = cva({
         _hover: {
           bg: 'primary.emphasized',
           shadow: 'chip.selectedHover',
+          transform: 'translateY(-1px)',
         },
       },
       false: {
@@ -42,6 +43,7 @@ export const chip = cva({
         _hover: {
           bg: 'chip.hover',
           shadow: 'chip.hover',
+          transform: 'translateY(-1px)',
         },
       },
     },
