@@ -1,4 +1,4 @@
-import { css, cva } from '@/styled-system/css';
+import { css } from '@/styled-system/css';
 
 // ScenarioCard スタイル
 export const scenarioCard = css({
@@ -262,53 +262,6 @@ export const searchPanelChips = css({
   display: 'flex',
   flexWrap: 'wrap',
   gap: 'sm',
-});
-
-// チップ（タグ・システム選択ボタン）
-// 背景色と影でコントラストを確保
-export const chip = cva({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 'xs',
-    px: 'sm',
-    py: '5px',
-    fontSize: 'sm',
-    fontWeight: 'medium',
-    borderRadius: 'full',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-    border: 'none',
-    outline: 'none',
-    userSelect: 'none',
-    _focusVisible: {
-      boxShadow:
-        '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
-    },
-  },
-  variants: {
-    selected: {
-      true: {
-        bg: 'primary.default',
-        color: 'primary.foreground.white',
-        shadow: 'chip.selected',
-        _hover: {
-          bg: 'primary.emphasized',
-        },
-      },
-      false: {
-        bg: 'chip.default',
-        color: 'text.primary',
-        shadow: 'chip.default',
-        _hover: {
-          bg: 'chip.hover',
-        },
-      },
-    },
-  },
-  defaultVariants: {
-    selected: false,
-  },
 });
 
 export const searchDivider = css({
