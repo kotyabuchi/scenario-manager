@@ -13,11 +13,15 @@ export const hero = css({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  px: 'lg',
-  py: '4xl',
+  px: '24px',
+  py: '80px',
   bg: 'linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})',
   textAlign: 'center',
-  gap: 'xl',
+  gap: '24px',
+  md: {
+    py: '100px',
+    gap: '32px',
+  },
 });
 
 export const heroTitle = css({
@@ -48,12 +52,13 @@ export const heroSubtitle = css({
 
 export const heroCTA = css({
   display: 'flex',
-  gap: 'md',
+  gap: '16px',
   flexWrap: 'wrap',
   justifyContent: 'center',
   animation: 'fadeIn 0.8s ease forwards',
   animationDelay: '0.4s',
   opacity: 0,
+  mt: '8px',
 });
 
 // 機能紹介セクション
@@ -61,113 +66,90 @@ export const features = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  px: 'lg',
-  py: '4xl',
+  px: '24px',
+  py: '64px',
   bg: 'bg.base',
+  md: {
+    py: '80px',
+  },
 });
 
 export const featuresTitle = css({
   fontSize: '2xl',
   fontWeight: 'bold',
   color: 'text.primary',
-  mb: '2xl',
+  mb: '40px',
   textAlign: 'center',
   md: {
     fontSize: '3xl',
+    mb: '56px',
   },
 });
 
 export const featuresList = css({
   display: 'grid',
   gridTemplateColumns: '1fr',
-  gap: 'xl',
-  maxW: '1200px',
+  gap: '24px',
+  maxW: '1000px',
   w: '100%',
   md: {
     gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '32px',
   },
 });
 
-export const featureCard = css({
+// 共通のカードスタイル
+const featureCardBase = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
-  p: 'xl',
+  alignItems: 'center',
+  textAlign: 'center',
+  gap: '16px',
+  p: '32px',
   bg: 'bg.card',
-  borderRadius: 'xl',
+  borderRadius: '24px',
   shadow: 'card.default',
   transition: 'all 0.3s',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-4px)',
   },
-});
+} as const;
+
+export const featureCard = css(featureCardBase);
 
 export const featureCard_1 = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'md',
-  p: 'xl',
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  shadow: 'card.default',
-  transition: 'all 0.3s',
+  ...featureCardBase,
   animation: 'fadeIn 0.5s ease forwards',
   animationDelay: '0.1s',
   opacity: 0,
-  _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-4px)',
-  },
 });
 
 export const featureCard_2 = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'md',
-  p: 'xl',
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  shadow: 'card.default',
-  transition: 'all 0.3s',
+  ...featureCardBase,
   animation: 'fadeIn 0.5s ease forwards',
   animationDelay: '0.2s',
   opacity: 0,
-  _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-4px)',
-  },
 });
 
 export const featureCard_3 = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'md',
-  p: 'xl',
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  shadow: 'card.default',
-  transition: 'all 0.3s',
+  ...featureCardBase,
   animation: 'fadeIn 0.5s ease forwards',
   animationDelay: '0.3s',
   opacity: 0,
-  _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-4px)',
-  },
 });
 
 export const featureIcon = css({
   w: '48px',
   h: '48px',
   color: 'primary.default',
-  mb: 'sm',
 });
 
 export const featureCardTitle = css({
   fontSize: 'xl',
   fontWeight: 'bold',
   color: 'text.primary',
+  mt: '8px',
 });
 
 export const featureCardDescription = css({
@@ -179,8 +161,8 @@ export const featureCardDescription = css({
 // フッター
 export const footer = css({
   mt: 'auto',
-  py: 'xl',
-  px: 'lg',
+  py: '32px',
+  px: '24px',
   bg: 'bg.subtle',
   borderTop: '1px solid',
   borderColor: 'border.subtle',
