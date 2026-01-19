@@ -281,8 +281,6 @@ export const chip = cva({
     border: 'none',
     outline: 'none',
     userSelect: 'none',
-    position: 'relative',
-    // アクセシビリティ: フォーカスリング
     _focusVisible: {
       boxShadow:
         '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
@@ -294,28 +292,15 @@ export const chip = cva({
         bg: 'primary.default',
         color: 'primary.foreground.white',
         shadow: 'chip.selected',
-        transform: 'translateY(-1px)',
         _hover: {
           bg: 'primary.emphasized',
-          shadow: 'chip.selectedHover',
-        },
-        _active: {
-          transform: 'translateY(0)',
-          shadow: 'chip.default',
         },
       },
       false: {
-        // 背景色を薄く、影で輪郭を表現
         bg: 'chip.default',
         color: 'text.primary',
         shadow: 'chip.default',
         _hover: {
-          bg: 'chip.hover',
-          shadow: 'chip.hover',
-          transform: 'translateY(-1px)',
-        },
-        _active: {
-          transform: 'translateY(0)',
           bg: 'chip.hover',
         },
       },
@@ -323,22 +308,6 @@ export const chip = cva({
   },
   defaultVariants: {
     selected: false,
-  },
-});
-
-// 選択チップの削除ボタン（×）
-export const chipRemove = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '16px',
-  h: '16px',
-  ml: 'xs',
-  borderRadius: 'full',
-  bg: 'primary.foreground.white/20',
-  transition: 'background 0.15s',
-  _hover: {
-    bg: 'primary.foreground.white/40',
   },
 });
 

@@ -2,7 +2,6 @@
 
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { X } from 'lucide-react';
 import { isNil } from 'ramda';
 
 import { type SearchFormValues, searchFormSchema } from './schema';
@@ -148,11 +147,6 @@ export const SearchPanel = ({
               onClick={() => toggleSystem(system.systemId)}
             >
               {system.name}
-              {selectedSystemIds.includes(system.systemId) && (
-                <span className={styles.chipRemove}>
-                  <X size={12} />
-                </span>
-              )}
             </button>
           ))}
         </div>
@@ -223,11 +217,6 @@ export const SearchPanel = ({
               onClick={() => toggleTag(tag.tagId)}
             >
               {tag.name}
-              {selectedTagIds.includes(tag.tagId) && (
-                <span className={styles.chipRemove}>
-                  <X size={12} />
-                </span>
-              )}
             </button>
           ))}
         </div>
