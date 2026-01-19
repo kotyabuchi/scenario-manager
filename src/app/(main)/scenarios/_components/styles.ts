@@ -310,6 +310,31 @@ export const expandButton = css({
   },
 });
 
+export const detailedConditions = cva({
+  base: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'md',
+    overflow: 'hidden',
+    transition: 'all 0.3s ease-in-out',
+  },
+  variants: {
+    expanded: {
+      true: {
+        maxHeight: '1000px',
+        opacity: 1,
+      },
+      false: {
+        maxHeight: '0',
+        opacity: 0,
+      },
+    },
+  },
+  defaultVariants: {
+    expanded: false,
+  },
+});
+
 export const searchDivider = css({
   border: 'none',
   borderTop: '1px solid',

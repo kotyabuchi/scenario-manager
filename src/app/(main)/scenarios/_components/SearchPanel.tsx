@@ -178,88 +178,86 @@ export const SearchPanel = ({
       </button>
 
       {/* プレイ人数・時間（折りたたみ可能） */}
-      {isExpanded && (
-        <>
-          <div className={styles.searchPanelRow}>
-            <fieldset className={styles.searchPanelField}>
-              <legend className={styles.searchPanelLabel}>プレイ人数</legend>
-              <div className={styles.rangeInput}>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  placeholder="最小"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('minPlayer')}
-                />
-                <span>〜</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  placeholder="最大"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('maxPlayer')}
-                />
-                <span>人</span>
-              </div>
-            </fieldset>
-
-            <fieldset className={styles.searchPanelField}>
-              <legend className={styles.searchPanelLabel}>プレイ時間</legend>
-              <div className={styles.rangeInput}>
-                <input
-                  type="number"
-                  min={1}
-                  max={24}
-                  placeholder="最小"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('minPlaytime')}
-                />
-                <span>〜</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={24}
-                  placeholder="最大"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('maxPlaytime')}
-                />
-                <span>時間</span>
-              </div>
-            </fieldset>
-          </div>
-
-          {/* タグ選択 */}
+      <div className={styles.detailedConditions({ expanded: isExpanded })}>
+        <div className={styles.searchPanelRow}>
           <fieldset className={styles.searchPanelField}>
-            <legend className={styles.searchPanelLabel}>タグ</legend>
-            <div className={styles.searchPanelChips}>
-              {tags.map((tag) => (
-                <Chip
-                  key={tag.tagId}
-                  label={tag.name}
-                  selected={selectedTagIds.includes(tag.tagId)}
-                  onClick={() => toggleTag(tag.tagId)}
-                />
-              ))}
+            <legend className={styles.searchPanelLabel}>プレイ人数</legend>
+            <div className={styles.rangeInput}>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                placeholder="最小"
+                className={`${inputStyle} ${styles.rangeInputField}`}
+                {...register('minPlayer')}
+              />
+              <span>〜</span>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                placeholder="最大"
+                className={`${inputStyle} ${styles.rangeInputField}`}
+                {...register('maxPlayer')}
+              />
+              <span>人</span>
             </div>
           </fieldset>
 
-          {/* シナリオ名検索 */}
-          <div className={styles.searchPanelField}>
-            <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
-              シナリオ名
-            </label>
-            <input
-              id="scenarioName"
-              type="text"
-              placeholder="シナリオ名で検索..."
-              className={inputStyle}
-              {...register('scenarioName')}
-            />
+          <fieldset className={styles.searchPanelField}>
+            <legend className={styles.searchPanelLabel}>プレイ時間</legend>
+            <div className={styles.rangeInput}>
+              <input
+                type="number"
+                min={1}
+                max={24}
+                placeholder="最小"
+                className={`${inputStyle} ${styles.rangeInputField}`}
+                {...register('minPlaytime')}
+              />
+              <span>〜</span>
+              <input
+                type="number"
+                min={1}
+                max={24}
+                placeholder="最大"
+                className={`${inputStyle} ${styles.rangeInputField}`}
+                {...register('maxPlaytime')}
+              />
+              <span>時間</span>
+            </div>
+          </fieldset>
+        </div>
+
+        {/* タグ選択 */}
+        <fieldset className={styles.searchPanelField}>
+          <legend className={styles.searchPanelLabel}>タグ</legend>
+          <div className={styles.searchPanelChips}>
+            {tags.map((tag) => (
+              <Chip
+                key={tag.tagId}
+                label={tag.name}
+                selected={selectedTagIds.includes(tag.tagId)}
+                onClick={() => toggleTag(tag.tagId)}
+              />
+            ))}
           </div>
-        </>
-      )}
+        </fieldset>
+
+        {/* シナリオ名検索 */}
+        <div className={styles.searchPanelField}>
+          <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
+            シナリオ名
+          </label>
+          <input
+            id="scenarioName"
+            type="text"
+            placeholder="シナリオ名で検索..."
+            className={inputStyle}
+            {...register('scenarioName')}
+          />
+        </div>
+      </div>
 
       {/* 検索ボタン */}
       <hr className={styles.searchDivider} />
