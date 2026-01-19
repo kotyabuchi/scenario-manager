@@ -5,16 +5,19 @@ import * as schema from './schema';
 
 const connectionString = process.env.DATABASE_URL ?? '';
 
-// Edge/Serverless環境用の接続設定
-// - prepare: false - prepared statementsを無効化（Supabase Transaction Pooler必須）
-// - idle_timeout: 20 - アイドル接続のタイムアウト（秒）
-// - connect_timeout: 10 - 接続タイムアウト（秒）
-// - max: 1 - Serverless環境では1接続のみ使用
+// Cloudflare Workers / Edge Runtime 向けの接続設定
+// - prepare: false - Transaction Pooler必須
+// - idle_timeout: 0 - リクエスト完了後に接続を即座に解放
+// - max: 1 - 単一接続のみ使用
+// - connection: { application_name: 'scenario-manager' } - 接続識別用
 const client = postgres(connectionString, {
   prepare: false,
-  idle_timeout: 20,
-  connect_timeout: 10,
+  idle_timeout: 0,
+  connect_timeout: 15,
   max: 1,
+  connection: {
+    application_name: 'scenario-manager',
+  },
 });
 
 export const db = drizzle({ client, schema });
