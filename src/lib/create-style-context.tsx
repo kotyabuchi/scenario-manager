@@ -79,7 +79,7 @@ export const createStyleContext = <T extends SlotRecipeFn>(recipe: T) => {
       );
     });
 
-    StyledComponent.displayName = `Styled${Component.displayName || Component.name || 'Component'}`;
+    StyledComponent.displayName = `Styled${(Component as { displayName?: string; name?: string }).displayName || (Component as { name?: string }).name || 'Component'}`;
     return StyledComponent as ForwardRefExoticComponent<
       PropsWithoutRef<TProps> & RefAttributes<TRef>
     >;
@@ -107,7 +107,7 @@ export const createStyleContext = <T extends SlotRecipeFn>(recipe: T) => {
       );
     });
 
-    StyledComponent.displayName = `Styled${Component.displayName || Component.name || 'Component'}`;
+    StyledComponent.displayName = `Styled${(Component as { displayName?: string; name?: string }).displayName || (Component as { name?: string }).name || 'Component'}`;
     return StyledComponent as ForwardRefExoticComponent<
       PropsWithoutRef<TProps> & RefAttributes<TRef>
     >;
