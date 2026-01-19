@@ -16,8 +16,8 @@ export const card_header = css({
 });
 
 export const card_avatar = css({
-  w: '80px',
-  h: '80px',
+  w: '128px',
+  h: '128px',
   borderRadius: 'full',
   border: '3px solid',
   borderColor: 'gray.200',
