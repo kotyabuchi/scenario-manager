@@ -1,4 +1,4 @@
-import { css } from '@/styled-system/css';
+import { css, cva } from '@/styled-system/css';
 
 // ScenarioCard スタイル
 export const scenarioCard = css({
@@ -286,6 +286,28 @@ export const searchPanelChips = css({
   display: 'flex',
   flexWrap: 'wrap',
   gap: 'sm',
+});
+
+export const expandButton = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 'xs',
+  w: '100%',
+  px: 'md',
+  py: 'sm',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: 'text.secondary',
+  bg: 'transparent',
+  border: 'none',
+  borderRadius: 'md',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  _hover: {
+    color: 'text.primary',
+    bg: 'bg.subtle',
+  },
 });
 
 export const searchDivider = css({
