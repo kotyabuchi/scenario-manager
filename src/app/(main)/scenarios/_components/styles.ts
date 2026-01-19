@@ -328,8 +328,9 @@ export const pageTitle = css({
 });
 
 export const resultCount = css({
-  fontSize: 'sm',
-  color: 'text.secondary',
+  fontSize: 'md',
+  fontWeight: 'medium',
+  color: 'text.primary',
   mb: 'md',
 });
 
