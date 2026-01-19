@@ -74,7 +74,7 @@ export const cardSystemLabelCurveRight = css({
   w: '12px',
   h: '12px',
   background:
-    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, rgba(255,255,255,0.85) 12px)',
+    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, {colors.overlay.light} 12px)',
 });
 
 // リキッドカーブ（下側）- radial-gradientで逆角丸を実現（透過対応）
@@ -85,7 +85,7 @@ export const cardSystemLabelCurveBottom = css({
   w: '12px',
   h: '12px',
   background:
-    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, rgba(255,255,255,0.85) 12px)',
+    'radial-gradient(circle 12px at 100% 100%, transparent 11.5px, {colors.overlay.light} 12px)',
 });
 
 // お気に入りボタン
@@ -178,8 +178,7 @@ export const cardTag = css({
   bg: 'neutral.50',
   borderRadius: 'md',
   color: 'neutral.500',
-  border: '1px solid',
-  borderColor: 'neutral.200',
+  shadow: 'sm',
 });
 
 export const cardDescription = css({

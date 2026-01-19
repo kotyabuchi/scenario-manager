@@ -8,6 +8,7 @@ import { type SearchFormValues, searchFormSchema } from './schema';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
+import { Chip } from '@/components/elements/Chip';
 import { css } from '@/styled-system/css';
 
 import type { SearchPanelProps, SearchParams } from '../interface';
@@ -138,16 +139,12 @@ export const SearchPanel = ({
         <legend className={styles.searchPanelLabel}>システム</legend>
         <div className={styles.searchPanelChips}>
           {systems.map((system) => (
-            <button
+            <Chip
               key={system.systemId}
-              type="button"
-              className={styles.chip({
-                selected: selectedSystemIds.includes(system.systemId),
-              })}
+              label={system.name}
+              selected={selectedSystemIds.includes(system.systemId)}
               onClick={() => toggleSystem(system.systemId)}
-            >
-              {system.name}
-            </button>
+            />
           ))}
         </div>
       </fieldset>
@@ -208,16 +205,12 @@ export const SearchPanel = ({
         <legend className={styles.searchPanelLabel}>タグ</legend>
         <div className={styles.searchPanelChips}>
           {tags.map((tag) => (
-            <button
+            <Chip
               key={tag.tagId}
-              type="button"
-              className={styles.chip({
-                selected: selectedTagIds.includes(tag.tagId),
-              })}
+              label={tag.name}
+              selected={selectedTagIds.includes(tag.tagId)}
               onClick={() => toggleTag(tag.tagId)}
-            >
-              {tag.name}
-            </button>
+            />
           ))}
         </div>
       </fieldset>

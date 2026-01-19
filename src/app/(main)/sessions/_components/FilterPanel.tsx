@@ -2,6 +2,8 @@
 
 import * as styles from './styles';
 
+import { Chip } from '@/components/elements/Chip';
+
 import type {
   RoleFilterValue,
   ScenarioSystem,
@@ -65,16 +67,12 @@ export const FilterPanel = ({
         <legend className={styles.searchPanelLabel}>役割</legend>
         <div className={styles.searchPanelChips}>
           {roleOptions.map((option) => (
-            <button
+            <Chip
               key={option.value}
-              type="button"
-              className={styles.chip({
-                selected: selectedRoles.includes(option.value),
-              })}
+              label={option.label}
+              selected={selectedRoles.includes(option.value)}
               onClick={() => handleRoleToggle(option.value)}
-            >
-              {option.label}
-            </button>
+            />
           ))}
         </div>
       </fieldset>
@@ -83,16 +81,12 @@ export const FilterPanel = ({
         <legend className={styles.searchPanelLabel}>状態</legend>
         <div className={styles.searchPanelChips}>
           {statusOptions.map((option) => (
-            <button
+            <Chip
               key={option.value}
-              type="button"
-              className={styles.chip({
-                selected: selectedStatuses.includes(option.value),
-              })}
+              label={option.label}
+              selected={selectedStatuses.includes(option.value)}
               onClick={() => handleStatusToggle(option.value)}
-            >
-              {option.label}
-            </button>
+            />
           ))}
         </div>
       </fieldset>
@@ -101,16 +95,12 @@ export const FilterPanel = ({
         <legend className={styles.searchPanelLabel}>システム</legend>
         <div className={styles.searchPanelChips}>
           {systems.slice(0, 5).map((system) => (
-            <button
+            <Chip
               key={system.systemId}
-              type="button"
-              className={styles.chip({
-                selected: selectedSystems.includes(system.systemId),
-              })}
+              label={system.name}
+              selected={selectedSystems.includes(system.systemId)}
               onClick={() => handleSystemToggle(system.systemId)}
-            >
-              {system.name}
-            </button>
+            />
           ))}
         </div>
       </fieldset>

@@ -8,6 +8,7 @@ import { type SearchFormValues, searchFormSchema } from './schema';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
+import { Chip } from '@/components/elements/Chip';
 import { SessionPhases } from '@/db/enum';
 import { css } from '@/styled-system/css';
 
@@ -221,16 +222,12 @@ export const SearchPanel = ({
           <legend className={styles.searchPanelLabel}>システム</legend>
           <div className={styles.searchPanelChips}>
             {systems.slice(0, 5).map((system) => (
-              <button
+              <Chip
                 key={system.systemId}
-                type="button"
-                className={styles.chip({
-                  selected: watchSystems?.includes(system.systemId),
-                })}
+                label={system.name}
+                selected={watchSystems?.includes(system.systemId)}
                 onClick={() => handleSystemToggle(system.systemId)}
-              >
-                {system.name}
-              </button>
+              />
             ))}
           </div>
         </fieldset>
@@ -241,16 +238,12 @@ export const SearchPanel = ({
           <legend className={styles.searchPanelLabel}>フェーズ</legend>
           <div className={styles.searchPanelChips}>
             {phaseOptions.map((phase) => (
-              <button
+              <Chip
                 key={phase.value}
-                type="button"
-                className={styles.chip({
-                  selected: watchPhases?.includes(phase.value),
-                })}
+                label={phase.label}
+                selected={watchPhases?.includes(phase.value)}
                 onClick={() => handlePhaseToggle(phase.value)}
-              >
-                {phase.label}
-              </button>
+              />
             ))}
           </div>
         </fieldset>
@@ -261,16 +254,12 @@ export const SearchPanel = ({
         <div className={styles.datePresetContainer}>
           <div className={styles.searchPanelChips}>
             {datePresetOptions.map((option) => (
-              <button
+              <Chip
                 key={option.value}
-                type="button"
-                className={styles.chip({
-                  selected: currentPreset === option.value,
-                })}
+                label={option.label}
+                selected={currentPreset === option.value}
                 onClick={() => handleDatePresetChange(option.value)}
-              >
-                {option.label}
-              </button>
+              />
             ))}
           </div>
           {currentPreset === 'custom' && (
