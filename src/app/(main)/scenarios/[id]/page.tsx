@@ -49,14 +49,11 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
     }
   }
 
-  // データ取得
-  const [scenarioResult, reviewsResult, sessionsResult, videosResult] =
-    await Promise.all([
-      getScenarioDetail(id),
-      getScenarioReviews(id, 'newest', 10, 0),
-      getScenarioSessions(id, 10),
-      getScenarioVideoLinks(id, 20),
-    ]);
+  // データ取得（Cloudflare Workers環境では順次実行で安定性を確保）
+  const scenarioResult = await getScenarioDetail(id);
+  const reviewsResult = await getScenarioReviews(id, 'newest', 10, 0);
+  const sessionsResult = await getScenarioSessions(id, 10);
+  const videosResult = await getScenarioVideoLinks(id, 20);
 
   if (!scenarioResult.success || isNil(scenarioResult.data)) {
     notFound();
