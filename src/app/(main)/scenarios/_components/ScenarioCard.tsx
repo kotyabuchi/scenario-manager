@@ -1,4 +1,4 @@
-import { Clock, Star, Users } from 'lucide-react';
+import { Clock, ImageOff, Star, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
@@ -31,7 +31,12 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
             className={styles.cardThumbnailImage}
           />
         ) : (
-          <div className={styles.cardThumbnailPlaceholder} />
+          <div className={styles.cardThumbnailPlaceholder}>
+            <ImageOff className={styles.cardThumbnailPlaceholderIcon} />
+            <span className={styles.cardThumbnailPlaceholderText}>
+              No Image
+            </span>
+          </div>
         )}
 
         {/* システム名ラベル（リキッドカーブ付き） */}

@@ -35,7 +35,26 @@ export const cardThumbnailImage = css({
 export const cardThumbnailPlaceholder = css({
   width: '100%',
   height: '100%',
-  bg: 'neutral.100',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 'xs',
+  background:
+    'linear-gradient(135deg, {colors.neutral.50} 0%, {colors.neutral.100} 100%)',
+  color: 'text.muted',
+});
+
+export const cardThumbnailPlaceholderIcon = css({
+  w: '32px',
+  h: '32px',
+  opacity: 0.4,
+});
+
+export const cardThumbnailPlaceholderText = css({
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  opacity: 0.6,
 });
 
 // システム名ラベル（リキッドカーブ付き）
