@@ -55,9 +55,12 @@ export const tabButton = cva({
     active: {
       true: {
         color: 'primary.default',
+        bg: 'chip.default',
         borderColor: 'primary.default',
+        fontWeight: 'bold',
         _hover: {
           color: 'primary.default',
+          bg: 'chip.default',
         },
       },
     },
