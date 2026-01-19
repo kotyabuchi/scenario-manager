@@ -23,9 +23,6 @@
         "noUnusedImports": "error",
         "noUnusedVariables": "warn"
       },
-      "complexity": {
-        "useLiteralKeys": "off"
-      },
       "a11y": {
         "useKeyWithClickEvents": "off"
       }

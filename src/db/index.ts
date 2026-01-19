@@ -6,7 +6,7 @@ import * as schema from './schema';
 
 config({ path: '.env.local' });
 
-const connectionString = process.env['DATABASE_URL'] ?? '';
+const connectionString = process.env.DATABASE_URL ?? '';
 
 // グローバルシングルトンパターン（開発環境でのHMRによる接続リークを防止）
 const globalForDb = globalThis as unknown as {
