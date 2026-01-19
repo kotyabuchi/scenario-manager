@@ -66,6 +66,10 @@ export const SchedulePhases = {
 } as const;
 
 export const ParticipantTypes = {
+  KEEPER: {
+    value: 'KEEPER',
+    label: 'キーパー',
+  },
   PLAYER: {
     value: 'PLAYER',
     label: 'プレイヤー',

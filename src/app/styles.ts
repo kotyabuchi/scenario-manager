@@ -15,7 +15,6 @@ export const hero = css({
   justifyContent: 'center',
   px: '24px',
   py: '80px',
-  bg: 'linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})',
   textAlign: 'center',
   gap: '24px',
   md: {
@@ -68,7 +67,6 @@ export const features = css({
   alignItems: 'center',
   px: '24px',
   py: '64px',
-  bg: 'bg.base',
   md: {
     py: '80px',
   },
@@ -163,7 +161,6 @@ export const footer = css({
   mt: 'auto',
   py: '32px',
   px: '24px',
-  bg: 'bg.subtle',
   borderTop: '1px solid',
   borderColor: 'border.subtle',
   textAlign: 'center',

@@ -10,7 +10,7 @@ import type { ComponentPropsWithoutRef } from 'react';
 const { withProvider, withContext } = createStyleContext(menu);
 
 // Root
-type RootProps = MenuRootProps & MenuVariantProps;
+type RootProps = MenuRootProps & MenuVariantProps & { className?: string };
 const Root = withProvider<HTMLDivElement, RootProps>(ArkMenu.Root, 'root');
 
 // Trigger

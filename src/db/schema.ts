@@ -145,21 +145,16 @@ export const gameSessions = pgTable(
     gameSessionId: varchar('game_session_id', { length: 26 })
       .primaryKey()
       .$defaultFn(() => ulid()),
+    sessionName: text('session_name').notNull(),
     scenarioId: varchar('scenario_id', { length: 26 })
       .notNull()
       .references(() => scenarios.scenarioId, { onDelete: 'cascade' }),
     sessionPhase: sessionPhaseEnum('session_phase')
       .default(SessionPhases.RECRUITING.value)
       .notNull(),
-    keeperId: varchar('keeper_id', { length: 26 }).references(
-      () => users.userId,
-    ),
     ...timestamps,
   },
-  (table) => [
-    index('game_sessions_scenario_idx').on(table.scenarioId),
-    index('game_sessions_keeper_idx').on(table.keeperId),
-  ],
+  (table) => [index('game_sessions_scenario_idx').on(table.scenarioId)],
 );
 
 export const gameSchedules = pgTable(
@@ -263,6 +258,7 @@ export const videoLinks = pgTable(
       .notNull()
       .references(() => gameSessions.gameSessionId, { onDelete: 'cascade' }),
     videoUrl: text('video_url').notNull().unique(),
+    spoiler: boolean('spoiler').notNull().default(false),
     createdById: varchar('created_by_id', { length: 26 })
       .notNull()
       .references(() => users.userId),
@@ -323,11 +319,6 @@ export const gameSessionRelations = relations(
     scenario: one(scenarios, {
       fields: [gameSessions.scenarioId],
       references: [scenarios.scenarioId],
-    }),
-    keeper: one(users, {
-      fields: [gameSessions.keeperId],
-      references: [users.userId],
-      relationName: 'keeper',
     }),
     schedule: one(gameSchedules),
     participants: many(sessionParticipants),
