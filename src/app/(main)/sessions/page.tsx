@@ -129,8 +129,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
         <h1 className={styles.pageTitle}>セッション</h1>
         {isLoggedIn && (
           <Link href="/sessions/new">
-            <Button status="primary">
-              <Plus size={16} />
+            <Button status="primary" size="lg" className={styles.createButton}>
+              <Plus size={20} />
               セッション作成
             </Button>
           </Link>

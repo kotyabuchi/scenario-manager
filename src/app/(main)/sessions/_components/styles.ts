@@ -21,6 +21,15 @@ export const pageTitle = css({
   color: 'text.primary',
 });
 
+export const createButton = css({
+  shadow: 'card.default',
+  transition: 'all 0.3s',
+  _hover: {
+    shadow: 'card.hover',
+    transform: 'translateY(-2px)',
+  },
+});
+
 // タブスタイル
 export const tabContainer = css({
   display: 'flex',
