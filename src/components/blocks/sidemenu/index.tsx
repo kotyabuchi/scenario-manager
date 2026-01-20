@@ -83,6 +83,15 @@ export const SideMenu = () => {
     await logout();
   };
 
+  const handleClickProfile = () => {
+    router.push('/profile');
+  };
+
+  // ユーザー情報から表示名とアバターを取得
+  const userDisplayName =
+    user?.user_metadata?.['full_name'] ?? user?.email ?? 'User';
+  const userAvatarUrl = user?.user_metadata?.['avatar_url'];
+
   return (
     <aside
       className={styles.sideMenu({ open })}
@@ -102,12 +111,22 @@ export const SideMenu = () => {
       </VStack>
       <VStack className={styles.authButtons}>
         {isLoggedIn ? (
-          <MenuItem
-            icon={LogOut}
-            text="Logout"
-            variant="logout"
-            onClick={handleClickLogout}
-          />
+          <>
+            <MenuItem
+              avatarSrc={userAvatarUrl}
+              avatarAlt={`${userDisplayName}のアバター`}
+              text={userDisplayName}
+              variant="profile"
+              active={isActive('/profile')}
+              onClick={handleClickProfile}
+            />
+            <MenuItem
+              icon={LogOut}
+              text="Logout"
+              variant="logout"
+              onClick={handleClickLogout}
+            />
+          </>
         ) : (
           <>
             <MenuItem

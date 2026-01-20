@@ -1,20 +1,25 @@
+import { Settings } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
 
-import type { ProfileCardProps } from '../interface';
+import type { ProfileCardProps } from './interface';
 
-export const ProfileCard = ({ user }: ProfileCardProps) => {
+export const ProfileCard = ({
+  user,
+  showEditButton = false,
+}: ProfileCardProps) => {
   return (
     <div className={styles.card_card}>
       <div className={styles.card_header}>
         {!isNil(user.image) && user.image !== '' && (
           <Image
             src={user.image}
-            alt={user.nickname}
-            width={80}
-            height={80}
+            alt={`${user.nickname}のプロフィール画像`}
+            width={128}
+            height={128}
             className={styles.card_avatar}
           />
         )}
@@ -37,7 +42,7 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
       <hr className={styles.card_divider} />
       <div>
         <div className={styles.card_metaItem}>
-          <span className={styles.card_metaLabel}>ロール</span>
+          <span className={styles.card_metaLabel}>権限</span>
           <span className={styles.card_metaValue}>
             {user.role === 'MODERATOR' ? 'モデレーター' : 'メンバー'}
           </span>
@@ -51,6 +56,15 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
           </div>
         )}
       </div>
+
+      {showEditButton && (
+        <div className={styles.card_editButtonWrapper}>
+          <Link href="/profile" className={styles.card_editButton}>
+            <Settings size={16} />
+            プロフィール設定
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
