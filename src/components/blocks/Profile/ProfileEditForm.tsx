@@ -5,15 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNil } from 'ramda';
 
-import { updateProfile } from '../actions';
 import { type ProfileFormValues, profileFormSchema } from './schema';
 import * as styles from './styles';
 
 import { FieldError } from '@/components/elements';
 
-import type { ProfileEditFormProps } from '../interface';
+import type { ProfileEditFormProps } from './interface';
 
-export const ProfileEditForm = ({ user }: ProfileEditFormProps) => {
+export const ProfileEditForm = ({ user, onUpdate }: ProfileEditFormProps) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -35,10 +34,13 @@ export const ProfileEditForm = ({ user }: ProfileEditFormProps) => {
     setSuccess(false);
 
     startTransition(async () => {
-      const result = await updateProfile(data);
+      const result = await onUpdate({
+        nickname: data.nickname,
+        bio: data.bio || undefined,
+      });
 
       if (!result.success) {
-        setServerError(result.error.message);
+        setServerError(result.error ?? '更新に失敗しました');
       } else {
         setSuccess(true);
       }

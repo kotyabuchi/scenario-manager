@@ -4,7 +4,7 @@ import { getDb } from '@/db';
 import { users } from '@/db/schema';
 import { err, ok, type Result } from '@/types/result';
 
-import type { UpdateProfileInput, User } from './interface';
+import type { User } from '@/components/blocks/Profile';
 
 /**
  * Discord IDでユーザーを取得する
@@ -20,7 +20,9 @@ export const getUserByDiscordId = async (
 
     return ok(result ?? null);
   } catch (e) {
-    return err(e instanceof Error ? e : new Error('Unknown error'));
+    return err(
+      e instanceof Error ? e : new Error('ユーザーの取得に失敗しました'),
+    );
   }
 };
 
@@ -29,7 +31,7 @@ export const getUserByDiscordId = async (
  */
 export const updateUserProfile = async (
   userId: string,
-  input: UpdateProfileInput,
+  input: { nickname: string; bio: string | undefined },
 ): Promise<Result<User>> => {
   const db = getDb();
   try {
@@ -49,6 +51,8 @@ export const updateUserProfile = async (
 
     return ok(updated);
   } catch (e) {
-    return err(e instanceof Error ? e : new Error('Unknown error'));
+    return err(
+      e instanceof Error ? e : new Error('プロフィールの更新に失敗しました'),
+    );
   }
 };

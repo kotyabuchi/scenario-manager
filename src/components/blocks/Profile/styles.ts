@@ -80,6 +80,36 @@ export const card_metaValue = css({
   color: 'gray.700',
 });
 
+export const card_editButtonWrapper = css({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  mt: '4',
+});
+
+export const card_editButton = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '2',
+  px: '4',
+  py: '2',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: 'primary.600',
+  bg: 'transparent',
+  borderRadius: 'md',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  border: 'none',
+  _hover: {
+    bg: 'primary.50',
+  },
+  _focusVisible: {
+    outline: '2px solid',
+    outlineColor: 'primary.500',
+    outlineOffset: '2px',
+  },
+});
+
 // ProfileEditForm用スタイル
 export const editForm_container = css({
   bg: 'white',

@@ -70,41 +70,38 @@
 ### 2.6 プロフィール画面（設計変更）
 
 #### 2.6.1 共通コンポーネント化
-- [ ] `src/components/blocks/Profile/` ディレクトリ作成
-- [ ] `ProfileCard.tsx` を移動・共通化（公開プロフィール表示用）
-- [ ] `ProfileEditForm.tsx` を移動・共通化（設定ページ用）
-- [ ] `schema.ts` を移動（Zodバリデーション）
-- [ ] `styles.ts` を移動（PandaCSSスタイル）
-- [ ] `interface.ts` を移動（型定義）
-- [ ] `index.ts` を作成（エクスポート）
+- [x] `src/components/blocks/Profile/` ディレクトリ作成
+- [x] `ProfileCard.tsx` を移動・共通化（公開プロフィール表示用）
+- [x] `ProfileEditForm.tsx` を移動・共通化（設定ページ用）
+- [x] `schema.ts` を移動（Zodバリデーション）
+- [x] `styles.ts` を移動（PandaCSSスタイル）
+- [x] `interface.ts` を移動（型定義）
+- [x] `index.ts` を作成（エクスポート）
 
 #### 2.6.2 `/users/[id]` 実装（公開プロフィール）
-- [ ] `src/app/(main)/users/[id]/page.tsx` 作成
-- [ ] `src/app/(main)/users/[id]/adapter.ts` 作成（getUserById）
-- [ ] `src/app/(main)/users/[id]/interface.ts` 作成
-- [ ] ProfileCard を使用して基本情報表示
+- [x] `src/app/(main)/users/[id]/page.tsx` 作成
+- [x] `src/app/(main)/users/[id]/adapter.ts` 作成（getUserById）
+- [x] ProfileCard を使用して基本情報表示
 - [ ] セッション履歴セクション（将来実装）
 - [ ] 投稿動画セクション（将来実装）
 - [ ] レビュー一覧セクション（将来実装）
-- [ ] 自分のIDの場合も他人のIDの場合も同じ表示
+- [x] 自分のIDの場合も他人のIDの場合も同じ表示（編集ボタン表示で区別）
 
 #### 2.6.3 `/profile` 実装（設定ページ）
-- [ ] `src/app/(main)/profile/page.tsx` 作成
-- [ ] `src/app/(main)/profile/actions.ts` 作成（updateProfile）
-- [ ] ProfileEditForm を使用してプロフィール編集
+- [x] `src/app/(main)/profile/page.tsx` 作成
+- [x] `src/app/(main)/profile/actions.ts` 作成（updateProfile）
+- [x] ProfileEditForm を使用してプロフィール編集
 - [ ] 通知設定セクション（将来実装）
 - [ ] その他設定項目（将来実装）
-- [ ] ログインユーザーのみアクセス可能
+- [x] ログインユーザーのみアクセス可能
 
-#### 2.6.4 `/users/me` リダイレクト対応
-- [ ] `/users/me/page.tsx` を削除または `/users/[現在のユーザーID]` へのリダイレクトに変更
-- [ ] 既存の `/users/me/_components/` を削除（共通化済みのため）
-- [ ] 既存の `/users/me/adapter.ts`, `actions.ts` を `/profile` または `/users/[id]` に移動
+#### 2.6.4 `/users/me` 削除
+- [x] `/users/me/` ディレクトリを完全削除（後方互換性不要）
 
 #### 2.6.5 ミドルウェア更新
-- [ ] `src/middleware.ts` の保護ルート更新
-- [ ] `/users/me` → `/profile` に変更
-- [ ] `/profile` を保護ルートに追加
+- [x] `src/lib/supabase/middleware.ts` の保護ルート更新
+- [x] `/users/me` を保護ルートから削除
+- [x] `/profile` を保護ルートに追加
 
 ---
 
@@ -211,6 +208,7 @@
 | 2026-01-19 | Claude | もっと見るボタン改善（P1-004完了：ChevronDownアイコン追加） |
 | 2026-01-19 | Claude | 0件時メッセージ改善（P1-005完了：温かみのあるメッセージに変更、絵文字をアイコンに置換） |
 | 2026-01-19 | Claude | 検索パネル折りたたみ機能追加（P1-001完了：詳細条件を折りたたみ可能に） |
+| 2026-01-20 | Claude | Phase 2.6 プロフィール画面設計変更完了（共通化・/users/[id]・/profile実装・/users/me削除） |
 
 ---
 
@@ -302,19 +300,19 @@ grep -r "borderTop:" src/
 
 ## 次のアクション
 
-### Phase 2完了に向けて
+### Phase 2完了 ✅
 
-**優先度A**: プロフィール画面の実装
-1. Phase 2.6.1: 共通コンポーネント化（`src/components/blocks/Profile/` に移動）
-2. Phase 2.6.2: `/users/[id]` 実装（公開プロフィール）
-3. Phase 2.6.3: `/profile` 実装（設定ページ）
-4. Phase 2.6.4: `/users/me` リダイレクト対応
-5. Phase 2.6.5: ミドルウェア更新
+**Phase 2.6 プロフィール画面（設計変更）**: 完了
+- `/profile` でプロフィール編集ができる ✅
+- `/users/[id]` で自分・他人のプロフィールが閲覧できる ✅
+- `/users/me` は削除（後方互換性不要）✅
 
-**完了条件**:
-- `/profile` でプロフィール編集ができる
-- `/users/[id]` で自分・他人のプロフィールが閲覧できる
-- `/users/me` が適切にリダイレクトする
+### Phase 3継続
+
+**優先度A**: シナリオ管理の残タスク
+1. Phase 3.7: シナリオ詳細画面のレビュー一覧・関連動画（後で実装）
+2. Phase 3.8: シナリオ登録画面
+3. Phase 3.9: シナリオ編集画面
 
 ---
 

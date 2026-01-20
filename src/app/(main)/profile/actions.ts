@@ -3,14 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { isNil } from 'ramda';
 
-import {
-  type ProfileFormValues,
-  profileFormSchema,
-} from './_components/schema';
 import { getUserByDiscordId, updateUserProfile } from './adapter';
 
+import { profileFormSchema } from '@/components/blocks/Profile';
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
+
+import type { ProfileFormData } from '@/components/blocks/Profile';
 
 /**
  * ユーザープロフィールを更新する
@@ -18,7 +17,7 @@ import { err, ok, type Result } from '@/types/result';
  * @returns 更新結果（成功時はvoid、失敗時はエラー）
  */
 export const updateProfile = async (
-  input: ProfileFormValues,
+  input: ProfileFormData,
 ): Promise<Result<void>> => {
   const supabase = await createClient();
   const {
@@ -40,14 +39,17 @@ export const updateProfile = async (
   }
 
   // Zodスキーマでバリデーション
-  const parsed = profileFormSchema.safeParse(input);
+  const parsed = profileFormSchema.safeParse({
+    nickname: input.nickname,
+    bio: input.bio ?? '',
+  });
   if (!parsed.success) {
     return err(
       new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
     );
   }
 
-  // プロフィール更新（空文字はundefinedに変換）
+  // プロフィール更新
   const updateResult = await updateUserProfile(userResult.data.userId, {
     nickname: parsed.data.nickname,
     bio: parsed.data.bio || undefined,
@@ -56,6 +58,7 @@ export const updateProfile = async (
     return err(updateResult.error);
   }
 
-  revalidatePath('/users/me');
+  revalidatePath('/profile');
+  revalidatePath(`/users/${userResult.data.userId}`);
   return ok(undefined);
 };

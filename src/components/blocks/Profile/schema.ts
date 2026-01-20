@@ -13,9 +13,3 @@ export const profileFormSchema = z.object({
 
 // スキーマから型を導出（フォーム入力用）
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-// サーバー送信時の型（bioを空文字からundefinedに変換）
-export type ProfileSubmitValues = {
-  nickname: string;
-  bio: string | undefined;
-};
