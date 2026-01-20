@@ -1,18 +1,17 @@
-import { neonConfig, Pool } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from 'ws';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
 import * as schema from './schema';
-
-// Node.js環境ではwsを使用、ブラウザ環境ではWebSocketを使用
-if (typeof WebSocket === 'undefined') {
-  neonConfig.webSocketConstructor = ws;
-}
 
 const connectionString = process.env.DATABASE_URL ?? '';
 
 // Cloudflare Workers / Edge Runtime 向けの接続設定
-// neon-serverless はWebSocket経由で接続（安定性向上）
-const pool = new Pool({ connectionString });
+// Supabase Transaction Pooler (port 6543) を使用すること
+const client = postgres(connectionString, {
+  prepare: false, // Transaction Pooler必須
+  max: 1, // Serverless環境では1接続
+  idle_timeout: 0, // 接続を即座に解放
+  connect_timeout: 30, // 接続タイムアウト
+});
 
-export const db = drizzle({ client: pool, schema });
+export const db = drizzle({ client, schema });
