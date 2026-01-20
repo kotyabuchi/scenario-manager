@@ -38,7 +38,7 @@ export const Basic: Story = {
   render: (args) => (
     <Menu.Root {...args}>
       <Menu.Trigger asChild>
-        <Button variant="outline">メニューを開く</Button>
+        <Button variant="subtle">メニューを開く</Button>
       </Menu.Trigger>
       <Menu.Positioner>
         <Menu.Content>
@@ -72,7 +72,7 @@ export const WithGroups: Story = {
   render: (args) => (
     <Menu.Root {...args}>
       <Menu.Trigger asChild>
-        <Button variant="outline">アカウント</Button>
+        <Button variant="subtle">アカウント</Button>
       </Menu.Trigger>
       <Menu.Positioner>
         <Menu.Content>
@@ -113,7 +113,7 @@ export const WithDisabledItems: Story = {
   render: (args) => (
     <Menu.Root {...args}>
       <Menu.Trigger asChild>
-        <Button variant="outline">操作</Button>
+        <Button variant="subtle">操作</Button>
       </Menu.Trigger>
       <Menu.Positioner>
         <Menu.Content>
@@ -142,7 +142,7 @@ export const SmallSize: Story = {
   render: (args) => (
     <Menu.Root {...args}>
       <Menu.Trigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="subtle" size="sm">
           Small Menu
         </Button>
       </Menu.Trigger>
@@ -170,7 +170,7 @@ export const LargeSize: Story = {
   render: (args) => (
     <Menu.Root {...args}>
       <Menu.Trigger asChild>
-        <Button variant="outline" size="lg">
+        <Button variant="subtle" size="lg">
           Large Menu
         </Button>
       </Menu.Trigger>

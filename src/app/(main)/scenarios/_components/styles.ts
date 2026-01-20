@@ -337,8 +337,8 @@ export const detailedConditions = cva({
 
 export const searchDivider = css({
   border: 'none',
-  borderTop: '1px solid',
-  borderColor: 'border.subtle',
+  h: '1px',
+  bg: 'border.subtle',
   my: 'md',
 });
 

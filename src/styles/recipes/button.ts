@@ -94,17 +94,6 @@ export const button = defineRecipe({
           },
         },
       },
-      outline: {
-        border: '1.5px solid',
-        borderColor: 'var(--button-color-main)',
-        color: 'var(--button-color-foreground)',
-        background: 'transparent',
-        _hover: {
-          '&:not([disabled])': {
-            background: 'var(--button-color-subtle)',
-          },
-        },
-      },
       ghost: {
         color: 'var(--button-color-foreground)',
         background: 'transparent',

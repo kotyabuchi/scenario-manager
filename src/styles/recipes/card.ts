@@ -5,48 +5,48 @@ export const card = defineRecipe({
   base: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'md',
-    p: 'lg',
-    borderRadius: 'lg',
+    bg: 'bg.card',
+    borderRadius: 'xl',
+    overflow: 'hidden',
+    transition: 'all 0.3s',
+    shadow: 'card.default',
   },
   variants: {
     // 浮遊感のバリエーション
     elevation: {
-      // フラット: 背景色のみで区切り
+      // フラット: 影なし
       flat: {
-        bg: '{colors.surface.default}',
+        shadow: 'none',
       },
-      // 浮き上がり: 背景色 + 影
+      // 標準（デフォルト）
       raised: {
-        bg: '{colors.surface.raised}',
-        shadow: 'sm',
+        shadow: 'card.default',
       },
-      // カード: より強い浮遊感
+      // 強調
       elevated: {
-        bg: '{colors.surface.raised}',
-        shadow: 'md',
-      },
-    },
-    // 境界線（原則使用しない）
-    bordered: {
-      true: {
-        border: '1px solid',
-        borderColor: '{colors.border.subtle}',
+        shadow: 'card.hover',
       },
     },
     // インタラクティブ（ホバー可能）
     interactive: {
       true: {
         cursor: 'pointer',
-        transition: 'all 0.2s ease-in-out',
         _hover: {
-          shadow: 'md',
-          bg: '{colors.surface.hover}',
+          shadow: 'card.hover',
+          transform: 'translateY(-2px)',
         },
       },
+    },
+    // パディング
+    padding: {
+      none: { p: '0' },
+      sm: { p: 'sm' },
+      md: { p: 'md' },
+      lg: { p: 'lg' },
     },
   },
   defaultVariants: {
     elevation: 'raised',
+    padding: 'lg',
   },
 });

@@ -40,8 +40,8 @@ export const card_userName = css({
 
 export const card_divider = css({
   border: 'none',
-  borderTop: '1px solid',
-  borderColor: 'gray.100',
+  h: '1px',
+  bg: 'gray.100',
   my: '4',
 });
 

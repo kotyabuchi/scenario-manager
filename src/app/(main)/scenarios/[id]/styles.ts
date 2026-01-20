@@ -42,7 +42,7 @@ export const actions = css({
 
 export const divider = css({
   border: 'none',
-  borderTop: '1px solid',
-  borderColor: 'border.subtle',
+  h: '1px',
+  bg: 'border.subtle',
   my: 'xl',
 });
