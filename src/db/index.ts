@@ -1,22 +1,18 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { neonConfig, Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from 'ws';
 
 import * as schema from './schema';
+
+// Node.js環境ではwsを使用、ブラウザ環境ではWebSocketを使用
+if (typeof WebSocket === 'undefined') {
+  neonConfig.webSocketConstructor = ws;
+}
 
 const connectionString = process.env.DATABASE_URL ?? '';
 
 // Cloudflare Workers / Edge Runtime 向けの接続設定
-// - prepare: false - Transaction Pooler必須
-// - max: 1 - 単一接続
-// - fetch_types: false - 型フェッチを無効化（安定性向上）
-const createClient = () =>
-  postgres(connectionString, {
-    prepare: false,
-    max: 1,
-    fetch_types: false,
-  });
+// neon-serverless はWebSocket経由で接続（安定性向上）
+const pool = new Pool({ connectionString });
 
-// グローバルなクライアントインスタンス
-const client = createClient();
-
-export const db = drizzle({ client, schema });
+export const db = drizzle({ client: pool, schema });
