@@ -1,26 +1,44 @@
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL ?? '';
-
 /**
- * Cloudflare Workers / Edge Runtime 向けのDB接続
+ * Cloudflare Hyperdrive を使用したDB接続
  *
- * Cloudflare Workersではモジュールレベルで初期化したI/Oオブジェクトを
- * 複数リクエスト間で再利用できないため、リクエストごとに新しいクライアントを作成する
- * @see https://zenn.dev/ud/articles/2cfd6050ef8f1e
+ * Hyperdriveは接続プーリングとクエリキャッシングを提供し、
+ * 毎回コネクションを作成するオーバーヘッドを削減する
  *
- * Supabase Transaction Pooler (port 6543) を使用すること
+ * @see https://developers.cloudflare.com/hyperdrive/
  */
 export const getDb = () => {
+  let connectionString: string;
+
+  try {
+    // Cloudflare Workers環境: Hyperdriveバインディングから接続文字列を取得
+    const { env } = getCloudflareContext();
+    connectionString = (env as { HYPERDRIVE?: { connectionString: string } })
+      .HYPERDRIVE?.connectionString as string;
+
+    if (!connectionString) {
+      throw new Error('HYPERDRIVE binding not found');
+    }
+  } catch {
+    // ローカル開発環境: 環境変数から接続文字列を取得
+    connectionString = process.env.DATABASE_URL ?? '';
+  }
+
   const client = postgres(connectionString, {
-    prepare: false, // Transaction Pooler必須
-    max: 1, // Serverless環境では1接続
-    idle_timeout: 0, // 接続を即座に解放
-    connect_timeout: 30, // 接続タイムアウト
+    // Hyperdriveが接続プーリングを担当するため、max: 5で十分
+    // Workersの同時外部接続数制限に対応
+    max: 5,
+    // 配列型を使用しない場合、追加のラウンドトリップを回避
+    fetch_types: false,
+    // Hyperdriveは prepare をサポート
+    prepare: true,
   });
+
   return drizzle({ client, schema });
 };
 
