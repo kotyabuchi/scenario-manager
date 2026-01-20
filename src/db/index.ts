@@ -7,17 +7,16 @@ const connectionString = process.env.DATABASE_URL ?? '';
 
 // Cloudflare Workers / Edge Runtime 向けの接続設定
 // - prepare: false - Transaction Pooler必須
-// - idle_timeout: 0 - リクエスト完了後に接続を即座に解放
-// - max: 1 - 単一接続のみ使用
-// - connection: { application_name: 'scenario-manager' } - 接続識別用
-const client = postgres(connectionString, {
-  prepare: false,
-  idle_timeout: 0,
-  connect_timeout: 15,
-  max: 1,
-  connection: {
-    application_name: 'scenario-manager',
-  },
-});
+// - max: 1 - 単一接続
+// - fetch_types: false - 型フェッチを無効化（安定性向上）
+const createClient = () =>
+  postgres(connectionString, {
+    prepare: false,
+    max: 1,
+    fetch_types: false,
+  });
+
+// グローバルなクライアントインスタンス
+const client = createClient();
 
 export const db = drizzle({ client, schema });
