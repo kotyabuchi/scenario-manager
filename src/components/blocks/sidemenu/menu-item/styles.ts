@@ -59,6 +59,20 @@ export const menuItem = cva({
           outline: '2px solid {colors.danger.focusRing}',
         },
       },
+      profile: {
+        padding: 'xs',
+        background:
+          'linear-gradient(135deg, {colors.secondary.subtle} 0%, {colors.primary.subtle} 100%)',
+        color: 'foreground.default',
+        _hover: {
+          background:
+            'linear-gradient(135deg, {colors.secondary.muted} 0%, {colors.primary.muted} 100%)',
+          color: 'foreground.default',
+        },
+        _focusVisible: {
+          outline: '2px solid {colors.primary.focusRing}',
+        },
+      },
     },
   },
   compoundVariants: [
@@ -100,4 +114,12 @@ export const menuItemText = css({
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   minWidth: 0,
+});
+
+export const menuItemAvatar = css({
+  flexShrink: 0,
+  rounded: 'full',
+  objectFit: 'cover',
+  border: '1px solid',
+  borderColor: 'primary.muted',
 });
