@@ -291,6 +291,66 @@ Ark UIはアクセシビリティ対応済みのコンポーネントを提供�
 | `ui-implementer` | UI実装 | 新規UI機能の実装 |
 | `playwright-test-fixer` | 機能テスト＆修正 | UIの動作確認と問題の自動修正 |
 
+### Worktree運用ルール（worktree環境のみ適用）
+
+このプロジェクトでは `git worktree` を使用して複数のClaude Codeが並行作業できる。
+worktree環境で作業する場合は以下のルールを厳守すること。
+
+#### worktree環境の判定方法
+```bash
+# worktreeかどうかを確認
+git rev-parse --is-inside-work-tree && git worktree list | wc -l
+# 2以上ならworktree環境の可能性が高い
+
+# または、ディレクトリ名で判定
+# scenario-manager-feature-xxx のような命名ならworktree
+```
+
+#### ブランチ名の命名規則
+| パターン | 形式 | 例 |
+|----------|------|-----|
+| issue指定あり | `type/issue番号-description` | `feature/123-add-search`, `fix/456-login-bug` |
+| issue指定なし | `type/description` | `feature/add-search`, `refactor/ui-components` |
+
+**許可されるtype**:
+- `feature`: 新機能
+- `fix`: バグ修正
+- `refactor`: リファクタリング
+- `style`: スタイル変更
+- `docs`: ドキュメント
+- `test`: テスト
+- `chore`: 雑務・設定変更
+- `perf`: パフォーマンス改善
+- `ci`: CI/CD関連
+
+#### 禁止操作
+| 操作 | 禁止理由 |
+|------|----------|
+| `git merge ... main` | mainへのマージはPRを通す。worktreeからの直接マージ禁止 |
+| `git push origin main` | mainへの直接pushは禁止 |
+| `git checkout main` | worktreeでmainブランチに切り替えない |
+
+#### 許可される操作
+- 自ブランチへのコミット・プッシュ
+- `git rebase develop` などでベースブランチの変更を取り込む
+- `git fetch origin` でリモートの最新を取得
+
+#### 開発サーバーのポート管理
+worktreeでは**指定されたポート**を使用する。3000番はメインリポジトリ用。
+
+```bash
+# worktreeでの開発サーバー起動（ポート指定必須）
+pnpm dev --port 3001  # worktree-1
+pnpm dev --port 3002  # worktree-2
+```
+
+**タスク完了時は必ずサーバーを停止すること。** ポートを専有したままにしない。
+
+#### タスク完了時のフロー
+1. 変更をコミット・プッシュ
+2. **開発サーバーを停止**（KillShellツールまたは手動）
+3. PRはメインリポジトリから作成（worktreeからでも可）
+
 ### タスク完了時のコミット（必須）
 **タスクが完了したら必ずコミットを作成すること。** 作業を放置しない。
 
