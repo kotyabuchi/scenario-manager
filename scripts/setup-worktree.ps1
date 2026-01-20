@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Git worktreeのセットアップスクリプト
 
@@ -74,7 +74,7 @@ Push-Location $sourceDir
 
 try {
     # 1. ブランチ作成（存在しない場合）
-    Write-Host "[1/5] ブランチを確認中..." -ForegroundColor Green
+    Write-Host "[1/4] ブランチを確認中..." -ForegroundColor Green
     $branchExists = git branch --list $Name
     if (-not $branchExists) {
         Write-Host "  新規ブランチ '$Name' を '$BaseBranch' から作成します"
@@ -87,17 +87,18 @@ try {
     }
 
     # 2. Worktree作成
-    Write-Host "[2/5] Worktreeを作成中..." -ForegroundColor Green
+    Write-Host "[2/4] Worktreeを作成中..." -ForegroundColor Green
     git worktree add $worktreePath $Name
     if ($LASTEXITCODE -ne 0) {
         throw "Worktreeの作成に失敗しました"
     }
     Write-Host "  作成完了: $worktreePath"
 
-    # 3. 環境変数ファイルのシンボリックリンク作成
-    Write-Host "[3/5] 環境変数ファイルのシンボリックリンクを作成中..." -ForegroundColor Green
-    $envFiles = @(".env", ".env.development.local", ".env.test.local")
+    # 3. シンボリックリンク作成（環境変数ファイル、Claude設定）
+    Write-Host "[3/4] シンボリックリンクを作成中..." -ForegroundColor Green
 
+    # 環境変数ファイル
+    $envFiles = @(".env", ".env.development.local", ".env.test.local")
     foreach ($envFile in $envFiles) {
         $sourcePath = Join-Path $sourceDir $envFile
         $targetPath = Join-Path $worktreePath $envFile
@@ -108,26 +109,36 @@ try {
                 Write-Host "  リンク作成: $envFile" -ForegroundColor Gray
             } catch {
                 Write-Host "  警告: $envFile のリンク作成に失敗しました。手動でコピーしてください。" -ForegroundColor Yellow
-                # フォールバック: コピー
                 Copy-Item $sourcePath $targetPath
                 Write-Host "  代替: $envFile をコピーしました" -ForegroundColor Yellow
             }
         }
     }
 
-    # 4. 依存関係インストール
-    Write-Host "[4/5] 依存関係をインストール中..." -ForegroundColor Green
+    # Claude設定ファイル
+    $claudeSettingsSource = Join-Path $sourceDir ".claude\settings.local.json"
+    if (Test-Path $claudeSettingsSource) {
+        $claudeDir = Join-Path $worktreePath ".claude"
+        if (-not (Test-Path $claudeDir)) {
+            New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null
+        }
+        $claudeSettingsTarget = Join-Path $claudeDir "settings.local.json"
+        try {
+            New-Item -ItemType SymbolicLink -Path $claudeSettingsTarget -Target $claudeSettingsSource -Force -ErrorAction Stop | Out-Null
+            Write-Host "  リンク作成: .claude/settings.local.json" -ForegroundColor Gray
+        } catch {
+            Write-Host "  警告: .claude/settings.local.json のリンク作成に失敗しました。" -ForegroundColor Yellow
+            Copy-Item $claudeSettingsSource $claudeSettingsTarget
+            Write-Host "  代替: .claude/settings.local.json をコピーしました" -ForegroundColor Yellow
+        }
+    }
+
+    # 4. 依存関係インストール（prepareスクリプトでPandaCSSも自動生成）
+    Write-Host "[4/4] 依存関係をインストール中..." -ForegroundColor Green
     Push-Location $worktreePath
     pnpm install
     if ($LASTEXITCODE -ne 0) {
         throw "pnpm install に失敗しました"
-    }
-
-    # 5. PandaCSS生成
-    Write-Host "[5/5] PandaCSSを生成中..." -ForegroundColor Green
-    pnpm prepare
-    if ($LASTEXITCODE -ne 0) {
-        throw "pnpm prepare に失敗しました"
     }
     Pop-Location
 
