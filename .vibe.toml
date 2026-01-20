@@ -1,0 +1,31 @@
+# Vibe設定ファイル - Git Worktree管理
+
+# Worktreeのパス・命名規則設定
+# [worktree]
+# path_script = "scripts/vibe-path.sh"  # カスタムスクリプトでベースブランチ制御可能
+
+# ファイル・ディレクトリのコピー設定
+[copy]
+# 環境変数ファイルをコピー
+files = [
+  ".env",
+  ".env.development.local",
+  ".env.test.local",
+  ".claude/settings.local.json"
+]
+
+# node_modulesは各worktreeで独立してインストール
+# （必要に応じて以下を有効化）
+# dirs = ["node_modules"]
+
+# フック設定（worktree作成/削除時に実行）
+[hooks]
+# worktree作成後に依存関係をインストール
+post_start = [
+  "pnpm install"
+]
+
+# worktree削除前の確認メッセージ（任意）
+# pre_clean = [
+#   "echo 'Worktreeを削除します...'"
+# ]

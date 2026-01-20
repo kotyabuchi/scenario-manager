@@ -293,8 +293,33 @@ Ark UIはアクセシビリティ対応済みのコンポーネントを提供�
 
 ### Worktree運用ルール（worktree環境のみ適用）
 
-このプロジェクトでは `git worktree` を使用して複数のClaude Codeが並行作業できる。
+このプロジェクトでは `git worktree` + `vibe` を使用して複数のClaude Codeが並行作業できる。
 worktree環境で作業する場合は以下のルールを厳守すること。
+
+#### worktreeの作成・削除
+
+**`/vibe`コマンドを使用する（推奨）**
+
+```bash
+# 新しいworktreeを作成（developから分岐、デフォルト）
+/vibe start feature/new-feature
+
+# ベースブランチを明示的に指定
+/vibe start hotfix/urgent-fix main
+
+# worktreeを削除してメインに戻る
+/vibe clean
+
+# worktree一覧を確認
+/vibe list
+```
+
+**メリット：**
+- ✅ **管理者権限不要**（シンボリックリンク不使用）
+- ✅ **Claude Codeを通常権限で起動可能** → **通知が正常に動作**
+- ✅ 環境変数ファイル（`.env`等）と`.claude/settings.local.json`を自動コピー
+- ✅ `pnpm install`を自動実行
+- ✅ ブランチ名の`/`は自動的に`-`に変換（`feature/ui` → `scenario-manager-feature-ui`）
 
 #### worktree環境の判定方法
 ```bash
@@ -340,9 +365,14 @@ worktreeでは**指定されたポート**を使用する。3000番はメイン�
 
 ```bash
 # worktreeでの開発サーバー起動（ポート指定必須）
-pnpm dev --port 3001  # worktree-1
-pnpm dev --port 3002  # worktree-2
+pnpm dev --port 3001  # 1つ目のworktree
+pnpm dev --port 3002  # 2つ目のworktree
+pnpm dev --port 3003  # 3つ目のworktree
 ```
+
+**推奨ポート番号：**
+- `/vibe start`実行後、既存worktreeの数から推奨ポート（3001, 3002...）が表示される
+- 表示された推奨ポートを使用すること
 
 **タスク完了時は必ずサーバーを停止すること。** ポートを専有したままにしない。
 
@@ -350,6 +380,9 @@ pnpm dev --port 3002  # worktree-2
 1. 変更をコミット・プッシュ
 2. **開発サーバーを停止**（KillShellツールまたは手動）
 3. PRはメインリポジトリから作成（worktreeからでも可）
+4. **worktreeを削除**（`/vibe clean`コマンドを使用）
+
+**注意：** `/vibe clean`はworktreeディレクトリ内で実行すること。メインリポジトリに自動的に戻る。
 
 ### タスク完了時のコミット（必須）
 **タスクが完了したら必ずコミットを作成すること。** 作業を放置しない。
