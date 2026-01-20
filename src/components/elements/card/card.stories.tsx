@@ -13,8 +13,9 @@ const meta = {
       control: 'select',
       options: ['flat', 'raised', 'elevated'],
     },
-    bordered: {
-      control: 'boolean',
+    padding: {
+      control: 'select',
+      options: ['none', 'sm', 'md', 'lg'],
     },
     interactive: {
       control: 'boolean',
@@ -86,21 +87,6 @@ export const Interactive: Story = {
       <Card {...args}>
         <h3>Interactive Card</h3>
         <p>Hover over this card to see the effect.</p>
-      </Card>
-    </div>
-  ),
-};
-
-export const Bordered: Story = {
-  args: {
-    elevation: 'flat',
-    bordered: true,
-  },
-  render: (args) => (
-    <div className={containerStyle}>
-      <Card {...args}>
-        <h3>Bordered Card</h3>
-        <p>This card has a subtle border (use sparingly).</p>
       </Card>
     </div>
   ),

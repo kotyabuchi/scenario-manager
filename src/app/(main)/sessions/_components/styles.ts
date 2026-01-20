@@ -124,8 +124,8 @@ export const searchPanelChips = css({
 
 export const searchDivider = css({
   border: 'none',
-  borderTop: '1px solid',
-  borderColor: 'border.subtle',
+  h: '1px',
+  bg: 'border.subtle',
   my: 'md',
 });
 
@@ -202,8 +202,7 @@ export const sessionCard_header = css({
   justifyContent: 'space-between',
   px: 'md',
   py: 'sm',
-  borderBottom: '1px solid',
-  borderColor: 'border.subtle',
+  bg: 'bg.subtle',
 });
 
 export const sessionCard_headerLeft = css({

@@ -247,7 +247,7 @@ export const HistoryTab = ({
                 mt: 'xl',
               })}
             >
-              <Button variant="outline" onClick={handleLoadMore}>
+              <Button variant="subtle" onClick={handleLoadMore}>
                 もっと見る <ChevronDown size={16} />
               </Button>
             </div>

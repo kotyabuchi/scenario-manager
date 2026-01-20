@@ -25,7 +25,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
         </p>
         <div className={styles.sessionListEmptyActions}>
           <Link href="/sessions?tab=public">
-            <Button variant="outline">
+            <Button variant="subtle">
               <Search size={16} />
               公開卓を探す
             </Button>
@@ -51,7 +51,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
         </p>
         <div className={styles.sessionListEmptyActions}>
           <Link href="/sessions?tab=public">
-            <Button variant="outline">
+            <Button variant="subtle">
               <Search size={16} />
               公開卓を探す
             </Button>
@@ -72,7 +72,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
       </p>
       <div className={styles.sessionListEmptyActions}>
         {onReset && (
-          <Button variant="outline" onClick={onReset}>
+          <Button variant="subtle" onClick={onReset}>
             条件をリセット
           </Button>
         )}
