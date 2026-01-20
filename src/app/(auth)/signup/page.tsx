@@ -4,11 +4,12 @@ import { isNil } from 'ramda';
 
 import { SignupForm } from './_components/SignupForm';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function SignupPage() {
+  const db = getDb();
   const supabase = await createClient();
   const {
     data: { user },

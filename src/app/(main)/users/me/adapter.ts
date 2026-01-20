@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { users } from '@/db/schema';
 import { err, ok, type Result } from '@/types/result';
 
@@ -12,6 +12,7 @@ import type { UpdateProfileInput, User } from './interface';
 export const getUserByDiscordId = async (
   discordId: string,
 ): Promise<Result<User | null>> => {
+  const db = getDb();
   try {
     const result = await db.query.users.findFirst({
       where: eq(users.discordId, discordId),
@@ -30,6 +31,7 @@ export const updateUserProfile = async (
   userId: string,
   input: UpdateProfileInput,
 ): Promise<Result<User>> => {
+  const db = getDb();
   try {
     const [updated] = await db
       .update(users)

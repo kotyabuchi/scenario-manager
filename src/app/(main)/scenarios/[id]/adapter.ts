@@ -1,7 +1,7 @@
 import { and, avg, count, desc, eq, sql } from 'drizzle-orm';
 import { isNil } from 'ramda';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import {
   gameSchedules,
   gameSessions,
@@ -29,6 +29,7 @@ import type {
 export const getScenarioDetail = async (
   id: string,
 ): Promise<Result<ScenarioDetail | null>> => {
+  const db = getDb();
   try {
     // シナリオ基本情報取得
     const scenario = await db.query.scenarios.findFirst({
@@ -82,6 +83,7 @@ export const getScenarioReviews = async (
   limit = 10,
   offset = 0,
 ): Promise<Result<{ reviews: ReviewWithUser[]; totalCount: number }>> => {
+  const db = getDb();
   try {
     // ソート順の決定
     const orderBy = (() => {
@@ -144,6 +146,7 @@ export const getScenarioSessions = async (
   scenarioId: string,
   limit = 10,
 ): Promise<Result<SessionWithKeeper[]>> => {
+  const db = getDb();
   try {
     // 完了済みセッションを取得
     const sessionsData = await db
@@ -248,6 +251,7 @@ export const getScenarioVideoLinks = async (
   scenarioId: string,
   limit = 20,
 ): Promise<Result<VideoLinkWithSession[]>> => {
+  const db = getDb();
   try {
     const videos = await db
       .select({
@@ -289,6 +293,7 @@ export const getUserScenarioPreference = async (
   scenarioId: string,
   userId: string,
 ): Promise<Result<UserPreference | null>> => {
+  const db = getDb();
   try {
     const preference = await db.query.userScenarioPreferences.findFirst({
       where: and(
@@ -319,6 +324,7 @@ export const getUserScenarioPreference = async (
 export const getUserByDiscordId = async (
   discordId: string,
 ): Promise<Result<{ userId: string } | null>> => {
+  const db = getDb();
   try {
     const result = await db.query.users.findFirst({
       where: eq(users.discordId, discordId),
@@ -338,6 +344,7 @@ export const toggleFavorite = async (
   scenarioId: string,
   userId: string,
 ): Promise<Result<boolean>> => {
+  const db = getDb();
   try {
     const existing = await db.query.userScenarioPreferences.findFirst({
       where: and(
@@ -385,6 +392,7 @@ export const togglePlayed = async (
   scenarioId: string,
   userId: string,
 ): Promise<Result<boolean>> => {
+  const db = getDb();
   try {
     const existing = await db.query.userScenarioPreferences.findFirst({
       where: and(

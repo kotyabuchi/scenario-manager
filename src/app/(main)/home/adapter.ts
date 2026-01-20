@@ -1,6 +1,6 @@
 import { desc, eq, inArray, or } from 'drizzle-orm';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { gameSessions, scenarios, sessionParticipants } from '@/db/schema';
 import { err, ok, type Result } from '@/types/result';
 
@@ -12,6 +12,7 @@ import type { NewScenario, UpcomingSession } from './interface';
 export const getUpcomingSessions = async (
   userId: string,
 ): Promise<Result<UpcomingSession[]>> => {
+  const db = getDb();
   try {
     // ユーザーが参加しているセッションIDを取得
     const participantSessions = await db.query.sessionParticipants.findMany({
@@ -63,6 +64,7 @@ export const getUpcomingSessions = async (
  * 新着シナリオを取得（最大3件）
  */
 export const getNewScenarios = async (): Promise<Result<NewScenario[]>> => {
+  const db = getDb();
   try {
     const newScenarios = await db.query.scenarios.findMany({
       with: {

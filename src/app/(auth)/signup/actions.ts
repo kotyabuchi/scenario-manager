@@ -3,7 +3,7 @@
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 import { err, type Result } from '@/types/result';
@@ -16,6 +16,7 @@ type CreateUserInput = {
 export const createUser = async (
   input: CreateUserInput,
 ): Promise<Result<void>> => {
+  const db = getDb();
   const supabase = await createClient();
   const {
     data: { user: authUser },

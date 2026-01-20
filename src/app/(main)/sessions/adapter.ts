@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, ilike, inArray, lte, sql } from 'drizzle-orm';
 import { isNil } from 'ramda';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { ParticipantTypes, SessionPhases } from '@/db/enum';
 import {
   gameSchedules,
@@ -34,6 +34,7 @@ import type {
  * 現在のユーザーIDを取得
  */
 export const getCurrentUserId = async (): Promise<string | null> => {
+  const db = getDb();
   try {
     const supabase = await createClient();
     const {
@@ -65,6 +66,7 @@ export const searchPublicSessions = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<PublicSession>>> => {
+  const db = getDb();
   try {
     // 公開セッション用のフェーズ（デフォルト: 募集中・準備中）
     const targetPhases = params.phases ?? [
@@ -207,6 +209,7 @@ export const getUpcomingSessions = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<MySessionWithRole>>> => {
+  const db = getDb();
   try {
     // 参加予定のフェーズ
     const targetPhases = [
@@ -305,6 +308,7 @@ export const getHistorySessions = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<MySessionWithRole>>> => {
+  const db = getDb();
   try {
     // 履歴のフェーズ（空の場合は全て表示）
     const targetPhases =
@@ -464,6 +468,7 @@ export const getCalendarSessions = async (
   year: number,
   month: number,
 ): Promise<Result<CalendarData>> => {
+  const db = getDb();
   try {
     // 参加予定のフェーズ
     const targetPhases = [
@@ -567,6 +572,7 @@ export const getCalendarSessions = async (
  * 全システムを取得
  */
 export const getAllSystems = async (): Promise<Result<ScenarioSystem[]>> => {
+  const db = getDb();
   try {
     const result = await db.query.scenarioSystems.findMany({
       orderBy: [asc(scenarioSystems.name)],

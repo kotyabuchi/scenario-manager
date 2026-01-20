@@ -1,11 +1,12 @@
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 
 export const GET = async (request: Request) => {
+  const db = getDb();
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
 

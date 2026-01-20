@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, ilike, inArray, lte, sql } from 'drizzle-orm';
 import { isNil } from 'ramda';
 
-import { db } from '@/db';
+import { getDb } from '@/db';
 import { scenarioSystems, scenarios, scenarioTags, tags } from '@/db/schema';
 import { err, ok, type Result } from '@/types/result';
 
@@ -23,6 +23,7 @@ export const searchScenarios = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult>> => {
+  const db = getDb();
   try {
     const conditions = [];
 
@@ -122,6 +123,7 @@ export const searchScenarios = async (
 export const getScenarioById = async (
   id: string,
 ): Promise<Result<ScenarioWithRelations | null>> => {
+  const db = getDb();
   try {
     const result = await db.query.scenarios.findFirst({
       where: eq(scenarios.scenarioId, id),
@@ -145,6 +147,7 @@ export const getScenarioById = async (
  * 全システムを取得する
  */
 export const getAllSystems = async (): Promise<Result<ScenarioSystem[]>> => {
+  const db = getDb();
   try {
     const result = await db.query.scenarioSystems.findMany({
       orderBy: [asc(scenarioSystems.name)],
@@ -159,6 +162,7 @@ export const getAllSystems = async (): Promise<Result<ScenarioSystem[]>> => {
  * 全タグを取得する
  */
 export const getAllTags = async (): Promise<Result<Tag[]>> => {
+  const db = getDb();
   try {
     const result = await db.query.tags.findMany({
       orderBy: [asc(tags.name)],
