@@ -351,25 +351,21 @@ export const sessionListEmpty = css({
   justifyContent: 'center',
   py: '2xl',
   gap: 'md',
-  color: 'neutral.600',
+  color: 'oklch(0.45 0.05 150)',
 });
 
 export const sessionListEmptyIcon = css({
-  w: '48px',
-  h: '48px',
-  // 親要素の色を継承
+  fontSize: '3xl',
 });
 
 export const sessionListEmptyText = css({
   fontSize: 'md',
   textAlign: 'center',
-  // 親要素の色を継承
 });
 
 export const sessionListEmptySubtext = css({
   fontSize: 'sm',
   textAlign: 'center',
-  // 親要素の色を継承
 });
 
 export const sessionListEmptyActions = css({
