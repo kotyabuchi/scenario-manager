@@ -67,7 +67,7 @@ export const sessionCard = css({
   p: 'md',
   shadow: 'card.default',
   cursor: 'pointer',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',

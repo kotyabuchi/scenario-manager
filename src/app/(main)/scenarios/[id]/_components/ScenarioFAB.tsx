@@ -50,7 +50,7 @@ const fabButton = css({
   height: '56px',
   borderRadius: 'full',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'lg',
   border: 'none',
   _hover: {
@@ -92,7 +92,7 @@ const menuItem = css({
   textAlign: 'left',
   cursor: 'pointer',
   border: 'none',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   _hover: {
     bg: 'bg.subtle',
   },
@@ -108,7 +108,7 @@ const menuLink = css({
   color: 'text.primary',
   fontSize: 'sm',
   textDecoration: 'none',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   _hover: {
     bg: 'bg.subtle',
   },

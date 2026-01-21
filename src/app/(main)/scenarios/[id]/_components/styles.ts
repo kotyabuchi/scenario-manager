@@ -17,7 +17,7 @@ export const header_backButton = css({
   color: 'text.secondary',
   fontSize: 'sm',
   cursor: 'pointer',
-  transition: 'color 0.2s',
+  transition: 'color {durations.normal}',
   _hover: {
     color: 'text.primary',
   },
@@ -102,7 +102,7 @@ export const scenarioInfo_rating = css({
   ml: '-xs',
   textDecoration: 'none',
   color: 'inherit',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   _hover: {
     bg: 'bg.subtle',
   },
@@ -224,7 +224,7 @@ export const description_toggleButton = css({
   fontSize: 'sm',
   fontWeight: 'medium',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   border: 'none',
   _hover: {
@@ -308,7 +308,7 @@ export const section_ctaButton = css({
   fontWeight: 'medium',
   borderRadius: 'lg',
   textDecoration: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'primary.600',
     transform: 'translateY(-1px)',
@@ -334,7 +334,7 @@ export const section_actionButton = css({
   borderRadius: 'md',
   border: 'none',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'primary.600',
   },
@@ -351,7 +351,7 @@ export const sessionCard = css({
   bg: 'bg.card',
   borderRadius: 'lg',
   shadow: 'card.default',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -399,7 +399,7 @@ export const videoCard = css({
   borderRadius: 'xl',
   overflow: 'hidden',
   shadow: 'card.default',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -425,7 +425,7 @@ export const videoCard_spoilerOverlay = css({
   backdropFilter: 'blur(8px)',
   color: 'primary.foreground.white',
   cursor: 'pointer',
-  transition: 'opacity 0.2s',
+  transition: 'opacity {durations.normal}',
   border: 'none',
   width: '100%',
   height: '100%',
@@ -503,7 +503,7 @@ export const reviewFilter_sortTabButton = cva({
     border: 'none',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     _hover: {
       color: 'text.primary',
       bg: 'bg.subtle',
@@ -616,7 +616,7 @@ export const reviewCard_actionButton = css({
   color: 'text.muted',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'bg.subtle',
     color: 'text.primary',
@@ -707,7 +707,7 @@ export const fabButton = cva({
     height: '56px',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     shadow: 'lg',
     _hover: {
       transform: 'scale(1.1)',

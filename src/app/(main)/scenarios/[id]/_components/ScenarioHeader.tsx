@@ -27,7 +27,7 @@ const header_backButton = css({
   color: 'text.secondary',
   fontSize: 'xl',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   flexShrink: 0,
   _hover: {
     bg: 'bg.subtle',

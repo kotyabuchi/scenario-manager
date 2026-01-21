@@ -25,7 +25,7 @@ const inputStyle = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   w: 'full',
   _hover: {
@@ -224,85 +224,86 @@ export const SearchPanel = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.searchPanel}>
-      <div className={styles.searchPanelRow}>
-        <fieldset className={styles.searchPanelField}>
-          <legend className={styles.searchPanelLabel}>システム</legend>
-          <div className={styles.searchPanelChips}>
-            {systems.slice(0, 5).map((system) => (
-              <Chip
-                key={system.systemId}
-                label={system.name}
-                selected={watchSystems?.includes(system.systemId)}
-                onClick={() => handleSystemToggle(system.systemId)}
-              />
-            ))}
-          </div>
-        </fieldset>
-      </div>
-
-      <div className={styles.searchPanelRow}>
-        <fieldset className={styles.searchPanelField}>
-          <legend className={styles.searchPanelLabel}>フェーズ</legend>
-          <div className={styles.searchPanelChips}>
-            {phaseOptions.map((phase) => (
-              <Chip
-                key={phase.value}
-                label={phase.label}
-                selected={watchPhases?.includes(phase.value)}
-                onClick={() => handlePhaseToggle(phase.value)}
-              />
-            ))}
-          </div>
-        </fieldset>
-      </div>
-
-      <div className={styles.searchPanelField}>
-        <span className={styles.searchPanelLabel}>開催日</span>
-        <div className={styles.datePresetContainer}>
-          <div className={styles.searchPanelChips}>
-            {datePresetOptions.map((option) => (
-              <Chip
-                key={option.value}
-                label={option.label}
-                selected={currentPreset === option.value}
-                onClick={() => handleDatePresetChange(option.value)}
-              />
-            ))}
-          </div>
-          {currentPreset === 'custom' && (
-            <div className={styles.dateInputContainer}>
-              <input
-                type="date"
-                {...register('dateFrom')}
-                className={styles.dateInput}
-                aria-label="開催日（開始）"
-              />
-              <span>〜</span>
-              <input
-                type="date"
-                {...register('dateTo')}
-                className={styles.dateInput}
-                aria-label="開催日（終了）"
-              />
+      <div className={styles.seachConditions}>
+        <div className={styles.searchPanelRow}>
+          <fieldset className={styles.searchPanelField}>
+            <legend className={styles.searchPanelLabel}>システム</legend>
+            <div className={styles.searchPanelChips}>
+              {systems.slice(0, 5).map((system) => (
+                <Chip
+                  key={system.systemId}
+                  label={system.name}
+                  selected={watchSystems?.includes(system.systemId)}
+                  onClick={() => handleSystemToggle(system.systemId)}
+                />
+              ))}
             </div>
-          )}
-          <FieldError error={errors.dateFrom} />
-          <FieldError error={errors.dateTo} />
+          </fieldset>
+        </div>
+
+        <div className={styles.searchPanelRow}>
+          <fieldset className={styles.searchPanelField}>
+            <legend className={styles.searchPanelLabel}>フェーズ</legend>
+            <div className={styles.searchPanelChips}>
+              {phaseOptions.map((phase) => (
+                <Chip
+                  key={phase.value}
+                  label={phase.label}
+                  selected={watchPhases?.includes(phase.value)}
+                  onClick={() => handlePhaseToggle(phase.value)}
+                />
+              ))}
+            </div>
+          </fieldset>
+        </div>
+
+        <div className={styles.searchPanelField}>
+          <span className={styles.searchPanelLabel}>開催日</span>
+          <div className={styles.datePresetContainer}>
+            <div className={styles.searchPanelChips}>
+              {datePresetOptions.map((option) => (
+                <Chip
+                  key={option.value}
+                  label={option.label}
+                  selected={currentPreset === option.value}
+                  onClick={() => handleDatePresetChange(option.value)}
+                />
+              ))}
+            </div>
+            {currentPreset === 'custom' && (
+              <div className={styles.dateInputContainer}>
+                <input
+                  type="date"
+                  {...register('dateFrom')}
+                  className={styles.dateInput}
+                  aria-label="開催日（開始）"
+                />
+                <span>〜</span>
+                <input
+                  type="date"
+                  {...register('dateTo')}
+                  className={styles.dateInput}
+                  aria-label="開催日（終了）"
+                />
+              </div>
+            )}
+            <FieldError error={errors.dateFrom} />
+            <FieldError error={errors.dateTo} />
+          </div>
+        </div>
+
+        <div className={styles.searchPanelField}>
+          <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
+            シナリオ名
+          </label>
+          <input
+            id="scenarioName"
+            {...register('q')}
+            placeholder="シナリオ名で検索..."
+            className={inputStyle}
+          />
         </div>
       </div>
-
-      <div className={styles.searchPanelField}>
-        <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
-          シナリオ名
-        </label>
-        <input
-          id="scenarioName"
-          {...register('q')}
-          placeholder="シナリオ名で検索..."
-          className={inputStyle}
-        />
-      </div>
-
       <hr className={styles.searchDivider} />
       <div className={styles.searchActions}>
         <Button type="submit" status="primary">

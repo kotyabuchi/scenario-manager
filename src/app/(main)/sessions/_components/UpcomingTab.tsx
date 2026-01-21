@@ -155,7 +155,7 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
         <div
           className={css({
             opacity: isPending ? 0.6 : 1,
-            transition: 'opacity 0.2s',
+            transition: 'opacity {durations.normal}',
           })}
         >
           {currentView === 'calendar' ? (

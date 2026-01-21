@@ -98,7 +98,7 @@ export const card_editButton = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   border: 'none',
   _hover: {
     bg: 'primary.50',
@@ -175,10 +175,10 @@ export const editForm_input = css({
   borderRadius: 'md',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'border-color 0.2s',
+  transition: 'border-color {durations.normal}',
   _focusVisible: {
     borderColor: 'primary.500',
-    boxShadow: '0 0 0 1px var(--colors-primary-500)',
+    outline: 'none',
   },
   _placeholder: {
     color: 'gray.400',
@@ -209,10 +209,10 @@ export const editForm_textarea = css({
   outline: 'none',
   resize: 'vertical',
   minH: '100px',
-  transition: 'border-color 0.2s',
+  transition: 'border-color {durations.normal}',
   _focusVisible: {
     borderColor: 'primary.500',
-    boxShadow: '0 0 0 1px var(--colors-primary-500)',
+    outline: 'none',
   },
   _placeholder: {
     color: 'gray.400',
@@ -233,7 +233,7 @@ export const editForm_submitButton = css({
   borderRadius: 'lg',
   fontWeight: 'medium',
   cursor: 'pointer',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   border: 'none',
   fontSize: 'md',
   mt: '2',

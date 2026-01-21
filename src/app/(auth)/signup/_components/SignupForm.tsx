@@ -209,7 +209,7 @@ const styles = {
     borderRadius: 'md',
     fontSize: 'sm',
     outline: 'none',
-    transition: 'border-color 0.2s',
+    transition: 'border-color {durations.normal}',
     _focus: {
       borderColor: 'primary.500',
       boxShadow: '0 0 0 1px var(--colors-primary-500)',
@@ -231,7 +231,7 @@ const styles = {
     borderRadius: 'lg',
     fontWeight: 'medium',
     cursor: 'pointer',
-    transition: 'background 0.2s',
+    transition: 'background {durations.normal}',
     border: 'none',
     fontSize: 'md',
     mt: '2',

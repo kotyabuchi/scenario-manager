@@ -15,13 +15,14 @@ export const chip = cva({
     fontWeight: 'medium',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
+    transition: 'all {durations.normal}',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
-      boxShadow:
-        '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
+      outline: '2px solid',
+      outlineColor: 'primary.focusRing',
+      outlineOffset: '2px',
     },
   },
   variants: {

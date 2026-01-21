@@ -21,7 +21,7 @@ export const header_back = css({
   color: 'text.secondary',
   fontSize: 'sm',
   cursor: 'pointer',
-  transition: 'color 0.2s',
+  transition: 'color {durations.normal}',
   _hover: {
     color: 'text.primary',
   },

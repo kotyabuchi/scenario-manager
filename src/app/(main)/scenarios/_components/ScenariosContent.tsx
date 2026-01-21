@@ -183,47 +183,49 @@ export const ScenariosContent = ({
         onSearch={handleSearch}
       />
 
-      <div className={styles.resultCount}>
-        検索結果: {searchResult.totalCount}件
-      </div>
+      <div className={styles.resultHeader}>
+        <div className={styles.resultCount}>
+          検索結果: {searchResult.totalCount}件
+        </div>
 
-      <div className={styles.sortTabs}>
-        <button
-          type="button"
-          onClick={() => handleSortChange('newest')}
-          className={styles.sortTabButton({
-            active: queryParams.sort === 'newest',
-          })}
-        >
-          新着順
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSortChange('rating')}
-          className={styles.sortTabButton({
-            active: queryParams.sort === 'rating',
-          })}
-        >
-          高評価順
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSortChange('playtime_asc')}
-          className={styles.sortTabButton({
-            active: queryParams.sort === 'playtime_asc',
-          })}
-        >
-          短時間順
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSortChange('playtime_desc')}
-          className={styles.sortTabButton({
-            active: queryParams.sort === 'playtime_desc',
-          })}
-        >
-          長時間順
-        </button>
+        <div className={styles.sortTabs}>
+          <button
+            type="button"
+            onClick={() => handleSortChange('newest')}
+            className={styles.sortTabButton({
+              active: queryParams.sort === 'newest',
+            })}
+          >
+            新着順
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSortChange('rating')}
+            className={styles.sortTabButton({
+              active: queryParams.sort === 'rating',
+            })}
+          >
+            高評価順
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSortChange('playtime_asc')}
+            className={styles.sortTabButton({
+              active: queryParams.sort === 'playtime_asc',
+            })}
+          >
+            短時間順
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSortChange('playtime_desc')}
+            className={styles.sortTabButton({
+              active: queryParams.sort === 'playtime_desc',
+            })}
+          >
+            長時間順
+          </button>
+        </div>
       </div>
 
       <ScenarioList scenarios={searchResult.scenarios} isLoading={isPending} />
@@ -236,7 +238,7 @@ export const ScenariosContent = ({
             mt: 'xl',
           })}
         >
-          <Button variant="subtle" onClick={handleLoadMore}>
+          <Button variant="subtle" status="primary" onClick={handleLoadMore}>
             もっと見る <ChevronDown size={16} />
           </Button>
         </div>

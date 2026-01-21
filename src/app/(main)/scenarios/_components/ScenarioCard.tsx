@@ -23,6 +23,7 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
     <Link
       href={`/scenarios/${scenario.scenarioId}`}
       className={`group ${styles.scenarioCard}`}
+      prefetch={false}
     >
       {/* サムネイル */}
       <div className={styles.cardThumbnail}>

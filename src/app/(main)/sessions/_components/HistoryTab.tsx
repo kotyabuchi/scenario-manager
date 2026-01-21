@@ -234,7 +234,7 @@ export const HistoryTab = ({
         <div
           className={css({
             opacity: isPending ? 0.6 : 1,
-            transition: 'opacity 0.2s',
+            transition: 'opacity {durations.normal}',
           })}
         >
           <SessionList sessions={searchResult.sessions} variant="my" showMeta />

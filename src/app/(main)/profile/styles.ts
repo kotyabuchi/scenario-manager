@@ -32,7 +32,7 @@ export const viewProfileLink = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   textDecoration: 'none',
   _hover: {
     bg: 'primary.50',

@@ -23,7 +23,7 @@ export const pageTitle = css({
 
 export const createButton = css({
   shadow: 'card.default',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -49,7 +49,7 @@ export const tabButton = cva({
     bg: 'transparent',
     border: 'none',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     borderBottom: '2px solid transparent',
     mb: '-1px',
     _hover: {
@@ -80,12 +80,17 @@ export const tabButton = cva({
 export const searchPanel = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
   p: 'lg',
   bg: 'bg.card',
   borderRadius: 'xl',
   mb: 'lg',
   shadow: 'card.default',
+});
+
+export const seachConditions = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'md',
 });
 
 export const searchPanelRow = css({
@@ -126,7 +131,7 @@ export const searchDivider = css({
   border: 'none',
   h: '1px',
   bg: 'border.subtle',
-  my: 'md',
+  my: 'lg',
 });
 
 export const searchActions = css({
@@ -146,13 +151,14 @@ export const chip = cva({
     fontWeight: 'medium',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
+    transition: 'all {durations.normal}',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
-      boxShadow:
-        '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
+      outline: '2px solid',
+      outlineColor: 'primary.focusRing',
+      outlineOffset: '2px',
     },
   },
   variants: {
@@ -188,7 +194,7 @@ export const sessionCard = css({
   borderRadius: 'xl',
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   shadow: 'card.default',
   _hover: {
     shadow: 'card.hover',
@@ -350,19 +356,21 @@ export const sessionListEmpty = css({
   justifyContent: 'center',
   py: '2xl',
   gap: 'md',
-  color: 'text.muted',
+  color: 'oklch(0.45 0.05 150)',
 });
 
 export const sessionListEmptyIcon = css({
-  w: '48px',
-  h: '48px',
-  color: 'neutral.300',
+  fontSize: '3xl',
 });
 
 export const sessionListEmptyText = css({
   fontSize: 'md',
   textAlign: 'center',
-  color: 'text.muted',
+});
+
+export const sessionListEmptySubtext = css({
+  fontSize: 'sm',
+  textAlign: 'center',
 });
 
 export const sessionListEmptyActions = css({
@@ -376,7 +384,7 @@ export const resultHeader = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  mb: 'md',
+  mb: 'lg',
 });
 
 export const resultCount = css({
@@ -387,34 +395,39 @@ export const resultCount = css({
 export const sortTabs = css({
   display: 'flex',
   gap: 'xs',
+  bg: 'white',
+  p: 'xs',
+  borderRadius: '16px',
+  shadow: 'xs',
 });
 
 export const sortTabButton = cva({
   base: {
     px: 'md',
-    py: 'xs',
+    py: 'sm',
     fontSize: 'sm',
     fontWeight: 'medium',
     color: 'text.muted',
     bg: 'transparent',
     border: 'none',
-    borderRadius: 'md',
+    borderRadius: '12px',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     _hover: {
-      color: 'text.primary',
-      bg: 'bg.subtle',
+      color: 'primary.700',
+      bg: 'primary.50',
     },
   },
   variants: {
     active: {
       true: {
-        color: 'primary.default',
-        bg: 'chip.default',
+        color: 'primary.700',
+        bg: 'primary.100',
         fontWeight: 'bold',
+        shadow: 'xs',
         _hover: {
-          color: 'primary.default',
-          bg: 'chip.default',
+          color: 'primary.700',
+          bg: 'primary.100',
         },
       },
     },
@@ -430,7 +443,7 @@ export const selectInput = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   cursor: 'pointer',
   _hover: {
@@ -438,7 +451,9 @@ export const selectInput = css({
   },
   _focusVisible: {
     bg: 'bg.emphasized',
-    shadow: '0 0 0 2px {colors.primary.focusRing}',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '2px',
   },
 });
 
@@ -462,7 +477,7 @@ export const viewToggleButton = cva({
     borderRadius: 'sm',
     border: 'none',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     color: 'text.muted',
     bg: 'transparent',
     _hover: {
@@ -550,14 +565,16 @@ export const dateInput = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   _hover: {
     bg: 'bg.emphasized',
   },
   _focusVisible: {
     bg: 'bg.emphasized',
-    shadow: '0 0 0 2px {colors.primary.focusRing}',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '2px',
   },
 });
 
@@ -596,7 +613,7 @@ export const calendarNavButton = css({
   bg: 'transparent',
   cursor: 'pointer',
   color: 'text.muted',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'neutral.100',
     color: 'text.primary',

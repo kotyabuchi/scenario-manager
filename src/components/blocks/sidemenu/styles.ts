@@ -18,12 +18,10 @@ export const sideMenu = cva({
   variants: {
     open: {
       true: {
-        minWidth: '200px',
-        width: 'fit-content',
+        width: '200px',
         shadow: 'sidemenu.hover',
       },
       false: {
-        minWidth: '64px',
         width: '64px',
       },
     },
