@@ -154,10 +154,10 @@
 - [ ] 関連動画（後で実装）
 
 ### 3.8 シナリオ登録画面
-- [ ] `/scenarios/new/page.tsx`
-- [ ] 登録フォーム
-- [ ] バリデーション
-- [ ] Server Action
+- [x] `/scenarios/new/page.tsx`
+- [x] 登録フォーム
+- [x] バリデーション
+- [x] Server Action
 
 ### 3.9 シナリオ編集画面
 - [ ] `/scenarios/[id]/edit/page.tsx`
@@ -209,6 +209,7 @@
 | 2026-01-19 | Claude | 0件時メッセージ改善（P1-005完了：温かみのあるメッセージに変更、絵文字をアイコンに置換） |
 | 2026-01-19 | Claude | 検索パネル折りたたみ機能追加（P1-001完了：詳細条件を折りたたみ可能に） |
 | 2026-01-20 | Claude | Phase 2.6 プロフィール画面設計変更完了（共通化・/users/[id]・/profile実装・/users/me削除） |
+| 2026-01-21 | Claude | Phase 3.8 シナリオ登録画面完了（フォーム・バリデーション・Server Action） |
 
 ---
 
