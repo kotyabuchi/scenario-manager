@@ -80,12 +80,17 @@ export const tabButton = cva({
 export const searchPanel = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
   p: 'lg',
   bg: 'bg.card',
   borderRadius: 'xl',
   mb: 'lg',
   shadow: 'card.default',
+});
+
+export const seachConditions = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'md',
 });
 
 export const searchPanelRow = css({
@@ -126,7 +131,7 @@ export const searchDivider = css({
   border: 'none',
   h: '1px',
   bg: 'border.subtle',
-  my: 'md',
+  my: 'lg',
 });
 
 export const searchActions = css({
@@ -379,7 +384,7 @@ export const resultHeader = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  mb: 'md',
+  mb: 'lg',
 });
 
 export const resultCount = css({

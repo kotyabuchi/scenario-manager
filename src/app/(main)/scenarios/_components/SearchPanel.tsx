@@ -173,7 +173,7 @@ export const SearchPanel = ({
 
         {/* プレイ人数・時間（折りたたみ可能） */}
         <div className={styles.detailedConditions({ expanded: isExpanded })}>
-          <div className={styles.searchPanelRow}>
+          <div className={styles.seachConditions}>
             <fieldset className={styles.searchPanelField}>
               <legend className={styles.searchPanelLabel}>プレイ人数</legend>
               <div className={styles.rangeInput}>

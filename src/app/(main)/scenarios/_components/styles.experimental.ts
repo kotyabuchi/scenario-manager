@@ -293,8 +293,14 @@ export const searchPanel = css({
   p: 'lg', // より広めのパディング
   bg: 'white',
   borderRadius: '16px',
-  mb: 'xl',
+  mb: 'lg',
   boxShadow: shadows.sm,
+});
+
+export const seachConditions = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'md',
 });
 
 export const searchPanelRow = css({
@@ -430,7 +436,7 @@ export const resultHeader = css({
   display: 'flex',
   flexDirection: 'column',
   gap: 'sm',
-  mb: 'md',
+  mb: 'lg',
   // タブレット以上で横並び
   md: {
     flexDirection: 'row',
@@ -440,9 +446,8 @@ export const resultHeader = css({
 });
 
 export const resultCount = css({
-  fontSize: 'md',
-  fontWeight: 'semibold',
-  color: colors.neutral[700],
+  fontSize: 'sm',
+  color: colors.neutral[600],
 });
 
 export const sortTabs = css({
