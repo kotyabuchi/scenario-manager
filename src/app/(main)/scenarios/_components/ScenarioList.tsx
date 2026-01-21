@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 
 import { ScenarioCard } from './ScenarioCard';
-import * as styles from './styles';
+import * as styles from './styles.experimental'; // 実験用スタイル
 
 import type { ScenarioListProps } from '../interface';
 

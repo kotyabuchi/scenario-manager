@@ -5,6 +5,23 @@
 
 ---
 
+## 重要な設計決定（2026-01-21更新）
+
+### タップターゲット: 26px最小（Apple 44pxは不採用）
+- デスクトップWebアプリには44pxは大きすぎる
+- シナリオカードのお気に入りボタン（26px）が視覚的・操作的に許容できる最小サイズ
+
+### フォーカスリング: `outline`を使用（`box-shadow`禁止）
+- アクセシビリティ的に`outline`がブラウザ標準で正しい
+- `box-shadow`での再現は禁止
+- `outlineOffset: '2px'`で視認性確保
+
+### overflow: hidden との競合対策
+- `outline`は要素外に描画されるため、親の`overflow: hidden`で切れる
+- 折りたたみアニメーション等では、展開時に`overflow: visible`へ切り替える
+
+---
+
 ## 詳細化の優先順位
 
 ### 🔴 最優先（すぐに必要）
@@ -35,7 +52,95 @@
 
 ---
 
-## 1. スペーシングシステム（Apple HIG準拠）
+## 1. Appleデザイン原則（採用/不採用の整理）
+
+### 1.1 採用する原則
+
+#### デザイン哲学（4原則）
+
+| 原則 | 説明 | 本プロジェクトでの適用 |
+|------|------|----------------------|
+| **Clarity（明確さ）** | 一目で理解できる、不要な複雑さを排除 | シンプルなUI、情報の優先順位を明確に |
+| **Deference（従順さ）** | UIがコンテンツの邪魔をしない | 控えめな装飾、コンテンツファースト |
+| **Depth（深度）** | レイヤー・シャドウ・モーションで階層を表現 | 影によるレイヤード表現（既存方針と一致） |
+| **Consistency（一貫性）** | 標準的なUI要素と視覚的手がかりの統一 | トークンシステム、コンポーネント再利用 |
+
+#### 8ptグリッドシステム
+
+**採用理由**: 予測可能で調和的なスペーシングを実現
+
+- 主要スペーシング: 8の倍数（8, 16, 24, 32px）
+- 補助グリッド: 4の倍数（4, 12, 20px）
+- 詳細は後述の「スペーシングシステム」セクション参照
+
+#### タップターゲット26px以上（プロジェクト独自基準）
+
+**採用理由**: Apple HIG推奨の44pxはWebアプリには大きすぎるため、本プロジェクト独自の基準を採用
+
+**基準の根拠**: シナリオカードのお気に入りボタン（26px）が視覚的・操作的に許容できる最小サイズ
+
+| 要素 | 最小サイズ | 備考 |
+|------|-----------|------|
+| アイコンボタン | 26×26px | お気に入りボタン等の小さいボタン |
+| テキストボタン | 高さ26px以上 | タブ、展開ボタン等 |
+| フォーム要素 | 高さ32px以上 | Input, Select等（入力しやすさ考慮） |
+
+**不採用**: Apple HIG 44px（デスクトップWebには大きすぎる）
+
+**実装例**:
+```typescript
+// 最小のアイコンボタン（26px）
+export const iconButtonSmall = css({
+  minW: '26px',
+  minH: '26px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  '& svg': {
+    w: '14px',
+    h: '14px',
+  },
+});
+```
+
+
+
+#### タイポグラフィの原則
+
+| 原則 | 説明 | 本プロジェクトでの適用 |
+|------|------|----------------------|
+| UI用とテキスト用の使い分け | Apple: SF Pro Display（UI）/ SF Pro Text（長文） | 同様の考え方でフォントサイズ・行間を調整 |
+| サイズに応じた文字間隔 | 小さいテキストは広め、大きいテキストは狭め | PandaCSSのfontSizeトークンで調整 |
+
+---
+
+### 1.2 不採用とする原則
+
+#### Squircle（スーパー楕円）
+
+**不採用理由**: 導入コストが高い
+
+- CSSのborder-radiusでは再現不可
+- SVGマスクやcanvasが必要
+- Figmaでの再現: `サイズ × 0.222` + コーナースムージング61%
+- Webでの実装は複雑すぎるため、通常の角丸（border-radius）を使用
+
+**代替**: 通常の角丸16px（4の倍数）で統一
+
+#### Liquid Glass（iOS 26〜）
+
+**不採用理由**: ユーザーから不評
+
+- 2025年6月発表のApple新デザイン言語
+- 半透明性、リアルタイムブラー、スペキュラハイライト等
+- ユーザーからの評判が悪く、アクセシビリティ上の懸念もあり
+- 本プロジェクトのターゲット層（TRPGプレイヤー）には不向き
+
+**代替**: 既存の「モダン × ソフト × レイヤードUI」を継続
+
+---
+
+## 2. スペーシングシステム（Apple HIG準拠）
 
 ### 設計原則：Apple流
 
@@ -299,12 +404,46 @@ _hover: {
 ```typescript
 _focusVisible: {
   bg: 'input.focus',
-  shadow: 'input.focus',     // フォーカスリング（影で表現）
-  // borderは使わない
+  outline: '2px solid',
+  outlineColor: 'primary.focusRing',
+  outlineOffset: '2px',
 }
 ```
 
-**重要**: `_focusVisible`を使用（マウスクリック時は非表示、キーボード操作時のみ表示）
+**重要**: 
+- `_focusVisible`を使用（マウスクリック時は非表示、キーボード操作時のみ表示）
+- フォーカスリングは`outline`（ブラウザ標準）を使用
+- `box-shadow`での再現は**禁止**（アクセシビリティ的にoutlineが正しい）
+- `outlineOffset: '2px'`で要素から少し離して視認性を確保
+
+#### overflow: hidden との競合
+
+`outline`は要素の外側に描画されるため、親コンテナに`overflow: hidden`があると切れる。
+
+**対処法**: 折りたたみアニメーション等で`overflow: hidden`を使う場合、展開時は`overflow: visible`に切り替える。
+
+```typescript
+// 折りたたみコンテナの例
+export const collapsible = cva({
+  base: {
+    transition: 'all 0.3s ease-in-out',
+  },
+  variants: {
+    expanded: {
+      true: {
+        maxHeight: '1000px',
+        opacity: 1,
+        overflow: 'visible',  // ✅ 展開時はoutlineが見えるように
+      },
+      false: {
+        maxHeight: '0',
+        opacity: 0,
+        overflow: 'hidden',   // 折りたたみ時のみhidden
+      },
+    },
+  },
+});
+```
 
 ---
 
@@ -538,7 +677,9 @@ export const checkbox = css({
   },
   
   _focusVisible: {
-    boxShadow: '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
+    outline: '2px solid',
+    outlineColor: 'primary.default',
+    outlineOffset: '2px',
   },
 });
 ```
@@ -625,7 +766,9 @@ export const radio = css({
   },
   
   _focusVisible: {
-    boxShadow: '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
+    outline: '2px solid',
+    outlineColor: 'primary.default',
+    outlineOffset: '2px',
   },
 });
 ```
@@ -664,7 +807,7 @@ export const checkboxLabel = css({
 | **ボーダー** | `border: 'none'`（Input/Select - 影で十分視認可能）<br>`border: '1.5px solid'`（Checkbox/Radio - 小さいため視認性確保） |
 | **影** | ✅ 必ず使用（`shadow: 'input.default'`等） |
 | **背景** | ✅ セマンティックトークン（`bg: 'input.default'`） |
-| **フォーカスリング** | `shadow: 'input.focus'`（Input/Select）<br>`boxShadow: '0 0 0 2px bg.card, 0 0 0 4px primary.focusRing'`（Checkbox/Radio） |
+| **フォーカスリング** | `outline: '2px solid', outlineColor: 'primary.focusRing', outlineOffset: '2px'`（ブラウザ標準を使用、box-shadow禁止） |
 | **トランジション** | `transition: 'all 0.2s ease'`（統一） |
 | **border-radius** | `md`（Input/Select）、`sm`（Checkbox）、`full`（Radio） |
 | **disabled背景** | `bg: 'input.disabled'` + `shadow: 'none'` |
@@ -800,9 +943,8 @@ shadows: {
   input: {
     default: { value: '0 1px 3px rgba(0, 0, 0, 0.06)' },
     hover: { value: '0 2px 4px rgba(0, 0, 0, 0.08)' },
-    focus: { value: '0 0 0 3px {colors.primary.focusRing}' },
+    // focus: outlineを使用（box-shadowでの再現は禁止）
     error: { value: '0 0 0 2px {colors.danger.200}' },
-    errorFocus: { value: '0 0 0 3px {colors.danger.300}' },
     success: { value: '0 0 0 2px {colors.success.200}' },
   },
   checkbox: {

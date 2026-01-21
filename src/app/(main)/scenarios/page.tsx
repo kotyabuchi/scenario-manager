@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 
 import { ScenariosContent } from './_components/ScenariosContent';
-import * as styles from './_components/styles';
+import * as styles from './_components/styles.experimental'; // 実験用スタイル
 import { getAllSystems, getAllTags, searchScenarios } from './adapter';
 import { searchParamsCache, toSearchParams } from './searchParams';
 

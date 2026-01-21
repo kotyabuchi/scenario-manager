@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
-import * as styles from './styles';
+import * as styles from './styles.experimental'; // 実験用スタイル
 
 import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
@@ -23,6 +23,7 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
     <Link
       href={`/scenarios/${scenario.scenarioId}`}
       className={`group ${styles.scenarioCard}`}
+      prefetch={false}
     >
       {/* サムネイル */}
       <div className={styles.cardThumbnail}>

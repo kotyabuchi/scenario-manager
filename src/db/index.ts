@@ -14,6 +14,7 @@ import * as schema from './schema';
  */
 export const getDb = () => {
   let connectionString: string;
+  let isCloudflare = false;
 
   try {
     // Cloudflare Workers環境: Hyperdriveバインディングから接続文字列を取得
@@ -24,19 +25,27 @@ export const getDb = () => {
     if (!connectionString) {
       throw new Error('HYPERDRIVE binding not found');
     }
+    isCloudflare = true;
   } catch {
     // ローカル開発環境: 環境変数から接続文字列を取得
     connectionString = process.env.DATABASE_URL ?? '';
+    isCloudflare = false;
   }
 
   const client = postgres(connectionString, {
-    // Hyperdriveが接続プーリングを担当するため、max: 5で十分
-    // Workersの同時外部接続数制限に対応
-    max: 5,
+    // 環境別の接続プール設定
+    max: isCloudflare ? 5 : 10,
     // 配列型を使用しない場合、追加のラウンドトリップを回避
     fetch_types: false,
-    // Hyperdriveは prepare をサポート
-    prepare: true,
+    // Cloudflare(Hyperdrive)ではprepare有効、開発環境(pgbouncer)では無効
+    prepare: isCloudflare,
+    // 開発環境のみ: アイドル接続のタイムアウトと最大生存時間を設定
+    ...(isCloudflare
+      ? {}
+      : {
+          idle_timeout: 20,
+          max_lifetime: 60 * 30,
+        }),
   });
 
   return drizzle({ client, schema });
