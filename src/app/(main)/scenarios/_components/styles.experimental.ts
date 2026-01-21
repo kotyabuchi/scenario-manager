@@ -425,17 +425,29 @@ export const pageTitle = css({
   color: colors.neutral[800],
 });
 
+// 検索結果ヘッダー（件数 + ソート）
+export const resultHeader = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'sm',
+  mb: 'md',
+  // タブレット以上で横並び
+  md: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+});
+
 export const resultCount = css({
   fontSize: 'md',
   fontWeight: 'semibold',
   color: colors.neutral[700],
-  mb: 'md',
 });
 
 export const sortTabs = css({
   display: 'flex',
   gap: 'xs',
-  mb: 'md',
   bg: 'white',
   p: 'xs',
   borderRadius: '16px',
