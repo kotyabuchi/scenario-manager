@@ -207,7 +207,9 @@ const MyComponent = ({ value, onUpdate }: Props) => {
 ### UI Design Guidelines
 プロジェクト全体のUIトーン: **モダン × ソフト × レイヤードUI**
 
-**詳細なデザインパターンは `ui-design-system.md` メモリを参照すること。**
+**UI実装時は以下のメモリを必ず参照すること:**
+- `ui-design-system.md` - デザインシステムの基本原則とトークン定義
+- `ui-design-refinement.md` - 実践的なスタイルパターンとカラーパレット（nani.now風パステルグリーン）
 
 | 原則 | 説明 |
 |------|------|
@@ -381,6 +383,16 @@ cmd //c "taskkill /PID <PID> /F"
 ```
 
 **注意**: `pnpm dev`などで起動したサーバーは、Playwrightでの確認後など用が済んだら必ず終了する。ポートを専有したままにしない。
+
+### agent-browserの終了（必須）
+**agent-browserを使用したら、作業完了後に必ず`agent-browser close`で終了すること。**
+
+```bash
+# agent-browserの終了
+agent-browser close
+```
+
+**理由**: agent-browserはヘッドレスChromeを起動するため、閉じずに放置するとメモリを大量消費し、システム全体のパフォーマンスが低下する。
 
 ### 開発サーバー起動時のポート管理（必須）
 **`pnpm dev`で3000番以外のポートが使われた場合は、必ず以下の手順に従うこと。**
