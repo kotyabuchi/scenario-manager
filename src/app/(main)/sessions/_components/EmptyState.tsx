@@ -20,7 +20,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
         <p className={styles.sessionListEmptyText}>
           参加予定のセッションはありません
         </p>
-        <p className={styles.sessionListEmptyText}>
+        <p className={styles.sessionListEmptySubtext}>
           公開卓を探してみませんか？
         </p>
         <div className={styles.sessionListEmptyActions}>
@@ -46,7 +46,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
       <div className={styles.sessionListEmpty}>
         <Calendar className={styles.sessionListEmptyIcon} />
         <p className={styles.sessionListEmptyText}>参加履歴はまだありません</p>
-        <p className={styles.sessionListEmptyText}>
+        <p className={styles.sessionListEmptySubtext}>
           セッションに参加して思い出を作りましょう!
         </p>
         <div className={styles.sessionListEmptyActions}>
@@ -67,7 +67,7 @@ export const EmptyState = ({ type, onReset }: EmptyStateProps) => {
       <p className={styles.sessionListEmptyText}>
         条件に一致するセッションが見つかりませんでした
       </p>
-      <p className={styles.sessionListEmptyText}>
+      <p className={styles.sessionListEmptySubtext}>
         条件を変えて、もう一度探してみませんか？
       </p>
       <div className={styles.sessionListEmptyActions}>
