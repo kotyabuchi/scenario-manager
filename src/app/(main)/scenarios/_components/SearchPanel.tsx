@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { isNil } from 'ramda';
 
 import { type SearchFormValues, searchFormSchema } from './schema';
-import * as styles from './styles.experimental'; // 実験用スタイル
+import * as styles from './styles';
 
 import { FieldError } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';

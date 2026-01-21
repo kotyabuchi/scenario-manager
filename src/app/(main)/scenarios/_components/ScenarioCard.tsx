@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
-import * as styles from './styles.experimental'; // 実験用スタイル
+import * as styles from './styles';
 
 import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 

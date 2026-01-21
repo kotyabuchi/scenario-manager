@@ -8,7 +8,7 @@ import { isNil } from 'ramda';
 import { searchParamsParsers } from '../searchParams';
 import { ScenarioList } from './ScenarioList';
 import { SearchPanel } from './SearchPanel';
-import * as styles from './styles.experimental'; // 実験用スタイル
+import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { css } from '@/styled-system/css';
