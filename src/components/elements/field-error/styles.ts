@@ -5,7 +5,7 @@ export const fieldError = css({
   alignItems: 'center',
   gap: '1',
   fontSize: 'xs',
-  color: 'danger.emphasized',
+  color: 'danger.default',
   mt: '1',
 });
 
