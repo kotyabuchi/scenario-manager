@@ -207,9 +207,7 @@ const MyComponent = ({ value, onUpdate }: Props) => {
 ### UI Design Guidelines
 プロジェクト全体のUIトーン: **モダン × ソフト × レイヤードUI**
 
-**UI実装時は以下のメモリを必ず参照すること:**
-- `ui-design-system.md` - デザインシステムの基本原則とトークン定義
-- `ui-design-refinement.md` - 実践的なスタイルパターンとカラーパレット（nani.now風パステルグリーン）
+**UI実装時は `ui-design-system.md` メモリを必ず参照すること。**（カラーパレット、コンポーネントパターン、禁止パターン等を記載）
 
 | 原則 | 説明 |
 |------|------|
