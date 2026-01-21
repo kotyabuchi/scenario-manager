@@ -25,7 +25,7 @@ const inputStyle = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   w: 'full',
   _hover: {

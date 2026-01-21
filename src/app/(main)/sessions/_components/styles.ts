@@ -23,7 +23,7 @@ export const pageTitle = css({
 
 export const createButton = css({
   shadow: 'card.default',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -49,7 +49,7 @@ export const tabButton = cva({
     bg: 'transparent',
     border: 'none',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     borderBottom: '2px solid transparent',
     mb: '-1px',
     _hover: {
@@ -146,13 +146,14 @@ export const chip = cva({
     fontWeight: 'medium',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
+    transition: 'all {durations.normal}',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
-      boxShadow:
-        '0 0 0 2px {colors.bg.card}, 0 0 0 4px {colors.primary.focusRing}',
+      outline: '2px solid',
+      outlineColor: 'primary.focusRing',
+      outlineOffset: '2px',
     },
   },
   variants: {
@@ -188,7 +189,7 @@ export const sessionCard = css({
   borderRadius: 'xl',
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   shadow: 'card.default',
   _hover: {
     shadow: 'card.hover',
@@ -400,7 +401,7 @@ export const sortTabButton = cva({
     border: 'none',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     _hover: {
       color: 'text.primary',
       bg: 'bg.subtle',
@@ -430,7 +431,7 @@ export const selectInput = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   cursor: 'pointer',
   _hover: {
@@ -438,7 +439,9 @@ export const selectInput = css({
   },
   _focusVisible: {
     bg: 'bg.emphasized',
-    shadow: '0 0 0 2px {colors.primary.focusRing}',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '2px',
   },
 });
 
@@ -462,7 +465,7 @@ export const viewToggleButton = cva({
     borderRadius: 'sm',
     border: 'none',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     color: 'text.muted',
     bg: 'transparent',
     _hover: {
@@ -550,14 +553,16 @@ export const dateInput = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   shadow: 'sm',
   _hover: {
     bg: 'bg.emphasized',
   },
   _focusVisible: {
     bg: 'bg.emphasized',
-    shadow: '0 0 0 2px {colors.primary.focusRing}',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '2px',
   },
 });
 
@@ -596,7 +601,7 @@ export const calendarNavButton = css({
   bg: 'transparent',
   cursor: 'pointer',
   color: 'text.muted',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'neutral.100',
     color: 'text.primary',

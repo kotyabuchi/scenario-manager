@@ -107,7 +107,7 @@ const featureCardBase = {
   bg: 'bg.card',
   borderRadius: '24px',
   shadow: 'card.default',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-4px)',

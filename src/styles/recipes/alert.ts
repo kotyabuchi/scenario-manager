@@ -44,7 +44,7 @@ export const alert = defineSlotRecipe({
       width: '5',
       height: '5',
       cursor: 'pointer',
-      transition: 'opacity 0.2s ease-in-out',
+      transition: 'opacity {durations.normal}',
       opacity: '0.7',
       _hover: {
         opacity: '1',

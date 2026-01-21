@@ -8,7 +8,7 @@ export const scenarioCard = css({
   borderRadius: 'xl',
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   shadow: 'card.default',
   _hover: {
     shadow: 'card.hover',
@@ -25,7 +25,7 @@ export const cardThumbnail = css({
 
 export const cardThumbnailImage = css({
   objectFit: 'cover',
-  transition: 'all 0.3s',
+  transition: 'all {durations.slow}',
   _groupHover: {
     transform: 'scale(1.03)',
     filter: 'brightness(1.05)',
@@ -120,7 +120,7 @@ export const cardFavoriteButton = css({
   borderRadius: 'full',
   bg: 'overlay.dark',
   backdropFilter: 'blur(4px)',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   zIndex: 1,
   _hover: {
     bg: 'overlay.darkHover',
@@ -303,7 +303,7 @@ export const expandButton = css({
   border: 'none',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     color: 'text.primary',
     bg: 'bg.subtle',
@@ -316,7 +316,7 @@ export const detailedConditions = cva({
     flexDirection: 'column',
     gap: 'md',
     overflow: 'hidden',
-    transition: 'all 0.3s ease-in-out',
+    transition: 'all {durations.slow}',
   },
   variants: {
     expanded: {
@@ -404,7 +404,7 @@ export const sortTabButton = cva({
     border: 'none',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     _hover: {
       color: 'text.primary',
       bg: 'bg.subtle',

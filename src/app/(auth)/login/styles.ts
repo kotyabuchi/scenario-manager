@@ -60,7 +60,7 @@ export const discordButton = css({
   borderRadius: 'lg',
   fontWeight: 'medium',
   cursor: 'pointer',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   border: 'none',
   fontSize: 'md',
   _hover: {
