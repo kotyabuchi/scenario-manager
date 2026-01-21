@@ -388,34 +388,39 @@ export const resultCount = css({
 export const sortTabs = css({
   display: 'flex',
   gap: 'xs',
+  bg: 'white',
+  p: 'xs',
+  borderRadius: '16px',
+  shadow: 'xs',
 });
 
 export const sortTabButton = cva({
   base: {
     px: 'md',
-    py: 'xs',
+    py: 'sm',
     fontSize: 'sm',
     fontWeight: 'medium',
     color: 'text.muted',
     bg: 'transparent',
     border: 'none',
-    borderRadius: 'md',
+    borderRadius: '12px',
     cursor: 'pointer',
     transition: 'all {durations.normal}',
     _hover: {
-      color: 'text.primary',
-      bg: 'bg.subtle',
+      color: 'primary.700',
+      bg: 'primary.50',
     },
   },
   variants: {
     active: {
       true: {
-        color: 'primary.default',
-        bg: 'chip.default',
+        color: 'primary.700',
+        bg: 'primary.100',
         fontWeight: 'bold',
+        shadow: 'xs',
         _hover: {
-          color: 'primary.default',
-          bg: 'chip.default',
+          color: 'primary.700',
+          bg: 'primary.100',
         },
       },
     },
