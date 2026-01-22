@@ -36,13 +36,14 @@
 | searchFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | searchScenarios | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | toSearchParams | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
-| getAllSystems | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getAllTags | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| getAllSystems | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getAllTags | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 
 **テストファイル**:
 - `src/app/(main)/scenarios/__tests__/searchFormSchema.test.ts`
 - `src/app/(main)/scenarios/__tests__/searchScenarios.test.ts`
 - `src/app/(main)/scenarios/__tests__/searchParams.test.ts`
+- `src/app/(main)/scenarios/__tests__/masterData.test.ts`
 
 ---
 
@@ -51,10 +52,12 @@
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
 | scenarioFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
-| createScenario | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| createScenario | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getUserByDiscordId | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 
 **テストファイル**:
 - `src/app/(main)/scenarios/new/__tests__/schema.test.ts`
+- `src/app/(main)/scenarios/new/__tests__/adapter.test.ts`
 
 ---
 
@@ -62,13 +65,17 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| getScenarioDetail | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getScenarioReviews | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getScenarioSessions | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getScenarioVideoLinks | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getUserScenarioPreference | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| toggleFavorite | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| togglePlayed | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| getScenarioDetail | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getScenarioReviews | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getScenarioSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getScenarioVideoLinks | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getUserScenarioPreference | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getUserByDiscordId | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| toggleFavorite | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| togglePlayed | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+
+**テストファイル**:
+- `src/app/(main)/scenarios/[id]/__tests__/adapter.test.ts`
 
 ---
 
@@ -76,10 +83,14 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| getUpcomingSessions | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getHistorySessions | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| searchPublicSessions | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| getCalendarSessions | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| searchPublicSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getUpcomingSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getHistorySessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getCalendarSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| getAllSystems | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+
+**テストファイル**:
+- `src/app/(main)/sessions/__tests__/adapter.test.ts`
 
 ---
 
