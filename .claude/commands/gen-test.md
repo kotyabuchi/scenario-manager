@@ -35,6 +35,8 @@ description: 要件定義書からテスト項目を洗い出し、失敗する�
 /gen-test                              # 対話で要件定義書を選択
 /gen-test feedback                     # requirements-feedback.md から生成
 /gen-test US-F01 US-F02                # 特定のユーザーストーリーのみ
+/gen-test シナリオ一覧機能             # 自然言語で機能を指定（該当要件を自動検索）
+/gen-test セッション募集               # 自然言語で機能を指定
 /gen-test --extract-only               # テスト項目の洗い出しのみ（テスト生成なし）
 /gen-test --vitest-only                # Vitestのみ生成
 /gen-test --playwright-only            # Playwrightのみ生成
@@ -48,14 +50,76 @@ description: 要件定義書からテスト項目を洗い出し、失敗する�
 
 $ARGUMENTS を解析:
 
-1. **機能名が指定された場合**: `.claude/rules/requirements-{機能名}.md` を読み込む
-2. **US-XXX が指定された場合**: 全要件定義書を検索
-3. **指定なしの場合**: AskUserQuestion で選択
+1. **要件定義書名が指定された場合**: `.claude/rules/requirements-{名前}.md` を読み込む
+   - 例: `feedback` → `requirements-feedback.md`
+
+2. **US-XXX が指定された場合**: 全要件定義書から該当ユーザーストーリーを検索
+
+3. **自然言語で機能名が指定された場合**: 全要件定義書を検索して該当箇所を特定
+   - 例: `シナリオ一覧機能` → 「シナリオ」「検索」「一覧」で検索
+
+4. **指定なしの場合**: AskUserQuestion で選択
 
 ```bash
 # 要件定義書の一覧を取得
 ls .claude/rules/requirements-*.md
 ```
+
+##### 自然言語からの要件検索ロジック
+
+自然言語で機能名が指定された場合、以下の手順で該当要件を特定:
+
+**Step A: キーワード抽出**
+
+入力からキーワードを抽出:
+```
+入力: "シナリオ一覧機能のテスト作って"
+キーワード: ["シナリオ", "一覧", "検索"]
+```
+
+**Step B: 全要件定義書を検索**
+
+```bash
+# 各要件定義書でキーワードを検索
+grep -l "シナリオ" .claude/rules/requirements-*.md
+```
+
+**Step C: 該当セクションの特定**
+
+見つかった要件定義書から、関連するセクションを抽出:
+- ユーザーストーリー（US-XXX）
+- データモデル
+- 画面仕様
+- バリデーションルール
+
+**Step D: ユーザーに確認**
+
+```
+「シナリオ一覧機能」に関連する要件を検索しました:
+
+📄 requirements-v1.md
+  - セクション5: シナリオ検索（最重要機能）
+  - US-201〜US-207: シナリオ検索のユーザーストーリー
+
+📄 requirements-session-flow.md
+  - セクション3.3: 募集一覧表示
+
+どの範囲でテストを生成しますか？
+[requirements-v1.md のシナリオ検索] [両方] [手動で選択] [中止]
+```
+
+##### キーワードマッピング（よく使う機能名）
+
+| 入力例 | 検索キーワード | 主な該当箇所 |
+|--------|--------------|-------------|
+| シナリオ一覧、シナリオ検索 | シナリオ, 検索, 一覧 | requirements-v1.md §5 |
+| シナリオ詳細 | シナリオ詳細, /scenarios/[id] | requirements-v1.md §10 |
+| セッション一覧 | セッション, 一覧, /sessions | requirements-v1.md §11 |
+| セッション募集、セッション作成 | 募集, 参加, セッション | requirements-session-flow.md §3 |
+| 日程調整 | 日程, 調整, カレンダー | requirements-session-flow.md §4 |
+| レビュー | レビュー, 評価, コメント | requirements-v1.md §7, requirements-review-ui.md |
+| フィードバック | フィードバック, 投稿, 投票 | requirements-feedback.md |
+| ログイン、認証 | ログイン, 認証, Discord | requirements-v1.md §3 |
 
 #### Step 1.2: 要件の完全性チェック
 
