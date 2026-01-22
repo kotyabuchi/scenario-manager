@@ -44,8 +44,8 @@ describe('Button', () => {
   });
 
   it('propsでvariantを変更できる', () => {
-    const { rerender } = render(<Default variant="outline" />);
-    // outline variantでレンダリングされることを確認
+    const { rerender } = render(<Default variant="subtle" />);
+    // subtle variantでレンダリングされることを確認
     expect(screen.getByRole('button')).toBeInTheDocument();
 
     rerender(<Default variant="ghost" />);
