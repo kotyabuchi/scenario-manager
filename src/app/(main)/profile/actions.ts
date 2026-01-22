@@ -40,6 +40,7 @@ export const updateProfile = async (
 
   // Zodスキーマでバリデーション
   const parsed = profileFormSchema.safeParse({
+    userName: input.userName,
     nickname: input.nickname,
     bio: input.bio ?? '',
   });
@@ -51,6 +52,7 @@ export const updateProfile = async (
 
   // プロフィール更新
   const updateResult = await updateUserProfile(userResult.data.userId, {
+    userName: parsed.data.userName,
     nickname: parsed.data.nickname,
     bio: parsed.data.bio || undefined,
   });

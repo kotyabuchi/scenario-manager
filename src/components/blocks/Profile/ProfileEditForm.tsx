@@ -24,6 +24,7 @@ export const ProfileEditForm = ({ user, onUpdate }: ProfileEditFormProps) => {
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
+      userName: user.userName,
       nickname: user.nickname,
       bio: user.bio ?? '',
     },
@@ -35,6 +36,7 @@ export const ProfileEditForm = ({ user, onUpdate }: ProfileEditFormProps) => {
 
     startTransition(async () => {
       const result = await onUpdate({
+        userName: data.userName,
         nickname: data.nickname,
         bio: data.bio || undefined,
       });
@@ -63,16 +65,20 @@ export const ProfileEditForm = ({ user, onUpdate }: ProfileEditFormProps) => {
       <form onSubmit={handleSubmit(onSubmit)} className={styles.editForm_form}>
         <div className={styles.editForm_field}>
           <label htmlFor="userName" className={styles.editForm_label}>
-            ユーザー名
+            ユーザーID
+            <span className={styles.editForm_required}>*</span>
           </label>
           <input
             type="text"
             id="userName"
-            value={`@${user.userName}`}
-            className={styles.editForm_inputDisabled}
-            disabled
+            {...register('userName')}
+            className={styles.editForm_input}
+            maxLength={30}
           />
-          <p className={styles.editForm_hint}>ユーザー名は変更できません</p>
+          <FieldError error={errors.userName} />
+          <p className={styles.editForm_hint}>
+            3〜30文字の英数字とアンダースコアのみ使用できます
+          </p>
         </div>
 
         <div className={styles.editForm_field}>
