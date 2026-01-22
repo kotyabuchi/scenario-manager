@@ -5,7 +5,7 @@ import { searchFormSchema } from '../_components/schema';
 /**
  * 検索フォームバリデーションのユニットテスト
  *
- * 対応: 要件定義書 Section 5.3 検索条件一覧
+ * 対応: 要件定義書 Section 5.3 検索条件一覧, 5.10 バリデーション仕様
  */
 describe('searchFormSchema', () => {
   describe('T-VAL-1: プレイ人数バリデーション', () => {
@@ -135,6 +135,70 @@ describe('searchFormSchema', () => {
       if (result.success) {
         expect(result.data.scenarioName).toBe('');
       }
+    });
+  });
+
+  describe('T-VAL-4: min > max バリデーション（5.10）', () => {
+    it('minPlayer > maxPlayer はバリデーションエラー', () => {
+      const result = searchFormSchema.safeParse({
+        minPlayer: 5,
+        maxPlayer: 3,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(
+          result.error.issues.some((i) => i.path.includes('maxPlayer')),
+        ).toBe(true);
+      }
+    });
+
+    it('minPlaytime > maxPlaytime はバリデーションエラー', () => {
+      const result = searchFormSchema.safeParse({
+        minPlaytime: 10,
+        maxPlaytime: 5,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(
+          result.error.issues.some((i) => i.path.includes('maxPlaytime')),
+        ).toBe(true);
+      }
+    });
+
+    it('minPlayer === maxPlayer は有効', () => {
+      const result = searchFormSchema.safeParse({
+        minPlayer: 4,
+        maxPlayer: 4,
+      });
+
+      expect(result.success).toBe(true);
+    });
+
+    it('minPlaytime === maxPlaytime は有効', () => {
+      const result = searchFormSchema.safeParse({
+        minPlaytime: 6,
+        maxPlaytime: 6,
+      });
+
+      expect(result.success).toBe(true);
+    });
+
+    it('min のみ指定は有効（max はデフォルト値）', () => {
+      const result = searchFormSchema.safeParse({
+        minPlayer: 5,
+      });
+
+      expect(result.success).toBe(true);
+    });
+
+    it('max のみ指定は有効（min はデフォルト値）', () => {
+      const result = searchFormSchema.safeParse({
+        maxPlayer: 3,
+      });
+
+      expect(result.success).toBe(true);
     });
   });
 
