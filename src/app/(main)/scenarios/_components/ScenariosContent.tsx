@@ -56,7 +56,7 @@ const buildApiQueryString = (
     if (params.playtime.min !== 1) {
       query.set('minPlaytime', params.playtime.min.toString());
     }
-    if (params.playtime.max !== 24) {
+    if (params.playtime.max !== 240) {
       query.set('maxPlaytime', params.playtime.max.toString());
     }
   }

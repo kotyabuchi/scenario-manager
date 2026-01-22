@@ -17,8 +17,8 @@ export const searchFormSchema = z.object({
   tagIds: z.array(z.string()).default([]),
   minPlayer: optionalNumber(1, 20, '最小プレイ人数'),
   maxPlayer: optionalNumber(1, 20, '最大プレイ人数'),
-  minPlaytime: optionalNumber(1, 24, '最小プレイ時間'),
-  maxPlaytime: optionalNumber(1, 24, '最大プレイ時間'),
+  minPlaytime: optionalNumber(1, 240, '最小プレイ時間'),
+  maxPlaytime: optionalNumber(1, 240, '最大プレイ時間'),
   scenarioName: z.string().default(''),
 });
 

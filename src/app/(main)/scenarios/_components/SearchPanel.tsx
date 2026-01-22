@@ -133,7 +133,7 @@ export const SearchPanel = ({
     if (!isNil(data.minPlaytime) || !isNil(data.maxPlaytime)) {
       params.playtime = {
         min: (data.minPlaytime as number) ?? 1,
-        max: (data.maxPlaytime as number) ?? 24,
+        max: (data.maxPlaytime as number) ?? 240,
       };
     }
 
@@ -206,7 +206,7 @@ export const SearchPanel = ({
                 <input
                   type="number"
                   min={1}
-                  max={24}
+                  max={240}
                   placeholder="最小"
                   className={`${inputStyle} ${styles.rangeInputField}`}
                   {...register('minPlaytime')}
@@ -215,7 +215,7 @@ export const SearchPanel = ({
                 <input
                   type="number"
                   min={1}
-                  max={24}
+                  max={240}
                   placeholder="最大"
                   className={`${inputStyle} ${styles.rangeInputField}`}
                   {...register('maxPlaytime')}

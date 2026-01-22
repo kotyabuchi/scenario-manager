@@ -68,7 +68,7 @@ export const toSearchParams = (parsed: {
   if (parsed.minPlaytime !== null || parsed.maxPlaytime !== null) {
     params.playtime = {
       min: parsed.minPlaytime ?? 1,
-      max: parsed.maxPlaytime ?? 24,
+      max: parsed.maxPlaytime ?? 240,
     };
   }
 
