@@ -71,3 +71,6 @@ src/lib/db/migrations
 
 # Netlify build output
 .netlify
+
+# Test results
+test-results/

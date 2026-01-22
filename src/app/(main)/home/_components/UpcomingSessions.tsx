@@ -32,7 +32,7 @@ export const UpcomingSessions = ({ sessions }: UpcomingSessionsProps) => {
         >
           <div className={styles.sessionCard}>
             <div className={styles.sessionHeader}>
-              <h3 className={styles.sessionTitle}>{session.scenario.name}</h3>
+              <h3 className={styles.sessionTitle}>{session.sessionName}</h3>
               <span
                 className={styles.sessionPhase}
                 style={{
@@ -58,9 +58,11 @@ export const UpcomingSessions = ({ sessions }: UpcomingSessionsProps) => {
               </span>
             </div>
             <div className={styles.sessionMeta}>
-              <span className={styles.sessionMetaItem}>
-                {session.scenario.system.name}
-              </span>
+              {session.scenario && (
+                <span className={styles.sessionMetaItem}>
+                  {session.scenario.system.name}
+                </span>
+              )}
               <span className={styles.sessionMetaItem}>
                 <Users size={14} />
                 {session.participants.length}人

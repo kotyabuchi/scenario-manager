@@ -380,7 +380,7 @@ export const getHistorySessions = async (
         .where(inArray(gameSessions.gameSessionId, sessionIds));
 
       filteredSessionIds = sessionsWithScenarios
-        .filter((s) => scenarioIdSet.has(s.scenarioId))
+        .filter((s) => s.scenarioId && scenarioIdSet.has(s.scenarioId))
         .map((s) => s.gameSessionId);
 
       if (filteredSessionIds.length === 0) {
@@ -428,12 +428,15 @@ export const getHistorySessions = async (
     // レビュー済み・動画あり情報を追加
     const sessionsWithMeta = await Promise.all(
       result.map(async (session) => {
-        const review = await db.query.userReviews.findFirst({
-          where: and(
-            eq(userReviews.userId, userId),
-            eq(userReviews.scenarioId, session.scenarioId),
-          ),
-        });
+        // scenarioIdがnullの場合はレビューなし
+        const review = session.scenarioId
+          ? await db.query.userReviews.findFirst({
+              where: and(
+                eq(userReviews.userId, userId),
+                eq(userReviews.scenarioId, session.scenarioId),
+              ),
+            })
+          : null;
 
         const video = await db.query.videoLinks.findFirst({
           where: eq(videoLinks.sessionId, session.gameSessionId),

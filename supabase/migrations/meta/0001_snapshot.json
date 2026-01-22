@@ -1,5 +1,5 @@
 {
-  "id": "e444b94a-31af-411f-b385-26dbd1ee4c5b",
+  "id": "f628de46-8429-4e01-a471-014b295e3e7f",
   "prevId": "6a4d72e8-a713-4dda-9b54-57188b1b6187",
   "version": "7",
   "dialect": "postgresql",
@@ -437,11 +437,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "session_description": {
+          "name": "session_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "scenario_id": {
           "name": "scenario_id",
           "type": "varchar(26)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "keeper_id": {
+          "name": "keeper_id",
+          "type": "varchar(26)",
+          "primaryKey": false,
+          "notNull": false
         },
         "session_phase": {
           "name": "session_phase",
@@ -450,6 +462,51 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'RECRUITING'"
+        },
+        "scheduled_at": {
+          "name": "scheduled_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recruited_player_count": {
+          "name": "recruited_player_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tools": {
+          "name": "tools",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_beginner_friendly": {
+          "name": "is_beginner_friendly",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "visibility": {
+          "name": "visibility",
+          "type": "session_visibility",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PUBLIC'"
+        },
+        "session_memo": {
+          "name": "session_memo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "completion_note": {
+          "name": "completion_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -490,7 +547,16 @@
           "tableTo": "scenarios",
           "columnsFrom": ["scenario_id"],
           "columnsTo": ["scenario_id"],
-          "onDelete": "cascade",
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "game_sessions_keeper_id_users_user_id_fk": {
+          "name": "game_sessions_keeper_id_users_user_id_fk",
+          "tableFrom": "game_sessions",
+          "tableTo": "users",
+          "columnsFrom": ["keeper_id"],
+          "columnsTo": ["user_id"],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -863,6 +929,191 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.schedule_responses": {
+      "name": "schedule_responses",
+      "schema": "",
+      "columns": {
+        "response_id": {
+          "name": "response_id",
+          "type": "varchar(26)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "schedule_id": {
+          "name": "schedule_id",
+          "type": "varchar(26)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(26)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "availability": {
+          "name": "availability",
+          "type": "schedule_availability",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'MAYBE'"
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "schedule_responses_schedule_idx": {
+          "name": "schedule_responses_schedule_idx",
+          "columns": [
+            {
+              "expression": "schedule_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "schedule_responses_schedule_id_game_schedules_session_id_fk": {
+          "name": "schedule_responses_schedule_id_game_schedules_session_id_fk",
+          "tableFrom": "schedule_responses",
+          "tableTo": "game_schedules",
+          "columnsFrom": ["schedule_id"],
+          "columnsTo": ["session_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "schedule_responses_user_id_users_user_id_fk": {
+          "name": "schedule_responses_user_id_users_user_id_fk",
+          "tableFrom": "schedule_responses",
+          "tableTo": "users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["user_id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "schedule_responses_schedule_id_user_id_unique": {
+          "name": "schedule_responses_schedule_id_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["schedule_id", "user_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.session_links": {
+      "name": "session_links",
+      "schema": "",
+      "columns": {
+        "link_id": {
+          "name": "link_id",
+          "type": "varchar(26)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "varchar(26)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "link_type": {
+          "name": "link_type",
+          "type": "session_link_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'OTHER'"
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "session_links_session_idx": {
+          "name": "session_links_session_idx",
+          "columns": [
+            {
+              "expression": "session_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "session_links_session_id_game_sessions_game_session_id_fk": {
+          "name": "session_links_session_id_game_sessions_game_session_id_fk",
+          "tableFrom": "session_links",
+          "tableTo": "game_sessions",
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["game_session_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.session_participants": {
       "name": "session_participants",
       "schema": "",
@@ -898,6 +1149,24 @@
         "character_sheet_url": {
           "name": "character_sheet_url",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "application_message": {
+          "name": "application_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "applied_at": {
+          "name": "applied_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "approved_at": {
+          "name": "approved_at",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
@@ -1574,10 +1843,20 @@
       "schema": "public",
       "values": ["MODERATOR", "MEMBER"]
     },
+    "public.schedule_availability": {
+      "name": "schedule_availability",
+      "schema": "public",
+      "values": ["OK", "MAYBE", "NG"]
+    },
     "public.schedule_phase": {
       "name": "schedule_phase",
       "schema": "public",
       "values": ["ADJUSTING", "CONFIRMED"]
+    },
+    "public.session_link_type": {
+      "name": "session_link_type",
+      "schema": "public",
+      "values": ["DISCORD", "CCFOLIA", "OTHER"]
     },
     "public.session_phase": {
       "name": "session_phase",
@@ -1589,6 +1868,11 @@
         "COMPLETED",
         "CANCELLED"
       ]
+    },
+    "public.session_visibility": {
+      "name": "session_visibility",
+      "schema": "public",
+      "values": ["PUBLIC", "FOLLOWERS_ONLY"]
     }
   },
   "schemas": {},

@@ -26,7 +26,15 @@ type ReviewWithUser = UserReview & {
 };
 
 // セッション（GM情報・参加者数付き）
-type SessionWithKeeper = GameSession & {
+type SessionWithKeeper = Pick<
+  GameSession,
+  | 'gameSessionId'
+  | 'sessionName'
+  | 'scenarioId'
+  | 'sessionPhase'
+  | 'createdAt'
+  | 'updatedAt'
+> & {
   keeper: Pick<User, 'userId' | 'nickname' | 'image'> | null;
   participantCount: number;
   scheduleDate: Date | null;

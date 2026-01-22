@@ -174,3 +174,44 @@ export const NotificationTypes = {
     label: 'フィードバックの統合',
   },
 } as const;
+
+export const SessionVisibilities = {
+  PUBLIC: {
+    value: 'PUBLIC',
+    label: '全体公開',
+  },
+  FOLLOWERS_ONLY: {
+    value: 'FOLLOWERS_ONLY',
+    label: 'フォロワーのみ',
+  },
+} as const;
+
+export const ScheduleAvailabilities = {
+  OK: {
+    value: 'OK',
+    label: '○',
+  },
+  MAYBE: {
+    value: 'MAYBE',
+    label: '△',
+  },
+  NG: {
+    value: 'NG',
+    label: '×',
+  },
+} as const;
+
+export const SessionLinkTypes = {
+  DISCORD: {
+    value: 'DISCORD',
+    label: 'Discord',
+  },
+  CCFOLIA: {
+    value: 'CCFOLIA',
+    label: 'ココフォリア',
+  },
+  OTHER: {
+    value: 'OTHER',
+    label: 'その他',
+  },
+} as const;

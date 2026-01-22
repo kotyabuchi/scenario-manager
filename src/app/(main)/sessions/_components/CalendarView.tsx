@@ -217,7 +217,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
                         key={session.gameSessionId}
                         className={styles.calendarSessionDot}
                       >
-                        {session.scenario.name.slice(0, 4)}
+                        {session.sessionName.slice(0, 4)}
                       </span>
                     ))}
                     {daySessions.length > 2 && (
@@ -245,7 +245,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
                   href={`/sessions/${session.gameSessionId}`}
                   className={styles.calendarSessionDot}
                 >
-                  {session.scenario.name}
+                  {session.sessionName}
                 </Link>
               ))}
             </div>
@@ -265,7 +265,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
                   href={`/sessions/${session.gameSessionId}`}
                   className={styles.calendarUnscheduledItem}
                 >
-                  {session.scenario.name}（
+                  {session.sessionName}（
                   {session.sessionPhase === 'RECRUITING' ? '募集中' : '準備中'}
                   ）
                 </Link>

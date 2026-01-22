@@ -23,8 +23,11 @@ import {
   ParticipantStatuses,
   ParticipantTypes,
   Roles,
+  ScheduleAvailabilities,
   SchedulePhases,
+  SessionLinkTypes,
   SessionPhases,
+  SessionVisibilities,
 } from './enum';
 
 const timestamps = {
@@ -72,6 +75,18 @@ export const feedbackPriorityEnum = pgEnum(
 export const notificationTypeEnum = pgEnum(
   'notification_type',
   extractValues(NotificationTypes),
+);
+export const sessionVisibilityEnum = pgEnum(
+  'session_visibility',
+  extractValues(SessionVisibilities),
+);
+export const scheduleAvailabilityEnum = pgEnum(
+  'schedule_availability',
+  extractValues(ScheduleAvailabilities),
+);
+export const sessionLinkTypeEnum = pgEnum(
+  'session_link_type',
+  extractValues(SessionLinkTypes),
 );
 
 // テーブル定義
@@ -166,12 +181,28 @@ export const gameSessions = pgTable(
       .primaryKey()
       .$defaultFn(() => ulid()),
     sessionName: text('session_name').notNull(),
-    scenarioId: varchar('scenario_id', { length: 26 })
-      .notNull()
-      .references(() => scenarios.scenarioId, { onDelete: 'cascade' }),
+    sessionDescription: text('session_description').notNull(),
+    scenarioId: varchar('scenario_id', { length: 26 }).references(
+      () => scenarios.scenarioId,
+      { onDelete: 'set null' },
+    ),
+    keeperId: varchar('keeper_id', { length: 26 }).references(
+      () => users.userId,
+    ),
     sessionPhase: sessionPhaseEnum('session_phase')
       .default(SessionPhases.RECRUITING.value)
       .notNull(),
+    scheduledAt: timestamp('scheduled_at'),
+    recruitedPlayerCount: integer('recruited_player_count'),
+    tools: text('tools'),
+    isBeginnerFriendly: boolean('is_beginner_friendly')
+      .default(false)
+      .notNull(),
+    visibility: sessionVisibilityEnum('visibility')
+      .default(SessionVisibilities.PUBLIC.value)
+      .notNull(),
+    sessionMemo: text('session_memo'),
+    completionNote: text('completion_note'),
     ...timestamps,
   },
   (table) => [index('game_sessions_scenario_idx').on(table.scenarioId)],
@@ -208,9 +239,55 @@ export const sessionParticipants = pgTable(
       .default(ParticipantStatuses.PENDING.value)
       .notNull(),
     characterSheetUrl: text('character_sheet_url'),
+    applicationMessage: text('application_message'),
+    appliedAt: timestamp('applied_at'),
+    approvedAt: timestamp('approved_at'),
     ...timestamps,
   },
   (table) => [primaryKey({ columns: [table.sessionId, table.userId] })],
+);
+
+export const scheduleResponses = pgTable(
+  'schedule_responses',
+  {
+    responseId: varchar('response_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    scheduleId: varchar('schedule_id', { length: 26 })
+      .notNull()
+      .references(() => gameSchedules.sessionId, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 26 })
+      .notNull()
+      .references(() => users.userId),
+    availability: scheduleAvailabilityEnum('availability')
+      .default(ScheduleAvailabilities.MAYBE.value)
+      .notNull(),
+    comment: text('comment'),
+    ...timestamps,
+  },
+  (table) => [
+    unique().on(table.scheduleId, table.userId),
+    index('schedule_responses_schedule_idx').on(table.scheduleId),
+  ],
+);
+
+export const sessionLinks = pgTable(
+  'session_links',
+  {
+    linkId: varchar('link_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    sessionId: varchar('session_id', { length: 26 })
+      .notNull()
+      .references(() => gameSessions.gameSessionId, { onDelete: 'cascade' }),
+    linkType: sessionLinkTypeEnum('link_type')
+      .default(SessionLinkTypes.OTHER.value)
+      .notNull(),
+    url: text('url').notNull(),
+    label: text('label'),
+    ...timestamps,
+  },
+  (table) => [index('session_links_session_idx').on(table.sessionId)],
 );
 
 export const userReviews = pgTable(
@@ -391,6 +468,7 @@ export const userRelations = relations(users, ({ many }) => ({
   feedbackVotes: many(feedbackVotes),
   feedbackComments: many(feedbackComments),
   notifications: many(notifications),
+  scheduleResponses: many(scheduleResponses),
 }));
 
 export const scenarioSystemRelations = relations(
@@ -434,17 +512,48 @@ export const gameSessionRelations = relations(
       fields: [gameSessions.scenarioId],
       references: [scenarios.scenarioId],
     }),
+    keeper: one(users, {
+      fields: [gameSessions.keeperId],
+      references: [users.userId],
+      relationName: 'keeper',
+    }),
     schedule: one(gameSchedules),
     participants: many(sessionParticipants),
     reviews: many(userReviews),
     preferences: many(userScenarioPreferences),
     videoLinks: many(videoLinks),
+    sessionLinks: many(sessionLinks),
   }),
 );
 
-export const gameScheduleRelations = relations(gameSchedules, ({ one }) => ({
+export const gameScheduleRelations = relations(
+  gameSchedules,
+  ({ one, many }) => ({
+    session: one(gameSessions, {
+      fields: [gameSchedules.sessionId],
+      references: [gameSessions.gameSessionId],
+    }),
+    responses: many(scheduleResponses),
+  }),
+);
+
+export const scheduleResponseRelations = relations(
+  scheduleResponses,
+  ({ one }) => ({
+    schedule: one(gameSchedules, {
+      fields: [scheduleResponses.scheduleId],
+      references: [gameSchedules.sessionId],
+    }),
+    user: one(users, {
+      fields: [scheduleResponses.userId],
+      references: [users.userId],
+    }),
+  }),
+);
+
+export const sessionLinkRelations = relations(sessionLinks, ({ one }) => ({
   session: one(gameSessions, {
-    fields: [gameSchedules.sessionId],
+    fields: [sessionLinks.sessionId],
     references: [gameSessions.gameSessionId],
   }),
 }));
