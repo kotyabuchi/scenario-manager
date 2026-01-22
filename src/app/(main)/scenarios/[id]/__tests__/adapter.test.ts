@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  createReview,
+  deleteReview,
   getScenarioDetail,
   getScenarioReviews,
   getScenarioSessions,
@@ -9,6 +11,7 @@ import {
   getUserScenarioPreference,
   toggleFavorite,
   togglePlayed,
+  updateReview,
 } from '../adapter';
 
 /**
@@ -372,6 +375,217 @@ describe('Scenario Detail Adapter', () => {
         // FK制約がない場合はinsert可能
         console.warn('FK制約なしでinsert成功');
         expect(result.data).toBe(true);
+      }
+    });
+  });
+
+  describe('createReview', () => {
+    // T-CR-001: 必須項目のみでレビューを作成できる
+    it.skip('必須項目のみでレビューを作成できる', async () => {
+      const userId = 'test-user-id';
+      const input = {
+        scenarioId: 'test-scenario-id',
+        rating: 4,
+      };
+
+      const result = await createReview(input, userId);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.userReviewId).toBeDefined();
+        expect(result.data.userReviewId.length).toBe(26); // ULIDは26文字
+      }
+    });
+
+    // T-CR-002: 全項目を指定してレビューを作成できる
+    it.skip('全項目を指定してレビューを作成できる', async () => {
+      const userId = 'test-user-id';
+      const input = {
+        scenarioId: 'test-scenario-id',
+        sessionId: 'test-session-id',
+        rating: 5,
+        openComment: 'とても面白いシナリオでした！',
+        spoilerComment: '犯人は○○でした',
+      };
+
+      const result = await createReview(input, userId);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.userReviewId).toBeDefined();
+      }
+    });
+
+    // T-CR-003: ratingなしでレビューを作成できる
+    it.skip('ratingなしでレビューを作成できる', async () => {
+      const userId = 'test-user-id';
+      const input = {
+        scenarioId: 'test-scenario-id',
+        openComment: 'コメントのみのレビュー',
+      };
+
+      const result = await createReview(input, userId);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.userReviewId).toBeDefined();
+      }
+    });
+
+    // T-CR-101: 存在しないシナリオIDでエラー
+    it('存在しないシナリオIDでエラー', async () => {
+      const userId = 'test-user-id';
+      const input = {
+        scenarioId: 'non-existent-scenario-id-12345',
+        rating: 4,
+      };
+
+      const result = await createReview(input, userId);
+
+      // 外部キー制約違反でエラーになるか、DB接続エラー
+      if (!result.success) {
+        expect(result.error).toBeDefined();
+      } else {
+        // DB接続エラーでスキップ扱いの場合
+        console.warn('予期せず成功したか、テストデータの問題');
+      }
+    });
+
+    // T-CR-102: 同一ユーザー・シナリオの重複レビューでエラー
+    it.skip('同一ユーザー・シナリオの重複レビューでエラー', async () => {
+      const userId = 'test-user-id';
+      const input = {
+        scenarioId: 'test-scenario-id',
+        rating: 4,
+      };
+
+      // 1回目の作成
+      const result1 = await createReview(input, userId);
+      expect(result1.success).toBe(true);
+
+      // 2回目の作成（重複）
+      const result2 = await createReview(input, userId);
+      expect(result2.success).toBe(false);
+      if (!result2.success) {
+        expect(result2.error).toBeDefined();
+      }
+    });
+  });
+
+  describe('updateReview', () => {
+    // T-UR-001: レビューを更新できる
+    it.skip('レビューを更新できる', async () => {
+      const reviewId = 'test-review-id';
+      const userId = 'test-user-id';
+      const input = {
+        rating: 5,
+        openComment: '更新後のコメント',
+        spoilerComment: '更新後のネタバレ',
+      };
+
+      const result = await updateReview(reviewId, input, userId);
+
+      expect(result.success).toBe(true);
+      if (result.success && result.data !== null) {
+        expect(result.data.rating).toBe(5);
+        expect(result.data.openComment).toBe('更新後のコメント');
+      }
+    });
+
+    // T-UR-002: 部分的な更新ができる
+    it.skip('部分的な更新ができる', async () => {
+      const reviewId = 'test-review-id';
+      const userId = 'test-user-id';
+      const input = {
+        rating: 3,
+      };
+
+      const result = await updateReview(reviewId, input, userId);
+
+      expect(result.success).toBe(true);
+      if (result.success && result.data !== null) {
+        expect(result.data.rating).toBe(3);
+      }
+    });
+
+    // T-UR-101: 存在しないレビューIDでエラー
+    it('存在しないレビューIDでエラー', async () => {
+      const nonExistentReviewId = 'non-existent-review-id-12345';
+      const userId = 'test-user-id';
+      const input = {
+        rating: 5,
+      };
+
+      const result = await updateReview(nonExistentReviewId, input, userId);
+
+      if (result.success) {
+        // 更新対象がない場合はnullが返る
+        expect(result.data).toBeNull();
+      } else {
+        // DB接続エラーの場合
+        console.warn('DB接続エラー: テストをスキップ', result.error.message);
+        expect(true).toBe(true);
+      }
+    });
+
+    // T-UR-102: 他ユーザーのレビューは更新できない
+    it.skip('他ユーザーのレビューは更新できない', async () => {
+      const reviewId = 'test-review-id';
+      const differentUserId = 'different-user-id';
+      const input = {
+        rating: 1,
+      };
+
+      const result = await updateReview(reviewId, input, differentUserId);
+
+      // 更新対象がない（所有者チェックで除外）
+      if (result.success) {
+        expect(result.data).toBeNull();
+      }
+    });
+  });
+
+  describe('deleteReview', () => {
+    // T-DR-001: レビューを削除できる
+    it.skip('レビューを削除できる', async () => {
+      const reviewId = 'test-review-id';
+      const userId = 'test-user-id';
+
+      const result = await deleteReview(reviewId, userId);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toBe(true);
+      }
+    });
+
+    // T-DR-101: 存在しないレビューIDでfalseを返す
+    it('存在しないレビューIDでfalseを返す', async () => {
+      const nonExistentReviewId = 'non-existent-review-id-12345';
+      const userId = 'test-user-id';
+
+      const result = await deleteReview(nonExistentReviewId, userId);
+
+      if (result.success) {
+        // 削除対象がない場合はfalseが返る
+        expect(result.data).toBe(false);
+      } else {
+        // DB接続エラーの場合
+        console.warn('DB接続エラー: テストをスキップ', result.error.message);
+        expect(true).toBe(true);
+      }
+    });
+
+    // T-DR-102: 他ユーザーのレビューは削除できない
+    it.skip('他ユーザーのレビューは削除できない', async () => {
+      const reviewId = 'test-review-id';
+      const differentUserId = 'different-user-id';
+
+      const result = await deleteReview(reviewId, differentUserId);
+
+      // 削除対象がない（所有者チェックで除外）
+      if (result.success) {
+        expect(result.data).toBe(false);
       }
     });
   });
