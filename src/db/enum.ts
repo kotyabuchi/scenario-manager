@@ -90,3 +90,87 @@ export const ParticipantStatuses = {
     label: '確定',
   },
 } as const;
+
+export const FeedbackCategories = {
+  BUG: {
+    value: 'BUG',
+    label: 'バグ報告',
+  },
+  FEATURE: {
+    value: 'FEATURE',
+    label: '機能要望',
+  },
+  UI_UX: {
+    value: 'UI_UX',
+    label: 'UI/UX改善',
+  },
+  OTHER: {
+    value: 'OTHER',
+    label: 'その他',
+  },
+} as const;
+
+export const FeedbackStatuses = {
+  NEW: {
+    value: 'NEW',
+    label: '新規',
+  },
+  TRIAGED: {
+    value: 'TRIAGED',
+    label: '検討中',
+  },
+  PLANNED: {
+    value: 'PLANNED',
+    label: '対応予定',
+  },
+  IN_PROGRESS: {
+    value: 'IN_PROGRESS',
+    label: '対応中',
+  },
+  DONE: {
+    value: 'DONE',
+    label: '完了',
+  },
+  WONT_FIX: {
+    value: 'WONT_FIX',
+    label: '対応しない',
+  },
+  DUPLICATE: {
+    value: 'DUPLICATE',
+    label: '重複',
+  },
+} as const;
+
+export const FeedbackPriorities = {
+  LOW: {
+    value: 'LOW',
+    label: '低',
+  },
+  MEDIUM: {
+    value: 'MEDIUM',
+    label: '中',
+  },
+  HIGH: {
+    value: 'HIGH',
+    label: '高',
+  },
+  CRITICAL: {
+    value: 'CRITICAL',
+    label: '緊急',
+  },
+} as const;
+
+export const NotificationTypes = {
+  FEEDBACK_STATUS_CHANGED: {
+    value: 'FEEDBACK_STATUS_CHANGED',
+    label: 'フィードバックのステータス変更',
+  },
+  FEEDBACK_COMMENT: {
+    value: 'FEEDBACK_COMMENT',
+    label: 'フィードバックへのコメント',
+  },
+  FEEDBACK_MERGED: {
+    value: 'FEEDBACK_MERGED',
+    label: 'フィードバックの統合',
+  },
+} as const;

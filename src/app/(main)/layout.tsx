@@ -1,3 +1,4 @@
+import { FeedbackButton } from '@/components/blocks/FeedbackButton';
 import { SideMenu } from '@/components/blocks/sidemenu';
 import { Grid, GridItem } from '@/styled-system/jsx';
 
@@ -16,6 +17,7 @@ export default function MianLayout({ children }: PropsWithChildren) {
       <GridItem padding="2" minHeight="100dvh">
         {children}
       </GridItem>
+      <FeedbackButton />
     </Grid>
   );
 }
