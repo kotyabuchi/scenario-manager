@@ -28,7 +28,7 @@ describe('scenarioFormSchema', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe('シナリオ名は必須です');
+        expect(result.error.issues[0]?.message).toBe('シナリオ名は必須です');
       }
     });
 
@@ -40,7 +40,7 @@ describe('scenarioFormSchema', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           'シナリオ名は100文字以内で入力してください',
         );
       }
@@ -54,7 +54,7 @@ describe('scenarioFormSchema', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           'システムを選択してください',
         );
       }
@@ -81,7 +81,7 @@ describe('scenarioFormSchema', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           '最小プレイ人数は最大プレイ人数以下にしてください',
         );
       }
@@ -112,7 +112,7 @@ describe('scenarioFormSchema', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           '最小プレイ時間は最大プレイ時間以下にしてください',
         );
       }
