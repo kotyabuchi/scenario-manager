@@ -32,7 +32,20 @@ export const sessionFormSchema = z.object({
     .nullish(),
 
   // 日時（任意）- 後で調整の場合はnull/undefined
-  scheduledAt: z.string().datetime({ offset: true }).nullish(),
+  // datetime-local入力（YYYY-MM-DDTHH:mm）やISO形式に対応
+  scheduledAt: z
+    .string()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        // datetime-local形式またはISO8601形式
+        const datetimeLocalPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+        const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+        return datetimeLocalPattern.test(val) || iso8601Pattern.test(val);
+      },
+      { message: '日時の形式が正しくありません' },
+    )
+    .nullish(),
 
   // 募集人数（任意）- 未定の場合はnull/undefined
   recruitedPlayerCount: z
@@ -48,10 +61,10 @@ export const sessionFormSchema = z.object({
     .max(200, '使用ツールは200文字以内で入力してください')
     .nullish(),
 
-  // 初心者歓迎（デフォルト: false）
+  // 初心者歓迎
   isBeginnerFriendly: z.boolean().default(false),
 
-  // 公開範囲（デフォルト: PUBLIC）
+  // 公開範囲
   visibility: z
     .enum(['PUBLIC', 'FOLLOWERS_ONLY'], {
       message: '公開範囲を選択してください',
@@ -59,6 +72,10 @@ export const sessionFormSchema = z.object({
     .default('PUBLIC'),
 });
 
+// フォーム入力型（defaultValues用）- .default()適用前の型
+export type SessionFormInput = z.input<typeof sessionFormSchema>;
+
+// フォーム出力型（パース後）- .default()適用後の型
 export type SessionFormValues = z.infer<typeof sessionFormSchema>;
 
 // 作成用の入力型（サーバーアクション用）
