@@ -99,13 +99,25 @@
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
 | sessionFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
-| createSession | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+| createSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| getSessionById | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
 | updateSession | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
 | 日程調整機能 | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
-| 参加申請機能 | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+| applyToSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| approveApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| rejectApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| withdrawFromSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| cancelApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| cancelSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
 
 **テストファイル**:
 - `src/app/(main)/sessions/new/__tests__/schema.test.ts`
+- `src/app/(main)/sessions/new/__tests__/adapter.test.ts`
+- `src/app/(main)/sessions/__tests__/participantAdapter.test.ts`
+
+**実装ファイル**:
+- `src/app/(main)/sessions/new/adapter.ts` - セッション作成・取得
+- `src/app/(main)/sessions/participantAdapter.ts` - 参加申請管理
 
 ---
 
@@ -113,9 +125,12 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| profileFormSchema | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（要件・テスト未） |
+| profileFormSchema | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（要件未定義） |
 | updateUserProfile | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（要件・テスト未） |
 | getUserById | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（要件・テスト未） |
+
+**テストファイル**:
+- `src/components/blocks/Profile/__tests__/schema.test.ts`
 
 ---
 
@@ -139,12 +154,13 @@
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
 | feedbackFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
-| createFeedbackAction | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| createFeedbackAction | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | FeedbackModal | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
 | FeedbackButton | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
 
 **テストファイル**:
 - `src/components/blocks/FeedbackModal/__tests__/schema.test.ts`
+- `src/components/blocks/FeedbackModal/__tests__/actions.test.ts`
 
 **UIコンポーネント**:
 - `src/components/blocks/FeedbackButton/` - 右下固定のFABボタン
@@ -226,21 +242,24 @@
 | 2026-01-22 | レビューCRUD機能を追加（schema + adapter + tests） |
 | 2026-01-22 | フィードバック機能のスキーマテストを追加 |
 | 2026-01-22 | セッション募集フォームスキーマを追加（schema + tests） |
+| 2026-01-22 | TDD Red: セッション管理・参加申請機能のテストを追加 |
+| 2026-01-22 | createFeedbackActionのテストを追加 |
+| 2026-01-22 | TDD Green: セッション管理・参加申請機能の実装完了 |
 
 ---
 
 ## 次のアクション
 
-### 優先度A: テスト追加
+### 優先度A: TDD Refactor（品質改善）
+Green phaseの実装が完了。リファクタリング待ち:
+1. セッション管理機能 - 重複コードの抽出、命名改善
+2. 参加申請機能 - 共通処理の統合
+
+### 優先度B: 追加テスト
 既存実装のテストカバレッジを向上:
 1. `createScenario` のテスト作成
 2. シナリオ詳細系関数のテスト作成
 3. セッション一覧系関数のテスト作成
-
-### 優先度B: 新機能実装（TDDで）
-1. レビュー機能（/gen-test → /implement-tests）
-2. フィードバック機能の完成
-3. セッション管理機能
 
 ### 優先度C: 未完了タスク
 1. シナリオ編集画面
