@@ -1,5 +1,11 @@
 import { css } from '@/styled-system/css';
 
+// シャドウ定義
+const shadows = {
+  xs: '0 1px 3px rgba(0, 0, 0, 0.06)',
+  input: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)',
+};
+
 export const form = css({
   display: 'flex',
   flexDirection: 'column',
@@ -26,53 +32,89 @@ export const required = css({
 });
 
 export const input = css({
+  w: 'full',
   px: '3',
-  py: '2',
+  py: '2.5',
   rounded: 'md',
-  bg: 'surface.input',
-  border: 'none',
-  outline: 'none',
+  bg: 'bg.muted',
+  border: '1px solid',
+  borderColor: 'border.default',
   color: 'text.default',
+  fontSize: 'sm',
+  outline: 'none',
+  transition: 'all 0.2s',
+  boxShadow: shadows.input,
   _placeholder: {
-    color: 'text.placeholder',
+    color: 'text.muted',
+  },
+  _hover: {
+    borderColor: 'border.emphasized',
+    bg: 'bg.emphasized',
   },
   _focus: {
-    ring: '2',
-    ringColor: 'primary.500',
+    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '1px',
   },
 });
 
 export const textarea = css({
+  w: 'full',
   px: '3',
-  py: '2',
+  py: '2.5',
   rounded: 'md',
-  bg: 'surface.input',
-  border: 'none',
-  outline: 'none',
+  bg: 'bg.muted',
+  border: '1px solid',
+  borderColor: 'border.default',
   color: 'text.default',
+  fontSize: 'sm',
   minH: '120px',
   resize: 'vertical',
+  outline: 'none',
+  transition: 'all 0.2s',
+  boxShadow: shadows.input,
   _placeholder: {
-    color: 'text.placeholder',
+    color: 'text.muted',
+  },
+  _hover: {
+    borderColor: 'border.emphasized',
+    bg: 'bg.emphasized',
   },
   _focus: {
-    ring: '2',
-    ringColor: 'primary.500',
+    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '1px',
   },
 });
 
 export const select = css({
+  w: 'full',
   px: '3',
-  py: '2',
+  py: '2.5',
   rounded: 'md',
-  bg: 'surface.input',
-  border: 'none',
-  outline: 'none',
+  bg: 'bg.muted',
+  border: '1px solid',
+  borderColor: 'border.default',
   color: 'text.default',
+  fontSize: 'sm',
   cursor: 'pointer',
+  outline: 'none',
+  transition: 'all 0.2s',
+  boxShadow: shadows.input,
+  _hover: {
+    borderColor: 'border.emphasized',
+    bg: 'bg.emphasized',
+  },
   _focus: {
-    ring: '2',
-    ringColor: 'primary.500',
+    borderColor: 'primary.500',
+    bg: 'bg.emphasized',
+    outline: '2px solid',
+    outlineColor: 'primary.focusRing',
+    outlineOffset: '1px',
   },
 });
 
@@ -90,9 +132,10 @@ export const checkboxLabel = css({
 });
 
 export const checkbox = css({
-  w: '4',
-  h: '4',
+  w: '5',
+  h: '5',
   cursor: 'pointer',
+  accentColor: 'primary.500',
 });
 
 export const radioGroup = css({
@@ -106,12 +149,25 @@ export const radioLabel = css({
   gap: '2',
   cursor: 'pointer',
   color: 'text.default',
+  px: '3',
+  py: '2',
+  rounded: 'md',
+  bg: 'bg.muted',
+  border: '1px solid',
+  borderColor: 'border.default',
+  transition: 'all 0.2s',
+  boxShadow: shadows.xs,
+  _hover: {
+    borderColor: 'border.emphasized',
+    bg: 'bg.emphasized',
+  },
 });
 
 export const radio = css({
   w: '4',
   h: '4',
   cursor: 'pointer',
+  accentColor: 'primary.500',
 });
 
 export const submitArea = css({
