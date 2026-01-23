@@ -26,7 +26,7 @@ const inputStyle = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   shadow: 'sm',
   _hover: {
     bg: 'bg.emphasized',
@@ -35,7 +35,6 @@ const inputStyle = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
   _placeholder: {
     color: 'text.muted',

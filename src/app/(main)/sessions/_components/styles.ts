@@ -151,14 +151,14 @@ export const chip = cva({
     fontWeight: 'medium',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transition:
+      'background-color {durations.normal}, box-shadow {durations.normal}, transform {durations.normal}',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
       outline: '2px solid',
       outlineColor: 'primary.focusRing',
-      outlineOffset: '2px',
     },
   },
   variants: {
@@ -443,7 +443,7 @@ export const selectInput = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   shadow: 'sm',
   cursor: 'pointer',
   _hover: {
@@ -453,7 +453,6 @@ export const selectInput = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
 });
 
@@ -565,7 +564,7 @@ export const dateInput = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   shadow: 'sm',
   _hover: {
     bg: 'bg.emphasized',
@@ -574,7 +573,6 @@ export const dateInput = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
 });
 

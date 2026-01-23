@@ -15,14 +15,14 @@ export const chip = cva({
     fontWeight: 'medium',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transition:
+      'background-color {durations.normal}, box-shadow {durations.normal}, transform {durations.normal}',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
       outline: '2px solid',
       outlineColor: 'primary.focusRing',
-      outlineOffset: '2px',
     },
   },
   variants: {

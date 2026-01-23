@@ -147,7 +147,7 @@ export const form_input = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   boxShadow: shadows.xs,
   _hover: {
     bg: 'bg.emphasized',
@@ -156,7 +156,6 @@ export const form_input = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
   _placeholder: {
     color: 'text.muted',
@@ -175,7 +174,7 @@ export const form_textarea = css({
   outline: 'none',
   resize: 'vertical',
   minH: '120px',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   boxShadow: shadows.xs,
   _hover: {
     bg: 'bg.emphasized',
@@ -184,7 +183,6 @@ export const form_textarea = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
   _placeholder: {
     color: 'text.muted',

@@ -196,7 +196,6 @@ export const resultCount = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
 }
 ```

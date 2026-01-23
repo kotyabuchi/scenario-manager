@@ -56,7 +56,6 @@ export const input = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '1px',
   },
 });
 
@@ -87,7 +86,6 @@ export const textarea = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '1px',
   },
 });
 
@@ -114,7 +112,6 @@ export const select = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '1px',
   },
 });
 

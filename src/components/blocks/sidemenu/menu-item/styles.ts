@@ -87,8 +87,8 @@ export const menuItem = cva({
           background: 'primary.emphasized',
         },
         _focusVisible: {
-          outline: '2px solid {colors.primary.focusRing}',
-          outlineOffset: '2px',
+          outline: '2px solid white',
+          outlineOffset: '-4px',
         },
       },
     },

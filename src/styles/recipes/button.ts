@@ -24,7 +24,7 @@ export const button = defineRecipe({
     _focusVisible: {
       outline: '2px solid',
       outlineColor: 'var(--button-color-focus)',
-      outlineOffset: '2px',
+      outlineOffset: '1px',
     },
     _disabled: {
       cursor: 'not-allowed',
