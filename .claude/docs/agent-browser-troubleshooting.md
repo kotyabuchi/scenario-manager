@@ -1,8 +1,5 @@
 # agent-browser トラブルシューティング
 
-> **Note**: 本プロジェクトでは `playwright-cli` スキルに移行しました。
-> このドキュメントは `agent-browser` スキルを使用する場合の参考資料として残しています。
-
 ## 問題: Windows環境で "Daemon failed to start" エラー
 
 ### 症状
