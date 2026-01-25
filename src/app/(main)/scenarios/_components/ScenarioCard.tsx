@@ -9,6 +9,28 @@ import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
 import type { ScenarioCardProps } from '../interface';
 
+// システム名に基づいて色を決定
+const getSystemColor = (systemName: string): string => {
+  const name = systemName.toLowerCase();
+  if (name.includes('coc') && name.includes('7')) return '#10B981'; // CoC7版
+  if (name.includes('sw') && name.includes('2.5')) return '#8B5CF6'; // SW2.5
+  if (name.includes('coc') && name.includes('6')) return '#F59E0B'; // CoC6版
+  if (name.includes('coc')) return '#10B981'; // その他CoC
+  return '#6B7280'; // デフォルト
+};
+
+// システムバリアントを決定
+const getSystemVariant = (
+  systemName: string,
+): 'coc7' | 'sw25' | 'coc6' | 'default' => {
+  const name = systemName.toLowerCase();
+  if (name.includes('coc') && name.includes('7')) return 'coc7';
+  if (name.includes('sw') && name.includes('2.5')) return 'sw25';
+  if (name.includes('coc') && name.includes('6')) return 'coc6';
+  if (name.includes('coc')) return 'coc7';
+  return 'default';
+};
+
 export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
   const tags = scenario.tags
     ? scenario.tags.slice(0, 3)
@@ -16,8 +38,8 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
       ? scenario.scenarioTags.map((st) => st.tag).slice(0, 3)
       : [];
 
-  // TODO: 実際のお気に入り数と連携
-  const favoriteCount = 0;
+  const systemColor = getSystemColor(scenario.system.name);
+  const systemVariant = getSystemVariant(scenario.system.name);
 
   return (
     <Link
@@ -46,23 +68,30 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
 
         {/* システム名ラベル（リキッドカーブ付き） */}
         <div className={styles.cardSystemLabelWrapper}>
-          <div className={styles.cardSystemLabel}>
+          <div className={styles.cardSystemLabel({ system: systemVariant })}>
             <span className={styles.cardSystemLabelText}>
               {scenario.system.name}
             </span>
           </div>
           {/* 右側のリキッドカーブ */}
-          <div className={styles.cardSystemLabelCurveRight} />
+          <div
+            className={styles.cardSystemLabelCurveRight}
+            style={{
+              background: `radial-gradient(circle 16px at 100% 100%, transparent 15.5px, ${systemColor} 16px)`,
+            }}
+          />
           {/* 下側のリキッドカーブ */}
-          <div className={styles.cardSystemLabelCurveBottom} />
+          <div
+            className={styles.cardSystemLabelCurveBottom}
+            style={{
+              background: `radial-gradient(circle 16px at 100% 100%, transparent 15.5px, ${systemColor} 16px)`,
+            }}
+          />
         </div>
 
         {/* お気に入りボタン */}
         <div className={styles.cardFavoriteButton}>
           <Star className={styles.cardFavoriteIcon} />
-          <span className={styles.cardFavoriteCount}>
-            {favoriteCount > 0 ? favoriteCount : '-'}
-          </span>
         </div>
       </div>
 

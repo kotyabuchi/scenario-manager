@@ -1,72 +1,68 @@
 import { css, cva } from '@/styled-system/css';
 
 /**
- * シナリオ一覧スタイル: nani.now風（淡い緑ベース）
- *
- * 参考質感:
- * - 明度: 0.85-0.98（非常に明るい）
- * - 彩度: 0.05-0.15（低彩度でソフト）
- * - シャドウ: rgba(0,0,0,0.06)程度（薄め）
- * - 角丸: 16px（4の倍数）
+ * シナリオ一覧スタイル: Pencilデザイン準拠
  */
 
-// カラー定義（淡い緑ベース）
+// カラー定義（Pencilデザインから抽出）
 const colors = {
-  // 背景グラデーション
+  // テキスト
+  text: {
+    primary: '#1F2937',
+    secondary: '#374151',
+    tertiary: '#4B5563',
+    muted: '#6B7280',
+    placeholder: '#9CA3AF',
+  },
+  // 背景
   bg: {
-    from: 'oklch(0.98 0.02 150)', // 淡い緑
-    to: 'oklch(0.98 0.02 180)', // 淡い青緑
+    white: '#FFFFFF',
+    light: '#F3F4F6',
+    hover: '#F9FAFB',
   },
-  // プライマリ（緑系）
-  primary: {
-    50: 'oklch(0.98 0.03 150)',
-    100: 'oklch(0.95 0.05 150)',
-    200: 'oklch(0.90 0.08 150)', // メイン
-    500: 'oklch(0.65 0.15 160)',
-    800: 'oklch(0.40 0.15 160)', // テキスト用
+  // システム別カラー
+  system: {
+    coc7: '#10B981', // CoC7版
+    sw25: '#8B5CF6', // SW2.5
+    coc6: '#F59E0B', // CoC6版
+    default: '#6B7280',
   },
-  // アクセント（補色系）
+  // アクセント
   accent: {
-    coral: 'oklch(0.85 0.10 15)', // 淡いコーラル
-    purple: 'oklch(0.80 0.12 320)', // 淡い紫
-  },
-  // ニュートラル
-  neutral: {
-    50: 'oklch(0.98 0.01 150)',
-    100: 'oklch(0.95 0.01 150)',
-    600: 'oklch(0.45 0.05 150)',
-    700: 'oklch(0.40 0.05 150)',
-    800: 'oklch(0.35 0.05 150)',
+    green: '#10B981',
+    greenLight: '#F0FDF4',
+    greenLighter: '#DCFCE7',
   },
 };
 
-// シャドウ定義（nani.now風の薄さ）
+// シャドウ定義（Pencilデザインから抽出）
 const shadows = {
-  xs: '0 1px 3px rgba(0, 0, 0, 0.06)',
-  sm: '0 4px 6px rgba(0, 0, 0, 0.08)',
-  md: '0 6px 12px rgba(0, 0, 0, 0.10)',
+  card: '0 4px 16px rgba(0, 0, 0, 0.06)', // blur 16, #0000000F
+  cardHover: '0 8px 24px rgba(0, 0, 0, 0.10)',
+  small: '0 1px 2px rgba(0, 0, 0, 0.05)', // blur 2, #0000000D
+  dropdown: '0 4px 16px rgba(0, 0, 0, 0.08)', // blur 16, #00000015
 };
 
-// ScenarioCard スタイル
+// ScenarioCard スタイル（Pencilデザイン準拠）
 export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
-  bg: 'white',
-  borderRadius: '16px',
+  bg: colors.bg.white,
+  borderRadius: '12px', // Pencil: cornerRadius 12
   overflow: 'hidden',
   cursor: 'pointer',
   transition: 'all {durations.slow} cubic-bezier(0.4, 0, 0.2, 1)',
-  boxShadow: shadows.xs,
+  boxShadow: shadows.card,
   _hover: {
-    boxShadow: shadows.sm,
+    boxShadow: shadows.cardHover,
     transform: 'translateY(-4px)',
   },
 });
 
 export const cardThumbnail = css({
   position: 'relative',
-  aspectRatio: '16/9',
-  bg: colors.neutral[50],
+  height: '180px', // Pencil: height 180px
+  bg: colors.bg.light,
   overflow: 'hidden',
 });
 
@@ -87,23 +83,25 @@ export const cardThumbnailPlaceholder = css({
   alignItems: 'center',
   justifyContent: 'center',
   gap: 'xs',
-  background: `linear-gradient(135deg, ${colors.neutral[50]} 0%, ${colors.neutral[100]} 100%)`,
-  color: colors.neutral[600],
+  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', // Pencil gradient
+  color: colors.text.muted,
 });
 
 export const cardThumbnailPlaceholderIcon = css({
   w: '32px',
   h: '32px',
   opacity: 0.4,
+  color: 'white',
 });
 
 export const cardThumbnailPlaceholderText = css({
   fontSize: 'xs',
   fontWeight: 'medium',
   opacity: 0.6,
+  color: 'white',
 });
 
-// システム名ラベル（リキッドカーブ付き）- 淡い緑ベース
+// システム名ラベル（リキッドカーブ付き）- Pencilデザイン準拠
 export const cardSystemLabelWrapper = css({
   position: 'absolute',
   top: 0,
@@ -112,98 +110,104 @@ export const cardSystemLabelWrapper = css({
   zIndex: 1,
 });
 
-export const cardSystemLabel = css({
-  position: 'relative',
-  bg: colors.primary[100],
-  backdropFilter: 'blur(8px)',
-  px: 'md', // 余白を広く
-  py: '2',
-  minH: '32px', // radius 16pxの2倍の高さ（4の倍数）
-  display: 'flex',
-  alignItems: 'center',
-  borderBottomRightRadius: '16px',
+// システムバッジのベーススタイル（色はcvaで制御）
+export const cardSystemLabel = cva({
+  base: {
+    position: 'relative',
+    px: '12px', // Pencil: padding [6,12]
+    py: '6px',
+    display: 'flex',
+    alignItems: 'center',
+    borderBottomRightRadius: '8px', // Pencil: cornerRadius [0,0,8,0]
+  },
+  variants: {
+    system: {
+      coc7: { bg: colors.system.coc7 },
+      sw25: { bg: colors.system.sw25 },
+      coc6: { bg: colors.system.coc6 },
+      default: { bg: colors.system.default },
+    },
+  },
+  defaultVariants: {
+    system: 'default',
+  },
 });
 
 export const cardSystemLabelText = css({
-  fontSize: 'xs',
-  fontWeight: 'semibold',
-  color: colors.primary[800],
+  fontSize: '11px', // Pencil: fontSize 11
+  fontWeight: '600', // Pencil: fontWeight 600
+  color: 'white', // Pencil: fill #FFFFFF
   truncate: true,
 });
 
-// リキッドカーブ（右側）
+// リキッドカーブ（右側）- 色はpropsで制御するためベーススタイルのみ
 export const cardSystemLabelCurveRight = css({
   position: 'absolute',
   top: 0,
   right: '-16px',
   w: '16px',
   h: '16px',
-  background: `radial-gradient(circle 16px at 100% 100%, transparent 15.5px, ${colors.primary[100]} 16px)`,
 });
 
-// リキッドカーブ（下側）
+// リキッドカーブ（下側）- 色はpropsで制御するためベーススタイルのみ
 export const cardSystemLabelCurveBottom = css({
   position: 'absolute',
   bottom: '-16px',
   left: 0,
   w: '16px',
   h: '16px',
-  background: `radial-gradient(circle 16px at 100% 100%, transparent 15.5px, ${colors.primary[100]} 16px)`,
 });
 
-// お気に入りボタン - コーラルアクセント
+// お気に入りボタン - Pencilデザイン準拠
 export const cardFavoriteButton = css({
   position: 'absolute',
-  top: '8px',
-  right: '8px',
+  top: '12px', // Pencil: y 12
+  right: '12px', // Pencil: x 280 (= right 12 for 320px card)
   display: 'flex',
   alignItems: 'center',
-  gap: '4px',
-  px: 'sm',
-  py: '4px',
-  borderRadius: 'full',
-  bg: 'rgba(255, 255, 255, 0.9)',
-  backdropFilter: 'blur(4px)',
+  justifyContent: 'center',
+  w: '28px', // Pencil: width 28
+  h: '28px', // Pencil: height 28
+  borderRadius: '14px', // Pencil: cornerRadius 14 = circle
+  bg: 'rgba(0, 0, 0, 0.25)', // Pencil: fill #00000040
   transition: 'all {durations.normal}',
   zIndex: 1,
-  boxShadow: shadows.xs,
   _hover: {
-    bg: 'white',
-    boxShadow: shadows.sm,
+    bg: 'rgba(0, 0, 0, 0.4)',
   },
 });
 
 export const cardFavoriteIcon = css({
-  w: '14px',
-  h: '14px',
-  color: colors.accent.coral,
+  w: '16px', // Pencil: width 16
+  h: '16px', // Pencil: height 16
+  color: 'white', // Pencil: fill #FFFFFF
 });
 
 export const cardFavoriteIconActive = css({
-  w: '14px',
-  h: '14px',
-  color: colors.accent.coral,
-  fill: colors.accent.coral,
+  w: '16px',
+  h: '16px',
+  color: '#F59E0B', // アクティブ時はオレンジ
+  fill: '#F59E0B',
 });
 
 export const cardFavoriteCount = css({
   fontSize: 'xs',
   fontWeight: 'semibold',
-  color: colors.neutral[700],
+  color: 'white',
 });
 
 export const cardContent = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'sm',
-  p: 'md', // 少し広めのパディング
+  gap: '12px', // Pencil: gap 12
+  p: '16px', // Pencil: padding 16
   flex: 1,
 });
 
 export const cardTitle = css({
-  fontSize: 'md',
-  fontWeight: 'bold',
-  color: colors.neutral[800],
+  fontSize: '16px', // Pencil: fontSize 16
+  fontWeight: '600', // Pencil: fontWeight 600
+  color: colors.text.primary, // Pencil: #1F2937
   lineClamp: 2,
   lineHeight: 'tight',
   textWrap: 'balance',
@@ -212,44 +216,44 @@ export const cardTitle = css({
 export const cardMeta = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
-  fontSize: 'sm',
-  color: colors.neutral[600],
+  gap: '16px', // Pencil: gap 16
+  fontSize: '13px', // Pencil: fontSize 13
+  color: colors.text.muted, // Pencil: #6B7280
 });
 
 export const cardMetaItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '4px',
+  gap: '6px', // Pencil: gap 6
 });
 
 export const cardMetaIcon = css({
-  w: '14px',
-  h: '14px',
+  w: '14px', // Pencil: width 14
+  h: '14px', // Pencil: height 14
+  color: colors.text.muted, // Pencil: #6B7280
 });
 
 export const cardTags = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '6px',
+  gap: '6px', // Pencil: gap 6
 });
 
 export const cardTag = css({
   display: 'inline-flex',
   alignItems: 'center',
-  px: 'sm',
-  py: '2px',
-  fontSize: 'xs',
-  bg: colors.primary[50],
-  borderRadius: '12px', // 大きめの角丸
-  color: colors.primary[800],
-  fontWeight: 'medium',
-  boxShadow: shadows.xs,
+  h: '24px', // Pencil: height 24
+  px: '8px', // Pencil: padding [0,8]
+  fontSize: '11px', // Pencil: fontSize 11
+  fontWeight: '500', // Pencil: fontWeight 500
+  bg: colors.bg.light, // Pencil: #F3F4F6
+  borderRadius: '4px', // Pencil: cornerRadius 4
+  color: colors.text.tertiary, // Pencil: #4B5563
 });
 
 export const cardDescription = css({
   fontSize: 'xs',
-  color: colors.neutral[600],
+  color: colors.text.muted,
   lineClamp: 3,
   lineHeight: 'relaxed',
 });
@@ -268,7 +272,7 @@ export const scenarioListEmpty = css({
   justifyContent: 'center',
   py: '2xl',
   gap: 'md',
-  color: colors.neutral[600],
+  color: colors.text.muted,
 });
 
 export const scenarioListEmptyIcon = css({
@@ -283,7 +287,7 @@ export const scenarioListEmptyText = css({
 export const scenarioListEmptySubtext = css({
   fontSize: 'sm',
   textAlign: 'center',
-  color: colors.neutral[600],
+  color: colors.text.muted,
 });
 
 // SearchPanel スタイル（ヘッダーと一体化）
@@ -360,9 +364,9 @@ export const searchPanelField = css({
 });
 
 export const searchPanelLabel = css({
-  fontSize: 'xs',
-  fontWeight: 'medium',
-  color: colors.neutral[700],
+  fontSize: '13px', // Pencil: fontSize 13
+  fontWeight: '500', // Pencil: fontWeight 500
+  color: colors.text.secondary, // Pencil: #374151
   letterSpacing: '0.01em',
 });
 
@@ -403,57 +407,60 @@ export const systemSelectContainer = css({
   minH: '44px',
   px: 'md',
   py: 'sm',
-  bg: colors.neutral[50],
-  borderRadius: 'md',
+  bg: colors.bg.light,
+  borderRadius: '8px',
 });
 
-// 選択されたシステムのタグ
+// 選択されたシステムのタグ（Pencilデザイン準拠）
 export const systemTag = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'xs',
-  px: 'sm',
-  py: '2px',
-  fontSize: 'xs',
-  fontWeight: 'medium',
-  bg: colors.primary[100],
-  color: colors.primary[800],
-  borderRadius: 'md',
+  gap: '6px', // Pencil: gap 6
+  px: '8px', // Pencil: padding [4,8]
+  py: '4px',
+  fontSize: '13px', // Pencil: fontSize 13
+  fontWeight: 'normal', // Pencil: fontWeight normal
+  bg: colors.bg.white, // Pencil: #FFFFFF
+  color: colors.text.secondary, // Pencil: #374151
+  borderRadius: '4px', // Pencil: cornerRadius 4
+  boxShadow: shadows.small, // Pencil: blur 2, #0000000D
 });
 
 export const systemTagRemove = css({
   cursor: 'pointer',
-  opacity: 0.7,
+  color: colors.text.placeholder, // Pencil: #9CA3AF
+  w: '12px', // Pencil: width 12
+  h: '12px', // Pencil: height 12
   _hover: {
-    opacity: 1,
+    color: colors.text.muted,
   },
 });
 
-// 入力フィールドスタイル
+// 入力フィールドスタイル（Pencilデザイン準拠）
 export const searchInput = css({
-  height: '44px',
-  px: 'md',
+  height: '44px', // Pencil: height 44
+  px: '12px', // Pencil: padding [0,12]
   border: 'none',
-  borderRadius: 'md',
-  bg: colors.neutral[50],
-  color: colors.neutral[800],
-  fontSize: 'sm',
+  borderRadius: '8px', // Pencil: cornerRadius 8
+  bg: colors.bg.light, // Pencil: #F3F4F6
+  color: colors.text.primary, // Pencil: #1F2937
+  fontSize: '14px', // Pencil: fontSize 14
   outline: 'none',
   transition: 'all {durations.normal}',
   _hover: {
-    bg: colors.neutral[100],
+    bg: '#E5E7EB',
   },
   _focus: {
-    bg: colors.neutral[100],
+    bg: colors.bg.light,
     outline: '2px solid',
-    outlineColor: colors.primary[200],
+    outlineColor: colors.accent.green, // Pencil: #10B981
   },
   _placeholder: {
-    color: colors.neutral[600],
+    color: colors.text.placeholder, // Pencil: #9CA3AF
   },
 });
 
-// 詳細条件トグルボタン（展開/折りたたみで異なるスタイル）
+// 詳細条件トグルボタン（展開/折りたたみで異なるスタイル）- Pencilデザイン準拠
 export const expandButton = cva({
   base: {
     display: 'flex',
@@ -472,18 +479,18 @@ export const expandButton = cva({
   variants: {
     expanded: {
       true: {
-        color: '#10B981',
-        bg: '#F0FDF4',
+        color: colors.accent.green, // #10B981
+        bg: colors.accent.greenLight, // #F0FDF4
         _hover: {
-          bg: '#DCFCE7',
+          bg: colors.accent.greenLighter, // #DCFCE7
         },
       },
       false: {
-        color: '#9CA3AF',
+        color: colors.text.placeholder, // #9CA3AF
         bg: 'transparent',
         _hover: {
-          color: '#6B7280',
-          bg: colors.neutral[50],
+          color: colors.text.muted, // #6B7280
+          bg: colors.bg.light,
         },
       },
     },
@@ -528,7 +535,7 @@ export const detailedConditions = cva({
 export const searchDivider = css({
   border: 'none',
   h: '1px',
-  bg: colors.neutral[100],
+  bg: colors.bg.light,
   my: 'md',
 });
 
@@ -542,7 +549,7 @@ export const rangeInput = css({
   alignItems: 'center',
   gap: 'sm',
   fontSize: 'sm',
-  color: colors.neutral[700],
+  color: colors.text.secondary,
 });
 
 export const rangeInputField = css({
@@ -592,7 +599,7 @@ export const pageHeader = css({
 export const pageTitle = css({
   fontSize: 'xl',
   fontWeight: 'bold',
-  color: colors.neutral[800],
+  color: colors.text.primary, // Pencil: #1F2937
 });
 
 // 検索結果ヘッダー（件数 + ソート）
@@ -610,47 +617,47 @@ export const resultHeader = css({
 });
 
 export const resultCount = css({
-  fontSize: 'sm',
-  color: colors.neutral[600],
+  fontSize: '13px',
+  color: colors.text.muted, // Pencil: #6B7280
 });
 
-// ソートエリア
+// ソートエリア（Pencilデザイン準拠）
 export const sortArea = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '8px', // Pencil: gap 8
 });
 
 export const sortLabel = css({
-  fontSize: 'xs',
-  color: colors.neutral[600],
+  fontSize: '13px', // Pencil: fontSize 13
+  color: colors.text.muted, // Pencil: #6B7280
 });
 
 export const sortSelect = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
-  height: '36px',
-  px: 'md',
-  bg: 'white',
-  borderRadius: 'md',
-  boxShadow: shadows.xs,
+  gap: '8px', // Pencil: gap 8
+  height: '36px', // Pencil: height 36
+  px: '12px', // Pencil: padding [0,12]
+  bg: colors.bg.white, // Pencil: #FFFFFF
+  borderRadius: '6px', // Pencil: cornerRadius 6
+  boxShadow: shadows.small, // Pencil: blur 2, #0000000D
   cursor: 'pointer',
   transition: 'all {durations.normal}',
   _hover: {
-    boxShadow: shadows.sm,
+    boxShadow: shadows.card,
   },
 });
 
 export const sortSelectText = css({
-  fontSize: 'xs',
-  fontWeight: 'medium',
-  color: colors.neutral[700],
+  fontSize: '13px', // Pencil: fontSize 13
+  fontWeight: '500', // Pencil: fontWeight 500
+  color: colors.text.secondary, // Pencil: #374151
 });
 
 export const sortSelectIcon = css({
-  fontSize: '10px',
-  color: colors.neutral[600],
+  fontSize: '10px', // Pencil: fontSize 10
+  color: colors.text.muted, // Pencil: #6B7280
 });
 
 // 旧タブスタイル（互換性のため残す）
@@ -660,36 +667,36 @@ export const sortTabs = css({
   bg: 'white',
   p: 'xs',
   borderRadius: '16px',
-  boxShadow: shadows.xs,
+  boxShadow: shadows.small,
 });
 
 export const sortTabButton = cva({
   base: {
     px: 'md',
     py: 'sm',
-    fontSize: 'sm',
-    fontWeight: 'medium',
-    color: colors.neutral[600],
+    fontSize: '13px',
+    fontWeight: '500',
+    color: colors.text.muted,
     bg: 'transparent',
     border: 'none',
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'all {durations.normal}',
     _hover: {
-      color: colors.primary[800],
-      bg: colors.primary[50],
+      color: colors.accent.green,
+      bg: colors.accent.greenLight,
     },
   },
   variants: {
     active: {
       true: {
-        color: colors.primary[800],
-        bg: colors.primary[100],
+        color: colors.accent.green,
+        bg: colors.accent.greenLight,
         fontWeight: 'bold',
-        boxShadow: shadows.xs,
+        boxShadow: shadows.small,
         _hover: {
-          color: colors.primary[800],
-          bg: colors.primary[100],
+          color: colors.accent.green,
+          bg: colors.accent.greenLight,
         },
       },
     },
