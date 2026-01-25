@@ -290,11 +290,45 @@ export const scenarioListEmptySubtext = css({
 export const searchPanel = css({
   display: 'flex',
   flexDirection: 'column',
-  p: 'lg', // より広めのパディング
+  gap: 'md',
+  p: 'lg',
   bg: 'white',
   borderRadius: '16px',
   mb: 'lg',
   boxShadow: shadows.sm,
+});
+
+// 検索パネルのメイン行（横並び）
+export const searchPanelMainRow = css({
+  display: 'flex',
+  alignItems: 'flex-end',
+  gap: 'lg',
+  flexWrap: 'wrap',
+});
+
+// システム選択フィールド
+export const searchPanelSystemField = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'sm',
+  width: '320px',
+  minW: '280px',
+});
+
+// シナリオ名フィールド
+export const searchPanelNameField = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'sm',
+  flex: 1,
+  minW: '200px',
+});
+
+// ボタングループ
+export const searchPanelButtons = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'md',
 });
 
 export const seachConditions = css({
@@ -325,8 +359,8 @@ export const searchPanelField = css({
 });
 
 export const searchPanelLabel = css({
-  fontSize: 'sm',
-  fontWeight: 'semibold',
+  fontSize: 'xs',
+  fontWeight: 'medium',
   color: colors.neutral[700],
   letterSpacing: '0.01em',
 });
@@ -337,26 +371,90 @@ export const searchPanelChips = css({
   gap: 'sm',
 });
 
+// システム選択の入力風コンテナ
+export const systemSelectContainer = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'sm',
+  flexWrap: 'wrap',
+  minH: '44px',
+  px: 'md',
+  py: 'sm',
+  bg: colors.neutral[50],
+  borderRadius: 'md',
+});
+
+// 選択されたシステムのタグ
+export const systemTag = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'xs',
+  px: 'sm',
+  py: '2px',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  bg: colors.primary[100],
+  color: colors.primary[800],
+  borderRadius: 'md',
+});
+
+export const systemTagRemove = css({
+  cursor: 'pointer',
+  opacity: 0.7,
+  _hover: {
+    opacity: 1,
+  },
+});
+
+// 入力フィールドスタイル
+export const searchInput = css({
+  height: '44px',
+  px: 'md',
+  border: 'none',
+  borderRadius: 'md',
+  bg: colors.neutral[50],
+  color: colors.neutral[800],
+  fontSize: 'sm',
+  outline: 'none',
+  transition: 'all {durations.normal}',
+  _hover: {
+    bg: colors.neutral[100],
+  },
+  _focus: {
+    bg: colors.neutral[100],
+    outline: '2px solid',
+    outlineColor: colors.primary[200],
+  },
+  _placeholder: {
+    color: colors.neutral[600],
+  },
+});
+
 export const expandButton = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   gap: 'xs',
-  w: '100%',
-  px: 'md',
+  px: 'lg',
   py: 'sm',
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: colors.neutral[700],
+  fontSize: 'xs',
+  fontWeight: 'normal',
+  color: colors.neutral[600],
   bg: 'transparent',
   border: 'none',
-  borderRadius: '12px',
+  borderRadius: 'full',
   cursor: 'pointer',
   transition: 'all {durations.normal}',
   _hover: {
     color: colors.primary[800],
     bg: colors.primary[50],
   },
+});
+
+// 詳細条件トグル行
+export const expandButtonRow = css({
+  display: 'flex',
+  justifyContent: 'center',
 });
 
 export const detailedConditions = cva({
@@ -372,6 +470,7 @@ export const detailedConditions = cva({
         maxHeight: '1000px',
         opacity: 1,
         overflow: 'visible',
+        pt: 'md',
       },
       false: {
         maxHeight: '0',
@@ -389,7 +488,7 @@ export const searchDivider = css({
   border: 'none',
   h: '1px',
   bg: colors.neutral[100],
-  my: 'lg',
+  my: 'md',
 });
 
 export const searchActions = css({
@@ -414,19 +513,18 @@ export const pageContainer = css({
   maxW: '1200px',
   mx: 'auto',
   px: 'lg',
-  py: 'xl',
-  // 背景は(main)/layout.tsxで設定
+  py: 'lg',
 });
 
 export const pageHeader = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  mb: 'xl',
+  mb: 'lg',
 });
 
 export const pageTitle = css({
-  fontSize: '2xl',
+  fontSize: 'xl',
   fontWeight: 'bold',
   color: colors.neutral[800],
 });
@@ -450,6 +548,46 @@ export const resultCount = css({
   color: colors.neutral[600],
 });
 
+// ソートエリア
+export const sortArea = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'sm',
+});
+
+export const sortLabel = css({
+  fontSize: 'xs',
+  color: colors.neutral[600],
+});
+
+export const sortSelect = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'sm',
+  height: '36px',
+  px: 'md',
+  bg: 'white',
+  borderRadius: 'md',
+  boxShadow: shadows.xs,
+  cursor: 'pointer',
+  transition: 'all {durations.normal}',
+  _hover: {
+    boxShadow: shadows.sm,
+  },
+});
+
+export const sortSelectText = css({
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  color: colors.neutral[700],
+});
+
+export const sortSelectIcon = css({
+  fontSize: '10px',
+  color: colors.neutral[600],
+});
+
+// 旧タブスタイル（互換性のため残す）
 export const sortTabs = css({
   display: 'flex',
   gap: 'xs',

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import { isNil } from 'ramda';
 
 import { type SearchFormValues, searchFormSchema } from './schema';
@@ -15,31 +15,6 @@ import { Chip } from '@/components/elements/Chip';
 import { css } from '@/styled-system/css';
 
 import type { SearchPanelProps, SearchParams } from '../interface';
-
-// 入力フィールドのスタイル（ボーダーレス、背景色で区別）
-const inputStyle = css({
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  transition: 'background-color {durations.normal}',
-  shadow: 'sm',
-  _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focus: {
-    bg: 'bg.emphasized',
-    outline: '2px solid',
-    outlineColor: 'primary.focusRing',
-  },
-  _placeholder: {
-    color: 'text.muted',
-  },
-});
 
 export const SearchPanel = ({
   systems,
@@ -152,12 +127,101 @@ export const SearchPanel = ({
     onSearch({});
   };
 
+  // 選択されたシステムの名前を取得
+  const getSystemName = (systemId: string) => {
+    const system = systems.find((s) => s.systemId === systemId);
+    return system?.name ?? systemId;
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.searchPanel}>
-      <div className={styles.searchPanelRow}>
-        {/* システム選択（常に表示） */}
+      {/* メイン検索行: システム選択、シナリオ名、ボタン */}
+      <div className={styles.searchPanelMainRow}>
+        {/* システム選択 */}
+        <div className={styles.searchPanelSystemField}>
+          <span className={styles.searchPanelLabel}>システム</span>
+          <div className={styles.systemSelectContainer}>
+            {selectedSystemIds.length > 0 ? (
+              selectedSystemIds.map((systemId) => (
+                <span key={systemId} className={styles.systemTag}>
+                  {getSystemName(systemId)}
+                  <X
+                    size={12}
+                    className={styles.systemTagRemove}
+                    onClick={() => toggleSystem(systemId)}
+                  />
+                </span>
+              ))
+            ) : (
+              <span
+                className={css({
+                  color: 'oklch(0.60 0.02 150)',
+                  fontSize: 'sm',
+                })}
+              >
+                システムを選択...
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* シナリオ名 */}
+        <div className={styles.searchPanelNameField}>
+          <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
+            シナリオ名
+          </label>
+          <input
+            id="scenarioName"
+            type="text"
+            placeholder="シナリオ名で検索..."
+            className={styles.searchInput}
+            {...register('scenarioName')}
+          />
+        </div>
+
+        {/* ボタングループ */}
+        <div className={styles.searchPanelButtons}>
+          <Button type="button" variant="subtle" onClick={handleReset}>
+            <X size={16} />
+            クリア
+          </Button>
+          <Button type="submit" status="primary">
+            <Search size={16} />
+            検索
+          </Button>
+        </div>
+      </div>
+
+      {/* 詳細条件トグル */}
+      <div className={styles.expandButtonRow}>
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={styles.expandButton}
+        >
+          {isExpanded ? (
+            <>
+              <ChevronUp size={14} />
+              詳細条件を閉じる
+            </>
+          ) : (
+            <>
+              <ChevronDown size={14} />
+              詳細条件を開く
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* 詳細条件（折りたたみ可能） */}
+      <div className={styles.detailedConditions({ expanded: isExpanded })}>
+        <hr className={styles.searchDivider} />
+
+        {/* システムチップ選択 */}
         <fieldset className={styles.searchPanelField}>
-          <legend className={styles.searchPanelLabel}>システム</legend>
+          <legend className={styles.searchPanelLabel}>
+            システム（複数選択可）
+          </legend>
           <div className={styles.searchPanelChips}>
             {systems.map((system) => (
               <Chip
@@ -170,119 +234,75 @@ export const SearchPanel = ({
           </div>
         </fieldset>
 
-        {/* プレイ人数・時間（折りたたみ可能） */}
-        <div className={styles.detailedConditions({ expanded: isExpanded })}>
-          <div className={styles.seachConditions}>
-            <fieldset className={styles.searchPanelField}>
-              <legend className={styles.searchPanelLabel}>プレイ人数</legend>
-              <div className={styles.rangeInput}>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  placeholder="最小"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('minPlayer')}
-                />
-                <span>〜</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  placeholder="最大"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('maxPlayer')}
-                />
-                <span>人</span>
-              </div>
-              <FieldError error={errors.minPlayer} />
-              <FieldError error={errors.maxPlayer} />
-            </fieldset>
-
-            <fieldset className={styles.searchPanelField}>
-              <legend className={styles.searchPanelLabel}>プレイ時間</legend>
-              <div className={styles.rangeInput}>
-                <input
-                  type="number"
-                  min={1}
-                  max={240}
-                  placeholder="最小"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('minPlaytime')}
-                />
-                <span>〜</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={240}
-                  placeholder="最大"
-                  className={`${inputStyle} ${styles.rangeInputField}`}
-                  {...register('maxPlaytime')}
-                />
-                <span>時間</span>
-              </div>
-              <FieldError error={errors.minPlaytime} />
-              <FieldError error={errors.maxPlaytime} />
-            </fieldset>
-          </div>
-
-          {/* タグ選択 */}
+        {/* プレイ人数・時間 */}
+        <div className={styles.searchPanelRow}>
           <fieldset className={styles.searchPanelField}>
-            <legend className={styles.searchPanelLabel}>タグ</legend>
-            <div className={styles.searchPanelChips}>
-              {tags.map((tag) => (
-                <Chip
-                  key={tag.tagId}
-                  label={tag.name}
-                  selected={selectedTagIds.includes(tag.tagId)}
-                  onClick={() => toggleTag(tag.tagId)}
-                />
-              ))}
+            <legend className={styles.searchPanelLabel}>プレイ人数</legend>
+            <div className={styles.rangeInput}>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                placeholder="最小"
+                className={`${styles.searchInput} ${styles.rangeInputField}`}
+                {...register('minPlayer')}
+              />
+              <span>〜</span>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                placeholder="最大"
+                className={`${styles.searchInput} ${styles.rangeInputField}`}
+                {...register('maxPlayer')}
+              />
+              <span>人</span>
             </div>
+            <FieldError error={errors.minPlayer} />
+            <FieldError error={errors.maxPlayer} />
           </fieldset>
 
-          {/* シナリオ名検索 */}
-          <div className={styles.searchPanelField}>
-            <label htmlFor="scenarioName" className={styles.searchPanelLabel}>
-              シナリオ名
-            </label>
-            <input
-              id="scenarioName"
-              type="text"
-              placeholder="シナリオ名で検索..."
-              className={inputStyle}
-              {...register('scenarioName')}
-            />
-          </div>
+          <fieldset className={styles.searchPanelField}>
+            <legend className={styles.searchPanelLabel}>プレイ時間</legend>
+            <div className={styles.rangeInput}>
+              <input
+                type="number"
+                min={1}
+                max={240}
+                placeholder="最小"
+                className={`${styles.searchInput} ${styles.rangeInputField}`}
+                {...register('minPlaytime')}
+              />
+              <span>〜</span>
+              <input
+                type="number"
+                min={1}
+                max={240}
+                placeholder="最大"
+                className={`${styles.searchInput} ${styles.rangeInputField}`}
+                {...register('maxPlaytime')}
+              />
+              <span>分</span>
+            </div>
+            <FieldError error={errors.minPlaytime} />
+            <FieldError error={errors.maxPlaytime} />
+          </fieldset>
         </div>
 
-        {/* 詳細条件の展開/折りたたみボタン */}
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={styles.expandButton}
-        >
-          {isExpanded ? (
-            <>
-              詳細条件を閉じる <ChevronUp size={16} />
-            </>
-          ) : (
-            <>
-              詳細条件を開く <ChevronDown size={16} />
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* 検索ボタン */}
-      <hr className={styles.searchDivider} />
-      <div className={styles.searchActions}>
-        <Button type="submit" status="primary">
-          検索
-        </Button>
-        <Button type="button" variant="ghost" onClick={handleReset}>
-          条件クリア
-        </Button>
+        {/* タグ選択 */}
+        <fieldset className={styles.searchPanelField}>
+          <legend className={styles.searchPanelLabel}>タグ</legend>
+          <div className={styles.searchPanelChips}>
+            {tags.map((tag) => (
+              <Chip
+                key={tag.tagId}
+                label={tag.name}
+                selected={selectedTagIds.includes(tag.tagId)}
+                onClick={() => toggleTag(tag.tagId)}
+              />
+            ))}
+          </div>
+        </fieldset>
       </div>
     </form>
   );
