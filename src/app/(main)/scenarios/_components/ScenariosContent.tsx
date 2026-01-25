@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useTransition } from 'react';
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import { useQueryStates } from 'nuqs';
 import { isNil } from 'ramda';
 
@@ -11,6 +12,11 @@ import { SearchPanel } from './SearchPanel';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
+import {
+  Select,
+  type SelectItem,
+  type SelectValueChangeDetails,
+} from '@/components/elements/select/select';
 import { css } from '@/styled-system/css';
 
 import type {
@@ -22,12 +28,12 @@ import type {
 } from '../interface';
 
 // ソートオプションの定義
-const sortOptions = [
+const sortOptions: SelectItem[] = [
   { value: 'newest', label: '新着順' },
   { value: 'rating', label: '高評価順' },
   { value: 'playtime_asc', label: '短時間順' },
   { value: 'playtime_desc', label: '長時間順' },
-] as const;
+];
 
 type ScenariosContentProps = {
   systems: ScenarioSystem[];
@@ -136,7 +142,8 @@ export const ScenariosContent = ({
   );
 
   const handleSortChange = useCallback(
-    async (newSort: SortOption) => {
+    async (details: SelectValueChangeDetails<SelectItem>) => {
+      const newSort = details.value[0] as SortOption;
       setOffset(0);
 
       // nuqsでソート更新
@@ -184,72 +191,68 @@ export const ScenariosContent = ({
 
   return (
     <>
-      <SearchPanel
-        systems={systems}
-        tags={tags}
-        defaultParams={currentParams}
-        onSearch={handleSearch}
-      />
-
-      <div className={styles.resultHeader}>
-        <div className={styles.resultCount}>
-          検索結果：{searchResult.totalCount}件
+      {/* 検索エリア（白背景、ヘッダーと一体化） */}
+      <div className={styles.searchArea}>
+        <div className={styles.searchAreaContent}>
+          <div className={styles.pageHeader}>
+            <h1 className={styles.pageTitle}>シナリオ検索</h1>
+            <Link href="/scenarios/new">
+              <Button status="primary">シナリオを登録</Button>
+            </Link>
+          </div>
         </div>
-
-        <div className={styles.sortArea}>
-          <span className={styles.sortLabel}>並び替え:</span>
-          <select
-            value={queryParams.sort}
-            onChange={(e) => handleSortChange(e.target.value as SortOption)}
-            className={css({
-              height: '36px',
-              px: 'md',
-              pr: 'xl',
-              bg: 'white',
-              border: 'none',
-              borderRadius: 'md',
-              fontSize: 'xs',
-              fontWeight: 'medium',
-              color: 'oklch(0.40 0.05 150)',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
-              cursor: 'pointer',
-              appearance: 'none',
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'right 12px center',
-              _hover: {
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
-              },
-              _focus: {
-                outline: '2px solid oklch(0.90 0.08 150)',
-                outlineOffset: '1px',
-              },
-            })}
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SearchPanel
+          systems={systems}
+          tags={tags}
+          defaultParams={currentParams}
+          onSearch={handleSearch}
+        />
       </div>
 
-      <ScenarioList scenarios={searchResult.scenarios} isLoading={isPending} />
+      {/* 結果エリア（グラデーション背景） */}
+      <div className={styles.resultsArea}>
+        <div className={styles.resultsAreaContent}>
+          <div className={styles.resultHeader}>
+            <div className={styles.resultCount}>
+              検索結果：{searchResult.totalCount}件
+            </div>
 
-      {hasMore && (
-        <div
-          className={css({
-            display: 'flex',
-            justifyContent: 'center',
-            mt: 'xl',
-          })}
-        >
-          <Button variant="subtle" status="primary" onClick={handleLoadMore}>
-            もっと見る <ChevronDown size={16} />
-          </Button>
+            <div className={styles.sortArea}>
+              <span className={styles.sortLabel}>並び替え：</span>
+              <div className={css({ width: '140px' })}>
+                <Select
+                  items={sortOptions}
+                  value={[queryParams.sort]}
+                  onValueChange={handleSortChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <ScenarioList
+            scenarios={searchResult.scenarios}
+            isLoading={isPending}
+          />
+
+          {hasMore && (
+            <div
+              className={css({
+                display: 'flex',
+                justifyContent: 'center',
+                mt: 'xl',
+              })}
+            >
+              <Button
+                variant="subtle"
+                status="primary"
+                onClick={handleLoadMore}
+              >
+                もっと見る <ChevronDown size={16} />
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 };

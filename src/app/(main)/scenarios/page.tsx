@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import Link from 'next/link';
 
 import { ScenariosContent } from './_components/ScenariosContent';
 import * as styles from './_components/styles';
@@ -7,7 +6,6 @@ import { getAllSystems, getAllTags, searchScenarios } from './adapter';
 import { searchParamsCache, toSearchParams } from './searchParams';
 
 import { Spinner } from '@/components/elements';
-import { Button } from '@/components/elements/button/button';
 
 import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 
@@ -50,10 +48,14 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
     }
     return (
       <main className={styles.pageContainer}>
-        <div className={styles.scenarioListEmpty}>
-          <span className={styles.scenarioListEmptyText}>
-            データの取得に失敗しました
-          </span>
+        <div className={styles.resultsArea}>
+          <div className={styles.resultsAreaContent}>
+            <div className={styles.scenarioListEmpty}>
+              <span className={styles.scenarioListEmptyText}>
+                データの取得に失敗しました
+              </span>
+            </div>
+          </div>
         </div>
       </main>
     );
@@ -65,13 +67,6 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
 
   return (
     <main className={styles.pageContainer}>
-      <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>シナリオ検索</h1>
-        <Link href="/scenarios/new">
-          <Button status="primary">シナリオを登録</Button>
-        </Link>
-      </div>
-
       <Suspense fallback={<ScenariosLoading />}>
         <ScenariosContent
           systems={systemsResult.data}

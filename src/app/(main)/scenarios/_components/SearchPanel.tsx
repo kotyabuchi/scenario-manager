@@ -9,9 +9,18 @@ import { isNil } from 'ramda';
 import { type SearchFormValues, searchFormSchema } from './schema';
 import * as styles from './styles';
 
-import { FieldError } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
-import { Chip } from '@/components/elements/Chip';
+import {
+  Combobox,
+  type ComboboxItem,
+  type ComboboxValueChangeDetails,
+} from '@/components/elements/combobox/combobox';
+import {
+  Select,
+  type SelectItem,
+  type SelectValueChangeDetails,
+} from '@/components/elements/select/select';
+import { Slider } from '@/components/elements/slider/slider';
 import { css } from '@/styled-system/css';
 
 import type { SearchPanelProps, SearchParams } from '../interface';
@@ -26,19 +35,21 @@ export const SearchPanel = ({
   const hasInitialConditions =
     !isNil(defaultParams?.playerCount) ||
     !isNil(defaultParams?.playtime) ||
-    (!isNil(defaultParams?.tagIds) && defaultParams.tagIds.length > 0) ||
-    (!isNil(defaultParams?.scenarioName) && defaultParams.scenarioName !== '');
+    (!isNil(defaultParams?.tagIds) && defaultParams.tagIds.length > 0);
 
   const [isExpanded, setIsExpanded] = useState(hasInitialConditions);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm({
+  // プレイ人数・プレイ時間のローカル状態（Slider用）
+  const [playerCountRange, setPlayerCountRange] = useState<number[]>([
+    defaultParams?.playerCount?.min ?? 2,
+    defaultParams?.playerCount?.max ?? 6,
+  ]);
+  const [playtimeRange, setPlaytimeRange] = useState<number[]>([
+    defaultParams?.playtime?.min ?? 30,
+    defaultParams?.playtime?.max ?? 180,
+  ]);
+
+  const { register, handleSubmit, watch, setValue, reset } = useForm({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       systemIds: defaultParams?.systemIds ?? [],
@@ -54,28 +65,28 @@ export const SearchPanel = ({
   const selectedSystemIds = watch('systemIds') as string[];
   const selectedTagIds = watch('tagIds') as string[];
 
-  const toggleSystem = (systemId: string) => {
-    const current = selectedSystemIds;
-    if (current.includes(systemId)) {
-      setValue(
-        'systemIds',
-        current.filter((id) => id !== systemId),
-      );
-    } else {
-      setValue('systemIds', [...current, systemId]);
-    }
+  // システム選択肢をSelectItem形式に変換
+  const systemItems: SelectItem[] = systems.map((system) => ({
+    label: system.name,
+    value: system.systemId,
+  }));
+
+  // タグ選択肢をComboboxItem形式に変換
+  const tagItems: ComboboxItem[] = tags.map((tag) => ({
+    label: tag.name,
+    value: tag.tagId,
+  }));
+
+  const handleSystemChange = (
+    details: SelectValueChangeDetails<SelectItem>,
+  ) => {
+    setValue('systemIds', details.value);
   };
 
-  const toggleTag = (tagId: string) => {
-    const current = selectedTagIds;
-    if (current.includes(tagId)) {
-      setValue(
-        'tagIds',
-        current.filter((id) => id !== tagId),
-      );
-    } else {
-      setValue('tagIds', [...current, tagId]);
-    }
+  const handleTagChange = (
+    details: ComboboxValueChangeDetails<ComboboxItem>,
+  ) => {
+    setValue('tagIds', details.value);
   };
 
   const onSubmit: SubmitHandler<SearchFormValues> = (data) => {
@@ -97,17 +108,22 @@ export const SearchPanel = ({
       params.scenarioName = scenarioName.trim();
     }
 
-    if (!isNil(data.minPlayer) || !isNil(data.maxPlayer)) {
+    // スライダーの値を使用（デフォルト値と異なる場合のみ）
+    const minPlayer = playerCountRange[0] ?? 2;
+    const maxPlayer = playerCountRange[1] ?? 6;
+    if (minPlayer !== 2 || maxPlayer !== 6) {
       params.playerCount = {
-        min: (data.minPlayer as number) ?? 1,
-        max: (data.maxPlayer as number) ?? 20,
+        min: minPlayer,
+        max: maxPlayer,
       };
     }
 
-    if (!isNil(data.minPlaytime) || !isNil(data.maxPlaytime)) {
+    const minPlaytime = playtimeRange[0] ?? 30;
+    const maxPlaytime = playtimeRange[1] ?? 180;
+    if (minPlaytime !== 30 || maxPlaytime !== 180) {
       params.playtime = {
-        min: (data.minPlaytime as number) ?? 1,
-        max: (data.maxPlaytime as number) ?? 240,
+        min: minPlaytime,
+        max: maxPlaytime,
       };
     }
 
@@ -124,13 +140,9 @@ export const SearchPanel = ({
       maxPlaytime: undefined,
       scenarioName: '',
     });
+    setPlayerCountRange([2, 6]);
+    setPlaytimeRange([30, 180]);
     onSearch({});
-  };
-
-  // 選択されたシステムの名前を取得
-  const getSystemName = (systemId: string) => {
-    const system = systems.find((s) => s.systemId === systemId);
-    return system?.name ?? systemId;
   };
 
   return (
@@ -140,29 +152,13 @@ export const SearchPanel = ({
         {/* システム選択 */}
         <div className={styles.searchPanelSystemField}>
           <span className={styles.searchPanelLabel}>システム</span>
-          <div className={styles.systemSelectContainer}>
-            {selectedSystemIds.length > 0 ? (
-              selectedSystemIds.map((systemId) => (
-                <span key={systemId} className={styles.systemTag}>
-                  {getSystemName(systemId)}
-                  <X
-                    size={12}
-                    className={styles.systemTagRemove}
-                    onClick={() => toggleSystem(systemId)}
-                  />
-                </span>
-              ))
-            ) : (
-              <span
-                className={css({
-                  color: 'oklch(0.60 0.02 150)',
-                  fontSize: 'sm',
-                })}
-              >
-                システムを選択...
-              </span>
-            )}
-          </div>
+          <Select
+            items={systemItems}
+            value={selectedSystemIds}
+            onValueChange={handleSystemChange}
+            placeholder="システムを選択..."
+            multiple
+          />
         </div>
 
         {/* シナリオ名 */}
@@ -181,128 +177,104 @@ export const SearchPanel = ({
 
         {/* ボタングループ */}
         <div className={styles.searchPanelButtons}>
-          <Button type="button" variant="subtle" onClick={handleReset}>
-            <X size={16} />
+          <button
+            type="button"
+            onClick={handleReset}
+            className={css({
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'xs',
+              px: 'md',
+              height: '44px',
+              fontSize: 'sm',
+              fontWeight: 'medium',
+              color: '#374151',
+              bg: 'white',
+              border: 'none',
+              borderRadius: 'md',
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              whiteSpace: 'nowrap',
+              _hover: {
+                bg: '#F9FAFB',
+              },
+            })}
+          >
+            <X size={16} color="#6B7280" />
             クリア
-          </Button>
+          </button>
           <Button type="submit" status="primary">
-            <Search size={16} />
+            <Search size={18} />
             検索
           </Button>
         </div>
       </div>
 
-      {/* 詳細条件トグル */}
+      {/* 詳細条件（折りたたみ可能） */}
+      <div className={styles.detailedConditions({ expanded: isExpanded })}>
+        {/* 詳細条件行: プレイ人数、プレイ時間、タグ */}
+        <div className={styles.detailedConditionsRow}>
+          <div className={styles.sliderField}>
+            <Slider
+              label="プレイ人数"
+              value={playerCountRange}
+              onValueChange={(details) => setPlayerCountRange(details.value)}
+              min={1}
+              max={20}
+              step={1}
+              range
+              showValue
+              formatValue={(v) => `${v}人`}
+            />
+          </div>
+
+          <div className={styles.sliderField}>
+            <Slider
+              label="プレイ時間"
+              value={playtimeRange}
+              onValueChange={(details) => setPlaytimeRange(details.value)}
+              min={30}
+              max={480}
+              step={30}
+              range
+              showValue
+              formatValue={(v) => `${v}分`}
+            />
+          </div>
+
+          <div className={styles.tagField}>
+            <span className={styles.searchPanelLabel}>タグ</span>
+            <Combobox
+              items={tagItems}
+              value={selectedTagIds}
+              onValueChange={handleTagChange}
+              placeholder="タグを追加..."
+              multiple
+              noResultsText="該当するタグがありません"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 詳細条件トグル（詳細条件の下に配置） */}
       <div className={styles.expandButtonRow}>
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className={styles.expandButton}
+          className={styles.expandButton({ expanded: isExpanded })}
         >
           {isExpanded ? (
             <>
-              <ChevronUp size={14} />
-              詳細条件を閉じる
+              <ChevronUp size={10} />
+              詳細条件を非表示
             </>
           ) : (
             <>
-              <ChevronDown size={14} />
-              詳細条件を開く
+              <ChevronDown size={10} />
+              詳細条件を表示
             </>
           )}
         </button>
-      </div>
-
-      {/* 詳細条件（折りたたみ可能） */}
-      <div className={styles.detailedConditions({ expanded: isExpanded })}>
-        <hr className={styles.searchDivider} />
-
-        {/* システムチップ選択 */}
-        <fieldset className={styles.searchPanelField}>
-          <legend className={styles.searchPanelLabel}>
-            システム（複数選択可）
-          </legend>
-          <div className={styles.searchPanelChips}>
-            {systems.map((system) => (
-              <Chip
-                key={system.systemId}
-                label={system.name}
-                selected={selectedSystemIds.includes(system.systemId)}
-                onClick={() => toggleSystem(system.systemId)}
-              />
-            ))}
-          </div>
-        </fieldset>
-
-        {/* プレイ人数・時間 */}
-        <div className={styles.searchPanelRow}>
-          <fieldset className={styles.searchPanelField}>
-            <legend className={styles.searchPanelLabel}>プレイ人数</legend>
-            <div className={styles.rangeInput}>
-              <input
-                type="number"
-                min={1}
-                max={20}
-                placeholder="最小"
-                className={`${styles.searchInput} ${styles.rangeInputField}`}
-                {...register('minPlayer')}
-              />
-              <span>〜</span>
-              <input
-                type="number"
-                min={1}
-                max={20}
-                placeholder="最大"
-                className={`${styles.searchInput} ${styles.rangeInputField}`}
-                {...register('maxPlayer')}
-              />
-              <span>人</span>
-            </div>
-            <FieldError error={errors.minPlayer} />
-            <FieldError error={errors.maxPlayer} />
-          </fieldset>
-
-          <fieldset className={styles.searchPanelField}>
-            <legend className={styles.searchPanelLabel}>プレイ時間</legend>
-            <div className={styles.rangeInput}>
-              <input
-                type="number"
-                min={1}
-                max={240}
-                placeholder="最小"
-                className={`${styles.searchInput} ${styles.rangeInputField}`}
-                {...register('minPlaytime')}
-              />
-              <span>〜</span>
-              <input
-                type="number"
-                min={1}
-                max={240}
-                placeholder="最大"
-                className={`${styles.searchInput} ${styles.rangeInputField}`}
-                {...register('maxPlaytime')}
-              />
-              <span>分</span>
-            </div>
-            <FieldError error={errors.minPlaytime} />
-            <FieldError error={errors.maxPlaytime} />
-          </fieldset>
-        </div>
-
-        {/* タグ選択 */}
-        <fieldset className={styles.searchPanelField}>
-          <legend className={styles.searchPanelLabel}>タグ</legend>
-          <div className={styles.searchPanelChips}>
-            {tags.map((tag) => (
-              <Chip
-                key={tag.tagId}
-                label={tag.name}
-                selected={selectedTagIds.includes(tag.tagId)}
-                onClick={() => toggleTag(tag.tagId)}
-              />
-            ))}
-          </div>
-        </fieldset>
       </div>
     </form>
   );

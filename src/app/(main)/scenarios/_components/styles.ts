@@ -286,16 +286,17 @@ export const scenarioListEmptySubtext = css({
   color: colors.neutral[600],
 });
 
-// SearchPanel スタイル
+// SearchPanel スタイル（ヘッダーと一体化）
 export const searchPanel = css({
   display: 'flex',
   flexDirection: 'column',
   gap: 'md',
-  p: 'lg',
+  px: 'xl',
+  py: 'lg',
   bg: 'white',
-  borderRadius: '16px',
-  mb: 'lg',
-  boxShadow: shadows.sm,
+  // ヘッダーと一体化するため、上部のborderRadiusなし
+  borderRadius: '0',
+  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
 });
 
 // 検索パネルのメイン行（横並び）
@@ -303,7 +304,6 @@ export const searchPanelMainRow = css({
   display: 'flex',
   alignItems: 'flex-end',
   gap: 'lg',
-  flexWrap: 'wrap',
 });
 
 // システム選択フィールド
@@ -329,6 +329,7 @@ export const searchPanelButtons = css({
   display: 'flex',
   alignItems: 'center',
   gap: 'md',
+  flexShrink: 0,
 });
 
 export const seachConditions = css({
@@ -369,6 +370,28 @@ export const searchPanelChips = css({
   display: 'flex',
   flexWrap: 'wrap',
   gap: 'sm',
+});
+
+// スライダーフィールド（固定幅240px）
+export const sliderField = css({
+  width: '240px',
+  flexShrink: 0,
+});
+
+// タグ選択フィールド
+export const tagField = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'sm',
+  flex: 1,
+  minW: '200px',
+});
+
+// 詳細条件行（プレイ人数、プレイ時間、タグを横並び）
+export const detailedConditionsRow = css({
+  display: 'flex',
+  alignItems: 'flex-end',
+  gap: 'lg',
 });
 
 // システム選択の入力風コンテナ
@@ -430,24 +453,43 @@ export const searchInput = css({
   },
 });
 
-export const expandButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 'xs',
-  px: 'lg',
-  py: 'sm',
-  fontSize: 'xs',
-  fontWeight: 'normal',
-  color: colors.neutral[600],
-  bg: 'transparent',
-  border: 'none',
-  borderRadius: 'full',
-  cursor: 'pointer',
-  transition: 'all {durations.normal}',
-  _hover: {
-    color: colors.primary[800],
-    bg: colors.primary[50],
+// 詳細条件トグルボタン（展開/折りたたみで異なるスタイル）
+export const expandButton = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    px: 'lg',
+    height: '32px',
+    fontSize: '13px',
+    fontWeight: 'normal',
+    border: 'none',
+    borderRadius: 'full',
+    cursor: 'pointer',
+    transition: 'all {durations.normal}',
+  },
+  variants: {
+    expanded: {
+      true: {
+        color: '#10B981',
+        bg: '#F0FDF4',
+        _hover: {
+          bg: '#DCFCE7',
+        },
+      },
+      false: {
+        color: '#9CA3AF',
+        bg: 'transparent',
+        _hover: {
+          color: '#6B7280',
+          bg: colors.neutral[50],
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    expanded: false,
   },
 });
 
@@ -470,7 +512,6 @@ export const detailedConditions = cva({
         maxHeight: '1000px',
         opacity: 1,
         overflow: 'visible',
-        pt: 'md',
       },
       false: {
         maxHeight: '0',
@@ -510,17 +551,42 @@ export const rangeInputField = css({
 
 // ページスタイル
 export const pageContainer = css({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+});
+
+// 検索エリア（白背景、ヘッダーと一体化）
+export const searchArea = css({
+  bg: 'white',
+  pb: 'md',
+});
+
+// 検索エリア内のコンテンツ
+export const searchAreaContent = css({
   maxW: '1200px',
   mx: 'auto',
   px: 'lg',
+});
+
+// 結果エリア（グラデーション背景）
+export const resultsArea = css({
+  flex: 1,
   py: 'lg',
+});
+
+// 結果エリア内のコンテンツ
+export const resultsAreaContent = css({
+  maxW: '1200px',
+  mx: 'auto',
+  px: 'lg',
 });
 
 export const pageHeader = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  mb: 'lg',
+  py: 'md',
 });
 
 export const pageTitle = css({
