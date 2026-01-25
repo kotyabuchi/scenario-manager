@@ -14,6 +14,9 @@ const ResizeObserverMock = vi.fn(() => ({
 }));
 vi.stubGlobal('ResizeObserver', ResizeObserverMock);
 
+// scrollTo mock for jsdom (Ark UIのzag-jsが使用)
+Element.prototype.scrollTo = vi.fn();
+
 // matchMedia mock for jsdom
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

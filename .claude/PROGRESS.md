@@ -176,6 +176,10 @@
 | Card | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
 | Chip | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
 | Modal | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| Select | ✅ | ✅ | ✅ | ✅ | ⬜ | Green完了（スタイル改善） |
+
+**要件定義書**:
+- `Select`: `.claude/requirements/components/Select.md`
 
 **テストファイル**:
 - `src/components/elements/button/button.test.tsx`

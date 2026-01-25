@@ -87,10 +87,10 @@ export const select_positioner = css({
 });
 
 export const select_content = css({
-  bg: 'menu.bg',
+  bg: 'white',
   borderRadius: '8px',
   boxShadow: 'menu.default',
-  py: '4px',
+  p: '4px', // 上下左右統一
   outline: 'none',
   maxH: '300px',
   overflowY: 'auto',
@@ -108,16 +108,17 @@ export const select_item = css({
   fontSize: '14px',
   color: 'menu.itemText',
   cursor: 'pointer',
+  borderRadius: '4px', // アイテム自体にも角丸
   transition: 'background-color 100ms ease-out',
   _hover: {
-    bg: 'menu.itemBgHover',
+    bg: 'oklch(0.98 0.03 150)', // primary.50相当（緑のアンダートーン）
   },
   _highlighted: {
-    bg: 'menu.itemBgHover',
+    bg: 'oklch(0.98 0.03 150)', // ホバーと同じ
   },
   _selected: {
-    bg: 'menu.itemBgSelected',
-    color: 'menu.itemTextSelected',
+    bg: 'oklch(0.95 0.05 150)', // primary.100相当
+    color: 'oklch(0.40 0.15 160)', // primary.800相当
     fontWeight: '500',
   },
   _disabled: {
@@ -130,7 +131,7 @@ export const select_item = css({
 });
 
 export const select_itemIndicator = css({
-  color: 'primary.default',
+  color: 'oklch(0.40 0.15 160)', // primary.800相当
 });
 
 export const select_itemGroup = css({
