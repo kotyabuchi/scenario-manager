@@ -1,48 +1,51 @@
 import { defineRecipe } from '@pandacss/dev';
 
+/**
+ * カードレシピ - 画面設計準拠
+ */
 export const card = defineRecipe({
   className: 'card',
   base: {
     display: 'flex',
     flexDirection: 'column',
-    bg: 'bg.card',
-    borderRadius: 'xl',
+    bg: 'card.bg',
+    borderRadius: '16px',
     overflow: 'hidden',
-    transition: 'all {durations.slow}',
-    shadow: 'card.default',
+    transition: 'all 150ms ease-out',
+    boxShadow: 'card.default',
   },
   variants: {
-    // 浮遊感のバリエーション
+    /** 浮遊感のバリエーション */
     elevation: {
       // フラット: 影なし
       flat: {
-        shadow: 'none',
+        boxShadow: 'none',
       },
       // 標準（デフォルト）
       raised: {
-        shadow: 'card.default',
+        boxShadow: 'card.default',
       },
       // 強調
       elevated: {
-        shadow: 'card.hover',
+        boxShadow: 'card.hover',
       },
     },
-    // インタラクティブ（ホバー可能）
+    /** インタラクティブ（ホバー可能） */
     interactive: {
       true: {
         cursor: 'pointer',
         _hover: {
-          shadow: 'card.hover',
+          boxShadow: 'card.hover',
           transform: 'translateY(-2px)',
         },
       },
     },
-    // パディング
+    /** パディング */
     padding: {
       none: { p: '0' },
-      sm: { p: 'sm' },
-      md: { p: 'md' },
-      lg: { p: 'lg' },
+      sm: { p: '12px' },
+      md: { p: '16px' },
+      lg: { p: '24px' },
     },
   },
   defaultVariants: {

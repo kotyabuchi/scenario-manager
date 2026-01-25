@@ -9,17 +9,17 @@ const meta = {
   argTypes: {
     status: {
       control: 'select',
-      options: ['default', 'primary', 'success', 'warning', 'danger', 'info'],
-      defaultValue: 'default',
+      options: ['primary', 'danger'],
+      defaultValue: 'primary',
     },
     variant: {
       control: 'select',
-      options: ['solid', 'subtle', 'ghost'],
+      options: ['solid', 'subtle', 'ghost', 'outline'],
       defaultValue: 'solid',
     },
     size: {
       control: 'select',
-      options: ['xs', 'sm', 'md', 'lg'],
+      options: ['sm', 'md', 'lg'],
       defaultValue: 'md',
     },
     loading: {
@@ -40,7 +40,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    status: 'default',
+    status: 'primary',
     variant: 'solid',
     size: 'md',
     loading: false,

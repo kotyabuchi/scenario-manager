@@ -1,5 +1,8 @@
 import { defineSlotRecipe } from '@pandacss/dev';
 
+/**
+ * メニューレシピ - 画面設計準拠
+ */
 export const menu = defineSlotRecipe({
   className: 'menu',
   slots: [
@@ -20,14 +23,14 @@ export const menu = defineSlotRecipe({
     trigger: {
       display: 'inline-flex',
       alignItems: 'center',
-      gap: 'xs',
+      gap: '4px',
       cursor: 'pointer',
       outline: 'none',
       _focusVisible: {
         outline: '2px solid',
-        outlineColor: 'primary.focusRing',
+        outlineColor: 'primary.default',
         outlineOffset: '2px',
-        borderRadius: 'md',
+        borderRadius: '8px',
       },
     },
     positioner: {
@@ -35,13 +38,13 @@ export const menu = defineSlotRecipe({
     },
     content: {
       bg: 'menu.bg',
-      borderRadius: 'lg',
+      borderRadius: '12px',
       boxShadow: 'menu.default',
       display: 'flex',
       flexDirection: 'column',
       outline: 'none',
       overflow: 'hidden',
-      p: 'xs',
+      p: '4px',
       minWidth: '180px',
       _hidden: {
         display: 'none',
@@ -55,22 +58,26 @@ export const menu = defineSlotRecipe({
     },
     item: {
       alignItems: 'center',
-      borderRadius: 'md',
+      borderRadius: '8px',
       cursor: 'pointer',
       display: 'flex',
-      gap: 'sm',
+      gap: '8px',
       outline: 'none',
-      px: 'sm',
-      py: 'xs',
-      textStyle: 'sm',
-      transitionDuration: 'fast',
+      px: '12px',
+      py: '8px',
+      fontSize: '14px',
+      color: 'menu.itemText',
+      transitionDuration: '100ms',
       transitionProperty: 'background, color',
-      transitionTimingFunction: 'default',
+      transitionTimingFunction: 'ease-out',
+      _hover: {
+        bg: 'menu.itemBgHover',
+      },
       _highlighted: {
-        bg: 'menu.itemBgHighlighted',
+        bg: 'menu.itemBgHover',
       },
       _disabled: {
-        color: 'text.muted',
+        color: 'text.placeholder',
         cursor: 'not-allowed',
         opacity: 0.5,
       },
@@ -88,6 +95,7 @@ export const menu = defineSlotRecipe({
       alignItems: 'center',
       justifyContent: 'center',
       ml: 'auto',
+      color: 'primary.default',
       '& :where(svg)': {
         width: '0.875em',
         height: '0.875em',
@@ -98,80 +106,80 @@ export const menu = defineSlotRecipe({
       flexDirection: 'column',
     },
     itemGroupLabel: {
-      px: 'sm',
-      py: 'xs',
-      textStyle: 'xs',
-      fontWeight: 'semibold',
-      color: 'text.muted',
+      px: '12px',
+      py: '4px',
+      fontSize: '12px',
+      fontWeight: '600',
+      color: 'text.secondary',
       textTransform: 'uppercase',
-      letterSpacing: 'wide',
+      letterSpacing: '0.05em',
     },
     separator: {
       borderTopWidth: '1px',
-      borderColor: 'menu.separator',
-      my: 'xs',
+      borderColor: 'border.subtle',
+      my: '4px',
     },
     arrow: {
       '--arrow-size': '8px',
-      '--arrow-background': '{colors.menu.bg}',
+      '--arrow-background': 'token(colors.menu.bg)',
     },
     arrowTip: {
       borderTopWidth: '1px',
       borderLeftWidth: '1px',
-      borderColor: 'menu.separator',
+      borderColor: 'border.subtle',
     },
   },
   variants: {
     size: {
       sm: {
         content: {
-          p: '1',
+          p: '2px',
           minWidth: '140px',
         },
         item: {
-          px: 'xs',
-          py: '1',
-          textStyle: 'xs',
-          gap: 'xs',
+          px: '8px',
+          py: '4px',
+          fontSize: '13px',
+          gap: '4px',
         },
         itemGroupLabel: {
-          px: 'xs',
-          py: '1',
-          textStyle: 'xs',
+          px: '8px',
+          py: '2px',
+          fontSize: '11px',
         },
       },
       md: {
         content: {
-          p: 'xs',
+          p: '4px',
           minWidth: '180px',
         },
         item: {
-          px: 'sm',
-          py: 'xs',
-          textStyle: 'sm',
-          gap: 'sm',
+          px: '12px',
+          py: '8px',
+          fontSize: '14px',
+          gap: '8px',
         },
         itemGroupLabel: {
-          px: 'sm',
-          py: 'xs',
-          textStyle: 'xs',
+          px: '12px',
+          py: '4px',
+          fontSize: '12px',
         },
       },
       lg: {
         content: {
-          p: 'sm',
+          p: '8px',
           minWidth: '220px',
         },
         item: {
-          px: 'md',
-          py: 'sm',
-          textStyle: 'md',
-          gap: 'md',
+          px: '16px',
+          py: '12px',
+          fontSize: '14px',
+          gap: '12px',
         },
         itemGroupLabel: {
-          px: 'md',
-          py: 'sm',
-          textStyle: 'sm',
+          px: '16px',
+          py: '8px',
+          fontSize: '13px',
         },
       },
     },

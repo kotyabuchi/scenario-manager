@@ -1,8 +1,13 @@
 import { css } from '@/styled-system/css';
 
+/**
+ * Modal スタイル定義 - 画面設計準拠
+ */
+
 export const backdrop = css({
   position: 'fixed',
   inset: 0,
+  bg: 'overlay.backdrop',
   backdropFilter: 'blur(4px)',
   zIndex: 9998,
   _open: {
@@ -20,13 +25,13 @@ export const positioner = css({
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 9999,
-  p: 'md',
+  p: '16px',
 });
 
 export const content = css({
-  bg: 'white',
+  bg: 'dialog.bg',
   borderRadius: '16px',
-  boxShadow: '0 6px 12px rgba(0, 0, 0, 0.10)',
+  boxShadow: 'dialog.default',
   maxW: '500px',
   w: 'full',
   maxH: '90vh',
@@ -43,15 +48,15 @@ export const header = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  p: 'lg',
+  p: '24px',
   borderBottom: '1px solid',
-  borderColor: 'oklch(0.95 0.01 150)',
+  borderColor: 'border.subtle',
 });
 
 export const title = css({
-  fontSize: 'lg',
-  fontWeight: 'bold',
-  color: 'oklch(0.35 0.05 150)',
+  fontSize: '18px',
+  fontWeight: '700',
+  color: 'dialog.title',
 });
 
 export const closeButton = css({
@@ -61,24 +66,25 @@ export const closeButton = css({
   w: '32px',
   h: '32px',
   borderRadius: '8px',
-  color: 'oklch(0.45 0.05 150)',
+  color: 'dialog.close',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all 150ms ease-out',
   _hover: {
-    bg: 'oklch(0.95 0.01 150)',
-    color: 'oklch(0.35 0.05 150)',
+    bg: 'gray.100',
+    color: 'text.title',
   },
 });
 
 export const body = css({
-  p: 'lg',
+  p: '24px',
+  color: 'dialog.content',
 });
 
 export const footer = css({
   display: 'flex',
   justifyContent: 'flex-end',
-  gap: 'sm',
-  p: 'lg',
+  gap: '8px',
+  p: '24px',
   borderTop: '1px solid',
-  borderColor: 'oklch(0.95 0.01 150)',
+  borderColor: 'border.subtle',
 });
