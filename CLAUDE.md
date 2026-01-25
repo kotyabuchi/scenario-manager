@@ -396,6 +396,7 @@ Users / プロフィール                  # /users/me
 | スキル | フェーズ | 説明 |
 |--------|---------|------|
 | `/requirements` | 要件定義 | ユーザーと対話しながら詳細仕様を策定。出力: `.claude/requirements/` |
+| `/component-spec` | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義。出力: `.claude/requirements/components/` |
 | `/gen-test` | Red | 要件定義書から失敗するテストを生成 |
 | `/implement-tests` | Green | テストを通過させる最小限の実装 |
 | `/refactor` | Refactor | テストを維持しながらコード品質を改善 |
