@@ -573,15 +573,15 @@ cmd //c "taskkill /PID <PID> /F"
 
 **注意**: `pnpm dev`などで起動したサーバーは、Playwrightでの確認後など用が済んだら必ず終了する。ポートを専有したままにしない。
 
-### agent-browserの終了（必須）
-**agent-browserを使用したら、作業完了後に必ず`agent-browser close`で終了すること。**
+### playwright-cliの終了（必須）
+**playwright-cliスキルを使用したら、作業完了後に必ず`close`コマンドで終了すること。**
 
-```bash
-# agent-browserの終了
-agent-browser close
+```
+Skill tool with skill: "playwright-cli"
+args: "close"
 ```
 
-**理由**: agent-browserはヘッドレスChromeを起動するため、閉じずに放置するとメモリを大量消費し、システム全体のパフォーマンスが低下する。
+**理由**: playwright-cliはヘッドレスChromeを起動するため、閉じずに放置するとメモリを大量消費し、システム全体のパフォーマンスが低下する。
 
 ### 開発サーバー起動時のポート管理（必須）
 **`pnpm dev`で3000番以外のポートが使われた場合は、必ず以下の手順に従うこと。**

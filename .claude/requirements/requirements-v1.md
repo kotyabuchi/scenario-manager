@@ -178,7 +178,7 @@ TRPGプレイヤーが**快適にセッションを計画・実行**し、**思�
 | 認証 | Discord OAuth | 将来的にGoogle追加検討 |
 | ID生成 | ULID | 26文字 |
 | Lint/Format | Biome | シングルクォート、2スペース |
-| Testing | Vitest + Storybook + agent-browser | - |
+| Testing | Vitest + Storybook + Playwright | - |
 
 ---
 

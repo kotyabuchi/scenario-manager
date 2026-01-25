@@ -1,6 +1,6 @@
 # UI Expert Agents
 
-agent-browser MCPとfrontend-design skillを活用したUI改善専門エージェント群。
+playwright-cli スキルと frontend-design skill を活用したUI改善専門エージェント群。
 
 ## エージェント一覧
 
@@ -31,14 +31,14 @@ Claudeが自動的に適切なエージェントを選択して委譲します�
 - 実装と検証を一貫して実施
 
 ### ui-reviewer（レビュー専門）
-- agent-browserでページを巡回
+- playwright-cliでページを巡回
 - アクセシビリティ・ユーザビリティ観点で評価
 - 優先度付きレポートを作成
 
 ### ui-implementer（実装専門）
 - 要件に基づいたコンポーネント設計
 - frontend-design skillで高品質なUI実装
-- agent-browserで実装結果を検証
+- playwright-cliで実装結果を検証
 
 ## 前提条件
 
@@ -48,8 +48,8 @@ pnpm dev        # Next.js (localhost:3000)
 pnpm storybook  # Storybook (localhost:6006)
 ```
 
-### 2. agent-browser MCPの設定
-`.mcp.json` にagent-browserサーバーが設定されていること。
+### 2. playwright-cli スキルの確認
+playwright-cli スキルが利用可能であること。
 
 ### 3. frontend-design skillのインストール
 ```bash
@@ -71,7 +71,7 @@ pnpm storybook  # Storybook (localhost:6006)
 1. 要件定義を確認
 2. ui-implementer でコンポーネント設計
 3. frontend-design skill でUI実装
-4. agent-browser で表示確認
+4. playwright-cli で表示確認
 5. ui-reviewer で品質チェック
 ```
 
@@ -79,7 +79,7 @@ pnpm storybook  # Storybook (localhost:6006)
 
 | ディレクトリ | 内容 |
 |-------------|------|
-| `screenshots/` | agent-browserスクリーンショット |
+| `screenshots/` | playwright-cli スクリーンショット |
 | `src/components/elements/` | 基本UIコンポーネント |
 | `src/components/blocks/` | 複合UIコンポーネント |
 
