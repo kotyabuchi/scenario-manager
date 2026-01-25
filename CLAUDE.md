@@ -542,6 +542,25 @@ pnpm dev --port 3002  # worktree-2
 2. **開発サーバーを停止**（KillShellツールまたは手動）
 3. PRはメインリポジトリから作成（worktreeからでも可）
 
+### Bashコマンド実行時のルール（必須）
+**Bashツールの作業ディレクトリは維持されるため、毎回cdする必要はない。**
+
+| 禁止 | 理由 |
+|------|------|
+| `cd /d ...` | Windowsのcmd.exe専用コマンド。Bashでは動作しない |
+| `cd ... &&` プレフィックス | 不要。作業ディレクトリは維持される |
+
+```bash
+# NG - 毎回cdするのは不要
+cd /d C:\Development\Nextjs\scenario-manager && pnpm dev
+
+# OK - 直接コマンドを実行
+pnpm dev
+
+# OK - 絶対パスを使う（必要な場合）
+pnpm vitest run src/components/Button/Button.test.tsx
+```
+
 ### タスク完了時のコミット（必須）
 **タスクが完了したら必ずコミットを作成すること。** 作業を放置しない。
 
