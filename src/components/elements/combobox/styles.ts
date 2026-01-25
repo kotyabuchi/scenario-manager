@@ -17,7 +17,8 @@ export const combobox_control = css({
   gap: '2px',
   h: '44px',
   borderRadius: '8px',
-  bg: 'input.bg',
+  bg: 'white',
+  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
   overflow: 'hidden',
   transition: 'all 150ms ease-out',
   _focusWithin: {
@@ -25,7 +26,7 @@ export const combobox_control = css({
     outlineColor: 'input.focusBorder',
   },
   _hover: {
-    bg: 'gray.200',
+    bg: 'gray.50',
   },
 });
 

@@ -20,14 +20,15 @@ export const select_trigger = css({
   px: '12px',
   border: 'none',
   borderRadius: '8px',
-  bg: 'input.bg',
+  bg: 'white',
+  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
   color: 'input.text',
   fontSize: '14px',
   fontFamily: 'Inter, sans-serif',
   cursor: 'pointer',
   transition: 'all 150ms ease-out',
   _hover: {
-    bg: 'gray.200',
+    bg: 'gray.50',
   },
   _focus: {
     outline: '2px solid',
