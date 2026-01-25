@@ -1,4 +1,4 @@
-import { css } from '@/styled-system/css';
+import { css, cva } from '@/styled-system/css';
 
 /**
  * Select スタイル定義 - 画面設計準拠
@@ -11,39 +11,66 @@ export const select_root = css({
   w: 'full',
 });
 
-export const select_trigger = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  w: 'full',
-  h: '44px',
-  px: '12px',
-  border: 'none',
-  borderRadius: '8px',
-  bg: 'white',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-  color: 'input.text',
-  fontSize: '14px',
-  fontFamily: 'Inter, sans-serif',
-  cursor: 'pointer',
-  transition: 'all 150ms ease-out',
-  _hover: {
-    bg: 'gray.50',
-  },
-  _focus: {
-    outline: '2px solid',
-    outlineColor: 'input.focusBorder',
-  },
-  _disabled: {
-    opacity: 0.5,
-    cursor: 'not-allowed',
-    bg: 'input.bgDisabled',
-    _hover: {
-      bg: 'input.bgDisabled',
+/**
+ * Select トリガーのバリアント
+ * - form: フォーム入力用（灰色背景）
+ * - minimal: ソート切り替えなど（白背景）
+ */
+export const select_trigger = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    w: 'full',
+    h: '44px',
+    px: '12px',
+    border: 'none',
+    borderRadius: '8px',
+    color: 'input.text',
+    fontSize: '14px',
+    fontFamily: 'Inter, sans-serif',
+    cursor: 'pointer',
+    transition: 'all 150ms ease-out',
+    _focus: {
+      outline: '2px solid',
+      outlineColor: 'input.focusBorder',
+    },
+    _disabled: {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+      _hover: {
+        bg: 'input.bgDisabled',
+      },
+    },
+    '& [data-placeholder]': {
+      color: 'input.placeholder',
     },
   },
-  '& [data-placeholder]': {
-    color: 'input.placeholder',
+  variants: {
+    variant: {
+      form: {
+        bg: 'input.bg',
+        _hover: {
+          bg: 'gray.200',
+        },
+        _disabled: {
+          bg: 'input.bgDisabled',
+        },
+      },
+      minimal: {
+        bg: 'white',
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+        _hover: {
+          bg: 'gray.50',
+        },
+        _disabled: {
+          bg: 'gray.100',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    variant: 'form',
   },
 });
 

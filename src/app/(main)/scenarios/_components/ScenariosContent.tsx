@@ -224,6 +224,7 @@ export const ScenariosContent = ({
                   items={sortOptions}
                   value={[queryParams.sort]}
                   onValueChange={handleSortChange}
+                  variant="minimal"
                 />
               </div>
             </div>

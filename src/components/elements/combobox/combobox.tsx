@@ -19,6 +19,8 @@ type ComboboxItem = {
   disabled?: boolean;
 };
 
+type ComboboxVariant = 'form' | 'minimal';
+
 type ComboboxProps = {
   /** 選択肢リスト */
   items: ComboboxItem[];
@@ -38,6 +40,8 @@ type ComboboxProps = {
   noResultsText?: string;
   /** 入力要素のID */
   id?: string;
+  /** スタイルバリアント: form（灰色背景）/ minimal（白背景） */
+  variant?: ComboboxVariant;
 } & Omit<
   ComboboxRootProps<ComboboxItem>,
   'collection' | 'value' | 'onValueChange' | 'multiple'
@@ -71,6 +75,7 @@ export const Combobox = ({
   multiple = false,
   noResultsText = '該当する項目がありません',
   id,
+  variant = 'form',
   ...rest
 }: ComboboxProps) => {
   const { contains } = useFilter({ sensitivity: 'base' });
@@ -96,7 +101,7 @@ export const Combobox = ({
       openOnClick
       {...rest}
     >
-      <ArkCombobox.Control className={styles.combobox_control}>
+      <ArkCombobox.Control className={styles.combobox_control({ variant })}>
         <ArkCombobox.Input
           id={id}
           placeholder={placeholder}
@@ -142,4 +147,5 @@ export type {
   ComboboxItem,
   ComboboxValueChangeDetails,
   ComboboxInputValueChangeDetails,
+  ComboboxVariant,
 };

@@ -1,4 +1,4 @@
-import { css } from '@/styled-system/css';
+import { css, cva } from '@/styled-system/css';
 
 /**
  * Combobox スタイル定義 - 画面設計準拠
@@ -11,22 +11,44 @@ export const combobox_root = css({
   w: 'full',
 });
 
-export const combobox_control = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2px',
-  h: '44px',
-  borderRadius: '8px',
-  bg: 'white',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-  overflow: 'hidden',
-  transition: 'all 150ms ease-out',
-  _focusWithin: {
-    outline: '2px solid',
-    outlineColor: 'input.focusBorder',
+/**
+ * Combobox コントロールのバリアント
+ * - form: フォーム入力用（灰色背景）
+ * - minimal: ソート切り替えなど（白背景）
+ */
+export const combobox_control = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '2px',
+    h: '44px',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    transition: 'all 150ms ease-out',
+    _focusWithin: {
+      outline: '2px solid',
+      outlineColor: 'input.focusBorder',
+    },
   },
-  _hover: {
-    bg: 'gray.50',
+  variants: {
+    variant: {
+      form: {
+        bg: 'input.bg',
+        _hover: {
+          bg: 'gray.200',
+        },
+      },
+      minimal: {
+        bg: 'white',
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+        _hover: {
+          bg: 'gray.50',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    variant: 'form',
   },
 });
 

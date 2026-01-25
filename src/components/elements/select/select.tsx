@@ -17,6 +17,8 @@ type SelectItem = {
   disabled?: boolean;
 };
 
+type SelectVariant = 'form' | 'minimal';
+
 type SelectProps = {
   /** 選択肢リスト */
   items: SelectItem[];
@@ -32,6 +34,8 @@ type SelectProps = {
   name?: string;
   /** 複数選択を許可 */
   multiple?: boolean;
+  /** スタイルバリアント: form（灰色背景）/ minimal（白背景） */
+  variant?: SelectVariant;
 } & Omit<
   SelectRootProps<SelectItem>,
   'collection' | 'value' | 'onValueChange' | 'multiple'
@@ -63,6 +67,7 @@ export const Select = ({
   disabled,
   name,
   multiple = false,
+  variant = 'form',
   ...rest
 }: SelectProps) => {
   const collection = createListCollection({ items });
@@ -80,7 +85,7 @@ export const Select = ({
     >
       <ArkSelect.HiddenSelect />
       <ArkSelect.Control>
-        <ArkSelect.Trigger className={styles.select_trigger}>
+        <ArkSelect.Trigger className={styles.select_trigger({ variant })}>
           <ArkSelect.ValueText placeholder={placeholder} />
           <ArkSelect.Indicator className={styles.select_icon}>
             <ChevronDown size={16} />
@@ -112,4 +117,9 @@ export const Select = ({
 };
 
 export { createListCollection };
-export type { SelectProps, SelectItem, SelectValueChangeDetails };
+export type {
+  SelectProps,
+  SelectItem,
+  SelectValueChangeDetails,
+  SelectVariant,
+};
