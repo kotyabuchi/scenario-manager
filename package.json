@@ -9,6 +9,7 @@
     "dev:watch": "rm -rf .next && next dev -p 3333 --turbopack",
     "build": "next build",
     "build:cloudflare": "opennextjs-cloudflare build",
+    "buildstart": "next build && next start",
     "preview": "opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare deploy",
     "start": "next start",
