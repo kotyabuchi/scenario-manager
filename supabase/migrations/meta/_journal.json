@@ -8,6 +8,13 @@
       "when": 1767443313215,
       "tag": "0000_sleepy_moonstone",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769065253755,
+      "tag": "0001_gifted_shard",
+      "breakpoints": true
     }
   ]
 }

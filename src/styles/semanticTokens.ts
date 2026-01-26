@@ -1,452 +1,483 @@
 export const semanticTokens = {
   colors: {
+    // ========================================
+    // 背景色
+    // ========================================
     bg: {
-      base: {
-        value: '{colors.layer.base}',
-        description: 'ページ全体の背景（最下層）',
-      },
-      card: {
-        value: '#ffffff',
-        description: 'カードの背景色（白）',
-      },
-      subtle: {
-        value: '{colors.layer.1}',
-        description: 'カード・セクションの背景（第1層）',
-      },
-      muted: {
-        value: '{colors.layer.2}',
-        description: 'ネスト要素・入力フィールドの背景（第2層）',
-      },
-      emphasized: {
-        value: '{colors.layer.3}',
-        description: 'さらにネスト・ホバー状態の背景（第3層）',
-      },
-      placeholder: {
-        value: '{colors.neutral.100}',
-        description: 'プレースホルダー領域の背景（サムネイルなど）',
-      },
+      // ページ背景
+      page: { value: '#F5F7FA' },
+      // カード・パネル背景
+      card: { value: '{colors.white}' },
+      // 入力フィールド背景
+      input: { value: '{colors.gray.100}' },
+      // 無効状態の背景
+      disabled: { value: '{colors.gray.200}' },
+      // エラー入力背景
+      error: { value: '{colors.red.50}' },
+      // 成功/選択状態背景
+      success: { value: '{colors.primary.50}' },
+      // 警告背景
+      warning: { value: '{colors.orange.100}' },
     },
 
-    surface: {
-      default: {
-        value: '{colors.layer.1}',
-        description: 'カード・パネルのデフォルト背景',
-      },
-      raised: {
-        value: '{colors.layer.1}',
-        description: '浮き上がった面の背景',
-      },
-      sunken: {
-        value: '{colors.layer.2}',
-        description: '沈んだ面の背景（入力フィールドなど）',
-      },
-      hover: {
-        value: '{colors.layer.3}',
-        description: 'ホバー時の背景',
-      },
-    },
-
-    primary: {
-      default: {
-        value: '{colors.primary.500}',
-        description: 'プライマリカラー（通常）',
-      },
-      foreground: {
-        white: {
-          value: '{colors.white}',
-          description: 'プライマリカラー上のテキスト',
-        },
-        dark: {
-          value: '{colors.primary.950}',
-          description: 'プライマリカラー上のテキスト',
-        },
-      },
-      emphasized: {
-        // WCAG AA準拠: subtle背景(0.94)との明度差0.52を確保
-        value: '{colors.primary.800}',
-        description: '強調表示（ボタンなど）',
-      },
-      muted: {
-        value: '{colors.primary.700}',
-        description: '控えめなUI表示用',
-      },
-      subtle: {
-        value: '{colors.primary.100}',
-        description: '背景や区切りに使う淡い色',
-      },
-      disabled: {
-        value: '{colors.primary.200}',
-        description: '非活性状態のUI',
-      },
-      focusRing: {
-        value: '{colors.primary.500}',
-        description: 'フォーカスリング（アクセシビリティ用）',
-      },
-    },
-    success: {
-      default: {
-        value: '{colors.success.500}',
-        description: '成功状態の基準色',
-      },
-      foreground: {
-        value: '{colors.white}',
-        description: '成功メッセージの文字色',
-      },
-      emphasized: {
-        // WCAG AA準拠: subtle背景(0.94)との明度差0.52を確保
-        value: '{colors.success.800}',
-        description: '成功状態の強調表示',
-      },
-      muted: {
-        value: '{colors.success.600}',
-        description: '控えめな成功表示',
-      },
-      subtle: {
-        value: '{colors.success.100}',
-        description: '成功通知の背景',
-      },
-      disabled: {
-        value: '{colors.success.200}',
-        description: '非活性状態の成功UI',
-      },
-      focusRing: {
-        value: '{colors.success.500}',
-        description: '成功要素のフォーカスリング',
-      },
-    },
-    warning: {
-      default: {
-        value: '{colors.warning.500}',
-        description: '警告状態の基準色',
-      },
-      foreground: {
-        value: '{colors.white}',
-        description: '警告テキストの色',
-      },
-      emphasized: {
-        // WCAG AA準拠: subtle背景(0.95)との明度差0.45を確保
-        value: '{colors.warning.800}',
-        description: '警告状態の強調表示',
-      },
-      muted: {
-        value: '{colors.warning.600}',
-        description: '控えめな警告表示',
-      },
-      subtle: {
-        value: '{colors.warning.100}',
-        description: '警告の背景色',
-      },
-      disabled: {
-        value: '{colors.warning.200}',
-        description: '非活性状態の警告UI',
-      },
-      focusRing: {
-        value: '{colors.warning.500}',
-        description: '警告要素のフォーカスリング',
-      },
-    },
-    danger: {
-      default: {
-        value: '{colors.danger.500}',
-        description: '危険・エラー状態',
-      },
-      foreground: {
-        white: {
-          value: '{colors.white}',
-          description: 'エラーメッセージなどの文字色',
-        },
-        dark: {
-          value: '{colors.danger.950}',
-          description: 'エラーメッセージなどの文字色',
-        },
-      },
-      emphasized: {
-        // WCAG AA準拠: subtle背景(0.94)との明度差0.54を確保
-        value: '{colors.danger.800}',
-        description: '危険状態の強調表示',
-      },
-      muted: {
-        value: '{colors.danger.600}',
-        description: '控えめな危険表示',
-      },
-      subtle: {
-        value: '{colors.danger.100}',
-        description: 'エラー通知の背景',
-      },
-      disabled: {
-        value: '{colors.danger.200}',
-        description: '非活性状態の危険UI',
-      },
-      focusRing: {
-        value: '{colors.danger.500}',
-        description: '危険要素のフォーカスリング',
-      },
-    },
-    info: {
-      default: {
-        value: '{colors.info.500}',
-        description: '情報メッセージのベース色',
-      },
-      foreground: {
-        white: {
-          value: '{colors.white}',
-          description: '情報テキストの色（白）',
-        },
-        dark: {
-          value: '{colors.info.950}',
-          description: '情報テキストの色（暗）',
-        },
-      },
-      emphasized: {
-        // WCAG AA準拠: subtle背景(0.97)との明度差0.55を確保
-        value: '{colors.info.800}',
-        description: '情報状態の強調表示',
-      },
-      muted: {
-        value: '{colors.info.400}',
-        description: '控えめな情報表示',
-      },
-      subtle: {
-        value: '{colors.info.50}',
-        description: '情報背景',
-      },
-      disabled: {
-        value: '{colors.info.200}',
-        description: '非活性状態の情報UI',
-      },
-      focusRing: {
-        value: '{colors.info.300}',
-        description: '情報要素のフォーカスリング',
-      },
-    },
-    neutral: {
-      default: {
-        value: '{colors.neutral.500}',
-        description: 'ニュートラルカラー（デフォルト）',
-      },
-      foreground: {
-        white: {
-          value: '{colors.white}',
-          description: 'ニュートラル上のテキスト（白）',
-        },
-        dark: {
-          value: '{colors.neutral.900}',
-          description: 'ニュートラル上のテキスト（暗）',
-        },
-      },
-      emphasized: {
-        value: '{colors.neutral.600}',
-        description: '強調表示',
-      },
-      muted: {
-        value: '{colors.neutral.400}',
-        description: '控えめな表示',
-      },
-      subtle: {
-        value: '{colors.neutral.100}',
-        description: '背景用の淡い色',
-      },
-      disabled: {
-        value: '{colors.neutral.200}',
-        description: '非活性状態',
-      },
-      focusRing: {
-        value: '{colors.neutral.300}',
-        description: 'フォーカスリング',
-      },
-    },
-    background: {
-      default: {
-        value: '{colors.layer.base}',
-        description: 'ページ背景全体',
-      },
-    },
-    foreground: {
-      default: {
-        value: '{colors.foreground.500}',
-        description: '通常のテキストカラー',
-      },
-      muted: {
-        // WCAG AA準拠: 背景(0.98)との明度差0.53を確保
-        value: '{colors.neutral.600}',
-        description: '控えめなテキストカラー',
-      },
-    },
+    // ========================================
+    // テキスト色
+    // ========================================
     text: {
-      primary: {
-        value: '{colors.foreground.500}',
-        description: 'メインのテキスト色（タイトルなど）',
-      },
-      secondary: {
-        // WCAG AA準拠: 背景(0.98)との明度差0.53を確保
-        value: '{colors.neutral.600}',
-        description: 'サブテキスト色',
-      },
-      muted: {
-        // WCAG AA準拠: 背景(0.98)との明度差0.53を確保
-        value: '{colors.neutral.600}',
-        description: '控えめなテキスト色（メタ情報など）',
-      },
-      subtle: {
-        // WCAG AA準拠: 背景(0.98)との明度差0.43（大きめのテキスト用）
-        value: '{colors.neutral.500}',
-        description: '非常に控えめなテキスト色（18pt以上の大きいテキスト用）',
-      },
+      // タイトル・見出し
+      title: { value: '{colors.gray.800}' },
+      // 本文・ラベル
+      body: { value: '{colors.gray.700}' },
+      // サブテキスト・補足
+      secondary: { value: '{colors.gray.500}' },
+      // プレースホルダー・無効テキスト
+      placeholder: { value: '{colors.gray.400}' },
+      // 白テキスト（濃い背景上）
+      white: { value: '{colors.white}' },
+      // エラーテキスト
+      error: { value: '{colors.red.500}' },
+      // 成功テキスト
+      success: { value: '{colors.primary.800}' },
+      // 警告テキスト
+      warning: { value: '{colors.orange.800}' },
     },
+
+    // ========================================
+    // プライマリ（緑）
+    // ========================================
+    primary: {
+      default: { value: '{colors.primary.500}' },
+      hover: { value: '{colors.primary.600}' },
+      active: { value: '{colors.primary.700}' },
+      subtle: { value: '{colors.primary.100}' },
+      subtleHover: { value: '{colors.primary.50}' },
+      text: { value: '{colors.primary.800}' },
+      textOnPrimary: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // エラー（赤）
+    // ========================================
+    error: {
+      default: { value: '{colors.red.500}' },
+      hover: { value: '{colors.red.600}' },
+      subtle: { value: '{colors.red.100}' },
+      subtleHover: { value: '{colors.red.50}' },
+      text: { value: '{colors.red.600}' },
+      textDark: { value: '{colors.red.800}' },
+      textOnError: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // 警告（オレンジ）
+    // ========================================
+    warning: {
+      default: { value: '{colors.orange.500}' },
+      hover: { value: '{colors.orange.600}' },
+      subtle: { value: '{colors.orange.100}' },
+      text: { value: '{colors.orange.800}' },
+      textOnWarning: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // パープル（システムバッジ用）
+    // ========================================
+    purple: {
+      default: { value: '{colors.purple.500}' },
+      hover: { value: '{colors.purple.600}' },
+      subtle: { value: '{colors.purple.100}' },
+      text: { value: '{colors.purple.800}' },
+      textOnPurple: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // レーティング（黄色）
+    // ========================================
+    rating: {
+      filled: { value: '{colors.orange.400}' },
+      empty: { value: '{colors.gray.200}' },
+    },
+
+    // ========================================
+    // お気に入り
+    // ========================================
+    favorite: {
+      active: { value: '{colors.orange.500}' },
+      inactive: { value: '{colors.overlay.40}' },
+      inactiveHover: { value: '{colors.overlay.60}' },
+    },
+
+    // ========================================
+    // ボーダー
+    // ========================================
     border: {
-      default: {
-        value: '{colors.border.500}',
-        description: '境界線などの色',
-      },
-      subtle: {
-        value: '{colors.neutral.200}',
-        description: '控えめな境界線',
-      },
+      default: { value: '{colors.gray.300}' },
+      subtle: { value: '{colors.gray.200}' },
+      focus: { value: '{colors.primary.500}' },
+      error: { value: '{colors.red.500}' },
     },
-    placeholder: {
-      default: {
-        value: '{colors.placeholder.500}',
-        description: 'フォームのプレースホルダー色',
-      },
-    },
-    backdrop: {
-      default: {
-        value: '{colors.backdrop.500}',
-        description: 'モーダル背景などの半透明黒',
-      },
-    },
-    // チップ（選択可能なタグ・バッジ）
-    chip: {
-      default: {
-        value: 'oklch(0.97 0 0)',
-        description: '非選択チップの背景（ほぼ白）',
-      },
-      hover: {
-        value: 'oklch(0.94 0 0)',
-        description: '非選択チップのホバー背景',
-      },
-    },
-    // オーバーレイ（サムネイル上のラベル・ボタン）
+
+    // ========================================
+    // オーバーレイ
+    // ========================================
     overlay: {
-      light: {
-        value: 'rgba(255,255,255,0.85)',
-        description: '明るいオーバーレイ（システムラベル等）',
-      },
-      dark: {
-        value: 'rgba(0,0,0,0.4)',
-        description: '暗いオーバーレイ（ボタン等）',
-      },
-      darkHover: {
-        value: 'rgba(0,0,0,0.6)',
-        description: '暗いオーバーレイのホバー',
-      },
+      light: { value: 'rgba(255, 255, 255, 0.85)' },
+      dark: { value: '{colors.overlay.40}' },
+      darkHover: { value: '{colors.overlay.60}' },
+      backdrop: { value: '{colors.overlay.20}' },
     },
-    // サイドメニュー（ナビゲーションパネル）
-    sidemenu: {
-      bg: {
-        value: '#ffffff',
-        description: 'サイドメニューの背景（白で明確に面を表現）',
-      },
-      itemBg: {
-        value: 'oklch(0.97 0.008 145)',
-        description: 'メニューアイテムのホバー背景',
-      },
+
+    // ========================================
+    // アイコン
+    // ========================================
+    icon: {
+      default: { value: '{colors.gray.500}' },
+      muted: { value: '{colors.gray.400}' },
+      white: { value: '{colors.white}' },
+      primary: { value: '{colors.primary.500}' },
+      error: { value: '{colors.red.500}' },
     },
-    // ドロップダウンメニュー
+
+    // ========================================
+    // ボタン
+    // ========================================
+    button: {
+      // Primary Button
+      primaryBg: { value: '{colors.primary.500}' },
+      primaryBgHover: { value: '{colors.primary.600}' },
+      primaryText: { value: '{colors.white}' },
+      // Secondary Button
+      secondaryBg: { value: '{colors.white}' },
+      secondaryBgHover: { value: '{colors.gray.50}' },
+      secondaryText: { value: '{colors.gray.700}' },
+      // Subtle Button
+      subtleBg: { value: '{colors.gray.100}' },
+      subtleBgHover: { value: '{colors.gray.200}' },
+      subtleText: { value: '{colors.gray.700}' },
+      // Destructive Button
+      destructiveBg: { value: '{colors.red.500}' },
+      destructiveBgHover: { value: '{colors.red.600}' },
+      destructiveText: { value: '{colors.white}' },
+      // Disabled Button
+      disabledBg: { value: '{colors.gray.200}' },
+      disabledText: { value: '{colors.gray.400}' },
+      // Ghost Button
+      ghostText: { value: '{colors.gray.400}' },
+      ghostTextHover: { value: '{colors.gray.500}' },
+    },
+
+    // ========================================
+    // チップ/タグ
+    // ========================================
+    chip: {
+      // Selectable (緑)
+      selectableBg: { value: '{colors.primary.100}' },
+      selectableText: { value: '{colors.primary.800}' },
+      // Label (グレー)
+      labelBg: { value: '{colors.gray.100}' },
+      labelText: { value: '{colors.gray.600}' },
+      // Error (赤)
+      errorBg: { value: '{colors.red.100}' },
+      errorText: { value: '{colors.red.600}' },
+      // Outline
+      outlineBg: { value: '{colors.white}' },
+      outlineBorder: { value: '{colors.gray.300}' },
+      outlineText: { value: '{colors.gray.500}' },
+    },
+
+    // ========================================
+    // 入力フィールド
+    // ========================================
+    input: {
+      bg: { value: '{colors.gray.100}' },
+      bgDisabled: { value: '{colors.gray.200}' },
+      bgError: { value: '{colors.red.50}' },
+      text: { value: '{colors.gray.800}' },
+      placeholder: { value: '{colors.gray.400}' },
+      label: { value: '{colors.gray.700}' },
+      focusBorder: { value: '{colors.primary.500}' },
+      errorBorder: { value: '{colors.red.500}' },
+    },
+
+    // ========================================
+    // スライダー
+    // ========================================
+    slider: {
+      track: { value: '{colors.gray.200}' },
+      fill: { value: '{colors.primary.500}' },
+      thumb: { value: '{colors.white}' },
+      valueText: { value: '{colors.primary.500}' },
+    },
+
+    // ========================================
+    // チェックボックス/ラジオ/スイッチ
+    // ========================================
+    toggle: {
+      uncheckedBg: { value: '{colors.white}' },
+      checkedBg: { value: '{colors.primary.500}' },
+      disabledBg: { value: '{colors.gray.200}' },
+      switchTrack: { value: '{colors.gray.200}' },
+      switchTrackOn: { value: '{colors.primary.500}' },
+    },
+
+    // ========================================
+    // ドロップダウン/メニュー
+    // ========================================
     menu: {
-      bg: {
-        value: '#ffffff',
-        description: 'メニューの背景（白）',
-      },
-      itemBg: {
-        value: 'oklch(0.97 0 0)',
-        description: 'メニューアイテムのホバー背景',
-      },
-      itemBgHighlighted: {
-        value: 'oklch(0.94 0 0)',
-        description: 'メニューアイテムのハイライト背景',
-      },
-      itemBgDanger: {
-        value: '{colors.danger.subtle}',
-        description: '危険アクションのホバー背景',
-      },
-      separator: {
-        value: '{colors.neutral.200}',
-        description: 'セパレーターの色',
-      },
+      bg: { value: '{colors.white}' },
+      itemBg: { value: 'transparent' },
+      itemBgHover: { value: '{colors.gray.50}' },
+      itemBgSelected: { value: '{colors.primary.50}' },
+      itemText: { value: '{colors.gray.700}' },
+      itemTextSelected: { value: '{colors.primary.500}' },
+    },
+
+    // ========================================
+    // タブ
+    // ========================================
+    tab: {
+      bg: { value: '{colors.gray.100}' },
+      activeBg: { value: '{colors.white}' },
+      activeText: { value: '{colors.gray.800}' },
+      inactiveText: { value: '{colors.gray.500}' },
+      underlineActive: { value: '{colors.primary.500}' },
+      underlineInactive: { value: '{colors.gray.200}' },
+    },
+
+    // ========================================
+    // ツールチップ
+    // ========================================
+    tooltip: {
+      bg: { value: '{colors.gray.800}' },
+      text: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // トースト
+    // ========================================
+    toast: {
+      bg: { value: '{colors.white}' },
+      successIcon: { value: '{colors.primary.500}' },
+      successIconBg: { value: '{colors.primary.100}' },
+      errorIcon: { value: '{colors.red.500}' },
+      errorIconBg: { value: '{colors.red.100}' },
+      title: { value: '{colors.gray.800}' },
+      description: { value: '{colors.gray.500}' },
+      close: { value: '{colors.gray.400}' },
+    },
+
+    // ========================================
+    // ページネーション
+    // ========================================
+    pagination: {
+      bg: { value: '{colors.white}' },
+      activeBg: { value: '{colors.primary.500}' },
+      activeText: { value: '{colors.white}' },
+      inactiveText: { value: '{colors.gray.700}' },
+      icon: { value: '{colors.gray.500}' },
+    },
+
+    // ========================================
+    // バッジ
+    // ========================================
+    badge: {
+      successBg: { value: '{colors.primary.100}' },
+      successDot: { value: '{colors.primary.500}' },
+      successText: { value: '{colors.primary.800}' },
+      warningBg: { value: '{colors.orange.100}' },
+      warningDot: { value: '{colors.orange.500}' },
+      warningText: { value: '{colors.orange.800}' },
+      errorBg: { value: '{colors.red.100}' },
+      errorDot: { value: '{colors.red.500}' },
+      errorText: { value: '{colors.red.800}' },
+      neutralBg: { value: '{colors.gray.100}' },
+      neutralDot: { value: '{colors.gray.500}' },
+      neutralText: { value: '{colors.gray.700}' },
+    },
+
+    // ========================================
+    // プログレス
+    // ========================================
+    progress: {
+      track: { value: '{colors.gray.200}' },
+      fill: { value: '{colors.primary.500}' },
+      text: { value: '{colors.primary.500}' },
+      circleBg: { value: '{colors.gray.200}' },
+      circleFg: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // アバター
+    // ========================================
+    avatar: {
+      bg: { value: '{colors.primary.100}' },
+      icon: { value: '{colors.primary.500}' },
+      placeholder: { value: '{colors.gray.200}' },
+    },
+
+    // ========================================
+    // スケルトン
+    // ========================================
+    skeleton: {
+      base: { value: '{colors.gray.200}' },
+      highlight: { value: '{colors.gray.100}' },
+    },
+
+    // ========================================
+    // ダイアログ
+    // ========================================
+    dialog: {
+      bg: { value: '{colors.white}' },
+      title: { value: '{colors.gray.800}' },
+      content: { value: '{colors.gray.500}' },
+      close: { value: '{colors.gray.400}' },
+    },
+
+    // ========================================
+    // ヘッダー
+    // ========================================
+    header: {
+      bg: { value: '{colors.white}' },
+      text: { value: '{colors.gray.500}' },
+      textActive: { value: '{colors.primary.500}' },
+      logo: { value: '{colors.primary.500}' },
+      logoBg: { value: '{colors.primary.100}' },
+    },
+
+    // ========================================
+    // カード
+    // ========================================
+    card: {
+      bg: { value: '{colors.white}' },
+      title: { value: '{colors.gray.800}' },
+      meta: { value: '{colors.gray.500}' },
+    },
+
+    // ========================================
+    // システムバッジ（TRPGシステム識別用）
+    // ========================================
+    systemBadge: {
+      green: { value: '{colors.primary.500}' },
+      purple: { value: '{colors.purple.500}' },
+      orange: { value: '{colors.orange.500}' },
+    },
+
+    // ========================================
+    // スクロールバー
+    // ========================================
+    scrollbar: {
+      track: { value: '{colors.gray.200}' },
+      thumb: { value: '{colors.primary.500}' },
+    },
+
+    // ========================================
+    // ランディングページ
+    // ========================================
+    landing: {
+      // Feature カード
+      featureIndigo: { value: '{colors.indigo.500}' },
+      featureIndigoBg: { value: '{colors.indigo.50}' },
+      // CTA セクション
+      ctaBg: { value: '{colors.primary.500}' },
+      ctaSubtext: { value: '{colors.primary.100}' },
+      // Footer
+      footerBg: { value: '{colors.gray.800}' },
+      footerText: { value: '{colors.gray.400}' },
+      // システムバッジ
+      sysGreenBg: { value: '{colors.green.50}' },
+      sysGreenText: { value: '{colors.green.700}' },
+      sysBlueBg: { value: '{colors.blue.50}' },
+      sysBlueText: { value: '{colors.blue.800}' },
+      sysPurpleBg: { value: '#F3E8FF' },
+      sysPurpleText: { value: '{colors.purple.600}' },
+      sysPinkBg: { value: '{colors.pink.50}' },
+      sysPinkText: { value: '{colors.pink.700}' },
+      sysOrangeBg: { value: '{colors.orange.100}' },
+      sysOrangeText: { value: '{colors.orange.800}' },
     },
   },
 
   shadows: {
+    // ========================================
+    // 汎用シャドウ
+    // ========================================
     sm: {
-      value: '0 1px 2px 0 oklch(0.20 0.01 270 / 0.05)',
-      description: '小さな影',
+      value: '0 1px 2px rgba(0, 0, 0, 0.05)',
     },
     md: {
-      value:
-        '0 4px 6px -1px oklch(0.20 0.01 270 / 0.07), 0 2px 4px -2px oklch(0.20 0.01 270 / 0.05)',
-      description: '中程度の影',
+      value: '0 1px 3px rgba(0, 0, 0, 0.10)',
     },
     lg: {
-      value:
-        '0 10px 15px -3px oklch(0.20 0.01 270 / 0.08), 0 4px 6px -4px oklch(0.20 0.01 270 / 0.05)',
-      description: '大きな影',
+      value: '0 4px 6px rgba(0, 0, 0, 0.10)',
     },
     xl: {
-      value:
-        '0 20px 25px -5px oklch(0.20 0.01 270 / 0.10), 0 8px 10px -6px oklch(0.20 0.01 270 / 0.05)',
-      description: '特大の影',
+      value: '0 8px 16px rgba(0, 0, 0, 0.15)',
     },
-    // カード用の影（ボーダーレスUI）
+
+    // ========================================
+    // コンポーネント別シャドウ
+    // ========================================
+    // ボタン
+    button: {
+      primary: { value: '0 2px 4px rgba(16, 185, 129, 0.25)' },
+      secondary: { value: '0 1px 3px rgba(0, 0, 0, 0.10)' },
+      destructive: { value: '0 2px 4px rgba(239, 68, 68, 0.25)' },
+    },
+    // カード
     card: {
-      default: {
-        value: '0 2px 6px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05)',
-        description: 'カードの基本影',
-      },
-      hover: {
-        value: '0 6px 16px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.08)',
-        description: 'カードホバー時の影',
-      },
+      default: { value: '0 4px 16px rgba(0, 0, 0, 0.06)' },
+      hover: { value: '0 8px 24px rgba(0, 0, 0, 0.10)' },
     },
-    // チップ用の影（選択可能なタグ・バッジ）
-    chip: {
-      default: {
-        value: '0 1px 3px rgba(0,0,0,0.08)',
-        description: 'チップの基本影',
-      },
-      hover: {
-        value: '0 2px 4px rgba(0,0,0,0.12)',
-        description: 'チップホバー時の影',
-      },
-      selected: {
-        value: '0 2px 4px rgba(0,0,0,0.15)',
-        description: '選択されたチップの影',
-      },
-      selectedHover: {
-        value: '0 4px 8px rgba(0,0,0,0.2)',
-        description: '選択されたチップホバー時の影',
-      },
+    // ヘッダー
+    header: {
+      default: { value: '0 2px 8px rgba(0, 0, 0, 0.05)' },
     },
-    // サイドメニュー用の影（ナビゲーションパネル）
-    sidemenu: {
-      default: {
-        value:
-          '0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03)',
-        description: 'サイドメニューの影（輪郭を明確に）',
-      },
-      hover: {
-        value:
-          '0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
-        description: 'サイドメニュー展開時の影',
-      },
+    // 検索パネル
+    panel: {
+      default: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
     },
-    // ドロップダウンメニュー用の影
+    // ドロップダウン/メニュー
     menu: {
-      default: {
-        value:
-          '0 10px 38px -10px rgba(22, 23, 24, 0.35), 0 10px 20px -15px rgba(22, 23, 24, 0.2)',
-        description: 'メニューの影（フローティング感）',
-      },
+      default: { value: '0 4px 16px rgba(0, 0, 0, 0.08)' },
+    },
+    // トースト
+    toast: {
+      default: { value: '0 4px 12px rgba(0, 0, 0, 0.08)' },
+    },
+    // ダイアログ
+    dialog: {
+      default: { value: '0 8px 24px rgba(0, 0, 0, 0.12)' },
+    },
+    // 入力フィールド（チェックボックス等）
+    input: {
+      default: { value: '0 1px 2px rgba(0, 0, 0, 0.08)' },
+    },
+    // スライダーつまみ
+    slider: {
+      thumb: { value: '0 1px 3px rgba(0, 0, 0, 0.19)' },
+    },
+    // スイッチつまみ
+    switch: {
+      thumb: { value: '0 1px 2px rgba(0, 0, 0, 0.12)' },
+    },
+    // FAB
+    fab: {
+      default: { value: '0 4px 12px rgba(16, 185, 129, 0.25)' },
+    },
+    // スクロールボタン
+    scrollButton: {
+      default: { value: '0 2px 8px rgba(0, 0, 0, 0.08)' },
+    },
+    // ランディングページ
+    landing: {
+      // ブラウズボタン
+      browseBtn: { value: '0 2px 8px rgba(0, 0, 0, 0.06)' },
+      // CTAボタン（Hero）
+      heroCta: { value: '0 4px 12px rgba(16, 185, 129, 0.19)' },
+      // Feature カード
+      featureCard: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
+      // CTAボタン（白背景）
+      ctaBtn: { value: '0 4px 12px rgba(0, 0, 0, 0.12)' },
     },
   },
 };

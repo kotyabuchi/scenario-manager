@@ -21,8 +21,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <StyledButton {...rest} ref={ref}>
-        {loading && <Spinner size="sm" />}
-        {children}
+        {loading ? (
+          <>
+            <Spinner size="sm" />
+            {loadingText ? <span>{loadingText}</span> : children}
+          </>
+        ) : (
+          children
+        )}
       </StyledButton>
     );
   },

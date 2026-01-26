@@ -6,6 +6,7 @@ import { durations } from './durations';
 import { easings } from './easing';
 import { sizes } from './sizes';
 import { spacing } from './spacing';
+import { zIndex } from './zIndex';
 
 export const tokens = defineTokens({
   animations,
@@ -14,4 +15,5 @@ export const tokens = defineTokens({
   easings,
   sizes,
   spacing,
+  zIndex,
 });

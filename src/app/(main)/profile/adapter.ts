@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 
 import { getDb } from '@/db';
 import { users } from '@/db/schema';
@@ -31,13 +31,23 @@ export const getUserByDiscordId = async (
  */
 export const updateUserProfile = async (
   userId: string,
-  input: { nickname: string; bio: string | undefined },
+  input: { userName: string; nickname: string; bio: string | undefined },
 ): Promise<Result<User>> => {
   const db = getDb();
   try {
+    // userNameの重複チェック（自分以外で同じuserNameがないか）
+    const existingUser = await db.query.users.findFirst({
+      where: and(eq(users.userName, input.userName), ne(users.userId, userId)),
+    });
+
+    if (existingUser) {
+      return err(new Error('このユーザーIDは既に使用されています'));
+    }
+
     const [updated] = await db
       .update(users)
       .set({
+        userName: input.userName,
         nickname: input.nickname,
         bio: input.bio ?? null,
         updatedAt: new Date(),

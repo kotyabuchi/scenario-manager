@@ -1,23 +1,40 @@
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
-// More info at: https://storybook.js.org/docs/writing-tests/test-addon
 export default defineConfig({
+  plugins: [tsconfigPaths()],
+  esbuild: {
+    jsx: 'automatic',
+  },
   test: {
-    workspace: [
+    // Vitest 3では workspace は非推奨、projects を使用
+    projects: [
+      // ユニットテスト用（ロジック、ユーティリティ）
       {
         extends: true,
-        plugins: [
-          // The plugin will run tests for the stories defined in your Storybook config
-          // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
-        ],
         test: {
-          name: 'storybook',
-          browser: {
-            enabled: true,
-            headless: true,
-            name: 'chromium',
-            provider: 'playwright',
-          },
+          name: 'unit',
+          include: [
+            'src/**/__tests__/**/*.test.ts',
+            'src/**/__tests__/**/*.test.tsx',
+          ],
+          exclude: ['node_modules', '.next', 'e2e'],
+          environment: 'node',
+        },
+      },
+      // コンポーネントテスト用（composeStoriesを使用）
+      {
+        extends: true,
+        test: {
+          name: 'component',
+          include: ['src/**/*.test.tsx'],
+          exclude: [
+            'node_modules',
+            '.next',
+            'e2e',
+            'src/**/__tests__/**', // unit testsは除外
+          ],
+          environment: 'jsdom',
           setupFiles: ['.storybook/vitest.setup.ts'],
         },
       },

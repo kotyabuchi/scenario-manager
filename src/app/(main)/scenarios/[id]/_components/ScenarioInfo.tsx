@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, ExternalLink, Star } from 'lucide-react';
+import { ExternalLink, FileText, Star, Timer, User, Users } from 'lucide-react';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -20,7 +20,7 @@ type ScenarioInfoProps = {
  */
 const StarRating = ({ rating }: { rating: number | null }) => {
   if (isNil(rating)) {
-    return <span className={styles.scenarioInfo_ratingCount}>評価なし</span>;
+    return null;
   }
 
   return (
@@ -28,7 +28,7 @@ const StarRating = ({ rating }: { rating: number | null }) => {
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          size={16}
+          size={18}
           fill={star <= rating ? 'currentColor' : 'none'}
           style={{ opacity: star <= rating ? 1 : 0.3 }}
         />
@@ -37,97 +37,99 @@ const StarRating = ({ rating }: { rating: number | null }) => {
   );
 };
 
+/**
+ * ハンドアウトタイプのテキスト
+ */
+const getHandoutText = (type: string): string => {
+  switch (type) {
+    case 'NONE':
+      return 'なし';
+    case 'PUBLIC':
+      return '公開';
+    case 'SECRET':
+      return '秘匿ハンドアウト';
+    default:
+      return '不明';
+  }
+};
+
 export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const hasLongDescription =
     !isNil(scenario.description) && scenario.description.length > 200;
 
+  // 短縮表示時のテキスト（3行分程度）
+  const truncatedDescription =
+    !isNil(scenario.description) && hasLongDescription && !isDescriptionExpanded
+      ? `${scenario.description.slice(0, 150)}...`
+      : scenario.description;
+
   return (
-    <article className={styles.scenarioInfo}>
+    <article className={styles.firstView}>
       {/* サムネイル */}
-      <div>
-        {!isNil(scenario.scenarioImageUrl) ? (
-          <div className={styles.scenarioInfo_thumbnail}>
-            <Image
-              src={scenario.scenarioImageUrl}
-              alt={scenario.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 280px"
-              style={{ objectFit: 'cover' }}
-              priority
-            />
-          </div>
-        ) : (
-          <div className={styles.scenarioInfo_thumbnailPlaceholder}>
-            No Image
-          </div>
-        )}
-      </div>
+      {!isNil(scenario.scenarioImageUrl) ? (
+        <div className={styles.firstView_thumbnail}>
+          <Image
+            src={scenario.scenarioImageUrl}
+            alt={scenario.name}
+            fill
+            sizes="400px"
+            style={{ objectFit: 'cover' }}
+            priority
+          />
+        </div>
+      ) : (
+        <div className={styles.firstView_thumbnailPlaceholder}>
+          <FileText size={48} />
+        </div>
+      )}
 
       {/* 情報エリア */}
-      <div className={styles.scenarioInfo_content}>
-        {/* システム名 */}
-        <span className={styles.scenarioInfo_system}>
-          {scenario.system.name}
-        </span>
+      <div className={styles.firstView_content}>
+        {/* トップ: システム + 評価 */}
+        <div className={styles.scenarioInfo_top}>
+          <span className={styles.scenarioInfo_system}>
+            {scenario.system.name}
+          </span>
+          {!isNil(scenario.avgRating) && (
+            <div className={styles.scenarioInfo_rating}>
+              <StarRating rating={scenario.avgRating} />
+              <span className={styles.scenarioInfo_ratingText}>
+                {scenario.avgRating.toFixed(1)}（{scenario.reviewCount}件）
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* シナリオ名 */}
         <h1 className={styles.scenarioInfo_title}>{scenario.name}</h1>
 
-        {/* 評価 */}
-        <a href="#reviews" className={styles.scenarioInfo_rating}>
-          <StarRating rating={scenario.avgRating} />
-          {!isNil(scenario.avgRating) && (
-            <span className={styles.scenarioInfo_ratingValue}>
-              {scenario.avgRating.toFixed(1)}
-            </span>
-          )}
-          <span className={styles.scenarioInfo_ratingCount}>
-            ({scenario.reviewCount}件)
-          </span>
-        </a>
-
-        {/* 作者 */}
-        {!isNil(scenario.author) && (
-          <p className={styles.scenarioInfo_author}>作者: {scenario.author}</p>
-        )}
-
-        {/* メタ情報 */}
-        <div className={styles.scenarioInfo_metaGrid}>
+        {/* メタ情報（横並び） */}
+        <div className={styles.scenarioInfo_metaRow}>
           <div className={styles.scenarioInfo_metaItem}>
-            <span className={styles.scenarioInfo_metaLabel}>プレイ人数</span>
-            <span className={styles.scenarioInfo_metaValue}>
+            <Users size={16} className={styles.scenarioInfo_metaIcon} />
+            <span>
               {formatPlayerCount(scenario.minPlayer, scenario.maxPlayer)}
             </span>
           </div>
           <div className={styles.scenarioInfo_metaItem}>
-            <span className={styles.scenarioInfo_metaLabel}>プレイ時間</span>
-            <span className={styles.scenarioInfo_metaValue}>
+            <Timer size={16} className={styles.scenarioInfo_metaIcon} />
+            <span>
               {formatPlaytime(scenario.minPlaytime, scenario.maxPlaytime)}
             </span>
           </div>
+          {!isNil(scenario.author) && (
+            <div className={styles.scenarioInfo_metaItem}>
+              <User size={16} className={styles.scenarioInfo_metaIcon} />
+              <span>作者: {scenario.author}</span>
+            </div>
+          )}
           <div className={styles.scenarioInfo_metaItem}>
-            <span className={styles.scenarioInfo_metaLabel}>ハンドアウト</span>
-            <span className={styles.scenarioInfo_metaValue}>
-              {scenario.handoutType === 'NONE' && 'なし'}
-              {scenario.handoutType === 'PUBLIC' && '公開'}
-              {scenario.handoutType === 'SECRET' && '秘匿'}
-            </span>
+            <FileText size={16} className={styles.scenarioInfo_metaIcon} />
+            <span>{getHandoutText(scenario.handoutType)}</span>
           </div>
         </div>
-
-        {/* 配布URL */}
-        {!isNil(scenario.distributeUrl) && (
-          <a
-            href={scenario.distributeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.distributeUrl_link}
-          >
-            配布ページを開く <ExternalLink size={14} />
-          </a>
-        )}
 
         {/* タグ */}
         {scenario.tags.length > 0 && (
@@ -142,40 +144,33 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
 
         {/* 概要 */}
         {!isNil(scenario.description) && (
-          <div className={styles.description_section}>
-            <h2 className={styles.description_title}>概要</h2>
-            <div className={styles.description_wrapper}>
-              <p
-                className={`${styles.description_text} ${
-                  !isDescriptionExpanded && hasLongDescription
-                    ? styles.description_collapsed
-                    : ''
-                }`}
-              >
-                {scenario.description}
-              </p>
-              {!isDescriptionExpanded && hasLongDescription && (
-                <div className={styles.description_fadeout} />
-              )}
-            </div>
+          <div className={styles.scenarioInfo_description}>
+            <p className={styles.scenarioInfo_descText}>
+              {truncatedDescription}
+            </p>
             {hasLongDescription && (
               <button
                 type="button"
-                className={styles.description_toggleButton}
+                className={styles.scenarioInfo_readMore}
                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
               >
-                {isDescriptionExpanded ? (
-                  <>
-                    閉じる <ChevronUp size={16} />
-                  </>
-                ) : (
-                  <>
-                    続きを読む <ChevronDown size={16} />
-                  </>
-                )}
+                {isDescriptionExpanded ? '閉じる' : '続きを読む'}
               </button>
             )}
           </div>
+        )}
+
+        {/* 配布URL */}
+        {!isNil(scenario.distributeUrl) && (
+          <a
+            href={scenario.distributeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.scenarioInfo_distributeBtn}
+          >
+            <ExternalLink size={14} />
+            <span>シナリオ配布ページへ</span>
+          </a>
         )}
       </div>
     </article>

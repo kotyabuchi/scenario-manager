@@ -1,4 +1,4 @@
-# ブラウザ自動化ツール比較: agent-browser vs Playwright MCP
+# ブラウザ自動化ツール比較: agent-browser vs playwright-cli
 
 ## 結論（TL;DR）
 
@@ -10,8 +10,8 @@
 4. ✅ **セマンティックロケータ対応**（ARIA role、label等で要素を特定）
 
 **唯一の違い：** 呼び出し方法
-- Playwright: MCPネイティブツール（`mcp__playwright__browser_*`）
-- agent-browser: CLIツール（`Skill tool`または`Bash tool`で呼び出し）
+- playwright-cli: CLIスキル（`Skill tool with skill: "playwright-cli"`）
+- agent-browser: CLIスキル（`Skill tool with skill: "agent-browser"`）
 
 ---
 
@@ -19,7 +19,7 @@
 
 ### 基本操作
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | ページ遷移 | ✅ `open` | ✅ `browser_navigate` |
 | クリック | ✅ `click` | ✅ `browser_click` |
@@ -32,7 +32,7 @@
 
 ### フォーム操作
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | チェックボックス | ✅ `check`, `uncheck` | ❌ |
 | セレクトボックス | ✅ `select` | ❌ |
@@ -41,7 +41,7 @@
 
 ### スクロール操作
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | ページスクロール | ✅ `scroll` | ❌ |
 | 要素へスクロール | ✅ `scrollintoview` | ❌ |
@@ -49,7 +49,7 @@
 
 ### 出力・キャプチャ
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | スクリーンショット | ✅ `screenshot` | ✅ `browser_take_screenshot` |
 | フルページスクリーンショット | ✅ `screenshot --full` | ⚠️ 部分対応 |
@@ -59,7 +59,7 @@
 
 ### ページ情報取得
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | スナップショット | ✅ `snapshot` | ✅ `browser_snapshot` |
 | JavaScript実行 | ✅ `eval` | ✅ `browser_evaluate` |
@@ -74,7 +74,7 @@
 
 ### 要素の状態確認
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | 表示確認 | ✅ `is visible` | ❌ |
 | 有効化確認 | ✅ `is enabled` | ❌ |
@@ -82,7 +82,7 @@
 
 ### 要素の検索（セマンティックロケータ）
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | ARIAロールで検索 | ✅ `find role` | ❌ |
 | テキストで検索 | ✅ `find text` | ❌ |
@@ -94,7 +94,7 @@
 
 ### デバイス・環境エミュレーション
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | ビューポート設定 | ✅ `set viewport` | ❌ |
 | デバイスエミュレーション | ✅ `set device` | ❌ |
@@ -105,7 +105,7 @@
 
 ### ネットワーク
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | ネットワークリクエスト一覧 | ✅ `network requests` | ✅ `browser_network_requests` |
 | ネットワークルート（モック） | ✅ `network route` | ❌ |
@@ -115,7 +115,7 @@
 
 ### ストレージ
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | クッキー管理 | ✅ `cookies` | ❌ |
 | localStorage管理 | ✅ `storage local` | ❌ |
@@ -123,7 +123,7 @@
 
 ### タブ・セッション管理
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | 新規タブ | ✅ `tab new` | ❌ |
 | タブ一覧 | ✅ `tab list` | ❌ |
@@ -133,7 +133,7 @@
 
 ### デバッグ
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | コンソールログ | ✅ `console` | ✅ `browser_console_messages` |
 | エラー一覧 | ✅ `errors` | ❌ |
@@ -143,7 +143,7 @@
 
 ### その他
 
-| 機能 | agent-browser | Playwright MCP |
+| 機能 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | ブラウザ拡張のロード | ✅ `--extension` | ❌ |
 | マウス操作 | ✅ `mouse` | ❌ |
@@ -174,7 +174,7 @@ link "Forgot password?" [ref=e4]
 - ✅ ref（`@e1`等）で直接操作可能
 - ✅ インタラクティブ要素のみ抽出可能
 
-### Playwright MCP
+### playwright-cli
 
 **出力**: 完全なアクセシビリティツリー（JSON形式）
 
@@ -248,7 +248,7 @@ agent-browser close
 
 ## トークン消費比較（概算）
 
-| 操作 | agent-browser | Playwright MCP |
+| 操作 | agent-browser | playwright-cli |
 |------|--------------|----------------|
 | スナップショット | ~500 tokens | ~2,000 tokens |
 | スクリーンショット | ~200 tokens | ~200 tokens |

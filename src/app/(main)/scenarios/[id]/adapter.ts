@@ -20,8 +20,10 @@ import type {
   ScenarioDetail,
   SessionWithKeeper,
   UserPreference,
+  UserReview,
   VideoLinkWithSession,
 } from './interface';
+import type { CreateReviewInput, UpdateReviewInput } from './schema';
 
 /**
  * シナリオ詳細を取得する
@@ -428,6 +430,107 @@ export const togglePlayed = async (
       );
 
     return ok(newValue);
+  } catch (e) {
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
+ * レビューを作成する
+ * 要件: requirements-review-ui.md
+ * - 1ユーザー1シナリオにつき1レビューまで（ユニーク制約）
+ */
+export const createReview = async (
+  input: CreateReviewInput,
+  userId: string,
+): Promise<Result<{ userReviewId: string }>> => {
+  const db = getDb();
+  try {
+    const result = await db
+      .insert(userReviews)
+      .values({
+        userId,
+        scenarioId: input.scenarioId,
+        sessionId: input.sessionId ?? null,
+        rating: input.rating ?? null,
+        openComment: input.openComment ?? null,
+        spoilerComment: input.spoilerComment ?? null,
+      })
+      .returning({ userReviewId: userReviews.userReviewId });
+
+    const inserted = result[0];
+    if (isNil(inserted)) {
+      return err(new Error('Failed to create review'));
+    }
+
+    return ok({ userReviewId: inserted.userReviewId });
+  } catch (e) {
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
+ * レビューを更新する
+ * - 本人のみ更新可能（userIdチェック）
+ */
+export const updateReview = async (
+  reviewId: string,
+  input: UpdateReviewInput,
+  userId: string,
+): Promise<Result<UserReview | null>> => {
+  const db = getDb();
+  try {
+    // 本人のレビューのみ更新
+    const result = await db
+      .update(userReviews)
+      .set({
+        rating: input.rating ?? null,
+        openComment: input.openComment ?? null,
+        spoilerComment: input.spoilerComment ?? null,
+      })
+      .where(
+        and(
+          eq(userReviews.userReviewId, reviewId),
+          eq(userReviews.userId, userId),
+        ),
+      )
+      .returning();
+
+    const updated = result[0];
+    if (isNil(updated)) {
+      // 更新対象がない（存在しないか、他ユーザーのレビュー）
+      return ok(null);
+    }
+
+    return ok(updated);
+  } catch (e) {
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
+ * レビューを削除する
+ * - 本人のみ削除可能（userIdチェック）
+ */
+export const deleteReview = async (
+  reviewId: string,
+  userId: string,
+): Promise<Result<boolean>> => {
+  const db = getDb();
+  try {
+    // 本人のレビューのみ削除
+    const result = await db
+      .delete(userReviews)
+      .where(
+        and(
+          eq(userReviews.userReviewId, reviewId),
+          eq(userReviews.userId, userId),
+        ),
+      )
+      .returning({ userReviewId: userReviews.userReviewId });
+
+    // 削除された行があればtrue
+    return ok(result.length > 0);
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }

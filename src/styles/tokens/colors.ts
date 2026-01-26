@@ -1,129 +1,138 @@
 import { defineTokens } from '@pandacss/dev';
 
 export const colors = defineTokens.colors({
-  // Primary: 緑系（色相145°）
+  // ========================================
+  // 画面設計準拠カラーパレット
+  // ========================================
+
+  // White
+  white: { value: '#FFFFFF' },
+
+  // Gray Scale (Tailwind Gray)
+  gray: {
+    50: { value: '#F9FAFB' },
+    100: { value: '#F3F4F6' },
+    200: { value: '#E5E7EB' },
+    300: { value: '#D1D5DB' },
+    400: { value: '#9CA3AF' },
+    500: { value: '#6B7280' },
+    600: { value: '#4B5563' },
+    700: { value: '#374151' },
+    800: { value: '#1F2937' },
+    900: { value: '#111827' },
+  },
+
+  // Primary: Emerald (緑)
   primary: {
-    50: { value: 'oklch(0.97 0.03 145)' },
-    100: { value: 'oklch(0.94 0.06 145)' },
-    200: { value: 'oklch(0.88 0.09 145)' },
-    300: { value: 'oklch(0.82 0.11 145)' },
-    400: { value: 'oklch(0.76 0.13 145)' },
-    500: { value: 'oklch(0.70 0.14 145)' },
-    600: { value: 'oklch(0.62 0.13 145)' },
-    700: { value: 'oklch(0.52 0.11 145)' },
-    800: { value: 'oklch(0.42 0.09 145)' },
-    900: { value: 'oklch(0.32 0.07 145)' },
-    950: { value: 'oklch(0.22 0.05 145)' },
+    50: { value: '#ECFDF5' },
+    100: { value: '#D1FAE5' },
+    200: { value: '#A7F3D0' },
+    300: { value: '#6EE7B7' },
+    400: { value: '#34D399' },
+    500: { value: '#10B981' },
+    600: { value: '#059669' },
+    700: { value: '#047857' },
+    800: { value: '#065F46' },
+    900: { value: '#064E3B' },
   },
 
-  // Success: ティールグリーン系（色相160°）- primaryと区別
-  success: {
-    50: { value: 'oklch(0.97 0.03 160)' },
-    100: { value: 'oklch(0.94 0.06 160)' },
-    200: { value: 'oklch(0.88 0.09 160)' },
-    300: { value: 'oklch(0.82 0.11 160)' },
-    400: { value: 'oklch(0.76 0.13 160)' },
-    500: { value: 'oklch(0.70 0.14 160)' },
-    600: { value: 'oklch(0.62 0.13 160)' },
-    700: { value: 'oklch(0.52 0.11 160)' },
-    800: { value: 'oklch(0.42 0.09 160)' },
-    900: { value: 'oklch(0.32 0.07 160)' },
-    950: { value: 'oklch(0.22 0.05 160)' },
+  // Purple (システムバッジ用)
+  purple: {
+    50: { value: '#F5F3FF' },
+    100: { value: '#EDE9FE' },
+    200: { value: '#DDD6FE' },
+    300: { value: '#C4B5FD' },
+    400: { value: '#A78BFA' },
+    500: { value: '#8B5CF6' },
+    600: { value: '#7C3AED' },
+    700: { value: '#6D28D9' },
+    800: { value: '#5B21B6' },
+    900: { value: '#4C1D95' },
   },
 
-  // Warning: 黄系（色相90°）- 少し緑寄りのパステルイエロー
-  warning: {
-    50: { value: 'oklch(0.98 0.04 90)' },
-    100: { value: 'oklch(0.95 0.07 90)' },
-    200: { value: 'oklch(0.91 0.10 90)' },
-    300: { value: 'oklch(0.86 0.12 90)' },
-    400: { value: 'oklch(0.82 0.14 90)' },
-    500: { value: 'oklch(0.78 0.15 90)' },
-    600: { value: 'oklch(0.70 0.14 90)' },
-    700: { value: 'oklch(0.60 0.12 90)' },
-    800: { value: 'oklch(0.50 0.10 90)' },
-    900: { value: 'oklch(0.40 0.08 90)' },
-    950: { value: 'oklch(0.30 0.06 90)' },
+  // Indigo (ランディングページ Feature用)
+  indigo: {
+    50: { value: '#EEF2FF' },
+    100: { value: '#E0E7FF' },
+    200: { value: '#C7D2FE' },
+    300: { value: '#A5B4FC' },
+    400: { value: '#818CF8' },
+    500: { value: '#6366F1' },
+    600: { value: '#4F46E5' },
+    700: { value: '#4338CA' },
+    800: { value: '#3730A3' },
+    900: { value: '#312E81' },
   },
 
-  // Danger: コーラルピンク系（色相 20°）- 柔らかい赤
-  danger: {
-    50: { value: 'oklch(0.97 0.03 20)' },
-    100: { value: 'oklch(0.94 0.06 20)' },
-    200: { value: 'oklch(0.88 0.10 20)' },
-    300: { value: 'oklch(0.82 0.13 20)' },
-    400: { value: 'oklch(0.75 0.15 20)' },
-    500: { value: 'oklch(0.68 0.16 20)' },
-    600: { value: 'oklch(0.60 0.15 20)' },
-    700: { value: 'oklch(0.50 0.13 20)' },
-    800: { value: 'oklch(0.40 0.11 20)' },
-    900: { value: 'oklch(0.30 0.09 20)' },
-    950: { value: 'oklch(0.22 0.07 20)' },
+  // Pink (ランディングページ システムバッジ用)
+  pink: {
+    50: { value: '#FCE7F3' },
+    100: { value: '#FBCFE8' },
+    200: { value: '#F9A8D4' },
+    500: { value: '#EC4899' },
+    700: { value: '#BE185D' },
   },
 
-  // Info: スカイブルー系（色相230°）- パステルブルー
-  info: {
-    50: { value: 'oklch(0.97 0.02 230)' },
-    100: { value: 'oklch(0.94 0.05 230)' },
-    200: { value: 'oklch(0.89 0.08 230)' },
-    300: { value: 'oklch(0.83 0.10 230)' },
-    400: { value: 'oklch(0.77 0.12 230)' },
-    500: { value: 'oklch(0.70 0.13 230)' },
-    600: { value: 'oklch(0.62 0.12 230)' },
-    700: { value: 'oklch(0.52 0.10 230)' },
-    800: { value: 'oklch(0.42 0.08 230)' },
-    900: { value: 'oklch(0.32 0.06 230)' },
-    950: { value: 'oklch(0.22 0.04 230)' },
+  // Green (ランディングページ システムバッジ用)
+  green: {
+    50: { value: '#DCFCE7' },
+    700: { value: '#166534' },
+    800: { value: '#166534' },
   },
 
-  // Neutral: グレー系（無彩色に近い）- デフォルトUI用
-  neutral: {
-    50: { value: 'oklch(0.98 0.005 270)' },
-    100: { value: 'oklch(0.96 0.005 270)' },
-    200: { value: 'oklch(0.92 0.005 270)' },
-    300: { value: 'oklch(0.87 0.005 270)' },
-    400: { value: 'oklch(0.70 0.005 270)' },
-    500: { value: 'oklch(0.55 0.005 270)' },
-    600: { value: 'oklch(0.45 0.005 270)' },
-    700: { value: 'oklch(0.37 0.005 270)' },
-    800: { value: 'oklch(0.27 0.005 270)' },
-    900: { value: 'oklch(0.20 0.005 270)' },
-    950: { value: 'oklch(0.14 0.005 270)' },
+  // Blue (ランディングページ システムバッジ用)
+  blue: {
+    50: { value: '#DBEAFE' },
+    800: { value: '#1E40AF' },
   },
 
-  // レイヤードUI用の背景色（明度差で階層を表現）
-  layer: {
-    // 最下層（ページ背景）
-    base: { value: 'oklch(0.985 0.008 145)' },
-    // 第1層（カード・セクション）
-    1: { value: 'oklch(0.995 0.003 145)' },
-    // 第2層（ネスト要素・入力フィールド背景）
-    2: { value: 'oklch(0.975 0.010 145)' },
-    // 第3層（さらにネスト・ホバー状態）
-    3: { value: 'oklch(0.960 0.015 145)' },
+  // Orange/Amber (警告、お気に入り)
+  orange: {
+    50: { value: '#FFFBEB' },
+    100: { value: '#FEF3C7' },
+    200: { value: '#FDE68A' },
+    300: { value: '#FCD34D' },
+    400: { value: '#FBBF24' },
+    500: { value: '#F59E0B' },
+    600: { value: '#D97706' },
+    700: { value: '#B45309' },
+    800: { value: '#92400E' },
+    900: { value: '#78350F' },
   },
 
-  // 背景・テキスト・境界
-  background: {
-    500: { value: 'oklch(0.985 0.008 145)' },
-  },
-  foreground: {
-    500: { value: 'oklch(0.20 0.02 270)' },
-  },
-  border: {
-    500: { value: 'oklch(0.88 0.01 270)' },
-  },
-  placeholder: {
-    // WCAG AA準拠: 背景(0.98)との明度差0.43以上を確保
-    500: { value: 'oklch(0.55 0.01 270)' },
-  },
-  backdrop: {
-    500: { value: 'oklch(0.20 0.01 270 / 0.4)' },
+  // Red (エラー、削除)
+  red: {
+    50: { value: '#FEF2F2' },
+    100: { value: '#FEE2E2' },
+    200: { value: '#FECACA' },
+    300: { value: '#FCA5A5' },
+    400: { value: '#F87171' },
+    500: { value: '#EF4444' },
+    600: { value: '#DC2626' },
+    700: { value: '#B91C1C' },
+    800: { value: '#991B1B' },
+    900: { value: '#7F1D1D' },
   },
 
-  // Discord連携
-  discord: {
-    default: { value: '#5865F2' },
-    hover: { value: '#4752C4' },
+  // Overlay colors
+  overlay: {
+    5: { value: 'rgba(0, 0, 0, 0.05)' },
+    10: { value: 'rgba(0, 0, 0, 0.10)' },
+    15: { value: 'rgba(0, 0, 0, 0.15)' },
+    20: { value: 'rgba(0, 0, 0, 0.20)' },
+    25: { value: 'rgba(0, 0, 0, 0.25)' },
+    30: { value: 'rgba(0, 0, 0, 0.30)' },
+    40: { value: 'rgba(0, 0, 0, 0.40)' },
+    60: { value: 'rgba(0, 0, 0, 0.60)' },
+  },
+
+  // Primary shadow colors
+  primaryShadow: {
+    25: { value: 'rgba(16, 185, 129, 0.25)' },
+  },
+
+  // Red shadow colors
+  redShadow: {
+    25: { value: 'rgba(239, 68, 68, 0.25)' },
   },
 });

@@ -23,9 +23,11 @@ type ParticipantWithUser = SessionParticipant & {
 
 // セッション（リレーション込み）
 type SessionWithRelations = GameSession & {
-  scenario: Scenario & {
-    system: ScenarioSystem;
-  };
+  scenario:
+    | (Scenario & {
+        system: ScenarioSystem;
+      })
+    | null;
   schedule: GameSchedule | null;
   participants: ParticipantWithUser[];
 };

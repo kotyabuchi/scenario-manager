@@ -32,7 +32,7 @@ export const viewProfileLink = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   textDecoration: 'none',
   _hover: {
     bg: 'primary.50',
@@ -40,7 +40,6 @@ export const viewProfileLink = css({
   _focusVisible: {
     outline: '2px solid',
     outlineColor: 'primary.500',
-    outlineOffset: '2px',
   },
 });
 

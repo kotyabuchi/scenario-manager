@@ -178,10 +178,12 @@ const MySessionCard = ({
       </div>
 
       <div className={styles.sessionCard_content}>
-        <h3 className={styles.sessionCard_title}>{session.scenario.name}</h3>
-        <span className={styles.sessionCard_system}>
-          {session.scenario.system.name}
-        </span>
+        <h3 className={styles.sessionCard_title}>{session.sessionName}</h3>
+        {session.scenario && (
+          <span className={styles.sessionCard_system}>
+            {session.scenario.system.name}
+          </span>
+        )}
 
         <div className={styles.sessionCard_meta}>
           {keeperName && (

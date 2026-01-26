@@ -43,6 +43,7 @@ next-env.d.ts
 .specstory/.what-is-this.md
 
 *storybook.log
+storybook-static/
 
 ## Panda
 styled-system
@@ -60,6 +61,7 @@ src/lib/db/migrations
 /screenshots/*.png
 /screenshots/*.jpeg
 .playwright-mcp/
+.playwright-cli/
 
 # Cursor IDE
 .cursor
@@ -71,3 +73,9 @@ src/lib/db/migrations
 
 # Netlify build output
 .netlify
+
+# Test results
+test-results/
+
+# Null
+nul

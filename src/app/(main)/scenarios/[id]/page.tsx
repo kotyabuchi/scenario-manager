@@ -80,6 +80,7 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
   const isPlayed = userPreference?.isPlayed ?? false;
   const canEdit =
     !isNil(currentUserId) && currentUserId === scenario.createdById;
+  const isLoggedIn = !isNil(currentUserId);
 
   // お気に入りトグルのServer Action
   const handleToggleFavorite = async () => {
@@ -97,40 +98,48 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
 
   return (
     <main className={styles.pageContainer}>
-      {/* ヘッダー */}
-      <ScenarioHeader scenarioName={scenario.name} />
-
-      {/* ファーストビュー: シナリオ基本情報 */}
-      <ScenarioInfo scenario={scenario} />
-
-      <hr className={styles.divider} />
-
-      {/* 関連セッションセクション */}
-      <SessionSection scenarioId={id} sessions={sessions} />
-      <hr className={styles.divider} />
-
-      {/* プレイ動画セクション */}
-      <VideoSection videos={videos} isPlayed={isPlayed} />
-      <hr className={styles.divider} />
-
-      {/* レビューセクション */}
-      <ReviewSection
-        reviews={reviews}
-        totalCount={reviewTotalCount}
-        {...(currentUserId ? { currentUserId } : {})}
-        scenarioId={id}
-        isPlayed={isPlayed}
+      {/* Sub Header（戻るボタン + お気に入り） */}
+      <ScenarioHeader
+        scenarioName={scenario.name}
+        isFavorite={isFavorite}
+        isLoggedIn={isLoggedIn}
+        onToggleFavorite={handleToggleFavorite}
       />
 
+      {/* メインコンテンツ */}
+      <div className={styles.mainContent}>
+        {/* ファーストビュー: シナリオ基本情報 */}
+        <ScenarioInfo scenario={scenario} />
+
+        <hr className={styles.divider} />
+
+        {/* 関連セッションセクション */}
+        <SessionSection scenarioId={id} sessions={sessions} />
+
+        <hr className={styles.divider} />
+
+        {/* プレイ動画セクション */}
+        <VideoSection videos={videos} isPlayed={isPlayed} />
+
+        <hr className={styles.divider} />
+
+        {/* レビューセクション */}
+        <ReviewSection
+          reviews={reviews}
+          totalCount={reviewTotalCount}
+          {...(currentUserId ? { currentUserId } : {})}
+          scenarioId={id}
+          isPlayed={isPlayed}
+        />
+      </div>
+
       {/* FAB（メニュー） */}
-      {!isNil(currentUserId) && (
+      {isLoggedIn && (
         <ScenarioFAB
           scenarioId={id}
           isPlayed={isPlayed}
-          isFavorite={isFavorite}
           canEdit={canEdit}
           onTogglePlayed={handleTogglePlayed}
-          onToggleFavorite={handleToggleFavorite}
         />
       )}
     </main>

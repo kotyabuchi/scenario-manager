@@ -18,9 +18,11 @@ type Tag = InferSelectModel<typeof tags>;
 
 // 参加予定セッション（リレーション込み）
 export type UpcomingSession = GameSession & {
-  scenario: Scenario & {
-    system: ScenarioSystem;
-  };
+  scenario:
+    | (Scenario & {
+        system: ScenarioSystem;
+      })
+    | null;
   participants: Array<
     SessionParticipant & {
       user: User;

@@ -1,5 +1,3 @@
-import { AlertCircle } from 'lucide-react';
-
 import * as styles from './styles';
 
 type Props = {
@@ -21,7 +19,6 @@ export const FieldError = ({ error }: Props) => {
 
   return (
     <div role="alert" className={styles.fieldError}>
-      <AlertCircle className={styles.fieldError_icon} />
       <span className={styles.fieldError_message}>{error.message}</span>
     </div>
   );

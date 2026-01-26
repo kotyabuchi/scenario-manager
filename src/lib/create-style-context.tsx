@@ -51,10 +51,8 @@ export const createStyleContext = <T extends SlotRecipeFn>(recipe: T) => {
     return context;
   };
 
-  const withProvider = <
-    TRef,
-    TProps extends { className?: string | undefined },
-  >(
+  // biome-ignore lint/suspicious/noExplicitAny: 型の柔軟性のため
+  const withProvider = <TRef, TProps extends { className?: any }>(
     Component: ElementType,
     slot: string,
   ): ForwardRefExoticComponent<
@@ -85,7 +83,8 @@ export const createStyleContext = <T extends SlotRecipeFn>(recipe: T) => {
     >;
   };
 
-  const withContext = <TRef, TProps extends { className?: string | undefined }>(
+  // biome-ignore lint/suspicious/noExplicitAny: 型の柔軟性のため
+  const withContext = <TRef, TProps extends { className?: any }>(
     Component: ElementType,
     slot: string,
   ): ForwardRefExoticComponent<

@@ -1,153 +1,222 @@
 import { defineRecipe } from '@pandacss/dev';
 
+/**
+ * ボタンレシピ - 画面設計準拠
+ *
+ * バリアント:
+ * - variant: solid, subtle, ghost, outline
+ * - status: primary, danger (色のセマンティクス)
+ */
 export const button = defineRecipe({
   className: 'button',
   jsx: ['Button', 'IconButton', 'SubmitButton'],
   base: {
     alignItems: 'center',
     appearance: 'none',
-    borderRadius: 'md',
+    borderRadius: '8px',
     cursor: 'pointer',
     display: 'inline-flex',
-    fontWeight: 'semibold',
+    fontWeight: '500',
+    fontFamily: 'Inter, sans-serif',
     isolation: 'isolate',
     minWidth: 'fit-content',
     justifyContent: 'center',
     outline: 'none',
     position: 'relative',
-    transitionDuration: 'normal',
-    transitionProperty: 'background, border-color, color, box-shadow',
-    transitionTimingFunction: 'default',
+    transitionDuration: '150ms',
+    transitionProperty: 'background, border-color, color, box-shadow, opacity',
+    transitionTimingFunction: 'ease-out',
     userSelect: 'none',
     verticalAlign: 'middle',
     whiteSpace: 'nowrap',
+    gap: '8px',
     _focusVisible: {
       outline: '2px solid',
-      outlineColor: 'var(--button-color-focus)',
+      outlineColor: 'primary.default',
       outlineOffset: '2px',
     },
     _disabled: {
       cursor: 'not-allowed',
-      opacity: '0.5',
+      opacity: '0.6',
+      bg: 'button.disabledBg',
+      color: 'button.disabledText',
+      boxShadow: 'none',
+      _hover: {
+        bg: 'button.disabledBg',
+        color: 'button.disabledText',
+      },
     },
     _hidden: {
       display: 'none',
     },
     '& :where(svg)': {
-      fontSize: '1.1em',
-      width: '1.1em',
-      height: '1.1em',
+      width: '1em',
+      height: '1em',
     },
   },
   variants: {
-    status: {
-      default: {
-        '--button-color-main': '{colors.neutral.default}',
-        '--button-color-hover': '{colors.neutral.emphasized}',
-        '--button-color-subtle': '{colors.neutral.subtle}',
-        '--button-color-foreground': '{colors.neutral.foreground.dark}',
-        '--button-color-focus': '{colors.neutral.focusRing}',
-      },
-      primary: {
-        '--button-color-main': '{colors.primary.default}',
-        '--button-color-hover': '{colors.primary.emphasized}',
-        '--button-color-subtle': '{colors.primary.subtle}',
-        '--button-color-foreground': '{colors.primary.foreground.dark}',
-        '--button-color-focus': '{colors.primary.focusRing}',
-      },
-      success: {
-        '--button-color-main': '{colors.success.default}',
-        '--button-color-hover': '{colors.success.emphasized}',
-        '--button-color-subtle': '{colors.success.subtle}',
-        '--button-color-foreground': '{colors.success.foreground.dark}',
-        '--button-color-focus': '{colors.success.focusRing}',
-      },
-      warning: {
-        '--button-color-main': '{colors.warning.default}',
-        '--button-color-hover': '{colors.warning.emphasized}',
-        '--button-color-subtle': '{colors.warning.subtle}',
-        '--button-color-foreground': '{colors.warning.foreground.dark}',
-        '--button-color-focus': '{colors.warning.focusRing}',
-      },
-      danger: {
-        '--button-color-main': '{colors.danger.default}',
-        '--button-color-hover': '{colors.danger.emphasized}',
-        '--button-color-subtle': '{colors.danger.subtle}',
-        '--button-color-foreground': '{colors.danger.foreground.dark}',
-        '--button-color-focus': '{colors.danger.focusRing}',
-      },
-      info: {
-        '--button-color-main': '{colors.info.default}',
-        '--button-color-hover': '{colors.info.emphasized}',
-        '--button-color-subtle': '{colors.info.subtle}',
-        '--button-color-foreground': '{colors.info.foreground.dark}',
-        '--button-color-focus': '{colors.info.focusRing}',
-      },
-    },
+    /** スタイルバリアント */
     variant: {
-      solid: {
-        background: 'var(--button-color-main)',
-        color: '{colors.white}',
-        _hover: {
-          '&:not([disabled])': {
-            background: 'var(--button-color-hover)',
-          },
-        },
-      },
-      ghost: {
-        color: 'var(--button-color-foreground)',
-        background: 'transparent',
-        _hover: {
-          '&:not([disabled])': {
-            background: 'var(--button-color-subtle)',
-          },
-        },
-      },
-      subtle: {
-        background: 'var(--button-color-subtle)',
-        color: 'var(--button-color-foreground)',
-        _hover: {
-          '&:not([disabled])': {
-            background: 'var(--button-color-main)',
-            color: '{colors.white}',
-          },
-        },
-      },
+      // Solid: 塗りつぶし
+      solid: {},
+      // Subtle: 薄い背景
+      subtle: {},
+      // Ghost: 背景なし
+      ghost: {},
+      // Outline: 枠線のみ
+      outline: {},
     },
+    /** カラーステータス */
+    status: {
+      primary: {},
+      danger: {},
+    },
+    /** サイズ */
     size: {
-      xs: {
-        h: '8',
-        minW: '8',
-        textStyle: 'sm',
-        px: 'sm',
-        gap: 'xs',
-      },
       sm: {
-        h: '9',
-        minW: '9',
-        textStyle: 'sm',
-        px: 'md',
-        gap: 'xs',
+        h: '32px',
+        minW: '32px',
+        fontSize: '13px',
+        px: '16px',
+        borderRadius: '16px',
       },
       md: {
-        h: '10',
-        minW: '10',
-        textStyle: 'sm',
-        px: 'lg',
-        gap: 'xs',
+        h: '44px',
+        minW: '44px',
+        fontSize: '14px',
+        px: '20px',
       },
       lg: {
-        h: '11',
-        minW: '11',
-        textStyle: 'md',
-        px: 'xl',
-        gap: '2',
+        h: '48px',
+        minW: '48px',
+        fontSize: '14px',
+        px: '24px',
       },
     },
   },
+  compoundVariants: [
+    // Solid + Primary
+    {
+      variant: 'solid',
+      status: 'primary',
+      css: {
+        bg: 'button.primaryBg',
+        color: 'button.primaryText',
+        fontWeight: '600',
+        boxShadow: 'button.primary',
+        _hover: {
+          '&:not([disabled])': {
+            bg: 'button.primaryBgHover',
+          },
+        },
+      },
+    },
+    // Solid + Danger
+    {
+      variant: 'solid',
+      status: 'danger',
+      css: {
+        bg: 'button.destructiveBg',
+        color: 'button.destructiveText',
+        fontWeight: '600',
+        boxShadow: 'button.destructive',
+        _hover: {
+          '&:not([disabled])': {
+            bg: 'button.destructiveBgHover',
+          },
+        },
+      },
+    },
+    // Subtle + Primary
+    {
+      variant: 'subtle',
+      status: 'primary',
+      css: {
+        bg: 'button.subtleBg',
+        color: 'button.subtleText',
+        _hover: {
+          '&:not([disabled])': {
+            bg: 'button.subtleBgHover',
+          },
+        },
+      },
+    },
+    // Subtle + Danger
+    {
+      variant: 'subtle',
+      status: 'danger',
+      css: {
+        bg: 'error.subtle',
+        color: 'error.text',
+        _hover: {
+          '&:not([disabled])': {
+            bg: 'error.subtleHover',
+          },
+        },
+      },
+    },
+    // Ghost + Primary
+    {
+      variant: 'ghost',
+      status: 'primary',
+      css: {
+        bg: 'transparent',
+        color: 'button.ghostText',
+        _hover: {
+          '&:not([disabled])': {
+            color: 'button.ghostTextHover',
+          },
+        },
+      },
+    },
+    // Ghost + Danger
+    {
+      variant: 'ghost',
+      status: 'danger',
+      css: {
+        bg: 'transparent',
+        color: 'error.text',
+        _hover: {
+          '&:not([disabled])': {
+            color: 'error.hover',
+          },
+        },
+      },
+    },
+    // Outline + Primary
+    {
+      variant: 'outline',
+      status: 'primary',
+      css: {
+        bg: 'button.secondaryBg',
+        color: 'button.secondaryText',
+        boxShadow: 'button.secondary',
+        _hover: {
+          '&:not([disabled])': {
+            bg: 'button.secondaryBgHover',
+          },
+        },
+      },
+    },
+    // Outline + Danger
+    {
+      variant: 'outline',
+      status: 'danger',
+      css: {
+        bg: 'white',
+        color: 'error.text',
+        boxShadow: 'inset 0 0 0 1px token(colors.error.default)',
+        _hover: {
+          '&:not([disabled])': {
+            bg: 'error.subtleHover',
+          },
+        },
+      },
+    },
+  ],
   defaultVariants: {
-    status: 'default',
     variant: 'solid',
+    status: 'primary',
     size: 'md',
   },
 });

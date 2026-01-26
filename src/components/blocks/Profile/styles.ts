@@ -98,7 +98,7 @@ export const card_editButton = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'background-color {durations.normal}',
   border: 'none',
   _hover: {
     bg: 'primary.50',
@@ -106,7 +106,6 @@ export const card_editButton = css({
   _focusVisible: {
     outline: '2px solid',
     outlineColor: 'primary.500',
-    outlineOffset: '2px',
   },
 });
 

@@ -12,6 +12,7 @@ export const ProfileEditFormWrapper = ({
   user,
 }: ProfileEditFormWrapperProps) => {
   const handleUpdate = async (data: {
+    userName: string;
     nickname: string;
     bio: string | undefined;
   }): Promise<{ success: boolean; error?: string }> => {

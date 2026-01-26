@@ -6,6 +6,7 @@ declare namespace NodeJS {
 
     // Database (Drizzle)
     DATABASE_URL: string;
+    DATABASE_DIRECT_URL: string;
 
     // Node environment
     NODE_ENV: 'development' | 'production' | 'test';

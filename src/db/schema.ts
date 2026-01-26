@@ -15,12 +15,19 @@ import { ulid } from 'ulid';
 
 import {
   extractValues,
+  FeedbackCategories,
+  FeedbackPriorities,
+  FeedbackStatuses,
   HandoutTypes,
+  NotificationTypes,
   ParticipantStatuses,
   ParticipantTypes,
   Roles,
+  ScheduleAvailabilities,
   SchedulePhases,
+  SessionLinkTypes,
   SessionPhases,
+  SessionVisibilities,
 } from './enum';
 
 const timestamps = {
@@ -52,6 +59,34 @@ export const schedulePhaseEnum = pgEnum(
 export const sessionPhaseEnum = pgEnum(
   'session_phase',
   extractValues(SessionPhases),
+);
+export const feedbackCategoryEnum = pgEnum(
+  'feedback_category',
+  extractValues(FeedbackCategories),
+);
+export const feedbackStatusEnum = pgEnum(
+  'feedback_status',
+  extractValues(FeedbackStatuses),
+);
+export const feedbackPriorityEnum = pgEnum(
+  'feedback_priority',
+  extractValues(FeedbackPriorities),
+);
+export const notificationTypeEnum = pgEnum(
+  'notification_type',
+  extractValues(NotificationTypes),
+);
+export const sessionVisibilityEnum = pgEnum(
+  'session_visibility',
+  extractValues(SessionVisibilities),
+);
+export const scheduleAvailabilityEnum = pgEnum(
+  'schedule_availability',
+  extractValues(ScheduleAvailabilities),
+);
+export const sessionLinkTypeEnum = pgEnum(
+  'session_link_type',
+  extractValues(SessionLinkTypes),
 );
 
 // テーブル定義
@@ -146,12 +181,28 @@ export const gameSessions = pgTable(
       .primaryKey()
       .$defaultFn(() => ulid()),
     sessionName: text('session_name').notNull(),
-    scenarioId: varchar('scenario_id', { length: 26 })
-      .notNull()
-      .references(() => scenarios.scenarioId, { onDelete: 'cascade' }),
+    sessionDescription: text('session_description').notNull(),
+    scenarioId: varchar('scenario_id', { length: 26 }).references(
+      () => scenarios.scenarioId,
+      { onDelete: 'set null' },
+    ),
+    keeperId: varchar('keeper_id', { length: 26 }).references(
+      () => users.userId,
+    ),
     sessionPhase: sessionPhaseEnum('session_phase')
       .default(SessionPhases.RECRUITING.value)
       .notNull(),
+    scheduledAt: timestamp('scheduled_at'),
+    recruitedPlayerCount: integer('recruited_player_count'),
+    tools: text('tools'),
+    isBeginnerFriendly: boolean('is_beginner_friendly')
+      .default(false)
+      .notNull(),
+    visibility: sessionVisibilityEnum('visibility')
+      .default(SessionVisibilities.PUBLIC.value)
+      .notNull(),
+    sessionMemo: text('session_memo'),
+    completionNote: text('completion_note'),
     ...timestamps,
   },
   (table) => [index('game_sessions_scenario_idx').on(table.scenarioId)],
@@ -188,9 +239,55 @@ export const sessionParticipants = pgTable(
       .default(ParticipantStatuses.PENDING.value)
       .notNull(),
     characterSheetUrl: text('character_sheet_url'),
+    applicationMessage: text('application_message'),
+    appliedAt: timestamp('applied_at'),
+    approvedAt: timestamp('approved_at'),
     ...timestamps,
   },
   (table) => [primaryKey({ columns: [table.sessionId, table.userId] })],
+);
+
+export const scheduleResponses = pgTable(
+  'schedule_responses',
+  {
+    responseId: varchar('response_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    scheduleId: varchar('schedule_id', { length: 26 })
+      .notNull()
+      .references(() => gameSchedules.sessionId, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 26 })
+      .notNull()
+      .references(() => users.userId),
+    availability: scheduleAvailabilityEnum('availability')
+      .default(ScheduleAvailabilities.MAYBE.value)
+      .notNull(),
+    comment: text('comment'),
+    ...timestamps,
+  },
+  (table) => [
+    unique().on(table.scheduleId, table.userId),
+    index('schedule_responses_schedule_idx').on(table.scheduleId),
+  ],
+);
+
+export const sessionLinks = pgTable(
+  'session_links',
+  {
+    linkId: varchar('link_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    sessionId: varchar('session_id', { length: 26 })
+      .notNull()
+      .references(() => gameSessions.gameSessionId, { onDelete: 'cascade' }),
+    linkType: sessionLinkTypeEnum('link_type')
+      .default(SessionLinkTypes.OTHER.value)
+      .notNull(),
+    url: text('url').notNull(),
+    label: text('label'),
+    ...timestamps,
+  },
+  (table) => [index('session_links_session_idx').on(table.sessionId)],
 );
 
 export const userReviews = pgTable(
@@ -270,6 +367,96 @@ export const videoLinks = pgTable(
   ],
 );
 
+export const feedbacks = pgTable(
+  'feedbacks',
+  {
+    feedbackId: varchar('feedback_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    userId: varchar('user_id', { length: 26 })
+      .notNull()
+      .references(() => users.userId),
+    category: feedbackCategoryEnum('category')
+      .default(FeedbackCategories.OTHER.value)
+      .notNull(),
+    title: varchar('title', { length: 100 }).notNull(),
+    description: text('description').notNull(),
+    pageUrl: text('page_url'),
+    screenshotUrl: text('screenshot_url'),
+    browserInfo: text('browser_info'),
+    status: feedbackStatusEnum('status')
+      .default(FeedbackStatuses.NEW.value)
+      .notNull(),
+    priority: feedbackPriorityEnum('priority'),
+    voteCount: integer('vote_count').default(0).notNull(),
+    mergedIntoId: varchar('merged_into_id', { length: 26 }),
+    adminNote: text('admin_note'),
+    resolvedAt: timestamp('resolved_at'),
+    ...timestamps,
+  },
+  (table) => [
+    index('feedbacks_user_idx').on(table.userId),
+    index('feedbacks_status_idx').on(table.status),
+    index('feedbacks_category_idx').on(table.category),
+    index('feedbacks_vote_count_idx').on(table.voteCount),
+  ],
+);
+
+export const feedbackVotes = pgTable(
+  'feedback_votes',
+  {
+    feedbackId: varchar('feedback_id', { length: 26 })
+      .notNull()
+      .references(() => feedbacks.feedbackId, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 26 })
+      .notNull()
+      .references(() => users.userId, { onDelete: 'cascade' }),
+    ...timestamps,
+  },
+  (table) => [primaryKey({ columns: [table.feedbackId, table.userId] })],
+);
+
+export const feedbackComments = pgTable(
+  'feedback_comments',
+  {
+    commentId: varchar('comment_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    feedbackId: varchar('feedback_id', { length: 26 })
+      .notNull()
+      .references(() => feedbacks.feedbackId, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 26 })
+      .notNull()
+      .references(() => users.userId),
+    content: text('content').notNull(),
+    isOfficial: boolean('is_official').default(false).notNull(),
+    ...timestamps,
+  },
+  (table) => [index('feedback_comments_feedback_idx').on(table.feedbackId)],
+);
+
+export const notifications = pgTable(
+  'notifications',
+  {
+    notificationId: varchar('notification_id', { length: 26 })
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    userId: varchar('user_id', { length: 26 })
+      .notNull()
+      .references(() => users.userId, { onDelete: 'cascade' }),
+    type: notificationTypeEnum('type').notNull(),
+    title: varchar('title', { length: 100 }).notNull(),
+    message: text('message').notNull(),
+    linkUrl: text('link_url'),
+    isRead: boolean('is_read').default(false).notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    index('notifications_user_idx').on(table.userId),
+    index('notifications_is_read_idx').on(table.isRead),
+  ],
+);
+
 // リレーション定義
 export const userRelations = relations(users, ({ many }) => ({
   participatedSessions: many(sessionParticipants),
@@ -277,6 +464,11 @@ export const userRelations = relations(users, ({ many }) => ({
   reviews: many(userReviews),
   videoLinks: many(videoLinks),
   scenarioPreferences: many(userScenarioPreferences),
+  feedbacks: many(feedbacks),
+  feedbackVotes: many(feedbackVotes),
+  feedbackComments: many(feedbackComments),
+  notifications: many(notifications),
+  scheduleResponses: many(scheduleResponses),
 }));
 
 export const scenarioSystemRelations = relations(
@@ -320,17 +512,48 @@ export const gameSessionRelations = relations(
       fields: [gameSessions.scenarioId],
       references: [scenarios.scenarioId],
     }),
+    keeper: one(users, {
+      fields: [gameSessions.keeperId],
+      references: [users.userId],
+      relationName: 'keeper',
+    }),
     schedule: one(gameSchedules),
     participants: many(sessionParticipants),
     reviews: many(userReviews),
     preferences: many(userScenarioPreferences),
     videoLinks: many(videoLinks),
+    sessionLinks: many(sessionLinks),
   }),
 );
 
-export const gameScheduleRelations = relations(gameSchedules, ({ one }) => ({
+export const gameScheduleRelations = relations(
+  gameSchedules,
+  ({ one, many }) => ({
+    session: one(gameSessions, {
+      fields: [gameSchedules.sessionId],
+      references: [gameSessions.gameSessionId],
+    }),
+    responses: many(scheduleResponses),
+  }),
+);
+
+export const scheduleResponseRelations = relations(
+  scheduleResponses,
+  ({ one }) => ({
+    schedule: one(gameSchedules, {
+      fields: [scheduleResponses.scheduleId],
+      references: [gameSchedules.sessionId],
+    }),
+    user: one(users, {
+      fields: [scheduleResponses.userId],
+      references: [users.userId],
+    }),
+  }),
+);
+
+export const sessionLinkRelations = relations(sessionLinks, ({ one }) => ({
   session: one(gameSessions, {
-    fields: [gameSchedules.sessionId],
+    fields: [sessionLinks.sessionId],
     references: [gameSessions.gameSessionId],
   }),
 }));
@@ -396,3 +619,49 @@ export const userScenarioPreferenceRelations = relations(
     }),
   }),
 );
+
+export const feedbackRelations = relations(feedbacks, ({ one, many }) => ({
+  user: one(users, {
+    fields: [feedbacks.userId],
+    references: [users.userId],
+  }),
+  mergedInto: one(feedbacks, {
+    fields: [feedbacks.mergedIntoId],
+    references: [feedbacks.feedbackId],
+    relationName: 'mergedFeedbacks',
+  }),
+  votes: many(feedbackVotes),
+  comments: many(feedbackComments),
+}));
+
+export const feedbackVoteRelations = relations(feedbackVotes, ({ one }) => ({
+  feedback: one(feedbacks, {
+    fields: [feedbackVotes.feedbackId],
+    references: [feedbacks.feedbackId],
+  }),
+  user: one(users, {
+    fields: [feedbackVotes.userId],
+    references: [users.userId],
+  }),
+}));
+
+export const feedbackCommentRelations = relations(
+  feedbackComments,
+  ({ one }) => ({
+    feedback: one(feedbacks, {
+      fields: [feedbackComments.feedbackId],
+      references: [feedbacks.feedbackId],
+    }),
+    user: one(users, {
+      fields: [feedbackComments.userId],
+      references: [users.userId],
+    }),
+  }),
+);
+
+export const notificationRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.userId],
+  }),
+}));

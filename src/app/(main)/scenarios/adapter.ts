@@ -2,10 +2,17 @@ import { and, asc, desc, eq, gte, ilike, inArray, lte, sql } from 'drizzle-orm';
 import { isNil } from 'ramda';
 
 import { getDb } from '@/db';
-import { scenarioSystems, scenarios, scenarioTags, tags } from '@/db/schema';
+import {
+  scenarioSystems,
+  scenarios,
+  scenarioTags,
+  tags,
+  users,
+} from '@/db/schema';
 import { err, ok, type Result } from '@/types/result';
 
 import type {
+  CreateScenarioInput,
   ScenarioSystem,
   ScenarioWithRelations,
   SearchParams,
@@ -170,5 +177,77 @@ export const getAllTags = async (): Promise<Result<Tag[]>> => {
     return ok(result);
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
+ * Discord IDでユーザーを取得する
+ */
+export const getUserByDiscordId = async (
+  discordId: string,
+): Promise<Result<{ userId: string } | null>> => {
+  const db = getDb();
+  try {
+    const result = await db.query.users.findFirst({
+      where: eq(users.discordId, discordId),
+      columns: {
+        userId: true,
+      },
+    });
+    return ok(result ?? null);
+  } catch (e) {
+    return err(
+      e instanceof Error ? e : new Error('ユーザーの取得に失敗しました'),
+    );
+  }
+};
+
+/**
+ * シナリオを作成する
+ */
+export const createScenario = async (
+  input: CreateScenarioInput,
+  userId: string,
+): Promise<Result<{ scenarioId: string }>> => {
+  const db = getDb();
+  try {
+    // シナリオをINSERT
+    const [inserted] = await db
+      .insert(scenarios)
+      .values({
+        name: input.name,
+        scenarioSystemId: input.scenarioSystemId,
+        handoutType: input.handoutType,
+        author: input.author ?? null,
+        description: input.description ?? null,
+        minPlayer: input.minPlayer ?? null,
+        maxPlayer: input.maxPlayer ?? null,
+        minPlaytime: input.minPlaytime ?? null,
+        maxPlaytime: input.maxPlaytime ?? null,
+        scenarioImageUrl: input.scenarioImageUrl ?? null,
+        distributeUrl: input.distributeUrl ?? null,
+        createdById: userId,
+      })
+      .returning({ scenarioId: scenarios.scenarioId });
+
+    if (!inserted) {
+      return err(new Error('シナリオの作成に失敗しました'));
+    }
+
+    // タグがある場合は紐付け
+    if (!isNil(input.tagIds) && input.tagIds.length > 0) {
+      await db.insert(scenarioTags).values(
+        input.tagIds.map((tagId) => ({
+          scenarioId: inserted.scenarioId,
+          tagId,
+        })),
+      );
+    }
+
+    return ok({ scenarioId: inserted.scenarioId });
+  } catch (e) {
+    return err(
+      e instanceof Error ? e : new Error('シナリオの作成に失敗しました'),
+    );
   }
 };

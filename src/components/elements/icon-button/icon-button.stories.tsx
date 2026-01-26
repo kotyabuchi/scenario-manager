@@ -11,15 +11,15 @@ const meta = {
   argTypes: {
     status: {
       control: { type: 'select' },
-      options: ['default', 'primary', 'success', 'warning', 'danger', 'info'],
+      options: ['primary', 'danger'],
     },
     variant: {
       control: { type: 'select' },
-      options: ['solid', 'outline', 'subtle', 'ghost'],
+      options: ['solid', 'subtle', 'ghost', 'outline'],
     },
     size: {
       control: { type: 'select' },
-      options: ['xs', 'sm', 'md', 'lg'],
+      options: ['sm', 'md', 'lg'],
     },
     loading: {
       control: { type: 'boolean' },
@@ -39,7 +39,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    status: 'default',
+    status: 'primary',
     variant: 'solid',
     size: 'md',
     loading: false,

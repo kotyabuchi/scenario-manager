@@ -22,6 +22,7 @@ type ProfileEditFormProps = {
 
 // フォームデータの型
 type ProfileFormData = {
+  userName: string;
   nickname: string;
   bio: string | undefined;
 };

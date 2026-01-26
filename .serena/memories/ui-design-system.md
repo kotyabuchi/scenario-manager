@@ -2,6 +2,8 @@
 
 本プロジェクトのUIデザイン仕様。**UI実装時は必ずこのファイルを参照すること。**
 
+> **コンポーネントの詳細な挙動**（ホイール操作、キーボード操作等）は `ui-component-behavior` メモリを参照。
+
 テーマ: **nani.now風パステルグリーン** - ソフト、低彩度、緑のアンダートーン
 
 ---
@@ -196,7 +198,6 @@ export const resultCount = css({
     bg: 'bg.emphasized',
     outline: '2px solid',
     outlineColor: 'primary.focusRing',
-    outlineOffset: '2px',
   },
 }
 ```
