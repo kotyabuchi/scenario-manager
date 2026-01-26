@@ -1,8 +1,8 @@
 # Select コンポーネント 要件定義書
 
-**作成日**: 2026-01-25
+**作成日**: 2026-01-25（2026-01-26更新）
 **TDDフェーズ**: 要件定義
-**対象**: スタイル改善（ドロップダウン部分）
+**Pencilデザイン**: docs/designs/scenarios.pen > Components > Select/*, Dropdown/*
 
 ---
 
