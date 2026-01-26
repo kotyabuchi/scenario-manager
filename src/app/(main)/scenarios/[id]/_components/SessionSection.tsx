@@ -1,4 +1,4 @@
-import { Dices } from 'lucide-react';
+import { Dices, Users } from 'lucide-react';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -18,8 +18,9 @@ const formatDate = (date: Date | null): string => {
   if (isNil(date)) return '日程未定';
   return new Intl.DateTimeFormat('ja-JP', {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'short',
   }).format(new Date(date));
 };
 
@@ -28,20 +29,20 @@ const formatDate = (date: Date | null): string => {
  * TODO: セッション詳細ページ実装後にLink化する
  */
 const SessionCard = ({ session }: { session: SessionWithKeeper }) => {
+  // セッション名はKMの卓名またはデフォルト
+  const sessionName = !isNil(session.keeper)
+    ? `${session.keeper.nickname}の卓`
+    : 'セッション';
+
   return (
     <div className={styles.sessionCard}>
-      <div className={styles.sessionCard_info}>
-        <div className={styles.sessionCard_date}>
-          {formatDate(session.scheduleDate)}
-        </div>
-        {!isNil(session.keeper) && (
-          <div className={styles.sessionCard_keeper}>
-            GM: {session.keeper.nickname}
-          </div>
-        )}
-        <div className={styles.sessionCard_participants}>
-          参加者: {session.participantCount}人
-        </div>
+      <div className={styles.sessionCard_date}>
+        {formatDate(session.scheduleDate)}
+      </div>
+      <div className={styles.sessionCard_name}>{sessionName}</div>
+      <div className={styles.sessionCard_meta}>
+        <Users size={14} />
+        <span>{session.participantCount}人参加</span>
       </div>
     </div>
   );
@@ -53,12 +54,8 @@ export const SessionSection = ({
 }: SessionSectionProps) => {
   return (
     <section className={styles.section}>
-      <div className={styles.section_header}>
-        <h2 className={styles.section_title}>
-          関連セッション
-          <span className={styles.section_count}>({sessions.length}件)</span>
-        </h2>
-      </div>
+      <h2 className={styles.section_title}>関連セッション</h2>
+
       {sessions.length === 0 ? (
         <div className={styles.section_empty}>
           <p className={styles.section_emptyText}>

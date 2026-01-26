@@ -1,13 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  AlertTriangle,
-  Link as LinkIcon,
-  Monitor,
-  Plus,
-  Video,
-} from 'lucide-react';
+import { EyeOff, PlayCircle, Plus, Video } from 'lucide-react';
 import Image from 'next/image';
 
 import * as styles from './styles';
@@ -65,9 +59,17 @@ const getThumbnailUrl = (url: string): string | null => {
 };
 
 /**
+ * 動画タイトルを取得（動画データにタイトルがあれば使う、なければプラットフォーム名）
+ */
+const getVideoTitle = (video: VideoLinkWithSession): string => {
+  const platform = getPlatform(video.videoUrl);
+  if (platform === 'youtube') return 'YouTube動画';
+  if (platform === 'niconico') return 'ニコニコ動画';
+  return '動画リンク';
+};
+
+/**
  * 動画カード
- * spoiler=true の動画のみネタバレ警告を表示
- * spoiler=false の動画は常にサムネイルを表示
  */
 const VideoCard = ({
   video,
@@ -79,7 +81,6 @@ const VideoCard = ({
   onReveal: () => void;
 }) => {
   const thumbnailUrl = getThumbnailUrl(video.videoUrl);
-  const platform = getPlatform(video.videoUrl);
 
   // spoiler=false または 表示済みの場合はサムネイルを表示
   const shouldShowThumbnail = !video.spoiler || isRevealed;
@@ -93,13 +94,16 @@ const VideoCard = ({
     >
       <div className={styles.videoCard_thumbnail}>
         {shouldShowThumbnail && thumbnailUrl ? (
-          <Image
-            src={thumbnailUrl}
-            alt="動画サムネイル"
-            fill
-            sizes="(max-width: 768px) 100vw, 280px"
-            style={{ objectFit: 'cover' }}
-          />
+          <>
+            <Image
+              src={thumbnailUrl}
+              alt="動画サムネイル"
+              fill
+              sizes="280px"
+              style={{ objectFit: 'cover' }}
+            />
+            <PlayCircle size={48} className={styles.videoCard_playIcon} />
+          </>
         ) : video.spoiler && !isRevealed ? (
           <button
             type="button"
@@ -109,36 +113,21 @@ const VideoCard = ({
               onReveal();
             }}
           >
-            <AlertTriangle size={24} />
+            <EyeOff size={24} />
             <span>ネタバレを含む可能性があります</span>
             <span style={{ fontSize: '12px' }}>クリックで表示</span>
           </button>
         ) : (
           <div className={styles.videoCard_placeholder}>
-            <Monitor size={32} />
+            <PlayCircle size={48} />
           </div>
         )}
       </div>
       <div className={styles.videoCard_info}>
-        <div className={styles.videoCard_title}>
-          {platform === 'youtube' && (
-            <>
-              <Video size={14} /> YouTube動画
-            </>
-          )}
-          {platform === 'niconico' && (
-            <>
-              <Monitor size={14} /> ニコニコ動画
-            </>
-          )}
-          {platform === 'unknown' && (
-            <>
-              <LinkIcon size={14} /> 動画リンク
-            </>
-          )}
-        </div>
+        <div className={styles.videoCard_title}>{getVideoTitle(video)}</div>
         <div className={styles.videoCard_meta}>
-          投稿者: {video.user.nickname}
+          <Video size={12} />
+          <span>投稿者: {video.user.nickname}</span>
         </div>
       </div>
     </a>
@@ -174,10 +163,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
   return (
     <section className={styles.section}>
       <div className={styles.section_header}>
-        <h2 className={styles.section_title}>
-          プレイ動画
-          <span className={styles.section_count}>({videos.length}件)</span>
-        </h2>
+        <h2 className={styles.section_title}>プレイ動画</h2>
         <div className={styles.section_headerActions}>
           {hasSpoilerVideos && (
             <label className={styles.spoilerToggle}>

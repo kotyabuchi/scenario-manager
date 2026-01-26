@@ -1,48 +1,28 @@
 import { css } from '@/styled-system/css';
 
+// ページ全体のコンテナ（全幅）
 export const pageContainer = css({
-  maxW: '1000px',
+  display: 'flex',
+  flexDirection: 'column',
+  minH: '100vh',
+  bg: 'gray.50', // #F9FAFB
+});
+
+// メインコンテンツエリア（Pencil: padding [32, 120]）
+export const mainContent = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'xl',
+  maxW: '1440px',
+  w: '100%',
   mx: 'auto',
-  px: 'lg',
+  px: '120px',
   py: 'xl',
-});
-
-export const header = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  mb: 'lg',
-});
-
-export const header_back = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
-  color: 'text.secondary',
-  fontSize: 'sm',
-  cursor: 'pointer',
-  transition: 'color {durations.normal}',
-  _hover: {
-    color: 'text.primary',
-  },
-});
-
-export const header_actions = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
-});
-
-export const actions = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'sm',
-  mt: 'lg',
 });
 
 export const divider = css({
   border: 'none',
   h: '1px',
-  bg: 'border.subtle',
-  my: 'xl',
+  bg: 'gray.200',
+  my: 'md',
 });

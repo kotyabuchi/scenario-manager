@@ -7,130 +7,30 @@ import {
   useState,
   useTransition,
 } from 'react';
-import {
-  Calendar,
-  Check,
-  Circle,
-  MoreVertical,
-  Pencil,
-  Share2,
-  Star,
-} from 'lucide-react';
+import { Check, Menu, Pencil, Plus, Share2 } from 'lucide-react';
 import Link from 'next/link';
 
-import { css } from '@/styled-system/css';
+import * as styles from './styles';
 
 import type { Route } from 'next';
 
 type ScenarioFABProps = {
   scenarioId: string;
   isPlayed: boolean;
-  isFavorite: boolean;
   canEdit: boolean;
   onTogglePlayed: () => Promise<void>;
-  onToggleFavorite: () => Promise<void>;
 };
-
-const fabContainer = css({
-  position: 'fixed',
-  bottom: 'xl',
-  right: 'xl',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  gap: 'sm',
-  zIndex: 50,
-});
-
-const fabButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '56px',
-  height: '56px',
-  borderRadius: 'full',
-  cursor: 'pointer',
-  transition: 'all {durations.normal}',
-  shadow: 'lg',
-  border: 'none',
-  _hover: {
-    transform: 'scale(1.1)',
-  },
-});
-
-const fabButton_menu = css({
-  bg: 'bg.card',
-  color: 'text.secondary',
-  _hover: {
-    color: 'text.primary',
-  },
-});
-
-const menuDropdown = css({
-  position: 'absolute',
-  bottom: '100%',
-  left: 0,
-  mb: 'sm',
-  minW: '180px',
-  bg: 'bg.card',
-  borderRadius: 'lg',
-  shadow: 'lg',
-  overflow: 'hidden',
-  zIndex: 100,
-});
-
-const menuItem = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
-  width: '100%',
-  px: 'md',
-  py: 'sm',
-  bg: 'transparent',
-  color: 'text.primary',
-  fontSize: 'sm',
-  textAlign: 'left',
-  cursor: 'pointer',
-  border: 'none',
-  transition: 'background {durations.normal}',
-  _hover: {
-    bg: 'bg.subtle',
-  },
-});
-
-const menuLink = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
-  width: '100%',
-  px: 'md',
-  py: 'sm',
-  color: 'text.primary',
-  fontSize: 'sm',
-  textDecoration: 'none',
-  transition: 'background {durations.normal}',
-  _hover: {
-    bg: 'bg.subtle',
-  },
-});
-
-const checkMark = css({
-  color: 'primary.600',
-});
 
 export const ScenarioFAB = ({
   scenarioId,
   isPlayed,
-  isFavorite,
   canEdit,
   onTogglePlayed,
-  onToggleFavorite,
 }: ScenarioFABProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [, startTransition] = useTransition();
   const [optimisticPlayed, setOptimisticPlayed] = useOptimistic(isPlayed);
-  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
 
   // クリック外で閉じる
   useEffect(() => {
@@ -164,89 +64,64 @@ export const ScenarioFAB = ({
     });
   };
 
-  const handleToggleFavorite = () => {
-    setIsMenuOpen(false);
-    startTransition(async () => {
-      setOptimisticFavorite(!optimisticFavorite);
-      await onToggleFavorite();
-    });
-  };
-
   return (
-    <div className={fabContainer}>
-      {/* メニューボタン */}
-      <div ref={menuRef} style={{ position: 'relative' }}>
-        <button
-          type="button"
-          className={`${fabButton} ${fabButton_menu}`}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="メニューを開く"
-          aria-expanded={isMenuOpen}
-        >
-          <MoreVertical size={24} />
-        </button>
+    <div className={styles.fabContainer} ref={menuRef}>
+      {/* メニュー（開いている時のみ表示） */}
+      {isMenuOpen && (
+        <div className={styles.fabMenu}>
+          <Link
+            href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
+            className={styles.fabMenuItem}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <Plus size={18} className={styles.fabMenuItem_iconPrimary} />
+            <span>セッション作成</span>
+          </Link>
 
-        {isMenuOpen && (
-          <div className={menuDropdown} role="menu">
+          <button
+            type="button"
+            className={styles.fabMenuItem}
+            onClick={handleTogglePlayed}
+          >
+            <Check size={18} className={styles.fabMenuItem_iconGray} />
+            <span>プレイ済み登録</span>
+            {optimisticPlayed && (
+              <Check size={14} className={styles.fabMenuItem_iconPrimary} />
+            )}
+          </button>
+
+          <button
+            type="button"
+            className={styles.fabMenuItem}
+            onClick={handleShare}
+          >
+            <Share2 size={18} className={styles.fabMenuItem_iconGray} />
+            <span>シェア</span>
+          </button>
+
+          {canEdit && (
             <Link
-              href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
-              className={menuLink}
-              role="menuitem"
+              href={`/scenarios/${scenarioId}/edit` as Route}
+              className={styles.fabMenuItem}
               onClick={() => setIsMenuOpen(false)}
             >
-              <Calendar size={16} />
-              <span>セッション作成</span>
+              <Pencil size={18} className={styles.fabMenuItem_iconGray} />
+              <span>シナリオ編集</span>
             </Link>
+          )}
+        </div>
+      )}
 
-            <button
-              type="button"
-              className={menuItem}
-              role="menuitem"
-              onClick={handleTogglePlayed}
-            >
-              {optimisticPlayed ? <Check size={16} /> : <Circle size={16} />}
-              <span>プレイ済み登録</span>
-              {optimisticPlayed && <Check size={16} className={checkMark} />}
-            </button>
-
-            <button
-              type="button"
-              className={menuItem}
-              role="menuitem"
-              onClick={handleToggleFavorite}
-            >
-              <Star
-                size={16}
-                fill={optimisticFavorite ? 'currentColor' : 'none'}
-              />
-              <span>お気に入り</span>
-              {optimisticFavorite && <Check size={16} className={checkMark} />}
-            </button>
-
-            {canEdit && (
-              <Link
-                href={`/scenarios/${scenarioId}/edit` as Route}
-                className={menuLink}
-                role="menuitem"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Pencil size={16} />
-                <span>シナリオ編集</span>
-              </Link>
-            )}
-
-            <button
-              type="button"
-              className={menuItem}
-              role="menuitem"
-              onClick={handleShare}
-            >
-              <Share2 size={16} />
-              <span>シェア</span>
-            </button>
-          </div>
-        )}
-      </div>
+      {/* FABボタン */}
+      <button
+        type="button"
+        className={styles.fabButton}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label="メニューを開く"
+        aria-expanded={isMenuOpen}
+      >
+        <Menu size={24} />
+      </button>
     </div>
   );
 };

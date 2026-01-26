@@ -1,18 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  AlertTriangle,
-  ChevronDown,
-  ChevronUp,
-  Eye,
-  EyeOff,
-  FileText,
-  Pencil,
-  Plus,
-  Sparkles,
-  Star,
-} from 'lucide-react';
+import { ChevronDown, FileText, Sparkles, Star } from 'lucide-react';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -54,9 +43,9 @@ const StarRating = ({ rating }: { rating: number | null }) => {
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          size={14}
+          size={16}
           fill={star <= rating ? 'currentColor' : 'none'}
-          style={{ opacity: star <= rating ? 1 : 0.3 }}
+          className={star <= rating ? '' : styles.reviewCard_starEmpty}
         />
       ))}
     </div>
@@ -64,7 +53,7 @@ const StarRating = ({ rating }: { rating: number | null }) => {
 };
 
 /**
- * レビューカード
+ * レビューカード（Pencil準拠）
  */
 const ReviewCard = ({
   review,
@@ -92,59 +81,36 @@ const ReviewCard = ({
     <div
       className={`${styles.reviewCard} ${isHidden ? styles.reviewCard_hidden : ''}`}
     >
-      {/* ヘッダー */}
+      {/* ヘッダー: 星評価 + アクション */}
       <div className={styles.reviewCard_header}>
-        <div className={styles.reviewCard_user}>
-          {!isNil(review.user.image) ? (
-            <div className={styles.reviewCard_avatar}>
-              <Image
-                src={review.user.image}
-                alt={review.user.nickname}
-                width={40}
-                height={40}
-                style={{ objectFit: 'cover' }}
-              />
-            </div>
-          ) : (
-            <div className={styles.reviewCard_avatarPlaceholder}>
-              {review.user.nickname.charAt(0)}
-            </div>
+        <div className={styles.reviewCard_left}>
+          <StarRating rating={review.rating} />
+          {!isNil(review.rating) && (
+            <span className={styles.reviewCard_ratingValue}>
+              {review.rating.toFixed(1)}
+            </span>
           )}
-          <div className={styles.reviewCard_userInfo}>
-            <span className={styles.reviewCard_nickname}>
-              {review.user.nickname}
-            </span>
-            <span className={styles.reviewCard_username}>
-              @{review.user.userName}
-            </span>
-          </div>
         </div>
         <div className={styles.reviewCard_actions}>
           {isOwner ? (
-            <button
-              type="button"
-              className={styles.reviewCard_actionButton}
-              aria-label="編集"
-            >
-              <Pencil size={16} />
+            <button type="button" className={styles.reviewCard_actionText}>
+              編集
             </button>
           ) : isHidden ? (
             <button
               type="button"
-              className={styles.reviewCard_actionButton}
+              className={styles.reviewCard_actionText}
               onClick={onShow}
-              aria-label="再表示"
             >
-              <Eye size={16} />
+              再表示
             </button>
           ) : (
             <button
               type="button"
-              className={styles.reviewCard_actionButton}
+              className={styles.reviewCard_actionText}
               onClick={onHide}
-              aria-label="非表示"
             >
-              <EyeOff size={16} />
+              非表示
             </button>
           )}
         </div>
@@ -157,53 +123,74 @@ const ReviewCard = ({
         </p>
       ) : (
         <>
-          {/* 評価・日時 */}
-          <div className={styles.reviewCard_rating}>
-            <StarRating rating={review.rating} />
-            {!isNil(review.rating) && (
-              <span className={styles.reviewCard_ratingValue}>
-                {review.rating.toFixed(1)}
-              </span>
+          {/* ユーザー情報 */}
+          <div className={styles.reviewCard_userInfo}>
+            {!isNil(review.user.image) ? (
+              <div className={styles.reviewCard_avatar}>
+                <Image
+                  src={review.user.image}
+                  alt={review.user.nickname}
+                  width={32}
+                  height={32}
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
+            ) : (
+              <div className={styles.reviewCard_avatarPlaceholder}>
+                {review.user.nickname.charAt(0)}
+              </div>
             )}
+            <span className={styles.reviewCard_userName}>
+              {review.user.nickname}
+            </span>
+            <span className={styles.reviewCard_handle}>
+              @{review.user.userName}
+            </span>
             <span className={styles.reviewCard_date}>
               {formatDate(review.createdAt)}
             </span>
           </div>
 
-          {/* 公開コメント */}
-          {!isNil(review.openComment) && (
-            <p className={styles.reviewCard_openComment}>
-              {review.openComment}
-            </p>
-          )}
-
-          {/* ネタバレコメント */}
-          {!isNil(review.spoilerComment) && (
-            <div className={styles.reviewCard_spoiler}>
-              <button
-                type="button"
-                className={styles.reviewCard_spoilerToggle}
-                onClick={() => setIsSpoilerExpanded(!isSpoilerExpanded)}
-              >
-                <AlertTriangle size={14} />
-                <span>
-                  {isSpoilerExpanded
-                    ? 'ネタバレを含む感想'
-                    : 'ネタバレを含む感想を表示'}
+          {/* コメント本文 */}
+          <div className={styles.reviewCard_content}>
+            {/* 公開コメント */}
+            {!isNil(review.openComment) && (
+              <>
+                <span className={styles.reviewCard_commentLabel}>
+                  【公開コメント】
                 </span>
-                {isSpoilerExpanded ? (
-                  <ChevronUp size={14} />
-                ) : (
-                  <ChevronDown size={14} />
-                )}
-              </button>
-              {isSpoilerExpanded && (
-                <p className={styles.reviewCard_spoilerContent}>
-                  {review.spoilerComment}
+                <p className={styles.reviewCard_commentText}>
+                  {review.openComment}
                 </p>
-              )}
-            </div>
-          )}
+              </>
+            )}
+
+            {/* ネタバレコメント */}
+            {!isNil(review.spoilerComment) && (
+              <>
+                <span className={styles.reviewCard_commentLabel}>
+                  【ネタバレコメント】
+                </span>
+                <button
+                  type="button"
+                  className={styles.reviewCard_spoilerToggle}
+                  onClick={() => setIsSpoilerExpanded(!isSpoilerExpanded)}
+                >
+                  <ChevronDown size={14} />
+                  <span>
+                    {isSpoilerExpanded
+                      ? 'ネタバレを非表示'
+                      : 'ネタバレを表示する'}
+                  </span>
+                </button>
+                {isSpoilerExpanded && (
+                  <p className={styles.reviewCard_spoilerContent}>
+                    {review.spoilerComment}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
         </>
       )}
     </div>
@@ -275,60 +262,45 @@ export const ReviewSection = ({
 
   return (
     <section id="reviews" className={styles.section}>
-      <div className={styles.section_header}>
-        <h2 className={styles.section_title}>
-          レビュー
-          <span className={styles.section_count}>({totalCount}件)</span>
-        </h2>
-        {isPlayed && sortedReviews.length > 0 && (
-          <div className={styles.section_headerActions}>
-            <button type="button" className={styles.section_actionButton}>
-              <Plus size={14} />
-              レビューを書く
-            </button>
-          </div>
-        )}
-      </div>
+      {/* ヘッダー */}
+      <div className={styles.reviewsHeader}>
+        <h2 className={styles.section_title}>レビュー（{totalCount}件）</h2>
+        <div className={styles.reviewsControls}>
+          <button
+            type="button"
+            className={styles.reviewsSort}
+            onClick={() => {
+              // 簡易トグル（本来はドロップダウン）
+              const options: ReviewSortOption[] = [
+                'newest',
+                'rating_high',
+                'rating_low',
+              ];
+              const currentIndex = options.indexOf(sortOption);
+              const nextIndex = (currentIndex + 1) % options.length;
+              const nextOption = options[nextIndex];
+              if (nextOption) {
+                setSortOption(nextOption);
+              }
+            }}
+          >
+            <span>
+              {sortOption === 'newest' && '新着順'}
+              {sortOption === 'rating_high' && '高評価順'}
+              {sortOption === 'rating_low' && '低評価順'}
+            </span>
+            <ChevronDown size={16} />
+          </button>
 
-      {/* フィルタパネル */}
-      <div className={styles.reviewFilter}>
-        <div className={styles.reviewFilter_sortTabs}>
-          <button
-            type="button"
-            onClick={() => setSortOption('newest')}
-            className={styles.reviewFilter_sortTabButton({
-              active: sortOption === 'newest',
-            })}
-          >
-            新着順
-          </button>
-          <button
-            type="button"
-            onClick={() => setSortOption('rating_high')}
-            className={styles.reviewFilter_sortTabButton({
-              active: sortOption === 'rating_high',
-            })}
-          >
-            高評価順
-          </button>
-          <button
-            type="button"
-            onClick={() => setSortOption('rating_low')}
-            className={styles.reviewFilter_sortTabButton({
-              active: sortOption === 'rating_low',
-            })}
-          >
-            低評価順
-          </button>
+          <label className={styles.reviewsHiddenToggle}>
+            <input
+              type="checkbox"
+              checked={showHidden}
+              onChange={(e) => setShowHidden(e.target.checked)}
+            />
+            <span>非表示コメントを表示</span>
+          </label>
         </div>
-        <label className={styles.reviewFilter_toggle}>
-          <input
-            type="checkbox"
-            checked={showHidden}
-            onChange={(e) => setShowHidden(e.target.checked)}
-          />
-          <span>非表示コメントを表示</span>
-        </label>
       </div>
 
       {/* レビュー一覧 */}
