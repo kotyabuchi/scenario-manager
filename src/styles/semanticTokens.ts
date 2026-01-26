@@ -369,6 +369,32 @@ export const semanticTokens = {
       track: { value: '{colors.gray.200}' },
       thumb: { value: '{colors.primary.500}' },
     },
+
+    // ========================================
+    // ランディングページ
+    // ========================================
+    landing: {
+      // Feature カード
+      featureIndigo: { value: '{colors.indigo.500}' },
+      featureIndigoBg: { value: '{colors.indigo.50}' },
+      // CTA セクション
+      ctaBg: { value: '{colors.primary.500}' },
+      ctaSubtext: { value: '{colors.primary.100}' },
+      // Footer
+      footerBg: { value: '{colors.gray.800}' },
+      footerText: { value: '{colors.gray.400}' },
+      // システムバッジ
+      sysGreenBg: { value: '{colors.green.50}' },
+      sysGreenText: { value: '{colors.green.700}' },
+      sysBlueBg: { value: '{colors.blue.50}' },
+      sysBlueText: { value: '{colors.blue.800}' },
+      sysPurpleBg: { value: '#F3E8FF' },
+      sysPurpleText: { value: '{colors.purple.600}' },
+      sysPinkBg: { value: '{colors.pink.50}' },
+      sysPinkText: { value: '{colors.pink.700}' },
+      sysOrangeBg: { value: '{colors.orange.100}' },
+      sysOrangeText: { value: '{colors.orange.800}' },
+    },
   },
 
   shadows: {
@@ -441,6 +467,17 @@ export const semanticTokens = {
     // スクロールボタン
     scrollButton: {
       default: { value: '0 2px 8px rgba(0, 0, 0, 0.08)' },
+    },
+    // ランディングページ
+    landing: {
+      // ブラウズボタン
+      browseBtn: { value: '0 2px 8px rgba(0, 0, 0, 0.06)' },
+      // CTAボタン（Hero）
+      heroCta: { value: '0 4px 12px rgba(16, 185, 129, 0.19)' },
+      // Feature カード
+      featureCard: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
+      // CTAボタン（白背景）
+      ctaBtn: { value: '0 4px 12px rgba(0, 0, 0, 0.12)' },
     },
   },
 };

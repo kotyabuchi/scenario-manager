@@ -50,6 +50,42 @@ export const colors = defineTokens.colors({
     900: { value: '#4C1D95' },
   },
 
+  // Indigo (ランディングページ Feature用)
+  indigo: {
+    50: { value: '#EEF2FF' },
+    100: { value: '#E0E7FF' },
+    200: { value: '#C7D2FE' },
+    300: { value: '#A5B4FC' },
+    400: { value: '#818CF8' },
+    500: { value: '#6366F1' },
+    600: { value: '#4F46E5' },
+    700: { value: '#4338CA' },
+    800: { value: '#3730A3' },
+    900: { value: '#312E81' },
+  },
+
+  // Pink (ランディングページ システムバッジ用)
+  pink: {
+    50: { value: '#FCE7F3' },
+    100: { value: '#FBCFE8' },
+    200: { value: '#F9A8D4' },
+    500: { value: '#EC4899' },
+    700: { value: '#BE185D' },
+  },
+
+  // Green (ランディングページ システムバッジ用)
+  green: {
+    50: { value: '#DCFCE7' },
+    700: { value: '#166534' },
+    800: { value: '#166534' },
+  },
+
+  // Blue (ランディングページ システムバッジ用)
+  blue: {
+    50: { value: '#DBEAFE' },
+    800: { value: '#1E40AF' },
+  },
+
   // Orange/Amber (警告、お気に入り)
   orange: {
     50: { value: '#FFFBEB' },

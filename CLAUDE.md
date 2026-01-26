@@ -401,6 +401,7 @@ Users / プロフィール                  # /users/me
 | `/implement-tests` | Green | テストを通過させる最小限の実装 |
 | `/refactor` | Refactor | テストを維持しながらコード品質を改善 |
 | `/fix-bug` | バグ修正 | テストケース見直し → 再現テスト → 修正 |
+| `/redesign` | UI更新 | Pencilデザインを唯一の情報源として既存UIをリデザイン。テストも通過させる |
 
 ### 進捗追跡
 
