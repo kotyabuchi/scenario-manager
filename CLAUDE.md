@@ -391,17 +391,21 @@ Users / プロフィール                  # /users/me
 | ロジックのみの変更 | - | ○ |
 | 既存パターンの再利用 | - | ○ |
 
-### TDDスキル一覧
+### TDDスキル・エージェント一覧
 
-| スキル | フェーズ | 説明 |
-|--------|---------|------|
-| `/requirements` | 要件定義 | ユーザーと対話しながら詳細仕様を策定。出力: `.claude/requirements/` |
-| `/component-spec` | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義。出力: `.claude/requirements/components/` |
-| `/gen-test` | Red | 要件定義書から失敗するテストを生成 |
-| `/implement-tests` | Green | テストを通過させる最小限の実装 |
-| `/refactor` | Refactor | テストを維持しながらコード品質を改善 |
-| `/fix-bug` | バグ修正 | テストケース見直し → 再現テスト → 修正 |
-| `/redesign` | UI更新 | Pencilデザインを唯一の情報源として既存UIをリデザイン。テストも通過させる |
+| 名前 | 種別 | フェーズ | 説明 |
+|------|------|---------|------|
+| `/requirements` | スキル | 要件定義 | ユーザーと対話しながら詳細仕様を策定 |
+| `/component-spec` | スキル | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義 |
+| `/gen-test` | スキル | Red | 要件定義書から失敗するテストを生成 |
+| `tdd-implementer` | エージェント | Green | テストを通過させる最小限の実装（自律実行） |
+| `tdd-refactorer` | エージェント | Refactor | テストを維持しながらコード品質を改善（自律実行） |
+| `/fix-bug` | スキル | バグ修正 | テストケース見直し → 再現テスト → 修正 |
+| `/redesign` | スキル | UI更新 | Pencilデザインを唯一の情報源としてUIをリデザイン |
+
+**スキル vs エージェントの使い分け**:
+- スキル: ユーザーとの対話が必要（確認・選択）
+- エージェント: 自律実行可能（明確なゴールがある）
 
 ### 進捗追跡
 
@@ -483,6 +487,8 @@ TDDスキルと汎用スキルは目的が異なる。状況に応じて適切�
 | `ui-expert` | UI/UX改善 | 既存UIの分析・改善 |
 | `ui-implementer` | UI実装 | 新規UI機能の実装 |
 | `playwright-test-fixer` | 機能テスト＆修正 | UIの動作確認と問題の自動修正 |
+| `tdd-implementer` | TDD Green実装 | 失敗テストを通す実装（自律実行） |
+| `tdd-refactorer` | TDD Refactor | テスト維持しながら品質改善（自律実行） |
 
 ### Worktree運用ルール（worktree環境のみ適用）
 

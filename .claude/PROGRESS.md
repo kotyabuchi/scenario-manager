@@ -8,18 +8,21 @@
 ## TDD開発フロー
 
 ```
-/requirements → /gen-test → /implement-tests → /refactor
-    ↓              ↓              ↓               ↓
- 要件定義        Red           Green          Refactor
+/requirements → /gen-test → tdd-implementer → tdd-refactorer
+    ↓              ↓              ↓                 ↓
+ 要件定義        Red           Green            Refactor
+ (スキル)      (スキル)    (エージェント)    (エージェント)
 ```
 
-| スキル | フェーズ | 説明 |
-|--------|---------|------|
-| `/requirements` | 要件定義 | 仕様策定 → `.claude/requirements/` |
-| `/gen-test` | Red | 失敗するテストを書く |
-| `/implement-tests` | Green | テストを通す最小実装 |
-| `/refactor` | Refactor | テスト維持しながら品質改善 |
-| `/fix-bug` | バグ修正 | 再現テスト作成 → 修正 → 検証 |
+| 名前 | 種別 | フェーズ | 説明 |
+|------|------|---------|------|
+| `/requirements` | スキル | 要件定義 | 仕様策定 → `.claude/requirements/` |
+| `/gen-test` | スキル | Red | 失敗するテストを書く |
+| `tdd-implementer` | エージェント | Green | テストを通す最小実装（自律実行） |
+| `tdd-refactorer` | エージェント | Refactor | テスト維持しながら品質改善（自律実行） |
+| `/fix-bug` | スキル | バグ修正 | 再現テスト作成 → 修正 → 検証 |
+
+**自動連携**: `tdd-implementer` が過剰実装を検出すると `tdd-refactorer` を自動呼び出し（最大3回）
 
 ---
 
