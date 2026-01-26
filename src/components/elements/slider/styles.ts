@@ -11,6 +11,7 @@ export const slider_root = css({
   w: 'full',
 });
 
+// 後方互換性のため残す（旧レイアウト用）
 export const slider_header = css({
   display: 'flex',
   alignItems: 'center',
@@ -18,15 +19,32 @@ export const slider_header = css({
 });
 
 export const slider_label = css({
-  fontSize: '14px',
+  fontSize: '13px',
   fontWeight: '500',
-  color: 'input.label',
+  color: '#374151',
+});
+
+export const slider_rangeLabels = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+});
+
+export const slider_rangeLabel = css({
+  fontSize: '12px',
+  fontWeight: 'normal',
+  color: '#6B7280',
+});
+
+export const slider_valueContainer = css({
+  display: 'flex',
+  justifyContent: 'center',
 });
 
 export const slider_output = css({
-  fontSize: '14px',
-  color: 'slider.valueText',
-  fontWeight: '600',
+  fontSize: '13px',
+  fontWeight: '500',
+  color: '#10B981',
 });
 
 export const slider_control = css({
@@ -77,7 +95,7 @@ export const slider_thumb = css({
   _focus: {
     outline: '2px solid',
     outlineColor: 'primary.default',
-    outlineOffset: '2px',
+    outlineOffset: '-1px',
   },
   _disabled: {
     cursor: 'not-allowed',

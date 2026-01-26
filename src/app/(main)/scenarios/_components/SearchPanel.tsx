@@ -45,8 +45,8 @@ export const SearchPanel = ({
     defaultParams?.playerCount?.max ?? 6,
   ]);
   const [playtimeRange, setPlaytimeRange] = useState<number[]>([
-    defaultParams?.playtime?.min ?? 30,
-    defaultParams?.playtime?.max ?? 180,
+    defaultParams?.playtime?.min ?? 3,
+    defaultParams?.playtime?.max ?? 8,
   ]);
 
   const { register, handleSubmit, watch, setValue, reset } = useForm({
@@ -81,8 +81,8 @@ export const SearchPanel = ({
       defaultParams?.playerCount?.max ?? 6,
     ]);
     setPlaytimeRange([
-      defaultParams?.playtime?.min ?? 30,
-      defaultParams?.playtime?.max ?? 180,
+      defaultParams?.playtime?.min ?? 3,
+      defaultParams?.playtime?.max ?? 8,
     ]);
     const hasConditions =
       !isNil(defaultParams?.playerCount) ||
@@ -144,9 +144,9 @@ export const SearchPanel = ({
       };
     }
 
-    const minPlaytime = playtimeRange[0] ?? 30;
-    const maxPlaytime = playtimeRange[1] ?? 180;
-    if (minPlaytime !== 30 || maxPlaytime !== 180) {
+    const minPlaytime = playtimeRange[0] ?? 3;
+    const maxPlaytime = playtimeRange[1] ?? 8;
+    if (minPlaytime !== 3 || maxPlaytime !== 8) {
       params.playtime = {
         min: minPlaytime,
         max: maxPlaytime,
@@ -167,7 +167,7 @@ export const SearchPanel = ({
       scenarioName: '',
     });
     setPlayerCountRange([2, 6]);
-    setPlaytimeRange([30, 180]);
+    setPlaytimeRange([3, 8]);
     onSearch({});
   };
 
@@ -246,11 +246,13 @@ export const SearchPanel = ({
               value={playerCountRange}
               onValueChange={(details) => setPlayerCountRange(details.value)}
               min={1}
-              max={20}
+              max={10}
               step={1}
               range
               showValue
               formatValue={(v) => `${v}人`}
+              minLabel="1人"
+              maxLabel="10人+"
             />
           </div>
 
@@ -259,12 +261,14 @@ export const SearchPanel = ({
               label="プレイ時間"
               value={playtimeRange}
               onValueChange={(details) => setPlaytimeRange(details.value)}
-              min={30}
-              max={480}
-              step={30}
+              min={1}
+              max={12}
+              step={1}
               range
               showValue
-              formatValue={(v) => `${v}分`}
+              formatValue={(v) => `${v}時間`}
+              minLabel="1時間"
+              maxLabel="12時間+"
             />
           </div>
 

@@ -399,9 +399,9 @@ export const searchPanelChips = css({
   gap: 'sm',
 });
 
-// スライダーフィールド（固定幅240px）
+// スライダーフィールド（固定幅280px - Pencilデザイン準拠）
 export const sliderField = css({
-  width: '240px',
+  width: '280px',
   flexShrink: 0,
 });
 
@@ -417,7 +417,7 @@ export const tagField = css({
 // 詳細条件行（プレイ人数、プレイ時間、タグを横並び）
 export const detailedConditionsRow = css({
   display: 'flex',
-  alignItems: 'flex-end',
+  alignItems: 'flex-start',
   gap: 'lg',
 });
 

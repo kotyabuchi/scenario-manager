@@ -42,6 +42,10 @@ type SliderProps = {
   name?: string;
   /** 範囲スライダー（2つのサム） */
   range?: boolean;
+  /** 最小値ラベル（スライダー上部左側に表示） */
+  minLabel?: string;
+  /** 最大値ラベル（スライダー上部右側に表示） */
+  maxLabel?: string;
 } & Omit<SliderRootProps, 'value' | 'onValueChange'>;
 
 // 固定のthumb識別子（indexをkeyとして使用するのを避けるため）
@@ -59,7 +63,7 @@ const SliderValueDisplay = ({
   const firstValue = context.value[0] ?? 0;
   const secondValue = context.value[1] ?? 0;
   const displayValue = range
-    ? `${formatValue(firstValue)} - ${formatValue(secondValue)}`
+    ? `${formatValue(firstValue)} ～ ${formatValue(secondValue)}`
     : formatValue(firstValue);
 
   return <span className={styles.slider_output}>{displayValue}</span>;
@@ -106,10 +110,13 @@ export const Slider = ({
   disabled,
   name,
   range = false,
+  minLabel,
+  maxLabel,
   ...rest
 }: SliderProps) => {
   const thumbIds = range ? THUMB_IDS : [THUMB_IDS[0]];
   const initialValue = defaultValue ?? (range ? [min, max] : [min]);
+  const hasRangeLabels = !isNil(minLabel) || !isNil(maxLabel);
 
   return (
     <ArkSlider.Root
@@ -124,16 +131,15 @@ export const Slider = ({
       className={styles.slider_root}
       {...rest}
     >
-      {(label || showValue) && (
-        <div className={styles.slider_header}>
-          {label && (
-            <ArkSlider.Label className={styles.slider_label}>
-              {label}
-            </ArkSlider.Label>
-          )}
-          {showValue && (
-            <SliderValueDisplay range={range} formatValue={formatValue} />
-          )}
+      {label && (
+        <ArkSlider.Label className={styles.slider_label}>
+          {label}
+        </ArkSlider.Label>
+      )}
+      {hasRangeLabels && (
+        <div className={styles.slider_rangeLabels}>
+          <span className={styles.slider_rangeLabel}>{minLabel}</span>
+          <span className={styles.slider_rangeLabel}>{maxLabel}</span>
         </div>
       )}
       <ArkSlider.Control className={styles.slider_control}>
@@ -150,6 +156,11 @@ export const Slider = ({
           </ArkSlider.Thumb>
         ))}
       </ArkSlider.Control>
+      {showValue && (
+        <div className={styles.slider_valueContainer}>
+          <SliderValueDisplay range={range} formatValue={formatValue} />
+        </div>
+      )}
       {!isNil(markers) && markers.length > 0 && (
         <ArkSlider.MarkerGroup className={styles.slider_markerGroup}>
           {markers.map((marker) => (
