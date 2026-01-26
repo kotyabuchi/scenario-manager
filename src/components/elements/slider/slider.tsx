@@ -72,7 +72,14 @@ const SliderValueDisplay = ({
 /**
  * スライダーコンポーネント
  *
- * Ark UI Sliderをベースに、プロジェクトのデザインシステムに合わせてスタイリング
+ * Ark UI Sliderをベースに、プロジェクトのデザインシステムに合わせてスタイリング。
+ * 単一値スライダーと範囲スライダーの両方に対応。
+ *
+ * ## レイアウト構造
+ * 1. ラベル（label）
+ * 2. 範囲テキスト（minLabel / maxLabel）- スライダー上部に左右配置
+ * 3. スライダートラック
+ * 4. 選択値表示（showValue）- スライダー下部に中央配置
  *
  * @example
  * // 基本的な使用法
@@ -93,6 +100,22 @@ const SliderValueDisplay = ({
  *   range
  *   min={0}
  *   max={100}
+ * />
+ *
+ * @example
+ * // 範囲テキスト付きスライダー（検索条件向け）
+ * <Slider
+ *   label="プレイ人数"
+ *   value={[2, 6]}
+ *   onValueChange={(details) => setPlayerCount(details.value)}
+ *   min={1}
+ *   max={10}
+ *   step={1}
+ *   range
+ *   showValue
+ *   formatValue={(v) => `${v}人`}
+ *   minLabel="1人"
+ *   maxLabel="10人+"
  * />
  */
 

@@ -39,14 +39,20 @@ export default async function ScenarioNewPage() {
 
   return (
     <main className={styles.pageContainer}>
-      <div className={styles.pageHeader}>
-        <Link href="/scenarios" className={styles.pageBackButton}>
-          <ArrowLeft size={20} />
-        </Link>
-        <h1 className={styles.pageTitle}>シナリオ登録</h1>
-      </div>
+      {/* ページヘッダー */}
+      <header className={styles.pageHeader}>
+        <div className={styles.pageHeaderLeft}>
+          <Link href="/scenarios" className={styles.pageBackButton}>
+            <ArrowLeft size={20} />
+          </Link>
+          <h1 className={styles.pageTitle}>シナリオを登録</h1>
+        </div>
+      </header>
 
-      <ScenarioForm systems={systems} tags={tags} />
+      {/* メインコンテンツ */}
+      <div className={styles.mainContent}>
+        <ScenarioForm systems={systems} tags={tags} />
+      </div>
     </main>
   );
 }

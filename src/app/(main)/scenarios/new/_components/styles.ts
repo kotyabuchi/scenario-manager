@@ -1,266 +1,201 @@
 import { css } from '@/styled-system/css';
 
 /**
- * シナリオ登録フォーム スタイル: nani.now風（淡い緑ベース）
+ * シナリオ登録フォーム スタイル
  *
- * UIデザインシステム準拠:
- * - ボーダーレス（境界線は影で表現）
- * - OKLCH カラー（hue 150 のアンダートーン）
- * - 角丸: 16px（カード/パネル）、8px（入力フィールド）
+ * Pencilデザイン準拠: docs/designs/scenarios.pen - Scenarios / 登録画面
+ * 既存コンポーネント（FormField, Input, Select, NumberInput, Chip, Button, Textarea）を活用
  */
 
-// カラー定義（淡い緑ベース）
-const colors = {
-  primary: {
-    50: 'oklch(0.98 0.03 150)',
-    100: 'oklch(0.95 0.05 150)',
-    800: 'oklch(0.40 0.15 160)',
-  },
-  accent: {
-    coral: 'oklch(0.85 0.10 15)',
-  },
-  neutral: {
-    50: 'oklch(0.98 0.01 150)',
-    100: 'oklch(0.95 0.01 150)',
-    600: 'oklch(0.45 0.05 150)',
-    700: 'oklch(0.40 0.05 150)',
-    800: 'oklch(0.35 0.05 150)',
-  },
-  success: {
-    bg: 'oklch(0.95 0.05 150)',
-    text: 'oklch(0.35 0.10 150)',
-  },
-  error: {
-    bg: 'oklch(0.95 0.05 15)',
-    text: 'oklch(0.45 0.15 15)',
-  },
-};
-
-// シャドウ定義
-const shadows = {
-  xs: '0 1px 3px rgba(0, 0, 0, 0.06)',
-  sm: '0 4px 6px rgba(0, 0, 0, 0.08)',
-};
-
-// フォームコンテナ
-export const form_container = css({
+// フォームカード（Pencil: formCard）
+export const form_card = css({
   bg: 'white',
   borderRadius: '16px',
-  boxShadow: shadows.sm,
-  p: 'xl',
-  maxW: '800px',
-  mx: 'auto',
+  shadow: 'card.default',
+  p: '32px',
+  w: 'full',
+  maxW: '1200px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '32px',
 });
 
-export const form_title = css({
-  fontSize: 'xl',
-  fontWeight: 'bold',
-  color: colors.neutral[800],
-  mb: 'lg',
-});
-
+// エラーメッセージ
 export const form_error = css({
-  bg: colors.error.bg,
-  color: colors.error.text,
-  p: 'md',
-  borderRadius: '12px',
-  fontSize: 'sm',
-  mb: 'lg',
+  bg: 'red.50',
+  color: 'red.600',
+  p: '12px 16px',
+  borderRadius: '8px',
+  fontSize: '14px',
 });
 
-export const form_success = css({
-  bg: colors.success.bg,
-  color: colors.success.text,
-  p: 'md',
-  borderRadius: '12px',
-  fontSize: 'sm',
-  mb: 'lg',
+// トップ行（画像 + フィールド群）
+export const form_topRow = css({
+  display: 'flex',
+  gap: '32px',
+  flexDirection: 'column',
+  lg: {
+    flexDirection: 'row',
+  },
 });
 
-export const form_form = css({
+// 画像アップロード行
+export const form_imageRow = css({
+  display: 'flex',
+  justifyContent: 'center',
+  w: '280px',
+  h: '280px',
+  flexShrink: 0,
+  mx: 'auto',
+  lg: {
+    mx: 0,
+  },
+});
+
+// 画像アップロードエリア（Pencil: imageUpload - 280x280, cornerRadius:12, bg:#F9FAFB）
+export const form_imageUpload = css({
   display: 'flex',
   flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '12px',
+  w: '280px',
+  h: '280px',
+  bg: 'gray.50',
+  borderRadius: '12px',
+  shadow: 'sm',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  _hover: {
+    bg: 'gray.100',
+  },
 });
 
-export const form_section = css({
+// 画像アップロードアイコン（Pencil: uploadIcon - 40x40, color:#9CA3AF）
+export const form_uploadIcon = css({
+  color: 'gray.400',
+});
+
+// 画像アップロードテキスト（Pencil: uploadText - fontSize:13, color:#6B7280）
+export const form_uploadText = css({
+  fontSize: '13px',
+  color: 'gray.500',
+  textAlign: 'center',
+});
+
+// 画像アップロードヒント（Pencil: uploadHint - fontSize:12, color:#9CA3AF）
+export const form_uploadHint = css({
+  fontSize: '12px',
+  color: 'gray.400',
+});
+
+// 右側フィールド群（Pencil: rightFields）
+export const form_rightFields = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'lg',
+  gap: '16px',
+  flex: 1,
+  minW: 0,
 });
 
-export const form_sectionTitle = css({
-  fontSize: 'md',
-  fontWeight: 'semibold',
-  color: colors.neutral[800],
-  mb: 'sm',
+// フィールド行（2カラム）
+export const form_fieldRow = css({
+  display: 'flex',
+  gap: '24px',
+  flexDirection: 'column',
+  sm: {
+    flexDirection: 'row',
+  },
+  '& > *': {
+    flex: 1,
+    minW: 0,
+  },
 });
 
-export const form_divider = css({
-  border: 'none',
-  h: '1px',
-  bg: colors.neutral[100],
-  my: 'xl',
+// フィールド行（2カラム、間隔狭め）
+export const form_fieldRow_narrow = css({
+  display: 'flex',
+  gap: '20px',
+  flexDirection: 'column',
+  sm: {
+    flexDirection: 'row',
+  },
+  '& > *': {
+    flex: 1,
+    minW: 0,
+  },
 });
 
+// フィールドコンテナ（NumberInput用）
 export const form_field = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'xs',
-  border: 'none',
-  padding: 0,
-  margin: 0,
-  '& > legend': {
-    mb: 'xs',
-  },
+  gap: '8px',
+  flex: 1,
+  minW: 0,
 });
 
-export const form_fieldInline = css({
+// ラベル（Pencil: fontSize:13, fontWeight:500, color:#374151）
+export const form_label = css({
+  fontSize: '13px',
+  fontWeight: '500',
+  color: 'gray.700',
+});
+
+// 範囲入力行（min ~ max 単位）
+export const form_rangeInputRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+});
+
+// 範囲セパレータ（Pencil: "〜", fontSize:14, fontWeight:500, color:#6B7280）
+export const form_rangeSeparator = css({
+  fontSize: '14px',
+  fontWeight: '500',
+  color: 'gray.500',
+});
+
+// 範囲単位（Pencil: fontSize:14, color:#6B7280）
+export const form_rangeUnit = css({
+  fontSize: '14px',
+  color: 'gray.500',
+});
+
+// スライダーコントロール群
+export const form_sliderControls = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'xs',
-  md: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 'md',
-  },
+  gap: '12px',
 });
 
-export const form_label = css({
-  fontSize: 'sm',
-  fontWeight: 'semibold',
-  color: colors.neutral[700],
-  letterSpacing: '0.01em',
+// スライダーの現在値表示
+export const form_sliderValue = css({
+  fontSize: '13px',
+  fontWeight: '500',
+  color: 'primary.500',
+  textAlign: 'center',
 });
 
-export const form_required = css({
-  color: colors.accent.coral,
-  ml: '1',
+// スライダーの最小/最大値表示
+export const form_sliderMinMax = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  fontSize: '12px',
+  color: 'gray.400',
 });
 
-export const form_input = css({
-  w: 'full',
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  transition: 'background-color {durations.normal}',
-  boxShadow: shadows.xs,
-  _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focus: {
-    bg: 'bg.emphasized',
-    outline: '2px solid',
-    outlineColor: 'primary.focusRing',
-  },
-  _placeholder: {
-    color: 'text.muted',
-  },
-});
-
-export const form_textarea = css({
-  w: 'full',
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  resize: 'vertical',
-  minH: '120px',
-  transition: 'background-color {durations.normal}',
-  boxShadow: shadows.xs,
-  _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focus: {
-    bg: 'bg.emphasized',
-    outline: '2px solid',
-    outlineColor: 'primary.focusRing',
-  },
-  _placeholder: {
-    color: 'text.muted',
-  },
-});
-
-export const form_hint = css({
-  fontSize: 'xs',
-  color: colors.neutral[600],
-});
-
+// チップ群
 export const form_chips = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'sm',
+  gap: '8px',
 });
 
-export const form_rangeInput = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
-  fontSize: 'sm',
-  color: colors.neutral[700],
-});
-
-export const form_rangeInputField = css({
-  w: '100px',
-});
-
-export const form_radioGroup = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'md',
-});
-
-export const form_radioLabel = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
-  cursor: 'pointer',
-  fontSize: 'sm',
-  color: colors.neutral[700],
-  px: 'md',
-  py: 'sm',
-  borderRadius: '12px',
-  transition: 'all {durations.normal}',
-  bg: colors.neutral[50],
-  boxShadow: shadows.xs,
-  _hover: {
-    bg: colors.primary[50],
-    transform: 'translateY(-1px)',
-  },
-});
-
-export const form_radioLabelSelected = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
-  cursor: 'pointer',
-  fontSize: 'sm',
-  color: colors.primary[800],
-  px: 'md',
-  py: 'sm',
-  borderRadius: '12px',
-  transition: 'all {durations.normal}',
-  bg: colors.primary[100],
-  fontWeight: 'medium',
-  boxShadow: shadows.xs,
-});
-
-export const form_radioInput = css({
-  w: '16px',
-  h: '16px',
-  accentColor: colors.primary[800],
-});
-
-export const form_actions = css({
+// フッター（Pencil: footer - justifyContent:end, gap:16）
+export const form_footer = css({
   display: 'flex',
   justifyContent: 'flex-end',
-  gap: 'md',
+  gap: '16px',
+  mt: '16px',
 });

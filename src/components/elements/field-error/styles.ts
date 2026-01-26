@@ -13,13 +13,6 @@ export const fieldError = css({
   mt: '4px',
 });
 
-export const fieldError_icon = css({
-  flexShrink: 0,
-  width: '14px',
-  height: '14px',
-  color: 'icon.error',
-});
-
 export const fieldError_message = css({
   lineHeight: '1.4',
 });

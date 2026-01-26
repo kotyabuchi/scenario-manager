@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, ImagePlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { isNil } from 'ramda';
 
@@ -14,9 +15,24 @@ import {
 } from './schema';
 import * as styles from './styles';
 
-import { FieldError } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
 import { Chip } from '@/components/elements/Chip';
+import { FieldError } from '@/components/elements/field-error/field-error';
+import { FormField } from '@/components/elements/form-field';
+import { Input } from '@/components/elements/input';
+import {
+  NumberInput,
+  type NumberInputValueChangeDetails,
+} from '@/components/elements/number-input';
+import {
+  Select,
+  type SelectValueChangeDetails,
+} from '@/components/elements/select';
+import {
+  Slider,
+  type SliderValueChangeDetails,
+} from '@/components/elements/slider';
+import { Textarea } from '@/components/elements/textarea';
 import { HandoutTypes } from '@/db/enum';
 
 import type { ScenarioSystem, Tag } from '../../interface';
@@ -30,6 +46,12 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // スライダー用の状態
+  const [playerRange, setPlayerRange] = useState<[number, number]>([1, 4]);
+  const [playtimeRange, setPlaytimeRange] = useState<[number, number]>([
+    60, 180,
+  ]);
 
   const {
     register,
@@ -59,10 +81,27 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
   const selectedTagIds = watch('tagIds') as string[];
   const selectedHandoutType = watch('handoutType');
 
-  const handleSystemSelect = (systemId: string) => {
-    setValue('scenarioSystemId', systemId);
+  // システム選択変更
+  const handleSystemChange = (
+    details: SelectValueChangeDetails<{ label: string; value: string }>,
+  ) => {
+    const value = details.value[0];
+    if (!isNil(value)) {
+      setValue('scenarioSystemId', value);
+    }
   };
 
+  // ハンドアウト選択変更
+  const handleHandoutChange = (
+    details: SelectValueChangeDetails<{ label: string; value: string }>,
+  ) => {
+    const value = details.value[0];
+    if (!isNil(value)) {
+      setValue('handoutType', value as 'NONE' | 'PUBLIC' | 'SECRET');
+    }
+  };
+
+  // タグ選択/解除
   const toggleTag = (tagId: string) => {
     const current = selectedTagIds;
     if (current.includes(tagId)) {
@@ -72,6 +111,55 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
       );
     } else {
       setValue('tagIds', [...current, tagId]);
+    }
+  };
+
+  // プレイ人数スライダー変更
+  const handlePlayerSliderChange = (details: SliderValueChangeDetails) => {
+    const [min, max] = details.value;
+    setPlayerRange([min ?? 1, max ?? 4]);
+    setValue('minPlayer', min);
+    setValue('maxPlayer', max);
+  };
+
+  // プレイ時間スライダー変更
+  const handlePlaytimeSliderChange = (details: SliderValueChangeDetails) => {
+    const [min, max] = details.value;
+    setPlaytimeRange([min ?? 60, max ?? 180]);
+    setValue('minPlaytime', min);
+    setValue('maxPlaytime', max);
+  };
+
+  // NumberInput変更ハンドラ（スライダーと連動）
+  const handleMinPlayerChange = (details: NumberInputValueChangeDetails) => {
+    const val = details.valueAsNumber;
+    if (!Number.isNaN(val)) {
+      setPlayerRange([val, playerRange[1]]);
+      setValue('minPlayer', val);
+    }
+  };
+
+  const handleMaxPlayerChange = (details: NumberInputValueChangeDetails) => {
+    const val = details.valueAsNumber;
+    if (!Number.isNaN(val)) {
+      setPlayerRange([playerRange[0], val]);
+      setValue('maxPlayer', val);
+    }
+  };
+
+  const handleMinPlaytimeChange = (details: NumberInputValueChangeDetails) => {
+    const val = details.valueAsNumber;
+    if (!Number.isNaN(val)) {
+      setPlaytimeRange([val, playtimeRange[1]]);
+      setValue('minPlaytime', val);
+    }
+  };
+
+  const handleMaxPlaytimeChange = (details: NumberInputValueChangeDetails) => {
+    const val = details.valueAsNumber;
+    if (!Number.isNaN(val)) {
+      setPlaytimeRange([playtimeRange[0], val]);
+      setValue('maxPlaytime', val);
     }
   };
 
@@ -93,224 +181,251 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
     router.back();
   };
 
+  // システム選択肢
+  const systemItems = systems.map((system) => ({
+    label: system.name,
+    value: system.systemId,
+  }));
+
+  // ハンドアウト選択肢
+  const handoutItems = Object.values(HandoutTypes).map((type) => ({
+    label: type.label,
+    value: type.value,
+  }));
+
+  // 選択されたタグ
+  const selectedTags = tags.filter((tag) => selectedTagIds.includes(tag.tagId));
+  // 未選択のタグ
+  const unselectedTags = tags.filter(
+    (tag) => !selectedTagIds.includes(tag.tagId),
+  );
+
   return (
-    <div className={styles.form_container}>
+    <div className={styles.form_card}>
       {!isNil(serverError) && (
         <div className={styles.form_error}>{serverError}</div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form_form}>
-        {/* 基本情報セクション */}
-        <div className={styles.form_section}>
-          <h2 className={styles.form_sectionTitle}>基本情報</h2>
-
-          {/* シナリオ名 */}
-          <div className={styles.form_field}>
-            <label htmlFor="name" className={styles.form_label}>
-              シナリオ名
-              <span className={styles.form_required}>*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              {...register('name')}
-              className={styles.form_input}
-              placeholder="シナリオ名を入力"
-              maxLength={100}
-            />
-            <FieldError error={errors.name} />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* トップ行: 画像 + フィールド群 */}
+        <div className={styles.form_topRow}>
+          {/* 画像アップロード */}
+          <div className={styles.form_imageRow}>
+            <div className={styles.form_imageUpload}>
+              <ImagePlus size={40} className={styles.form_uploadIcon} />
+              <span className={styles.form_uploadText}>
+                クリックまたはドラッグで画像をアップロード
+              </span>
+              <span className={styles.form_uploadHint}>
+                PNG, JPG, WebP（最大5MB）
+              </span>
+            </div>
           </div>
 
-          {/* システム選択 */}
-          <fieldset className={styles.form_field}>
-            <legend className={styles.form_label}>
-              システム
-              <span className={styles.form_required}>*</span>
-            </legend>
-            <div className={styles.form_chips}>
-              {systems.map((system) => (
-                <Chip
-                  key={system.systemId}
-                  label={system.name}
-                  selected={selectedSystemId === system.systemId}
-                  onClick={() => handleSystemSelect(system.systemId)}
+          {/* 右側フィールド群 */}
+          <div className={styles.form_rightFields}>
+            {/* シナリオ名 + 作者名 */}
+            <div className={styles.form_fieldRow}>
+              <FormField
+                id="name"
+                label="シナリオ名"
+                required
+                error={errors.name}
+              >
+                <Input
+                  id="name"
+                  {...register('name')}
+                  placeholder="シナリオ名を入力"
+                  maxLength={100}
                 />
-              ))}
-            </div>
-            <FieldError error={errors.scenarioSystemId} />
-          </fieldset>
+              </FormField>
 
-          {/* ハンドアウト形式 */}
-          <fieldset className={styles.form_field}>
-            <legend className={styles.form_label}>
-              ハンドアウト形式
-              <span className={styles.form_required}>*</span>
-            </legend>
-            <div className={styles.form_radioGroup}>
-              {Object.values(HandoutTypes).map((type) => (
-                <label
-                  key={type.value}
-                  className={
-                    selectedHandoutType === type.value
-                      ? styles.form_radioLabelSelected
-                      : styles.form_radioLabel
-                  }
-                >
-                  <input
-                    type="radio"
-                    {...register('handoutType')}
-                    value={type.value}
-                    className={styles.form_radioInput}
+              <FormField id="author" label="作者名" error={errors.author}>
+                <Input
+                  id="author"
+                  {...register('author')}
+                  placeholder="作者名を入力（任意）"
+                  maxLength={100}
+                />
+              </FormField>
+            </div>
+
+            {/* システム + ハンドアウト */}
+            <div className={styles.form_fieldRow_narrow}>
+              <FormField
+                label="シナリオシステム"
+                required
+                error={errors.scenarioSystemId}
+              >
+                <Select
+                  items={systemItems}
+                  value={selectedSystemId ? [selectedSystemId] : []}
+                  onValueChange={handleSystemChange}
+                  placeholder="システムを選択"
+                />
+              </FormField>
+
+              <FormField label="ハンドアウトタイプ" error={errors.handoutType}>
+                <Select
+                  items={handoutItems}
+                  value={selectedHandoutType ? [selectedHandoutType] : []}
+                  onValueChange={handleHandoutChange}
+                  placeholder="なし"
+                />
+              </FormField>
+            </div>
+
+            {/* プレイ人数 + プレイ時間 */}
+            <div className={styles.form_fieldRow}>
+              {/* プレイ人数 */}
+              <div className={styles.form_field}>
+                <span className={styles.form_label}>プレイ人数</span>
+                <div className={styles.form_sliderControls}>
+                  <Slider
+                    value={playerRange}
+                    onValueChange={handlePlayerSliderChange}
+                    min={1}
+                    max={20}
+                    step={1}
+                    range
                   />
-                  {type.label}
-                </label>
-              ))}
+                  <div className={styles.form_sliderMinMax}>
+                    <span>1</span>
+                    <span>20+</span>
+                  </div>
+                  <div className={styles.form_sliderValue}>
+                    {playerRange[0]} 〜 {playerRange[1]} 人
+                  </div>
+                  <div className={styles.form_rangeInputRow}>
+                    <NumberInput
+                      value={String(playerRange[0])}
+                      onValueChange={handleMinPlayerChange}
+                      min={1}
+                      max={20}
+                      placeholder="最小"
+                    />
+                    <span className={styles.form_rangeSeparator}>〜</span>
+                    <NumberInput
+                      value={String(playerRange[1])}
+                      onValueChange={handleMaxPlayerChange}
+                      min={1}
+                      max={20}
+                      placeholder="最大"
+                    />
+                    <span className={styles.form_rangeUnit}>人</span>
+                  </div>
+                </div>
+                <FieldError error={errors.minPlayer} />
+                <FieldError error={errors.maxPlayer} />
+              </div>
+
+              {/* プレイ時間 */}
+              <div className={styles.form_field}>
+                <span className={styles.form_label}>プレイ時間</span>
+                <div className={styles.form_sliderControls}>
+                  <Slider
+                    value={playtimeRange}
+                    onValueChange={handlePlaytimeSliderChange}
+                    min={30}
+                    max={480}
+                    step={30}
+                    range
+                  />
+                  <div className={styles.form_sliderMinMax}>
+                    <span>30</span>
+                    <span>480+</span>
+                  </div>
+                  <div className={styles.form_sliderValue}>
+                    {playtimeRange[0]} 〜 {playtimeRange[1]} 分
+                  </div>
+                  <div className={styles.form_rangeInputRow}>
+                    <NumberInput
+                      value={String(playtimeRange[0])}
+                      onValueChange={handleMinPlaytimeChange}
+                      min={30}
+                      max={480}
+                      step={30}
+                      placeholder="最小"
+                    />
+                    <span className={styles.form_rangeSeparator}>〜</span>
+                    <NumberInput
+                      value={String(playtimeRange[1])}
+                      onValueChange={handleMaxPlaytimeChange}
+                      min={30}
+                      max={480}
+                      step={30}
+                      placeholder="最大"
+                    />
+                    <span className={styles.form_rangeUnit}>分</span>
+                  </div>
+                </div>
+                <FieldError error={errors.minPlaytime} />
+                <FieldError error={errors.maxPlaytime} />
+              </div>
             </div>
-            <FieldError error={errors.handoutType} />
-          </fieldset>
-        </div>
 
-        <hr className={styles.form_divider} />
-
-        {/* 詳細情報セクション */}
-        <div className={styles.form_section}>
-          <h2 className={styles.form_sectionTitle}>詳細情報（任意）</h2>
-
-          {/* 作者名 */}
-          <div className={styles.form_field}>
-            <label htmlFor="author" className={styles.form_label}>
-              作者名
-            </label>
-            <input
-              type="text"
-              id="author"
-              {...register('author')}
-              className={styles.form_input}
-              placeholder="作者名を入力"
-              maxLength={100}
-            />
-            <FieldError error={errors.author} />
-          </div>
-
-          {/* 概要 */}
-          <div className={styles.form_field}>
-            <label htmlFor="description" className={styles.form_label}>
-              概要
-            </label>
-            <textarea
-              id="description"
-              {...register('description')}
-              className={styles.form_textarea}
-              placeholder="シナリオの概要を入力"
-              maxLength={2000}
-            />
-            <p className={styles.form_hint}>2000文字以内</p>
-            <FieldError error={errors.description} />
-          </div>
-
-          {/* プレイ人数 */}
-          <div className={styles.form_field}>
-            <span className={styles.form_label}>プレイ人数</span>
-            <div className={styles.form_rangeInput}>
-              <input
-                type="number"
-                min={1}
-                max={20}
-                placeholder="最小"
-                className={`${styles.form_input} ${styles.form_rangeInputField}`}
-                {...register('minPlayer')}
-              />
-              <span>〜</span>
-              <input
-                type="number"
-                min={1}
-                max={20}
-                placeholder="最大"
-                className={`${styles.form_input} ${styles.form_rangeInputField}`}
-                {...register('maxPlayer')}
-              />
-              <span>人</span>
-            </div>
-            <FieldError error={errors.minPlayer} />
-            <FieldError error={errors.maxPlayer} />
-          </div>
-
-          {/* プレイ時間 */}
-          <div className={styles.form_field}>
-            <span className={styles.form_label}>プレイ時間</span>
-            <div className={styles.form_rangeInput}>
-              <input
-                type="number"
-                min={1}
-                max={14400}
-                placeholder="最小"
-                className={`${styles.form_input} ${styles.form_rangeInputField}`}
-                {...register('minPlaytime')}
-              />
-              <span>〜</span>
-              <input
-                type="number"
-                min={1}
-                max={14400}
-                placeholder="最大"
-                className={`${styles.form_input} ${styles.form_rangeInputField}`}
-                {...register('maxPlaytime')}
-              />
-              <span>分</span>
-            </div>
-            <FieldError error={errors.minPlaytime} />
-            <FieldError error={errors.maxPlaytime} />
-          </div>
-
-          {/* タグ選択 */}
-          <fieldset className={styles.form_field}>
-            <legend className={styles.form_label}>タグ</legend>
-            <div className={styles.form_chips}>
-              {tags.map((tag) => (
-                <Chip
-                  key={tag.tagId}
-                  label={tag.name}
-                  selected={selectedTagIds.includes(tag.tagId)}
-                  onClick={() => toggleTag(tag.tagId)}
-                />
-              ))}
-            </div>
-          </fieldset>
-
-          {/* サムネイルURL */}
-          <div className={styles.form_field}>
-            <label htmlFor="scenarioImageUrl" className={styles.form_label}>
-              サムネイルURL
-            </label>
-            <input
-              type="url"
-              id="scenarioImageUrl"
-              {...register('scenarioImageUrl')}
-              className={styles.form_input}
-              placeholder="https://example.com/image.jpg"
-            />
-            <FieldError error={errors.scenarioImageUrl} />
-          </div>
-
-          {/* 配布URL */}
-          <div className={styles.form_field}>
-            <label htmlFor="distributeUrl" className={styles.form_label}>
-              配布URL
-            </label>
-            <input
-              type="url"
+            {/* 配布URL */}
+            <FormField
               id="distributeUrl"
-              {...register('distributeUrl')}
-              className={styles.form_input}
-              placeholder="https://booth.pm/ja/items/..."
-            />
-            <FieldError error={errors.distributeUrl} />
+              label="配布URL"
+              error={errors.distributeUrl}
+            >
+              <Input
+                type="url"
+                id="distributeUrl"
+                {...register('distributeUrl')}
+                placeholder="https://..."
+              />
+            </FormField>
+
+            {/* タグ */}
+            <FormField label="タグ">
+              {/* 選択済みタグ */}
+              {selectedTags.length > 0 && (
+                <div className={styles.form_chips}>
+                  {selectedTags.map((tag) => (
+                    <Chip
+                      key={tag.tagId}
+                      label={tag.name}
+                      selected
+                      removable
+                      onRemove={() => toggleTag(tag.tagId)}
+                    />
+                  ))}
+                </div>
+              )}
+              {/* 選択可能タグ */}
+              {unselectedTags.length > 0 && (
+                <div className={styles.form_chips}>
+                  {unselectedTags.map((tag) => (
+                    <Chip
+                      key={tag.tagId}
+                      label={tag.name}
+                      onClick={() => toggleTag(tag.tagId)}
+                    />
+                  ))}
+                </div>
+              )}
+            </FormField>
           </div>
         </div>
 
-        {/* アクションボタン */}
-        <hr className={styles.form_divider} />
-        <div className={styles.form_actions}>
+        {/* シナリオ概要 */}
+        <FormField
+          id="description"
+          label="シナリオ概要"
+          error={errors.description}
+        >
+          <Textarea
+            id="description"
+            {...register('description')}
+            placeholder="シナリオの概要を入力（任意）"
+            maxLength={2000}
+          />
+        </FormField>
+
+        {/* フッター */}
+        <div className={styles.form_footer}>
           <Button type="button" variant="ghost" onClick={handleCancel}>
             キャンセル
           </Button>
@@ -321,6 +436,7 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
             loading={isPending}
             loadingText="登録中..."
           >
+            <Check size={18} />
             登録する
           </Button>
         </div>

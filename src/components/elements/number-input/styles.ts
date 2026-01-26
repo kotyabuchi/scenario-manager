@@ -14,7 +14,8 @@ export const numberInput_root = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '8px',
-  width: '200px',
+  w: 'full',
+  minW: 0,
 });
 
 export const numberInput_label = css({

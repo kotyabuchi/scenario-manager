@@ -13,7 +13,7 @@ type FormFieldProps = {
   /** 必須マーク表示 */
   required?: boolean;
   /** エラーオブジェクト（React Hook Form互換） */
-  error?: { message?: string };
+  error?: { message?: string } | undefined;
   /** ヒントテキスト */
   hint?: string;
   /** 入力要素 */
