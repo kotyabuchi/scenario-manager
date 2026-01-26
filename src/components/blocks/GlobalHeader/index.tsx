@@ -20,6 +20,8 @@ const navItems: NavItem[] = [
   { href: '/home', label: 'ホーム' },
   { href: '/scenarios', label: 'シナリオ' },
   { href: '/sessions', label: 'セッション' },
+  { href: '/schedules', label: 'スケジュール' },
+  { href: '/users', label: 'ユーザー' },
 ];
 
 export const GlobalHeader = () => {

@@ -13,203 +13,11 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "1XXtD",
+          "id": "xuTJx",
+          "type": "ref",
+          "ref": "meAr4",
           "name": "Header",
-          "width": "fill_container",
-          "height": 64,
-          "fill": "#FFFFFF",
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#0000000D",
-            "offset": {
-              "x": 0,
-              "y": 2
-            },
-            "blur": 8
-          },
-          "padding": [
-            0,
-            32
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "xk7wL",
-              "name": "logo",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "24Yxb",
-                  "name": "logoIcon",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "#D1FAE5",
-                  "cornerRadius": 8,
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "zcRhZ",
-                      "x": 7,
-                      "y": 7,
-                      "name": "logoIcon1",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "book-open",
-                      "iconFontFamily": "lucide",
-                      "fill": "#10B981"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "R8Zrb",
-                  "name": "logoText",
-                  "fill": "#10B981",
-                  "content": "シナプレ管理くん",
-                  "fontFamily": "Inter",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "R80H3",
-              "name": "navLinks",
-              "gap": 24,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ntfSy",
-                  "name": "navHomeFrame",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "SgZfs",
-                      "name": "navHomeText",
-                      "fill": "#6B7280",
-                      "content": "ホーム",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "kHRAt",
-                      "name": "navHomeLine",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "rOrHx",
-                  "name": "navScenarioFrame",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "fPqK9",
-                      "name": "navScenarioText",
-                      "fill": "#10B981",
-                      "content": "シナリオ",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "OXd90",
-                      "name": "navScenarioLine",
-                      "width": "fill_container",
-                      "height": 2,
-                      "fill": "#10B981",
-                      "cornerRadius": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "FDeYC",
-                  "name": "navSessionFrame",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Kl013",
-                      "name": "navSessionText",
-                      "fill": "#6B7280",
-                      "content": "セッション",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "jOonB",
-                      "name": "navSessionLine",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "os8gy",
-              "name": "userArea",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "MyXGG",
-                  "type": "ref",
-                  "ref": "zgKWk",
-                  "height": 36,
-                  "name": "scenarioRegBtn",
-                  "descendants": {
-                    "pTc6p": {
-                      "iconFontName": "plus",
-                      "width": 16,
-                      "height": 16
-                    },
-                    "ZXcTb": {
-                      "content": "シナリオを登録",
-                      "fontSize": 13
-                    }
-                  }
-                },
-                {
-                  "type": "frame",
-                  "id": "RNR9p",
-                  "name": "avatar",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#E5E7EB",
-                  "cornerRadius": 18
-                }
-              ]
-            }
-          ]
+          "width": "fill_container"
         },
         {
           "type": "frame",
@@ -1865,203 +1673,11 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "arvGi",
+          "id": "Y7nJ7",
+          "type": "ref",
+          "ref": "meAr4",
           "name": "Header",
-          "width": "fill_container",
-          "height": 64,
-          "fill": "#FFFFFF",
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#0000000D",
-            "offset": {
-              "x": 0,
-              "y": 2
-            },
-            "blur": 8
-          },
-          "padding": [
-            0,
-            32
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "HZ3Vz",
-              "name": "logo",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "Dgi2n",
-                  "name": "logoIcon2",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "#D1FAE5",
-                  "cornerRadius": 8,
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "aVidv",
-                      "x": 7,
-                      "y": 7,
-                      "name": "logoIconInner2",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "book-open",
-                      "iconFontFamily": "lucide",
-                      "fill": "#10B981"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "FDWol",
-                  "name": "logoText2",
-                  "fill": "#10B981",
-                  "content": "シナプレ管理くん",
-                  "fontFamily": "Inter",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "hXIG3",
-              "name": "emptyNav",
-              "gap": 24,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "zzru5",
-                  "name": "navHomeFrame2",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "DFeCd",
-                      "name": "navHomeText2",
-                      "fill": "#6B7280",
-                      "content": "ホーム",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "7PGJJ",
-                      "name": "navHomeLine2",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "4qNPR",
-                  "name": "navScenarioFrame2",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "L8P71",
-                      "name": "navScenarioText2",
-                      "fill": "#10B981",
-                      "content": "シナリオ",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "fTUuh",
-                      "name": "navScenarioLine2",
-                      "width": "fill_container",
-                      "height": 2,
-                      "fill": "#10B981",
-                      "cornerRadius": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "g4osf",
-                  "name": "navSessionFrame2",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "eqJ84",
-                      "name": "navSessionText2",
-                      "fill": "#6B7280",
-                      "content": "セッション",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "A5j6E",
-                      "name": "navSessionLine2",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "WQjV9",
-              "name": "emptyUser",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "ceV8R",
-                  "type": "ref",
-                  "ref": "zgKWk",
-                  "height": 36,
-                  "name": "emptyRegBtn",
-                  "descendants": {
-                    "pTc6p": {
-                      "iconFontName": "plus",
-                      "width": 16,
-                      "height": 16
-                    },
-                    "ZXcTb": {
-                      "content": "シナリオを登録",
-                      "fontSize": 13
-                    }
-                  }
-                },
-                {
-                  "type": "frame",
-                  "id": "fc4s2",
-                  "name": "emptyAvatar",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#E5E7EB",
-                  "cornerRadius": 18
-                }
-              ]
-            }
-          ]
+          "width": "fill_container"
         },
         {
           "type": "frame",
@@ -2532,203 +2148,11 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "OEhKn",
+          "id": "4rgjz",
+          "type": "ref",
+          "ref": "meAr4",
           "name": "Header",
-          "width": "fill_container",
-          "height": 64,
-          "fill": "#FFFFFF",
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#0000000D",
-            "offset": {
-              "x": 0,
-              "y": 2
-            },
-            "blur": 8
-          },
-          "padding": [
-            0,
-            32
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "jYvoW",
-              "name": "logo",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "nxSDG",
-                  "name": "logoIcon3",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "#D1FAE5",
-                  "cornerRadius": 8,
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "jyQ3Q",
-                      "x": 7,
-                      "y": 7,
-                      "name": "logoIconInner3",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "book-open",
-                      "iconFontFamily": "lucide",
-                      "fill": "#10B981"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "8hbpp",
-                  "name": "logoText3",
-                  "fill": "#10B981",
-                  "content": "シナプレ管理くん",
-                  "fontFamily": "Inter",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "b8r1S",
-              "name": "navLinks",
-              "gap": 24,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "6Z0YF",
-                  "name": "navHomeFrame3",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "HZFzg",
-                      "name": "navHomeText3",
-                      "fill": "#6B7280",
-                      "content": "ホーム",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "wOlpX",
-                      "name": "navHomeLine3",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "pMHuC",
-                  "name": "navScenarioFrame3",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "I0D5V",
-                      "name": "navScenarioText3",
-                      "fill": "#10B981",
-                      "content": "シナリオ",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "dTIK7",
-                      "name": "navScenarioLine3",
-                      "width": "fill_container",
-                      "height": 2,
-                      "fill": "#10B981",
-                      "cornerRadius": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "EPsLO",
-                  "name": "navSessionFrame3",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "AyQaz",
-                      "name": "navSessionText3",
-                      "fill": "#6B7280",
-                      "content": "セッション",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "6SliJ",
-                      "name": "navSessionLine3",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "bCBJt",
-              "name": "userArea",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "m0vP6",
-                  "type": "ref",
-                  "ref": "zgKWk",
-                  "height": 36,
-                  "name": "expandRegBtn",
-                  "descendants": {
-                    "pTc6p": {
-                      "iconFontName": "plus",
-                      "width": 16,
-                      "height": 16
-                    },
-                    "ZXcTb": {
-                      "content": "シナリオを登録",
-                      "fontSize": 13
-                    }
-                  }
-                },
-                {
-                  "type": "frame",
-                  "id": "z4fyI",
-                  "name": "avatar",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#E5E7EB",
-                  "cornerRadius": 18
-                }
-              ]
-            }
-          ]
+          "width": "fill_container"
         },
         {
           "type": "frame",
@@ -3025,7 +2449,6 @@
               "name": "詳細条件行",
               "width": "fill_container",
               "gap": 24,
-              "alignItems": "end",
               "children": [
                 {
                   "type": "frame",
@@ -11099,7 +10522,7 @@
         {
           "type": "frame",
           "id": "85Sl4",
-          "name": "Combobox Row",
+          "name": "TagsInput Row",
           "width": "fill_container",
           "layout": "vertical",
           "gap": 16,
@@ -11107,7 +10530,7 @@
             {
               "type": "text",
               "id": "TV6lW",
-              "name": "comboRowLabel",
+              "name": "tagsInputRowLabel",
               "fill": "#6B7280",
               "content": "TagsInput",
               "fontFamily": "Inter",
@@ -11752,7 +11175,7 @@
               "id": "r0Mhi",
               "name": "headerLabel",
               "fill": "#6B7280",
-              "content": "GlobalHeader",
+              "content": "GlobalHeader（ナビ選択バリエーション）",
               "fontFamily": "Inter",
               "fontSize": 16,
               "fontWeight": "600"
@@ -11760,7 +11183,7 @@
             {
               "type": "frame",
               "id": "meAr4",
-              "name": "GlobalHeader/Default",
+              "name": "GlobalHeader/Scenario",
               "reusable": true,
               "width": 1440,
               "height": 64,
@@ -11775,16 +11198,13 @@
                 },
                 "blur": 8
               },
-              "padding": [
-                0,
-                32
-              ],
-              "justifyContent": "space_between",
-              "alignItems": "center",
+              "layout": "none",
               "children": [
                 {
                   "type": "frame",
                   "id": "PJTBN",
+                  "x": 32,
+                  "y": 16,
                   "name": "logo",
                   "gap": 8,
                   "alignItems": "center",
@@ -11828,6 +11248,8 @@
                 {
                   "type": "frame",
                   "id": "QQOa3",
+                  "x": 518,
+                  "y": 20,
                   "name": "navLinks",
                   "gap": 24,
                   "alignItems": "center",
@@ -11918,12 +11340,72 @@
                           "cornerRadius": 1
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "6Nc1z",
+                      "name": "navSchedule",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OT30b",
+                          "name": "navScheduleText",
+                          "fill": "#6B7280",
+                          "content": "スケジュール",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Mjsjc",
+                          "name": "navScheduleLine",
+                          "opacity": 0,
+                          "width": "fill_container",
+                          "height": 2,
+                          "cornerRadius": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "5BWEj",
+                      "name": "navUser",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "SVb43",
+                          "name": "navUserText",
+                          "fill": "#6B7280",
+                          "content": "ユーザー",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "tzGdN",
+                          "name": "navUserLine",
+                          "opacity": 0,
+                          "width": "fill_container",
+                          "height": 2,
+                          "cornerRadius": 1
+                        }
+                      ]
                     }
                   ]
                 },
                 {
                   "type": "frame",
                   "id": "3aoWK",
+                  "x": 1204,
+                  "y": 14,
                   "name": "userArea",
                   "gap": 12,
                   "alignItems": "center",
@@ -11958,6 +11440,151 @@
                   ]
                 }
               ]
+            },
+            {
+              "id": "bW36Z",
+              "type": "ref",
+              "ref": "meAr4",
+              "name": "GlobalHeader/Home",
+              "descendants": {
+                "clnXq": {
+                  "fill": "#10B981",
+                  "fontWeight": "600"
+                },
+                "RbZft": {
+                  "fill": "#10B981",
+                  "opacity": 1
+                },
+                "Vc1Ag": {
+                  "fill": "#6B7280",
+                  "fontWeight": "500"
+                },
+                "hrIDK": {
+                  "opacity": 0
+                },
+                "3aoWK": {
+                  "gap": 0,
+                  "x": 1372
+                },
+                "1fIJH": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "uWHv7",
+              "type": "ref",
+              "ref": "meAr4",
+              "name": "GlobalHeader/Scenario/NoButton",
+              "descendants": {
+                "3aoWK": {
+                  "gap": 0,
+                  "x": 1372
+                },
+                "1fIJH": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "A6YJg",
+              "type": "ref",
+              "ref": "meAr4",
+              "name": "GlobalHeader/Session",
+              "descendants": {
+                "Vc1Ag": {
+                  "fill": "#6B7280",
+                  "fontWeight": "500"
+                },
+                "hrIDK": {
+                  "opacity": 0
+                },
+                "THOiZ": {
+                  "fill": "#10B981",
+                  "fontWeight": "600"
+                },
+                "v3R50": {
+                  "fill": "#10B981",
+                  "opacity": 1
+                },
+                "3aoWK": {
+                  "gap": 0,
+                  "x": 1372
+                },
+                "1fIJH": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "9A8gs",
+              "type": "ref",
+              "ref": "meAr4",
+              "name": "GlobalHeader/Schedule",
+              "descendants": {
+                "Vc1Ag": {
+                  "fill": "#6B7280",
+                  "fontWeight": "500"
+                },
+                "hrIDK": {
+                  "opacity": 0
+                },
+                "OT30b": {
+                  "fill": "#10B981",
+                  "fontWeight": "600"
+                },
+                "Mjsjc": {
+                  "fill": "#10B981",
+                  "opacity": 1
+                },
+                "3aoWK": {
+                  "gap": 0,
+                  "x": 1372
+                },
+                "1fIJH": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "MTUPN",
+              "type": "ref",
+              "ref": "meAr4",
+              "name": "GlobalHeader/User",
+              "descendants": {
+                "Vc1Ag": {
+                  "fill": "#6B7280",
+                  "fontWeight": "500"
+                },
+                "hrIDK": {
+                  "opacity": 0
+                },
+                "SVb43": {
+                  "fill": "#10B981",
+                  "fontWeight": "600"
+                },
+                "tzGdN": {
+                  "fill": "#10B981",
+                  "opacity": 1
+                },
+                "3aoWK": {
+                  "gap": 0,
+                  "x": 1372
+                },
+                "1fIJH": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                }
+              }
             }
           ]
         },
@@ -13066,207 +12693,13 @@
       "layout": "none",
       "children": [
         {
-          "type": "frame",
-          "id": "TSHXz",
-          "x": 0,
-          "y": 0,
+          "id": "DeIpU",
+          "type": "ref",
+          "ref": "meAr4",
           "name": "Header",
           "width": 1440,
-          "height": 64,
-          "fill": "#FFFFFF",
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#0000000D",
-            "offset": {
-              "x": 0,
-              "y": 2
-            },
-            "blur": 8
-          },
-          "padding": [
-            0,
-            32
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "g3Ln6",
-              "name": "logo",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "YXFk9",
-                  "name": "logoIconFrame",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "#D1FAE5",
-                  "cornerRadius": 8,
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "5sRbn",
-                      "x": 7,
-                      "y": 7,
-                      "name": "logoIcon",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "book-open",
-                      "iconFontFamily": "lucide",
-                      "fill": "#10B981"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "Q8qm6",
-                  "name": "logoText",
-                  "fill": "#10B981",
-                  "content": "シナプレ管理くん",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "600"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "LOJ3M",
-              "name": "navLinks",
-              "gap": 24,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "Hnr2J",
-                  "name": "navHome",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "1V1Aq",
-                      "name": "navHomeText",
-                      "fill": "#6B7280",
-                      "content": "ホーム",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "EKAzb",
-                      "name": "navHomeLine",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2,
-                      "cornerRadius": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "CeRkC",
-                  "name": "navScenario",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "XwUd3",
-                      "name": "navScenarioText",
-                      "fill": "#10B981",
-                      "content": "シナリオ",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "MTGBU",
-                      "name": "navScenarioLine",
-                      "width": "fill_container",
-                      "height": 2,
-                      "fill": "#10B981",
-                      "cornerRadius": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "JUZTR",
-                  "name": "navSession",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "TnSBt",
-                      "name": "navSessionText",
-                      "fill": "#6B7280",
-                      "content": "セッション",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "qzpeA",
-                      "name": "navSessionLine",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2,
-                      "cornerRadius": 1
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "Yroem",
-              "name": "userArea",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "Y9nms",
-                  "type": "ref",
-                  "ref": "zgKWk",
-                  "height": 36,
-                  "name": "detailRegBtn",
-                  "descendants": {
-                    "pTc6p": {
-                      "iconFontName": "plus",
-                      "width": 16,
-                      "height": 16
-                    },
-                    "ZXcTb": {
-                      "content": "シナリオを登録",
-                      "fontSize": 13
-                    }
-                  }
-                },
-                {
-                  "type": "frame",
-                  "id": "AXhND",
-                  "name": "userAvatar",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#E5E7EB",
-                  "cornerRadius": 18
-                }
-              ]
-            }
-          ]
+          "x": 0,
+          "y": 0
         },
         {
           "type": "frame",
@@ -15309,185 +14742,18 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "KzIKR",
+          "id": "CiDub",
+          "type": "ref",
+          "ref": "meAr4",
           "name": "siteHeader",
           "width": "fill_container",
-          "height": 64,
-          "fill": "#FFFFFF",
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#0000000D",
-            "offset": {
-              "x": 0,
-              "y": 2
-            },
-            "blur": 8
-          },
-          "padding": [
-            0,
-            32
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "EwDdr",
-              "name": "logo",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "mc8iy",
-                  "name": "logoIcon",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "#D1FAE5",
-                  "cornerRadius": 8,
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "yEkVc",
-                      "x": 7,
-                      "y": 7,
-                      "name": "logoIcon1",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "book-open",
-                      "iconFontFamily": "lucide",
-                      "fill": "#10B981"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "WHVKG",
-                  "name": "logoText",
-                  "fill": "#10B981",
-                  "content": "シナプレ管理くん",
-                  "fontFamily": "Inter",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "WstJs",
-              "name": "navLinks",
-              "gap": 24,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "TVO9X",
-                  "name": "navHomeFrame",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "L9FdA",
-                      "name": "navHomeText",
-                      "fill": "#6B7280",
-                      "content": "ホーム",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "NGzEq",
-                      "name": "navHomeLine",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "dR72P",
-                  "name": "navScenarioFrame",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "VCfoj",
-                      "name": "navScenarioText",
-                      "fill": "#10B981",
-                      "content": "シナリオ",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "SUoJj",
-                      "name": "navScenarioLine",
-                      "width": "fill_container",
-                      "height": 2,
-                      "fill": "#10B981",
-                      "cornerRadius": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "xgjlG",
-                  "name": "navSessionFrame",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Iqv73",
-                      "name": "navSessionText",
-                      "fill": "#6B7280",
-                      "content": "セッション",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "AN64d",
-                      "name": "navSessionLine",
-                      "opacity": 0,
-                      "width": "fill_container",
-                      "height": 2
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "Soi3o",
-              "name": "userArea",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "SO734",
-                  "name": "avatar",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#E5E7EB",
-                  "cornerRadius": 18
-                }
-              ]
+          "descendants": {
+            "1fIJH": {
+              "opacity": 0,
+              "width": 0,
+              "height": 0
             }
-          ]
+          }
         },
         {
           "type": "frame",
