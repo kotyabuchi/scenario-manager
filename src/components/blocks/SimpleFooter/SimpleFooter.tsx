@@ -26,7 +26,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     height: '48px',
-    bg: 'gray.50',
+    bg: 'white',
   }),
   copyright: css({
     fontSize: '12px',
