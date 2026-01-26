@@ -1,13 +1,12 @@
 'use client';
 
-import { BookOpen, LogIn, LogOut, UserPlus } from 'lucide-react';
+import { BookOpen, LogIn, Plus, UserPlus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 import * as styles from './styles';
 
-import { logout } from '@/app/(auth)/logout/actions';
 import { useAuth } from '@/hooks/use-auth';
 
 import type { Route } from 'next';
@@ -33,16 +32,16 @@ export const GlobalHeader = () => {
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
+  // scenarios配下（/scenarios/new以外）で登録ボタンを表示
+  const showScenarioRegisterButton =
+    pathname.startsWith('/scenarios') && pathname !== '/scenarios/new';
+
   const handleClickLogin = () => {
     router.push('/login');
   };
 
   const handleClickSignup = () => {
     router.push('/signup');
-  };
-
-  const handleClickLogout = async () => {
-    await logout();
   };
 
   const handleClickProfile = () => {
@@ -82,33 +81,29 @@ export const GlobalHeader = () => {
 
       {/* User Area */}
       <div className={styles.userArea}>
+        {showScenarioRegisterButton && (
+          <Link href="/scenarios/new" className={styles.registerButton}>
+            <Plus size={16} />
+            シナリオを登録
+          </Link>
+        )}
         {isLoggedIn ? (
-          <>
-            <button
-              type="button"
-              className={styles.avatar}
-              onClick={handleClickProfile}
-              aria-label="プロフィール"
-            >
-              {userAvatarUrl ? (
-                <Image
-                  src={userAvatarUrl}
-                  alt="ユーザーアバター"
-                  width={36}
-                  height={36}
-                  className={styles.avatarImage}
-                />
-              ) : null}
-            </button>
-            <button
-              type="button"
-              className={styles.authButton({ variant: 'logout' })}
-              onClick={handleClickLogout}
-            >
-              <LogOut size={16} />
-              ログアウト
-            </button>
-          </>
+          <button
+            type="button"
+            className={styles.avatar}
+            onClick={handleClickProfile}
+            aria-label="プロフィール"
+          >
+            {userAvatarUrl ? (
+              <Image
+                src={userAvatarUrl}
+                alt="ユーザーアバター"
+                width={36}
+                height={36}
+                className={styles.avatarImage}
+              />
+            ) : null}
+          </button>
         ) : (
           <>
             <button

@@ -181,6 +181,24 @@
               "alignItems": "center",
               "children": [
                 {
+                  "id": "MyXGG",
+                  "type": "ref",
+                  "ref": "zgKWk",
+                  "height": 36,
+                  "name": "scenarioRegBtn",
+                  "descendants": {
+                    "pTc6p": {
+                      "iconFontName": "plus",
+                      "width": 16,
+                      "height": 16
+                    },
+                    "ZXcTb": {
+                      "content": "シナリオを登録",
+                      "fontSize": 13
+                    }
+                  }
+                },
+                {
                   "type": "frame",
                   "id": "RNR9p",
                   "name": "avatar",
@@ -2015,6 +2033,24 @@
               "alignItems": "center",
               "children": [
                 {
+                  "id": "ceV8R",
+                  "type": "ref",
+                  "ref": "zgKWk",
+                  "height": 36,
+                  "name": "emptyRegBtn",
+                  "descendants": {
+                    "pTc6p": {
+                      "iconFontName": "plus",
+                      "width": 16,
+                      "height": 16
+                    },
+                    "ZXcTb": {
+                      "content": "シナリオを登録",
+                      "fontSize": 13
+                    }
+                  }
+                },
+                {
                   "type": "frame",
                   "id": "fc4s2",
                   "name": "emptyAvatar",
@@ -2663,6 +2699,24 @@
               "gap": 12,
               "alignItems": "center",
               "children": [
+                {
+                  "id": "m0vP6",
+                  "type": "ref",
+                  "ref": "zgKWk",
+                  "height": 36,
+                  "name": "expandRegBtn",
+                  "descendants": {
+                    "pTc6p": {
+                      "iconFontName": "plus",
+                      "width": 16,
+                      "height": 16
+                    },
+                    "ZXcTb": {
+                      "content": "シナリオを登録",
+                      "fontSize": 13
+                    }
+                  }
+                },
                 {
                   "type": "frame",
                   "id": "z4fyI",
@@ -11875,6 +11929,24 @@
                   "alignItems": "center",
                   "children": [
                     {
+                      "id": "1fIJH",
+                      "type": "ref",
+                      "ref": "zgKWk",
+                      "height": 36,
+                      "name": "registerBtn",
+                      "descendants": {
+                        "pTc6p": {
+                          "iconFontName": "plus",
+                          "width": 16,
+                          "height": 16
+                        },
+                        "ZXcTb": {
+                          "content": "シナリオを登録",
+                          "fontSize": 13
+                        }
+                      }
+                    },
+                    {
                       "type": "frame",
                       "id": "4HBPe",
                       "name": "userAvatar",
@@ -13122,6 +13194,24 @@
               "gap": 12,
               "alignItems": "center",
               "children": [
+                {
+                  "id": "Y9nms",
+                  "type": "ref",
+                  "ref": "zgKWk",
+                  "height": 36,
+                  "name": "detailRegBtn",
+                  "descendants": {
+                    "pTc6p": {
+                      "iconFontName": "plus",
+                      "width": 16,
+                      "height": 16
+                    },
+                    "ZXcTb": {
+                      "content": "シナリオを登録",
+                      "fontSize": 13
+                    }
+                  }
+                },
                 {
                   "type": "frame",
                   "id": "AXhND",

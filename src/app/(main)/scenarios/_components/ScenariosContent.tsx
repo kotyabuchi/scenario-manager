@@ -2,7 +2,6 @@
 
 import { useCallback, useState, useTransition } from 'react';
 import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
 import { useQueryStates } from 'nuqs';
 import { isNil } from 'ramda';
 
@@ -193,14 +192,6 @@ export const ScenariosContent = ({
     <>
       {/* 検索エリア（白背景、ヘッダーと一体化） */}
       <div className={styles.searchArea}>
-        <div className={styles.searchAreaContent}>
-          <div className={styles.pageHeader}>
-            <h1 className={styles.pageTitle}>シナリオ検索</h1>
-            <Link href="/scenarios/new">
-              <Button status="primary">シナリオを登録</Button>
-            </Link>
-          </div>
-        </div>
         <SearchPanel
           systems={systems}
           tags={tags}
@@ -240,15 +231,20 @@ export const ScenariosContent = ({
               className={css({
                 display: 'flex',
                 justifyContent: 'center',
-                mt: 'xl',
+                pt: '4',
               })}
             >
               <Button
-                variant="subtle"
+                variant="outline"
                 status="primary"
                 onClick={handleLoadMore}
+                className={css({
+                  px: '32px',
+                  shadow: 'header.default',
+                })}
               >
-                もっと見る <ChevronDown size={16} />
+                <ChevronDown size={18} className={css({ color: 'gray.500' })} />
+                もっと見る
               </Button>
             </div>
           )}

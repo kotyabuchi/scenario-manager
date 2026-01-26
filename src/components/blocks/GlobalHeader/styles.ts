@@ -124,6 +124,26 @@ export const avatarImage = css({
   objectFit: 'cover',
 });
 
+export const registerButton = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  px: '4',
+  height: '36px',
+  fontSize: 'sm',
+  fontWeight: 'semibold',
+  color: 'button.primaryText',
+  bg: 'button.primaryBg',
+  boxShadow: 'button.primary',
+  borderRadius: 'md',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  textDecoration: 'none',
+  _hover: {
+    bg: 'button.primaryBgHover',
+  },
+});
+
 export const authButton = cva({
   base: {
     display: 'flex',
@@ -151,13 +171,6 @@ export const authButton = cva({
         bg: 'oklch(0.55 0.15 160)',
         _hover: {
           bg: 'oklch(0.50 0.15 160)',
-        },
-      },
-      logout: {
-        color: 'oklch(0.45 0.02 150)',
-        bg: 'transparent',
-        _hover: {
-          bg: 'oklch(0.95 0.02 150)',
         },
       },
     },
