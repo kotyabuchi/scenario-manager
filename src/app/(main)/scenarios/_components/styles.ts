@@ -566,12 +566,11 @@ export const pageContainer = css({
 // 検索エリア（白背景、ヘッダーと一体化）
 export const searchArea = css({
   bg: 'white',
-  pb: 'md',
 });
 
 // 検索エリア内のコンテンツ
 export const searchAreaContent = css({
-  maxW: '1200px',
+  maxW: '1400px',
   mx: 'auto',
   px: 'lg',
 });
@@ -584,7 +583,7 @@ export const resultsArea = css({
 
 // 結果エリア内のコンテンツ
 export const resultsAreaContent = css({
-  maxW: '1200px',
+  maxW: '1400px',
   mx: 'auto',
   px: 'lg',
 });
