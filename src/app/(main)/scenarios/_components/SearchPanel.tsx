@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
@@ -64,6 +64,32 @@ export const SearchPanel = ({
 
   const selectedSystemIds = watch('systemIds') as string[];
   const selectedTagIds = watch('tagIds') as string[];
+
+  // defaultParamsが変更されたらフォームとスライダーの状態を同期
+  useEffect(() => {
+    reset({
+      systemIds: defaultParams?.systemIds ?? [],
+      tagIds: defaultParams?.tagIds ?? [],
+      minPlayer: defaultParams?.playerCount?.min,
+      maxPlayer: defaultParams?.playerCount?.max,
+      minPlaytime: defaultParams?.playtime?.min,
+      maxPlaytime: defaultParams?.playtime?.max,
+      scenarioName: defaultParams?.scenarioName ?? '',
+    });
+    setPlayerCountRange([
+      defaultParams?.playerCount?.min ?? 2,
+      defaultParams?.playerCount?.max ?? 6,
+    ]);
+    setPlaytimeRange([
+      defaultParams?.playtime?.min ?? 30,
+      defaultParams?.playtime?.max ?? 180,
+    ]);
+    const hasConditions =
+      !isNil(defaultParams?.playerCount) ||
+      !isNil(defaultParams?.playtime) ||
+      (!isNil(defaultParams?.tagIds) && defaultParams.tagIds.length > 0);
+    setIsExpanded(hasConditions);
+  }, [defaultParams, reset]);
 
   // システム選択肢をSelectItem形式に変換
   const systemItems: SelectItem[] = systems.map((system) => ({
