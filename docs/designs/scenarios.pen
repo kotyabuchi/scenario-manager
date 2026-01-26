@@ -4793,7 +4793,7 @@
       "y": 0,
       "name": "Components",
       "width": 1771,
-      "fill": "#FFFFFF",
+      "fill": "#f5f7fa",
       "layout": "vertical",
       "gap": 32,
       "padding": 32,
@@ -11960,6 +11960,49 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "5mlH3",
+          "name": "SimpleFooter Row",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "children": [
+            {
+              "type": "text",
+              "id": "5opjO",
+              "name": "footerLabel",
+              "fill": "#6B7280",
+              "content": "SimpleFooter",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "3IKRN",
+              "name": "SimpleFooter/Default",
+              "reusable": true,
+              "width": 1440,
+              "height": 48,
+              "fill": "#FFFFFF",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CNgYF",
+                  "name": "copyright",
+                  "fill": "#9CA3AF",
+                  "content": "© 2026 シナプレ管理くん",
+                  "fontFamily": "Inter",
+                  "fontSize": 12
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -13019,7 +13062,7 @@
       "name": "Scenarios / 詳細画面",
       "width": 1440,
       "height": 1500,
-      "fill": "#F9FAFB",
+      "fill": "#f5f7fa",
       "layout": "none",
       "children": [
         {
@@ -15262,7 +15305,7 @@
       "name": "Scenarios / 登録画面",
       "clip": true,
       "width": 1440,
-      "fill": "#f9fafb",
+      "fill": "#f5f7fa",
       "layout": "vertical",
       "children": [
         {
