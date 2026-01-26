@@ -11,7 +11,74 @@ import { useFilter } from '@ark-ui/react/locale';
 import { Portal } from '@ark-ui/react/portal';
 import { Check, ChevronDown, X } from 'lucide-react';
 
-import * as styles from './styles';
+import { createStyleContext } from '@/lib/create-style-context';
+import { type ComboboxVariantProps, combobox } from '@/styled-system/recipes';
+
+import type { ComponentPropsWithoutRef } from 'react';
+
+const { withProvider, withContext } = createStyleContext(combobox);
+
+// Styled components
+const Root = withProvider<
+  HTMLDivElement,
+  ComboboxRootProps<ComboboxItem> & ComboboxVariantProps
+>(ArkCombobox.Root, 'root');
+
+const Control = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.Control>
+>(ArkCombobox.Control, 'control');
+
+const Input = withContext<
+  HTMLInputElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.Input>
+>(ArkCombobox.Input, 'input');
+
+const Trigger = withContext<
+  HTMLButtonElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.Trigger>
+>(ArkCombobox.Trigger, 'trigger');
+
+const ClearTrigger = withContext<
+  HTMLButtonElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.ClearTrigger>
+>(ArkCombobox.ClearTrigger, 'clearTrigger');
+
+const Positioner = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.Positioner>
+>(ArkCombobox.Positioner, 'positioner');
+
+const Content = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.Content>
+>(ArkCombobox.Content, 'content');
+
+const Item = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.Item>
+>(ArkCombobox.Item, 'item');
+
+const ItemText = withContext<
+  HTMLSpanElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.ItemText>
+>(ArkCombobox.ItemText, 'itemText');
+
+const ItemIndicator = withContext<
+  HTMLSpanElement,
+  ComponentPropsWithoutRef<typeof ArkCombobox.ItemIndicator>
+>(ArkCombobox.ItemIndicator, 'itemIndicator');
+
+// No results style (inline as it's simple)
+import { css } from '@/styled-system/css';
+
+const noResultsStyle = css({
+  px: '12px',
+  py: '8px',
+  fontSize: '14px',
+  color: 'text.secondary',
+  textAlign: 'center',
+});
 
 type ComboboxItem = {
   label: string;
@@ -89,7 +156,7 @@ export const Combobox = ({
   };
 
   return (
-    <ArkCombobox.Root
+    <Root
       collection={collection}
       value={value}
       onValueChange={onValueChange}
@@ -97,48 +164,38 @@ export const Combobox = ({
       disabled={disabled}
       name={name}
       multiple={multiple}
-      className={styles.combobox_root}
       openOnClick
+      variant={variant}
       {...rest}
     >
-      <ArkCombobox.Control className={styles.combobox_control({ variant })}>
-        <ArkCombobox.Input
-          id={id}
-          placeholder={placeholder}
-          className={styles.combobox_input}
-        />
-        <ArkCombobox.ClearTrigger className={styles.combobox_clearTrigger}>
+      <Control>
+        <Input id={id} placeholder={placeholder} />
+        <ClearTrigger>
           <X size={16} />
-        </ArkCombobox.ClearTrigger>
-        <ArkCombobox.Trigger className={styles.combobox_trigger}>
+        </ClearTrigger>
+        <Trigger>
           <ChevronDown size={16} />
-        </ArkCombobox.Trigger>
-      </ArkCombobox.Control>
+        </Trigger>
+      </Control>
       <Portal>
-        <ArkCombobox.Positioner className={styles.combobox_positioner}>
-          <ArkCombobox.Content className={styles.combobox_content}>
+        <Positioner>
+          <Content>
             {collection.items.length === 0 ? (
-              <div className={styles.combobox_noResults}>{noResultsText}</div>
+              <div className={noResultsStyle}>{noResultsText}</div>
             ) : (
               collection.items.map((item) => (
-                <ArkCombobox.Item
-                  key={item.value}
-                  item={item}
-                  className={styles.combobox_item}
-                >
-                  <ArkCombobox.ItemText>{item.label}</ArkCombobox.ItemText>
-                  <ArkCombobox.ItemIndicator
-                    className={styles.combobox_itemIndicator}
-                  >
+                <Item key={item.value} item={item}>
+                  <ItemText>{item.label}</ItemText>
+                  <ItemIndicator>
                     <Check size={16} />
-                  </ArkCombobox.ItemIndicator>
-                </ArkCombobox.Item>
+                  </ItemIndicator>
+                </Item>
               ))
             )}
-          </ArkCombobox.Content>
-        </ArkCombobox.Positioner>
+          </Content>
+        </Positioner>
       </Portal>
-    </ArkCombobox.Root>
+    </Root>
   );
 };
 

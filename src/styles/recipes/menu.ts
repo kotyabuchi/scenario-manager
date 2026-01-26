@@ -33,10 +33,9 @@ export const menu = defineSlotRecipe({
         borderRadius: '8px',
       },
     },
-    positioner: {
-      zIndex: 'dropdown',
-    },
+    positioner: {},
     content: {
+      zIndex: 'dropdown',
       bg: 'menu.bg',
       borderRadius: '12px',
       boxShadow: 'menu.default',

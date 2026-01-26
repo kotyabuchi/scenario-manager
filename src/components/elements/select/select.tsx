@@ -9,7 +9,53 @@ import {
 } from '@ark-ui/react/select';
 import { Check, ChevronDown } from 'lucide-react';
 
-import * as styles from './styles';
+import { createStyleContext } from '@/lib/create-style-context';
+import { type SelectVariantProps, select } from '@/styled-system/recipes';
+
+import type { ComponentPropsWithoutRef } from 'react';
+
+const { withProvider, withContext } = createStyleContext(select);
+
+// Styled components
+const Root = withProvider<
+  HTMLDivElement,
+  SelectRootProps<SelectItem> & SelectVariantProps
+>(ArkSelect.Root, 'root');
+
+const Trigger = withContext<
+  HTMLButtonElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.Trigger>
+>(ArkSelect.Trigger, 'trigger');
+
+const Indicator = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.Indicator>
+>(ArkSelect.Indicator, 'indicator');
+
+const Positioner = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.Positioner>
+>(ArkSelect.Positioner, 'positioner');
+
+const Content = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.Content>
+>(ArkSelect.Content, 'content');
+
+const Item = withContext<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.Item>
+>(ArkSelect.Item, 'item');
+
+const ItemText = withContext<
+  HTMLSpanElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.ItemText>
+>(ArkSelect.ItemText, 'itemText');
+
+const ItemIndicator = withContext<
+  HTMLSpanElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.ItemIndicator>
+>(ArkSelect.ItemIndicator, 'itemIndicator');
 
 type SelectItem = {
   label: string;
@@ -73,46 +119,40 @@ export const Select = ({
   const collection = createListCollection({ items });
 
   return (
-    <ArkSelect.Root
+    <Root
       collection={collection}
       value={value}
       onValueChange={onValueChange}
       disabled={disabled}
       name={name}
       multiple={multiple}
-      className={styles.select_root}
+      variant={variant}
       {...rest}
     >
       <ArkSelect.HiddenSelect />
       <ArkSelect.Control>
-        <ArkSelect.Trigger className={styles.select_trigger({ variant })}>
+        <Trigger>
           <ArkSelect.ValueText placeholder={placeholder} />
-          <ArkSelect.Indicator className={styles.select_icon}>
+          <Indicator>
             <ChevronDown size={16} />
-          </ArkSelect.Indicator>
-        </ArkSelect.Trigger>
+          </Indicator>
+        </Trigger>
       </ArkSelect.Control>
       <Portal>
-        <ArkSelect.Positioner className={styles.select_positioner}>
-          <ArkSelect.Content className={styles.select_content}>
+        <Positioner>
+          <Content>
             {collection.items.map((item) => (
-              <ArkSelect.Item
-                key={item.value}
-                item={item}
-                className={styles.select_item}
-              >
-                <ArkSelect.ItemText>{item.label}</ArkSelect.ItemText>
-                <ArkSelect.ItemIndicator
-                  className={styles.select_itemIndicator}
-                >
+              <Item key={item.value} item={item}>
+                <ItemText>{item.label}</ItemText>
+                <ItemIndicator>
                   <Check size={16} />
-                </ArkSelect.ItemIndicator>
-              </ArkSelect.Item>
+                </ItemIndicator>
+              </Item>
             ))}
-          </ArkSelect.Content>
-        </ArkSelect.Positioner>
+          </Content>
+        </Positioner>
       </Portal>
-    </ArkSelect.Root>
+    </Root>
   );
 };
 

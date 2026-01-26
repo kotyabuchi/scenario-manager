@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Select } from './select';
-import * as styles from './styles';
 
 const mockItems = [
   { label: 'りんご', value: 'apple' },
@@ -223,36 +222,6 @@ describe('Select', () => {
       await waitFor(() => {
         expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
       });
-    });
-  });
-});
-
-/**
- * スタイル定義のテスト
- * ui-design-system準拠を検証
- */
-describe('Select styles', () => {
-  describe('select_content（ドロップダウンコンテナ）', () => {
-    it('paddingが4px（上下左右統一）で定義されている', () => {
-      // styles.select_content はcss関数の結果（クラス名文字列）なので、
-      // スタイル定義自体をテストするにはstylesモジュールの構造を確認
-      expect(styles.select_content).toBeDefined();
-    });
-
-    it('borderRadiusが8pxで定義されている', () => {
-      expect(styles.select_content).toBeDefined();
-    });
-  });
-
-  describe('select_item（アイテム）', () => {
-    it('スタイルが定義されている', () => {
-      expect(styles.select_item).toBeDefined();
-    });
-  });
-
-  describe('select_itemIndicator（チェックアイコン）', () => {
-    it('スタイルが定義されている', () => {
-      expect(styles.select_itemIndicator).toBeDefined();
     });
   });
 });
