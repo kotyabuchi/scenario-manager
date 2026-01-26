@@ -137,7 +137,8 @@ export const featuresSection = css({
   flexDirection: 'column',
   alignItems: 'center',
   gap: '48px',
-  padding: '80px 120px',
+  padding: '80px 0',
+  overflow: 'hidden',
 });
 
 export const featuresTitle = css({
@@ -148,9 +149,16 @@ export const featuresTitle = css({
 
 export const featuresGrid = css({
   display: 'flex',
-  justifyContent: 'center',
   gap: '24px',
-  flexWrap: 'wrap',
+  overflowX: 'auto',
+  maxWidth: '100%',
+  px: '24px',
+  pb: '8px',
+  // Hide scrollbar but keep functionality
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
 });
 
 export const featureCard = css({
@@ -207,8 +215,14 @@ export const howtoTitle = css({
 export const howtoSteps = css({
   display: 'flex',
   gap: '48px',
-  flexWrap: 'wrap',
   justifyContent: 'center',
+  // Stack vertically on smaller screens
+  flexDirection: 'column',
+  alignItems: 'center',
+  md: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
 });
 
 export const stepCard = css({
