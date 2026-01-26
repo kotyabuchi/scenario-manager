@@ -186,6 +186,12 @@ export const ScenariosContent = ({
     }
   }, [currentParams, queryParams.sort, offset]);
 
+  // 検索条件をリセット
+  const handleReset = useCallback(async () => {
+    const emptyParams: SearchParams = {};
+    await handleSearch(emptyParams);
+  }, [handleSearch]);
+
   const hasMore = searchResult.scenarios.length < searchResult.totalCount;
 
   return (
@@ -224,6 +230,7 @@ export const ScenariosContent = ({
           <ScenarioList
             scenarios={searchResult.scenarios}
             isLoading={isPending}
+            onReset={handleReset}
           />
 
           {hasMore && (

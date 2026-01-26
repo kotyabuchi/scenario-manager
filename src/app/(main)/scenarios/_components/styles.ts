@@ -265,29 +265,52 @@ export const scenarioListContainer = css({
   gap: 'xl', // より広めの間隔
 });
 
+// 空状態コンテナ（Pencilデザイン準拠）
 export const scenarioListEmpty = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
+  flex: 1,
   py: '2xl',
-  gap: 'md',
-  color: colors.text.muted,
+  gap: '24px', // Pencil: gap 24
+});
+
+// 空状態アイコンフレーム（80x80 円形）
+export const scenarioListEmptyIconFrame = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  w: '80px', // Pencil: width 80
+  h: '80px', // Pencil: height 80
+  borderRadius: '40px', // Pencil: cornerRadius 40
+  bg: colors.bg.light, // Pencil: #F3F4F6
 });
 
 export const scenarioListEmptyIcon = css({
-  fontSize: '3xl',
+  w: '36px', // Pencil: width 36
+  h: '36px', // Pencil: height 36
+  color: colors.text.placeholder, // Pencil: #9CA3AF
 });
 
 export const scenarioListEmptyText = css({
-  fontSize: 'md',
+  fontSize: '18px', // Pencil: fontSize 18
+  fontWeight: '600', // Pencil: fontWeight 600
+  color: colors.text.secondary, // Pencil: #374151
   textAlign: 'center',
 });
 
 export const scenarioListEmptySubtext = css({
-  fontSize: 'sm',
+  fontSize: '14px', // Pencil: fontSize 14
+  fontWeight: 'normal', // Pencil: fontWeight normal
+  color: colors.text.muted, // Pencil: #6B7280
   textAlign: 'center',
-  color: colors.text.muted,
+});
+
+// 空状態アクションボタン群
+export const scenarioListEmptyActions = css({
+  display: 'flex',
+  gap: '16px', // Pencil: gap 16
 });
 
 // SearchPanel スタイル（ヘッダーと一体化）
