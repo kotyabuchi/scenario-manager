@@ -432,6 +432,10 @@ export const semanticTokens = {
     header: {
       default: { value: '0 2px 8px rgba(0, 0, 0, 0.05)' },
     },
+    // サブヘッダー（グローバルヘッダー直下のパネル用、下方向のみの影）
+    subHeader: {
+      default: { value: '0 4px 8px -4px rgba(0, 0, 0, 0.08)' },
+    },
     // 検索パネル
     panel: {
       default: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },

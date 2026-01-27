@@ -59,7 +59,9 @@ describe('Rating', () => {
       render(<Default onValueChange={handleValueChange} />);
 
       const stars = screen.getAllByRole('button');
-      await user.click(stars[3]); // 4つ目の星をクリック
+      const fourthStar = stars[3];
+      expect(fourthStar).toBeDefined();
+      await user.click(fourthStar as HTMLElement); // 4つ目の星をクリック
 
       expect(handleValueChange).toHaveBeenCalledWith(4);
     });
@@ -72,7 +74,9 @@ describe('Rating', () => {
       render(<ReadOnly onValueChange={handleValueChange} />);
 
       const stars = screen.getAllByRole('button');
-      await user.click(stars[0]);
+      const firstStar = stars[0];
+      expect(firstStar).toBeDefined();
+      await user.click(firstStar as HTMLElement);
 
       expect(handleValueChange).not.toHaveBeenCalled();
     });
@@ -96,7 +100,9 @@ describe('Rating', () => {
       render(<Interactive />);
 
       const stars = screen.getAllByRole('button');
-      await user.click(stars[4]); // 5つ目の星をクリック
+      const fifthStar = stars[4];
+      expect(fifthStar).toBeDefined();
+      await user.click(fifthStar as HTMLElement); // 5つ目の星をクリック
 
       expect(screen.getByText('選択: 5つ星')).toBeInTheDocument();
     });

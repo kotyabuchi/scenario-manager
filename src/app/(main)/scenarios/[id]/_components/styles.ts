@@ -12,7 +12,7 @@ export const subHeader = css({
   px: '32px',
   py: '8px',
   bg: 'white',
-  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+  shadow: 'subHeader.default',
 });
 
 export const subHeader_left = css({

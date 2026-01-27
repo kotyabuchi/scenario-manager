@@ -321,9 +321,9 @@ export const searchPanel = css({
   px: 'xl',
   py: 'lg',
   bg: 'white',
-  // ヘッダーと一体化するため、上部のborderRadiusなし
+  // ヘッダーと一体化するため、上部のborderRadiusなし、影は下方向のみ
   borderRadius: '0',
-  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+  shadow: 'subHeader.default',
 });
 
 // 検索パネルのメイン行（横並び）
