@@ -100,7 +100,7 @@ type CheckboxProps = {
   text: #9CA3AF, 14px
 
 全体:
-  opacity: 0.5
+  opacity: 'disabled'
 ```
 
 ---
@@ -115,7 +115,7 @@ type CheckboxProps = {
 | checked | 緑背景、チェックマーク | 通常色 | チェック済み |
 | hover | 背景色変化 | - | cursor: pointer |
 | focus | フォーカスリング | - | 2px offset |
-| disabled | グレー背景 | グレー | opacity: 0.5 |
+| disabled | グレー背景 | グレー | opacity: 'disabled' |
 
 ### 4.2 キーボード操作
 
@@ -128,8 +128,8 @@ type CheckboxProps = {
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| 背景色変化 | 150ms | ease-out |
-| チェックマーク表示 | 150ms | ease-out |
+| 背景色変化 | {durations.fast} | {easings.ease-out} |
+| チェックマーク表示 | {durations.fast} | {easings.ease-out} |
 
 ---
 

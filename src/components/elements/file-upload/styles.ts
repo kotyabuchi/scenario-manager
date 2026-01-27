@@ -28,22 +28,22 @@ export const fileUpload_dropzone = css({
   borderRadius: '8px',
   bg: 'input.bg',
   cursor: 'pointer',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'gray.200',
   },
   _focus: {
     outline: '2px solid',
-    outlineColor: 'primary.default',
+    outlineColor: 'border.focus',
   },
   // ドラッグ中のスタイル
   '&[data-dragging]': {
     bg: 'primary.subtle',
     outline: '2px dashed',
-    outlineColor: 'primary.default',
+    outlineColor: 'border.focus',
   },
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
     _hover: {
       bg: 'input.bg',
@@ -133,7 +133,7 @@ export const fileUpload_itemDeleteTrigger = css({
   cursor: 'pointer',
   borderRadius: '8px',
   flexShrink: 0,
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'error.subtle',
     color: 'error.default',
@@ -153,12 +153,12 @@ export const fileUpload_trigger = css({
   fontSize: '14px',
   fontWeight: '500',
   cursor: 'pointer',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
-    opacity: 0.9,
+    opacity: 'hover',
   },
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
   },
 });

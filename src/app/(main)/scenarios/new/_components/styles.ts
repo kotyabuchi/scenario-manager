@@ -65,7 +65,7 @@ export const form_imageUpload = css({
   borderRadius: '12px',
   shadow: 'sm',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'gray.100',
   },
@@ -87,6 +87,58 @@ export const form_uploadText = css({
 export const form_uploadHint = css({
   fontSize: '12px',
   color: 'gray.400',
+});
+
+// 画像アップロードラッパー
+export const form_imageUploadWrapper = css({
+  w: '280px',
+  h: '280px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+});
+
+// 画像プレビュー
+export const form_imagePreview = css({
+  position: 'relative',
+  w: '280px',
+  h: '280px',
+  borderRadius: '12px',
+  overflow: 'hidden',
+  shadow: 'sm',
+});
+
+// プレビュー画像
+export const form_previewImage = css({
+  w: 'full',
+  h: 'full',
+  objectFit: 'cover',
+});
+
+// 画像削除ボタン
+export const form_imageRemove = css({
+  position: 'absolute',
+  bottom: '8px',
+  right: '8px',
+  px: '12px',
+  py: '6px',
+  bg: 'rgba(0, 0, 0, 0.6)',
+  color: 'white',
+  fontSize: '12px',
+  fontWeight: '500',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  transition: 'background {durations.normal}',
+  _hover: {
+    bg: 'rgba(0, 0, 0, 0.8)',
+  },
+});
+
+// 画像アップロードエラー
+export const form_uploadError = css({
+  fontSize: '12px',
+  color: 'red.500',
+  textAlign: 'center',
 });
 
 // 右側フィールド群（Pencil: rightFields）

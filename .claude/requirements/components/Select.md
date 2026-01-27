@@ -70,7 +70,7 @@ Selectコンポーネントのドロップダウン部分をui-design-systemに�
   color: 'menu.itemText', // または neutral.700相当
   cursor: 'pointer',
   borderRadius: '4px', // アイテム自体にも角丸
-  transition: 'background-color 100ms ease-out',
+  transition: 'background-color {durations.faster} {easings.ease-out}',
 
   // ホバー状態
   _hover: {
@@ -91,7 +91,7 @@ Selectコンポーネントのドロップダウン部分をui-design-systemに�
 
   // 無効状態
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
     _hover: {
       bg: 'transparent',
@@ -137,7 +137,7 @@ ui-design-systemのカラーパレットに準拠:
 | highlighted（キーボード） | primary.50背景（hoverと同じ） |
 | selected | primary.100背景、primary.800テキスト、fontWeight: 500 |
 | selected + hover | primary.100背景を維持 |
-| disabled | opacity: 0.5、カーソル変更 |
+| disabled | opacity: 'disabled'、カーソル変更 |
 
 ### 5.2 キーボード操作（Ark UI標準）
 

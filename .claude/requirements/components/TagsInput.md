@@ -102,7 +102,7 @@
 ### 3.3 TagsInput/Disabled (XpsfA)
 ```
 コンテナ:
-  opacity: 0.5
+  opacity: 'disabled'
 
 入力ボックス:
   fill: #E5E7EB

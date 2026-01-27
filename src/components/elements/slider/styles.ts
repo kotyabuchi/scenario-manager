@@ -54,7 +54,7 @@ export const slider_control = css({
   h: '24px',
   cursor: 'pointer',
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
   },
 });
@@ -84,7 +84,7 @@ export const slider_thumb = css({
   bg: 'slider.thumb',
   boxShadow: 'slider.thumb',
   cursor: 'grab',
-  transition: 'transform 150ms ease-out',
+  transition: 'transform {durations.fast} ease-out',
   _hover: {
     transform: 'scale(1.1)',
   },
@@ -94,7 +94,7 @@ export const slider_thumb = css({
   },
   _focus: {
     outline: '2px solid',
-    outlineColor: 'primary.default',
+    outlineColor: 'border.focus',
     outlineOffset: '-1px',
   },
   _disabled: {

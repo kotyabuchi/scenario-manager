@@ -53,9 +53,9 @@ export const navLink = cva({
     gap: '1',
     cursor: 'pointer',
     textDecoration: 'none',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     _hover: {
-      opacity: 0.8,
+      opacity: 'hover',
     },
   },
   variants: {
@@ -89,7 +89,7 @@ export const navLinkLine = cva({
     width: '100%',
     height: '2px',
     borderRadius: 'full',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
   },
   variants: {
     active: {
@@ -137,7 +137,7 @@ export const registerButton = css({
   boxShadow: 'button.primary',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   textDecoration: 'none',
   _hover: {
     bg: 'button.primaryBgHover',
@@ -155,7 +155,7 @@ export const authButton = cva({
     fontWeight: 'medium',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
   },
   variants: {
     variant: {

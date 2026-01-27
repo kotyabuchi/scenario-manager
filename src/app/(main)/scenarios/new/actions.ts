@@ -3,9 +3,15 @@
 import { revalidatePath } from 'next/cache';
 import { isNil } from 'ramda';
 
-import { createScenario, getUserByDiscordId } from '../adapter';
+import {
+  checkDistributeUrlDuplicate,
+  checkScenarioNameDuplicate,
+  createScenario,
+  getUserByDiscordId,
+} from '../adapter';
 import { scenarioFormSchema } from './_components/schema';
 
+import { checkRateLimit } from '@/lib/rateLimit';
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
@@ -39,7 +45,7 @@ export const createScenarioAction = async (
     );
   }
 
-  // ユーザーIDを取得
+  // ユーザーIDとロールを取得
   const userResult = await getUserByDiscordId(authUser.id);
   if (!userResult.success) {
     return err(userResult.error);
@@ -47,6 +53,57 @@ export const createScenarioAction = async (
 
   if (isNil(userResult.data)) {
     return err(new Error('ユーザーが見つかりません'));
+  }
+
+  const { userId, role } = userResult.data;
+
+  // レートリミットチェック
+  const rateLimitResult = await checkRateLimit({
+    userId,
+    action: 'create_scenario',
+    userRole: role,
+  });
+
+  if (!rateLimitResult.success) {
+    return err(rateLimitResult.error);
+  }
+
+  if (!rateLimitResult.data.allowed) {
+    return err(
+      new Error(
+        rateLimitResult.data.message ??
+          'しばらく時間をおいてから再度お試しください',
+      ),
+    );
+  }
+
+  // シナリオ名の重複チェック
+  const nameDuplicateResult = await checkScenarioNameDuplicate({
+    name: parsed.data.name,
+    scenarioSystemId: parsed.data.scenarioSystemId,
+  });
+
+  if (!nameDuplicateResult.success) {
+    return err(nameDuplicateResult.error);
+  }
+
+  if (nameDuplicateResult.data.isDuplicate) {
+    return err(new Error('同じシステムに同名のシナリオが既に登録されています'));
+  }
+
+  // 配布URLの重複チェック
+  if (!isNil(parsed.data.distributeUrl)) {
+    const urlDuplicateResult = await checkDistributeUrlDuplicate({
+      distributeUrl: parsed.data.distributeUrl,
+    });
+
+    if (!urlDuplicateResult.success) {
+      return err(urlDuplicateResult.error);
+    }
+
+    if (urlDuplicateResult.data.isDuplicate) {
+      return err(new Error('この配布URLのシナリオは既に登録されています'));
+    }
   }
 
   // シナリオ作成
@@ -65,7 +122,7 @@ export const createScenarioAction = async (
       distributeUrl: parsed.data.distributeUrl,
       tagIds: parsed.data.tagIds,
     },
-    userResult.data.userId,
+    userId,
   );
 
   if (!createResult.success) {

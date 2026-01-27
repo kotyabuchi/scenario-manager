@@ -132,7 +132,7 @@ fill: #E5E7EB
 cornerRadius: 14px
 width: 28px
 height: 28px
-opacity: 0.5
+opacity: 'disabled'
 icon: bookmark, 16px, #9CA3AF
 ```
 
@@ -148,7 +148,7 @@ icon: bookmark, 16px, #9CA3AF
 | hover | 背景色が少し変化 | cursor: pointer |
 | focus | フォーカスリング表示 | 2px offset |
 | active | variant=solidでscale(0.95) | |
-| disabled | opacity: 0.5 | cursor: not-allowed |
+| disabled | opacity: 'disabled' | cursor: not-allowed |
 | loading | スピナー表示 | アイコンと置換 |
 
 ### 5.2 キーボード操作
@@ -163,8 +163,8 @@ icon: bookmark, 16px, #9CA3AF
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| 背景色変化 | 150ms | ease-out |
-| scale | 100ms | ease-out |
+| 背景色変化 | {durations.fast} | {easings.ease-out} |
+| scale | {durations.faster} | {easings.ease-out} |
 
 ---
 

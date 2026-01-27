@@ -51,7 +51,7 @@ export const scenarioCard = css({
   borderRadius: '12px', // Pencil: cornerRadius 12
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all {durations.slow} cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: 'all {durations.normal} cubic-bezier(0.4, 0, 0.2, 1)',
   boxShadow: shadows.card,
   _hover: {
     boxShadow: shadows.cardHover,
@@ -68,7 +68,7 @@ export const cardThumbnail = css({
 
 export const cardThumbnailImage = css({
   objectFit: 'cover',
-  transition: 'all {durations.slow}',
+  transition: 'all {durations.normal}',
   _groupHover: {
     transform: 'scale(1.05)',
     filter: 'brightness(1.1)',
@@ -90,14 +90,14 @@ export const cardThumbnailPlaceholder = css({
 export const cardThumbnailPlaceholderIcon = css({
   w: '32px',
   h: '32px',
-  opacity: 0.4,
+  opacity: 'disabled',
   color: 'white',
 });
 
 export const cardThumbnailPlaceholderText = css({
   fontSize: 'xs',
   fontWeight: 'medium',
-  opacity: 0.6,
+  opacity: 'disabled',
   color: 'white',
 });
 
@@ -170,7 +170,7 @@ export const cardFavoriteButton = css({
   h: '28px', // Pencil: height 28
   borderRadius: '14px', // Pencil: cornerRadius 14 = circle
   bg: 'rgba(0, 0, 0, 0.25)', // Pencil: fill #00000040
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   zIndex: 1,
   _hover: {
     bg: 'rgba(0, 0, 0, 0.4)',
@@ -321,9 +321,9 @@ export const searchPanel = css({
   px: 'xl',
   py: 'lg',
   bg: 'white',
-  // ヘッダーと一体化するため、上部のborderRadiusなし
+  // ヘッダーと一体化するため、上部のborderRadiusなし、影は下方向のみ
   borderRadius: '0',
-  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+  shadow: 'subHeader.default',
 });
 
 // 検索パネルのメイン行（横並び）
@@ -469,7 +469,7 @@ export const searchInput = css({
   color: colors.text.primary, // Pencil: #1F2937
   fontSize: '14px', // Pencil: fontSize 14
   outline: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     bg: '#E5E7EB',
   },
@@ -497,7 +497,7 @@ export const expandButton = cva({
     border: 'none',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transition: 'all {durations.fast}',
   },
   variants: {
     expanded: {
@@ -534,7 +534,7 @@ export const detailedConditions = cva({
     display: 'flex',
     flexDirection: 'column',
     gap: 'md',
-    transition: 'all {durations.slow} ease-in-out',
+    transition: 'all {durations.normal} ease-in-out',
   },
   variants: {
     expanded: {
@@ -665,7 +665,7 @@ export const sortSelect = css({
   borderRadius: '6px', // Pencil: cornerRadius 6
   boxShadow: shadows.small, // Pencil: blur 2, #0000000D
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     boxShadow: shadows.card,
   },
@@ -703,7 +703,7 @@ export const sortTabButton = cva({
     border: 'none',
     borderRadius: '12px',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transition: 'all {durations.fast}',
     _hover: {
       color: colors.accent.green,
       bg: colors.accent.greenLight,

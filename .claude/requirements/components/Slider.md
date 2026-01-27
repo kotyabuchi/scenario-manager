@@ -162,7 +162,7 @@ SliderRoot
   h: '24px',
   cursor: 'pointer',
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
   },
 }
@@ -204,7 +204,7 @@ SliderRoot
   bg: 'slider.thumb', // white
   boxShadow: 'slider.thumb',
   cursor: 'grab',
-  transition: 'transform 150ms ease-out',
+  transition: 'transform {durations.fast} {easings.ease-out}',
   _hover: {
     transform: 'scale(1.1)',
   },
@@ -257,7 +257,7 @@ SliderRoot
 | hover（サム） | scale(1.1) | サムが少し大きくなる |
 | active（サム） | scale(1.15), cursor: grabbing | ドラッグ中 |
 | focus（サム） | フォーカスリング表示 | outlineOffset: -1px |
-| disabled | opacity: 0.5 | cursor: not-allowed |
+| disabled | opacity: 'disabled' | cursor: not-allowed |
 
 ### 5.2 キーボード操作（Ark UI標準）
 
@@ -282,7 +282,7 @@ SliderRoot
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| サムのscale | 150ms | ease-out |
+| サムのscale | {durations.fast} | {easings.ease-out} |
 
 ---
 

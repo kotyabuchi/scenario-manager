@@ -35,7 +35,7 @@ export const numberInput_wrapper = css({
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
   _focusWithin: {
     outline: '2px solid',
-    outlineColor: 'primary.default',
+    outlineColor: 'border.focus',
     outlineOffset: '2px',
   },
 });
@@ -62,7 +62,7 @@ export const numberInput_input = css({
     color: 'gray.400',
   },
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
   },
 });
@@ -77,13 +77,13 @@ export const numberInput_button = css({
   bg: 'gray.50',
   color: 'gray.500',
   cursor: 'pointer',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'gray.100',
     color: 'gray.700',
   },
   _disabled: {
-    opacity: 0.3,
+    opacity: 'muted',
     cursor: 'not-allowed',
     _hover: {
       bg: 'gray.50',

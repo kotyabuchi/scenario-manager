@@ -12,7 +12,7 @@ export const subHeader = css({
   px: '32px',
   py: '8px',
   bg: 'white',
-  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+  shadow: 'subHeader.default',
 });
 
 export const subHeader_left = css({
@@ -32,7 +32,7 @@ export const subHeader_backBtn = css({
   color: 'gray.500',
   flexShrink: 0,
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     bg: 'gray.200',
     color: 'gray.700',
@@ -61,7 +61,7 @@ export const subHeader_favBtn = css({
   fontSize: '13px',
   fontWeight: 'medium',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   border: 'none',
   _hover: {
     bg: 'orange.200',
@@ -229,7 +229,7 @@ export const scenarioInfo_distributeBtn = css({
   fontWeight: 'medium',
   shadow: 'button.primary',
   textDecoration: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     bg: 'primary.600',
     transform: 'translateY(-1px)',
@@ -298,7 +298,7 @@ export const section_ctaButton = css({
   fontWeight: 'medium',
   borderRadius: 'lg',
   textDecoration: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     bg: 'primary.600',
     transform: 'translateY(-1px)',
@@ -318,7 +318,7 @@ export const section_actionButton = css({
   borderRadius: 'md',
   border: 'none',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     bg: 'primary.600',
   },
@@ -368,7 +368,7 @@ export const horizontalScroll_btn = css({
   shadow: 'scrollButton.default',
   color: 'gray.500',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   border: 'none',
   _hover: {
     shadow: 'card.hover',
@@ -403,7 +403,7 @@ export const sessionCard = css({
   borderRadius: 'xl',
   shadow: 'card.default',
   flexShrink: 0,
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -449,7 +449,7 @@ export const videoCard = css({
   overflow: 'hidden',
   flexShrink: 0,
   textDecoration: 'none',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -484,12 +484,12 @@ export const videoCard_spoilerOverlay = css({
   backdropFilter: 'blur(8px)',
   color: 'white',
   cursor: 'pointer',
-  transition: 'opacity {durations.normal}',
+  transition: 'opacity {durations.fast}',
   border: 'none',
   width: '100%',
   height: '100%',
   _hover: {
-    opacity: 0.9,
+    opacity: 'hover',
   },
 });
 
@@ -605,7 +605,7 @@ export const reviewFilter_sortTabButton = cva({
     border: 'none',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transition: 'all {durations.fast}',
     _hover: {
       color: 'gray.600',
       bg: 'gray.100',
@@ -839,7 +839,7 @@ export const reviewCard_actionButton = css({
   color: 'gray.400',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   _hover: {
     bg: 'gray.100',
     color: 'gray.600',
@@ -880,7 +880,7 @@ export const fabMenuItem = css({
   color: 'gray.800',
   fontSize: 'sm',
   cursor: 'pointer',
-  transition: 'background {durations.normal}',
+  transition: 'background {durations.fast}',
   textDecoration: 'none',
   border: 'none',
   bg: 'transparent',
@@ -915,7 +915,7 @@ export const fabButton = css({
   color: 'white',
   shadow: 'fab.default',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   border: 'none',
   _hover: {
     transform: 'scale(1.1)',
@@ -959,7 +959,7 @@ export const header_backButton = css({
   color: 'gray.500',
   fontSize: 'sm',
   cursor: 'pointer',
-  transition: 'color {durations.normal}',
+  transition: 'color {durations.fast}',
   _hover: {
     color: 'gray.800',
   },
@@ -981,7 +981,7 @@ export const fabButton_old = cva({
     height: '56px',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transition: 'all {durations.fast}',
     shadow: 'lg',
     _hover: {
       transform: 'scale(1.1)',

@@ -40,14 +40,14 @@ export const alert = defineSlotRecipe({
     },
     description: {
       fontSize: '14px',
-      opacity: '0.9',
+      opacity: 'hover',
     },
     actionButton: {
       flexShrink: '0',
       width: '20px',
       height: '20px',
       cursor: 'pointer',
-      transition: 'opacity 150ms ease-out',
+      transition: 'opacity {durations.fast} ease-out',
       opacity: '0.7',
       _hover: {
         opacity: '1',

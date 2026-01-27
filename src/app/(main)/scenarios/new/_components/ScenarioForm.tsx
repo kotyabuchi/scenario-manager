@@ -3,7 +3,8 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ImagePlus } from 'lucide-react';
+import { Check } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { isNil } from 'ramda';
 
@@ -18,6 +19,10 @@ import * as styles from './styles';
 import { Button } from '@/components/elements/button/button';
 import { Chip } from '@/components/elements/Chip';
 import { FieldError } from '@/components/elements/field-error/field-error';
+import {
+  FileUpload,
+  type FileUploadFileAcceptDetails,
+} from '@/components/elements/file-upload';
 import { FormField } from '@/components/elements/form-field';
 import { Input } from '@/components/elements/input';
 import {
@@ -34,6 +39,8 @@ import {
 } from '@/components/elements/slider';
 import { Textarea } from '@/components/elements/textarea';
 import { HandoutTypes } from '@/db/enum';
+import { useSystemMessage } from '@/hooks/useSystemMessage';
+import { resizeImage } from '@/lib/image';
 
 import type { ScenarioSystem, Tag } from '../../interface';
 
@@ -45,7 +52,10 @@ type ScenarioFormProps = {
 export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [serverError, setServerError] = useState<string | null>(null);
+  const { showError, showSuccess } = useSystemMessage();
+
+  // 画像プレビュー用の状態
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // スライダー用の状態
   const [playerRange, setPlayerRange] = useState<[number, number]>([1, 4]);
@@ -71,6 +81,7 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
       maxPlayer: undefined,
       minPlaytime: undefined,
       maxPlaytime: undefined,
+      scenarioImage: null,
       scenarioImageUrl: '',
       distributeUrl: '',
       tagIds: [],
@@ -163,15 +174,92 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
     }
   };
 
-  const onSubmit = (data: ScenarioFormValues) => {
-    setServerError(null);
+  // 画像選択処理（リサイズ・プレビュー）
+  const handleImageSelect = async (details: FileUploadFileAcceptDetails) => {
+    const file = details.files[0];
+    if (!file) return;
 
+    try {
+      // 600x600px、JPEG 80%にリサイズ・圧縮
+      const resizedFile = await resizeImage(file, {
+        size: 600,
+        quality: 0.8,
+        format: 'image/jpeg',
+      });
+
+      // React Hook Formでファイルを管理
+      setValue('scenarioImage', resizedFile, { shouldValidate: true });
+
+      // プレビュー用のObject URLを生成
+      if (!isNil(previewUrl)) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(URL.createObjectURL(resizedFile));
+    } catch {
+      // リサイズに失敗した場合は元のファイルを使用
+      setValue('scenarioImage', file, { shouldValidate: true });
+      if (!isNil(previewUrl)) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // 画像削除処理
+  const handleImageRemove = () => {
+    if (!isNil(previewUrl)) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setValue('scenarioImage', null);
+    setPreviewUrl(null);
+    setValue('scenarioImageUrl', '');
+  };
+
+  const onSubmit = (data: ScenarioFormValues) => {
     startTransition(async () => {
-      const result = await createScenarioAction(data);
+      let imageUrl = data.scenarioImageUrl;
+
+      // 選択された画像があればアップロード
+      if (!isNil(data.scenarioImage)) {
+        try {
+          const formData = new FormData();
+          formData.append('file', data.scenarioImage);
+
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const uploadResult = (await response.json()) as {
+            url?: string;
+            error?: string;
+          };
+
+          if (!response.ok) {
+            showError(uploadResult.error ?? '画像のアップロードに失敗しました');
+            return;
+          }
+
+          imageUrl = uploadResult.url ?? '';
+        } catch {
+          showError('画像のアップロードに失敗しました');
+          return;
+        }
+      }
+
+      const result = await createScenarioAction({
+        ...data,
+        scenarioImageUrl: imageUrl,
+      });
 
       if (!result.success) {
-        setServerError(result.error?.message ?? '登録に失敗しました');
+        showError(result.error?.message ?? '登録に失敗しました');
       } else {
+        // プレビューURLをクリーンアップ
+        if (!isNil(previewUrl)) {
+          URL.revokeObjectURL(previewUrl);
+        }
+        showSuccess('シナリオを登録しました');
         router.push(`/scenarios/${result.data.scenarioId}`);
       }
     });
@@ -202,24 +290,47 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
 
   return (
     <div className={styles.form_card}>
-      {!isNil(serverError) && (
-        <div className={styles.form_error}>{serverError}</div>
-      )}
-
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* トップ行: 画像 + フィールド群 */}
         <div className={styles.form_topRow}>
           {/* 画像アップロード */}
           <div className={styles.form_imageRow}>
-            <div className={styles.form_imageUpload}>
-              <ImagePlus size={40} className={styles.form_uploadIcon} />
-              <span className={styles.form_uploadText}>
-                クリックまたはドラッグで画像をアップロード
-              </span>
-              <span className={styles.form_uploadHint}>
-                PNG, JPG, WebP（最大5MB）
-              </span>
-            </div>
+            {!isNil(previewUrl) ? (
+              <div className={styles.form_imagePreview}>
+                <Image
+                  src={previewUrl}
+                  alt="選択した画像"
+                  fill
+                  className={styles.form_previewImage}
+                  unoptimized
+                />
+                <button
+                  type="button"
+                  className={styles.form_imageRemove}
+                  onClick={handleImageRemove}
+                >
+                  削除
+                </button>
+              </div>
+            ) : (
+              <div className={styles.form_imageUploadWrapper}>
+                <FileUpload
+                  accept={[
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                    'image/gif',
+                  ]}
+                  maxFileSize={5 * 1024 * 1024}
+                  maxFiles={1}
+                  onFileAccept={handleImageSelect}
+                  dropzoneText="クリックまたはドラッグで画像をアップロード"
+                  hint="PNG, JPG, WebP, GIF（最大5MB）※600×600pxに自動リサイズ"
+                  compact
+                />
+                <FieldError error={errors.scenarioImage} />
+              </div>
+            )}
           </div>
 
           {/* 右側フィールド群 */}

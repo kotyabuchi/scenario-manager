@@ -156,7 +156,7 @@ type CardTagsProps = {
 hover:
   shadow: 0 8px blur:24px #00000015
   transform: translateY(-2px)
-  transition: 150ms ease-out
+  transition: {durations.fast} {easings.ease-out}
 ```
 
 ### 5.2 クリック可能時

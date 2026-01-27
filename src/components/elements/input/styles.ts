@@ -15,19 +15,19 @@ export const input = cva({
     fontSize: '14px',
     fontFamily: 'Inter, sans-serif',
     outline: 'none',
-    transition: 'all 150ms ease-out',
+    transition: 'all {durations.fast} ease-out',
     _hover: {
       bg: 'gray.200',
     },
     _focus: {
       outline: '2px solid',
-      outlineColor: 'input.focusBorder',
+      outlineColor: 'border.focus',
     },
     _placeholder: {
       color: 'input.placeholder',
     },
     _disabled: {
-      opacity: 0.5,
+      opacity: 'disabled',
       cursor: 'not-allowed',
       bg: 'input.bgDisabled',
       _hover: {

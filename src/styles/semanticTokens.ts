@@ -4,7 +4,7 @@ export const semanticTokens = {
     // 背景色
     // ========================================
     bg: {
-      // ページ背景
+      // ページ背景（淡い青みがかった白）
       page: { value: '#F5F7FA' },
       // カード・パネル背景
       card: { value: '{colors.white}' },
@@ -77,6 +77,17 @@ export const semanticTokens = {
       subtle: { value: '{colors.orange.100}' },
       text: { value: '{colors.orange.800}' },
       textOnWarning: { value: '{colors.white}' },
+    },
+
+    // ========================================
+    // 情報（青）
+    // ========================================
+    info: {
+      default: { value: '{colors.info.500}' },
+      hover: { value: '{colors.info.600}' },
+      subtle: { value: '{colors.info.100}' },
+      text: { value: '{colors.info.800}' },
+      textOnInfo: { value: '{colors.white}' },
     },
 
     // ========================================
@@ -397,6 +408,17 @@ export const semanticTokens = {
     },
   },
 
+  opacity: {
+    disabled: { value: '0.5' },
+    hover: { value: '0.8' },
+    muted: { value: '0.3' },
+  },
+
+  borders: {
+    focusRing: { value: '2px solid {colors.primary.500}' },
+    focusRingDashed: { value: '2px dashed {colors.primary.500}' },
+  },
+
   shadows: {
     // ========================================
     // 汎用シャドウ
@@ -431,6 +453,10 @@ export const semanticTokens = {
     // ヘッダー
     header: {
       default: { value: '0 2px 8px rgba(0, 0, 0, 0.05)' },
+    },
+    // サブヘッダー（グローバルヘッダー直下のパネル用、下方向のみの影）
+    subHeader: {
+      default: { value: '0 4px 8px -4px rgba(0, 0, 0, 0.08)' },
     },
     // 検索パネル
     panel: {

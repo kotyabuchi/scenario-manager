@@ -149,7 +149,7 @@ text: #9CA3AF, 12px, fontWeight: 500
 cornerRadius: 6px
 height: 28px
 padding: 0 10px
-opacity: 0.5
+opacity: 'disabled'
 ```
 
 ---
@@ -164,7 +164,7 @@ opacity: 0.5
 | hover | 背景色が少し暗く、translateY(-1px) | ui-design-system準拠 |
 | focus | フォーカスリング表示 | 2px offset |
 | selected | 選択時の色に変化 | selectable variantのみ |
-| disabled | opacity: 0.5 | cursor: not-allowed |
+| disabled | opacity: 'disabled' | cursor: not-allowed |
 
 ### 5.2 キーボード操作
 
@@ -178,8 +178,8 @@ opacity: 0.5
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| 背景色変化 | 200ms | ease-in-out |
-| transform | 200ms | ease-in-out |
+| 背景色変化 | {durations.normal} | {easings.ease-in-out} |
+| transform | {durations.normal} | {easings.ease-in-out} |
 
 ---
 

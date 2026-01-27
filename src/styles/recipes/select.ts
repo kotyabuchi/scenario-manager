@@ -21,19 +21,20 @@ export const select = defineSlotRecipe({
       w: 'full',
       h: '44px',
       px: '12px',
+      gap: '8px',
       border: 'none',
       borderRadius: '8px',
       color: 'input.text',
       fontSize: '14px',
       fontFamily: 'Inter, sans-serif',
       cursor: 'pointer',
-      transition: 'all 150ms ease-out',
+      transition: 'all {durations.fast} ease-out',
       _focus: {
         outline: '2px solid',
         outlineColor: 'input.focusBorder',
       },
       _disabled: {
-        opacity: 0.5,
+        opacity: 'disabled',
         cursor: 'not-allowed',
       },
       '& [data-placeholder]': {
@@ -42,7 +43,7 @@ export const select = defineSlotRecipe({
     },
     indicator: {
       color: 'icon.muted',
-      transition: 'transform 150ms ease-out',
+      transition: 'transform {durations.fast} ease-out',
       '[data-state=open] &': {
         transform: 'rotate(180deg)',
       },
@@ -71,7 +72,7 @@ export const select = defineSlotRecipe({
       color: 'menu.itemText',
       cursor: 'pointer',
       borderRadius: '4px',
-      transition: 'background-color 100ms ease-out',
+      transition: 'background-color {durations.faster} ease-out',
       _hover: {
         bg: 'oklch(0.98 0.03 150)',
       },
@@ -84,7 +85,7 @@ export const select = defineSlotRecipe({
         fontWeight: '500',
       },
       _disabled: {
-        opacity: 0.5,
+        opacity: 'disabled',
         cursor: 'not-allowed',
         _hover: {
           bg: 'transparent',

@@ -23,7 +23,7 @@ export const button = defineRecipe({
     justifyContent: 'center',
     outline: 'none',
     position: 'relative',
-    transitionDuration: '150ms',
+    transitionDuration: 'fast',
     transitionProperty: 'background, border-color, color, box-shadow, opacity',
     transitionTimingFunction: 'ease-out',
     userSelect: 'none',
@@ -37,7 +37,7 @@ export const button = defineRecipe({
     },
     _disabled: {
       cursor: 'not-allowed',
-      opacity: '0.6',
+      opacity: 'disabled',
       bg: 'button.disabledBg',
       color: 'button.disabledText',
       boxShadow: 'none',
@@ -78,7 +78,6 @@ export const button = defineRecipe({
         minW: '32px',
         fontSize: '13px',
         px: '16px',
-        borderRadius: '16px',
       },
       md: {
         h: '44px',

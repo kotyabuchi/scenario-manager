@@ -27,7 +27,7 @@ export const radioGroup_item = css({
   px: '12px',
   py: '8px',
   borderRadius: '12px',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   bg: 'toggle.uncheckedBg',
   boxShadow: 'input.default',
   _hover: {
@@ -40,7 +40,7 @@ export const radioGroup_item = css({
     fontWeight: '500',
   },
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
     _hover: {
       bg: 'toggle.uncheckedBg',
@@ -55,7 +55,7 @@ export const radioGroup_itemControl = css({
   borderRadius: 'full',
   border: '2px solid',
   borderColor: 'text.placeholder',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   position: 'relative',
   flexShrink: 0,
   _before: {
@@ -68,7 +68,7 @@ export const radioGroup_itemControl = css({
     h: '8px',
     borderRadius: 'full',
     bg: 'primary.text',
-    transition: 'transform 150ms ease-out',
+    transition: 'transform {durations.fast} ease-out',
   },
   _checked: {
     borderColor: 'primary.text',

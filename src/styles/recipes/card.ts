@@ -11,7 +11,7 @@ export const card = defineRecipe({
     bg: 'card.bg',
     borderRadius: '16px',
     overflow: 'hidden',
-    transition: 'all 150ms ease-out',
+    transition: 'all {durations.fast} ease-out',
     boxShadow: 'card.default',
   },
   variants: {

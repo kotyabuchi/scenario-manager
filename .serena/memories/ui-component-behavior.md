@@ -121,9 +121,9 @@ Root
 
 ### 無効状態
 - `disabled` prop で無効化
-- 視覚的に `opacity: 0.5` + `cursor: not-allowed`
+- 視覚的に `opacity: 'disabled'`（セマンティックトークン） + `cursor: not-allowed`
 - キーボード/マウス操作を無効化
 
 ### トランジション
-- 状態変化は `transition: all 150ms ease-out` を基本とする
+- 状態変化は `transition: all {durations.fast} ease-out` を基本とする（duration トークンを使用）
 - ホバー/フォーカス/選択状態の切り替えに適用

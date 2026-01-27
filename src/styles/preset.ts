@@ -30,6 +30,14 @@ export default definePreset({
             opacity: '1',
           },
         },
+        shimmer: {
+          '0%': {
+            backgroundPosition: '-200% 0',
+          },
+          '100%': {
+            backgroundPosition: '200% 0',
+          },
+        },
       },
     },
     semanticTokens,

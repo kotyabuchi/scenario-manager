@@ -1,586 +1,540 @@
 import { css, cva } from '@/styled-system/css';
 
-// ページスタイル
+// ===== Page Layout =====
+
 export const pageContainer = css({
-  maxW: '1200px',
-  mx: 'auto',
-  px: 'lg',
-  py: 'xl',
+  bg: 'bg.page',
+  minH: '100vh',
 });
 
-export const pageHeader = css({
+export const pageLayout = css({
   display: 'flex',
-  justifyContent: 'space-between',
+  flexDirection: 'column',
+});
+
+// ===== Tab Bar =====
+
+export const tabBar = css({
+  bg: 'white',
+  h: '56px',
+  display: 'flex',
+  justifyContent: 'center',
   alignItems: 'center',
-  mb: 'lg',
+  px: '32px',
+  shadow: 'subHeader.default',
 });
 
-export const pageTitle = css({
-  fontSize: '2xl',
-  fontWeight: 'bold',
-  color: 'text.primary',
-});
+// ===== Search Panel (公開卓) =====
 
-export const createButton = css({
-  shadow: 'card.default',
-  transition: 'all {durations.slow}',
-  _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-2px)',
-  },
-});
-
-// タブスタイル
-export const tabContainer = css({
-  display: 'flex',
-  gap: 'xs',
-  borderBottom: '1px solid',
-  borderColor: 'border.subtle',
-  mb: 'lg',
-});
-
-export const tabButton = cva({
-  base: {
-    px: 'lg',
-    py: 'sm',
-    fontSize: 'sm',
-    fontWeight: 'medium',
-    color: 'text.muted',
-    bg: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all {durations.normal}',
-    borderBottom: '2px solid transparent',
-    mb: '-1px',
-    _hover: {
-      color: 'text.primary',
-    },
-    _disabled: {
-      opacity: 0.5,
-      cursor: 'not-allowed',
-    },
-  },
-  variants: {
-    active: {
-      true: {
-        color: 'primary.default',
-        bg: 'chip.default',
-        borderColor: 'primary.default',
-        fontWeight: 'bold',
-        _hover: {
-          color: 'primary.default',
-          bg: 'chip.default',
-        },
-      },
-    },
-  },
-});
-
-// 検索パネルスタイル
 export const searchPanel = css({
+  bg: 'white',
+  shadow: 'subHeader.default',
+  p: '24px 32px',
   display: 'flex',
   flexDirection: 'column',
-  p: 'lg',
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  mb: 'lg',
-  shadow: 'card.default',
+  gap: '16px',
 });
 
-export const seachConditions = css({
+export const searchPanel_row = css({
   display: 'flex',
-  flexDirection: 'column',
-  gap: 'md',
-});
-
-export const searchPanelRow = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'md',
+  gap: '16px',
   alignItems: 'flex-end',
+  flexWrap: 'wrap',
 });
 
-export const searchPanelField = css({
+export const searchPanel_field = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'sm',
-  minW: '200px',
-  flex: 1,
+  gap: '6px',
   border: 'none',
   padding: 0,
   margin: 0,
-  // legendはflexboxのgapが効かないため明示的にマージンを設定
-  '& > legend': {
-    mb: 'sm',
-  },
 });
 
-export const searchPanelLabel = css({
-  fontSize: 'sm',
-  fontWeight: 'semibold',
-  color: 'text.secondary',
-});
-
-export const searchPanelChips = css({
+export const searchPanel_fieldSystem = css({
   display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'sm',
-});
-
-export const searchDivider = css({
+  flexDirection: 'column',
+  gap: '6px',
+  w: '200px',
   border: 'none',
-  h: '1px',
-  bg: 'border.subtle',
-  my: 'lg',
+  padding: 0,
+  margin: 0,
 });
 
-export const searchActions = css({
-  display: 'flex',
-  gap: 'sm',
-});
-
-// チップスタイル
-export const chip = cva({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 'xs',
-    px: 'sm',
-    py: '5px',
-    fontSize: 'sm',
-    fontWeight: 'medium',
-    borderRadius: 'full',
-    cursor: 'pointer',
-    transition:
-      'background-color {durations.normal}, box-shadow {durations.normal}, transform {durations.normal}',
-    border: 'none',
-    outline: 'none',
-    userSelect: 'none',
-    _focusVisible: {
-      outline: '2px solid',
-      outlineColor: 'primary.focusRing',
-    },
-  },
-  variants: {
-    selected: {
-      true: {
-        bg: 'primary.default',
-        color: 'primary.foreground.white',
-        shadow: 'chip.selected',
-        _hover: {
-          bg: 'primary.emphasized',
-        },
-      },
-      false: {
-        bg: 'chip.default',
-        color: 'text.primary',
-        shadow: 'chip.default',
-        _hover: {
-          bg: 'chip.hover',
-        },
-      },
-    },
-  },
-  defaultVariants: {
-    selected: false,
-  },
-});
-
-// セッションカードスタイル
-export const sessionCard = css({
+export const searchPanel_fieldDate = css({
   display: 'flex',
   flexDirection: 'column',
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  overflow: 'hidden',
-  cursor: 'pointer',
-  transition: 'all {durations.slow}',
-  shadow: 'card.default',
-  _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-2px)',
-  },
+  gap: '6px',
+  w: '280px',
+  border: 'none',
+  padding: 0,
+  margin: 0,
 });
 
-export const sessionCard_header = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  px: 'md',
-  py: 'sm',
-  bg: 'bg.subtle',
-});
-
-export const sessionCard_headerLeft = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
-});
-
-export const sessionCard_phaseBadge = cva({
-  base: {
-    px: 'sm',
-    py: '2px',
-    fontSize: 'xs',
-    fontWeight: 'medium',
-    borderRadius: 'full',
-  },
-  variants: {
-    phase: {
-      RECRUITING: {
-        bg: 'success.50',
-        color: 'success.700',
-      },
-      PREPARATION: {
-        bg: 'warning.50',
-        color: 'warning.700',
-      },
-      IN_PROGRESS: {
-        bg: 'primary.50',
-        color: 'primary.700',
-      },
-      COMPLETED: {
-        bg: 'neutral.100',
-        color: 'neutral.600',
-      },
-      CANCELLED: {
-        bg: 'error.50',
-        color: 'error.700',
-      },
-    },
-  },
-});
-
-export const sessionCard_dateTime = css({
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'text.secondary',
-});
-
-export const sessionCard_roleBadge = cva({
-  base: {
-    px: 'sm',
-    py: '2px',
-    fontSize: 'xs',
-    fontWeight: 'medium',
-    borderRadius: 'md',
-  },
-  variants: {
-    role: {
-      KEEPER: {
-        bg: 'primary.50',
-        color: 'primary.700',
-      },
-      PLAYER: {
-        bg: 'neutral.100',
-        color: 'neutral.600',
-      },
-      SPECTATOR: {
-        bg: 'neutral.50',
-        color: 'text.secondary',
-      },
-    },
-  },
-});
-
-export const sessionCard_content = css({
+export const searchPanel_fieldPhase = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'sm',
-  p: 'md',
+  gap: '6px',
+  w: '160px',
+  border: 'none',
+  padding: 0,
+  margin: 0,
+});
+
+export const searchPanel_fieldScenario = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '6px',
   flex: 1,
+  minW: '200px',
+  border: 'none',
+  padding: 0,
+  margin: 0,
 });
 
-export const sessionCard_title = css({
-  fontSize: 'md',
-  fontWeight: 'bold',
-  color: 'text.primary',
-  lineClamp: 2,
-  lineHeight: 'tight',
+export const searchPanel_fieldSearchButton = css({
+  w: '100px',
 });
 
-export const sessionCard_system = css({
-  fontSize: 'sm',
-  color: 'text.secondary',
+export const searchPanel_label = css({
+  fontSize: '13px',
+  fontWeight: '500',
+  color: '#6B7280',
 });
 
-export const sessionCard_meta = css({
+// ===== Filter Panel (履歴) =====
+
+export const filterPanel = css({
+  bg: 'white',
+  shadow: 'subHeader.default',
+  p: '24px 32px',
   display: 'flex',
   flexDirection: 'column',
-  gap: 'xs',
-  fontSize: 'sm',
-  color: 'text.muted',
+  gap: '16px',
 });
 
-export const sessionCard_metaItem = css({
+export const filterPanel_row = css({
   display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
+  gap: '16px',
+  alignItems: 'flex-end',
+  flexWrap: 'wrap',
 });
 
-export const sessionCard_metaIcon = css({
-  w: '14px',
-  h: '14px',
-  flexShrink: 0,
-});
-
-export const sessionCard_badges = css({
-  display: 'flex',
-  gap: 'xs',
-  mt: 'auto',
-});
-
-export const sessionCard_badge = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '2px',
-  px: 'xs',
-  py: '1px',
-  fontSize: 'xs',
-  color: 'text.muted',
-  bg: 'neutral.50',
-  borderRadius: 'sm',
-});
-
-// セッションリストスタイル
-export const sessionListContainer = css({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-  gap: 'lg',
-});
-
-export const sessionListEmpty = css({
+export const filterPanel_fieldSystem = css({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  py: '2xl',
-  gap: 'md',
-  color: 'oklch(0.45 0.05 150)',
+  gap: '6px',
+  w: '180px',
 });
 
-export const sessionListEmptyIcon = css({
-  fontSize: '3xl',
-});
-
-export const sessionListEmptyText = css({
-  fontSize: 'md',
-  textAlign: 'center',
-});
-
-export const sessionListEmptySubtext = css({
-  fontSize: 'sm',
-  textAlign: 'center',
-});
-
-export const sessionListEmptyActions = css({
+export const filterPanel_fieldRole = css({
   display: 'flex',
-  gap: 'sm',
-  mt: 'md',
+  flexDirection: 'column',
+  gap: '6px',
+  w: '140px',
 });
 
-// 結果表示スタイル
+export const filterPanel_fieldStatus = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '6px',
+  w: '140px',
+});
+
+export const filterPanel_label = css({
+  fontSize: '13px',
+  fontWeight: '500',
+  color: '#6B7280',
+});
+
+// ===== Content Area =====
+
+export const contentArea_public = css({
+  maxW: '1440px',
+  mx: 'auto',
+  w: '100%',
+  p: '24px 32px 32px 32px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+});
+
+export const contentArea_upcoming = css({
+  maxW: '1440px',
+  mx: 'auto',
+  w: '100%',
+  p: '24px 32px 32px 32px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+});
+
+export const contentArea_history = css({
+  maxW: '1440px',
+  mx: 'auto',
+  w: '100%',
+  p: '16px 32px 32px 32px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+});
+
+// ===== Result Header =====
+
 export const resultHeader = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  mb: 'lg',
 });
 
-export const resultCount = css({
-  fontSize: 'sm',
-  color: 'text.secondary',
+export const resultHeader_count = css({
+  fontSize: '14px',
+  color: '#6B7280',
 });
 
-export const sortTabs = css({
+export const resultHeader_sortArea = css({
   display: 'flex',
-  gap: 'xs',
-  bg: 'white',
-  p: 'xs',
-  borderRadius: '16px',
-  shadow: 'xs',
+  gap: '8px',
+  alignItems: 'center',
 });
 
-export const sortTabButton = cva({
+export const resultHeader_sortLabel = css({
+  fontSize: '13px',
+  color: '#6B7280',
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
+});
+
+// ===== Public Cards (Card/Default component) =====
+
+export const publicCardsGrid = css({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+  gap: '20px',
+});
+
+export const publicCard = css({
+  w: '320px',
+  bg: 'white',
+  borderRadius: '12px',
+  shadow: '0 4px 16px 0 rgba(0, 0, 0, 0.06)',
+  overflow: 'hidden',
+  cursor: 'pointer',
+  transition: 'all {durations.normal}',
+  _hover: {
+    shadow: '0 8px 24px 0 rgba(0, 0, 0, 0.12)',
+    transform: 'translateY(-2px)',
+  },
+});
+
+export const publicCard_thumbnail = css({
+  h: '100px',
+  bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  position: 'relative',
+});
+
+export const publicCard_systemBadge = css({
+  position: 'absolute',
+  bottom: 0,
+  right: 0,
+  bg: '#10B981',
+  color: 'white',
+  fontSize: '11px',
+  fontWeight: '600',
+  p: '4px 8px',
+  borderRadius: '0 0 8px 0',
+});
+
+export const publicCard_content = css({
+  p: '16px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+});
+
+export const publicCard_title = css({
+  fontSize: '16px',
+  fontWeight: '600',
+  color: '#1F2937',
+  lineClamp: 2,
+});
+
+export const publicCard_meta = css({
+  display: 'flex',
+  gap: '16px',
+  alignItems: 'center',
+});
+
+export const publicCard_metaItem = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  fontSize: '13px',
+  color: '#6B7280',
+});
+
+export const publicCard_metaIcon = css({
+  w: '14px',
+  h: '14px',
+  color: '#6B7280',
+});
+
+export const publicCard_tags = css({
+  display: 'flex',
+  gap: '6px',
+  flexWrap: 'wrap',
+});
+
+export const publicCard_phaseTag = cva({
   base: {
-    px: 'md',
-    py: 'sm',
-    fontSize: 'sm',
-    fontWeight: 'medium',
-    color: 'text.muted',
-    bg: 'transparent',
-    border: 'none',
-    borderRadius: '12px',
-    cursor: 'pointer',
-    transition: 'all {durations.normal}',
-    _hover: {
-      color: 'primary.700',
-      bg: 'primary.50',
-    },
+    borderRadius: '4px',
+    h: '24px',
+    fontSize: '11px',
+    fontWeight: '500',
+    px: '8px',
+    display: 'inline-flex',
+    alignItems: 'center',
   },
   variants: {
-    active: {
-      true: {
-        color: 'primary.700',
-        bg: 'primary.100',
-        fontWeight: 'bold',
-        shadow: 'xs',
-        _hover: {
-          color: 'primary.700',
-          bg: 'primary.100',
-        },
+    phase: {
+      RECRUITING: {
+        bg: '#DCFCE7',
+        color: '#16A34A',
+      },
+      PREPARATION: {
+        bg: '#FEF3C7',
+        color: '#D97706',
       },
     },
   },
 });
 
-export const selectInput = css({
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  transition: 'background-color {durations.normal}',
-  shadow: 'sm',
+export const publicCard_slotWarning = css({
+  bg: '#FEF2F2',
+  color: '#DC2626',
+  fontSize: '11px',
+  fontWeight: '600',
+  px: '8px',
+  h: '24px',
+  borderRadius: '4px',
+  display: 'inline-flex',
+  alignItems: 'center',
+});
+
+// ===== Upcoming/History Session Card (horizontal layout) =====
+
+export const sessionCard_horizontal = css({
+  bg: 'white',
+  borderRadius: '12px',
+  shadow: '0 4px 16px 0 rgba(0, 0, 0, 0.06)',
+  display: 'flex',
+  gap: '16px',
+  p: '20px',
+  alignItems: 'center',
   cursor: 'pointer',
+  transition: 'all {durations.normal}',
   _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focusVisible: {
-    bg: 'bg.emphasized',
-    outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    shadow: '0 8px 24px 0 rgba(0, 0, 0, 0.12)',
+    transform: 'translateY(-2px)',
   },
 });
 
-// 表示切替スタイル
+export const sessionCard_dateArea = css({
+  w: '80px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  flexShrink: 0,
+});
+
+export const sessionCard_month = cva({
+  base: {
+    fontSize: '13px',
+  },
+  variants: {
+    type: {
+      upcoming: {
+        color: '#6B7280',
+      },
+      history: {
+        color: '#9CA3AF',
+      },
+    },
+  },
+});
+
+export const sessionCard_day = cva({
+  base: {
+    fontSize: '32px',
+    fontWeight: '700',
+  },
+  variants: {
+    type: {
+      upcoming: {
+        color: '#1F2937',
+      },
+      history: {
+        color: '#6B7280',
+      },
+    },
+  },
+});
+
+export const sessionCard_weekday = cva({
+  base: {
+    fontSize: '12px',
+  },
+  variants: {
+    type: {
+      upcoming: {
+        color: '#6B7280',
+      },
+      history: {
+        color: '#9CA3AF',
+      },
+    },
+  },
+});
+
+export const sessionCard_infoArea = css({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+});
+
+export const sessionCard_title = css({
+  fontSize: '16px',
+  fontWeight: '600',
+  color: '#1F2937',
+});
+
+export const sessionCard_metaRow = css({
+  display: 'flex',
+  gap: '16px',
+  alignItems: 'center',
+});
+
+export const sessionCard_systemBadgeInline = css({
+  bg: '#10B981',
+  color: 'white',
+  fontSize: '11px',
+  fontWeight: '600',
+  borderRadius: '4px',
+  p: '4px 8px',
+});
+
+export const sessionCard_time = css({
+  fontSize: '13px',
+  color: '#6B7280',
+});
+
+export const sessionCard_players = css({
+  fontSize: '13px',
+  color: '#6B7280',
+});
+
+export const sessionCard_roleBadge = cva({
+  base: {
+    borderRadius: '6px',
+    p: '6px 12px',
+    fontSize: '12px',
+    fontWeight: '600',
+  },
+  variants: {
+    role: {
+      PLAYER: {
+        bg: '#EEF2FF',
+        color: '#4F46E5',
+      },
+      KEEPER: {
+        bg: '#FEF3C7',
+        color: '#D97706',
+      },
+    },
+  },
+});
+
+// ===== Empty State =====
+
+export const emptyState = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flex: 1,
+  minH: '400px',
+  gap: '16px',
+});
+
+export const emptyState_icon = css({
+  w: '48px',
+  h: '48px',
+  color: '#D1D5DB',
+});
+
+export const emptyState_title = css({
+  fontSize: '16px',
+  color: '#6B7280',
+});
+
+export const emptyState_subtitle = css({
+  fontSize: '13px',
+  color: '#9CA3AF',
+});
+
+// ===== More Button Area =====
+
+export const moreButtonArea = css({
+  display: 'flex',
+  justifyContent: 'center',
+  pt: '16px',
+});
+
+// ===== View Toggle (ToggleGroup) =====
+
 export const viewToggle = css({
   display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
-  p: '2px',
-  bg: 'neutral.100',
-  borderRadius: 'md',
+  gap: '4px',
+  bg: '#F3F4F6',
+  p: '4px',
+  borderRadius: '8px',
 });
 
-export const viewToggleButton = cva({
+export const viewToggle_button = cva({
   base: {
+    w: '36px',
+    h: '36px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    w: '32px',
-    h: '32px',
-    borderRadius: 'sm',
+    borderRadius: '6px',
     border: 'none',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
-    color: 'text.muted',
+    transition: 'all 0.2s',
     bg: 'transparent',
+    color: '#6B7280',
     _hover: {
-      color: 'text.primary',
+      color: '#1F2937',
     },
   },
   variants: {
     active: {
       true: {
         bg: 'white',
-        color: 'text.primary',
-        shadow: 'sm',
+        color: '#1F2937',
+        shadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
       },
     },
   },
 });
 
-// フィルタパネルスタイル
-export const filterPanel = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'md',
-  p: 'lg',
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  mb: 'lg',
-  shadow: 'card.default',
-});
+// ===== Calendar Styles =====
 
-export const filterRow = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'md',
-  alignItems: 'flex-end',
-});
-
-export const filterItem = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'sm',
-  minW: '120px',
-});
-
-export const filterField = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'sm',
-  minW: '200px',
-  flex: 1,
-  border: 'none',
-  padding: 0,
-  margin: 0,
-  // legendはflexboxのgapが効かないため明示的にマージンを設定
-  '& > legend': {
-    mb: 'sm',
-  },
-});
-
-export const filterLabel = css({
-  fontSize: 'sm',
-  fontWeight: 'semibold',
-  color: 'text.secondary',
-  letterSpacing: '0.01em',
-});
-
-// 日付入力スタイル
-export const datePresetContainer = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'sm',
-});
-
-export const dateInputContainer = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'sm',
-});
-
-export const dateInput = css({
-  px: 'md',
-  py: 'sm',
-  border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  color: 'text.primary',
-  fontSize: 'sm',
-  outline: 'none',
-  transition: 'background-color {durations.normal}',
-  shadow: 'sm',
-  _hover: {
-    bg: 'bg.emphasized',
-  },
-  _focusVisible: {
-    bg: 'bg.emphasized',
-    outline: '2px solid',
-    outlineColor: 'primary.focusRing',
-  },
-});
-
-// カレンダースタイル
 export const calendarContainer = css({
-  bg: 'bg.card',
-  borderRadius: 'xl',
-  shadow: 'card.default',
+  bg: 'white',
+  borderRadius: '12px',
+  shadow: '0 4px 16px 0 rgba(0, 0, 0, 0.06)',
   overflow: 'hidden',
 });
 
@@ -588,16 +542,14 @@ export const calendarHeader = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  px: 'lg',
-  py: 'md',
-  borderBottom: '1px solid',
-  borderColor: 'border.subtle',
+  p: '16px 24px',
+  borderBottom: '1px solid #E5E7EB',
 });
 
 export const calendarTitle = css({
-  fontSize: 'lg',
-  fontWeight: 'bold',
-  color: 'text.primary',
+  fontSize: '18px',
+  fontWeight: '600',
+  color: '#1F2937',
 });
 
 export const calendarNavButton = css({
@@ -606,15 +558,15 @@ export const calendarNavButton = css({
   justifyContent: 'center',
   w: '32px',
   h: '32px',
-  borderRadius: 'md',
+  borderRadius: '6px',
   border: 'none',
   bg: 'transparent',
   cursor: 'pointer',
-  color: 'text.muted',
+  color: '#6B7280',
   transition: 'all {durations.normal}',
   _hover: {
-    bg: 'neutral.100',
-    color: 'text.primary',
+    bg: '#F3F4F6',
+    color: '#1F2937',
   },
 });
 
@@ -628,22 +580,20 @@ export const calendarWeekHeader = css({
 });
 
 export const calendarWeekDay = css({
-  py: 'sm',
+  py: '12px',
   textAlign: 'center',
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'text.muted',
-  borderBottom: '1px solid',
-  borderColor: 'border.subtle',
+  fontSize: '13px',
+  fontWeight: '500',
+  color: '#6B7280',
+  borderBottom: '1px solid #E5E7EB',
 });
 
 export const calendarDay = cva({
   base: {
     minH: '80px',
-    p: 'xs',
-    borderRight: '1px solid',
-    borderBottom: '1px solid',
-    borderColor: 'border.subtle',
+    p: '8px',
+    borderRight: '1px solid #E5E7EB',
+    borderBottom: '1px solid #E5E7EB',
     _last: {
       borderRight: 'none',
     },
@@ -651,15 +601,15 @@ export const calendarDay = cva({
   variants: {
     isCurrentMonth: {
       true: {
-        bg: 'bg.primary',
+        bg: 'white',
       },
       false: {
-        bg: 'neutral.50',
+        bg: '#F9FAFB',
       },
     },
     isToday: {
       true: {
-        bg: 'primary.50',
+        bg: '#EEF2FF',
       },
     },
   },
@@ -667,17 +617,17 @@ export const calendarDay = cva({
 
 export const calendarDayNumber = cva({
   base: {
-    fontSize: 'sm',
-    fontWeight: 'medium',
-    mb: 'xs',
+    fontSize: '13px',
+    fontWeight: '500',
+    mb: '4px',
   },
   variants: {
     isCurrentMonth: {
       true: {
-        color: 'text.primary',
+        color: '#1F2937',
       },
       false: {
-        color: 'text.muted',
+        color: '#9CA3AF',
       },
     },
     isToday: {
@@ -687,9 +637,9 @@ export const calendarDayNumber = cva({
         justifyContent: 'center',
         w: '24px',
         h: '24px',
-        borderRadius: 'full',
-        bg: 'primary.default',
-        color: 'primary.foreground.white',
+        borderRadius: '50%',
+        bg: '#4F46E5',
+        color: 'white',
       },
     },
   },
@@ -699,46 +649,169 @@ export const calendarSessionDot = css({
   display: 'flex',
   alignItems: 'center',
   gap: '2px',
-  px: 'xs',
-  py: '1px',
-  fontSize: 'xs',
-  bg: 'primary.50',
-  color: 'primary.700',
-  borderRadius: 'sm',
+  px: '6px',
+  py: '2px',
+  fontSize: '11px',
+  bg: '#EEF2FF',
+  color: '#4F46E5',
+  borderRadius: '4px',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   cursor: 'pointer',
+  mb: '2px',
   _hover: {
-    bg: 'primary.100',
+    bg: '#E0E7FF',
   },
 });
 
 export const calendarUnscheduledSection = css({
-  px: 'lg',
-  py: 'md',
-  borderTop: '1px solid',
-  borderColor: 'border.subtle',
+  px: '24px',
+  py: '16px',
+  borderTop: '1px solid #E5E7EB',
 });
 
 export const calendarUnscheduledTitle = css({
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'text.secondary',
-  mb: 'sm',
+  fontSize: '13px',
+  fontWeight: '500',
+  color: '#6B7280',
+  mb: '12px',
 });
 
 export const calendarUnscheduledList = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'sm',
+  gap: '8px',
 });
 
 export const calendarUnscheduledItem = css({
-  px: 'sm',
-  py: 'xs',
-  fontSize: 'sm',
-  bg: 'warning.50',
-  color: 'warning.700',
-  borderRadius: 'md',
+  px: '12px',
+  py: '6px',
+  fontSize: '13px',
+  bg: '#FEF3C7',
+  color: '#D97706',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  _hover: {
+    bg: '#FDE68A',
+  },
+});
+
+// ===== Common Input Styles =====
+
+export const selectInput = css({
+  px: '12px',
+  py: '8px',
+  border: 'none',
+  borderRadius: '6px',
+  bg: '#F9FAFB',
+  color: '#1F2937',
+  fontSize: '13px',
+  outline: 'none',
+  transition: 'background-color {durations.normal}',
+  cursor: 'pointer',
+  _hover: {
+    bg: '#F3F4F6',
+  },
+  _focusVisible: {
+    bg: '#F3F4F6',
+    outline: '2px solid #4F46E5',
+    outlineOffset: '2px',
+  },
+});
+
+export const dateInput = css({
+  px: '12px',
+  py: '8px',
+  border: 'none',
+  borderRadius: '6px',
+  bg: '#F9FAFB',
+  color: '#1F2937',
+  fontSize: '13px',
+  outline: 'none',
+  transition: 'background-color {durations.normal}',
+  _hover: {
+    bg: '#F3F4F6',
+  },
+  _focusVisible: {
+    bg: '#F3F4F6',
+    outline: '2px solid #4F46E5',
+    outlineOffset: '2px',
+  },
+});
+
+export const textInput = css({
+  px: '12px',
+  py: '8px',
+  border: 'none',
+  borderRadius: '6px',
+  bg: '#F9FAFB',
+  color: '#1F2937',
+  fontSize: '13px',
+  outline: 'none',
+  transition: 'background-color {durations.normal}',
+  w: '100%',
+  _hover: {
+    bg: '#F3F4F6',
+  },
+  _focusVisible: {
+    bg: '#F3F4F6',
+    outline: '2px solid',
+    outlineColor: 'border.focus',
+    outlineOffset: '2px',
+  },
+  _placeholder: {
+    color: '#9CA3AF',
+  },
+});
+
+// ===== Chip/Tag Styles =====
+
+export const chip = cva({
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    px: '8px',
+    py: '4px',
+    fontSize: '11px',
+    fontWeight: '500',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'all {durations.normal}',
+    border: 'none',
+    outline: 'none',
+    userSelect: 'none',
+  },
+  variants: {
+    selected: {
+      true: {
+        bg: '#4F46E5',
+        color: 'white',
+        _hover: {
+          bg: '#4338CA',
+        },
+      },
+      false: {
+        bg: '#F3F4F6',
+        color: '#6B7280',
+        _hover: {
+          bg: '#E5E7EB',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    selected: false,
+  },
+});
+
+// ===== Divider =====
+
+export const divider = css({
+  border: 'none',
+  h: '1px',
+  bg: '#E5E7EB',
+  my: '16px',
 });

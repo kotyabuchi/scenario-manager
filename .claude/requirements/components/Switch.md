@@ -112,7 +112,7 @@ type SwitchProps = {
   text: #9CA3AF, 14px
 
 全体:
-  opacity: 0.5
+  opacity: 'disabled'
 ```
 
 ---
@@ -127,7 +127,7 @@ type SwitchProps = {
 | on | 緑 | 右 | オン状態 |
 | hover | 背景色変化 | - | cursor: pointer |
 | focus | フォーカスリング | - | 2px offset |
-| disabled | グレー | 左 | opacity: 0.5 |
+| disabled | グレー | 左 | opacity: 'disabled' |
 
 ### 4.2 キーボード操作
 
@@ -141,8 +141,8 @@ type SwitchProps = {
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| トラック背景色 | 150ms | ease-out |
-| サム位置 | 150ms | ease-out |
+| トラック背景色 | {durations.fast} | {easings.ease-out} |
+| サム位置 | {durations.fast} | {easings.ease-out} |
 
 ---
 
