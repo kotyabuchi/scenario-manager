@@ -125,10 +125,17 @@ export const DatePicker = ({
                     <ArkDatePicker.Table className={styles.datePicker_table}>
                       <ArkDatePicker.TableHead>
                         <ArkDatePicker.TableRow>
-                          {context.weekDays.map((weekDay) => (
+                          {context.weekDays.map((weekDay, index) => (
                             <ArkDatePicker.TableHeader
                               key={weekDay.short}
                               className={styles.datePicker_tableHeader}
+                              data-holiday-type={
+                                index === 0
+                                  ? 'sunday'
+                                  : index === 6
+                                    ? 'saturday'
+                                    : null
+                              }
                             >
                               {weekDay.narrow}
                             </ArkDatePicker.TableHeader>
@@ -140,7 +147,7 @@ export const DatePicker = ({
                           <ArkDatePicker.TableRow
                             key={`week-${week[0]?.year}-${week[0]?.month}-${week[0]?.day}`}
                           >
-                            {week.map((day) => (
+                            {week.map((day, index) => (
                               <ArkDatePicker.TableCell
                                 key={`${day.year}-${day.month}-${day.day}`}
                                 value={day}
@@ -148,6 +155,13 @@ export const DatePicker = ({
                               >
                                 <ArkDatePicker.TableCellTrigger
                                   className={styles.datePicker_day}
+                                  data-holiday-type={
+                                    index === 0
+                                      ? 'sunday'
+                                      : index === 6
+                                        ? 'saturday'
+                                        : null
+                                  }
                                 >
                                   {day.day}
                                 </ArkDatePicker.TableCellTrigger>

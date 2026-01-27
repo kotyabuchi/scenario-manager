@@ -1,4 +1,5 @@
 import { User } from 'lucide-react';
+import Image from 'next/image';
 
 import * as styles from './styles';
 
@@ -67,7 +68,15 @@ export const Avatar = ({
 
   const renderContent = () => {
     if (src) {
-      return <img src={src} alt={alt || ''} className={styles.avatarImage()} />;
+      return (
+        <Image
+          src={src}
+          alt={alt || ''}
+          className={styles.avatarImage()}
+          width={iconSize}
+          height={iconSize}
+        />
+      );
     }
 
     if (fallback) {
