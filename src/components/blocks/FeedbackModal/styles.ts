@@ -68,7 +68,7 @@ export const radioLabel = css({
   px: 'md',
   py: 'sm',
   borderRadius: '12px',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   bg: colors.neutral[50],
   boxShadow: shadows.xs,
   _hover: {
@@ -87,7 +87,7 @@ export const radioLabelSelected = css({
   px: 'md',
   py: 'sm',
   borderRadius: '12px',
-  transition: 'all {durations.normal}',
+  transition: 'all {durations.fast}',
   bg: colors.primary[100],
   fontWeight: 'medium',
   boxShadow: shadows.xs,
@@ -110,7 +110,7 @@ export const input = css({
   color: 'text.primary',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'background-color {durations.normal}',
+  transition: 'background-color {durations.fast}',
   boxShadow: shadows.xs,
   _hover: {
     bg: 'bg.emphasized',
@@ -118,7 +118,7 @@ export const input = css({
   _focus: {
     bg: 'bg.emphasized',
     outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    outlineColor: 'border.focus',
   },
   _placeholder: {
     color: 'text.muted',
@@ -137,7 +137,7 @@ export const textarea = css({
   outline: 'none',
   resize: 'vertical',
   minH: '120px',
-  transition: 'background-color {durations.normal}',
+  transition: 'background-color {durations.fast}',
   boxShadow: shadows.xs,
   _hover: {
     bg: 'bg.emphasized',
@@ -145,7 +145,7 @@ export const textarea = css({
   _focus: {
     bg: 'bg.emphasized',
     outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    outlineColor: 'border.focus',
   },
   _placeholder: {
     color: 'text.muted',

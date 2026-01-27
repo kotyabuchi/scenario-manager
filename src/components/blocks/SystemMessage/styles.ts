@@ -74,7 +74,7 @@ export const closeButton = css({
   border: 'none',
   cursor: 'pointer',
   flexShrink: 0,
-  transition: 'background {durations.normal}',
+  transition: 'background {durations.fast}',
   _hover: {
     bg: 'bg.emphasized',
   },

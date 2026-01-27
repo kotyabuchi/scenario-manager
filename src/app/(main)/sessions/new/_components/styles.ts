@@ -42,7 +42,7 @@ export const input = css({
   color: 'text.default',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   boxShadow: shadows.input,
   _placeholder: {
     color: 'text.muted',
@@ -55,7 +55,7 @@ export const input = css({
     borderColor: 'primary.500',
     bg: 'bg.emphasized',
     outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    outlineColor: 'border.focus',
   },
 });
 
@@ -72,7 +72,7 @@ export const textarea = css({
   minH: '120px',
   resize: 'vertical',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   boxShadow: shadows.input,
   _placeholder: {
     color: 'text.muted',
@@ -85,7 +85,7 @@ export const textarea = css({
     borderColor: 'primary.500',
     bg: 'bg.emphasized',
     outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    outlineColor: 'border.focus',
   },
 });
 
@@ -101,7 +101,7 @@ export const select = css({
   fontSize: 'sm',
   cursor: 'pointer',
   outline: 'none',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   boxShadow: shadows.input,
   _hover: {
     borderColor: 'border.emphasized',
@@ -111,7 +111,7 @@ export const select = css({
     borderColor: 'primary.500',
     bg: 'bg.emphasized',
     outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    outlineColor: 'border.focus',
   },
 });
 

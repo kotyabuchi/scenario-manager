@@ -11,10 +11,10 @@ export const backdrop = css({
   backdropFilter: 'blur(4px)',
   zIndex: 9998,
   _open: {
-    animation: 'fadeIn 0.2s ease-out',
+    animation: 'fadeIn {durations.normal} ease-out',
   },
   _closed: {
-    animation: 'fadeOut 0.2s ease-in',
+    animation: 'fadeOut {durations.normal} ease-in',
   },
 });
 
@@ -37,10 +37,10 @@ export const content = css({
   maxH: '90vh',
   overflow: 'auto',
   _open: {
-    animation: 'slideInUp 0.2s ease-out',
+    animation: 'slideInUp {durations.normal} ease-out',
   },
   _closed: {
-    animation: 'slideOutDown 0.2s ease-in',
+    animation: 'slideOutDown {durations.normal} ease-in',
   },
 });
 
@@ -68,7 +68,7 @@ export const closeButton = css({
   borderRadius: '8px',
   color: 'dialog.close',
   cursor: 'pointer',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'gray.100',
     color: 'text.title',

@@ -96,7 +96,7 @@ const publicCard = css({
   overflow: 'hidden',
   shadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   textDecoration: 'none',
   _hover: {
     shadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
@@ -183,7 +183,7 @@ const sessionCard_horizontal = css({
   borderRadius: '12px',
   shadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   textDecoration: 'none',
   w: '100%',
   _hover: {

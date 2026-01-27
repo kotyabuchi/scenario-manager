@@ -87,7 +87,7 @@ export const browseBtn = css({
   bg: 'white',
   shadow: 'landing.browseBtn',
   cursor: 'pointer',
-  transition: 'all 0.15s ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     shadow: 'md',
   },
@@ -113,7 +113,7 @@ export const heroCTABtn = css({
   bg: 'primary.default',
   shadow: 'landing.heroCta',
   cursor: 'pointer',
-  transition: 'all 0.15s ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'primary.hover',
   },
@@ -337,7 +337,7 @@ export const ctaBtn = css({
   bg: 'white',
   shadow: 'landing.ctaBtn',
   cursor: 'pointer',
-  transition: 'all 0.15s ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     shadow: 'xl',
   },

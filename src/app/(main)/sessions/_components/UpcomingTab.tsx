@@ -43,7 +43,7 @@ const viewContainer = css({
 
 const listPanel = (isCalendarView: boolean) =>
   css({
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition: 'all {durations.slower} cubic-bezier(0.4, 0, 0.2, 1)',
     width: isCalendarView ? '320px' : '100%',
     minWidth: isCalendarView ? '320px' : '0',
     flexShrink: 0,
@@ -52,7 +52,7 @@ const listPanel = (isCalendarView: boolean) =>
 
 const calendarPanel = (isCalendarView: boolean) =>
   css({
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition: 'all {durations.slower} cubic-bezier(0.4, 0, 0.2, 1)',
     width: isCalendarView ? 'calc(100% - 320px)' : '0',
     opacity: isCalendarView ? 1 : 0,
     overflow: 'hidden',
@@ -167,8 +167,8 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
           className={cx(
             viewContainer,
             css({
-              opacity: isPending ? 0.6 : 1,
-              transition: 'opacity 0.2s',
+              opacity: isPending ? 'disabled' : 1,
+              transition: 'opacity {durations.normal}',
             }),
           )}
         >

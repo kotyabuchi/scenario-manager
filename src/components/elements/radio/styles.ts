@@ -19,7 +19,7 @@ export const radioItem = css({
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',
-    opacity: 0.5,
+    opacity: 'disabled',
   },
 });
 
@@ -35,7 +35,7 @@ export const radioControl = css({
   borderRadius: '50%',
   bg: 'white',
   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
-  transition: 'all 0.15s',
+  transition: 'all {durations.fast}',
   flexShrink: 0,
   _checked: {
     bg: '#10B981',
@@ -46,7 +46,8 @@ export const radioControl = css({
     boxShadow: 'none',
   },
   _focus: {
-    outline: '2px solid #10B981',
+    outline: '2px solid',
+    outlineColor: 'border.focus',
     outlineOffset: '2px',
   },
 });

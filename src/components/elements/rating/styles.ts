@@ -16,7 +16,7 @@ export const ratingButton = css({
   bg: 'transparent',
   border: 'none',
   cursor: 'pointer',
-  transition: 'transform 0.1s',
+  transition: 'transform {durations.faster}',
   _hover: {
     transform: 'scale(1.1)',
   },

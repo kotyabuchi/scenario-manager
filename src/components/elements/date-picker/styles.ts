@@ -14,15 +14,14 @@ export const datePicker_root = css({
 export const datePicker_control = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
   h: '44px',
   borderRadius: '8px',
   bg: 'input.bg',
   overflow: 'hidden',
-  transition: 'all 150ms ease-out',
+  transition: 'background {durations.fast} ease-out',
   _focusWithin: {
     outline: '2px solid',
-    outlineColor: 'input.focusBorder',
+    outlineColor: 'border.focus',
   },
   _hover: {
     bg: 'gray.200',
@@ -31,7 +30,7 @@ export const datePicker_control = css({
 
 export const datePicker_input = css({
   w: 'full',
-  px: '12px',
+  pl: '12px',
   py: '8px',
   border: 'none',
   bg: 'transparent',
@@ -43,7 +42,7 @@ export const datePicker_input = css({
     color: 'input.placeholder',
   },
   _disabled: {
-    opacity: 0.5,
+    opacity: 'disabled',
     cursor: 'not-allowed',
   },
 });
@@ -52,12 +51,17 @@ export const datePicker_trigger = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  px: '8px',
+  p: '8px',
   border: 'none',
+  borderRadius: '4px',
   bg: 'transparent',
   color: 'icon.muted',
   cursor: 'pointer',
-  transition: 'color 150ms ease-out',
+  transition: 'color {durations.fast} ease-out',
+  outline: 'none',
+  _focusWithin: {
+    color: 'border.focus',
+  },
   _hover: {
     color: 'icon.default',
   },
@@ -72,7 +76,7 @@ export const datePicker_clearTrigger = css({
   bg: 'transparent',
   color: 'icon.muted',
   cursor: 'pointer',
-  transition: 'color 150ms ease-out',
+  transition: 'color {durations.fast} ease-out',
   _hover: {
     color: 'icon.default',
   },
@@ -111,12 +115,12 @@ export const datePicker_navButton = css({
   color: 'text.secondary',
   cursor: 'pointer',
   borderRadius: '8px',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'gray.100',
   },
   _disabled: {
-    opacity: 0.3,
+    opacity: 'muted',
     cursor: 'not-allowed',
   },
 });
@@ -134,7 +138,7 @@ export const datePicker_viewTrigger = css({
   fontWeight: '600',
   cursor: 'pointer',
   borderRadius: '8px',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'gray.100',
   },
@@ -152,6 +156,12 @@ export const datePicker_tableHeader = css({
   fontWeight: '500',
   textAlign: 'center',
   pb: '4px',
+  '&[data-holiday-type="sunday"]': {
+    color: 'error.default',
+  },
+  '&[data-holiday-type="saturday"]': {
+    color: 'info.default',
+  },
 });
 
 export const datePicker_tableCell = css({
@@ -171,7 +181,7 @@ export const datePicker_day = css({
   fontSize: '14px',
   cursor: 'pointer',
   borderRadius: '8px',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   position: 'relative',
   _hover: {
     bg: 'gray.100',
@@ -195,12 +205,24 @@ export const datePicker_day = css({
       bg: 'primary.default',
     },
   },
+  '&[data-in-range]&:not([data-selected])': {
+    bg: 'primary.subtle',
+    color: 'primary.text',
+    fontWeight: '600',
+  },
   '&[data-outside-range]': {
     color: 'text.secondary',
-    opacity: 0.5,
+    opacity: 'disabled',
   },
+  '&[data-holiday-type="sunday"]&:not([data-selected])&:not([data-in-range])': {
+    color: 'error.default',
+  },
+  '&[data-holiday-type="saturday"]&:not([data-selected])&:not([data-in-range])':
+    {
+      color: 'info.default',
+    },
   _disabled: {
-    opacity: 0.3,
+    opacity: 'muted',
     cursor: 'not-allowed',
     _hover: {
       bg: 'transparent',
@@ -226,7 +248,7 @@ export const datePicker_monthYearCell = css({
   fontSize: '14px',
   cursor: 'pointer',
   borderRadius: '8px',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: 'gray.100',
   },
@@ -236,7 +258,7 @@ export const datePicker_monthYearCell = css({
     fontWeight: '600',
   },
   _disabled: {
-    opacity: 0.3,
+    opacity: 'muted',
     cursor: 'not-allowed',
   },
 });

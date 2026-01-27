@@ -36,7 +36,7 @@ export const pageBackButton = css({
   bg: '#F7F6F3',
   color: 'gray.500',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   border: 'none',
   _hover: {
     bg: 'gray.200',

@@ -80,6 +80,17 @@ export const semanticTokens = {
     },
 
     // ========================================
+    // 情報（青）
+    // ========================================
+    info: {
+      default: { value: '{colors.info.500}' },
+      hover: { value: '{colors.info.600}' },
+      subtle: { value: '{colors.info.100}' },
+      text: { value: '{colors.info.800}' },
+      textOnInfo: { value: '{colors.white}' },
+    },
+
+    // ========================================
     // パープル（システムバッジ用）
     // ========================================
     purple: {
@@ -395,6 +406,17 @@ export const semanticTokens = {
       sysOrangeBg: { value: '{colors.orange.100}' },
       sysOrangeText: { value: '{colors.orange.800}' },
     },
+  },
+
+  opacity: {
+    disabled: { value: '0.5' },
+    hover: { value: '0.8' },
+    muted: { value: '0.3' },
+  },
+
+  borders: {
+    focusRing: { value: '2px solid {colors.primary.500}' },
+    focusRingDashed: { value: '2px dashed {colors.primary.500}' },
   },
 
   shadows: {

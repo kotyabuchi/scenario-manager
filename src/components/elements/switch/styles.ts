@@ -10,7 +10,7 @@ export const switchRoot = css({
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',
-    opacity: 0.5,
+    opacity: 'disabled',
   },
 });
 
@@ -23,7 +23,7 @@ export const switchControl = css({
   h: '24px',
   borderRadius: '12px',
   bg: '#E5E7EB',
-  transition: 'all 0.15s',
+  transition: 'all {durations.fast}',
   _checked: {
     bg: '#10B981',
   },
@@ -41,7 +41,7 @@ export const switchThumb = css({
   borderRadius: '10px',
   bg: 'white',
   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.12)',
-  transition: 'transform 0.15s',
+  transition: 'transform {durations.fast}',
   _checked: {
     transform: 'translateX(20px)',
   },

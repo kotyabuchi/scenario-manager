@@ -185,7 +185,7 @@ icon: lock
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| 背景色・ボーダー・色・影・透明度 | 150ms | ease-out |
+| 背景色・ボーダー・色・影・透明度 | {durations.fast} | {easings.ease-out} |
 
 ---
 

@@ -21,7 +21,7 @@ export const combobox = defineSlotRecipe({
       h: '44px',
       borderRadius: '8px',
       overflow: 'hidden',
-      transition: 'all 150ms ease-out',
+      transition: 'all {durations.fast} ease-out',
       _focusWithin: {
         outline: '2px solid',
         outlineColor: 'input.focusBorder',
@@ -41,7 +41,7 @@ export const combobox = defineSlotRecipe({
         color: 'input.placeholder',
       },
       _disabled: {
-        opacity: 0.5,
+        opacity: 'disabled',
         cursor: 'not-allowed',
       },
     },
@@ -54,7 +54,7 @@ export const combobox = defineSlotRecipe({
       bg: 'transparent',
       color: 'icon.muted',
       cursor: 'pointer',
-      transition: 'color 150ms ease-out',
+      transition: 'color {durations.fast} ease-out',
       _hover: {
         color: 'icon.default',
       },
@@ -68,7 +68,7 @@ export const combobox = defineSlotRecipe({
       bg: 'transparent',
       color: 'icon.muted',
       cursor: 'pointer',
-      transition: 'color 150ms ease-out',
+      transition: 'color {durations.fast} ease-out',
       _hover: {
         color: 'icon.default',
       },
@@ -99,7 +99,7 @@ export const combobox = defineSlotRecipe({
       fontSize: '14px',
       color: 'menu.itemText',
       cursor: 'pointer',
-      transition: 'background-color 100ms ease-out',
+      transition: 'background-color {durations.faster} ease-out',
       _hover: {
         bg: 'menu.itemBgHover',
       },
@@ -112,7 +112,7 @@ export const combobox = defineSlotRecipe({
         fontWeight: '500',
       },
       _disabled: {
-        opacity: 0.5,
+        opacity: 'disabled',
         cursor: 'not-allowed',
         _hover: {
           bg: 'transparent',

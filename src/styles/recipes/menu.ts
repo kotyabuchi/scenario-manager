@@ -49,10 +49,10 @@ export const menu = defineSlotRecipe({
         display: 'none',
       },
       _open: {
-        animation: 'fadeIn 0.2s ease-out',
+        animation: 'fadeIn {durations.normal} ease-out',
       },
       _closed: {
-        animation: 'fadeOut 0.15s ease-in',
+        animation: 'fadeOut {durations.fast} ease-in',
       },
     },
     item: {
@@ -66,7 +66,7 @@ export const menu = defineSlotRecipe({
       py: '8px',
       fontSize: '14px',
       color: 'menu.itemText',
-      transitionDuration: '100ms',
+      transitionDuration: 'faster',
       transitionProperty: 'background, color',
       transitionTimingFunction: 'ease-out',
       _hover: {
@@ -78,7 +78,7 @@ export const menu = defineSlotRecipe({
       _disabled: {
         color: 'text.placeholder',
         cursor: 'not-allowed',
-        opacity: 0.5,
+        opacity: 'disabled',
       },
       '& :where(svg)': {
         width: '1em',

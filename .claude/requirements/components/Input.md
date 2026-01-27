@@ -124,7 +124,7 @@ type InputProps = {
 ```
 fill: #E5E7EB
 text: #9CA3AF, 14px
-opacity: 0.5
+opacity: 'disabled'
 ```
 
 ### 4.5 Input/Required (E443n)
@@ -155,7 +155,7 @@ Required + Error の組み合わせ
 | focus | 2px solid フォーカスリング | input.focusBorder色 |
 | filled | text: #1F2937 | 入力済みテキスト |
 | error | bg: #FEF2F2, outline: 1px solid red | hasError=true |
-| disabled | opacity: 0.5, bg: #E5E7EB | cursor: not-allowed |
+| disabled | opacity: 'disabled', bg: #E5E7EB | cursor: not-allowed |
 
 ### 5.2 キーボード操作
 
@@ -170,7 +170,7 @@ Required + Error の組み合わせ
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| all（背景色、フォーカス等） | 150ms | ease-out |
+| all（背景色、フォーカス等） | {durations.fast} | {easings.ease-out} |
 
 ---
 

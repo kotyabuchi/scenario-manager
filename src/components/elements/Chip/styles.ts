@@ -21,13 +21,13 @@ export const chip = cva({
     fontFamily: 'Inter, sans-serif',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all 150ms ease-out',
+    transition: 'all {durations.fast} ease-out',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
       outline: '2px solid',
-      outlineColor: 'primary.default',
+      outlineColor: 'border.focus',
       outlineOffset: '2px',
     },
   },
@@ -39,7 +39,7 @@ export const chip = cva({
         bg: 'chip.selectableBg',
         color: 'chip.selectableText',
         _hover: {
-          opacity: 0.9,
+          opacity: 'hover',
         },
       },
       // ラベルチップ（グレー）

@@ -54,7 +54,7 @@ const tabButton = (active: boolean) =>
     px: '16px',
     h: '36px',
     cursor: 'pointer',
-    transition: 'all 0.15s',
+    transition: 'all {durations.fast}',
     color: active ? '#1F2937' : '#6B7280',
     fontWeight: active ? '500' : 'normal',
     shadow: active ? '0 1px 2px rgba(0, 0, 0, 0.05)' : 'none',
@@ -62,7 +62,7 @@ const tabButton = (active: boolean) =>
       color: '#1F2937',
     },
     _disabled: {
-      opacity: 0.4,
+      opacity: 'disabled',
       cursor: 'not-allowed',
     },
   });

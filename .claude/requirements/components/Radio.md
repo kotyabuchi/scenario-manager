@@ -112,7 +112,7 @@ type RadioItemProps = {
   text: #9CA3AF, 14px
 
 全体:
-  opacity: 0.5
+  opacity: 'disabled'
 ```
 
 ---
@@ -127,7 +127,7 @@ type RadioItemProps = {
 | checked | 緑背景、白内側サークル | 通常色 | 選択済み |
 | hover | 背景色変化 | - | cursor: pointer |
 | focus | フォーカスリング | - | 2px offset |
-| disabled | グレー背景 | グレー | opacity: 0.5 |
+| disabled | グレー背景 | グレー | opacity: 'disabled' |
 
 ### 4.2 キーボード操作
 
@@ -142,8 +142,8 @@ type RadioItemProps = {
 
 | 対象 | duration | easing |
 |------|----------|--------|
-| 背景色変化 | 150ms | ease-out |
-| 内側サークル表示 | 150ms | ease-out |
+| 背景色変化 | {durations.fast} | {easings.ease-out} |
+| 内側サークル表示 | {durations.fast} | {easings.ease-out} |
 
 ---
 

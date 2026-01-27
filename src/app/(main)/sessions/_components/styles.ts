@@ -213,7 +213,7 @@ export const publicCard = css({
   shadow: '0 4px 16px 0 rgba(0, 0, 0, 0.06)',
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     shadow: '0 8px 24px 0 rgba(0, 0, 0, 0.12)',
     transform: 'translateY(-2px)',
@@ -325,7 +325,7 @@ export const sessionCard_horizontal = css({
   p: '20px',
   alignItems: 'center',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     shadow: '0 8px 24px 0 rgba(0, 0, 0, 0.12)',
     transform: 'translateY(-2px)',
@@ -556,7 +556,7 @@ export const calendarNavButton = css({
   bg: 'transparent',
   cursor: 'pointer',
   color: '#6B7280',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: '#F3F4F6',
     color: '#1F2937',
@@ -702,7 +702,7 @@ export const selectInput = css({
   color: '#1F2937',
   fontSize: '13px',
   outline: 'none',
-  transition: 'background-color 0.2s',
+  transition: 'background-color {durations.normal}',
   cursor: 'pointer',
   _hover: {
     bg: '#F3F4F6',
@@ -723,7 +723,7 @@ export const dateInput = css({
   color: '#1F2937',
   fontSize: '13px',
   outline: 'none',
-  transition: 'background-color 0.2s',
+  transition: 'background-color {durations.normal}',
   _hover: {
     bg: '#F3F4F6',
   },
@@ -743,14 +743,15 @@ export const textInput = css({
   color: '#1F2937',
   fontSize: '13px',
   outline: 'none',
-  transition: 'background-color 0.2s',
+  transition: 'background-color {durations.normal}',
   w: '100%',
   _hover: {
     bg: '#F3F4F6',
   },
   _focusVisible: {
     bg: '#F3F4F6',
-    outline: '2px solid #4F46E5',
+    outline: '2px solid',
+    outlineColor: 'border.focus',
     outlineOffset: '2px',
   },
   _placeholder: {
@@ -771,7 +772,7 @@ export const chip = cva({
     fontWeight: '500',
     borderRadius: '4px',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all {durations.normal}',
     border: 'none',
     outline: 'none',
     userSelect: 'none',

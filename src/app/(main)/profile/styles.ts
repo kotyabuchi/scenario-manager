@@ -32,14 +32,14 @@ export const viewProfileLink = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'background-color {durations.normal}',
+  transition: 'background-color {durations.fast}',
   textDecoration: 'none',
   _hover: {
     bg: 'primary.50',
   },
   _focusVisible: {
     outline: '2px solid',
-    outlineColor: 'primary.500',
+    outlineColor: 'border.focus',
   },
 });
 

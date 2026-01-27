@@ -65,7 +65,7 @@ export const form_imageUpload = css({
   borderRadius: '12px',
   shadow: 'sm',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'gray.100',
   },
@@ -128,7 +128,7 @@ export const form_imageRemove = css({
   fontWeight: '500',
   borderRadius: '6px',
   cursor: 'pointer',
-  transition: 'background 0.2s',
+  transition: 'background {durations.normal}',
   _hover: {
     bg: 'rgba(0, 0, 0, 0.8)',
   },

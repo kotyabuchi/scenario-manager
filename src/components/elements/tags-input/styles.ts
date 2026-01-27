@@ -165,5 +165,5 @@ export const tagsInputError = css({
  * Disabled状態のコンテナ
  */
 export const tagsInputContainerDisabled = css({
-  opacity: 0.5,
+  opacity: 'disabled',
 });

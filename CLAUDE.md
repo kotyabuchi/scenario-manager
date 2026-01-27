@@ -260,7 +260,7 @@ const MyComponent = ({ value, onUpdate }: Props) => {
 #### フォーカス管理
 - すべてのインタラクティブ要素にフォーカス可能
 - フォーカス順序は論理的な読み順に従う
-- フォーカスリングは`focusRing`トークンを使用
+- フォーカスリングは`borders.focusRing`トークン（`semanticTokens.ts`で定義）を使用
 - キーボードナビゲーション対応（Tab, Enter, Space, Escape, 矢印キー）
 
 #### セマンティックHTML
@@ -301,10 +301,10 @@ Ark UIはアクセシビリティ対応済みのコンポーネントを提供�
 ### 開発フロー
 
 ```
-/requirements → Pencil → レビュー → /gen-test → /implement-tests → /refactor
-    ↓             ↓         ↓           ↓              ↓               ↓
- 要件定義     UIデザイン   承認        Red           Green          Refactor
- (仕様策定)  (.penファイル)          (失敗テスト)   (最小実装)     (品質改善)
+/requirements → /pencil-design → レビュー → /gen-test → /implement-tests → /refactor
+    ↓                ↓              ↓           ↓              ↓               ↓
+ 要件定義        UIデザイン        承認        Red           Green          Refactor
+ (仕様策定)     (.penファイル)              (失敗テスト)   (最小実装)     (品質改善)
 ```
 
 ### UI開発フロー（Design First）
@@ -317,10 +317,10 @@ Ark UIはアクセシビリティ対応済みのコンポーネントを提供�
    - ユーザーと対話しながら詳細仕様を策定
    - 画面の目的、ユーザーストーリー、必要な要素を明確化
 
-2. **UIデザイン** (Pencil)
+2. **UIデザイン** (`/pencil-design`)
    - `.pen`ファイルでUIデザインを作成
    - `ui-design-system`メモリを参照してデザインシステムに準拠
-   - コンポーネント構成、レイアウト、インタラクションを設計
+   - 画面ごとにスクリーンショットを見せてユーザーの承認を得る
 
 3. **レビュー・承認**
    - ユーザーにデザインを確認してもらう
@@ -396,6 +396,7 @@ Users / プロフィール                  # /users/me
 | 名前 | 種別 | フェーズ | 説明 |
 |------|------|---------|------|
 | `/requirements` | スキル | 要件定義 | ユーザーと対話しながら詳細仕様を策定 |
+| `/pencil-design` | スキル | UIデザイン | 要件定義を元にPencilでUIデザインを作成 |
 | `/component-spec` | スキル | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義 |
 | `/gen-test` | スキル | Red | 要件定義書から失敗するテストを生成 |
 | `tdd-implementer` | エージェント | Green | テストを通過させる最小限の実装（自律実行） |

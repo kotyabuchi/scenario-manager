@@ -52,7 +52,7 @@ export const progressFill = css({
   h: '100%',
   bg: '#10B981',
   borderRadius: '4px',
-  transition: 'width 0.3s ease',
+  transition: 'width {durations.slow} ease',
 });
 
 /**

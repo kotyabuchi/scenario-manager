@@ -10,7 +10,7 @@ export const checkboxRoot = css({
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',
-    opacity: 0.5,
+    opacity: 'disabled',
   },
 });
 
@@ -25,11 +25,11 @@ export const checkboxControl = cva({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all 150ms ease-out',
+    transition: 'all {durations.fast} ease-out',
     flexShrink: 0,
     _focusVisible: {
       outline: '2px solid',
-      outlineColor: 'primary.default',
+      outlineColor: 'border.focus',
       outlineOffset: '2px',
     },
   },
@@ -47,7 +47,7 @@ export const checkboxControl = cva({
     disabled: {
       true: {
         backgroundColor: '#E5E7EB',
-        opacity: 0.5,
+        opacity: 'disabled',
       },
     },
   },

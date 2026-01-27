@@ -123,7 +123,7 @@
 ### 3.5 Textarea/Disabled (1xn2X)
 ```
 コンテナ:
-  opacity: 0.5
+  opacity: 'disabled'
 
 テキストエリア:
   fill: #E5E7EB

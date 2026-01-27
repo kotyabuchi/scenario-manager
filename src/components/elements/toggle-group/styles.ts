@@ -22,7 +22,7 @@ export const toggleGroupItem = css({
   height: '40px',
   borderRadius: '6px',
   cursor: 'pointer',
-  transition: 'all 0.15s',
+  transition: 'all {durations.fast}',
   bg: 'transparent',
   border: 'none',
   color: '#9CA3AF',

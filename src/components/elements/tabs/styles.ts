@@ -43,13 +43,13 @@ export const tabsTrigger = cva({
     fontSize: '14px',
     fontWeight: 500,
     cursor: 'pointer',
-    transition: 'all 0.15s',
+    transition: 'all {durations.fast}',
     color: '#6B7280',
     bg: 'transparent',
     border: 'none',
     position: 'relative',
     _disabled: {
-      opacity: 0.5,
+      opacity: 'disabled',
       cursor: 'not-allowed',
     },
   },
@@ -92,7 +92,7 @@ export const tabsIndicator = css({
   height: '2px',
   borderRadius: '1px',
   bg: 'transparent',
-  transition: 'background 0.15s',
+  transition: 'background {durations.fast}',
 });
 
 /**

@@ -22,13 +22,13 @@ export const dropdownTrigger = css({
   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
   fontSize: '14px',
   cursor: 'pointer',
-  transition: 'all 150ms ease-out',
+  transition: 'all {durations.fast} ease-out',
   _hover: {
     bg: '#F9FAFB',
   },
   _focus: {
     outline: '2px solid',
-    outlineColor: 'primary.default',
+    outlineColor: 'border.focus',
     outlineOffset: '2px',
   },
 });
@@ -64,7 +64,7 @@ export const dropdownItem = cva({
     fontSize: '13px',
     textAlign: 'left',
     cursor: 'pointer',
-    transition: 'all 150ms ease-out',
+    transition: 'all {durations.fast} ease-out',
     _hover: {
       bg: '#F3F4F6',
     },
@@ -87,7 +87,7 @@ export const dropdownItem = cva({
       true: {
         cursor: 'not-allowed',
         color: '#9CA3AF',
-        opacity: 0.5,
+        opacity: 'disabled',
         _hover: {
           bg: 'transparent',
         },

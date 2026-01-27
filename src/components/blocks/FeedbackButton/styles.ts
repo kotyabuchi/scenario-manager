@@ -19,7 +19,7 @@ export const button = css({
   cursor: 'pointer',
   border: 'none',
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-  transition: 'all 0.2s',
+  transition: 'all {durations.normal}',
   _hover: {
     bg: 'oklch(0.40 0.15 160)',
     transform: 'translateY(-2px)',

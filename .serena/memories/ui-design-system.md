@@ -4,143 +4,123 @@
 
 > **コンポーネントの詳細な挙動**（ホイール操作、キーボード操作等）は `ui-component-behavior` メモリを参照。
 
-テーマ: **nani.now風パステルグリーン** - ソフト、低彩度、緑のアンダートーン
+テーマ: **モダン × ソフト × レイヤードUI** - 淡い青みがかった白背景、Tailwind Emerald（緑）ベース
 
 ---
 
 ## 1. カラーパレット（最重要）
 
-すべての色は **OKLCH形式** で、**hue 150（緑）のアンダートーン** を持つ。
+すべての色は **HEX形式** で定義。Tailwindカラーパレットをベースとする。
+
+### 背景色
 
 ```typescript
-// 背景グラデーション
 bg: {
-  from: 'oklch(0.98 0.02 150)', // 淡い緑
-  to: 'oklch(0.98 0.02 180)',   // 淡い青緑
-}
-
-// プライマリ（緑系）
-primary: {
-  50:  'oklch(0.98 0.03 150)',  // 最も淡い
-  100: 'oklch(0.95 0.05 150)',  // チップ選択時など
-  200: 'oklch(0.90 0.08 150)',  // メインカラー
-  500: 'oklch(0.65 0.15 160)',  // 中間（使用注意: コントラスト確認）
-  800: 'oklch(0.40 0.15 160)',  // テキスト、アイコン
-}
-
-// アクセント
-accent: {
-  coral:  'oklch(0.85 0.10 15)',   // お気に入り、警告系
-  purple: 'oklch(0.80 0.12 320)', // 補助アクセント
-}
-
-// ニュートラル（緑のアンダートーン入り）
-neutral: {
-  50:  'oklch(0.98 0.01 150)',  // 背景
-  100: 'oklch(0.95 0.01 150)',  // divider
-  600: 'oklch(0.45 0.05 150)',  // サブテキスト、空き状態
-  700: 'oklch(0.40 0.05 150)',  // 通常テキスト
-  800: 'oklch(0.35 0.05 150)',  // 強調テキスト
+  page: '#F5F7FA',        // ページ背景（淡い青みがかった白）
+  card: '#FFFFFF',        // カード背景
+  input: '#F3F4F6',       // 入力フィールド（gray.100）
+  disabled: '#E5E7EB',    // 無効状態（gray.200）
 }
 ```
 
-### 色の設計意図
-- **明度**: 0.85-0.98（非常に明るい背景）、0.35-0.45（テキスト）
-- **彩度**: 0.01-0.15（低彩度でソフト）
-- **色相**: 150-180（緑〜青緑の範囲で統一）
-- **純粋なグレーは使わない**: 必ず hue 150 のアンダートーンを入れる
+### プライマリ（Tailwind Emerald）
+
+```typescript
+primary: {
+  50:  '#ECFDF5',  // 最も淡い（選択状態の背景等）
+  100: '#D1FAE5',  // チップ選択時
+  200: '#A7F3D0',
+  300: '#6EE7B7',
+  400: '#34D399',
+  500: '#10B981',  // メインカラー（ボタン、アクティブ状態）
+  600: '#059669',  // ホバー時
+  700: '#047857',  // アクティブ時
+  800: '#065F46',  // テキスト用
+}
+```
+
+### グレー
+
+```typescript
+gray: {
+  50:  '#F9FAFB',  // 背景のバリエーション
+  100: '#F3F4F6',  // 入力フィールド背景
+  200: '#E5E7EB',  // ボーダー、無効状態
+  300: '#D1D5DB',  // ボーダー
+  400: '#9CA3AF',  // プレースホルダー
+  500: '#6B7280',  // サブテキスト
+  600: '#4B5563',
+  700: '#374151',  // 本文テキスト
+  800: '#1F2937',  // 見出しテキスト
+}
+```
+
+### アクセント
+
+```typescript
+accent: {
+  orange: '#F59E0B',  // お気に入り、警告
+  red: '#EF4444',     // エラー、削除
+  purple: '#8B5CF6',  // システムバッジ
+}
+```
+
+### 色の使用ガイドライン
+
+- **背景**: 白（#FFFFFF）を基調とし、カードも白
+- **テキスト**: gray.800（見出し）、gray.700（本文）、gray.500（サブ）
+- **プライマリ**: primary.500をメインに、ホバーで600、アクティブで700
+- **エラー**: red.500
+- **純粋なグレーを使用**: 緑のアンダートーンは不要
 
 ---
 
 ## 2. 影・角丸・余白
 
-### シャドウ（3段階のみ）
+### シャドウ（コンポーネント別）
 
 ```typescript
 shadows: {
-  xs: '0 1px 3px rgba(0, 0, 0, 0.06)',   // カード通常、チップ
-  sm: '0 4px 6px rgba(0, 0, 0, 0.08)',   // カードホバー、パネル
-  md: '0 6px 12px rgba(0, 0, 0, 0.10)',  // ドロップダウン、モーダル
+  // 汎用
+  sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  md: '0 1px 3px rgba(0, 0, 0, 0.10)',
+  lg: '0 4px 6px rgba(0, 0, 0, 0.10)',
+  xl: '0 8px 16px rgba(0, 0, 0, 0.15)',
+
+  // コンポーネント別
+  card: {
+    default: '0 4px 16px rgba(0, 0, 0, 0.06)',
+    hover: '0 8px 24px rgba(0, 0, 0, 0.10)',
+  },
+  button: {
+    primary: '0 2px 4px rgba(16, 185, 129, 0.25)',
+  },
+  menu: '0 4px 16px rgba(0, 0, 0, 0.08)',
+  dialog: '0 8px 24px rgba(0, 0, 0, 0.12)',
 }
 ```
 
-**ポイント**: 透明度は 0.06〜0.10 の範囲（従来より薄め）
-
 ### 角丸
 
-| 用途 | サイズ |
-|------|--------|
-| カード、パネル、検索パネル | 16px |
-| チップ、タグ、ボタン | 12px |
-| 入力フィールド | 8px (md) |
+| 用途 | サイズ | PandaCSSトークン |
+|------|--------|-----------------|
+| カード、パネル | 16px | `2xl` |
+| チップ、タグ、ボタン | 12px | `xl` |
+| 入力フィールド | 8px | `lg` または `md` |
+
+> **Note**: borderRadius は厳密なトークン使用の対象外。計算値（例: `calc(...)` やコンテキストに応じた値）の使用も許容される。
 
 ### セクション間の余白
 
 | 場所 | トークン |
-|------|---------|
+|------|---------| 
 | 検索パネル → 結果ヘッダー | `mb: 'lg'` |
 | 結果ヘッダー → カードリスト | `mb: 'lg'` |
 | パネル内のセクション間 | divider の `my: 'lg'` |
 
 ---
 
-## 3. ページ統一ルール
-
-### 空き状態（0件表示）
-
-```typescript
-// アイコン: fontSize トークンを使用（w/h ではない）
-export const emptyStateIcon = css({
-  fontSize: '3xl',
-  color: 'oklch(0.45 0.05 150)', // neutral.600
-});
-
-// テキスト
-export const emptyStateText = css({
-  color: 'oklch(0.45 0.05 150)', // neutral.600
-});
-
-// ボタン
-<Button variant="subtle" status="primary">
-  公開卓を探す
-</Button>
-```
-
-### 検索パネル構造
-
-**gap:0 のコンテナ** + **divider の margin で余白確保**
-
-```typescript
-export const searchPanel = css({
-  display: 'flex',
-  flexDirection: 'column',
-  // gap は使わない
-  p: 'lg',
-  bg: 'white',
-  borderRadius: '16px',
-  boxShadow: shadows.sm,
-});
-
-export const searchDivider = css({
-  border: 'none',
-  h: '1px',
-  bg: 'oklch(0.95 0.01 150)', // neutral.100
-  my: 'lg',  // divider のマージンで余白確保
-});
-```
-
-### 検索結果件数
-
-```typescript
-export const resultCount = css({
-  fontSize: 'sm',
-  color: 'oklch(0.45 0.05 150)', // neutral.600
-});
-```
-
----
-
-## 4. コンポーネントパターン
+## 3. コンポーネントパターン
 
 ### カード
 
@@ -149,10 +129,10 @@ export const resultCount = css({
   bg: 'white',
   borderRadius: '16px',
   overflow: 'hidden',
-  boxShadow: shadows.xs,
-  transition: 'all 0.3s',
+  boxShadow: 'card.default',  // 0 4px 16px rgba(0, 0, 0, 0.06)
+  transition: 'all {durations.slow} ease',
   _hover: {
-    boxShadow: shadows.sm,
+    boxShadow: 'card.hover',  // 0 8px 24px rgba(0, 0, 0, 0.10)
     transform: 'translateY(-2px)',
   },
 }
@@ -165,21 +145,18 @@ export const resultCount = css({
 ```typescript
 // 非選択
 {
-  bg: 'oklch(0.97 0.01 150)',
-  color: 'oklch(0.40 0.05 150)',
-  boxShadow: shadows.xs,
+  bg: 'gray.100',
+  color: 'gray.600',
   borderRadius: '12px',
   _hover: {
-    bg: 'oklch(0.94 0.01 150)',
-    transform: 'translateY(-1px)',
+    bg: 'gray.200',
   },
 }
 
 // 選択時
 {
-  bg: 'oklch(0.95 0.05 150)', // primary.100
-  color: 'oklch(0.40 0.15 160)', // primary.800
-  boxShadow: shadows.xs,
+  bg: 'primary.100',
+  color: 'primary.800',
 }
 ```
 
@@ -190,53 +167,36 @@ export const resultCount = css({
   px: 'md',
   py: 'sm',
   border: 'none',
-  borderRadius: 'md',
-  bg: 'bg.muted',
-  boxShadow: 'sm',
-  _hover: { bg: 'bg.emphasized' },
+  borderRadius: 'lg',
+  bg: 'gray.100',
+  _hover: { bg: 'gray.200' },
   _focus: {
-    bg: 'bg.emphasized',
+    bg: 'gray.200',
     outline: '2px solid',
-    outlineColor: 'primary.focusRing',
+    outlineColor: 'primary.500',
   },
 }
 ```
 
-### ソートタブ
+### ボタン
 
 ```typescript
-export const sortTabs = css({
-  display: 'flex',
-  gap: 'xs',
+// Primary
+{
+  bg: 'primary.500',
+  color: 'white',
+  _hover: { bg: 'primary.600' },
+  _active: { bg: 'primary.700' },
+  boxShadow: '0 2px 4px rgba(16, 185, 129, 0.25)',
+}
+
+// Secondary
+{
   bg: 'white',
-  p: 'xs',
-  borderRadius: '16px',
-  boxShadow: shadows.xs,
-});
-
-// アクティブタブ
-{
-  color: 'oklch(0.40 0.15 160)', // primary.800
-  bg: 'oklch(0.95 0.05 150)',    // primary.100
-  fontWeight: 'bold',
-  boxShadow: shadows.xs,
-}
-```
-
-### オーバーレイ（サムネイル上のラベル等）
-
-```typescript
-// 明るいオーバーレイ
-{
-  bg: 'rgba(255, 255, 255, 0.85)',
-  backdropFilter: 'blur(8px)',
-}
-
-// 暗いオーバーレイ
-{
-  bg: 'rgba(0, 0, 0, 0.40)',
-  backdropFilter: 'blur(4px)',
-  _hover: { bg: 'rgba(0, 0, 0, 0.60)' },
+  color: 'gray.700',
+  border: '1px solid',
+  borderColor: 'gray.300',
+  _hover: { bg: 'gray.50' },
 }
 ```
 
@@ -250,38 +210,32 @@ export const sortTabs = css({
 
 ---
 
-## 5. 禁止パターン
+## 4. 禁止パターン
 
 | 禁止 | 理由 | 代替 |
-|------|------|------|
-| `w: '48px', h: '48px'` でアイコンサイズ | ページ間で不統一 | `fontSize: '3xl'` |
-| `gap` でパネル内余白調整 | divider の margin が効かない | gap:0 + divider margin |
-| 純粋なグレー `oklch(0.xx 0 0)` | テーマと不調和 | `oklch(0.xx 0.01-0.05 150)` |
+|------|------|------| 
+| OKLCH形式 | コードベースはHEX | HEX形式を使用 |
 | `border: 1px solid` でカード輪郭 | ボーダーレスUI原則に反する | shadow で表現 |
-| coral 以外の赤系 | テーマと不調和 | `accent.coral` |
-| ハードコードされた色を直接使用 | 一貫性が崩れる | トークンを定義して使用 |
+| ハードコードされた色を直接使用 | 一貫性が崩れる | セマンティックトークンを使用 |
+| `w: '48px', h: '48px'` でアイコンサイズ | ページ間で不統一 | `fontSize` トークン |
 
 ---
 
-## 6. 実装チェックリスト
+## 5. 実装チェックリスト
 
 ### 必須（実装前に確認）
-- [ ] 色は OKLCH 形式で hue 150 のアンダートーンがあるか
-- [ ] 影は xs/sm/md の3段階を使用しているか
+- [ ] 色はHEX形式でsemanticeTokensを使用しているか
+- [ ] 影はコンポーネント別トークンを使用しているか
 - [ ] カードに border を使っていないか（shadow で表現）
-- [ ] 空き状態のアイコンは `fontSize` トークンを使用しているか
-- [ ] 検索パネルは gap:0 + divider margin 構造か
+- [ ] 背景は#F5F7FA（淡い青みがかった白）を使用しているか
 
 ### 統一性（実装後に確認）
 - [ ] シナリオ一覧とセッション一覧で同じスタイルを使っているか
-- [ ] 0件表示のテキスト色・アイコンサイズは統一されているか
-- [ ] ボタンのバリアントは適切か（空き状態は subtle + primary）
+- [ ] ボタンのバリアントは適切か
 
 ---
 
-## 7. 補足：設計原則
-
-以下は上記ルールの背景となる設計思想。実装時は上記の具体的なルールを優先。
+## 6. 設計原則
 
 ### デザインコンセプト
 
@@ -290,24 +244,39 @@ export const sortTabs = css({
 | 原則 | 説明 |
 |------|------|
 | ボーダーレス | 境界線は原則使用しない。輪郭は影で表現 |
-| ソフト | 角丸、淡い色、柔らかい影で優しい印象 |
+| ソフト | 角丸、柔らかい影で優しい印象 |
 | レイヤード | 影の強弱で奥行きと階層を表現 |
+| 淡い背景 | 淡い青みがかった白（#F5F7FA）でコンテンツを引き立てる |
 
 ### インタラクション
 
 - **ホバー**: `translateY(-1〜2px)` + 影の強調
-- **トランジション**: `all 0.3s ease`（カード）、`all 0.2s ease-in-out`（チップ）
+- **トランジション**: `all {durations.slow} ease`（カード）、`all {durations.normal} ease-in-out`（チップ）
 - **フォーカス**: 2px のフォーカスリングで明示
-
-### AI臭いデザインの回避
-
-- 紫グラデーション on 白背景を避ける
-- Inter, Roboto の安易な使用を避ける
-- 過度なアニメーションを避ける
-- 予測可能な左右対称レイアウトを避ける
 
 ### アクセシビリティ（WCAG AA）
 
 - 通常テキスト: コントラスト比 4.5:1 以上
 - 大きいテキスト: コントラスト比 3:1 以上
 - UIコンポーネント: コントラスト比 3:1 以上
+
+---
+
+## 7. Pencil MCP連携
+
+Pencilでデザインを作成する際は、以下のカラー値を使用:
+
+| 用途 | HEX値 |
+|------|-------|
+| 背景 | `#F5F7FA` |
+| カード | `#FFFFFF` |
+| プライマリ | `#10B981` |
+| プライマリホバー | `#059669` |
+| テキスト（見出し） | `#1F2937` |
+| テキスト（本文） | `#374151` |
+| テキスト（サブ） | `#6B7280` |
+| ボーダー | `#D1D5DB` |
+| エラー | `#EF4444` |
+| 警告 | `#F59E0B` |
+
+Pencilのスタイルガイドタグを使用する場合は、上記の色を手動でオーバーライドすること。

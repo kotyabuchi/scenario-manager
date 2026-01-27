@@ -238,6 +238,24 @@ Q: 異常系や境界値の挙動を確認します
 
 ## 出力フォーマット
 
+### 固定値禁止ルール
+
+要件定義書にサイズ・duration・色などの値を記載する際は、**プロジェクトのトークンを使用すること。** px値やms値などの固定値を直接書かない。
+
+| 種別 | トークン例 | 定義元 | 固定値（禁止） |
+|------|-----------|--------|---------------|
+| duration | `{durations.fast}` | `tokens/durations.ts` | `150ms` |
+| easing | `{easings.ease-out}` | `tokens/easing.ts` | `ease-out` |
+| spacing | `{spacing.4}` | `tokens/spacing.ts` | `16px` |
+| size | `{sizes.10}` | `tokens/sizes.ts` | `40px` |
+| color | `{colors.primary.500}` | `tokens/colors.ts` | `oklch(...)` |
+| shadow | `card.default` 等 | `semanticTokens.ts` | `0 2px 4px ...` |
+| opacity | `disabled` / `hover` / `muted` | `semanticTokens.ts` | `0.5` / `0.8` / `0.3` |
+| focus ring | `{borders.focusRing}` | `semanticTokens.ts` | `2px solid ...` |
+| font size | `{fontSizes.sm}` 等 | PandaCSS preset-panda | `14px` |
+
+> **borderRadius は例外**: 親の `padding - borderRadius` で計算した値を使うケースがあるため、固定値（`4px`等）の直接指定を許可する。トークンの使用は推奨だが必須ではない。
+
 ```markdown
 # [コンポーネント名] 要件定義書
 
@@ -306,11 +324,13 @@ type ButtonProps = {
 
 ### 3.2 size
 
+**サイズはトークンで指定すること。** プロジェクトの`spacing`/`sizes`トークンを参照。
+
 | 値 | 高さ | フォントサイズ | パディング |
 |-----|------|--------------|-----------|
-| `sm` | 32px | 14px | 8px 12px |
-| `md` | 40px | 16px | 12px 16px |
-| `lg` | 48px | 18px | 16px 24px |
+| `sm` | `{sizes.8}` (32px) | `{fontSizes.sm}` (14px) | `{spacing.2}` `{spacing.3}` |
+| `md` | `{sizes.10}` (40px) | `{fontSizes.md}` (16px) | `{spacing.3}` `{spacing.4}` |
+| `lg` | `{sizes.12}` (48px) | `{fontSizes.lg}` (18px) | `{spacing.4}` `{spacing.6}` |
 
 ---
 
@@ -318,13 +338,15 @@ type ButtonProps = {
 
 ### 4.1 状態
 
+**セマンティックトークンやデザインシステムの値を使用すること。** 固定値（`0.5`, `2px`等）を直接書かない。
+
 | 状態 | 見た目の変化 | 備考 |
 |------|-------------|------|
 | default | - | 通常状態 |
 | hover | 背景色が少し明るく | cursor: pointer |
-| focus | フォーカスリング表示 | 2px offset |
-| active | 背景色が少し暗く | scale(0.98) |
-| disabled | opacity: 0.5 | cursor: not-allowed |
+| focus | フォーカスリング表示 | `{borders.focusRing}` 使用 |
+| active | 背景色が少し暗く | scale値はデザインシステム参照 |
+| disabled | opacity低下 | cursor: not-allowed、`{opacity.disabled}` 使用 |
 | loading | スピナー表示 | クリック無効 |
 
 ### 4.2 キーボード操作
@@ -337,10 +359,22 @@ type ButtonProps = {
 
 ### 4.3 アニメーション
 
+**durationはトークンで指定すること。** プロジェクトの`durations`トークンを参照:
+
+| トークン | 値 |
+|----------|-----|
+| `{durations.fastest}` | 50ms |
+| `{durations.faster}` | 100ms |
+| `{durations.fast}` | 150ms |
+| `{durations.normal}` | 200ms |
+| `{durations.slow}` | 300ms |
+| `{durations.slower}` | 400ms |
+| `{durations.slowest}` | 500ms |
+
 | 対象 | duration | easing |
 |------|----------|--------|
-| 背景色変化 | 150ms | ease-out |
-| scale変化 | 100ms | ease-out |
+| 背景色変化 | `{durations.fast}` | `{easings.ease-out}` |
+| scale変化 | `{durations.faster}` | `{easings.ease-out}` |
 
 ---
 
