@@ -31,7 +31,7 @@ importers:
         version: 17.2.3
       drizzle-orm:
         specifier: 0.45.1
-        version: 0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(postgres@3.4.7)
+        version: 0.45.1(@cloudflare/workers-types@4.20260127.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(postgres@3.4.7)
       jotai:
         specifier: ^2.16.2
         version: 2.16.2(@babel/core@7.28.5)(@babel/template@7.27.2)(@types/react@19.2.7)(react@19.2.3)
@@ -75,9 +75,12 @@ importers:
       '@biomejs/biome':
         specifier: 2.3.10
         version: 2.3.10
+      '@cloudflare/workers-types':
+        specifier: ^4.20260127.0
+        version: 4.20260127.0
       '@opennextjs/cloudflare':
         specifier: ^1.14.9
-        version: 1.14.9(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(wrangler@4.59.2)
+        version: 1.14.9(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(wrangler@4.59.2(@cloudflare/workers-types@4.20260127.0))
       '@pandacss/dev':
         specifier: ^0.53.6
         version: 0.53.7(jsdom@27.4.0(@noble/hashes@2.0.1))(typescript@5.9.3)
@@ -158,7 +161,7 @@ importers:
         version: 3.2.4(@types/node@20.19.27)(@vitest/browser@3.2.4)(jsdom@27.4.0(@noble/hashes@2.0.1))(lightningcss@1.25.1)(terser@5.16.9)
       wrangler:
         specifier: ^4.59.2
-        version: 4.59.2
+        version: 4.59.2(@cloudflare/workers-types@4.20260127.0)
 
 packages:
 
@@ -728,6 +731,9 @@ packages:
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
+
+  '@cloudflare/workers-types@4.20260127.0':
+    resolution: {integrity: sha512-4M1HLcWViSdT/pAeDGEB5x5P3sqW7UIi34QrBRnxXbqjAY9if8vBU/lWRWnM+UqKzxWGB2LYjEVOzZrp0jZL+w==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -6594,6 +6600,8 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20260114.0':
     optional: true
 
+  '@cloudflare/workers-types@4.20260127.0': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -7367,7 +7375,7 @@ snapshots:
       - aws-crt
       - supports-color
 
-  '@opennextjs/cloudflare@1.14.9(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(wrangler@4.59.2)':
+  '@opennextjs/cloudflare@1.14.9(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(wrangler@4.59.2(@cloudflare/workers-types@4.20260127.0))':
     dependencies:
       '@ast-grep/napi': 0.40.0
       '@dotenvx/dotenvx': 1.31.0
@@ -7377,7 +7385,7 @@ snapshots:
       glob: 12.0.0
       next: 16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       ts-tqdm: 0.8.6
-      wrangler: 4.59.2
+      wrangler: 4.59.2(@cloudflare/workers-types@4.20260127.0)
       yargs: 18.0.0
     transitivePeerDependencies:
       - aws-crt
@@ -9475,8 +9483,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(postgres@3.4.7):
+  drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260127.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(postgres@3.4.7):
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20260127.0
       '@neondatabase/serverless': 1.0.2
       '@types/pg': 8.16.0
       postgres: 3.4.7
@@ -11250,7 +11259,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20260114.0
       '@cloudflare/workerd-windows-64': 1.20260114.0
 
-  wrangler@4.59.2:
+  wrangler@4.59.2(@cloudflare/workers-types@4.20260127.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.2
       '@cloudflare/unenv-preset': 2.10.0(unenv@2.0.0-rc.24)(workerd@1.20260114.0)
@@ -11261,6 +11270,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20260114.0
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20260127.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil

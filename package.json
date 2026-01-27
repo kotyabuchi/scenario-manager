@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "prepare": "panda codegen",
-    "dev": "rm -rf .next && next dev --turbopack",
-    "dev:watch": "rm -rf .next && next dev -p 3333 --turbopack",
+    "dev": "next dev --turbopack",
+    "dev:watch": "next dev -p 3333 --turbopack",
     "build": "next build",
     "build:cloudflare": "opennextjs-cloudflare build",
     "buildstart": "next build && next start",
@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
+    "@cloudflare/workers-types": "^4.20260127.0",
     "@opennextjs/cloudflare": "^1.14.9",
     "@pandacss/dev": "^0.53.6",
     "@playwright/test": "^1.57.0",
