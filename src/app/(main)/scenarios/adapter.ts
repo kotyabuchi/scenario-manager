@@ -185,19 +185,102 @@ export const getAllTags = async (): Promise<Result<Tag[]>> => {
  */
 export const getUserByDiscordId = async (
   discordId: string,
-): Promise<Result<{ userId: string } | null>> => {
+): Promise<Result<{ userId: string; role: string } | null>> => {
   const db = getDb();
   try {
     const result = await db.query.users.findFirst({
       where: eq(users.discordId, discordId),
       columns: {
         userId: true,
+        role: true,
       },
     });
     return ok(result ?? null);
   } catch (e) {
     return err(
       e instanceof Error ? e : new Error('ユーザーの取得に失敗しました'),
+    );
+  }
+};
+
+/**
+ * 同一システム内でシナリオ名が重複しているかチェック
+ */
+export const checkScenarioNameDuplicate = async (params: {
+  name: string;
+  scenarioSystemId: string;
+}): Promise<Result<{ isDuplicate: boolean; existingScenarioId?: string }>> => {
+  const db = getDb();
+  try {
+    const existing = await db.query.scenarios.findFirst({
+      where: and(
+        eq(scenarios.scenarioSystemId, params.scenarioSystemId),
+        eq(scenarios.name, params.name),
+      ),
+      columns: {
+        scenarioId: true,
+      },
+    });
+
+    if (existing) {
+      return ok({
+        isDuplicate: true,
+        existingScenarioId: existing.scenarioId,
+      });
+    }
+
+    return ok({ isDuplicate: false });
+  } catch (e) {
+    return err(
+      e instanceof Error
+        ? e
+        : new Error('シナリオ名の重複チェックに失敗しました'),
+    );
+  }
+};
+
+/**
+ * 配布URLが重複しているかチェック
+ */
+export const checkDistributeUrlDuplicate = async (params: {
+  distributeUrl?: string;
+}): Promise<
+  Result<{
+    isDuplicate: boolean;
+    existingScenarioId?: string;
+    existingScenarioName?: string;
+  }>
+> => {
+  const db = getDb();
+  try {
+    // distributeUrlが未定義の場合はスキップ
+    if (isNil(params.distributeUrl)) {
+      return ok({ isDuplicate: false });
+    }
+
+    // URL正規化: 末尾スラッシュを削除
+    const normalizedUrl = params.distributeUrl.replace(/\/+$/, '');
+
+    const existing = await db.query.scenarios.findFirst({
+      where: eq(scenarios.distributeUrl, normalizedUrl),
+      columns: {
+        scenarioId: true,
+        name: true,
+      },
+    });
+
+    if (existing) {
+      return ok({
+        isDuplicate: true,
+        existingScenarioId: existing.scenarioId,
+        existingScenarioName: existing.name,
+      });
+    }
+
+    return ok({ isDuplicate: false });
+  } catch (e) {
+    return err(
+      e instanceof Error ? e : new Error('配布URLの重複チェックに失敗しました'),
     );
   }
 };
@@ -211,6 +294,11 @@ export const createScenario = async (
 ): Promise<Result<{ scenarioId: string }>> => {
   const db = getDb();
   try {
+    // distributeUrlの正規化（末尾スラッシュ削除）
+    const normalizedDistributeUrl = !isNil(input.distributeUrl)
+      ? input.distributeUrl.replace(/\/+$/, '')
+      : null;
+
     // シナリオをINSERT
     const [inserted] = await db
       .insert(scenarios)
@@ -225,7 +313,7 @@ export const createScenario = async (
         minPlaytime: input.minPlaytime ?? null,
         maxPlaytime: input.maxPlaytime ?? null,
         scenarioImageUrl: input.scenarioImageUrl ?? null,
-        distributeUrl: input.distributeUrl ?? null,
+        distributeUrl: normalizedDistributeUrl,
         createdById: userId,
       })
       .returning({ scenarioId: scenarios.scenarioId });

@@ -2,6 +2,33 @@ import { z } from 'zod';
 
 import { HandoutTypes } from '@/db/enum';
 
+// 画像ファイルのバリデーション定数
+const ALLOWED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+] as const;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+
+// 画像ファイルのZodスキーマ
+const imageFileSchema = z
+  .instanceof(File)
+  .refine((file) => file.size <= MAX_IMAGE_SIZE, {
+    message: '画像サイズは5MB以下にしてください',
+  })
+  .refine(
+    (file) =>
+      ALLOWED_IMAGE_TYPES.includes(
+        file.type as (typeof ALLOWED_IMAGE_TYPES)[number],
+      ),
+    {
+      message: 'JPEG、PNG、WebP、GIF形式の画像のみ対応しています',
+    },
+  )
+  .optional()
+  .nullable();
+
 // 空文字列をundefinedに変換して数値としてバリデーション
 const optionalNumberString = (min: number, max: number, fieldName: string) =>
   z
@@ -50,6 +77,9 @@ export const scenarioFormSchema = z
       .max(2000, '概要は2000文字以内で入力してください')
       .optional()
       .transform((val) => (val === '' ? undefined : val)),
+    // 画像ファイル（アップロード前）
+    scenarioImage: imageFileSchema,
+    // 画像URL（アップロード後に設定）
     scenarioImageUrl: z
       .string()
       .url('サムネイルURLは有効なURL形式で入力してください')

@@ -8,6 +8,9 @@ declare namespace NodeJS {
     DATABASE_URL: string;
     DATABASE_DIRECT_URL: string;
 
+    // Cloudflare R2
+    R2_PUBLIC_URL?: string;
+
     // Node environment
     NODE_ENV: 'development' | 'production' | 'test';
   }
