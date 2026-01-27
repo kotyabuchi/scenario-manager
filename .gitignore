@@ -78,4 +78,4 @@ src/lib/db/migrations
 test-results/
 
 # Null
-nul
+nulsupabase/.temp/
