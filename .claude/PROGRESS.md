@@ -50,17 +50,29 @@
 
 ---
 
-### シナリオ登録（requirements-v1.md Section 4）
+### シナリオ登録（requirements-scenario-new.md）
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
 | scenarioFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | createScenario | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | getUserByDiscordId | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| checkScenarioNameDuplicate | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（統合済） |
+| checkDistributeUrlDuplicate | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（統合済） |
+| checkRateLimit | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（統合済） |
+| createScenarioAction | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（統合済） |
+
+**要件定義書**: `.claude/requirements/requirements-scenario-new.md`
 
 **テストファイル**:
 - `src/app/(main)/scenarios/new/__tests__/schema.test.ts`
 - `src/app/(main)/scenarios/new/__tests__/adapter.test.ts`
+- `src/app/(main)/scenarios/new/__tests__/duplicateCheck.test.ts`
+- `src/app/(main)/scenarios/new/__tests__/rateLimit.test.ts`
+
+**実装ファイル**:
+- `src/app/(main)/scenarios/adapter.ts` - 重複チェック関数
+- `src/lib/rateLimit.ts` - レートリミット関数
 
 ---
 
@@ -82,18 +94,23 @@
 
 ---
 
-### セッション一覧（requirements-v1.md Section 11）
+### セッション一覧（requirements-session-list.md）
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
+| searchFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| searchParamsParsers | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
 | searchPublicSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | getUpcomingSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | getHistorySessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | getCalendarSessions | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | getAllSystems | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 
+**要件定義書**: `.claude/requirements/requirements-session-list.md`
+
 **テストファイル**:
 - `src/app/(main)/sessions/__tests__/adapter.test.ts`
+- `src/app/(main)/sessions/_components/schema.ts` （スキーマ定義）
 
 ---
 
@@ -252,6 +269,12 @@
 | 2026-01-22 | TDD Red: セッション管理・参加申請機能のテストを追加 |
 | 2026-01-22 | createFeedbackActionのテストを追加 |
 | 2026-01-22 | TDD Green: セッション管理・参加申請機能の実装完了 |
+| 2026-01-27 | シナリオ登録画面の詳細要件定義書を作成（重複チェック・レートリミット追加） |
+| 2026-01-27 | TDD Red: シナリオ登録の境界値テスト追加、重複チェック・レートリミットのテスト作成 |
+| 2026-01-27 | TDD Green: 重複チェック・レートリミット実装完了（adapter.ts, rateLimit.ts） |
+| 2026-01-27 | セッション一覧画面の個別要件定義書を作成（requirements-session-list.md） |
+| 2026-01-27 | Server Action統合: 重複チェック・レートリミットをcreateScenarioActionに組み込み |
+| 2026-01-27 | フロントエンド改善: useSystemMessageでエラー・成功メッセージ表示 |
 
 ---
 

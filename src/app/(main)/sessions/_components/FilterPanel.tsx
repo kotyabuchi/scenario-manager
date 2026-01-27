@@ -1,9 +1,9 @@
 'use client';
 
-import * as styles from './styles';
+import { Select } from '@/components/elements/select/select';
+import { css } from '@/styled-system/css';
 
-import { Chip } from '@/components/elements/Chip';
-
+import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type {
   RoleFilterValue,
   ScenarioSystem,
@@ -22,16 +22,43 @@ type FilterPanelProps = {
   ) => void;
 };
 
-const roleOptions: { value: RoleFilterValue; label: string }[] = [
+const roleItems = [
   { value: 'keeper', label: 'GM' },
   { value: 'player', label: 'PL' },
   { value: 'spectator', label: '観戦' },
 ];
 
-const statusOptions: { value: StatusFilterValue; label: string }[] = [
+const statusItems = [
   { value: 'completed', label: '完了' },
   { value: 'cancelled', label: 'キャンセル' },
 ];
+
+const panel = css({
+  bg: '#FFFFFF',
+  shadow: 'subHeader.default',
+  p: '24px 32px',
+  display: 'flex',
+  flexDir: 'column',
+  gap: '16px',
+});
+
+const searchRow = css({
+  display: 'flex',
+  gap: '16px',
+  alignItems: 'flex-end',
+});
+
+const fieldWrapper = css({
+  display: 'flex',
+  flexDir: 'column',
+  gap: '6px',
+});
+
+const fieldLabel = css({
+  fontSize: '13px',
+  fontWeight: '500',
+  color: '#6B7280',
+});
 
 export const FilterPanel = ({
   systems,
@@ -40,70 +67,79 @@ export const FilterPanel = ({
   selectedSystems,
   onFilterChange,
 }: FilterPanelProps) => {
-  const handleRoleToggle = (role: RoleFilterValue) => {
-    const newRoles = selectedRoles.includes(role)
-      ? selectedRoles.filter((r) => r !== role)
-      : [...selectedRoles, role];
-    onFilterChange(newRoles, selectedStatuses, selectedSystems);
+  const systemItems = systems.slice(0, 5).map((s) => ({
+    label: s.name,
+    value: s.systemId,
+  }));
+
+  const handleSystemChange = (
+    details: SelectValueChangeDetails<{ label: string; value: string }>,
+  ) => {
+    onFilterChange(selectedRoles, selectedStatuses, details.value as string[]);
   };
 
-  const handleStatusToggle = (status: StatusFilterValue) => {
-    const newStatuses = selectedStatuses.includes(status)
-      ? selectedStatuses.filter((s) => s !== status)
-      : [...selectedStatuses, status];
-    onFilterChange(selectedRoles, newStatuses, selectedSystems);
+  const handleRoleChange = (
+    details: SelectValueChangeDetails<{ label: string; value: string }>,
+  ) => {
+    onFilterChange(
+      details.value as RoleFilterValue[],
+      selectedStatuses,
+      selectedSystems,
+    );
   };
 
-  const handleSystemToggle = (systemId: string) => {
-    const newSystems = selectedSystems.includes(systemId)
-      ? selectedSystems.filter((id) => id !== systemId)
-      : [...selectedSystems, systemId];
-    onFilterChange(selectedRoles, selectedStatuses, newSystems);
+  const handleStatusChange = (
+    details: SelectValueChangeDetails<{ label: string; value: string }>,
+  ) => {
+    onFilterChange(
+      selectedRoles,
+      details.value as StatusFilterValue[],
+      selectedSystems,
+    );
   };
 
   return (
-    <div className={styles.filterPanel}>
-      <fieldset className={styles.searchPanelField}>
-        <legend className={styles.searchPanelLabel}>役割</legend>
-        <div className={styles.searchPanelChips}>
-          {roleOptions.map((option) => (
-            <Chip
-              key={option.value}
-              label={option.label}
-              selected={selectedRoles.includes(option.value)}
-              onClick={() => handleRoleToggle(option.value)}
-            />
-          ))}
+    <div className={panel}>
+      <div className={searchRow}>
+        {/* システム: width 180 */}
+        <div className={fieldWrapper} style={{ width: '180px', flexShrink: 0 }}>
+          <span className={fieldLabel}>システム</span>
+          <Select
+            items={systemItems}
+            value={selectedSystems}
+            onValueChange={handleSystemChange}
+            placeholder="すべて"
+            multiple
+            variant="form"
+          />
         </div>
-      </fieldset>
 
-      <fieldset className={styles.searchPanelField}>
-        <legend className={styles.searchPanelLabel}>状態</legend>
-        <div className={styles.searchPanelChips}>
-          {statusOptions.map((option) => (
-            <Chip
-              key={option.value}
-              label={option.label}
-              selected={selectedStatuses.includes(option.value)}
-              onClick={() => handleStatusToggle(option.value)}
-            />
-          ))}
+        {/* 役割: width 140 */}
+        <div className={fieldWrapper} style={{ width: '140px', flexShrink: 0 }}>
+          <span className={fieldLabel}>役割</span>
+          <Select
+            items={roleItems}
+            value={selectedRoles}
+            onValueChange={handleRoleChange}
+            placeholder="すべて"
+            multiple
+            variant="form"
+          />
         </div>
-      </fieldset>
 
-      <fieldset className={styles.searchPanelField}>
-        <legend className={styles.searchPanelLabel}>システム</legend>
-        <div className={styles.searchPanelChips}>
-          {systems.slice(0, 5).map((system) => (
-            <Chip
-              key={system.systemId}
-              label={system.name}
-              selected={selectedSystems.includes(system.systemId)}
-              onClick={() => handleSystemToggle(system.systemId)}
-            />
-          ))}
+        {/* ステータス: width 140 */}
+        <div className={fieldWrapper} style={{ width: '140px', flexShrink: 0 }}>
+          <span className={fieldLabel}>ステータス</span>
+          <Select
+            items={statusItems}
+            value={selectedStatuses}
+            onValueChange={handleStatusChange}
+            placeholder="すべて"
+            multiple
+            variant="form"
+          />
         </div>
-      </fieldset>
+      </div>
     </div>
   );
 };

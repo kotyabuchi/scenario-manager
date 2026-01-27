@@ -26,7 +26,7 @@ export const toggleGroupItem = css({
   bg: 'transparent',
   border: 'none',
   color: '#9CA3AF',
-  _pressed: {
+  '&[data-state=on]': {
     bg: '#FFFFFF',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
     color: '#1F2937',

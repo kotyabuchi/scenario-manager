@@ -12,8 +12,9 @@ import { SessionList } from './SessionList';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { css } from '@/styled-system/css';
+import { Select } from '@/components/elements/select/select';
 
+import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type {
   PublicSearchResult,
   PublicSortOption,
@@ -133,42 +134,6 @@ export const PublicTab = ({
     [queryParams.publicSort, setQueryParams],
   );
 
-  const handleReset = useCallback(async () => {
-    const defaultParams = {
-      systems: [] as string[],
-      phases: ['RECRUITING', 'PREPARATION'],
-      dateFrom: '',
-      dateTo: '',
-      q: '',
-    };
-
-    setCurrentParams(defaultParams);
-    setOffset(0);
-
-    // nuqsでURL更新
-    await setQueryParams({
-      systems: [],
-      phases: ['RECRUITING', 'PREPARATION'],
-      dateFrom: null,
-      dateTo: null,
-      q: '',
-    });
-
-    // サーバーから検索結果を取得
-    try {
-      const queryString = buildApiQueryString(defaultParams, 'date_asc');
-      const response = await fetch(
-        `/api/sessions/search${queryString}&limit=20&offset=0`,
-      );
-      if (response.ok) {
-        const data = (await response.json()) as PublicSearchResult;
-        setSearchResult(data);
-      }
-    } catch (error) {
-      console.error('Reset failed:', error);
-    }
-  }, [setQueryParams]);
-
   const handleSortChange = useCallback(
     async (newSort: PublicSortOption) => {
       setOffset(0);
@@ -221,6 +186,7 @@ export const PublicTab = ({
 
   return (
     <>
+      {/* 検索パネルはタブバー直下（コンテンツエリアの外） */}
       <SearchPanel
         systems={systems}
         selectedSystems={currentParams.systems}
@@ -229,71 +195,57 @@ export const PublicTab = ({
         dateTo={currentParams.dateTo ?? ''}
         scenarioName={currentParams.q ?? ''}
         onSearch={handleSearch}
-        onReset={handleReset}
       />
 
-      <div className={styles.resultHeader}>
-        <div className={styles.resultCount}>
-          検索結果: {searchResult.totalCount}件
+      <div className={styles.contentArea_public}>
+        <div className={styles.resultHeader}>
+          <span className={styles.resultHeader_count}>
+            {searchResult.totalCount}件のセッションが見つかりました
+          </span>
+          <div className={styles.resultHeader_sortArea}>
+            <span className={styles.resultHeader_sortLabel}>並び替え</span>
+            <Select
+              items={[
+                { value: 'date_asc', label: '開催日順' },
+                { value: 'created_desc', label: '新着順' },
+                { value: 'slots_desc', label: '残り枠順' },
+              ]}
+              value={[queryParams.publicSort]}
+              onValueChange={(
+                details: SelectValueChangeDetails<{
+                  label: string;
+                  value: string;
+                }>,
+              ) => {
+                const val = details.value[0] as PublicSortOption | undefined;
+                if (val) handleSortChange(val);
+              }}
+              variant="minimal"
+            />
+          </div>
         </div>
 
-        <div className={styles.sortTabs}>
-          <button
-            type="button"
-            onClick={() => handleSortChange('date_asc')}
-            className={styles.sortTabButton({
-              active: queryParams.publicSort === 'date_asc',
-            })}
-          >
-            開催日順
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSortChange('created_desc')}
-            className={styles.sortTabButton({
-              active: queryParams.publicSort === 'created_desc',
-            })}
-          >
-            新着順
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSortChange('slots_desc')}
-            className={styles.sortTabButton({
-              active: queryParams.publicSort === 'slots_desc',
-            })}
-          >
-            残り枠順
-          </button>
-        </div>
+        {searchResult.sessions.length === 0 ? (
+          <EmptyState type="public" />
+        ) : (
+          <>
+            <SessionList sessions={searchResult.sessions} variant="public" />
+
+            {hasMore && (
+              <div className={styles.moreButtonArea}>
+                <Button
+                  variant="outline"
+                  onClick={handleLoadMore}
+                  disabled={isPending}
+                >
+                  <ChevronDown size={16} />
+                  もっと見る
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
-
-      {searchResult.sessions.length === 0 ? (
-        <EmptyState type="public" onReset={handleReset} />
-      ) : (
-        <div
-          className={css({
-            opacity: isPending ? 0.6 : 1,
-            transition: 'opacity {durations.normal}',
-          })}
-        >
-          <SessionList sessions={searchResult.sessions} variant="public" />
-
-          {hasMore && (
-            <div
-              className={css({
-                display: 'flex',
-                justifyContent: 'center',
-                mt: 'xl',
-              })}
-            >
-              <Button variant="subtle" onClick={handleLoadMore}>
-                もっと見る <ChevronDown size={16} />
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
     </>
   );
 };

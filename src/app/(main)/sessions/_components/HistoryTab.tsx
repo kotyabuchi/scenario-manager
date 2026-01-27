@@ -11,8 +11,9 @@ import { SessionList } from './SessionList';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { css } from '@/styled-system/css';
+import { Select } from '@/components/elements/select/select';
 
+import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type {
   HistorySortOption,
   MySessionWithRole,
@@ -193,6 +194,7 @@ export const HistoryTab = ({
 
   return (
     <>
+      {/* フィルターパネルはタブバー直下（コンテンツエリアの外） */}
       <FilterPanel
         systems={systems}
         selectedRoles={currentRoles}
@@ -201,59 +203,58 @@ export const HistoryTab = ({
         onFilterChange={handleFilterChange}
       />
 
-      <div className={styles.resultHeader}>
-        <div className={styles.resultCount}>
-          参加履歴: {searchResult.totalCount}件
+      <div className={styles.contentArea_history}>
+        <div className={styles.resultHeader}>
+          <span className={styles.resultHeader_count}>
+            参加履歴: {searchResult.totalCount}件
+          </span>
+          <div className={styles.resultHeader_sortArea}>
+            <span className={styles.resultHeader_sortLabel}>並び替え</span>
+            <Select
+              items={[
+                { value: 'date_desc', label: '新しい順' },
+                { value: 'date_asc', label: '古い順' },
+              ]}
+              value={[queryParams.historySort]}
+              onValueChange={(
+                details: SelectValueChangeDetails<{
+                  label: string;
+                  value: string;
+                }>,
+              ) => {
+                const val = details.value[0] as HistorySortOption | undefined;
+                if (val) handleSortChange(val);
+              }}
+              variant="minimal"
+            />
+          </div>
         </div>
 
-        <div className={styles.sortTabs}>
-          <button
-            type="button"
-            onClick={() => handleSortChange('date_desc')}
-            className={styles.sortTabButton({
-              active: queryParams.historySort === 'date_desc',
-            })}
-          >
-            新しい順
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSortChange('date_asc')}
-            className={styles.sortTabButton({
-              active: queryParams.historySort === 'date_asc',
-            })}
-          >
-            古い順
-          </button>
-        </div>
+        {searchResult.sessions.length === 0 ? (
+          <EmptyState type="history" />
+        ) : (
+          <>
+            <SessionList
+              sessions={searchResult.sessions}
+              variant="my"
+              showMeta
+            />
+
+            {hasMore && (
+              <div className={styles.moreButtonArea}>
+                <Button
+                  variant="outline"
+                  onClick={handleLoadMore}
+                  disabled={isPending}
+                >
+                  <ChevronDown size={16} />
+                  もっと見る
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
-
-      {searchResult.sessions.length === 0 ? (
-        <EmptyState type="history" />
-      ) : (
-        <div
-          className={css({
-            opacity: isPending ? 0.6 : 1,
-            transition: 'opacity {durations.normal}',
-          })}
-        >
-          <SessionList sessions={searchResult.sessions} variant="my" showMeta />
-
-          {hasMore && (
-            <div
-              className={css({
-                display: 'flex',
-                justifyContent: 'center',
-                mt: 'xl',
-              })}
-            >
-              <Button variant="subtle" onClick={handleLoadMore}>
-                もっと見る <ChevronDown size={16} />
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
     </>
   );
 };

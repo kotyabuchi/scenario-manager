@@ -11,8 +11,12 @@ import { SessionList } from './SessionList';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { css } from '@/styled-system/css';
+import { Select } from '@/components/elements/select/select';
+import { ToggleGroup } from '@/components/elements/toggle-group/toggle-group';
+import { css, cx } from '@/styled-system/css';
 
+import type { SelectValueChangeDetails } from '@/components/elements/select/select';
+import type { ToggleItem } from '@/components/elements/toggle-group/toggle-group';
 import type {
   MySessionWithRole,
   SearchResult,
@@ -23,6 +27,37 @@ import type {
 type UpcomingTabProps = {
   initialResult: SearchResult<MySessionWithRole>;
 };
+
+const viewToggleItems: ToggleItem[] = [
+  { value: 'list', icon: <List size={18} />, label: 'リスト表示' },
+  { value: 'calendar', icon: <Calendar size={18} />, label: 'カレンダー表示' },
+];
+
+// アニメーション用スタイル
+const viewContainer = css({
+  display: 'flex',
+  gap: '0',
+  overflow: 'hidden',
+  position: 'relative',
+});
+
+const listPanel = (isCalendarView: boolean) =>
+  css({
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    width: isCalendarView ? '320px' : '100%',
+    minWidth: isCalendarView ? '320px' : '0',
+    flexShrink: 0,
+    overflow: 'hidden',
+  });
+
+const calendarPanel = (isCalendarView: boolean) =>
+  css({
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    width: isCalendarView ? 'calc(100% - 320px)' : '0',
+    opacity: isCalendarView ? 1 : 0,
+    overflow: 'hidden',
+    flexShrink: 0,
+  });
 
 export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
   const [isPending, startTransition] = useTransition();
@@ -37,6 +72,9 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
   const [searchResult, setSearchResult] =
     useState<SearchResult<MySessionWithRole>>(initialResult);
   const [offset, setOffset] = useState(0);
+
+  // ビュー切替はローカルstate
+  const [currentView, setCurrentView] = useState<ViewType>('list');
 
   const handleSortChange = useCallback(
     async (newSort: UpcomingSortOption) => {
@@ -80,72 +118,45 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
   }, [offset, queryParams.upcomingSort]);
 
   const hasMore = searchResult.sessions.length < searchResult.totalCount;
+  const isCalendarView = currentView === 'calendar';
 
-  const handleViewChange = async (newView: ViewType) => {
-    await setQueryParams({ view: newView });
+  const handleViewChange = (newView: ViewType) => {
+    setCurrentView(newView);
   };
 
-  const currentView = queryParams.view;
-
   return (
-    <>
+    <div className={styles.contentArea_upcoming}>
+      {/* Pencil準拠: 左にビュー切替、右に並び替え */}
       <div className={styles.resultHeader}>
-        <div className={styles.resultCount}>
-          参加予定: {searchResult.totalCount}件
-        </div>
-
-        <div
-          className={css({
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'md',
-          })}
-        >
-          {currentView === 'list' && (
-            <div className={styles.sortTabs}>
-              <button
-                type="button"
-                onClick={() => handleSortChange('date_asc')}
-                className={styles.sortTabButton({
-                  active: queryParams.upcomingSort === 'date_asc',
-                })}
-              >
-                開催日順
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSortChange('created_desc')}
-                className={styles.sortTabButton({
-                  active: queryParams.upcomingSort === 'created_desc',
-                })}
-              >
-                登録日順
-              </button>
-            </div>
-          )}
-
-          <div className={styles.viewToggle}>
-            <button
-              type="button"
-              className={styles.viewToggleButton({
-                active: currentView === 'list',
-              })}
-              onClick={() => handleViewChange('list')}
-              aria-label="リスト表示"
-            >
-              <List size={18} />
-            </button>
-            <button
-              type="button"
-              className={styles.viewToggleButton({
-                active: currentView === 'calendar',
-              })}
-              onClick={() => handleViewChange('calendar')}
-              aria-label="カレンダー表示"
-            >
-              <Calendar size={18} />
-            </button>
-          </div>
+        <ToggleGroup
+          value={[currentView]}
+          onValueChange={(details) => {
+            const newView = details.value[0] as ViewType | undefined;
+            if (newView) {
+              handleViewChange(newView);
+            }
+          }}
+          items={viewToggleItems}
+        />
+        <div className={styles.resultHeader_sortArea}>
+          <span className={styles.resultHeader_sortLabel}>並び替え</span>
+          <Select
+            items={[
+              { value: 'date_asc', label: '開催日順' },
+              { value: 'created_desc', label: '登録日順' },
+            ]}
+            value={[queryParams.upcomingSort]}
+            onValueChange={(
+              details: SelectValueChangeDetails<{
+                label: string;
+                value: string;
+              }>,
+            ) => {
+              const val = details.value[0] as UpcomingSortOption | undefined;
+              if (val) handleSortChange(val);
+            }}
+            variant="minimal"
+          />
         </div>
       </div>
 
@@ -153,34 +164,34 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
         <EmptyState type="upcoming" />
       ) : (
         <div
-          className={css({
-            opacity: isPending ? 0.6 : 1,
-            transition: 'opacity {durations.normal}',
-          })}
-        >
-          {currentView === 'calendar' ? (
-            <CalendarView sessions={searchResult.sessions} />
-          ) : (
-            <>
-              <SessionList sessions={searchResult.sessions} variant="my" />
-
-              {hasMore && (
-                <div
-                  className={css({
-                    display: 'flex',
-                    justifyContent: 'center',
-                    mt: 'xl',
-                  })}
-                >
-                  <Button variant="subtle" onClick={handleLoadMore}>
-                    もっと見る <ChevronDown size={16} />
-                  </Button>
-                </div>
-              )}
-            </>
+          className={cx(
+            viewContainer,
+            css({
+              opacity: isPending ? 0.6 : 1,
+              transition: 'opacity 0.2s',
+            }),
           )}
+        >
+          {/* リストパネル: カレンダー時は右サイドパネルに縮小 */}
+          <div className={listPanel(isCalendarView)}>
+            <SessionList sessions={searchResult.sessions} variant="my" />
+            {hasMore && !isCalendarView && (
+              <div className={styles.moreButtonArea}>
+                <Button variant="subtle" onClick={handleLoadMore}>
+                  <ChevronDown size={16} /> もっと見る
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* カレンダーパネル: 左から展開 */}
+          <div className={calendarPanel(isCalendarView)}>
+            {isCalendarView && (
+              <CalendarView sessions={searchResult.sessions} />
+            )}
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

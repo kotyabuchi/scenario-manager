@@ -14,14 +14,10 @@ import type {
   StatusFilterValue,
   TabType,
   UpcomingSortOption,
-  ViewType,
 } from './interface';
 
 // タブオプション
 const tabOptions = ['upcoming', 'history', 'public'] as const;
-
-// 表示形式オプション
-const viewOptions = ['list', 'calendar'] as const;
 
 // 公開卓ソートオプション
 const publicSortOptions = ['date_asc', 'created_desc', 'slots_desc'] as const;
@@ -38,7 +34,6 @@ export const searchParamsParsers = {
   tab: parseAsStringLiteral(tabOptions).withDefault('public'),
 
   // 参加予定タブ
-  view: parseAsStringLiteral(viewOptions).withDefault('list'),
   upcomingSort:
     parseAsStringLiteral(upcomingSortOptions).withDefault('date_asc'),
 
@@ -99,7 +94,6 @@ export const toPublicSearchParams = (parsed: {
 
 export type {
   TabType,
-  ViewType,
   PublicSortOption,
   UpcomingSortOption,
   HistorySortOption,
