@@ -78,7 +78,6 @@ export const button = defineRecipe({
         minW: '32px',
         fontSize: '13px',
         px: '16px',
-        borderRadius: '16px',
       },
       md: {
         h: '44px',

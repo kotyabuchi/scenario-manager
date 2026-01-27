@@ -6,7 +6,7 @@ import { css } from '@/styled-system/css';
 export const radioGroupRoot = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
+  gap: '16px',
 });
 
 /**
