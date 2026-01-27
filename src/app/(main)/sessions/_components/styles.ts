@@ -8,8 +8,6 @@ export const pageContainer = css({
 });
 
 export const pageLayout = css({
-  maxW: '1440px',
-  mx: 'auto',
   display: 'flex',
   flexDirection: 'column',
 });
@@ -152,6 +150,9 @@ export const filterPanel_label = css({
 // ===== Content Area =====
 
 export const contentArea_public = css({
+  maxW: '1440px',
+  mx: 'auto',
+  w: '100%',
   p: '24px 32px 32px 32px',
   display: 'flex',
   flexDirection: 'column',
@@ -159,6 +160,9 @@ export const contentArea_public = css({
 });
 
 export const contentArea_upcoming = css({
+  maxW: '1440px',
+  mx: 'auto',
+  w: '100%',
   p: '24px 32px 32px 32px',
   display: 'flex',
   flexDirection: 'column',
@@ -166,6 +170,9 @@ export const contentArea_upcoming = css({
 });
 
 export const contentArea_history = css({
+  maxW: '1440px',
+  mx: 'auto',
+  w: '100%',
   p: '16px 32px 32px 32px',
   display: 'flex',
   flexDirection: 'column',
