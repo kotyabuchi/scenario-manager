@@ -21,6 +21,9 @@ type Story = StoryObj<typeof meta>;
  * デフォルト（未選択）
  */
 export const Default: Story = {
+  args: {
+    children: null,
+  },
   render: (args) => (
     <Radio {...args}>
       <Radio.Item value="option1">オプション1</Radio.Item>
@@ -34,8 +37,12 @@ export const Default: Story = {
  * 選択済み
  */
 export const Selected: Story = {
-  render: () => (
-    <Radio defaultValue="option2">
+  args: {
+    defaultValue: 'option2',
+    children: null,
+  },
+  render: (args) => (
+    <Radio {...args}>
       <Radio.Item value="option1">オプション1</Radio.Item>
       <Radio.Item value="option2">オプション2</Radio.Item>
       <Radio.Item value="option3">オプション3</Radio.Item>
@@ -47,8 +54,12 @@ export const Selected: Story = {
  * 一部無効
  */
 export const WithDisabledItem: Story = {
-  render: () => (
-    <Radio defaultValue="option1">
+  args: {
+    defaultValue: 'option1',
+    children: null,
+  },
+  render: (args) => (
+    <Radio {...args}>
       <Radio.Item value="option1">オプション1</Radio.Item>
       <Radio.Item value="option2">オプション2</Radio.Item>
       <Radio.Item value="option3" disabled>
@@ -62,8 +73,13 @@ export const WithDisabledItem: Story = {
  * 全体無効
  */
 export const Disabled: Story = {
-  render: () => (
-    <Radio defaultValue="option1" disabled>
+  args: {
+    defaultValue: 'option1',
+    disabled: true,
+    children: null,
+  },
+  render: (args) => (
+    <Radio {...args}>
       <Radio.Item value="option1">オプション1</Radio.Item>
       <Radio.Item value="option2">オプション2</Radio.Item>
       <Radio.Item value="option3">オプション3</Radio.Item>
@@ -75,10 +91,16 @@ export const Disabled: Story = {
  * インタラクティブ
  */
 export const Interactive: Story = {
+  args: {
+    children: null,
+  },
   render: () => {
     const [value, setValue] = useState('option1');
     return (
-      <Radio value={value} onValueChange={(details) => setValue(details.value)}>
+      <Radio
+        value={value}
+        onValueChange={(details) => setValue(details.value ?? '')}
+      >
         <Radio.Item value="option1">オプション1</Radio.Item>
         <Radio.Item value="option2">オプション2</Radio.Item>
         <Radio.Item value="option3">オプション3</Radio.Item>

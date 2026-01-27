@@ -72,7 +72,7 @@ export const Interactive: Story = {
     value: 'newest',
   },
   render: (args) => {
-    const [value, setValue] = useState(args.value);
+    const [value, setValue] = useState(args.value ?? '');
     return <Dropdown {...args} value={value} onValueChange={setValue} />;
   },
 };
