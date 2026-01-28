@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 
 import { HistoryTab } from './_components/HistoryTab';
+import { LoginPrompt } from './_components/LoginPrompt';
 import { PublicTab } from './_components/PublicTab';
 import * as styles from './_components/styles';
 import { UpcomingTab } from './_components/UpcomingTab';
@@ -15,7 +16,6 @@ import {
 import { searchParamsCache, toPublicSearchParams } from './searchParams';
 
 import { Spinner } from '@/components/elements';
-import { Button } from '@/components/elements/button/button';
 
 import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 import type {
@@ -162,14 +162,7 @@ export default async function SessionsPage({ searchParams }: PageProps) {
             <UpcomingTab initialResult={upcomingInitialResult} />
           )}
           {tab === 'upcoming' && !isLoggedIn && (
-            <div className={styles.loginPrompt}>
-              <span className={styles.loginPromptText}>
-                参加予定を確認するにはログインが必要です
-              </span>
-              <Link href="/login">
-                <Button status="primary">ログイン</Button>
-              </Link>
-            </div>
+            <LoginPrompt message="参加予定を確認するにはログインが必要です" />
           )}
           {tab === 'history' && isLoggedIn && (
             <HistoryTab
@@ -181,14 +174,7 @@ export default async function SessionsPage({ searchParams }: PageProps) {
             />
           )}
           {tab === 'history' && !isLoggedIn && (
-            <div className={styles.loginPrompt}>
-              <span className={styles.loginPromptText}>
-                参加履歴を確認するにはログインが必要です
-              </span>
-              <Link href="/login">
-                <Button status="primary">ログイン</Button>
-              </Link>
-            </div>
+            <LoginPrompt message="参加履歴を確認するにはログインが必要です" />
           )}
         </Suspense>
       </div>

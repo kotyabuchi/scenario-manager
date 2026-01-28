@@ -1,6 +1,7 @@
-import { BookOpen, Calendar, LogIn, Search, Shield, Star } from 'lucide-react';
+import { BookOpen, Calendar, Search, Shield, Star } from 'lucide-react';
 import Link from 'next/link';
 
+import { DiscordLoginButton } from './_components/DiscordLoginButton';
 import * as styles from './styles';
 
 export const metadata = {
@@ -34,10 +35,11 @@ export default function Home() {
               <Search size={20} className={styles.browseBtnIcon} />
               <span className={styles.browseBtnText}>まずは見てみる</span>
             </Link>
-            <Link href="/login" className={styles.heroCTABtn}>
-              <LogIn size={20} className={styles.heroCTABtnIcon} />
-              <span className={styles.heroCTABtnText}>Discordではじめる</span>
-            </Link>
+            <DiscordLoginButton
+              className={styles.heroCTABtn}
+              iconClassName={styles.heroCTABtnIcon}
+              textClassName={styles.heroCTABtnText}
+            />
           </div>
         </div>
       </section>
@@ -157,10 +159,11 @@ export default function Home() {
       <section className={styles.ctaSection}>
         <h2 className={styles.ctaTitle}>さあ、はじめよう</h2>
         <p className={styles.ctaSub}>無料で今すぐ始められます</p>
-        <Link href="/login" className={styles.ctaBtn}>
-          <LogIn size={20} className={styles.ctaBtnIcon} />
-          <span className={styles.ctaBtnText}>Discordではじめる</span>
-        </Link>
+        <DiscordLoginButton
+          className={styles.ctaBtn}
+          iconClassName={styles.ctaBtnIcon}
+          textClassName={styles.ctaBtnText}
+        />
       </section>
 
       {/* Footer */}

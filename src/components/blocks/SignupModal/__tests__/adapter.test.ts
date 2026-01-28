@@ -17,8 +17,8 @@ describe('checkUserNameAvailability', () => {
     vi.clearAllMocks();
   });
 
-  // CHK-01: 未使用のユーザー名は available: true を返す
-  it('未使用のユーザー名は available: true を返す', async () => {
+  // CHK-01: 未使用のユーザーIDは available: true を返す
+  it('未使用のユーザーIDは available: true を返す', async () => {
     checkUserNameAvailability.mockResolvedValue({
       success: true,
       data: { available: true },
@@ -32,8 +32,8 @@ describe('checkUserNameAvailability', () => {
     }
   });
 
-  // CHK-02: 使用済みのユーザー名は available: false を返す
-  it('使用済みのユーザー名は available: false を返す', async () => {
+  // CHK-02: 使用済みのユーザーIDは available: false を返す
+  it('使用済みのユーザーIDは available: false を返す', async () => {
     checkUserNameAvailability.mockResolvedValue({
       success: true,
       data: { available: false },
@@ -63,7 +63,7 @@ describe('checkUserNameAvailability', () => {
   it('空文字はバリデーションエラーを返す', async () => {
     checkUserNameAvailability.mockResolvedValue({
       success: false,
-      error: new Error('ユーザー名を入力してください'),
+      error: new Error('ユーザーIDを入力してください'),
     });
 
     const result = await checkUserNameAvailability('');

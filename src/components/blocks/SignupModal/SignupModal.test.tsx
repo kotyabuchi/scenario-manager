@@ -1,7 +1,7 @@
 import { composeStories } from '@storybook/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import * as stories from './SignupModal.stories';
 
@@ -15,6 +15,7 @@ const {
   Step2Filled,
   Submitting,
   Closed,
+  Completion,
 } = composeStories(stories);
 
 describe('SignupModal', () => {
@@ -24,14 +25,14 @@ describe('SignupModal', () => {
       render(<Step1Default />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByLabelText(/ユーザー名/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/ユーザーID/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/表示名/i)).toBeInTheDocument();
     });
 
-    it('A04-02: Discord名からユーザー名がデフォルト入力される', () => {
+    it('A04-02: Discord名からユーザーIDがデフォルト入力される', () => {
       render(<Step1Default />);
 
-      expect(screen.getByLabelText(/ユーザー名/i)).toHaveValue('taro_trpg');
+      expect(screen.getByLabelText(/ユーザーID/i)).toHaveValue('taro_trpg');
     });
 
     it('A04-03: Discord名から表示名がデフォルト入力される', () => {
@@ -51,6 +52,30 @@ describe('SignupModal', () => {
       render(<Step1Default />);
 
       expect(screen.getByText(/ステップ.*1/i)).toBeInTheDocument();
+    });
+
+    it('A04-12: ユーザーIDにプレースホルダーが表示される', () => {
+      render(<Step1WithErrors />);
+
+      expect(screen.getByLabelText(/ユーザーID/i)).toHaveAttribute(
+        'placeholder',
+        '例: taro_trpg',
+      );
+    });
+
+    it('A04-13: 表示名にプレースホルダーが表示される', () => {
+      render(<Step1WithErrors />);
+
+      expect(screen.getByLabelText(/表示名/i)).toHaveAttribute(
+        'placeholder',
+        '例: 太郎',
+      );
+    });
+
+    it('A04-14: ユーザーIDに文字数制限ヒントが表示される', () => {
+      render(<Step1Default />);
+
+      expect(screen.getByText(/3〜20文字/)).toBeInTheDocument();
     });
 
     it('A04-06: 「次へ」ボタンが表示される', () => {
@@ -82,24 +107,23 @@ describe('SignupModal', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/ユーザー名を入力してください/i),
+          screen.getByText(/ユーザーIDを入力してください/i),
         ).toBeInTheDocument();
       });
     });
   });
 
-  // ユーザー名一意性チェック表示
-  describe('A04: ユーザー名一意性チェック', () => {
+  // ユーザーID一意性チェック表示
+  describe('A04: ユーザーID一意性チェック', () => {
     it('A04-09: チェック中にローディングインジケーターが表示される', () => {
       render(<Step1Checking />);
 
-      // ローディング状態の視覚的フィードバック
       expect(
         screen.getByTestId('username-checking') || screen.getByText(/確認中/i),
       ).toBeInTheDocument();
     });
 
-    it('A04-10: ユーザー名が使用可能な場合、チェックマークが表示される', () => {
+    it('A04-10: ユーザーIDが使用可能な場合、チェックマークが表示される', () => {
       render(<Step1Available />);
 
       expect(
@@ -108,7 +132,7 @@ describe('SignupModal', () => {
       ).toBeInTheDocument();
     });
 
-    it('A04-11: ユーザー名が使用済みの場合、エラーメッセージが表示される', () => {
+    it('A04-11: ユーザーIDが使用済みの場合、エラーメッセージが表示される', () => {
       render(<Step1Taken />);
 
       expect(screen.getByText(/既に使用されています/i)).toBeInTheDocument();
@@ -135,6 +159,54 @@ describe('SignupModal', () => {
       expect(screen.getByLabelText(/好きなシナリオ/i)).toBeInTheDocument();
     });
 
+    it('A05-09: 自己紹介にプレースホルダーが表示される', () => {
+      render(<Step2Default />);
+
+      expect(screen.getByLabelText(/自己紹介/i)).toHaveAttribute(
+        'placeholder',
+        '例: TRPGが大好きです。CoC7版をメインに遊んでいます。',
+      );
+    });
+
+    it('A05-10: 好きなシナリオにプレースホルダーが表示される', () => {
+      render(<Step2Default />);
+
+      expect(screen.getByLabelText(/好きなシナリオ/i)).toHaveAttribute(
+        'placeholder',
+        '例: 狂気山脈、悪霊の家',
+      );
+    });
+
+    it('A05-11: 自己紹介に文字数カウンターが表示される', () => {
+      render(<Step2Default />);
+
+      // charCounter spanを検索
+      const counters = screen.getAllByText(/^0\/500$/);
+      expect(counters.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('A05-12: 好きなシナリオに文字数カウンターが表示される', () => {
+      render(<Step2Default />);
+
+      // 2つのカウンターが存在する（自己紹介と好きなシナリオ）
+      const counters = screen.getAllByText(/^0\/500$/);
+      expect(counters.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('A05-13: 入力済み状態で文字数カウンターが更新される', () => {
+      render(<Step2Filled />);
+
+      // 「TRPGが大好きです。CoC7版をメインに遊んでいます。」= 28文字
+      expect(screen.getByText('28/500')).toBeInTheDocument();
+    });
+
+    it('A05-14: ラベルに文字数制限ヒントが含まれる', () => {
+      render(<Step2Default />);
+
+      // FormFieldのlabelに「（500文字以内）」が含まれている
+      expect(screen.getByText(/自己紹介（500文字以内）/)).toBeInTheDocument();
+    });
+
     it('A05-04: 「スキップ」ボタンが表示される', () => {
       render(<Step2Default />);
 
@@ -151,15 +223,14 @@ describe('SignupModal', () => {
       ).toBeInTheDocument();
     });
 
-    it('A05-06: 「スキップ」をクリックするとonCompleteが呼ばれる', async () => {
+    it('A05-06: 「スキップ」をクリックすると完了画面に遷移する', async () => {
       const user = userEvent.setup();
-      const handleComplete = vi.fn();
-      render(<Step2Default onComplete={handleComplete} />);
+      render(<Step2Default />);
 
       await user.click(screen.getByRole('button', { name: /スキップ/i }));
 
       await waitFor(() => {
-        expect(handleComplete).toHaveBeenCalled();
+        expect(screen.getByText(/登録が完了しました/)).toBeInTheDocument();
       });
     });
 
@@ -187,6 +258,23 @@ describe('SignupModal', () => {
         name: /登録中|送信中/i,
       });
       expect(submitButton).toBeDisabled();
+    });
+  });
+
+  // 登録完了
+  describe('登録完了画面', () => {
+    it('完了画面に「登録が完了しました」メッセージが表示される', () => {
+      render(<Completion />);
+
+      expect(screen.getByText(/登録が完了しました/)).toBeInTheDocument();
+    });
+
+    it('完了画面に「はじめる」ボタンが表示される', () => {
+      render(<Completion />);
+
+      expect(
+        screen.getByRole('button', { name: /はじめる/ }),
+      ).toBeInTheDocument();
     });
   });
 

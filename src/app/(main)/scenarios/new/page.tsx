@@ -21,7 +21,7 @@ export default async function ScenarioNewPage() {
   } = await supabase.auth.getUser();
 
   if (!authUser) {
-    redirect('/login');
+    redirect('/');
   }
 
   // システムとタグを取得

@@ -3,75 +3,75 @@ import { describe, expect, it } from 'vitest';
 import { signupFormSchema, signupStep2Schema } from '../schema';
 
 describe('signupFormSchema（Step1 バリデーション）', () => {
-  // SCH1-01: 有効なユーザー名＋表示名でパース成功
+  // SCH1-01: 有効なユーザーID＋表示名でパース成功
   describe('正常系', () => {
-    it('有効なユーザー名と表示名でパース成功', () => {
+    it('有効なユーザーIDと表示名でパース成功', () => {
       const data = { userName: 'taro_trpg', nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(true);
     });
   });
 
-  // ユーザー名バリデーション
-  describe('ユーザー名', () => {
-    // SCH1-02: ユーザー名が空でエラー
-    it('空文字の場合エラー「ユーザー名を入力してください」', () => {
+  // ユーザーIDバリデーション
+  describe('ユーザーID', () => {
+    // SCH1-02: ユーザーIDが空でエラー
+    it('空文字の場合エラー「ユーザーIDを入力してください」', () => {
       const data = { userName: '', nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe(
-          'ユーザー名を入力してください',
+          'ユーザーIDを入力してください',
         );
       }
     });
 
-    // SCH1-03: ユーザー名が2文字でエラー（境界値）
-    it('2文字の場合エラー「ユーザー名は3文字以上で入力してください」', () => {
+    // SCH1-03: ユーザーIDが2文字でエラー（境界値）
+    it('2文字の場合エラー「ユーザーIDは3文字以上で入力してください」', () => {
       const data = { userName: 'ab', nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe(
-          'ユーザー名は3文字以上で入力してください',
+          'ユーザーIDは3文字以上で入力してください',
         );
       }
     });
 
-    // SCH1-04: ユーザー名が3文字で成功（境界値）
+    // SCH1-04: ユーザーIDが3文字で成功（境界値）
     it('3文字の場合成功', () => {
       const data = { userName: 'abc', nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(true);
     });
 
-    // SCH1-05: ユーザー名が20文字で成功（境界値）
+    // SCH1-05: ユーザーIDが20文字で成功（境界値）
     it('20文字の場合成功', () => {
       const data = { userName: 'a'.repeat(20), nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(true);
     });
 
-    // SCH1-06: ユーザー名が21文字でエラー（境界値）
-    it('21文字の場合エラー「ユーザー名は20文字以内で入力してください」', () => {
+    // SCH1-06: ユーザーIDが21文字でエラー（境界値）
+    it('21文字の場合エラー「ユーザーIDは20文字以内で入力してください」', () => {
       const data = { userName: 'a'.repeat(21), nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe(
-          'ユーザー名は20文字以内で入力してください',
+          'ユーザーIDは20文字以内で入力してください',
         );
       }
     });
 
-    // SCH1-07: ユーザー名に特殊文字でエラー
-    it('特殊文字を含む場合エラー「ユーザー名は英数字とアンダースコアのみ使用できます」', () => {
+    // SCH1-07: ユーザーIDに特殊文字でエラー
+    it('特殊文字を含む場合エラー「ユーザーIDは英数字とアンダースコアのみ使用できます」', () => {
       const data = { userName: 'taro@#$', nickname: '太郎' };
       const result = signupFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe(
-          'ユーザー名は英数字とアンダースコアのみ使用できます',
+          'ユーザーIDは英数字とアンダースコアのみ使用できます',
         );
       }
     });
@@ -125,7 +125,7 @@ describe('signupFormSchema（Step1 バリデーション）', () => {
   // SCH1-12: エラーメッセージが日本語で正しい
   describe('エラーメッセージ', () => {
     it('すべてのエラーメッセージが日本語', () => {
-      // 空のユーザー名
+      // 空のユーザーID
       const r1 = signupFormSchema.safeParse({ userName: '', nickname: '' });
       if (!r1.success) {
         for (const issue of r1.error.issues) {

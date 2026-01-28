@@ -34,36 +34,15 @@ export const updateSession = async (request: NextRequest) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // ルート分類
-  const isLoginRoute = request.nextUrl.pathname.startsWith('/login');
-  const isSignupRoute = request.nextUrl.pathname.startsWith('/signup');
-  const isAuthCallbackRoute =
-    request.nextUrl.pathname.startsWith('/auth/callback');
-
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith('/home') ||
     request.nextUrl.pathname.startsWith('/sessions') ||
     request.nextUrl.pathname.startsWith('/profile');
 
-  // 未ログインで保護ルートにアクセス → ログインへ
+  // 未ログインで保護ルートにアクセス → ランディングへ
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
-
-  // 未ログインで /signup にアクセス → ログインへ
-  if (!user && isSignupRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
-
-  // ログイン済みで /login にアクセス → ホームへ
-  // （/signup はユーザー登録が必要なので除外）
-  if (user && isLoginRoute && !isAuthCallbackRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/home';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 

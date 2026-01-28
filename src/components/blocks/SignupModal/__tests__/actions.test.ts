@@ -25,7 +25,7 @@ describe('createUser', () => {
   });
 
   // CRU-01: Step1の必須項目で正常にユーザー作成
-  it('有効なユーザー名と表示名でユーザーを作成できる', async () => {
+  it('有効なユーザーIDと表示名でユーザーを作成できる', async () => {
     createUser.mockResolvedValue({
       success: true,
       data: { userId: 'user-123' },
@@ -60,11 +60,11 @@ describe('createUser', () => {
     expect(isOk(result)).toBe(true);
   });
 
-  // CRU-03: ユーザー名重複時にエラーを返す
-  it('ユーザー名重複時にエラーを返す', async () => {
+  // CRU-03: ユーザーID重複時にエラーを返す
+  it('ユーザーID重複時にエラーを返す', async () => {
     createUser.mockResolvedValue({
       success: false,
-      error: new Error('このユーザー名は既に使用されています'),
+      error: new Error('このユーザーIDは既に使用されています'),
     });
 
     const result = await createUser({
@@ -74,7 +74,7 @@ describe('createUser', () => {
 
     expect(isErr(result)).toBe(true);
     if (isErr(result)) {
-      expect(result.error.message).toBe('このユーザー名は既に使用されています');
+      expect(result.error.message).toBe('このユーザーIDは既に使用されています');
     }
   });
 
@@ -82,7 +82,7 @@ describe('createUser', () => {
   it('バリデーション不正時にエラーを返す', async () => {
     createUser.mockResolvedValue({
       success: false,
-      error: new Error('ユーザー名を入力してください'),
+      error: new Error('ユーザーIDを入力してください'),
     });
 
     const result = await createUser({

@@ -21,12 +21,12 @@ export default async function ProfilePage() {
   } = await supabase.auth.getUser();
 
   if (!authUser) {
-    redirect('/login');
+    redirect('/');
   }
 
   const result = await getUserByDiscordId(authUser.id);
   if (!result.success || isNil(result.data)) {
-    redirect('/signup');
+    redirect('/');
   }
 
   const user = result.data;

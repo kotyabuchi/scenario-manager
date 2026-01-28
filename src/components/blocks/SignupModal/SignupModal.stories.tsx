@@ -1,3 +1,5 @@
+import { fn, userEvent, within } from '@storybook/test';
+
 import { SignupModal } from './SignupModal';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -9,6 +11,10 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  args: {
+    onSubmit: fn(async () => true),
+    onComplete: fn(),
+  },
 } satisfies Meta<typeof SignupModal>;
 
 export default meta;
@@ -35,6 +41,11 @@ export const Step1WithErrors: Story = {
     defaultUserName: '',
     defaultNickname: '',
     avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const nextButton = canvas.getByRole('button', { name: /次へ/i });
+    await userEvent.click(nextButton);
   },
 };
 
@@ -117,6 +128,19 @@ export const Submitting: Story = {
     defaultNickname: '太郎',
     avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
     isSubmitting: true,
+  },
+};
+
+/**
+ * 登録完了画面
+ */
+export const Completion: Story = {
+  args: {
+    isOpen: true,
+    initialStep: 3,
+    defaultUserName: 'taro_trpg',
+    defaultNickname: '太郎',
+    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
   },
 };
 

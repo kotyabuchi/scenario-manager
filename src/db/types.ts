@@ -710,6 +710,7 @@ export type Database = {
           bio: string | null;
           created_at: string;
           discord_id: string;
+          favorite_scenarios: string | null;
           image: string | null;
           lastlogin_at: string | null;
           nickname: string;
@@ -722,6 +723,7 @@ export type Database = {
           bio?: string | null;
           created_at?: string;
           discord_id: string;
+          favorite_scenarios?: string | null;
           image?: string | null;
           lastlogin_at?: string | null;
           nickname: string;
@@ -734,6 +736,7 @@ export type Database = {
           bio?: string | null;
           created_at?: string;
           discord_id?: string;
+          favorite_scenarios?: string | null;
           image?: string | null;
           lastlogin_at?: string | null;
           nickname?: string;

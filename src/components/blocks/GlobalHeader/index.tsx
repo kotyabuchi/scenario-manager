@@ -1,13 +1,14 @@
 'use client';
 
-import { BookOpen, LogIn, Plus, UserPlus } from 'lucide-react';
+import { BookOpen, LogIn, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 import * as styles from './styles';
 
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/context';
+import { useDiscordAuth } from '@/hooks/useDiscordAuth';
 
 import type { Route } from 'next';
 
@@ -27,30 +28,26 @@ const navItems: NavItem[] = [
 export const GlobalHeader = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, discordMeta, isLoading, isAuthenticated } = useAuth();
+  const { login } = useDiscordAuth();
 
-  const isLoggedIn = !isLoading && user !== null;
+  const isLoggedIn = !isLoading && isAuthenticated;
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
-  // scenarios配下（/scenarios/new以外）で登録ボタンを表示
   const showScenarioRegisterButton =
     pathname.startsWith('/scenarios') && pathname !== '/scenarios/new';
 
   const handleClickLogin = () => {
-    router.push('/login');
-  };
-
-  const handleClickSignup = () => {
-    router.push('/signup');
+    login();
   };
 
   const handleClickProfile = () => {
     router.push('/profile');
   };
 
-  const userAvatarUrl = user?.user_metadata?.avatar_url;
+  const userAvatarUrl = user?.avatar ?? discordMeta?.avatarUrl;
 
   return (
     <header className={styles.header}>
@@ -107,24 +104,14 @@ export const GlobalHeader = () => {
             ) : null}
           </button>
         ) : (
-          <>
-            <button
-              type="button"
-              className={styles.authButton({ variant: 'login' })}
-              onClick={handleClickLogin}
-            >
-              <LogIn size={16} />
-              ログイン
-            </button>
-            <button
-              type="button"
-              className={styles.authButton({ variant: 'signup' })}
-              onClick={handleClickSignup}
-            >
-              <UserPlus size={16} />
-              新規登録
-            </button>
-          </>
+          <button
+            type="button"
+            className={styles.authButton({ variant: 'login' })}
+            onClick={handleClickLogin}
+          >
+            <LogIn size={16} />
+            ログイン
+          </button>
         )}
       </div>
     </header>

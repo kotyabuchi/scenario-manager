@@ -1,3 +1,3 @@
 export { SignupModal } from './SignupModal';
 
-export type { SignupModalProps } from './SignupModal';
+export type { SignupFormData, SignupModalProps } from './SignupModal';

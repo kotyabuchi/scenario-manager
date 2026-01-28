@@ -20,7 +20,7 @@ export default async function NewSessionPage() {
   } = await supabase.auth.getUser();
 
   if (!authUser) {
-    redirect('/login');
+    redirect('/');
   }
 
   return (

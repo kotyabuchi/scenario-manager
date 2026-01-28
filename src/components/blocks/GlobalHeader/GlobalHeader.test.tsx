@@ -20,8 +20,23 @@ vi.mock('next/navigation', () => ({
 }));
 
 // useAuth をモック（未ログイン状態）
-vi.mock('@/hooks/use-auth', () => ({
-  useAuth: () => ({ user: null, isLoading: false }),
+vi.mock('@/context', () => ({
+  useAuth: () => ({
+    user: null,
+    discordMeta: null,
+    isLoading: false,
+    isAuthenticated: false,
+    isNewUser: false,
+    setUser: vi.fn(),
+    clearUser: vi.fn(),
+  }),
+}));
+
+// useDiscordAuth をモック
+vi.mock('@/hooks/useDiscordAuth', () => ({
+  useDiscordAuth: () => ({
+    login: vi.fn(),
+  }),
 }));
 
 describe('GlobalHeader', () => {
@@ -60,13 +75,6 @@ describe('GlobalHeader', () => {
       render(<GlobalHeader />);
       expect(
         screen.getByRole('button', { name: /ログイン/i }),
-      ).toBeInTheDocument();
-    });
-
-    it('新規登録ボタンが表示される', () => {
-      render(<GlobalHeader />);
-      expect(
-        screen.getByRole('button', { name: /新規登録/i }),
       ).toBeInTheDocument();
     });
   });
