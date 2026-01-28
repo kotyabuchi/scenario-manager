@@ -38,10 +38,16 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Remove unused @vercel/og WASM files
+      - name: Replace unused @vercel/og WASM with empty stubs
         run: |
-          find .open-next -name "resvg.wasm" -delete -o -name "yoga.wasm" -delete
-          echo "Removed unused WASM files to reduce bundle size"
+          for f in $(find node_modules -path "*/next/dist/compiled/@vercel/og/*.wasm"); do
+            echo "Replacing $f with empty stub"
+            printf '\x00\x61\x73\x6d\x01\x00\x00\x00' > "$f"
+          done
+          for f in $(find .open-next -name "resvg.wasm" -o -name "yoga.wasm" 2>/dev/null); do
+            echo "Replacing $f with empty stub"
+            printf '\x00\x61\x73\x6d\x01\x00\x00\x00' > "$f"
+          done
 
       - name: Deploy to Cloudflare Pages
         run: pnpm run deploy
