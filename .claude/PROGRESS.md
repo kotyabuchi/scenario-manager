@@ -141,6 +141,21 @@
 
 ---
 
+### 認証画面（requirements-auth.md）
+
+| 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
+|------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
+| signupFormSchema (Step1) | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+| signupStep2Schema | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+| checkUserNameAvailability | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+| createUser | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 要件定義済（既存実装あり） |
+| generateUserName | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+| AuthRedirect | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
+
+**要件定義書**: `.claude/requirements/requirements-auth.md`
+
+---
+
 ### プロフィール
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
