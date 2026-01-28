@@ -49,14 +49,15 @@ if (-not $paneId) {
 }
 
 if ($StartClaude) {
-  # ロールに応じたシステムプロンプトを選択
+  # ロールに応じたシステムプロンプトファイルを選択
   $promptFile = switch ($Target) {
-    "captain"   { ".agents/fleet/captain.md" }
-    "navigator" { ".agents/fleet/navigator.md" }
-    default     { ".agents/fleet/sailor.md" }
+    "captain"   { "$FleetDir\captain.md" }
+    "navigator" { "$FleetDir\navigator.md" }
+    default     { "$FleetDir\sailor.md" }
   }
 
-  $cmd = "claude --system-prompt $promptFile"
+  # ペイン側でファイルを読み込んでclaude起動するコマンドを送信
+  $cmd = "claude --system-prompt (Get-Content '$promptFile' -Raw)"
   if ($Message) {
     $cmd += " '$Message'"
   }

@@ -72,5 +72,6 @@ Write-Host @"
 
 "@ -ForegroundColor White
 
-# 船長のClaude Codeを起動
-claude --system-prompt .agents/fleet/captain.md
+# 船長のClaude Codeを起動（ファイル内容をシステムプロンプトとして渡す）
+$captainPrompt = Get-Content "$FleetDir\captain.md" -Raw
+claude --system-prompt $captainPrompt

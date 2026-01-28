@@ -87,3 +87,5 @@ nulsupabase/.temp/
 .agents/fleet/skill-proposals/
 .agents/fleet/locks.json
 .agents/fleet/dashboard.md
+
+supabase/.temp/
