@@ -23186,6 +23186,833 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "4DFmF",
+      "x": 10620,
+      "y": 0,
+      "name": "Auth / プロフィール設定 Step1",
+      "width": 1440,
+      "height": 900,
+      "fill": "#F5F7FA",
+      "layout": "none",
+      "children": [
+        {
+          "id": "UyzWX",
+          "type": "ref",
+          "ref": "meAr4",
+          "width": 1440,
+          "x": 0,
+          "y": 0,
+          "name": "header1"
+        },
+        {
+          "type": "frame",
+          "id": "rWyDL",
+          "x": 480,
+          "y": 140,
+          "name": "signupCard",
+          "width": 480,
+          "fill": "#FFFFFF",
+          "cornerRadius": 16,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000015",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 24
+          },
+          "layout": "vertical",
+          "gap": 24,
+          "padding": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "kRqrT",
+              "name": "stepIndicator",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "voyjg",
+                  "name": "stepLabelRow",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iMuQr",
+                      "name": "stepText1",
+                      "fill": "#6B7280",
+                      "content": "ステップ 1 / 2",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6Uuxq",
+                      "name": "stepDesc1",
+                      "fill": "#10B981",
+                      "content": "基本情報",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ybeI3",
+                  "name": "barBg",
+                  "width": "fill_container",
+                  "height": 4,
+                  "fill": "#E5E7EB",
+                  "cornerRadius": 2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "xfEK9",
+                      "x": 0,
+                      "y": 0,
+                      "name": "barFill",
+                      "width": 200,
+                      "height": 4,
+                      "fill": "#10B981",
+                      "cornerRadius": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "1agIP",
+              "type": "ref",
+              "ref": "DK0Lq",
+              "name": "avatar1"
+            },
+            {
+              "type": "frame",
+              "id": "yTJC3",
+              "name": "titleGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "b9VUd",
+                  "name": "titleText",
+                  "fill": "#1F2937",
+                  "content": "プロフィール設定",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "fYkhT",
+                  "name": "subtitleText",
+                  "fill": "#6B7280",
+                  "content": "はじめに、あなたのプロフィールを設定しましょう",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1Xa8z",
+              "name": "formGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "id": "yQdTH",
+                  "type": "ref",
+                  "ref": "xgI9m",
+                  "width": "fill_container",
+                  "name": "usernameInput",
+                  "descendants": {
+                    "1Pwb1": {
+                      "content": "ユーザー名"
+                    },
+                    "uPBx5": {
+                      "content": "例: taro_trpg"
+                    }
+                  }
+                },
+                {
+                  "id": "Buvt4",
+                  "type": "ref",
+                  "ref": "xgI9m",
+                  "width": "fill_container",
+                  "name": "displayNameInput",
+                  "descendants": {
+                    "1Pwb1": {
+                      "content": "表示名"
+                    },
+                    "uPBx5": {
+                      "content": "例: 太郎"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "vk3Ot",
+              "type": "ref",
+              "ref": "zgKWk",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "name": "nextBtn",
+              "descendants": {
+                "pTc6p": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                },
+                "ZXcTb": {
+                  "content": "次へ"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "fo3i3",
+      "x": 10620,
+      "y": 1000,
+      "name": "Auth / プロフィール設定 Step2",
+      "width": 1440,
+      "height": 900,
+      "fill": "#F5F7FA",
+      "layout": "none",
+      "children": [
+        {
+          "id": "EaJqp",
+          "type": "ref",
+          "ref": "meAr4",
+          "width": 1440,
+          "x": 0,
+          "y": 0,
+          "name": "header2"
+        },
+        {
+          "type": "frame",
+          "id": "ihILY",
+          "x": 480,
+          "y": 100,
+          "name": "signupCard2",
+          "width": 480,
+          "fill": "#FFFFFF",
+          "cornerRadius": 16,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000015",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 24
+          },
+          "layout": "vertical",
+          "gap": 24,
+          "padding": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "kLKnE",
+              "name": "stepIndicator2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "wWmfY",
+                  "name": "stepLabelRow2",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mWPx5",
+                      "name": "st2a",
+                      "fill": "#6B7280",
+                      "content": "ステップ 2 / 2",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LKI4e",
+                      "name": "st2b",
+                      "fill": "#10B981",
+                      "content": "追加情報",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Gg5Pg",
+                  "name": "barBg2",
+                  "width": "fill_container",
+                  "height": 4,
+                  "fill": "#E5E7EB",
+                  "cornerRadius": 2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nAuTc",
+                      "x": 0,
+                      "y": 0,
+                      "name": "barFill2",
+                      "width": 400,
+                      "height": 4,
+                      "fill": "#10B981",
+                      "cornerRadius": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WRuTa",
+              "name": "titleGroup2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "1Fodl",
+                  "name": "title2",
+                  "fill": "#1F2937",
+                  "content": "追加情報（任意）",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "uPmV5",
+                  "name": "subtitle2",
+                  "fill": "#6B7280",
+                  "content": "スキップして後から設定することもできます",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "6Yp04",
+              "name": "formGroup2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "id": "n92UT",
+                  "type": "ref",
+                  "ref": "GLSit",
+                  "width": "fill_container",
+                  "name": "bioInput",
+                  "descendants": {
+                    "vfsst": {
+                      "content": "自己紹介"
+                    },
+                    "YnnhA": {
+                      "content": "自己紹介を入力（500文字以内）"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "BUlNO",
+                  "name": "chipSection",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "6dC8t",
+                      "name": "chipLabel",
+                      "fill": "#374151",
+                      "content": "好きなTRPGシステム",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uAwPS",
+                      "name": "chipRow",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "id": "vkEL6",
+                          "type": "ref",
+                          "ref": "tDQ3l",
+                          "name": "chip1",
+                          "descendants": {
+                            "LgKoU": {
+                              "content": "クトゥルフ神話TRPG"
+                            }
+                          }
+                        },
+                        {
+                          "id": "v2QRm",
+                          "type": "ref",
+                          "ref": "tDQ3l",
+                          "name": "chip2",
+                          "descendants": {
+                            "LgKoU": {
+                              "content": "D&D 5e"
+                            }
+                          }
+                        },
+                        {
+                          "id": "0ZFee",
+                          "type": "ref",
+                          "ref": "tDQ3l",
+                          "name": "chip3",
+                          "descendants": {
+                            "LgKoU": {
+                              "content": "ソード・ワールド"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "peFA7",
+                  "type": "ref",
+                  "ref": "GLSit",
+                  "width": "fill_container",
+                  "name": "favInput",
+                  "descendants": {
+                    "vfsst": {
+                      "content": "好きなシナリオ"
+                    },
+                    "YnnhA": {
+                      "content": "好きなシナリオを入力（500文字以内）"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "J9f1u",
+              "name": "footerBtns",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dVQoM",
+                  "name": "skipBtn",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 3
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EBGQU",
+                      "name": "skipText",
+                      "fill": "#374151",
+                      "content": "スキップ",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "id": "UBLtw",
+                  "type": "ref",
+                  "ref": "zgKWk",
+                  "width": "fill_container",
+                  "justifyContent": "center",
+                  "name": "regBtn",
+                  "descendants": {
+                    "pTc6p": {
+                      "opacity": 0,
+                      "width": 0,
+                      "height": 0
+                    },
+                    "ZXcTb": {
+                      "content": "登録する"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "JDSD6",
+      "x": 10620,
+      "y": 2000,
+      "name": "Auth / プロフィール設定 完了",
+      "width": 1440,
+      "height": 900,
+      "fill": "#F5F7FA",
+      "layout": "none",
+      "children": [
+        {
+          "id": "2JFUh",
+          "type": "ref",
+          "ref": "meAr4",
+          "width": 1440,
+          "x": 0,
+          "y": 0,
+          "name": "header3"
+        },
+        {
+          "type": "frame",
+          "id": "OHrR3",
+          "x": 480,
+          "y": 180,
+          "name": "completionCard",
+          "width": 480,
+          "fill": "#FFFFFF",
+          "cornerRadius": 16,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000015",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 24
+          },
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            48,
+            40
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "miUQ8",
+              "name": "checkCircle",
+              "width": 64,
+              "height": 64,
+              "fill": "#D1FAE5",
+              "cornerRadius": 32,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "cWsGt",
+                  "x": 16,
+                  "y": 16,
+                  "name": "checkIcon",
+                  "width": 32,
+                  "height": 32,
+                  "iconFontName": "check",
+                  "iconFontFamily": "lucide",
+                  "fill": "#10B981"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "dczHT",
+              "name": "completeTitle",
+              "fill": "#1F2937",
+              "content": "登録が完了しました！",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "3NLGb",
+              "name": "completeMsg",
+              "fill": "#6B7280",
+              "content": "プロフィールはいつでも編集できます",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "id": "w3VwP",
+              "type": "ref",
+              "ref": "zgKWk",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "name": "startBtn",
+              "descendants": {
+                "pTc6p": {
+                  "opacity": 0,
+                  "width": 0,
+                  "height": 0
+                },
+                "ZXcTb": {
+                  "content": "はじめる →"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "jjf5t",
+      "x": 10620,
+      "y": 3000,
+      "name": "Auth / プロフィール設定 Step1（エラー）",
+      "width": 1440,
+      "height": 900,
+      "fill": "#F5F7FA",
+      "layout": "none",
+      "children": [
+        {
+          "id": "rYSvr",
+          "type": "ref",
+          "ref": "meAr4",
+          "width": 1440,
+          "x": 0,
+          "y": 0,
+          "name": "header4"
+        },
+        {
+          "type": "frame",
+          "id": "NAGXf",
+          "x": 480,
+          "y": 140,
+          "name": "signupCardErr",
+          "width": 480,
+          "fill": "#FFFFFF",
+          "cornerRadius": 16,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000015",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 24
+          },
+          "layout": "vertical",
+          "gap": 24,
+          "padding": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "bLDx7",
+              "name": "stepIndicator4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "245Tv",
+                  "name": "stepLabelRow4",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JdliM",
+                      "name": "st4a",
+                      "fill": "#6B7280",
+                      "content": "ステップ 1 / 2",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "1pGOZ",
+                      "name": "st4b",
+                      "fill": "#EF4444",
+                      "content": "基本情報",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iw3GF",
+                  "name": "barBg4",
+                  "width": "fill_container",
+                  "height": 4,
+                  "fill": "#E5E7EB",
+                  "cornerRadius": 2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "yJ7CG",
+                      "x": 0,
+                      "y": 0,
+                      "name": "barFill4",
+                      "width": 200,
+                      "height": 4,
+                      "fill": "#EF4444",
+                      "cornerRadius": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "dIhn5",
+              "type": "ref",
+              "ref": "DK0Lq",
+              "name": "avatar4"
+            },
+            {
+              "type": "frame",
+              "id": "rBfez",
+              "name": "titleGroup4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J28tJ",
+                  "name": "t4",
+                  "fill": "#1F2937",
+                  "content": "プロフィール設定",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "XCZhg",
+                  "name": "st4",
+                  "fill": "#6B7280",
+                  "content": "はじめに、あなたのプロフィールを設定しましょう",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "3nHT9",
+              "name": "formGroup4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "id": "9J5A8",
+                  "type": "ref",
+                  "ref": "JJfk3",
+                  "width": "fill_container",
+                  "name": "errInput",
+                  "descendants": {
+                    "TVmcn": {
+                      "content": "ユーザー名"
+                    },
+                    "d6mHl": {
+                      "content": "admin_user"
+                    },
+                    "NbkhW": {
+                      "content": "このユーザー名は既に使用されています"
+                    }
+                  }
+                },
+                {
+                  "id": "DFde0",
+                  "type": "ref",
+                  "ref": "xgI9m",
+                  "width": "fill_container",
+                  "name": "dispInput4",
+                  "descendants": {
+                    "1Pwb1": {
+                      "content": "表示名"
+                    },
+                    "uPBx5": {
+                      "content": "例: 太郎"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "otyrf",
+              "name": "disabledBtn",
+              "width": "fill_container",
+              "height": 44,
+              "fill": "#9CA3AF",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jBd0b",
+                  "name": "disabledText",
+                  "fill": "#FFFFFF",
+                  "content": "次へ",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {
