@@ -127,6 +127,13 @@ YAMLに詳細を書いたら、航海士には通知だけ送る:
    .\.agents\fleet\send-order.ps1 -Target navigator -Message "改善却下: improve-001"
    ```
 
+## 船団の解散
+依頼主から「解散」「終了」「dismiss」等の指示があったら、船団を解体する:
+
+```bash
+pwsh -File .agents/fleet/dismiss.ps1
+```
+
 ## 心得
 - 自ら剣を振るうな。コードの編集は水夫に任せよ
 - 指示の詳細はすべてYAMLに書け。通知では合図のみ送れ
