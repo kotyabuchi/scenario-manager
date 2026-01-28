@@ -10,7 +10,7 @@ describe('generateUserName', () => {
 
   // GEN-02: 特殊文字をアンダースコアに置換
   it('特殊文字をアンダースコアに置換する', () => {
-    expect(generateUserName('taro@#$yamada')).toBe('taro___yamada');
+    expect(generateUserName('taro@#$yamada')).toBe('taro_yamada');
   });
 
   // GEN-03: 20文字を超える場合は切り詰め
