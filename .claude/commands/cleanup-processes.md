@@ -54,7 +54,7 @@ description: 開発中のNode.jsプロセス（dev server, Storybook, Vitest等�
 | プロセス | 識別方法 | 備考 |
 |----------|----------|------|
 | Prisma Studio | `prisma studio` | DB GUI |
-| Drizzle Studio | `drizzle-kit studio` | DB GUI |
+| Supabase Studio | `supabase studio` | DB GUI |
 
 ### 関連ブラウザプロセス
 | プロセス | 実行ファイル | 備考 |

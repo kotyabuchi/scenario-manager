@@ -35,7 +35,7 @@ pnpm prepare
 
 ### Tech Stack
 - **Framework**: Next.js 16 (App Router, Turbopack)
-- **Database**: PostgreSQL (Supabase) + Drizzle ORM
+- **Database**: PostgreSQL (Supabase) — Supabase JS Client (REST API/RPC) でアクセス
 - **Styling**: PandaCSS（styled-system は `@/styled-system/*` で参照）
 - **UI**: Ark UI + 自作コンポーネント
 - **Linter/Formatter**: Biome（シングルクォート、2スペースインデント）
@@ -55,31 +55,6 @@ pnpm build:cloudflare
 pnpm deploy
 ```
 
-#### Hyperdrive（DB接続プーリング）
-Cloudflare **Hyperdrive** を使用してPostgreSQL接続を最適化。
-
-| 項目 | 値 |
-|------|-----|
-| Hyperdrive ID | `d075b1e588984ebd896a4617cdc24719` |
-| バインディング名 | `HYPERDRIVE` |
-| 接続先 | Supabase Direct Connection (port 5432) |
-
-**設定ファイル**: `wrangler.jsonc`
-```jsonc
-{
-  "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      "id": "d075b1e588984ebd896a4617cdc24719"
-    }
-  ]
-}
-```
-
-**DB接続コード**: `src/db/index.ts`
-- Cloudflare環境: `getCloudflareContext()` から `env.HYPERDRIVE.connectionString` を取得
-- ローカル環境: `process.env.DATABASE_URL` にフォールバック
-
 #### GitHub Actions（CI/CD）
 `.github/workflows/deploy-cloudflare.yml` でmainブランチへのpush時に自動デプロイ。
 
@@ -88,8 +63,6 @@ Cloudflare **Hyperdrive** を使用してPostgreSQL接続を最適化。
 |----------|------|
 | `CLOUDFLARE_API_TOKEN` | Cloudflare APIトークン |
 | `CLOUDFLARE_ACCOUNT_ID` | CloudflareアカウントID |
-| `DATABASE_URL` | Supabase接続文字列（ビルド時用） |
-| `HYPERDRIVE_CONNECTION_STRING` | Supabase Direct接続文字列（デプロイ時用） |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Anon Key |
 
@@ -105,14 +78,15 @@ src/
 │       └── [feature]/
 │           ├── page.tsx        # ページコンポーネント（Server Component）
 │           ├── styles.ts       # ページのスタイル定義
-│           ├── interface.ts    # ページ用型定義（Drizzleから導出）
-│           ├── adapter.ts      # DB操作関数（Drizzle）
+│           ├── interface.ts    # ページ用型定義（Supabase生成型から導出）
+│           ├── adapter.ts      # DB操作関数（Supabase Client）
 │           └── _components/    # ページ固有コンポーネント
 ├── components/
 │   ├── elements/           # 基本コンポーネント（Button, Card等）
 │   └── blocks/             # 複合コンポーネント（Header, SideMenu等）
 ├── db/
-│   ├── schema.ts           # Drizzle スキーマ定義
+│   ├── types.ts            # Supabase生成型定義（supabase gen types）
+│   ├── helpers.ts          # DB操作ヘルパー関数
 │   └── enum.ts             # DB用Enum定義
 ├── hooks/                  # カスタムフック
 ├── lib/                    # ユーティリティ（db接続等）
@@ -133,6 +107,7 @@ src/
 - マイグレーション出力先: `./supabase/migrations`
 
 ### Key Patterns
+- **DBアクセス**: `src/lib/supabase/server.ts` の `createClient()` を使用。型は `src/db/types.ts`（`supabase gen types` で生成）
 - **型安全ルーティング**: `next.config.ts` で `typedRoutes: true` 有効
 - **パスエイリアス**: `@/*` → `src/*`, `@/styled-system/*` → `styled-system/*`
 - **Storybook**: コンポーネントと同階層に `.stories.tsx` を配置

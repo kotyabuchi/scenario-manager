@@ -99,35 +99,33 @@ const name = user?.name ?? 'Unknown'
 
 | 優先度 | 型の取得元 | 例 |
 |--------|-----------|-----|
-| 1 | ライブラリ公式の型 | `z.infer`, `$inferSelect`, `FieldErrors` |
+| 1 | ライブラリ公式の型 | `z.infer`, Supabase生成型, `FieldErrors` |
 | 2 | 上記から推論された型 | `typeof schema` からの派生 |
 | 3 | 最小限の独自型 | やむを得ない場合のみ |
 
-### Drizzle テーブル定義からの型導出
+### Supabase 生成型からの型導出
 
-Drizzle のテーブル定義が存在する場合、行データ・Insert・Select の型は必ず `$inferSelect` / `$inferInsert` を使用すること。
+DB行データの型は `src/db/types.ts`（`supabase gen types typescript` で生成）から導出すること。
 
 ```typescript
-// src/db/schema.ts
-export const users = pgTable('users', {
-  userId: text('user_id').primaryKey(),
-  userName: text('user_name').notNull(),
-  email: text('email'),
-  createdAt: timestamp('created_at').defaultNow(),
-})
+// src/db/types.ts（自動生成）
+// supabase gen types typescript --project-id <id> > src/db/types.ts
 
-// ✅ OK - テーブル定義から型を導出
-type User = typeof users.$inferSelect
-type NewUser = typeof users.$inferInsert
+// ✅ OK - Supabase生成型から導出
+import type { Database } from '@/db/types'
+type User = Database['public']['Tables']['users']['Row']
+type NewUser = Database['public']['Tables']['users']['Insert']
 
 // ❌ NG - テーブル定義と同等の独自型を作成
 type User = {
   userId: string
   userName: string
   email: string | null
-  createdAt: Date
+  createdAt: string
 }
 ```
+
+**注意**: Supabase REST APIはタイムスタンプを`string`（ISO形式）で返す。`Date`型ではない。
 
 ### Zod スキーマからの型導出
 
@@ -202,13 +200,13 @@ type FormOutput = z.infer<typeof schema>
 ```typescript
 // ❌ すべて禁止
 type Errors = Record<string, string>           // FieldErrors を使う
-type User = { id: string; name: string }       // $inferSelect を使う
+type User = { id: string; name: string }       // Supabase生成型 を使う
 type FormData = { [key: string]: unknown }     // z.infer を使う
 ```
 
 ### まとめ
 
-1. **Drizzle テーブル** → `$inferSelect` / `$inferInsert`
+1. **DBテーブル** → `Database['public']['Tables'][T]['Row']` / `['Insert']`（Supabase生成型）
 2. **Zod スキーマ** → `z.infer<typeof schema>` / `z.input<typeof schema>`
 3. **React Hook Form** → `FieldErrors<T>`, `UseFormReturn<T>` 等
 4. **独自型は最終手段** → 上記で対応できない場合のみ
@@ -467,16 +465,16 @@ Biomeの設定により自動整理される。手動で書く場合は以下の
 import { useState, useEffect } from 'react'
 
 // 2. 外部パッケージ
-import { eq } from 'drizzle-orm'
+import { isNil } from 'ramda'
 
 // 3. 内部モジュール（lib）
-import { db } from '@/lib/db'
+import { createClient } from '@/lib/supabase/server'
 
 // 4. 相対パス
 import { Button } from '../Button'
 
 // 5. 型のみのインポート
-import type { User } from '@/db/schema'
+import type { Database } from '@/db/types'
 ```
 
 ---
@@ -581,13 +579,14 @@ src/
 │       └── scenarios/
 │           ├── page.tsx       # ページコンポーネント
 │           ├── interface.ts   # ページ用型定義
-│           ├── adapter.ts     # DB操作（Drizzle）
+│           ├── adapter.ts     # DB操作（Supabase Client）
 │           └── _components/   # ページ固有コンポーネント
 ├── components/
 │   ├── elements/          # 基本コンポーネント（Button, Card等）
 │   └── blocks/            # 複合コンポーネント（Header, SideMenu等）
 ├── db/
-│   ├── schema.ts          # Drizzleスキーマ
+│   ├── types.ts           # Supabase生成型定義
+│   ├── helpers.ts         # DB操作ヘルパー関数
 │   └── enum.ts            # Enum定義
 ├── hooks/                 # カスタムフック
 ├── lib/                   # ユーティリティ
@@ -619,17 +618,16 @@ src/app/(main)/scenarios/
 ```
 
 ### interface.ts - 型定義ファイル
-Drizzleの型出力機能を活用し、DBスキーマとの整合性を保証する。
+Supabase生成型（`src/db/types.ts`）を活用し、DBスキーマとの整合性を保証する。
 
 ```typescript
 // src/app/(main)/scenarios/interface.ts
-import type { InferSelectModel } from 'drizzle-orm'
-import type { scenarios, scenarioSystems, tags } from '@/db/schema'
+import type { Database } from '@/db/types'
 
-// Drizzleスキーマから型を導出
-type Scenario = InferSelectModel<typeof scenarios>
-type ScenarioSystem = InferSelectModel<typeof scenarioSystems>
-type Tag = InferSelectModel<typeof tags>
+// Supabase生成型から導出
+type Scenario = Database['public']['Tables']['scenarios']['Row']
+type ScenarioSystem = Database['public']['Tables']['scenario_systems']['Row']
+type Tag = Database['public']['Tables']['tags']['Row']
 
 // ページ固有の型（リレーション込み）
 type ScenarioWithRelations = Scenario & {
@@ -646,64 +644,24 @@ type SearchParams = {
   scenarioName?: string
 }
 
-// Props型
-type ScenarioListProps = {
-  scenarios: ScenarioWithRelations[]
-  isLoading?: boolean
-}
-
 export type {
   Scenario,
   ScenarioSystem,
   Tag,
   ScenarioWithRelations,
   SearchParams,
-  ScenarioListProps,
 }
 ```
 
 ### adapter.ts - DB操作ファイル
-Drizzleを使用したDB操作を集約。共通のResult型でエラーハンドリング。
+Supabase JS Clientを使用したDB操作を集約。共通のResult型でエラーハンドリング。
 
 ```typescript
 // src/app/(main)/scenarios/adapter.ts
-import { db } from '@/lib/db'
-import { scenarios } from '@/db/schema'
-import { eq, and, ilike } from 'drizzle-orm'
 import { isNil } from 'ramda'
+import { createClient } from '@/lib/supabase/server'
 import { type Result, ok, err } from '@/types/result'
 import type { ScenarioWithRelations, SearchParams } from './interface'
-
-/**
- * シナリオを検索する
- */
-export const searchScenarios = async (
-  params: SearchParams
-): Promise<Result<ScenarioWithRelations[]>> => {
-  try {
-    const conditions = []
-
-    if (!isNil(params.systemIds) && params.systemIds.length > 0) {
-      // システムIDでフィルタ
-    }
-
-    if (!isNil(params.scenarioName)) {
-      conditions.push(ilike(scenarios.name, `%${params.scenarioName}%`))
-    }
-
-    const result = await db.query.scenarios.findMany({
-      where: and(...conditions),
-      with: {
-        system: true,
-        tags: true,
-      },
-    })
-
-    return ok(result)
-  } catch (e) {
-    return err(e instanceof Error ? e : new Error('Unknown error'))
-  }
-}
 
 /**
  * シナリオをIDで取得する
@@ -712,15 +670,15 @@ export const getScenarioById = async (
   id: string
 ): Promise<Result<ScenarioWithRelations | null>> => {
   try {
-    const result = await db.query.scenarios.findFirst({
-      where: eq(scenarios.id, id),
-      with: {
-        system: true,
-        tags: true,
-      },
-    })
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('scenarios')
+      .select('*, system:scenario_systems(*), tags(*)')
+      .eq('scenario_id', id)
+      .single()
 
-    return ok(result ?? null)
+    if (error) return err(new Error(error.message))
+    return ok(data)
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'))
   }
@@ -732,8 +690,8 @@ export const getScenarioById = async (
 |----------|------|
 | `page.tsx` | UIレンダリング、Server Component |
 | `styles.ts` | スタイル定義（css, cva） |
-| `interface.ts` | 型定義（Drizzleから導出） |
-| `adapter.ts` | DB操作（クエリ、ミューテーション） |
+| `interface.ts` | 型定義（Supabase生成型から導出） |
+| `adapter.ts` | DB操作（Supabase Client） |
 | `_components/` | ページ固有のUIコンポーネント |
 | `actions.ts` | Server Actions（必要な場合） |
 

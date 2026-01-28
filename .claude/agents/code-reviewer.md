@@ -50,7 +50,7 @@ When reviewing code, you will:
 
 4. **Verify Architecture Alignment**: Ensure code follows the established patterns:
    - Proper file structure (page.tsx, interface.ts, adapter.ts pattern)
-   - Drizzle ORM usage with InferSelectModel for type safety
+   - Supabase Client usage with generated types (`src/db/types.ts`) for type safety
    - Server Components vs Client Components ('use client' directive)
    - Proper use of Next.js App Router features
 

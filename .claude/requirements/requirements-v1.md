@@ -172,7 +172,7 @@ TRPGプレイヤーが**快適にセッションを計画・実行**し、**思�
 |---------|------|------|
 | Framework | Next.js 16 | App Router, Turbopack |
 | Database | PostgreSQL (Supabase) | - |
-| ORM | Drizzle ORM | TypeScript |
+| DBクライアント | Supabase JS Client | REST API/RPC |
 | Styling | PandaCSS | @/styled-system/* |
 | UI | Ark UI | + カスタムコンポーネント |
 | 認証 | Discord OAuth | 将来的にGoogle追加検討 |
@@ -1447,7 +1447,7 @@ US-712: ユーザーとして、検索条件をURLで共有できる
 - Discord OAuth 2.0 による認証
 - CSRF対策（Next.js組み込み）
 - XSS対策（React自動エスケープ）
-- SQLインジェクション対策（Drizzle ORM）
+- SQLインジェクション対策（Supabase REST API / パラメタライズドRPC）
 - RLS（Row Level Security）によるデータ保護
 
 ### 14.3 ユーザビリティ
