@@ -79,3 +79,11 @@ test-results/
 
 # Null
 nulsupabase/.temp/
+
+# Fleet (multi-agent runtime files)
+.agents/fleet/panes.json
+.agents/fleet/voyages/
+.agents/fleet/reports/
+.agents/fleet/skill-proposals/
+.agents/fleet/locks.json
+.agents/fleet/dashboard.md
