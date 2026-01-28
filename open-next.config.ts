@@ -11,7 +11,7 @@ const config: OpenNextConfig = {
       queue: 'dummy',
     },
   },
-  edgeExternals: ['node:crypto', '@vercel/og', 'next/og'],
+  edgeExternals: ['node:crypto'],
   middleware: {
     external: true,
     override: {

@@ -2,7 +2,6 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   typedRoutes: true,
-  serverExternalPackages: ['@vercel/og'],
   images: {
     remotePatterns: [
       {

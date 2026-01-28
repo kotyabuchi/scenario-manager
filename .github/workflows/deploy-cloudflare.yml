@@ -38,6 +38,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
+      - name: Remove unused @vercel/og WASM files
+        run: |
+          find .open-next -name "resvg.wasm" -delete -o -name "yoga.wasm" -delete
+          echo "Removed unused WASM files to reduce bundle size"
+
       - name: Deploy to Cloudflare Pages
         run: pnpm run deploy
         env:
