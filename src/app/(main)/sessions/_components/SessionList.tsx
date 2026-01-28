@@ -3,8 +3,6 @@
 import { SessionCard } from './SessionCard';
 import * as styles from './styles';
 
-import { css } from '@/styled-system/css';
-
 import type { MySessionWithRole, PublicSession } from '../interface';
 
 type PublicSessionListProps = {
@@ -19,12 +17,6 @@ type MySessionListProps = {
 };
 
 type SessionListProps = PublicSessionListProps | MySessionListProps;
-
-const mySessionListContainer = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-});
 
 export const SessionList = (props: SessionListProps) => {
   if (props.sessions.length === 0) {
@@ -46,7 +38,7 @@ export const SessionList = (props: SessionListProps) => {
   }
 
   return (
-    <div className={mySessionListContainer}>
+    <div className={styles.mySessionListContainer}>
       {props.sessions.map((session) => (
         <SessionCard
           key={session.gameSessionId}

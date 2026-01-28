@@ -24,6 +24,64 @@ export const tabBar = css({
   shadow: 'subHeader.default',
 });
 
+export const tabContainer = css({
+  display: 'flex',
+  bg: '#F3F4F6',
+  borderRadius: '8px',
+  p: '4px',
+});
+
+export const tabButton = cva({
+  base: {
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontFamily: 'Inter, sans-serif',
+    px: '16px',
+    h: '36px',
+    cursor: 'pointer',
+    transition: 'all {durations.fast}',
+    _hover: {
+      color: '#1F2937',
+    },
+    _disabled: {
+      opacity: 'disabled',
+      cursor: 'not-allowed',
+    },
+  },
+  variants: {
+    active: {
+      true: {
+        bg: '#FFFFFF',
+        color: '#1F2937',
+        fontWeight: '500',
+        shadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+      },
+      false: {
+        bg: 'transparent',
+        color: '#6B7280',
+        fontWeight: 'normal',
+        shadow: 'none',
+      },
+    },
+  },
+});
+
+export const loginPrompt = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flex: 1,
+  minH: '400px',
+  gap: '16px',
+});
+
+export const loginPromptText = css({
+  fontSize: '16px',
+  color: '#6B7280',
+});
+
 // ===== Search Panel (公開卓) =====
 
 export const searchPanel = css({
@@ -213,6 +271,14 @@ export const publicCardsGrid = css({
   gap: '20px',
 });
 
+// ===== My Session List (vertical layout) =====
+
+export const mySessionListContainer = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+});
+
 export const publicCard = css({
   w: '320px',
   bg: 'white',
@@ -305,8 +371,32 @@ export const publicCard_phaseTag = cva({
         bg: '#FEF3C7',
         color: '#D97706',
       },
+      IN_PROGRESS: {
+        bg: '#DBEAFE',
+        color: '#2563EB',
+      },
+      COMPLETED: {
+        bg: '#F3F4F6',
+        color: '#6B7280',
+      },
+      CANCELLED: {
+        bg: '#FEE2E2',
+        color: '#DC2626',
+      },
     },
   },
+});
+
+export const publicCard_tag = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  h: '24px',
+  px: '8px',
+  borderRadius: '4px',
+  fontSize: '11px',
+  fontWeight: '500',
+  bg: '#F3F4F6',
+  color: '#4B5563',
 });
 
 export const publicCard_slotWarning = css({
@@ -440,6 +530,7 @@ export const sessionCard_roleBadge = cva({
     p: '6px 12px',
     fontSize: '12px',
     fontWeight: '600',
+    flexShrink: 0,
   },
   variants: {
     role: {
@@ -451,8 +542,30 @@ export const sessionCard_roleBadge = cva({
         bg: '#FEF3C7',
         color: '#D97706',
       },
+      SPECTATOR: {
+        bg: '#F3F4F6',
+        color: '#6B7280',
+      },
     },
   },
+});
+
+export const sessionCard_badges = css({
+  display: 'flex',
+  gap: '8px',
+  mt: '4px',
+});
+
+export const sessionCard_badge = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '4px',
+  px: '8px',
+  py: '2px',
+  fontSize: '12px',
+  color: '#6B7280',
+  bg: '#F3F4F6',
+  borderRadius: '4px',
 });
 
 // ===== Empty State =====

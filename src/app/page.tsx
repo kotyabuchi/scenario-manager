@@ -3,8 +3,6 @@ import Link from 'next/link';
 
 import * as styles from './styles';
 
-import { css } from '@/styled-system/css';
-
 export const metadata = {
   title: 'シナプレ管理くん',
   description: 'TRPGセッションをもっと快適に。',
@@ -19,10 +17,7 @@ export default function Home() {
           {/* Logo */}
           <div className={styles.heroLogo}>
             <div className={styles.heroLogoIcon}>
-              <BookOpen
-                size={28}
-                className={css({ color: 'primary.default' })}
-              />
+              <BookOpen size={28} className={styles.iconColor_primary} />
             </div>
             <span className={styles.heroLogoText}>シナプレ管理くん</span>
           </div>
@@ -53,8 +48,8 @@ export default function Home() {
         <div className={styles.featuresGrid}>
           {/* Feature 1: シナリオ検索 */}
           <div className={styles.featureCard}>
-            <div className={css({ ...featureIconStyle, bg: 'primary.50' })}>
-              <Search size={24} className={css({ color: 'primary.default' })} />
+            <div className={styles.featureIcon_search}>
+              <Search size={24} className={styles.iconColor_primary} />
             </div>
             <h3 className={styles.featureTitle}>シナリオ検索</h3>
             <p className={styles.featureDesc}>
@@ -66,8 +61,8 @@ export default function Home() {
 
           {/* Feature 2: セッション管理 */}
           <div className={styles.featureCard}>
-            <div className={css({ ...featureIconStyle, bg: 'indigo.50' })}>
-              <Calendar size={24} className={css({ color: 'indigo.500' })} />
+            <div className={styles.featureIcon_calendar}>
+              <Calendar size={24} className={styles.iconColor_indigo} />
             </div>
             <h3 className={styles.featureTitle}>セッション管理</h3>
             <p className={styles.featureDesc}>
@@ -77,8 +72,8 @@ export default function Home() {
 
           {/* Feature 3: 思い出の記録 */}
           <div className={styles.featureCard}>
-            <div className={css({ ...featureIconStyle, bg: 'orange.100' })}>
-              <Star size={24} className={css({ color: 'orange.500' })} />
+            <div className={styles.featureIcon_star}>
+              <Star size={24} className={styles.iconColor_orange} />
             </div>
             <h3 className={styles.featureTitle}>思い出の記録</h3>
             <p className={styles.featureDesc}>
@@ -88,8 +83,8 @@ export default function Home() {
 
           {/* Feature 4: ネタバレ保護 */}
           <div className={styles.featureCard}>
-            <div className={css({ ...featureIconStyle, bg: 'red.100' })}>
-              <Shield size={24} className={css({ color: 'red.500' })} />
+            <div className={styles.featureIcon_shield}>
+              <Shield size={24} className={styles.iconColor_red} />
             </div>
             <h3 className={styles.featureTitle}>ネタバレ保護</h3>
             <p className={styles.featureDesc}>
@@ -149,60 +144,12 @@ export default function Home() {
           人気のTRPGシステムに対応。ユーザーが自由に追加できます。
         </p>
         <div className={styles.systemsGrid}>
-          <span
-            className={css({
-              ...systemBadgeStyle,
-              bg: 'green.50',
-              color: 'green.700',
-            })}
-          >
-            CoC6版
-          </span>
-          <span
-            className={css({
-              ...systemBadgeStyle,
-              bg: 'green.50',
-              color: 'green.700',
-            })}
-          >
-            CoC7版
-          </span>
-          <span
-            className={css({
-              ...systemBadgeStyle,
-              bg: 'blue.50',
-              color: 'blue.800',
-            })}
-          >
-            SW2.5
-          </span>
-          <span
-            className={css({
-              ...systemBadgeStyle,
-              bg: '#F3E8FF',
-              color: 'purple.600',
-            })}
-          >
-            インセイン
-          </span>
-          <span
-            className={css({
-              ...systemBadgeStyle,
-              bg: 'pink.50',
-              color: 'pink.700',
-            })}
-          >
-            シノビガミ
-          </span>
-          <span
-            className={css({
-              ...systemBadgeStyle,
-              bg: 'orange.100',
-              color: 'orange.800',
-            })}
-          >
-            エモクロア
-          </span>
+          <span className={styles.systemBadge_coc}>CoC6版</span>
+          <span className={styles.systemBadge_coc}>CoC7版</span>
+          <span className={styles.systemBadge_sw}>SW2.5</span>
+          <span className={styles.systemBadge_insane}>インセイン</span>
+          <span className={styles.systemBadge_shinobigami}>シノビガミ</span>
+          <span className={styles.systemBadge_emochloa}>エモクロア</span>
         </div>
       </section>
 
@@ -220,7 +167,7 @@ export default function Home() {
       <footer className={styles.footer}>
         <div className={styles.footerLogo}>
           <div className={styles.footerLogoIcon}>
-            <BookOpen size={18} className={css({ color: 'primary.default' })} />
+            <BookOpen size={18} className={styles.iconColor_primary} />
           </div>
           <span className={styles.footerLogoText}>シナプレ管理くん</span>
         </div>
@@ -231,23 +178,3 @@ export default function Home() {
     </div>
   );
 }
-
-// Feature icon container style (inline for dynamic bg)
-const featureIconStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
-} as const;
-
-// System badge style (inline for dynamic colors)
-const systemBadgeStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
-} as const;

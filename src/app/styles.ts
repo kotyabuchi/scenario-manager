@@ -1,6 +1,15 @@
 import { css } from '@/styled-system/css';
 
 // ========================================
+// Layout (共通)
+// ========================================
+
+export const bodyStyle = css({
+  minH: '100vh',
+  bg: 'linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})',
+});
+
+// ========================================
 // ランディングページ - Pencilデザイン準拠
 // ========================================
 
@@ -181,6 +190,64 @@ export const featureIcon = css({
   borderRadius: '12px',
 });
 
+// Feature icon variants (with background colors)
+export const featureIcon_search = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '48px',
+  height: '48px',
+  borderRadius: '12px',
+  bg: 'primary.50',
+});
+
+export const featureIcon_calendar = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '48px',
+  height: '48px',
+  borderRadius: '12px',
+  bg: 'indigo.50',
+});
+
+export const featureIcon_star = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '48px',
+  height: '48px',
+  borderRadius: '12px',
+  bg: 'orange.100',
+});
+
+export const featureIcon_shield = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '48px',
+  height: '48px',
+  borderRadius: '12px',
+  bg: 'red.100',
+});
+
+// Icon colors
+export const iconColor_primary = css({
+  color: 'primary.default',
+});
+
+export const iconColor_indigo = css({
+  color: 'indigo.500',
+});
+
+export const iconColor_orange = css({
+  color: 'orange.500',
+});
+
+export const iconColor_red = css({
+  color: 'red.500',
+});
+
 export const featureTitle = css({
   fontSize: '18px',
   fontWeight: '600',
@@ -301,6 +368,62 @@ export const systemBadge = css({
   borderRadius: '8px',
   fontSize: '14px',
   fontWeight: '500',
+});
+
+// System badge variants (with colors)
+export const systemBadge_coc = css({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  bg: 'green.50',
+  color: 'green.700',
+});
+
+export const systemBadge_sw = css({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  bg: 'blue.50',
+  color: 'blue.800',
+});
+
+export const systemBadge_insane = css({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  bg: '#F3E8FF',
+  color: 'purple.600',
+});
+
+export const systemBadge_shinobigami = css({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  bg: 'pink.50',
+  color: 'pink.700',
+});
+
+export const systemBadge_emochloa = css({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  bg: 'orange.100',
+  color: 'orange.800',
 });
 
 // ========================================

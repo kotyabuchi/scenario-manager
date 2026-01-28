@@ -359,6 +359,26 @@ export const searchPanelButtons = css({
   flexShrink: 0,
 });
 
+export const clearButton = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'xs',
+  px: 'md',
+  height: '44px',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: '#374151',
+  bg: 'white',
+  border: 'none',
+  borderRadius: 'md',
+  cursor: 'pointer',
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  whiteSpace: 'nowrap',
+  _hover: {
+    bg: '#F9FAFB',
+  },
+});
+
 export const seachConditions = css({
   display: 'flex',
   flexDirection: 'column',
@@ -653,6 +673,25 @@ export const sortArea = css({
 export const sortLabel = css({
   fontSize: '13px', // Pencil: fontSize 13
   color: colors.text.muted, // Pencil: #6B7280
+});
+
+export const sortSelectWrapper = css({
+  width: '140px',
+});
+
+export const loadMoreContainer = css({
+  display: 'flex',
+  justifyContent: 'center',
+  pt: '4',
+});
+
+export const loadMoreButton = css({
+  px: '32px',
+  shadow: 'header.default',
+});
+
+export const loadMoreIcon = css({
+  color: 'gray.500',
 });
 
 export const sortSelect = css({

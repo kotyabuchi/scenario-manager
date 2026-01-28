@@ -16,7 +16,6 @@ import { searchParamsCache, toPublicSearchParams } from './searchParams';
 
 import { Spinner } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
-import { css } from '@/styled-system/css';
 
 import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 import type {
@@ -34,53 +33,6 @@ export const metadata = {
 type PageProps = {
   searchParams: Promise<NuqsSearchParams>;
 };
-
-// Pencil準拠: ピル型タブコンテナ（cornerRadius 8、bg #F3F4F6、padding 4）
-const tabContainer = css({
-  display: 'flex',
-  bg: '#F3F4F6',
-  borderRadius: '8px',
-  p: '4px',
-});
-
-// Pencil準拠: タブボタン（height 36、padding 0 16、fontSize 14）
-const tabButton = (active: boolean) =>
-  css({
-    bg: active ? '#FFFFFF' : 'transparent',
-    border: 'none',
-    borderRadius: '6px',
-    fontSize: '14px',
-    fontFamily: 'Inter, sans-serif',
-    px: '16px',
-    h: '36px',
-    cursor: 'pointer',
-    transition: 'all {durations.fast}',
-    color: active ? '#1F2937' : '#6B7280',
-    fontWeight: active ? '500' : 'normal',
-    shadow: active ? '0 1px 2px rgba(0, 0, 0, 0.05)' : 'none',
-    _hover: {
-      color: '#1F2937',
-    },
-    _disabled: {
-      opacity: 'disabled',
-      cursor: 'not-allowed',
-    },
-  });
-
-const loginPrompt = css({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flex: 1,
-  minH: '400px',
-  gap: '16px',
-});
-
-const loginPromptText = css({
-  fontSize: '16px',
-  color: '#6B7280',
-});
 
 const SessionsLoading = () => (
   <div className={styles.emptyState}>
@@ -168,11 +120,11 @@ export default async function SessionsPage({ searchParams }: PageProps) {
       <div className={styles.pageLayout}>
         {/* Pencil準拠: 白bg、h56、center、padding 0 32 のタブバー */}
         <div className={styles.tabBar}>
-          <div className={tabContainer}>
+          <div className={styles.tabContainer}>
             <Link href="/sessions?tab=upcoming">
               <button
                 type="button"
-                className={tabButton(tab === 'upcoming')}
+                className={styles.tabButton({ active: tab === 'upcoming' })}
                 disabled={!isLoggedIn}
               >
                 参加予定
@@ -181,14 +133,17 @@ export default async function SessionsPage({ searchParams }: PageProps) {
             <Link href="/sessions?tab=history">
               <button
                 type="button"
-                className={tabButton(tab === 'history')}
+                className={styles.tabButton({ active: tab === 'history' })}
                 disabled={!isLoggedIn}
               >
                 参加履歴
               </button>
             </Link>
             <Link href="/sessions?tab=public">
-              <button type="button" className={tabButton(tab === 'public')}>
+              <button
+                type="button"
+                className={styles.tabButton({ active: tab === 'public' })}
+              >
                 公開卓を探す
               </button>
             </Link>
@@ -207,8 +162,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
             <UpcomingTab initialResult={upcomingInitialResult} />
           )}
           {tab === 'upcoming' && !isLoggedIn && (
-            <div className={loginPrompt}>
-              <span className={loginPromptText}>
+            <div className={styles.loginPrompt}>
+              <span className={styles.loginPromptText}>
                 参加予定を確認するにはログインが必要です
               </span>
               <Link href="/login">
@@ -226,8 +181,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
             />
           )}
           {tab === 'history' && !isLoggedIn && (
-            <div className={loginPrompt}>
-              <span className={loginPromptText}>
+            <div className={styles.loginPrompt}>
+              <span className={styles.loginPromptText}>
                 参加履歴を確認するにはログインが必要です
               </span>
               <Link href="/login">

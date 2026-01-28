@@ -16,7 +16,6 @@ import {
   type SelectItem,
   type SelectValueChangeDetails,
 } from '@/components/elements/select/select';
-import { css } from '@/styled-system/css';
 
 import type {
   ScenarioSystem,
@@ -216,7 +215,7 @@ export const ScenariosContent = ({
 
             <div className={styles.sortArea}>
               <span className={styles.sortLabel}>並び替え：</span>
-              <div className={css({ width: '140px' })}>
+              <div className={styles.sortSelectWrapper}>
                 <Select
                   items={sortOptions}
                   value={[queryParams.sort]}
@@ -234,23 +233,14 @@ export const ScenariosContent = ({
           />
 
           {hasMore && (
-            <div
-              className={css({
-                display: 'flex',
-                justifyContent: 'center',
-                pt: '4',
-              })}
-            >
+            <div className={styles.loadMoreContainer}>
               <Button
                 variant="outline"
                 status="primary"
                 onClick={handleLoadMore}
-                className={css({
-                  px: '32px',
-                  shadow: 'header.default',
-                })}
+                className={styles.loadMoreButton}
               >
-                <ChevronDown size={18} className={css({ color: 'gray.500' })} />
+                <ChevronDown size={18} className={styles.loadMoreIcon} />
                 もっと見る
               </Button>
             </div>

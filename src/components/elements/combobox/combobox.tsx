@@ -11,6 +11,8 @@ import { useFilter } from '@ark-ui/react/locale';
 import { Portal } from '@ark-ui/react/portal';
 import { Check, ChevronDown, X } from 'lucide-react';
 
+import { noResultsStyle } from './styles';
+
 import { createStyleContext } from '@/lib/create-style-context';
 import { type ComboboxVariantProps, combobox } from '@/styled-system/recipes';
 
@@ -68,17 +70,6 @@ const ItemIndicator = withContext<
   HTMLSpanElement,
   ComponentPropsWithoutRef<typeof ArkCombobox.ItemIndicator>
 >(ArkCombobox.ItemIndicator, 'itemIndicator');
-
-// No results style (inline as it's simple)
-import { css } from '@/styled-system/css';
-
-const noResultsStyle = css({
-  px: '12px',
-  py: '8px',
-  fontSize: '14px',
-  color: 'text.secondary',
-  textAlign: 'center',
-});
 
 type ComboboxItem = {
   label: string;

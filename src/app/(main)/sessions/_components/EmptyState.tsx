@@ -3,48 +3,26 @@
 import { CalendarX, History, Plus, Search, SearchX } from 'lucide-react';
 import Link from 'next/link';
 
+import * as styles from './styles';
+
 import { Button } from '@/components/elements/button/button';
-import { css } from '@/styled-system/css';
 
 type EmptyStateProps = {
   type: 'upcoming' | 'history' | 'public';
   onReset?: () => void;
 };
 
-const emptyContainer = css({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '16px',
-  flex: 1,
-  minH: '400px',
-});
-
-const emptyIcon = css({
-  w: '48px',
-  h: '48px',
-  color: '#D1D5DB',
-});
-
-const emptyTitle = css({
-  fontSize: '16px',
-  fontWeight: 'normal',
-  color: 'text.muted',
-});
-
-const emptySubtitle = css({
-  fontSize: '13px',
-  color: '#9CA3AF',
-});
-
 export const EmptyState = ({ type }: EmptyStateProps) => {
   if (type === 'upcoming') {
     return (
-      <div className={emptyContainer}>
-        <CalendarX className={emptyIcon} />
-        <p className={emptyTitle}>参加予定のセッションはありません</p>
-        <p className={emptySubtitle}>公開卓を探して参加してみましょう</p>
+      <div className={styles.emptyState}>
+        <CalendarX className={styles.emptyState_icon} />
+        <p className={styles.emptyState_title}>
+          参加予定のセッションはありません
+        </p>
+        <p className={styles.emptyState_subtitle}>
+          公開卓を探して参加してみましょう
+        </p>
         <Link href="/sessions?tab=public">
           <Button status="primary">
             <Search size={16} />
@@ -57,10 +35,10 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
 
   if (type === 'history') {
     return (
-      <div className={emptyContainer}>
-        <History className={emptyIcon} />
-        <p className={emptyTitle}>参加履歴はまだありません</p>
-        <p className={emptySubtitle}>
+      <div className={styles.emptyState}>
+        <History className={styles.emptyState_icon} />
+        <p className={styles.emptyState_title}>参加履歴はまだありません</p>
+        <p className={styles.emptyState_subtitle}>
           セッションに参加すると、ここに履歴が表示されます
         </p>
         <Link href="/sessions?tab=public">
@@ -74,12 +52,12 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
   }
 
   return (
-    <div className={emptyContainer}>
-      <SearchX className={emptyIcon} />
-      <p className={emptyTitle}>
+    <div className={styles.emptyState}>
+      <SearchX className={styles.emptyState_icon} />
+      <p className={styles.emptyState_title}>
         条件に一致するセッションが見つかりませんでした
       </p>
-      <p className={emptySubtitle}>
+      <p className={styles.emptyState_subtitle}>
         検索条件を変更するか、新しいセッションを作成してみましょう
       </p>
       <Link href="/sessions/new">
