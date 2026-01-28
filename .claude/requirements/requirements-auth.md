@@ -52,7 +52,7 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 [Discord OAuth 完了]
   └── /auth/callback
         ├── 既存ユーザー → リダイレクト元のページに戻る（なければ /home）
-        └── 新規ユーザー → /signup（プロフィール設定画面）へ遷移
+        └── 新規ユーザー → リダイレクト元のページに戻り、プロフィール設定モーダルを自動表示
 ```
 
 ### 2.2 ランディングページの認証ボタン動作
@@ -76,9 +76,12 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 - `redirectTo` がなければ `/home` へ遷移
 - 新規ユーザーの場合は先に `/signup` へ遷移し、プロフィール設定完了後に元のページへ
 
-### 2.5 プロフィール設定画面（/signup）
+### 2.5 プロフィール設定モーダル
 
-#### 画面構成: ステップ形式（スワイプ / スライドアニメーション）
+**独立した /signup ページは廃止し、モーダルダイアログで表示する。**
+OAuth callback 後にリダイレクト元ページ上でモーダルが自動的に開く。
+
+#### 画面構成: ステップ形式（モーダル内スライドアニメーション）
 
 **Step 1: 基本情報（必須）**
 
@@ -106,7 +109,7 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 
 - **「スキップ」ボタン**: Step 2をスキップして登録完了
 - **「登録する」ボタン**: 入力内容を保存して登録完了
-- 登録完了後 → リダイレクト元のページへ遷移（なければ `/home`）
+- 登録完了後 → モーダルを閉じて現在のページに留まる（ページ内容をリフレッシュ）
 
 #### ステップ遷移のUI
 
@@ -114,13 +117,13 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 - Step インジケーター（ドットやステップバー）で現在位置を表示
 - Step 2 → Step 1 に戻れる（左スワイプ or 戻るボタン）
 
-### 2.6 /login ページの廃止
+### 2.6 /login・/signup ページの廃止
 
-独立した `/login` ページは廃止する。
+独立した `/login` および `/signup` ページは廃止する。
 
 - `/login` へのアクセス → Discord OAuth を直接起動（互換性のため）
-- または `/` へリダイレクト
-- ヘッダーやランディングから直接OAuth起動するため、専用画面は不要
+- `/signup` へのアクセス → `/home` にリダイレクト（互換性のため）
+- ヘッダーやランディングから直接OAuth起動し、プロフィール設定はモーダルで行うため専用画面は不要
 
 ---
 
@@ -195,8 +198,8 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 |------|-----------|-------------|
 | ランディングページ閲覧 | ○ | ○ |
 | Discord認証の起動 | ○ | - |
-| /signup（プロフィール設定） | - | ○（初回のみ） |
-| /signup へのアクセス（登録済み） | - | → /home にリダイレクト |
+| プロフィール設定モーダル表示 | - | ○（初回ログイン時に自動表示） |
+| /signup へのアクセス（互換性） | → /login（OAuth起動） | → /home にリダイレクト |
 
 ---
 
@@ -219,7 +222,7 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 
 - [ ] Discord OAuth を起動してコールバックを受信できる
 - [ ] 既存ユーザーがログインした場合、元のページにリダイレクトされる
-- [ ] 新規ユーザーがログインした場合、/signup に遷移する
+- [ ] 新規ユーザーがログインした場合、プロフィール設定モーダルが自動表示される
 - [ ] Step 1 で有効なユーザー名・表示名を入力して次へ進める
 - [ ] Step 2 をスキップして登録完了できる
 - [ ] Step 2 で任意項目を入力して登録完了できる
@@ -245,8 +248,10 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 
 ### 7.3 権限制御
 
-- [ ] 未ログインユーザーが /signup にアクセスした場合、/login（→OAuth）にリダイレクト
+- [ ] 未ログインユーザーが /signup にアクセスした場合、OAuth起動にリダイレクト
 - [ ] 登録済みユーザーが /signup にアクセスした場合、/home にリダイレクト
+- [ ] 新規ユーザーのOAuth callback後にプロフィール設定モーダルが自動表示される
+- [ ] プロフィール設定モーダルは閉じるボタンでは閉じない（必須入力のため）
 
 ---
 
@@ -285,12 +290,13 @@ US-A07: 認証済みユーザーとして、ランディングページから直
 
 | 対象 | 種別 | ファイルパス | 備考 |
 |------|------|-------------|------|
-| signupFormSchema (Step1) | Zodスキーマ | `src/app/(auth)/signup/_components/schema.ts` | ユーザー名 + 表示名 |
-| signupStep2Schema | Zodスキーマ | `src/app/(auth)/signup/_components/schema.ts` | 自己紹介 + 好きなシステム + 好きなシナリオ |
-| checkUserNameAvailability | adapter関数 | `src/app/(auth)/signup/adapter.ts` | ユーザー名一意性チェック |
-| createUser | Server Action | `src/app/(auth)/signup/actions.ts` | ユーザー登録処理 |
-| generateUserName | ユーティリティ | `src/app/(auth)/signup/utils.ts` | Discord名からユーザー名自動生成 |
-| AuthRedirect | ユーティリティ | `src/lib/auth/redirect.ts` | リダイレクト制御 |
+| signupFormSchema (Step1) | Zodスキーマ | `src/components/blocks/SignupModal/schema.ts` | ユーザー名 + 表示名 |
+| signupStep2Schema | Zodスキーマ | `src/components/blocks/SignupModal/schema.ts` | 自己紹介 + 好きなシステム + 好きなシナリオ |
+| checkUserNameAvailability | adapter関数 | `src/components/blocks/SignupModal/adapter.ts` | ユーザー名一意性チェック |
+| createUser | Server Action | `src/components/blocks/SignupModal/actions.ts` | ユーザー登録処理 |
+| generateUserName | ユーティリティ | `src/components/blocks/SignupModal/utils.ts` | Discord名からユーザー名自動生成 |
+| SignupModal | コンポーネント | `src/components/blocks/SignupModal/SignupModal.tsx` | プロフィール設定モーダル |
+| AuthRedirect | ユーティリティ | `src/lib/auth/redirect.ts` | リダイレクト制御（新規ユーザーフラグ管理） |
 
 ---
 
