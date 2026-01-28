@@ -1,10 +1,9 @@
-import type { InferSelectModel } from 'drizzle-orm';
-import type { scenarioSystems, scenarios, tags } from '@/db/schema';
+import type { ScenarioRow, ScenarioSystemRow, TagRow } from '@/db/helpers';
 
-// Drizzleスキーマから型を導出
-type Scenario = InferSelectModel<typeof scenarios>;
-type ScenarioSystem = InferSelectModel<typeof scenarioSystems>;
-type Tag = InferSelectModel<typeof tags>;
+// 基本型
+type Scenario = ScenarioRow;
+type ScenarioSystem = ScenarioSystemRow;
+type Tag = TagRow;
 
 // ページ固有の型（リレーション込み）
 type ScenarioWithRelations = Scenario & {

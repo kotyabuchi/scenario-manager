@@ -1,20 +1,19 @@
-import type { InferSelectModel } from 'drizzle-orm';
 import type {
-  gameSchedules,
-  gameSessions,
-  scenarioSystems,
-  scenarios,
-  sessionParticipants,
-  users,
-} from '@/db/schema';
+  GameScheduleRow,
+  GameSessionRow,
+  ScenarioRow,
+  ScenarioSystemRow,
+  SessionParticipantRow,
+  UserRow,
+} from '@/db/helpers';
 
-// Drizzleスキーマから型を導出
-type GameSession = InferSelectModel<typeof gameSessions>;
-type GameSchedule = InferSelectModel<typeof gameSchedules>;
-type Scenario = InferSelectModel<typeof scenarios>;
-type ScenarioSystem = InferSelectModel<typeof scenarioSystems>;
-type SessionParticipant = InferSelectModel<typeof sessionParticipants>;
-type User = InferSelectModel<typeof users>;
+// 基本型
+type GameSession = GameSessionRow;
+type GameSchedule = GameScheduleRow;
+type Scenario = ScenarioRow;
+type ScenarioSystem = ScenarioSystemRow;
+type SessionParticipant = SessionParticipantRow;
+type User = UserRow;
 
 // 参加者（ユーザー情報付き）
 type ParticipantWithUser = SessionParticipant & {
@@ -47,7 +46,7 @@ type PublicSession = {
   scenarioId: string;
   scenarioName: string;
   systemName: string;
-  scheduleDate: Date | null;
+  scheduleDate: string | null;
   schedulePhase: string | null;
   keeperName: string | null;
   keeperUserId: string | null;
@@ -55,7 +54,7 @@ type PublicSession = {
   maxPlayer: number | null;
   minPlaytime: number | null;
   maxPlaytime: number | null;
-  createdAt: Date;
+  createdAt: string;
 };
 
 // タブの種類
@@ -111,7 +110,7 @@ type CalendarSession = {
   sessionName: string;
   sessionPhase: string;
   scenarioName: string;
-  scheduleDate: Date;
+  scheduleDate: string;
   myRole: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
 };
 

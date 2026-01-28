@@ -8,12 +8,6 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      "id": "d075b1e588984ebd896a4617cdc24719"
-    }
-  ],
   "r2_buckets": [
     {
       "binding": "SCENARIO_IMAGES",

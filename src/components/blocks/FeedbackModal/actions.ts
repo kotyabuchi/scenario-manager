@@ -1,12 +1,10 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
 import { isNil } from 'ramda';
+import { ulid } from 'ulid';
 
 import { feedbackFormSchema } from './schema';
 
-import { db } from '@/db';
-import { feedbacks, users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
@@ -50,9 +48,11 @@ export const createFeedbackAction = async (
   }
 
   // ユーザーIDを取得
-  const user = await db.query.users.findFirst({
-    where: eq(users.discordId, authUser.id),
-  });
+  const { data: user } = await supabase
+    .from('users')
+    .select('user_id')
+    .eq('discord_id', authUser.id)
+    .maybeSingle();
 
   if (isNil(user)) {
     return err(new Error('ユーザーが見つかりません'));
@@ -60,24 +60,22 @@ export const createFeedbackAction = async (
 
   // フィードバック作成
   try {
-    const result = await db
-      .insert(feedbacks)
-      .values({
-        userId: user.userId,
-        category: parsed.data.category as FeedbackCategoryValue,
-        title: parsed.data.title,
-        description: parsed.data.description,
-        pageUrl: input.pageUrl ?? null,
-        browserInfo: input.browserInfo ?? null,
-      })
-      .returning({ feedbackId: feedbacks.feedbackId });
+    const feedbackId = ulid();
+    const { error } = await supabase.from('feedbacks').insert({
+      feedback_id: feedbackId,
+      user_id: user.user_id,
+      category: parsed.data.category as FeedbackCategoryValue,
+      title: parsed.data.title,
+      description: parsed.data.description,
+      page_url: input.pageUrl ?? null,
+      browser_info: input.browserInfo ?? null,
+    });
 
-    const feedback = result[0];
-    if (isNil(feedback)) {
+    if (error) {
       return err(new Error('フィードバックの作成に失敗しました'));
     }
 
-    return ok({ feedbackId: feedback.feedbackId });
+    return ok({ feedbackId });
   } catch (error) {
     console.error('Failed to create feedback:', error);
     return err(new Error('フィードバックの送信に失敗しました'));

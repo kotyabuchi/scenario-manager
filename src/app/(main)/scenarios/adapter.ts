@@ -1,14 +1,8 @@
-import { and, asc, desc, eq, gte, ilike, inArray, lte, sql } from 'drizzle-orm';
 import { isNil } from 'ramda';
+import { ulid } from 'ulid';
 
-import { getDb } from '@/db';
-import {
-  scenarioSystems,
-  scenarios,
-  scenarioTags,
-  tags,
-  users,
-} from '@/db/schema';
+import { createDbClient } from '@/lib/supabase/server';
+import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
 import type {
@@ -30,94 +24,102 @@ export const searchScenarios = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult>> => {
-  const db = getDb();
   try {
-    const conditions = [];
+    const supabase = await createDbClient();
 
-    // システムIDでフィルタ（OR条件）
+    // タグANDフィルタ: 先にタグ条件に合うシナリオIDを取得
+    let tagFilteredScenarioIds: string[] | null = null;
+    if (!isNil(params.tagIds) && params.tagIds.length > 0) {
+      const { data: tagData } = await supabase
+        .from('scenario_tags')
+        .select('scenario_id')
+        .in('tag_id', params.tagIds);
+
+      if (tagData) {
+        // 全タグを持つシナリオのみ（ANDフィルタ）
+        const scenarioTagCounts = new Map<string, number>();
+        for (const row of tagData) {
+          const count = scenarioTagCounts.get(row.scenario_id) ?? 0;
+          scenarioTagCounts.set(row.scenario_id, count + 1);
+        }
+        tagFilteredScenarioIds = [];
+        for (const [scenarioId, count] of scenarioTagCounts) {
+          if (count >= params.tagIds.length) {
+            tagFilteredScenarioIds.push(scenarioId);
+          }
+        }
+        if (tagFilteredScenarioIds.length === 0) {
+          return ok({ scenarios: [], totalCount: 0 });
+        }
+      }
+    }
+
+    // ベースクエリ
+    let query = supabase
+      .from('scenarios')
+      .select(
+        '*, system:scenario_systems(*), scenarioTags:scenario_tags(tag:tags(*))',
+        { count: 'exact' },
+      );
+
+    // フィルタ適用
     if (!isNil(params.systemIds) && params.systemIds.length > 0) {
-      conditions.push(inArray(scenarios.scenarioSystemId, params.systemIds));
+      query = query.in('scenario_system_id', params.systemIds);
     }
 
-    // シナリオ名で部分一致検索
     if (!isNil(params.scenarioName) && params.scenarioName.trim() !== '') {
-      conditions.push(ilike(scenarios.name, `%${params.scenarioName}%`));
+      query = query.ilike('name', `%${params.scenarioName}%`);
     }
 
-    // プレイ人数で範囲フィルタ
     if (!isNil(params.playerCount)) {
-      // シナリオの範囲と検索条件の範囲が重なるものを取得
-      // scenarioMin <= filterMax AND scenarioMax >= filterMin
-      conditions.push(lte(scenarios.minPlayer, params.playerCount.max));
-      conditions.push(gte(scenarios.maxPlayer, params.playerCount.min));
+      query = query
+        .lte('min_player', params.playerCount.max)
+        .gte('max_player', params.playerCount.min);
     }
 
-    // プレイ時間で範囲フィルタ（分単位）
     if (!isNil(params.playtime)) {
       const minMinutes = params.playtime.min * 60;
       const maxMinutes = params.playtime.max * 60;
-      conditions.push(lte(scenarios.minPlaytime, maxMinutes));
-      conditions.push(gte(scenarios.maxPlaytime, minMinutes));
+      query = query
+        .lte('min_playtime', maxMinutes)
+        .gte('max_playtime', minMinutes);
     }
 
-    // タグでフィルタ（AND条件）- サブクエリで実現
-    if (!isNil(params.tagIds) && params.tagIds.length > 0) {
-      // 指定されたすべてのタグを持つシナリオを取得
-      const tagCount = params.tagIds.length;
-      const scenariosWithAllTags = db
-        .select({ scenarioId: scenarioTags.scenarioId })
-        .from(scenarioTags)
-        .where(inArray(scenarioTags.tagId, params.tagIds))
-        .groupBy(scenarioTags.scenarioId)
-        .having(sql`count(distinct ${scenarioTags.tagId}) = ${tagCount}`);
-
-      conditions.push(inArray(scenarios.scenarioId, scenariosWithAllTags));
+    if (tagFilteredScenarioIds) {
+      query = query.in('scenario_id', tagFilteredScenarioIds);
     }
 
-    // ソート順の決定
-    const orderBy = (() => {
-      switch (sort) {
-        case 'newest':
-          return desc(scenarios.createdAt);
-        case 'playtime_asc':
-          return asc(scenarios.minPlaytime);
-        case 'playtime_desc':
-          return desc(scenarios.minPlaytime);
-        case 'rating':
-          // TODO: レビューテーブルと結合して平均評価でソート
-          return desc(scenarios.createdAt);
-        default:
-          return desc(scenarios.createdAt);
-      }
-    })();
+    // ソート
+    switch (sort) {
+      case 'newest':
+        query = query.order('created_at', { ascending: false });
+        break;
+      case 'playtime_asc':
+        query = query.order('min_playtime', { ascending: true });
+        break;
+      case 'playtime_desc':
+        query = query.order('min_playtime', { ascending: false });
+        break;
+      case 'rating':
+        query = query.order('created_at', { ascending: false });
+        break;
+    }
 
-    // 件数取得
-    const countResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(scenarios)
-      .where(conditions.length > 0 ? and(...conditions) : undefined);
+    // ページネーション
+    query = query.range(offset, offset + limit - 1);
 
-    const totalCount = Number(countResult[0]?.count ?? 0);
+    const { data, error, count } = await query;
 
-    // シナリオ取得
-    const result = await db.query.scenarios.findMany({
-      where: conditions.length > 0 ? and(...conditions) : undefined,
-      with: {
-        system: true,
-        scenarioTags: {
-          with: {
-            tag: true,
-          },
-        },
-      },
-      orderBy: [orderBy],
-      limit,
-      offset,
-    });
+    if (error) {
+      return err(new Error(error.message));
+    }
 
     return ok({
-      scenarios: result as ScenarioWithRelations[],
-      totalCount,
+      scenarios: (data ?? []).map(
+        (s) =>
+          camelCaseKeys(s as Record<string, unknown>) as ScenarioWithRelations,
+      ),
+      totalCount: count ?? 0,
     });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
@@ -130,21 +132,27 @@ export const searchScenarios = async (
 export const getScenarioById = async (
   id: string,
 ): Promise<Result<ScenarioWithRelations | null>> => {
-  const db = getDb();
   try {
-    const result = await db.query.scenarios.findFirst({
-      where: eq(scenarios.scenarioId, id),
-      with: {
-        system: true,
-        scenarioTags: {
-          with: {
-            tag: true,
-          },
-        },
-      },
-    });
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('scenarios')
+      .select(
+        '*, system:scenario_systems(*), scenarioTags:scenario_tags(tag:tags(*))',
+      )
+      .eq('scenario_id', id)
+      .maybeSingle();
 
-    return ok((result as ScenarioWithRelations) ?? null);
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(
+      data
+        ? (camelCaseKeys(
+            data as Record<string, unknown>,
+          ) as ScenarioWithRelations)
+        : null,
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -154,12 +162,22 @@ export const getScenarioById = async (
  * 全システムを取得する
  */
 export const getAllSystems = async (): Promise<Result<ScenarioSystem[]>> => {
-  const db = getDb();
   try {
-    const result = await db.query.scenarioSystems.findMany({
-      orderBy: [asc(scenarioSystems.name)],
-    });
-    return ok(result);
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('scenario_systems')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(
+      (data ?? []).map(
+        (s) => camelCaseKeys(s as Record<string, unknown>) as ScenarioSystem,
+      ),
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -169,12 +187,22 @@ export const getAllSystems = async (): Promise<Result<ScenarioSystem[]>> => {
  * 全タグを取得する
  */
 export const getAllTags = async (): Promise<Result<Tag[]>> => {
-  const db = getDb();
   try {
-    const result = await db.query.tags.findMany({
-      orderBy: [asc(tags.name)],
-    });
-    return ok(result);
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('tags')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(
+      (data ?? []).map(
+        (s) => camelCaseKeys(s as Record<string, unknown>) as Tag,
+      ),
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -186,16 +214,19 @@ export const getAllTags = async (): Promise<Result<Tag[]>> => {
 export const getUserByDiscordId = async (
   discordId: string,
 ): Promise<Result<{ userId: string; role: string } | null>> => {
-  const db = getDb();
   try {
-    const result = await db.query.users.findFirst({
-      where: eq(users.discordId, discordId),
-      columns: {
-        userId: true,
-        role: true,
-      },
-    });
-    return ok(result ?? null);
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('users')
+      .select('user_id, role')
+      .eq('discord_id', discordId)
+      .maybeSingle();
+
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(data ? { userId: data.user_id, role: data.role } : null);
   } catch (e) {
     return err(
       e instanceof Error ? e : new Error('ユーザーの取得に失敗しました'),
@@ -210,22 +241,19 @@ export const checkScenarioNameDuplicate = async (params: {
   name: string;
   scenarioSystemId: string;
 }): Promise<Result<{ isDuplicate: boolean; existingScenarioId?: string }>> => {
-  const db = getDb();
   try {
-    const existing = await db.query.scenarios.findFirst({
-      where: and(
-        eq(scenarios.scenarioSystemId, params.scenarioSystemId),
-        eq(scenarios.name, params.name),
-      ),
-      columns: {
-        scenarioId: true,
-      },
-    });
+    const supabase = await createDbClient();
+    const { data: existing } = await supabase
+      .from('scenarios')
+      .select('scenario_id')
+      .eq('scenario_system_id', params.scenarioSystemId)
+      .eq('name', params.name)
+      .maybeSingle();
 
     if (existing) {
       return ok({
         isDuplicate: true,
-        existingScenarioId: existing.scenarioId,
+        existingScenarioId: existing.scenario_id,
       });
     }
 
@@ -251,28 +279,24 @@ export const checkDistributeUrlDuplicate = async (params: {
     existingScenarioName?: string;
   }>
 > => {
-  const db = getDb();
   try {
-    // distributeUrlが未定義の場合はスキップ
     if (isNil(params.distributeUrl)) {
       return ok({ isDuplicate: false });
     }
 
-    // URL正規化: 末尾スラッシュを削除
     const normalizedUrl = params.distributeUrl.replace(/\/+$/, '');
 
-    const existing = await db.query.scenarios.findFirst({
-      where: eq(scenarios.distributeUrl, normalizedUrl),
-      columns: {
-        scenarioId: true,
-        name: true,
-      },
-    });
+    const supabase = await createDbClient();
+    const { data: existing } = await supabase
+      .from('scenarios')
+      .select('scenario_id, name')
+      .eq('distribute_url', normalizedUrl)
+      .maybeSingle();
 
     if (existing) {
       return ok({
         isDuplicate: true,
-        existingScenarioId: existing.scenarioId,
+        existingScenarioId: existing.scenario_id,
         existingScenarioName: existing.name,
       });
     }
@@ -292,47 +316,46 @@ export const createScenario = async (
   input: CreateScenarioInput,
   userId: string,
 ): Promise<Result<{ scenarioId: string }>> => {
-  const db = getDb();
   try {
-    // distributeUrlの正規化（末尾スラッシュ削除）
+    const supabase = await createDbClient();
+
     const normalizedDistributeUrl = !isNil(input.distributeUrl)
       ? input.distributeUrl.replace(/\/+$/, '')
       : null;
 
-    // シナリオをINSERT
-    const [inserted] = await db
-      .insert(scenarios)
-      .values({
-        name: input.name,
-        scenarioSystemId: input.scenarioSystemId,
-        handoutType: input.handoutType,
-        author: input.author ?? null,
-        description: input.description ?? null,
-        minPlayer: input.minPlayer ?? null,
-        maxPlayer: input.maxPlayer ?? null,
-        minPlaytime: input.minPlaytime ?? null,
-        maxPlaytime: input.maxPlaytime ?? null,
-        scenarioImageUrl: input.scenarioImageUrl ?? null,
-        distributeUrl: normalizedDistributeUrl,
-        createdById: userId,
-      })
-      .returning({ scenarioId: scenarios.scenarioId });
+    const scenarioId = ulid();
 
-    if (!inserted) {
+    const { error: insertError } = await supabase.from('scenarios').insert({
+      scenario_id: scenarioId,
+      name: input.name,
+      scenario_system_id: input.scenarioSystemId,
+      handout_type: input.handoutType,
+      author: input.author ?? null,
+      description: input.description ?? null,
+      min_player: input.minPlayer ?? null,
+      max_player: input.maxPlayer ?? null,
+      min_playtime: input.minPlaytime ?? null,
+      max_playtime: input.maxPlaytime ?? null,
+      scenario_image_url: input.scenarioImageUrl ?? null,
+      distribute_url: normalizedDistributeUrl,
+      created_by_id: userId,
+    });
+
+    if (insertError) {
       return err(new Error('シナリオの作成に失敗しました'));
     }
 
     // タグがある場合は紐付け
     if (!isNil(input.tagIds) && input.tagIds.length > 0) {
-      await db.insert(scenarioTags).values(
+      await supabase.from('scenario_tags').insert(
         input.tagIds.map((tagId) => ({
-          scenarioId: inserted.scenarioId,
-          tagId,
+          scenario_id: scenarioId,
+          tag_id: tagId,
         })),
       );
     }
 
-    return ok({ scenarioId: inserted.scenarioId });
+    return ok({ scenarioId });
   } catch (e) {
     return err(
       e instanceof Error ? e : new Error('シナリオの作成に失敗しました'),

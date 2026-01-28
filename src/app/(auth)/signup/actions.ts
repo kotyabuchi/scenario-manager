@@ -1,10 +1,8 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
+import { ulid } from 'ulid';
 
-import { getDb } from '@/db';
-import { users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 import { err, type Result } from '@/types/result';
 
@@ -16,7 +14,6 @@ type CreateUserInput = {
 export const createUser = async (
   input: CreateUserInput,
 ): Promise<Result<void>> => {
-  const db = getDb();
   const supabase = await createClient();
   const {
     data: { user: authUser },
@@ -27,30 +24,39 @@ export const createUser = async (
   }
 
   // ユーザー名の重複チェック
-  const existingUserName = await db.query.users.findFirst({
-    where: eq(users.userName, input.userName),
-  });
+  const { data: existingUserName } = await supabase
+    .from('users')
+    .select('user_id')
+    .eq('user_name', input.userName)
+    .maybeSingle();
 
   if (existingUserName) {
     return err(new Error('このユーザー名は既に使用されています'));
   }
 
   // Discord IDの重複チェック（既にサインアップ済みかどうか）
-  const existingDiscordId = await db.query.users.findFirst({
-    where: eq(users.discordId, authUser.id),
-  });
+  const { data: existingDiscordId } = await supabase
+    .from('users')
+    .select('user_id')
+    .eq('discord_id', authUser.id)
+    .maybeSingle();
 
   if (existingDiscordId) {
     return err(new Error('既に登録済みです'));
   }
 
   // ユーザー作成
-  await db.insert(users).values({
-    discordId: authUser.id,
-    userName: input.userName,
+  const { error } = await supabase.from('users').insert({
+    user_id: ulid(),
+    discord_id: authUser.id,
+    user_name: input.userName,
     nickname: input.nickname,
-    image: authUser.user_metadata['avatar_url'],
+    image: authUser.user_metadata.avatar_url,
   });
+
+  if (error) {
+    return err(new Error(error.message));
+  }
 
   redirect('/home');
 };

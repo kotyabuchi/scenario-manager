@@ -1,12 +1,8 @@
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-import { getDb } from '@/db';
-import { users } from '@/db/schema';
 import { createClient } from '@/lib/supabase/server';
 
 export const GET = async (request: Request) => {
-  const db = getDb();
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
 
@@ -22,9 +18,11 @@ export const GET = async (request: Request) => {
 
       if (authUser) {
         // usersテーブルにユーザーが存在するかチェック
-        const existingUser = await db.query.users.findFirst({
-          where: eq(users.discordId, authUser.id),
-        });
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('user_id')
+          .eq('discord_id', authUser.id)
+          .maybeSingle();
 
         const redirectUrl = getRedirectUrl(request, origin);
 

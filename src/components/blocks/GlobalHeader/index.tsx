@@ -50,7 +50,7 @@ export const GlobalHeader = () => {
     router.push('/profile');
   };
 
-  const userAvatarUrl = user?.user_metadata?.['avatar_url'];
+  const userAvatarUrl = user?.user_metadata?.avatar_url;
 
   return (
     <header className={styles.header}>

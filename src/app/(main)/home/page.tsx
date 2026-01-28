@@ -43,7 +43,7 @@ export default async function HomePage() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>ホーム</h1>
         <p className={styles.pageSubtitle}>
-          ようこそ、{user.user_metadata?.['full_name'] ?? user.email}さん
+          ようこそ、{user.user_metadata?.full_name ?? user.email}さん
         </p>
       </div>
 

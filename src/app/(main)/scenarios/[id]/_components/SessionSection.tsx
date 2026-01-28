@@ -14,7 +14,7 @@ type SessionSectionProps = {
 /**
  * 日付をフォーマットする
  */
-const formatDate = (date: Date | null): string => {
+const formatDate = (date: string | null): string => {
   if (isNil(date)) return '日程未定';
   return new Intl.DateTimeFormat('ja-JP', {
     year: 'numeric',

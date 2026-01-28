@@ -1,8 +1,7 @@
-import type { InferSelectModel } from 'drizzle-orm';
-import type { users } from '@/db/schema';
+import type { UserRow } from '@/db/helpers';
 
-// Drizzleスキーマから型を導出
-type User = InferSelectModel<typeof users>;
+// ユーザー型
+type User = UserRow;
 
 // ProfileCard Props
 type ProfileCardProps = {

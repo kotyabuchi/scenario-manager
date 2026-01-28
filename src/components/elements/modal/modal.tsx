@@ -38,7 +38,10 @@ export const Modal = ({
           <Dialog.Content className={styles.content}>
             <header className={styles.header}>
               <Dialog.Title className={styles.title}>{title}</Dialog.Title>
-              <Dialog.CloseTrigger className={styles.closeButton}>
+              <Dialog.CloseTrigger
+                className={styles.closeButton}
+                aria-label="閉じる"
+              >
                 <X size={20} />
               </Dialog.CloseTrigger>
             </header>

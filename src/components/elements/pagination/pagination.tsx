@@ -96,7 +96,7 @@ export const Pagination = ({
   const pages = getPageNumbers(page, totalPages, siblingCount);
 
   return (
-    <nav role="navigation" aria-label="ページネーション" className={className}>
+    <nav aria-label="ページネーション" className={className}>
       <div className={styles.paginationRoot}>
         <button
           type="button"
@@ -111,6 +111,7 @@ export const Pagination = ({
         {pages.map((p, index) =>
           p === 'ellipsis' ? (
             <span
+              // biome-ignore lint/suspicious/noArrayIndexKey: ellipsisは同値が複数存在するためindexで区別
               key={`ellipsis-${index}`}
               className={styles.paginationEllipsis}
             >

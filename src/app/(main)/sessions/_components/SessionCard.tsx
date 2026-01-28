@@ -26,7 +26,7 @@ type SessionCardProps = PublicSessionCardProps | MySessionCardProps;
 
 // --- ヘルパー関数 ---
 
-const formatDateTime = (date: Date | null): string => {
+const formatDateTime = (date: string | null): string => {
   if (isNil(date)) return '日程調整中';
   const d = new Date(date);
   const month = d.getMonth() + 1;

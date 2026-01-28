@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     // 公開URLを構築
     const r2PublicUrl =
-      process.env['R2_PUBLIC_URL'] ??
+      process.env.R2_PUBLIC_URL ??
       'https://pub-f95dd6b93a8642b39889342b87ba0852.r2.dev';
     const publicUrl = `${r2PublicUrl}/${key}`;
 

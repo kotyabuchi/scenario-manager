@@ -1,25 +1,38 @@
-import { composeStories } from '@storybook/react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import * as stories from './GlobalHeader.stories';
+import { GlobalHeader } from './index';
 
-const { Default, HomePage, ScenariosPage, SessionsPage, UsersPage } =
-  composeStories(stories);
+// Next.js navigation hooks をモック
+const mockPathname = vi.fn(() => '/scenarios');
+const mockRouter = {
+  push: vi.fn(),
+  replace: vi.fn(),
+  back: vi.fn(),
+  forward: vi.fn(),
+  refresh: vi.fn(),
+  prefetch: vi.fn(),
+};
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockPathname(),
+  useRouter: () => mockRouter,
+}));
+
+// useAuth をモック（未ログイン状態）
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({ user: null, isLoading: false }),
+}));
 
 describe('GlobalHeader', () => {
   describe('レンダリング', () => {
-    // GHD-01: ロゴが正しく表示される
     it('ロゴが表示される', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(screen.getByText('シナプレ管理くん')).toBeInTheDocument();
     });
 
-    // GHD-02: ナビゲーションリンクが表示される
     it('ナビゲーションリンクが表示される', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(screen.getByRole('link', { name: 'ホーム' })).toBeInTheDocument();
       expect(
         screen.getByRole('link', { name: 'シナリオ' }),
@@ -35,29 +48,23 @@ describe('GlobalHeader', () => {
       ).toBeInTheDocument();
     });
 
-    // GHD-03: ロゴがホームへのリンクになっている
     it('ロゴがホームへのリンクになっている', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       const logoLink = screen.getByRole('link', { name: /シナプレ管理くん/i });
       expect(logoLink).toHaveAttribute('href', '/home');
     });
   });
 
   describe('未ログイン時', () => {
-    // GHD-04: ログインボタンが表示される
     it('ログインボタンが表示される', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(
         screen.getByRole('button', { name: /ログイン/i }),
       ).toBeInTheDocument();
     });
 
-    // GHD-05: 新規登録ボタンが表示される
     it('新規登録ボタンが表示される', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(
         screen.getByRole('button', { name: /新規登録/i }),
       ).toBeInTheDocument();
@@ -65,10 +72,8 @@ describe('GlobalHeader', () => {
   });
 
   describe('ナビゲーション', () => {
-    // GHD-06: 各リンクが正しいhrefを持つ
     it('各リンクが正しいhrefを持つ', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(screen.getByRole('link', { name: 'ホーム' })).toHaveAttribute(
         'href',
         '/home',
@@ -92,19 +97,17 @@ describe('GlobalHeader', () => {
   });
 
   describe('シナリオ登録ボタン', () => {
-    // GHD-07: シナリオ画面で登録ボタンが表示される
     it('シナリオ画面で登録ボタンが表示される', () => {
-      render(<ScenariosPage />);
-
+      mockPathname.mockReturnValue('/scenarios');
+      render(<GlobalHeader />);
       expect(
         screen.getByRole('link', { name: /シナリオを登録/i }),
       ).toBeInTheDocument();
     });
 
-    // GHD-08: シナリオ登録ボタンが正しいリンク先を持つ
     it('シナリオ登録ボタンが正しいリンク先を持つ', () => {
-      render(<ScenariosPage />);
-
+      mockPathname.mockReturnValue('/scenarios');
+      render(<GlobalHeader />);
       const registerLink = screen.getByRole('link', {
         name: /シナリオを登録/i,
       });
@@ -113,40 +116,33 @@ describe('GlobalHeader', () => {
   });
 
   describe('アクセシビリティ', () => {
-    // GHD-09: header要素が使用されている
     it('header要素が使用されている', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    // GHD-10: nav要素が使用されている
     it('nav要素が使用されている', () => {
-      render(<Default />);
-
+      render(<GlobalHeader />);
       expect(screen.getByRole('navigation')).toBeInTheDocument();
     });
   });
 
   describe('各ページでのアクティブ状態', () => {
-    // GHD-11: ホーム画面でホームリンクがアクティブ
     it('ホーム画面でレンダリングできる', () => {
-      render(<HomePage />);
-
+      mockPathname.mockReturnValue('/home');
+      render(<GlobalHeader />);
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    // GHD-12: セッション画面でレンダリングできる
     it('セッション画面でレンダリングできる', () => {
-      render(<SessionsPage />);
-
+      mockPathname.mockReturnValue('/sessions');
+      render(<GlobalHeader />);
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    // GHD-13: ユーザー画面でレンダリングできる
     it('ユーザー画面でレンダリングできる', () => {
-      render(<UsersPage />);
-
+      mockPathname.mockReturnValue('/users');
+      render(<GlobalHeader />);
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
   });

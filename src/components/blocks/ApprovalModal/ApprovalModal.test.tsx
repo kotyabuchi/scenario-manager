@@ -159,9 +159,11 @@ describe('ApprovalModal', () => {
       const handleClose = vi.fn();
       render(<Default onClose={handleClose} />);
 
-      await user.click(
-        screen.getByRole('button', { name: /閉じる|キャンセル|×/i }),
-      );
+      const closeButton = screen
+        .getAllByRole('button', { name: /閉じる/i })
+        .find((el) => !el.hasAttribute('data-part'));
+      expect(closeButton).toBeDefined();
+      await user.click(closeButton as HTMLElement);
 
       expect(handleClose).toHaveBeenCalled();
     });

@@ -24,8 +24,8 @@ let testUserId: string;
 // CI環境または DB 未接続時はスキップ
 const isIntegrationTestEnabled =
   process.env.DATABASE_URL &&
-  !process.env['CI'] &&
-  process.env['RUN_INTEGRATION_TESTS'] === 'true';
+  !process.env.CI &&
+  process.env.RUN_INTEGRATION_TESTS === 'true';
 
 describe('Session Management Adapter', () => {
   beforeAll(async () => {

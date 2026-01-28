@@ -1,19 +1,8 @@
-import { and, asc, desc, eq, gte, ilike, inArray, lte, sql } from 'drizzle-orm';
 import { isNil } from 'ramda';
 
-import { getDb } from '@/db';
 import { ParticipantTypes, SessionPhases } from '@/db/enum';
-import {
-  gameSchedules,
-  gameSessions,
-  scenarioSystems,
-  scenarios,
-  sessionParticipants,
-  userReviews,
-  users,
-  videoLinks,
-} from '@/db/schema';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createDbClient } from '@/lib/supabase/server';
+import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
 import type {
@@ -34,7 +23,6 @@ import type {
  * 現在のユーザーIDを取得
  */
 export const getCurrentUserId = async (): Promise<string | null> => {
-  const db = getDb();
   try {
     const supabase = await createClient();
     const {
@@ -45,13 +33,13 @@ export const getCurrentUserId = async (): Promise<string | null> => {
       return null;
     }
 
-    // DiscordのユーザーIDからDBのユーザーIDを取得
-    const dbUser = await db.query.users.findFirst({
-      where: eq(users.discordId, user.id),
-      columns: { userId: true },
-    });
+    const { data: dbUser } = await supabase
+      .from('users')
+      .select('user_id')
+      .eq('discord_id', user.id)
+      .maybeSingle();
 
-    return dbUser?.userId ?? null;
+    return dbUser?.user_id ?? null;
   } catch {
     return null;
   }
@@ -66,135 +54,129 @@ export const searchPublicSessions = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<PublicSession>>> => {
-  const db = getDb();
   try {
-    // 公開セッション用のフェーズ（デフォルト: 募集中・準備中）
+    const supabase = await createDbClient();
+
     const targetPhases = params.phases ?? [
       SessionPhases.RECRUITING.value,
       SessionPhases.PREPARATION.value,
     ];
 
-    const conditions = [inArray(gameSessions.sessionPhase, targetPhases)];
+    // シナリオ付きセッションを取得（シナリオINNER JOINの代替）
+    let query = supabase
+      .from('game_sessions')
+      .select(
+        `
+        game_session_id, session_name, session_phase, scenario_id, created_at,
+        scenario:scenarios!inner(
+          scenario_id, name, max_player, min_playtime, max_playtime,
+          scenario_system_id,
+          system:scenario_systems!inner(name)
+        ),
+        schedule:game_schedules(schedule_date, schedule_phase)
+      `,
+        { count: 'exact' },
+      )
+      .in('session_phase', targetPhases);
 
-    // システムIDでフィルタ
+    // システムIDフィルタ
     if (!isNil(params.systemIds) && params.systemIds.length > 0) {
-      const scenariosWithSystems = db
-        .select({ scenarioId: scenarios.scenarioId })
-        .from(scenarios)
-        .where(inArray(scenarios.scenarioSystemId, params.systemIds));
-      conditions.push(inArray(gameSessions.scenarioId, scenariosWithSystems));
+      query = query.in(
+        'scenario.scenario_system_id' as string,
+        params.systemIds,
+      );
     }
 
-    // シナリオ名で部分一致検索
+    // シナリオ名検索
     if (!isNil(params.scenarioName) && params.scenarioName.trim() !== '') {
-      const matchingScenarios = db
-        .select({ scenarioId: scenarios.scenarioId })
-        .from(scenarios)
-        .where(ilike(scenarios.name, `%${params.scenarioName}%`));
-      conditions.push(inArray(gameSessions.scenarioId, matchingScenarios));
+      query = query.ilike(
+        'scenario.name' as string,
+        `%${params.scenarioName}%`,
+      );
     }
 
-    // 日付範囲でフィルタ
-    const dateConditions = [];
-    if (!isNil(params.dateFrom)) {
-      dateConditions.push(gte(gameSchedules.scheduleDate, params.dateFrom));
+    // ソート
+    switch (sort) {
+      case 'date_asc':
+        query = query.order('created_at', { ascending: true });
+        break;
+      case 'created_desc':
+        query = query.order('created_at', { ascending: false });
+        break;
+      case 'slots_desc':
+        query = query.order('created_at', { ascending: false });
+        break;
     }
-    if (!isNil(params.dateTo)) {
-      dateConditions.push(lte(gameSchedules.scheduleDate, params.dateTo));
+
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: result, error, count } = await query;
+
+    if (error) {
+      return err(new Error(error.message));
     }
 
-    // ソート順の決定
-    const orderBy = (() => {
-      switch (sort) {
-        case 'date_asc':
-          return asc(gameSchedules.scheduleDate);
-        case 'created_desc':
-          return desc(gameSessions.createdAt);
-        case 'slots_desc':
-          // 残り枠順（空き枠が多い順）: 後で計算する必要があるため一旦作成日降順
-          return desc(gameSessions.createdAt);
-        default:
-          return asc(gameSchedules.scheduleDate);
-      }
-    })();
-
-    // 件数取得（日付条件なし）
-    const countResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(gameSessions)
-      .where(and(...conditions));
-
-    const totalCount = Number(countResult[0]?.count ?? 0);
-
-    // セッション取得（LEFT JOINでスケジュールとシナリオ情報を取得）
-    const result = await db
-      .select({
-        gameSessionId: gameSessions.gameSessionId,
-        sessionName: gameSessions.sessionName,
-        sessionPhase: gameSessions.sessionPhase,
-        scenarioId: gameSessions.scenarioId,
-        scenarioName: scenarios.name,
-        systemName: scenarioSystems.name,
-        scheduleDate: gameSchedules.scheduleDate,
-        schedulePhase: gameSchedules.schedulePhase,
-        maxPlayer: scenarios.maxPlayer,
-        minPlaytime: scenarios.minPlaytime,
-        maxPlaytime: scenarios.maxPlaytime,
-        createdAt: gameSessions.createdAt,
-      })
-      .from(gameSessions)
-      .innerJoin(scenarios, eq(gameSessions.scenarioId, scenarios.scenarioId))
-      .innerJoin(
-        scenarioSystems,
-        eq(scenarios.scenarioSystemId, scenarioSystems.systemId),
-      )
-      .leftJoin(
-        gameSchedules,
-        eq(gameSessions.gameSessionId, gameSchedules.sessionId),
-      )
-      .where(
-        dateConditions.length > 0
-          ? and(...conditions, ...dateConditions)
-          : and(...conditions),
-      )
-      .orderBy(orderBy)
-      .limit(limit)
-      .offset(offset);
+    const totalCount = count ?? 0;
 
     // 各セッションのKeeperと参加者数を取得
-    const sessionsWithDetails = await Promise.all(
-      result.map(async (session) => {
-        // Keeper情報取得
-        const keeper = await db.query.sessionParticipants.findFirst({
-          where: and(
-            eq(sessionParticipants.sessionId, session.gameSessionId),
-            eq(
-              sessionParticipants.participantType,
-              ParticipantTypes.KEEPER.value,
-            ),
-          ),
-          with: { user: true },
-        });
+    const sessionIds = (result ?? []).map((s) => s.game_session_id);
 
-        // 参加者数取得
-        const participantCountResult = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(sessionParticipants)
-          .where(eq(sessionParticipants.sessionId, session.gameSessionId));
+    // Keeper情報を一括取得
+    const { data: keepers } = await supabase
+      .from('session_participants')
+      .select('session_id, user_id, user:users(nickname)')
+      .in('session_id', sessionIds)
+      .eq('participant_type', ParticipantTypes.KEEPER.value);
 
-        return {
-          ...session,
-          keeperName: keeper?.user?.nickname ?? null,
-          keeperUserId: keeper?.userId ?? null,
-          participantCount: Number(participantCountResult[0]?.count ?? 0),
-        } as PublicSession;
-      }),
+    const keeperMap = new Map(
+      (keepers ?? []).map((k) => [
+        k.session_id,
+        {
+          keeperName: (k.user as Record<string, unknown>)?.nickname as
+            | string
+            | null,
+          keeperUserId: k.user_id,
+        },
+      ]),
     );
 
-    return ok({
-      sessions: sessionsWithDetails,
-      totalCount,
+    // 参加者数を一括取得
+    const { data: participants } = await supabase
+      .from('session_participants')
+      .select('session_id')
+      .in('session_id', sessionIds);
+
+    const countMap = new Map<string, number>();
+    for (const p of participants ?? []) {
+      countMap.set(p.session_id, (countMap.get(p.session_id) ?? 0) + 1);
+    }
+
+    const sessions: PublicSession[] = (result ?? []).map((session) => {
+      const scenario = session.scenario as Record<string, unknown>;
+      const system = (scenario?.system ?? {}) as Record<string, unknown>;
+      const schedule = session.schedule as Record<string, unknown> | null;
+      const keeper = keeperMap.get(session.game_session_id);
+
+      return {
+        gameSessionId: session.game_session_id,
+        sessionName: session.session_name,
+        sessionPhase: session.session_phase,
+        scenarioId: session.scenario_id ?? '',
+        scenarioName: (scenario?.name as string) ?? '',
+        systemName: (system?.name as string) ?? '',
+        scheduleDate: (schedule?.schedule_date as string) ?? null,
+        schedulePhase: (schedule?.schedule_phase as string) ?? null,
+        keeperName: keeper?.keeperName ?? null,
+        keeperUserId: keeper?.keeperUserId ?? null,
+        participantCount: countMap.get(session.game_session_id) ?? 0,
+        maxPlayer: (scenario?.max_player as number) ?? null,
+        minPlaytime: (scenario?.min_playtime as number) ?? null,
+        maxPlaytime: (scenario?.max_playtime as number) ?? null,
+        createdAt: session.created_at,
+      };
     });
+
+    return ok({ sessions, totalCount });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -209,9 +191,9 @@ export const getUpcomingSessions = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<MySessionWithRole>>> => {
-  const db = getDb();
   try {
-    // 参加予定のフェーズ
+    const supabase = await createDbClient();
+
     const targetPhases = [
       SessionPhases.RECRUITING.value,
       SessionPhases.PREPARATION.value,
@@ -219,78 +201,73 @@ export const getUpcomingSessions = async (
     ];
 
     // ユーザーが参加しているセッションIDを取得
-    const userSessions = await db
-      .select({
-        sessionId: sessionParticipants.sessionId,
-        participantType: sessionParticipants.participantType,
-      })
-      .from(sessionParticipants)
-      .where(eq(sessionParticipants.userId, userId));
+    const { data: userSessions } = await supabase
+      .from('session_participants')
+      .select('session_id, participant_type')
+      .eq('user_id', userId);
 
-    if (userSessions.length === 0) {
+    if (!userSessions || userSessions.length === 0) {
       return ok({ sessions: [], totalCount: 0 });
     }
 
-    const sessionIds = userSessions.map((s) => s.sessionId);
+    const sessionIds = userSessions.map((s) => s.session_id);
     const roleMap = new Map(
-      userSessions.map((s) => [s.sessionId, s.participantType]),
+      userSessions.map((s) => [s.session_id, s.participant_type]),
     );
 
-    // ソート順の決定
-    const orderBy =
-      sort === 'date_asc'
-        ? asc(gameSchedules.scheduleDate)
-        : desc(gameSessions.createdAt);
-
     // 件数取得
-    const countResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(gameSessions)
-      .where(
-        and(
-          inArray(gameSessions.gameSessionId, sessionIds),
-          inArray(gameSessions.sessionPhase, targetPhases),
-        ),
-      );
+    const { count } = await supabase
+      .from('game_sessions')
+      .select('game_session_id', { count: 'exact', head: true })
+      .in('game_session_id', sessionIds)
+      .in('session_phase', targetPhases);
 
-    const totalCount = Number(countResult[0]?.count ?? 0);
+    const totalCount = count ?? 0;
 
     // セッション取得
-    const result = await db.query.gameSessions.findMany({
-      where: and(
-        inArray(gameSessions.gameSessionId, sessionIds),
-        inArray(gameSessions.sessionPhase, targetPhases),
-      ),
-      with: {
-        scenario: {
-          with: {
-            system: true,
-          },
-        },
-        schedule: true,
-        participants: {
-          with: {
-            user: true,
-          },
-        },
-      },
-      orderBy: [orderBy],
-      limit,
-      offset,
+    let query = supabase
+      .from('game_sessions')
+      .select(`
+        *,
+        scenario:scenarios(
+          *,
+          system:scenario_systems(*)
+        ),
+        schedule:game_schedules(*),
+        participants:session_participants(
+          *,
+          user:users(*)
+        )
+      `)
+      .in('game_session_id', sessionIds)
+      .in('session_phase', targetPhases);
+
+    if (sort === 'date_asc') {
+      query = query.order('created_at', { ascending: true });
+    } else {
+      query = query.order('created_at', { ascending: false });
+    }
+
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: result, error } = await query;
+
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    const sessions: MySessionWithRole[] = (result ?? []).map((session) => {
+      const s = camelCaseKeys(session as Record<string, unknown>);
+      return {
+        ...s,
+        myRole: roleMap.get(session.game_session_id) as
+          | 'KEEPER'
+          | 'PLAYER'
+          | 'SPECTATOR',
+      } as MySessionWithRole;
     });
 
-    const sessions: MySessionWithRole[] = result.map((session) => ({
-      ...session,
-      myRole: roleMap.get(session.gameSessionId) as
-        | 'KEEPER'
-        | 'PLAYER'
-        | 'SPECTATOR',
-    }));
-
-    return ok({
-      sessions,
-      totalCount,
-    });
+    return ok({ sessions, totalCount });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -308,9 +285,9 @@ export const getHistorySessions = async (
   limit = 20,
   offset = 0,
 ): Promise<Result<SearchResult<MySessionWithRole>>> => {
-  const db = getDb();
   try {
-    // 履歴のフェーズ（空の場合は全て表示）
+    const supabase = await createDbClient();
+
     const targetPhases =
       statuses.length === 0
         ? [SessionPhases.COMPLETED.value, SessionPhases.CANCELLED.value]
@@ -320,8 +297,11 @@ export const getHistorySessions = async (
               : SessionPhases.CANCELLED.value,
           );
 
-    // ユーザーが参加しているセッションを取得（役割フィルタ付き）
-    const participantConditions = [eq(sessionParticipants.userId, userId)];
+    // ユーザーが参加しているセッション取得（役割フィルタ付き）
+    let participantQuery = supabase
+      .from('session_participants')
+      .select('session_id, participant_type')
+      .eq('user_id', userId);
 
     if (roles.length > 0) {
       const roleValues = roles.map((r) =>
@@ -331,133 +311,132 @@ export const getHistorySessions = async (
             ? ParticipantTypes.PLAYER.value
             : ParticipantTypes.SPECTATOR.value,
       );
-      participantConditions.push(
-        inArray(sessionParticipants.participantType, roleValues),
-      );
+      participantQuery = participantQuery.in('participant_type', roleValues);
     }
 
-    const userSessions = await db
-      .select({
-        sessionId: sessionParticipants.sessionId,
-        participantType: sessionParticipants.participantType,
-      })
-      .from(sessionParticipants)
-      .where(and(...participantConditions));
+    const { data: userSessions } = await participantQuery;
 
-    if (userSessions.length === 0) {
+    if (!userSessions || userSessions.length === 0) {
       return ok({ sessions: [], totalCount: 0 });
     }
 
-    const sessionIds = userSessions.map((s) => s.sessionId);
+    let sessionIds = userSessions.map((s) => s.session_id);
     const roleMap = new Map(
-      userSessions.map((s) => [s.sessionId, s.participantType]),
+      userSessions.map((s) => [s.session_id, s.participant_type]),
     );
 
-    // ソート順の決定
-    const orderBy =
-      sort === 'date_desc'
-        ? desc(gameSchedules.scheduleDate)
-        : asc(gameSchedules.scheduleDate);
-
-    // システムIDフィルタ用のシナリオIDを取得
-    let filteredSessionIds = sessionIds;
+    // システムIDフィルタ
     if (systemIds.length > 0) {
-      const scenariosWithSystems = await db
-        .select({ scenarioId: scenarios.scenarioId })
-        .from(scenarios)
-        .where(inArray(scenarios.scenarioSystemId, systemIds));
+      const { data: scenariosWithSystems } = await supabase
+        .from('scenarios')
+        .select('scenario_id')
+        .in('scenario_system_id', systemIds);
+
       const scenarioIdSet = new Set(
-        scenariosWithSystems.map((s) => s.scenarioId),
+        (scenariosWithSystems ?? []).map((s) => s.scenario_id),
       );
 
-      // セッションIDをフィルタ（シナリオIDで絞り込み）
-      const sessionsWithScenarios = await db
-        .select({
-          gameSessionId: gameSessions.gameSessionId,
-          scenarioId: gameSessions.scenarioId,
-        })
-        .from(gameSessions)
-        .where(inArray(gameSessions.gameSessionId, sessionIds));
+      const { data: sessionsWithScenarios } = await supabase
+        .from('game_sessions')
+        .select('game_session_id, scenario_id')
+        .in('game_session_id', sessionIds);
 
-      filteredSessionIds = sessionsWithScenarios
-        .filter((s) => s.scenarioId && scenarioIdSet.has(s.scenarioId))
-        .map((s) => s.gameSessionId);
+      sessionIds = (sessionsWithScenarios ?? [])
+        .filter((s) => s.scenario_id && scenarioIdSet.has(s.scenario_id))
+        .map((s) => s.game_session_id);
 
-      if (filteredSessionIds.length === 0) {
+      if (sessionIds.length === 0) {
         return ok({ sessions: [], totalCount: 0 });
       }
     }
 
     // 件数取得
-    const countResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(gameSessions)
-      .where(
-        and(
-          inArray(gameSessions.gameSessionId, filteredSessionIds),
-          inArray(gameSessions.sessionPhase, targetPhases),
-        ),
-      );
+    const { count } = await supabase
+      .from('game_sessions')
+      .select('game_session_id', { count: 'exact', head: true })
+      .in('game_session_id', sessionIds)
+      .in('session_phase', targetPhases);
 
-    const totalCount = Number(countResult[0]?.count ?? 0);
+    const totalCount = count ?? 0;
 
     // セッション取得
-    const result = await db.query.gameSessions.findMany({
-      where: and(
-        inArray(gameSessions.gameSessionId, filteredSessionIds),
-        inArray(gameSessions.sessionPhase, targetPhases),
-      ),
-      with: {
-        scenario: {
-          with: {
-            system: true,
-          },
-        },
-        schedule: true,
-        participants: {
-          with: {
-            user: true,
-          },
-        },
-      },
-      orderBy: [orderBy],
-      limit,
-      offset,
-    });
+    let query = supabase
+      .from('game_sessions')
+      .select(`
+        *,
+        scenario:scenarios(
+          *,
+          system:scenario_systems(*)
+        ),
+        schedule:game_schedules(*),
+        participants:session_participants(
+          *,
+          user:users(*)
+        )
+      `)
+      .in('game_session_id', sessionIds)
+      .in('session_phase', targetPhases);
+
+    if (sort === 'date_desc') {
+      query = query.order('created_at', { ascending: false });
+    } else {
+      query = query.order('created_at', { ascending: true });
+    }
+
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: result, error } = await query;
+
+    if (error) {
+      return err(new Error(error.message));
+    }
 
     // レビュー済み・動画あり情報を追加
-    const sessionsWithMeta = await Promise.all(
-      result.map(async (session) => {
-        // scenarioIdがnullの場合はレビューなし
-        const review = session.scenarioId
-          ? await db.query.userReviews.findFirst({
-              where: and(
-                eq(userReviews.userId, userId),
-                eq(userReviews.scenarioId, session.scenarioId),
-              ),
-            })
-          : null;
+    const gameSessionIds = (result ?? []).map((s) => s.game_session_id);
+    const scenarioIds = (result ?? [])
+      .map((s) => s.scenario_id)
+      .filter((id): id is string => !isNil(id));
 
-        const video = await db.query.videoLinks.findFirst({
-          where: eq(videoLinks.sessionId, session.gameSessionId),
-        });
+    // レビュー情報を一括取得
+    const { data: reviewData } = await supabase
+      .from('user_reviews')
+      .select('scenario_id')
+      .eq('user_id', userId)
+      .in('scenario_id', scenarioIds.length > 0 ? scenarioIds : ['__none__']);
 
-        return {
-          ...session,
-          myRole: roleMap.get(session.gameSessionId) as
-            | 'KEEPER'
-            | 'PLAYER'
-            | 'SPECTATOR',
-          isReviewed: !isNil(review),
-          hasVideo: !isNil(video),
-        };
-      }),
+    const reviewedScenarioIds = new Set(
+      (reviewData ?? []).map((r) => r.scenario_id),
     );
 
-    return ok({
-      sessions: sessionsWithMeta,
-      totalCount,
+    // 動画リンク情報を一括取得
+    const { data: videoData } = await supabase
+      .from('video_links')
+      .select('session_id')
+      .in(
+        'session_id',
+        gameSessionIds.length > 0 ? gameSessionIds : ['__none__'],
+      );
+
+    const sessionsWithVideo = new Set(
+      (videoData ?? []).map((v) => v.session_id),
+    );
+
+    const sessions: MySessionWithRole[] = (result ?? []).map((session) => {
+      const s = camelCaseKeys(session as Record<string, unknown>);
+      return {
+        ...s,
+        myRole: roleMap.get(session.game_session_id) as
+          | 'KEEPER'
+          | 'PLAYER'
+          | 'SPECTATOR',
+        isReviewed: session.scenario_id
+          ? reviewedScenarioIds.has(session.scenario_id)
+          : false,
+        hasVideo: sessionsWithVideo.has(session.game_session_id),
+      } as MySessionWithRole;
     });
+
+    return ok({ sessions, totalCount });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -471,9 +450,9 @@ export const getCalendarSessions = async (
   year: number,
   month: number,
 ): Promise<Result<CalendarData>> => {
-  const db = getDb();
   try {
-    // 参加予定のフェーズ
+    const supabase = await createDbClient();
+
     const targetPhases = [
       SessionPhases.RECRUITING.value,
       SessionPhases.PREPARATION.value,
@@ -481,86 +460,72 @@ export const getCalendarSessions = async (
     ];
 
     // ユーザーが参加しているセッションを取得
-    const userSessions = await db
-      .select({
-        sessionId: sessionParticipants.sessionId,
-        participantType: sessionParticipants.participantType,
-      })
-      .from(sessionParticipants)
-      .where(eq(sessionParticipants.userId, userId));
+    const { data: userSessions } = await supabase
+      .from('session_participants')
+      .select('session_id, participant_type')
+      .eq('user_id', userId);
 
-    if (userSessions.length === 0) {
+    if (!userSessions || userSessions.length === 0) {
       return ok({ sessions: [], unscheduledSessions: [] });
     }
 
-    const sessionIds = userSessions.map((s) => s.sessionId);
+    const sessionIds = userSessions.map((s) => s.session_id);
     const roleMap = new Map(
-      userSessions.map((s) => [s.sessionId, s.participantType]),
+      userSessions.map((s) => [s.session_id, s.participant_type]),
     );
 
     // 月の開始日と終了日
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0, 23, 59, 59);
+    const startDate = new Date(year, month - 1, 1).toISOString();
+    const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
 
     // スケジュール確定済みセッション
-    const scheduledSessions = await db
-      .select({
-        gameSessionId: gameSessions.gameSessionId,
-        sessionName: gameSessions.sessionName,
-        sessionPhase: gameSessions.sessionPhase,
-        scenarioName: scenarios.name,
-        scheduleDate: gameSchedules.scheduleDate,
-      })
-      .from(gameSessions)
-      .innerJoin(scenarios, eq(gameSessions.scenarioId, scenarios.scenarioId))
-      .innerJoin(
-        gameSchedules,
-        eq(gameSessions.gameSessionId, gameSchedules.sessionId),
-      )
-      .where(
-        and(
-          inArray(gameSessions.gameSessionId, sessionIds),
-          inArray(gameSessions.sessionPhase, targetPhases),
-          gte(gameSchedules.scheduleDate, startDate),
-          lte(gameSchedules.scheduleDate, endDate),
-        ),
-      );
+    const { data: scheduledSessions } = await supabase
+      .from('game_sessions')
+      .select(`
+        game_session_id, session_name, session_phase,
+        scenario:scenarios!inner(name),
+        schedule:game_schedules!inner(schedule_date)
+      `)
+      .in('game_session_id', sessionIds)
+      .in('session_phase', targetPhases)
+      .gte('game_schedules.schedule_date', startDate)
+      .lte('game_schedules.schedule_date', endDate);
 
     // 日程未確定セッション
-    const unscheduledResult = await db
-      .select({
-        gameSessionId: gameSessions.gameSessionId,
-        sessionName: gameSessions.sessionName,
-        sessionPhase: gameSessions.sessionPhase,
-        scenarioName: scenarios.name,
-      })
-      .from(gameSessions)
-      .innerJoin(scenarios, eq(gameSessions.scenarioId, scenarios.scenarioId))
-      .leftJoin(
-        gameSchedules,
-        eq(gameSessions.gameSessionId, gameSchedules.sessionId),
-      )
-      .where(
-        and(
-          inArray(gameSessions.gameSessionId, sessionIds),
-          inArray(gameSessions.sessionPhase, targetPhases),
-          sql`${gameSchedules.sessionId} IS NULL`,
-        ),
-      );
+    const { data: allSessionsForPhase } = await supabase
+      .from('game_sessions')
+      .select(`
+        game_session_id, session_name, session_phase,
+        scenario:scenarios!inner(name),
+        schedule:game_schedules(schedule_date)
+      `)
+      .in('game_session_id', sessionIds)
+      .in('session_phase', targetPhases);
+
+    const unscheduledResult = (allSessionsForPhase ?? []).filter((s) =>
+      isNil(s.schedule),
+    );
 
     return ok({
-      sessions: scheduledSessions.map((s) => ({
-        ...s,
-        scheduleDate: s.scheduleDate,
-        myRole: roleMap.get(s.gameSessionId) as
+      sessions: (scheduledSessions ?? []).map((s) => ({
+        gameSessionId: s.game_session_id,
+        sessionName: s.session_name,
+        sessionPhase: s.session_phase,
+        scenarioName: (s.scenario as Record<string, unknown>)?.name as string,
+        scheduleDate: (s.schedule as Record<string, unknown>)
+          ?.schedule_date as string,
+        myRole: roleMap.get(s.game_session_id) as
           | 'KEEPER'
           | 'PLAYER'
           | 'SPECTATOR',
       })),
       unscheduledSessions: unscheduledResult.map((s) => ({
-        ...s,
-        scheduleDate: new Date(), // プレースホルダー
-        myRole: roleMap.get(s.gameSessionId) as
+        gameSessionId: s.game_session_id,
+        sessionName: s.session_name,
+        sessionPhase: s.session_phase,
+        scenarioName: (s.scenario as Record<string, unknown>)?.name as string,
+        scheduleDate: new Date().toISOString(),
+        myRole: roleMap.get(s.game_session_id) as
           | 'KEEPER'
           | 'PLAYER'
           | 'SPECTATOR',
@@ -575,12 +540,22 @@ export const getCalendarSessions = async (
  * 全システムを取得
  */
 export const getAllSystems = async (): Promise<Result<ScenarioSystem[]>> => {
-  const db = getDb();
   try {
-    const result = await db.query.scenarioSystems.findMany({
-      orderBy: [asc(scenarioSystems.name)],
-    });
-    return ok(result);
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('scenario_systems')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(
+      (data ?? []).map(
+        (s) => camelCaseKeys(s as Record<string, unknown>) as ScenarioSystem,
+      ),
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
