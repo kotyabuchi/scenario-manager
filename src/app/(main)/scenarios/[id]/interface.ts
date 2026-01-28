@@ -1,24 +1,21 @@
-import type { InferSelectModel } from 'drizzle-orm';
 import type {
-  gameSessions,
-  scenarioSystems,
-  scenarios,
-  tags,
-  userReviews,
-  userScenarioPreferences,
-  users,
-  videoLinks,
-} from '@/db/schema';
+  GameSessionRow,
+  ScenarioRow,
+  ScenarioSystemRow,
+  TagRow,
+  UserReviewRow,
+  UserRow,
+  VideoLinkRow,
+} from '@/db/helpers';
 
-// Drizzleスキーマから型を導出
-type Scenario = InferSelectModel<typeof scenarios>;
-type ScenarioSystem = InferSelectModel<typeof scenarioSystems>;
-type Tag = InferSelectModel<typeof tags>;
-type User = InferSelectModel<typeof users>;
-type GameSession = InferSelectModel<typeof gameSessions>;
-type UserReview = InferSelectModel<typeof userReviews>;
-type VideoLink = InferSelectModel<typeof videoLinks>;
-type UserScenarioPreference = InferSelectModel<typeof userScenarioPreferences>;
+// 基本型
+type Scenario = ScenarioRow;
+type ScenarioSystem = ScenarioSystemRow;
+type Tag = TagRow;
+type User = UserRow;
+type GameSession = GameSessionRow;
+type UserReview = UserReviewRow;
+type VideoLink = VideoLinkRow;
 
 // レビュー（ユーザー情報付き）
 type ReviewWithUser = UserReview & {
@@ -37,7 +34,7 @@ type SessionWithKeeper = Pick<
 > & {
   keeper: Pick<User, 'userId' | 'nickname' | 'image'> | null;
   participantCount: number;
-  scheduleDate: Date | null;
+  scheduleDate: string | null;
 };
 
 // 動画リンク（セッション情報付き）
@@ -115,7 +112,6 @@ export type {
   GameSession,
   UserReview,
   VideoLink,
-  UserScenarioPreference,
   ReviewWithUser,
   SessionWithKeeper,
   VideoLinkWithSession,

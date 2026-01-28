@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { Button } from './button';
 import * as stories from './button.stories';
 
 // StorybookのStoryからテスト用コンポーネントを生成
@@ -168,7 +169,7 @@ describe('Button', () => {
 
     // BTN-19: loadingTextが未指定なら元のchildrenが表示される
     it('loadingTextが未指定の場合は元のchildrenが表示される', () => {
-      render(<Default loading>保存</Default>);
+      render(<Button loading>保存</Button>);
 
       expect(screen.getByText('保存')).toBeInTheDocument();
     });

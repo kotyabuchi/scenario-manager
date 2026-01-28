@@ -147,9 +147,7 @@ describe('CancelModal', () => {
       const handleClose = vi.fn();
       render(<CancelSession onClose={handleClose} />);
 
-      await user.click(
-        screen.getByRole('button', { name: /戻る|閉じる|いいえ/i }),
-      );
+      await user.click(screen.getByRole('button', { name: /^戻る$/i }));
 
       expect(handleClose).toHaveBeenCalled();
     });

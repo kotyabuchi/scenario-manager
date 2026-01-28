@@ -1,7 +1,5 @@
-import { eq } from 'drizzle-orm';
-
-import { getDb } from '@/db';
-import { users } from '@/db/schema';
+import { createDbClient } from '@/lib/supabase/server';
+import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
 import type { User } from './interface';
@@ -12,13 +10,19 @@ import type { User } from './interface';
 export const getUserById = async (
   userId: string,
 ): Promise<Result<User | null>> => {
-  const db = getDb();
   try {
-    const result = await db.query.users.findFirst({
-      where: eq(users.userId, userId),
-    });
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    return ok(result ?? null);
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(data ? (camelCaseKeys(data) as User) : null);
   } catch (e) {
     return err(
       e instanceof Error ? e : new Error('ユーザーの取得に失敗しました'),
@@ -32,13 +36,19 @@ export const getUserById = async (
 export const getUserByDiscordId = async (
   discordId: string,
 ): Promise<Result<User | null>> => {
-  const db = getDb();
   try {
-    const result = await db.query.users.findFirst({
-      where: eq(users.discordId, discordId),
-    });
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('discord_id', discordId)
+      .maybeSingle();
 
-    return ok(result ?? null);
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(data ? (camelCaseKeys(data) as User) : null);
   } catch (e) {
     return err(
       e instanceof Error ? e : new Error('ユーザーの取得に失敗しました'),

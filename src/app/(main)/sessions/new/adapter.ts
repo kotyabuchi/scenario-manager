@@ -1,13 +1,13 @@
-import { eq } from 'drizzle-orm';
 import { isNil } from 'ramda';
+import { ulid } from 'ulid';
 
-import { getDb } from '@/db';
 import {
   ParticipantStatuses,
   ParticipantTypes,
   SessionPhases,
 } from '@/db/enum';
-import { gameSessions, sessionParticipants, users } from '@/db/schema';
+import { createDbClient } from '@/lib/supabase/server';
+import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
 import type { CreateSessionInput } from './schema';
@@ -20,7 +20,7 @@ export type CreateSessionResult = {
   sessionName: string;
   sessionPhase: string;
   scenarioId: string | null;
-  scheduledAt: Date | null;
+  scheduledAt: string | null;
   recruitedPlayerCount: number | null;
   tools: string | null;
   isBeginnerFriendly: boolean;
@@ -36,7 +36,7 @@ export type SessionWithRelations = {
   sessionDescription: string;
   sessionPhase: string;
   scenarioId: string | null;
-  scheduledAt: Date | null;
+  scheduledAt: string | null;
   recruitedPlayerCount: number | null;
   tools: string | null;
   isBeginnerFriendly: boolean;
@@ -65,73 +65,76 @@ const ERROR_MESSAGES = {
 
 /**
  * セッションを作成する
- *
- * @param input - セッション作成入力
- * @param userId - 作成者のユーザーID
- * @returns 作成されたセッション情報
- *
- * 要件: requirements-session-flow.md Section 3
- * - US-S101: シナリオ未定でも募集可能
- * - US-S102: 日程未定でも募集可能
- * - US-S103: 人数未定でも募集可能
  */
 export const createSession = async (
   input: CreateSessionInput,
   userId: string,
 ): Promise<Result<CreateSessionResult>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // ユーザーの存在確認
-    const user = await db.query.users.findFirst({
-      where: eq(users.userId, userId),
-    });
+    const { data: user } = await supabase
+      .from('users')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
 
     if (isNil(user)) {
       return err(new Error(ERROR_MESSAGES.USER_NOT_FOUND));
     }
 
+    const gameSessionId = ulid();
+
     // セッションを作成
-    const [createdSession] = await db
-      .insert(gameSessions)
-      .values({
-        sessionName: input.sessionName,
-        sessionDescription: input.sessionDescription,
-        scenarioId: input.scenarioId ?? null,
-        keeperId: userId,
-        sessionPhase: SessionPhases.RECRUITING.value,
-        scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : null,
-        recruitedPlayerCount: input.recruitedPlayerCount ?? null,
+    const { data: createdSession, error: insertError } = await supabase
+      .from('game_sessions')
+      .insert({
+        game_session_id: gameSessionId,
+        session_name: input.sessionName,
+        session_description: input.sessionDescription,
+        scenario_id: input.scenarioId ?? null,
+        keeper_id: userId,
+        session_phase: SessionPhases.RECRUITING.value,
+        scheduled_at: input.scheduledAt
+          ? new Date(input.scheduledAt).toISOString()
+          : null,
+        recruited_player_count: input.recruitedPlayerCount ?? null,
         tools: input.tools ?? null,
-        isBeginnerFriendly: input.isBeginnerFriendly,
+        is_beginner_friendly: input.isBeginnerFriendly,
         visibility: input.visibility,
       })
-      .returning();
+      .select()
+      .single();
 
-    if (isNil(createdSession)) {
+    if (insertError || isNil(createdSession)) {
       return err(new Error(ERROR_MESSAGES.CREATE_FAILED));
     }
 
     // 作成者をKEEPERとして参加者に追加（確定済み状態）
-    await db.insert(sessionParticipants).values({
-      sessionId: createdSession.gameSessionId,
-      userId: userId,
-      participantType: ParticipantTypes.KEEPER.value,
-      participantStatus: ParticipantStatuses.CONFIRMED.value,
-      appliedAt: new Date(),
-      approvedAt: new Date(),
+    await supabase.from('session_participants').insert({
+      session_id: gameSessionId,
+      user_id: userId,
+      participant_type: ParticipantTypes.KEEPER.value,
+      participant_status: ParticipantStatuses.CONFIRMED.value,
+      applied_at: new Date().toISOString(),
+      approved_at: new Date().toISOString(),
     });
 
+    const session = camelCaseKeys(
+      createdSession as Record<string, unknown>,
+    ) as Record<string, unknown>;
+
     return ok({
-      gameSessionId: createdSession.gameSessionId,
-      sessionName: createdSession.sessionName,
-      sessionPhase: createdSession.sessionPhase,
-      scenarioId: createdSession.scenarioId,
-      scheduledAt: createdSession.scheduledAt,
-      recruitedPlayerCount: createdSession.recruitedPlayerCount,
-      tools: createdSession.tools,
-      isBeginnerFriendly: createdSession.isBeginnerFriendly,
-      visibility: createdSession.visibility,
+      gameSessionId: session.gameSessionId as string,
+      sessionName: session.sessionName as string,
+      sessionPhase: session.sessionPhase as string,
+      scenarioId: session.scenarioId as string | null,
+      scheduledAt: session.scheduledAt as string | null,
+      recruitedPlayerCount: session.recruitedPlayerCount as number | null,
+      tools: session.tools as string | null,
+      isBeginnerFriendly: session.isBeginnerFriendly as boolean,
+      visibility: session.visibility as string,
     });
   } catch (e) {
     return err(
@@ -142,63 +145,68 @@ export const createSession = async (
 
 /**
  * セッションをIDで取得する
- *
- * @param sessionId - セッションID
- * @returns セッション情報（参加者・シナリオ情報含む）、存在しない場合はnull
  */
 export const getSessionById = async (
   sessionId: string,
 ): Promise<Result<SessionWithRelations | null>> => {
-  const db = getDb();
-
   try {
-    const session = await db.query.gameSessions.findFirst({
-      where: eq(gameSessions.gameSessionId, sessionId),
-      with: {
-        scenario: {
-          columns: {
-            scenarioId: true,
-            name: true,
-          },
-        },
-        participants: {
-          columns: {
-            userId: true,
-            participantType: true,
-            participantStatus: true,
-            applicationMessage: true,
-          },
-        },
-      },
-    });
+    const supabase = await createDbClient();
+
+    const { data: session, error } = await supabase
+      .from('game_sessions')
+      .select(`
+        *,
+        scenario:scenarios(scenario_id, name),
+        participants:session_participants(
+          user_id,
+          participant_type,
+          participant_status,
+          application_message
+        )
+      `)
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
+
+    if (error) {
+      return err(new Error(error.message));
+    }
 
     if (isNil(session)) {
       return ok(null);
     }
 
+    const s = camelCaseKeys(session as Record<string, unknown>) as Record<
+      string,
+      unknown
+    >;
+
     return ok({
-      gameSessionId: session.gameSessionId,
-      sessionName: session.sessionName,
-      sessionDescription: session.sessionDescription,
-      sessionPhase: session.sessionPhase,
-      scenarioId: session.scenarioId,
-      scheduledAt: session.scheduledAt,
-      recruitedPlayerCount: session.recruitedPlayerCount,
-      tools: session.tools,
-      isBeginnerFriendly: session.isBeginnerFriendly,
-      visibility: session.visibility,
-      scenario: session.scenario
+      gameSessionId: s.gameSessionId as string,
+      sessionName: s.sessionName as string,
+      sessionDescription: s.sessionDescription as string,
+      sessionPhase: s.sessionPhase as string,
+      scenarioId: s.scenarioId as string | null,
+      scheduledAt: s.scheduledAt as string | null,
+      recruitedPlayerCount: s.recruitedPlayerCount as number | null,
+      tools: s.tools as string | null,
+      isBeginnerFriendly: s.isBeginnerFriendly as boolean,
+      visibility: s.visibility as string,
+      scenario: s.scenario
         ? {
-            scenarioId: session.scenario.scenarioId,
-            scenarioName: session.scenario.name,
+            scenarioId: (s.scenario as Record<string, unknown>)
+              .scenarioId as string,
+            scenarioName: (s.scenario as Record<string, unknown>)
+              .name as string,
           }
         : null,
-      participants: session.participants.map((p) => ({
-        userId: p.userId,
-        participantType: p.participantType,
-        participantStatus: p.participantStatus,
-        applicationMessage: p.applicationMessage,
-      })),
+      participants: (s.participants as Array<Record<string, unknown>>).map(
+        (p) => ({
+          userId: p.userId as string,
+          participantType: p.participantType as string,
+          participantStatus: p.participantStatus as string,
+          applicationMessage: p.applicationMessage as string | null,
+        }),
+      ),
     });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));

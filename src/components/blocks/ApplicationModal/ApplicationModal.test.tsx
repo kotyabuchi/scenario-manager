@@ -59,9 +59,7 @@ describe('ApplicationModal', () => {
       const handleClose = vi.fn();
       render(<Default onClose={handleClose} />);
 
-      await user.click(
-        screen.getByRole('button', { name: /キャンセル|閉じる/i }),
-      );
+      await user.click(screen.getByRole('button', { name: /^キャンセル$/i }));
 
       expect(handleClose).toHaveBeenCalled();
     });

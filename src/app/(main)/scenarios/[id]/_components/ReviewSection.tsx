@@ -24,7 +24,7 @@ const STORAGE_KEY_PREFIX = 'hiddenReviews_';
 /**
  * 日付をフォーマットする
  */
-const formatDate = (date: Date): string => {
+const formatDate = (date: string): string => {
   return new Intl.DateTimeFormat('ja-JP', {
     year: 'numeric',
     month: '2-digit',

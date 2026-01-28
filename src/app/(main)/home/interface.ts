@@ -1,40 +1,31 @@
-import type { InferSelectModel } from 'drizzle-orm';
 import type {
-  gameSessions,
-  scenarioSystems,
-  scenarios,
-  sessionParticipants,
-  tags,
-  users,
-} from '@/db/schema';
-
-// Drizzleスキーマから型を導出
-type GameSession = InferSelectModel<typeof gameSessions>;
-type Scenario = InferSelectModel<typeof scenarios>;
-type ScenarioSystem = InferSelectModel<typeof scenarioSystems>;
-type SessionParticipant = InferSelectModel<typeof sessionParticipants>;
-type User = InferSelectModel<typeof users>;
-type Tag = InferSelectModel<typeof tags>;
+  GameSessionRow,
+  ScenarioRow,
+  ScenarioSystemRow,
+  SessionParticipantRow,
+  TagRow,
+  UserRow,
+} from '@/db/helpers';
 
 // 参加予定セッション（リレーション込み）
-export type UpcomingSession = GameSession & {
+export type UpcomingSession = GameSessionRow & {
   scenario:
-    | (Scenario & {
-        system: ScenarioSystem;
+    | (ScenarioRow & {
+        system: ScenarioSystemRow;
       })
     | null;
   participants: Array<
-    SessionParticipant & {
-      user: User;
+    SessionParticipantRow & {
+      user: UserRow;
     }
   >;
 };
 
 // 新着シナリオ（リレーション込み）
-export type NewScenario = Scenario & {
-  system: ScenarioSystem;
+export type NewScenario = ScenarioRow & {
+  system: ScenarioSystemRow;
   scenarioTags: Array<{
-    tag: Tag;
+    tag: TagRow;
   }>;
 };
 

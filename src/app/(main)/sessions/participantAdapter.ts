@@ -1,9 +1,7 @@
-import { and, eq } from 'drizzle-orm';
 import { isNil } from 'ramda';
 
-import { getDb } from '@/db';
 import { ParticipantStatuses, SessionPhases } from '@/db/enum';
-import { gameSessions, sessionParticipants } from '@/db/schema';
+import { createDbClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
 /**
@@ -57,66 +55,62 @@ const isSessionGM = async (
   sessionId: string,
   userId: string,
 ): Promise<boolean> => {
-  const db = getDb();
-  const session = await db.query.gameSessions.findFirst({
-    where: eq(gameSessions.gameSessionId, sessionId),
-  });
-  return session?.keeperId === userId;
+  const supabase = await createDbClient();
+  const { data: session } = await supabase
+    .from('game_sessions')
+    .select('keeper_id')
+    .eq('game_session_id', sessionId)
+    .maybeSingle();
+  return session?.keeper_id === userId;
 };
 
 /**
  * セッションに参加申請する
- *
- * @param sessionId - セッションID
- * @param userId - 申請者のユーザーID
- * @param input - 申請情報（参加タイプ、メッセージ）
- * @returns 作成された参加者情報
- *
- * 要件: requirements-session-flow.md Section 3.4
- * - US-S108: PLとして、プレイヤーまたは観戦者として申請できる
  */
 export const applyToSession = async (
   sessionId: string,
   userId: string,
   input: ApplyToSessionInput,
 ): Promise<Result<ParticipantResult>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // セッションの存在確認
-    const session = await db.query.gameSessions.findFirst({
-      where: eq(gameSessions.gameSessionId, sessionId),
-    });
+    const { data: session } = await supabase
+      .from('game_sessions')
+      .select('game_session_id, session_phase')
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
 
     if (isNil(session)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.SESSION_NOT_FOUND));
     }
 
     // 募集中かどうか確認
-    if (session.sessionPhase !== SessionPhases.RECRUITING.value) {
+    if (session.session_phase !== SessionPhases.RECRUITING.value) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.RECRUITMENT_CLOSED));
     }
 
     // 既に申請済みかどうか確認
-    const existingParticipant = await db.query.sessionParticipants.findFirst({
-      where: and(
-        eq(sessionParticipants.sessionId, sessionId),
-        eq(sessionParticipants.userId, userId),
-      ),
-    });
+    const { data: existingParticipant } = await supabase
+      .from('session_participants')
+      .select('session_id')
+      .eq('session_id', sessionId)
+      .eq('user_id', userId)
+      .maybeSingle();
 
     if (!isNil(existingParticipant)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.ALREADY_APPLIED));
     }
 
     // 参加申請を作成
-    await db.insert(sessionParticipants).values({
-      sessionId: sessionId,
-      userId: userId,
-      participantType: input.participantType,
-      participantStatus: ParticipantStatuses.PENDING.value,
-      applicationMessage: input.applicationMessage ?? null,
-      appliedAt: new Date(),
+    await supabase.from('session_participants').insert({
+      session_id: sessionId,
+      user_id: userId,
+      participant_type: input.participantType,
+      participant_status: ParticipantStatuses.PENDING.value,
+      application_message: input.applicationMessage ?? null,
+      applied_at: new Date().toISOString(),
     });
 
     return ok({
@@ -133,30 +127,22 @@ export const applyToSession = async (
 
 /**
  * 参加申請を承認する
- *
- * @param sessionId - セッションID
- * @param applicantUserId - 申請者のユーザーID
- * @param gmUserId - GMのユーザーID
- * @returns 更新された参加者情報
- *
- * 要件: requirements-session-flow.md Section 3.6
- * - US-S106: GMとして、参加希望者のプロフィールを見て承認/拒否できる
  */
 export const approveApplication = async (
   sessionId: string,
   applicantUserId: string,
   gmUserId: string,
 ): Promise<Result<ParticipantResult>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // 参加申請の存在確認
-    const participant = await db.query.sessionParticipants.findFirst({
-      where: and(
-        eq(sessionParticipants.sessionId, sessionId),
-        eq(sessionParticipants.userId, applicantUserId),
-      ),
-    });
+    const { data: participant } = await supabase
+      .from('session_participants')
+      .select('participant_type, participant_status, application_message')
+      .eq('session_id', sessionId)
+      .eq('user_id', applicantUserId)
+      .maybeSingle();
 
     if (isNil(participant)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.PARTICIPANT_NOT_FOUND));
@@ -169,30 +155,28 @@ export const approveApplication = async (
     }
 
     // 既に処理済みかどうか確認
-    if (participant.participantStatus === ParticipantStatuses.CONFIRMED.value) {
+    if (
+      participant.participant_status === ParticipantStatuses.CONFIRMED.value
+    ) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.ALREADY_PROCESSED));
     }
 
     // 承認処理
-    await db
-      .update(sessionParticipants)
-      .set({
-        participantStatus: ParticipantStatuses.CONFIRMED.value,
-        approvedAt: new Date(),
+    await supabase
+      .from('session_participants')
+      .update({
+        participant_status: ParticipantStatuses.CONFIRMED.value,
+        approved_at: new Date().toISOString(),
       })
-      .where(
-        and(
-          eq(sessionParticipants.sessionId, sessionId),
-          eq(sessionParticipants.userId, applicantUserId),
-        ),
-      );
+      .eq('session_id', sessionId)
+      .eq('user_id', applicantUserId);
 
     return ok({
       sessionId: sessionId,
       userId: applicantUserId,
-      participantType: participant.participantType,
+      participantType: participant.participant_type,
       participantStatus: ParticipantStatuses.CONFIRMED.value,
-      applicationMessage: participant.applicationMessage,
+      applicationMessage: participant.application_message,
     });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
@@ -201,29 +185,22 @@ export const approveApplication = async (
 
 /**
  * 参加申請を拒否する
- *
- * @param sessionId - セッションID
- * @param applicantUserId - 申請者のユーザーID
- * @param gmUserId - GMのユーザーID
- * @returns 成功/失敗
- *
- * 要件: requirements-session-flow.md Section 3.6
  */
 export const rejectApplication = async (
   sessionId: string,
   applicantUserId: string,
   gmUserId: string,
 ): Promise<Result<void>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // 参加申請の存在確認
-    const participant = await db.query.sessionParticipants.findFirst({
-      where: and(
-        eq(sessionParticipants.sessionId, sessionId),
-        eq(sessionParticipants.userId, applicantUserId),
-      ),
-    });
+    const { data: participant } = await supabase
+      .from('session_participants')
+      .select('session_id')
+      .eq('session_id', sessionId)
+      .eq('user_id', applicantUserId)
+      .maybeSingle();
 
     if (isNil(participant)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.PARTICIPANT_NOT_FOUND));
@@ -236,14 +213,11 @@ export const rejectApplication = async (
     }
 
     // 参加者レコードを削除
-    await db
-      .delete(sessionParticipants)
-      .where(
-        and(
-          eq(sessionParticipants.sessionId, sessionId),
-          eq(sessionParticipants.userId, applicantUserId),
-        ),
-      );
+    await supabase
+      .from('session_participants')
+      .delete()
+      .eq('session_id', sessionId)
+      .eq('user_id', applicantUserId);
 
     return ok(undefined);
   } catch (e) {
@@ -253,27 +227,21 @@ export const rejectApplication = async (
 
 /**
  * セッションから辞退する
- *
- * @param sessionId - セッションID
- * @param userId - 辞退するユーザーID
- * @param _reason - 辞退理由（オプション）
- * @returns 成功/失敗
- *
- * 要件: requirements-session-flow.md Section 3.4
- * - US-S110: PLとして、承認済みセッションから辞退できる
  */
 export const withdrawFromSession = async (
   sessionId: string,
   userId: string,
   _reason?: string,
 ): Promise<Result<void>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // セッションの存在確認
-    const session = await db.query.gameSessions.findFirst({
-      where: eq(gameSessions.gameSessionId, sessionId),
-    });
+    const { data: session } = await supabase
+      .from('game_sessions')
+      .select('game_session_id, session_phase')
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
 
     if (isNil(session)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.SESSION_NOT_FOUND));
@@ -281,33 +249,30 @@ export const withdrawFromSession = async (
 
     // 完了済みセッションからは辞退できない
     if (
-      session.sessionPhase === SessionPhases.COMPLETED.value ||
-      session.sessionPhase === SessionPhases.CANCELLED.value
+      session.session_phase === SessionPhases.COMPLETED.value ||
+      session.session_phase === SessionPhases.CANCELLED.value
     ) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.CANNOT_WITHDRAW));
     }
 
     // 参加者かどうか確認
-    const participant = await db.query.sessionParticipants.findFirst({
-      where: and(
-        eq(sessionParticipants.sessionId, sessionId),
-        eq(sessionParticipants.userId, userId),
-      ),
-    });
+    const { data: participant } = await supabase
+      .from('session_participants')
+      .select('session_id')
+      .eq('session_id', sessionId)
+      .eq('user_id', userId)
+      .maybeSingle();
 
     if (isNil(participant)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.NOT_PARTICIPANT));
     }
 
     // 参加者レコードを削除
-    await db
-      .delete(sessionParticipants)
-      .where(
-        and(
-          eq(sessionParticipants.sessionId, sessionId),
-          eq(sessionParticipants.userId, userId),
-        ),
-      );
+    await supabase
+      .from('session_participants')
+      .delete()
+      .eq('session_id', sessionId)
+      .eq('user_id', userId);
 
     return ok(undefined);
   } catch (e) {
@@ -317,47 +282,39 @@ export const withdrawFromSession = async (
 
 /**
  * 参加申請を取り消す
- *
- * @param sessionId - セッションID
- * @param userId - 取り消すユーザーID
- * @returns 成功/失敗
- *
- * 要件: requirements-session-flow.md Section 3.4
- * - US-S111: PLとして、承認待ちの申請を取り消しできる
  */
 export const cancelApplication = async (
   sessionId: string,
   userId: string,
 ): Promise<Result<void>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // 参加申請の存在確認
-    const participant = await db.query.sessionParticipants.findFirst({
-      where: and(
-        eq(sessionParticipants.sessionId, sessionId),
-        eq(sessionParticipants.userId, userId),
-      ),
-    });
+    const { data: participant } = await supabase
+      .from('session_participants')
+      .select('participant_status')
+      .eq('session_id', sessionId)
+      .eq('user_id', userId)
+      .maybeSingle();
 
     if (isNil(participant)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.NOT_PARTICIPANT));
     }
 
     // 承認済みの場合は取り消せない（辞退を使う）
-    if (participant.participantStatus === ParticipantStatuses.CONFIRMED.value) {
+    if (
+      participant.participant_status === ParticipantStatuses.CONFIRMED.value
+    ) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.USE_WITHDRAW));
     }
 
     // 申請を削除
-    await db
-      .delete(sessionParticipants)
-      .where(
-        and(
-          eq(sessionParticipants.sessionId, sessionId),
-          eq(sessionParticipants.userId, userId),
-        ),
-      );
+    await supabase
+      .from('session_participants')
+      .delete()
+      .eq('session_id', sessionId)
+      .eq('user_id', userId);
 
     return ok(undefined);
   } catch (e) {
@@ -367,27 +324,21 @@ export const cancelApplication = async (
 
 /**
  * セッションをキャンセルする
- *
- * @param sessionId - セッションID
- * @param gmUserId - GMのユーザーID
- * @param _reason - キャンセル理由（オプション）
- * @returns キャンセルされたセッション情報
- *
- * 要件: requirements-session-flow.md Section 3
- * - US-S109: GMとして、セッションをキャンセルできる
  */
 export const cancelSession = async (
   sessionId: string,
   gmUserId: string,
   _reason?: string,
 ): Promise<Result<CancelSessionResult>> => {
-  const db = getDb();
-
   try {
+    const supabase = await createDbClient();
+
     // セッションの存在確認
-    const session = await db.query.gameSessions.findFirst({
-      where: eq(gameSessions.gameSessionId, sessionId),
-    });
+    const { data: session } = await supabase
+      .from('game_sessions')
+      .select('game_session_id, session_phase')
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
 
     if (isNil(session)) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.SESSION_NOT_FOUND));
@@ -400,22 +351,22 @@ export const cancelSession = async (
     }
 
     // 完了済みはキャンセルできない
-    if (session.sessionPhase === SessionPhases.COMPLETED.value) {
+    if (session.session_phase === SessionPhases.COMPLETED.value) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.COMPLETED_CANNOT_CANCEL));
     }
 
     // 既にキャンセル済み
-    if (session.sessionPhase === SessionPhases.CANCELLED.value) {
+    if (session.session_phase === SessionPhases.CANCELLED.value) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.ALREADY_CANCELLED));
     }
 
     // キャンセル処理
-    await db
-      .update(gameSessions)
-      .set({
-        sessionPhase: SessionPhases.CANCELLED.value,
+    await supabase
+      .from('game_sessions')
+      .update({
+        session_phase: SessionPhases.CANCELLED.value,
       })
-      .where(eq(gameSessions.gameSessionId, sessionId));
+      .eq('game_session_id', sessionId);
 
     return ok({
       gameSessionId: sessionId,

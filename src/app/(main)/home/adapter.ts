@@ -1,7 +1,5 @@
-import { desc, eq, inArray, or } from 'drizzle-orm';
-
-import { getDb } from '@/db';
-import { gameSessions, scenarios, sessionParticipants } from '@/db/schema';
+import { createDbClient } from '@/lib/supabase/server';
+import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
 import type { NewScenario, UpcomingSession } from './interface';
@@ -12,49 +10,56 @@ import type { NewScenario, UpcomingSession } from './interface';
 export const getUpcomingSessions = async (
   userId: string,
 ): Promise<Result<UpcomingSession[]>> => {
-  const db = getDb();
   try {
-    // ユーザーが参加しているセッションIDを取得
-    const participantSessions = await db.query.sessionParticipants.findMany({
-      where: eq(sessionParticipants.userId, userId),
-      columns: {
-        sessionId: true,
-      },
-    });
+    const supabase = await createDbClient();
 
-    if (participantSessions.length === 0) {
+    // ユーザーが参加しているセッションIDを取得
+    const { data: participantSessions, error: partError } = await supabase
+      .from('session_participants')
+      .select('session_id')
+      .eq('user_id', userId);
+
+    if (partError) {
+      return err(new Error(partError.message));
+    }
+
+    if (!participantSessions || participantSessions.length === 0) {
       return ok([]);
     }
 
     const sessionIds = participantSessions.map(
-      (p: { sessionId: string }) => p.sessionId,
+      (p: { session_id: string }) => p.session_id,
     );
 
     // セッション情報を取得（RECRUITING/PREPARATION/IN_PROGRESS）
-    const sessions = await db.query.gameSessions.findMany({
-      where: or(
-        inArray(gameSessions.gameSessionId, sessionIds),
-        eq(gameSessions.sessionPhase, 'RECRUITING'),
-        eq(gameSessions.sessionPhase, 'PREPARATION'),
-        eq(gameSessions.sessionPhase, 'IN_PROGRESS'),
-      ),
-      with: {
-        scenario: {
-          with: {
-            system: true,
-          },
-        },
-        participants: {
-          with: {
-            user: true,
-          },
-        },
-      },
-      orderBy: [desc(gameSessions.createdAt)],
-      limit: 3,
-    });
+    const { data: sessions, error: sessError } = await supabase
+      .from('game_sessions')
+      .select(`
+        *,
+        scenario:scenarios(
+          *,
+          system:scenario_systems(*)
+        ),
+        participants:session_participants(
+          *,
+          user:users(*)
+        )
+      `)
+      .or(
+        `game_session_id.in.(${sessionIds.join(',')}),session_phase.eq.RECRUITING,session_phase.eq.PREPARATION,session_phase.eq.IN_PROGRESS`,
+      )
+      .order('created_at', { ascending: false })
+      .limit(3);
 
-    return ok(sessions);
+    if (sessError) {
+      return err(new Error(sessError.message));
+    }
+
+    return ok(
+      (sessions ?? []).map(
+        (s) => camelCaseKeys(s as Record<string, unknown>) as UpcomingSession,
+      ),
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
@@ -64,22 +69,29 @@ export const getUpcomingSessions = async (
  * 新着シナリオを取得（最大3件）
  */
 export const getNewScenarios = async (): Promise<Result<NewScenario[]>> => {
-  const db = getDb();
   try {
-    const newScenarios = await db.query.scenarios.findMany({
-      with: {
-        system: true,
-        scenarioTags: {
-          with: {
-            tag: true,
-          },
-        },
-      },
-      orderBy: [desc(scenarios.createdAt)],
-      limit: 3,
-    });
+    const supabase = await createDbClient();
+    const { data, error } = await supabase
+      .from('scenarios')
+      .select(`
+        *,
+        system:scenario_systems(*),
+        scenarioTags:scenario_tags(
+          tag:tags(*)
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .limit(3);
 
-    return ok(newScenarios as NewScenario[]);
+    if (error) {
+      return err(new Error(error.message));
+    }
+
+    return ok(
+      (data ?? []).map(
+        (s) => camelCaseKeys(s as Record<string, unknown>) as NewScenario,
+      ),
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }

@@ -37,8 +37,8 @@ const mockReviews: ReviewWithUser[] = [
       '素晴らしいシナリオでした！初心者でも楽しめる内容で、GMも回しやすかったです。謎解き要素と戦闘のバランスが絶妙でした。',
     spoilerComment:
       '最後のどんでん返しは全員が驚いていました。NPCの正体が明かされるシーンは特に盛り上がりましたね。',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15'),
+    createdAt: '2024-01-15',
+    updatedAt: '2024-01-15',
     user: {
       userId: 'user-1',
       nickname: 'たろう',
@@ -55,8 +55,8 @@ const mockReviews: ReviewWithUser[] = [
     openComment:
       '全体的に楽しめました。ストーリーがしっかりしていて、ロールプレイしがいがあります。',
     spoilerComment: null,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10'),
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-10',
     user: {
       userId: 'user-2',
       nickname: 'はなこ',
@@ -74,8 +74,8 @@ const mockReviews: ReviewWithUser[] = [
       '普通に楽しめるシナリオです。特筆すべき点は少ないですが、安定した内容。',
     spoilerComment:
       '中盤の展開がやや冗長に感じました。もう少しテンポよく進められると良いかも。',
-    createdAt: new Date('2024-01-05'),
-    updatedAt: new Date('2024-01-05'),
+    createdAt: '2024-01-05',
+    updatedAt: '2024-01-05',
     user: {
       userId: 'user-3',
       nickname: 'じろう',
@@ -92,8 +92,8 @@ const mockReviews: ReviewWithUser[] = [
     openComment:
       'まだプレイしていませんが、期待大です！友人のおすすめで気になっています。',
     spoilerComment: null,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-01',
     user: {
       userId: 'user-4',
       nickname: 'さぶろう',
@@ -111,8 +111,8 @@ const mockReviews: ReviewWithUser[] = [
       '何度遊んでも楽しい！GMとしても3回、PLとしても2回遊びましたが、毎回違った展開になります。',
     spoilerComment:
       'マルチエンディングの分岐条件がよく練られています。バッドエンドも含めてすべて見たくなる。',
-    createdAt: new Date('2023-12-25'),
-    updatedAt: new Date('2023-12-25'),
+    createdAt: '2023-12-25',
+    updatedAt: '2023-12-25',
     user: {
       userId: 'user-5',
       nickname: 'しろう',

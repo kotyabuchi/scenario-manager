@@ -20,7 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const { loading, loadingText, children, ...rest } = props;
 
     return (
-      <StyledButton {...rest} ref={ref}>
+      <StyledButton {...rest} ref={ref} disabled={loading || rest.disabled}>
         {loading ? (
           <>
             <Spinner size="sm" />
