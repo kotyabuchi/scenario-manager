@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import { getSlotWarning } from './slotWarning';
+import * as styles from './styles';
 
 import { SessionPhases } from '@/db/enum';
-import { css } from '@/styled-system/css';
 
 import type { MySessionWithRole, PublicSession } from '../interface';
 
@@ -53,231 +53,18 @@ const getPhaseLabel = (phase: string): string => {
   return phaseObj?.label ?? phase;
 };
 
-const getPhaseColor = (phase: string): { bg: string; color: string } => {
-  switch (phase) {
-    case 'RECRUITING':
-      return { bg: '#DCFCE7', color: '#16A34A' };
-    case 'PREPARATION':
-      return { bg: '#FEF3C7', color: '#D97706' };
-    case 'IN_PROGRESS':
-      return { bg: '#DBEAFE', color: '#2563EB' };
-    case 'COMPLETED':
-      return { bg: '#F3F4F6', color: '#6B7280' };
-    case 'CANCELLED':
-      return { bg: '#FEE2E2', color: '#DC2626' };
-    default:
-      return { bg: '#F3F4F6', color: '#6B7280' };
-  }
-};
-
-const getRoleBadge = (
-  role: string,
-): { label: string; bg: string; color: string } => {
+const getRoleLabel = (role: string): string => {
   switch (role) {
     case 'KEEPER':
-      return { label: 'GM', bg: '#FEF3C7', color: '#D97706' };
+      return 'GM';
     case 'PLAYER':
-      return { label: 'PL', bg: '#EEF2FF', color: '#4F46E5' };
+      return 'PL';
     case 'SPECTATOR':
-      return { label: '観戦', bg: '#F3F4F6', color: '#6B7280' };
+      return '観戦';
     default:
-      return { label: role, bg: '#F3F4F6', color: '#6B7280' };
+      return role;
   }
 };
-
-// --- スタイル ---
-
-// 公開卓カード
-const publicCard = css({
-  display: 'flex',
-  flexDirection: 'column',
-  bg: 'white',
-  borderRadius: '12px',
-  overflow: 'hidden',
-  shadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-  cursor: 'pointer',
-  transition: 'all {durations.normal}',
-  textDecoration: 'none',
-  _hover: {
-    shadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-    transform: 'translateY(-2px)',
-  },
-});
-
-const publicCard_thumbnail = css({
-  position: 'relative',
-  h: '100px',
-  bg: 'linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%)',
-});
-
-const publicCard_systemBadge = css({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  px: '12px',
-  py: '6px',
-  borderRadius: '0 0 8px 0',
-  fontSize: '11px',
-  fontWeight: '600',
-  color: 'white',
-  bg: '#10B981',
-});
-
-const publicCard_content = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-  p: '16px',
-});
-
-const publicCard_title = css({
-  fontSize: '16px',
-  fontWeight: '600',
-  color: '#1F2937',
-  lineClamp: 2,
-});
-
-const publicCard_meta = css({
-  display: 'flex',
-  gap: '16px',
-  alignItems: 'center',
-});
-
-const publicCard_metaItem = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-  fontSize: '13px',
-  color: '#6B7280',
-});
-
-const publicCard_metaIcon = css({
-  w: '14px',
-  h: '14px',
-  flexShrink: 0,
-});
-
-const publicCard_tags = css({
-  display: 'flex',
-  gap: '6px',
-  flexWrap: 'wrap',
-});
-
-const publicCard_tag = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  h: '24px',
-  px: '8px',
-  borderRadius: '4px',
-  fontSize: '11px',
-  fontWeight: '500',
-});
-
-// 参加予定・履歴カード（横並び）
-const sessionCard_horizontal = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  p: '20px',
-  bg: 'white',
-  borderRadius: '12px',
-  shadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-  cursor: 'pointer',
-  transition: 'all {durations.normal}',
-  textDecoration: 'none',
-  w: '100%',
-  _hover: {
-    shadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-    transform: 'translateY(-1px)',
-  },
-});
-
-const sessionCard_dateArea = css({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  w: '80px',
-  flexShrink: 0,
-});
-
-const sessionCard_dateMonth = css({
-  fontSize: '13px',
-  fontWeight: 'normal',
-});
-
-const sessionCard_dateDay = css({
-  fontSize: '32px',
-  fontWeight: '700',
-});
-
-const sessionCard_dateDow = css({
-  fontSize: '12px',
-  fontWeight: 'normal',
-});
-
-const sessionCard_infoArea = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-  flex: 1,
-  minW: 0,
-});
-
-const sessionCard_infoTitle = css({
-  fontSize: '16px',
-  fontWeight: '600',
-  color: '#1F2937',
-  lineClamp: 1,
-});
-
-const sessionCard_infoMeta = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  flexWrap: 'wrap',
-});
-
-const sessionCard_systemTag = css({
-  px: '8px',
-  py: '4px',
-  borderRadius: '4px',
-  bg: '#10B981',
-  color: 'white',
-  fontSize: '11px',
-  fontWeight: '600',
-});
-
-const sessionCard_metaText = css({
-  fontSize: '13px',
-  color: '#6B7280',
-});
-
-const sessionCard_roleBadge = css({
-  px: '12px',
-  py: '6px',
-  borderRadius: '6px',
-  fontSize: '12px',
-  fontWeight: '600',
-  flexShrink: 0,
-});
-
-const sessionCard_badges = css({
-  display: 'flex',
-  gap: '8px',
-  mt: '4px',
-});
-
-const sessionCard_badge = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '4px',
-  px: '8px',
-  py: '2px',
-  fontSize: '12px',
-  color: '#6B7280',
-  bg: '#F3F4F6',
-  borderRadius: '4px',
-});
 
 // --- コンポーネント ---
 
@@ -291,56 +78,56 @@ export const SessionCard = (props: SessionCardProps) => {
 };
 
 const PublicSessionCard = ({ session }: { session: PublicSession }) => {
-  const phaseStyle = getPhaseColor(session.sessionPhase);
   const slotWarning = getSlotWarning({
     participantCount: session.participantCount,
     maxPlayer: session.maxPlayer,
   });
 
   return (
-    <Link href={`/sessions/${session.gameSessionId}`} className={publicCard}>
-      <div className={publicCard_thumbnail}>
-        <span className={publicCard_systemBadge}>{session.systemName}</span>
+    <Link
+      href={`/sessions/${session.gameSessionId}`}
+      className={styles.publicCard}
+    >
+      <div className={styles.publicCard_thumbnail}>
+        <span className={styles.publicCard_systemBadge}>
+          {session.systemName}
+        </span>
       </div>
 
-      <div className={publicCard_content}>
-        <h3 className={publicCard_title}>{session.scenarioName}</h3>
+      <div className={styles.publicCard_content}>
+        <h3 className={styles.publicCard_title}>{session.scenarioName}</h3>
 
-        <div className={publicCard_meta}>
-          <span className={publicCard_metaItem}>
-            <Calendar className={publicCard_metaIcon} />
+        <div className={styles.publicCard_meta}>
+          <span className={styles.publicCard_metaItem}>
+            <Calendar className={styles.publicCard_metaIcon} />
             {formatDateTime(session.scheduleDate)}
           </span>
-          <span className={publicCard_metaItem}>
-            <Users className={publicCard_metaIcon} />
+          <span className={styles.publicCard_metaItem}>
+            <Users className={styles.publicCard_metaIcon} />
             {session.participantCount}/{session.maxPlayer ?? '?'}人
           </span>
         </div>
 
-        <div className={publicCard_tags}>
+        <div className={styles.publicCard_tags}>
           <span
-            className={publicCard_tag}
-            style={{ backgroundColor: phaseStyle.bg, color: phaseStyle.color }}
+            className={styles.publicCard_phaseTag({
+              phase: session.sessionPhase as
+                | 'RECRUITING'
+                | 'PREPARATION'
+                | 'IN_PROGRESS'
+                | 'COMPLETED'
+                | 'CANCELLED',
+            })}
           >
             {getPhaseLabel(session.sessionPhase)}
           </span>
           {!isNil(slotWarning) ? (
-            <span
-              className={publicCard_tag}
-              style={{
-                backgroundColor: '#FEF2F2',
-                color: '#DC2626',
-                fontWeight: 600,
-              }}
-            >
+            <span className={styles.publicCard_slotWarning}>
               {slotWarning.label}
             </span>
           ) : (
             (session.minPlaytime || session.maxPlaytime) && (
-              <span
-                className={publicCard_tag}
-                style={{ backgroundColor: '#F3F4F6', color: '#4B5563' }}
-              >
+              <span className={styles.publicCard_tag}>
                 {formatPlaytime(session.minPlaytime, session.maxPlaytime)}
               </span>
             )
@@ -360,6 +147,7 @@ const MySessionCard = ({
 }) => {
   const scheduleDate = session.schedule?.scheduleDate ?? null;
   const isHistory = showMeta;
+  const cardType = isHistory ? 'history' : 'upcoming';
 
   // 日付パーツ
   const dateInfo = (() => {
@@ -381,7 +169,6 @@ const MySessionCard = ({
     };
   })();
 
-  const roleBadge = getRoleBadge(session.myRole);
   const systemName = session.scenario?.system?.name ?? '';
   const displayTitle = session.sessionName || session.scenario?.name || '';
 
@@ -392,67 +179,55 @@ const MySessionCard = ({
     return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}〜`;
   })();
 
-  // 履歴カードの日付色は薄め
-  const dateMonthColor = isHistory ? '#9CA3AF' : '#6B7280';
-  const dateDayColor = isHistory ? '#6B7280' : '#1F2937';
-  const dateDowColor = isHistory ? '#9CA3AF' : '#6B7280';
-
   return (
     <Link
       href={`/sessions/${session.gameSessionId}`}
-      className={sessionCard_horizontal}
+      className={styles.sessionCard_horizontal}
     >
       {/* 日付エリア */}
-      <div className={sessionCard_dateArea}>
+      <div className={styles.sessionCard_dateArea}>
         {dateInfo ? (
           <>
-            <span
-              className={sessionCard_dateMonth}
-              style={{ color: dateMonthColor }}
-            >
+            <span className={styles.sessionCard_month({ type: cardType })}>
               {dateInfo.month}
             </span>
-            <span
-              className={sessionCard_dateDay}
-              style={{ color: dateDayColor }}
-            >
+            <span className={styles.sessionCard_day({ type: cardType })}>
               {dateInfo.day}
             </span>
-            <span
-              className={sessionCard_dateDow}
-              style={{ color: dateDowColor }}
-            >
+            <span className={styles.sessionCard_weekday({ type: cardType })}>
               {dateInfo.weekday}
             </span>
           </>
         ) : (
-          <span className={sessionCard_metaText}>日程未定</span>
+          <span className={styles.sessionCard_time}>日程未定</span>
         )}
       </div>
 
       {/* 情報エリア */}
-      <div className={sessionCard_infoArea}>
-        <h3 className={sessionCard_infoTitle}>{displayTitle}</h3>
-        <div className={sessionCard_infoMeta}>
+      <div className={styles.sessionCard_infoArea}>
+        <h3 className={styles.sessionCard_title}>{displayTitle}</h3>
+        <div className={styles.sessionCard_metaRow}>
           {systemName && (
-            <span className={sessionCard_systemTag}>{systemName}</span>
+            <span className={styles.sessionCard_systemBadgeInline}>
+              {systemName}
+            </span>
           )}
-          <span className={sessionCard_metaText}>{timeStr}</span>
-          <span className={sessionCard_metaText}>
+          <span className={styles.sessionCard_time}>{timeStr}</span>
+          <span className={styles.sessionCard_players}>
             参加者: {session.participants.length}人
           </span>
         </div>
 
         {showMeta && (session.isReviewed || session.hasVideo) && (
-          <div className={sessionCard_badges}>
+          <div className={styles.sessionCard_badges}>
             {session.isReviewed && (
-              <span className={sessionCard_badge}>
+              <span className={styles.sessionCard_badge}>
                 <Check size={12} />
                 レビュー済み
               </span>
             )}
             {session.hasVideo && (
-              <span className={sessionCard_badge}>
+              <span className={styles.sessionCard_badge}>
                 <Video size={12} />
                 動画あり
               </span>
@@ -462,11 +237,8 @@ const MySessionCard = ({
       </div>
 
       {/* 役割バッジ */}
-      <span
-        className={sessionCard_roleBadge}
-        style={{ backgroundColor: roleBadge.bg, color: roleBadge.color }}
-      >
-        {roleBadge.label}
+      <span className={styles.sessionCard_roleBadge({ role: session.myRole })}>
+        {getRoleLabel(session.myRole)}
       </span>
     </Link>
   );

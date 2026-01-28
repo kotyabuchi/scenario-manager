@@ -1,4 +1,4 @@
-import { css } from '@/styled-system/css';
+import * as styles from './styles';
 
 const START_YEAR = 2026;
 
@@ -18,19 +18,4 @@ export const SimpleFooter = () => {
       </p>
     </footer>
   );
-};
-
-const styles = {
-  footer: css({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '48px',
-    bg: 'white',
-  }),
-  copyright: css({
-    fontSize: '12px',
-    fontWeight: 'normal',
-    color: 'gray.400',
-  }),
 };

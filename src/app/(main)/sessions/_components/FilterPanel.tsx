@@ -1,7 +1,8 @@
 'use client';
 
+import * as styles from './styles';
+
 import { Select } from '@/components/elements/select/select';
-import { css } from '@/styled-system/css';
 
 import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type {
@@ -32,33 +33,6 @@ const statusItems = [
   { value: 'completed', label: '完了' },
   { value: 'cancelled', label: 'キャンセル' },
 ];
-
-const panel = css({
-  bg: '#FFFFFF',
-  shadow: 'subHeader.default',
-  p: '24px 32px',
-  display: 'flex',
-  flexDir: 'column',
-  gap: '16px',
-});
-
-const searchRow = css({
-  display: 'flex',
-  gap: '16px',
-  alignItems: 'flex-end',
-});
-
-const fieldWrapper = css({
-  display: 'flex',
-  flexDir: 'column',
-  gap: '6px',
-});
-
-const fieldLabel = css({
-  fontSize: '13px',
-  fontWeight: '500',
-  color: '#6B7280',
-});
 
 export const FilterPanel = ({
   systems,
@@ -99,11 +73,11 @@ export const FilterPanel = ({
   };
 
   return (
-    <div className={panel}>
-      <div className={searchRow}>
+    <div className={styles.filterPanel}>
+      <div className={styles.filterPanel_row}>
         {/* システム: width 180 */}
-        <div className={fieldWrapper} style={{ width: '180px', flexShrink: 0 }}>
-          <span className={fieldLabel}>システム</span>
+        <div className={styles.filterPanel_fieldSystem}>
+          <span className={styles.filterPanel_label}>システム</span>
           <Select
             items={systemItems}
             value={selectedSystems}
@@ -115,8 +89,8 @@ export const FilterPanel = ({
         </div>
 
         {/* 役割: width 140 */}
-        <div className={fieldWrapper} style={{ width: '140px', flexShrink: 0 }}>
-          <span className={fieldLabel}>役割</span>
+        <div className={styles.filterPanel_fieldRole}>
+          <span className={styles.filterPanel_label}>役割</span>
           <Select
             items={roleItems}
             value={selectedRoles}
@@ -128,8 +102,8 @@ export const FilterPanel = ({
         </div>
 
         {/* ステータス: width 140 */}
-        <div className={fieldWrapper} style={{ width: '140px', flexShrink: 0 }}>
-          <span className={fieldLabel}>ステータス</span>
+        <div className={styles.filterPanel_fieldStatus}>
+          <span className={styles.filterPanel_label}>ステータス</span>
           <Select
             items={statusItems}
             value={selectedStatuses}

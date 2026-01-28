@@ -21,7 +21,6 @@ import {
   type SelectValueChangeDetails,
 } from '@/components/elements/select/select';
 import { Slider } from '@/components/elements/slider/slider';
-import { css } from '@/styled-system/css';
 
 import type { SearchPanelProps, SearchParams } from '../interface';
 
@@ -206,25 +205,7 @@ export const SearchPanel = ({
           <button
             type="button"
             onClick={handleReset}
-            className={css({
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'xs',
-              px: 'md',
-              height: '44px',
-              fontSize: 'sm',
-              fontWeight: 'medium',
-              color: '#374151',
-              bg: 'white',
-              border: 'none',
-              borderRadius: 'md',
-              cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-              whiteSpace: 'nowrap',
-              _hover: {
-                bg: '#F9FAFB',
-              },
-            })}
+            className={styles.clearButton}
           >
             <X size={16} color="#6B7280" />
             クリア
