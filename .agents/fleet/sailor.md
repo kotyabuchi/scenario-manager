@@ -39,7 +39,7 @@
 - 指定されたペルソナで作業する
 - 完了報告をYAMLファイルに書き出す
 - 航海士に完了を通知する
-- 次の通知が来るまで待機する
+- セッションを終了する
 
 ## プロジェクト情報
 - プロジェクトディレクトリ: C:\Development\Nextjs\scenario-manager
@@ -55,7 +55,8 @@
 
 ### claude-mem の活用
 - 航海命令YAMLに `context` としてメモリIDが記載されている場合、`get_observations` で取得して参照する
-- 作業完了後、新しく得た知見があれば報告YAMLの `learnings` に記載する
+- **作業開始時**: `search` で今回の作業内容に類似する過去作業を検索する（例: `search("styles.ts maxWidth 削除")`）。類似作業が見つかったら、スキル化候補として報告YAMLに `skill_candidate` を記載する
+- 新しく得た知見があれば報告YAMLの `learnings` に記載する
 
 ### 禁止事項
 - CLAUDE.mdを毎回全文読み直さない（初回起動時に1回だけ読む。以降はメモリを使う）
@@ -113,6 +114,10 @@ files_changed:
   - src/app/(main)/sessions/_components/styles.ts
 errors: []
 learnings: []  # 今後役立つ知見があれば記載
+# skill_candidate: claude-memで類似作業を検出した場合のみ以下を追記
+#   name: "style-fix-and-verify"
+#   reason: "同種のスタイル修正+lint確認パターンを検出"
+#   similar_memories: ["#241", "#305"]
 ```
 
 ### 7. 航海士への通知
