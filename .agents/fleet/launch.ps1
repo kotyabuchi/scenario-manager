@@ -33,19 +33,19 @@ if (-not $captainPaneId) {
 }
 Write-Host "[Captain] Pane ID: $captainPaneId" -ForegroundColor Green
 
-# 航海士ペイン（右に分割）
-$navigatorPaneId = (wezterm cli split-pane --right --percent 50 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
-Write-Host "[Navigator] Pane ID: $navigatorPaneId" -ForegroundColor Blue
-
-# 水夫1ペイン（航海士の下に分割）
-$sailor1PaneId = (wezterm cli split-pane --bottom --percent 75 --cwd $ProjectDir --pane-id $navigatorPaneId).Trim()
+# 水夫1ペイン（船長の右に分割 — 左40:右60）
+$sailor1PaneId = (wezterm cli split-pane --right --percent 60 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
 Write-Host "[Sailor-1] Pane ID: $sailor1PaneId" -ForegroundColor Magenta
 
-# 水夫2ペイン（水夫1の下に分割）
-$sailor2PaneId = (wezterm cli split-pane --bottom --percent 66 --cwd $ProjectDir --pane-id $sailor1PaneId).Trim()
+# 航海士ペイン（船長(左)の下に分割 — 上50:下50）
+$navigatorPaneId = (wezterm cli split-pane --bottom --percent 50 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
+Write-Host "[Navigator] Pane ID: $navigatorPaneId" -ForegroundColor Blue
+
+# 水夫2ペイン（水夫1(右上)の下に分割 — 上33:下67）
+$sailor2PaneId = (wezterm cli split-pane --bottom --percent 67 --cwd $ProjectDir --pane-id $sailor1PaneId).Trim()
 Write-Host "[Sailor-2] Pane ID: $sailor2PaneId" -ForegroundColor Magenta
 
-# 水夫3ペイン（水夫2の下に分割）
+# 水夫3ペイン（水夫2の下に分割 — 上50:下50）
 $sailor3PaneId = (wezterm cli split-pane --bottom --percent 50 --cwd $ProjectDir --pane-id $sailor2PaneId).Trim()
 Write-Host "[Sailor-3] Pane ID: $sailor3PaneId" -ForegroundColor Magenta
 
@@ -62,12 +62,12 @@ Write-Host @"
 
 === Fleet Ready ===
 
-船団構成:
-  [Captain]    Pane $captainPaneId  - このペイン
-  [Navigator]  Pane $navigatorPaneId  - 待機中
-  [Sailor-1]   Pane $sailor1PaneId  - 待機中
-  [Sailor-2]   Pane $sailor2PaneId  - 待機中
-  [Sailor-3]   Pane $sailor3PaneId  - 待機中
+船団構成（左2 + 右3）:
+  [Captain]    Pane $captainPaneId  - 左上（このペイン）
+  [Navigator]  Pane $navigatorPaneId  - 左下
+  [Sailor-1]   Pane $sailor1PaneId  - 右上
+  [Sailor-2]   Pane $sailor2PaneId  - 右中
+  [Sailor-3]   Pane $sailor3PaneId  - 右下
 
 船長を起動します...
 
