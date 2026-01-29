@@ -523,6 +523,14 @@ export const videoCard_meta = css({
   fontSize: 'xs',
 });
 
+export const video_thumbnailImage = css({
+  objectFit: 'cover',
+});
+
+export const video_spoilerHint = css({
+  fontSize: '12px',
+});
+
 export const videoGrid = css({
   display: 'flex',
   gap: 'md',
@@ -1018,4 +1026,8 @@ export const header_actions = css({
   display: 'flex',
   alignItems: 'center',
   gap: 'sm',
+});
+
+export const review_avatarImage = css({
+  objectFit: 'cover',
 });

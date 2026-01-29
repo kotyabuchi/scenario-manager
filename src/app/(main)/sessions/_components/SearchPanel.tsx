@@ -6,6 +6,7 @@ import { Search } from 'lucide-react';
 import { isNil } from 'ramda';
 
 import { type SearchFormValues, searchFormSchema } from './schema';
+import * as styles from './styles';
 
 import { FieldError } from '@/components/elements';
 import { Button } from '@/components/elements/button/button';
@@ -16,7 +17,7 @@ import {
 import { Input } from '@/components/elements/input/input';
 import { Select } from '@/components/elements/select/select';
 import { SessionPhases } from '@/db/enum';
-import { css } from '@/styled-system/css';
+import { css, cx } from '@/styled-system/css';
 
 import type { DatePickerValueChangeDetails } from '@/components/elements/date-picker/date-picker';
 import type { ScenarioSystem } from '../interface';
@@ -147,7 +148,7 @@ export const SearchPanel = ({
     <form onSubmit={handleSubmit(onSubmit)} className={panel}>
       <div className={searchRow}>
         {/* システム: width 200 */}
-        <div className={fieldWrapper} style={{ width: '200px', flexShrink: 0 }}>
+        <div className={cx(fieldWrapper, styles.searchPanel_systemField)}>
           <span className={fieldLabel}>システム</span>
           <Controller
             name="systems"
@@ -166,7 +167,7 @@ export const SearchPanel = ({
         </div>
 
         {/* 開催日: width 280 */}
-        <div className={fieldWrapper} style={{ width: '280px', flexShrink: 0 }}>
+        <div className={cx(fieldWrapper, styles.searchPanel_dateField)}>
           <span className={fieldLabel}>開催日</span>
           <div className={dateRow}>
             <Controller
@@ -202,7 +203,7 @@ export const SearchPanel = ({
         </div>
 
         {/* ステータス: width 160 */}
-        <div className={fieldWrapper} style={{ width: '160px', flexShrink: 0 }}>
+        <div className={cx(fieldWrapper, styles.searchPanel_statusField)}>
           <span className={fieldLabel}>ステータス</span>
           <Controller
             name="phases"
@@ -221,7 +222,7 @@ export const SearchPanel = ({
         </div>
 
         {/* シナリオ名: fill */}
-        <div className={fieldWrapper} style={{ flex: 1, minWidth: 0 }}>
+        <div className={cx(fieldWrapper, styles.searchPanel_scenarioField)}>
           <label htmlFor="scenarioName" className={fieldLabel}>
             シナリオ名
           </label>
@@ -234,7 +235,11 @@ export const SearchPanel = ({
 
         {/* 検索ボタン: width 100 */}
         <div className={searchBtn}>
-          <Button type="submit" status="primary" style={{ width: '100%' }}>
+          <Button
+            type="submit"
+            status="primary"
+            className={styles.searchPanel_submitButton}
+          >
             <Search size={16} />
             検索
           </Button>

@@ -100,7 +100,7 @@ const VideoCard = ({
               alt="動画サムネイル"
               fill
               sizes="280px"
-              style={{ objectFit: 'cover' }}
+              className={styles.video_thumbnailImage}
             />
             <PlayCircle size={48} className={styles.videoCard_playIcon} />
           </>
@@ -115,7 +115,7 @@ const VideoCard = ({
           >
             <EyeOff size={24} />
             <span>ネタバレを含む可能性があります</span>
-            <span style={{ fontSize: '12px' }}>クリックで表示</span>
+            <span className={styles.video_spoilerHint}>クリックで表示</span>
           </button>
         ) : (
           <div className={styles.videoCard_placeholder}>

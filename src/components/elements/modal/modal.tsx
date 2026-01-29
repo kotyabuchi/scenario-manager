@@ -30,10 +30,7 @@ export const Modal = ({
   return (
     <Dialog.Root open={true} onOpenChange={onOpenChange} closeOnInteractOutside>
       <Portal>
-        <Dialog.Backdrop
-          className={styles.backdrop}
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-        />
+        <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Positioner className={styles.positioner}>
           <Dialog.Content className={styles.content}>
             <header className={styles.header}>

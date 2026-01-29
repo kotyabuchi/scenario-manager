@@ -922,9 +922,41 @@ export const chip = cva({
 
 // ===== Divider =====
 
+export const calendar_sessionDots = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '2px',
+});
+
 export const divider = css({
   border: 'none',
   h: '1px',
   bg: '#E5E7EB',
   my: '16px',
+});
+
+// ===== SearchPanel Inline Style Migration =====
+
+export const searchPanel_systemField = css({
+  width: '200px',
+  flexShrink: 0,
+});
+
+export const searchPanel_dateField = css({
+  width: '280px',
+  flexShrink: 0,
+});
+
+export const searchPanel_statusField = css({
+  width: '160px',
+  flexShrink: 0,
+});
+
+export const searchPanel_scenarioField = css({
+  flex: 1,
+  minWidth: 0,
+});
+
+export const searchPanel_submitButton = css({
+  width: '100%',
 });

@@ -209,9 +209,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
                   {dayInfo.day}
                 </span>
                 {daySessions.length > 0 && (
-                  <div
-                    style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}
-                  >
+                  <div className={styles.calendar_sessionDots}>
                     {daySessions.slice(0, 2).map((session) => (
                       <span
                         key={session.gameSessionId}

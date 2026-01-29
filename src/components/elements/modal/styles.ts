@@ -7,7 +7,7 @@ import { css } from '@/styled-system/css';
 export const backdrop = css({
   position: 'fixed',
   inset: 0,
-  bg: 'overlay.backdrop',
+  bg: 'overlay.dark',
   backdropFilter: 'blur(4px)',
   zIndex: 9998,
   _open: {

@@ -132,7 +132,7 @@ const ReviewCard = ({
                   alt={review.user.nickname}
                   width={32}
                   height={32}
-                  style={{ objectFit: 'cover' }}
+                  className={styles.review_avatarImage}
                 />
               </div>
             ) : (
