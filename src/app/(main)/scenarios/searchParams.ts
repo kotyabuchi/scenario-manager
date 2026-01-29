@@ -5,6 +5,7 @@ import {
   parseAsString,
   parseAsStringLiteral,
 } from 'nuqs/server';
+import { isNotNil } from 'ramda';
 
 import type { SortOption } from './interface';
 
@@ -58,14 +59,14 @@ export const toSearchParams = (parsed: {
     params.tagIds = parsed.tags;
   }
 
-  if (parsed.minPlayer !== null || parsed.maxPlayer !== null) {
+  if (isNotNil(parsed.minPlayer) || isNotNil(parsed.maxPlayer)) {
     params.playerCount = {
       min: parsed.minPlayer ?? 1,
       max: parsed.maxPlayer ?? 20,
     };
   }
 
-  if (parsed.minPlaytime !== null || parsed.maxPlaytime !== null) {
+  if (isNotNil(parsed.minPlaytime) || isNotNil(parsed.maxPlaytime)) {
     params.playtime = {
       min: parsed.minPlaytime ?? 1,
       max: parsed.maxPlaytime ?? 240,

@@ -1,3 +1,5 @@
+import { isNil } from 'ramda';
+
 type SlotWarningInput = {
   participantCount: number;
   maxPlayer: number | null;
@@ -20,7 +22,7 @@ export const getSlotWarning = (
 ): SlotWarningResult | null => {
   const { participantCount, maxPlayer } = input;
 
-  if (maxPlayer === null || maxPlayer === 0) {
+  if (isNil(maxPlayer) || maxPlayer === 0) {
     return null;
   }
 

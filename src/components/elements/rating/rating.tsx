@@ -92,9 +92,6 @@ export const Rating = ({
     <div
       role="radiogroup"
       aria-label="評価"
-      aria-valuenow={value}
-      aria-valuemin={0}
-      aria-valuemax={max}
       className={`${styles.ratingRoot} ${className ?? ''}`}
       style={{ gap }}
       onMouseLeave={handleMouseLeave}
@@ -104,7 +101,8 @@ export const Rating = ({
 
         return (
           <button
-            key={index}
+            // biome-ignore lint/suspicious/noArrayIndexKey: 星の順序は固定で並び替えは発生しない
+            key={`star-${index}`}
             type="button"
             onClick={() => handleClick(index)}
             onMouseEnter={() => handleMouseEnter(index)}

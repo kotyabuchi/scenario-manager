@@ -146,7 +146,7 @@ export const Dropdown = ({
             <button
               key={item.value}
               type="button"
-              role="menuitem"
+              role="menuitemradio"
               disabled={item.disabled}
               aria-checked={item.value === value}
               onClick={() => handleItemClick(item)}

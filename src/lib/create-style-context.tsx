@@ -9,6 +9,7 @@ import {
   type RefAttributes,
   useContext,
 } from 'react';
+import { isNil } from 'ramda';
 
 type SlotRecipeFn = (props?: Record<string, unknown>) => Record<string, string>;
 
@@ -31,8 +32,7 @@ const extractVariantProps = (
       typeof value === 'string' ||
       typeof value === 'number' ||
       typeof value === 'boolean' ||
-      value === undefined ||
-      value === null
+      isNil(value)
     ) {
       variantProps[key] = value;
     }

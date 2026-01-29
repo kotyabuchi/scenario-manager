@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { isNil } from 'ramda';
 
 import { HistoryTab } from './_components/HistoryTab';
 import { LoginPrompt } from './_components/LoginPrompt';
@@ -52,7 +53,7 @@ export default async function SessionsPage({ searchParams }: PageProps) {
   const statusesFilter = (parsed.statuses ?? []) as StatusFilterValue[];
 
   const userId = await getCurrentUserId();
-  const isLoggedIn = userId !== null;
+  const isLoggedIn = !isNil(userId);
 
   const systemsResult = await getAllSystems();
 
