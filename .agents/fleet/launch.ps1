@@ -33,12 +33,12 @@ if (-not $captainPaneId) {
 }
 Write-Host "[Captain] Pane ID: $captainPaneId" -ForegroundColor Green
 
-# 水夫1ペイン（船長の右に分割 — 左40:右60）
-$sailor1PaneId = (wezterm cli split-pane --right --percent 60 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
+# 水夫1ペイン（船長の右に分割 — 左55:右45）
+$sailor1PaneId = (wezterm cli split-pane --right --percent 45 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
 Write-Host "[Sailor-1] Pane ID: $sailor1PaneId" -ForegroundColor Magenta
 
-# 航海士ペイン（船長(左)の下に分割 — 上50:下50）
-$navigatorPaneId = (wezterm cli split-pane --bottom --percent 50 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
+# 航海士ペイン（船長(左)の下に分割 — 上55:下45）
+$navigatorPaneId = (wezterm cli split-pane --bottom --percent 45 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
 Write-Host "[Navigator] Pane ID: $navigatorPaneId" -ForegroundColor Blue
 
 # 水夫2ペイン（水夫1(右上)の下に分割 — 上33:下67）

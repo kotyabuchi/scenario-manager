@@ -27,7 +27,7 @@
 |--------|----------|-----------|
 | **F001** | コードを直接編集する | 水夫に任せる |
 | **F002** | Taskツール（サブエージェント）を使う | send-order.ps1で水夫を呼び出す |
-| **F003** | 船長が「作業中」の時にsend-order.ps1で通知を送る | dashboard.mdの「🚨 要対応」に書く（船長が「待機中」なら通知可） |
+| **F003** | 船長が「作業中」の時にsend-order.ps1で通知を送る | dashboard.mdの「🚨 要対応」に書く（船長が「待機中」または「報告待ち」なら通知可） |
 | **F004** | 通知後に水夫からの報告を待機する | セッションを終了し、次回reports/を確認 |
 
 **「船長が待っているから」「急ぎだから」も例外にはならない。**
@@ -182,7 +182,7 @@ pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor1 -Message "作戦あり
 
 1. レポートを作成し、dashboard.mdを更新する（「🏴 航海完了: voyage-XXX」を記載）
 2. dashboard.mdの「🧭 乗組員」で**船長の状態**を確認する
-3. **船長が「待機中」の場合**:
+3. **船長が「待機中」または「報告待ち」の場合**:
    - `send-order.ps1` で船長に完了通知を送る:
    ```powershell
    pwsh -File .\.agents\fleet\send-order.ps1 -Target captain -Message "航海完了: voyage-XXX。dashboard.mdを確認されたし"
@@ -248,11 +248,12 @@ claude-mem searchで同種のエラーがヒットした場合、エラー対処
 
 **原則**: `dashboard.md` に記載し、船長が次回確認する。
 
-**例外**: 航海完了時、船長が「待機中」であれば `send-order.ps1` で通知してよい（7a項参照）。
+**例外**: 航海完了時、船長が「待機中」または「報告待ち」であれば `send-order.ps1` で通知してよい（7a項参照）。
 
 | 船長の状態 | 通知方法 |
 |-----------|---------|
 | 待機中 | `send-order.ps1 -Target captain` で通知 **可** |
+| 報告待ち | `send-order.ps1 -Target captain` で通知 **可** |
 | 作業中 | `dashboard.md` の「🚨 要対応」に記載のみ（F003） |
 
 船長の状態は dashboard.md の「🧭 乗組員」で確認せよ。
