@@ -6,6 +6,7 @@
 ## 前提条件
 
 - [WezTerm](https://wezfurlong.org/wezterm/) がインストール済み
+- **PowerShell 7+（pwsh）** がインストール済み（PS5は非対応。全スクリプトを `pwsh -File` で実行すること）
 - Claude Code がインストール済み
 - Claude Max プラン（複数インスタンス同時実行のため推奨）
 
@@ -23,7 +24,7 @@ WezTermのターミナルで以下を実行:
 
 ```powershell
 cd C:\Development\Nextjs\scenario-manager
-.\.agents\fleet\launch.ps1
+pwsh -File .\.agents\fleet\launch.ps1
 ```
 
 5ペインに分割され、船長ペインでClaude Codeが自動起動する。
@@ -89,16 +90,16 @@ cd C:\Development\Nextjs\scenario-manager
 
 ```powershell
 # ロック取得
-.\.agents\fleet\filelock.ps1 -Action lock -File "src/path/to/file.ts" -Owner sailor1
+pwsh -File .\.agents\fleet\filelock.ps1 -Action lock -File "src/path/to/file.ts" -Owner sailor1
 
 # ロック解放
-.\.agents\fleet\filelock.ps1 -Action unlock -File "src/path/to/file.ts" -Owner sailor1
+pwsh -File .\.agents\fleet\filelock.ps1 -Action unlock -File "src/path/to/file.ts" -Owner sailor1
 
 # ロック確認
-.\.agents\fleet\filelock.ps1 -Action check -File "src/path/to/file.ts"
+pwsh -File .\.agents\fleet\filelock.ps1 -Action check -File "src/path/to/file.ts"
 
 # 全ロック一覧
-.\.agents\fleet\filelock.ps1 -Action list
+pwsh -File .\.agents\fleet\filelock.ps1 -Action list
 ```
 
 ### ペルソナ（動的変更）
@@ -132,13 +133,13 @@ cd C:\Development\Nextjs\scenario-manager
 
 ```powershell
 # 航海士にメッセージ送信
-.\.agents\fleet\send-order.ps1 -Target navigator -Message "新たな航海命令: voyage-001"
+pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "新たな航海命令: voyage-001"
 
 # 水夫1でClaude Codeを起動
-.\.agents\fleet\send-order.ps1 -Target sailor1 -StartClaude
+pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor1 -StartClaude
 
 # 水夫2にタスクを通知
-.\.agents\fleet\send-order.ps1 -Target sailor2 -Message "作戦あり: voyage-001/task-002"
+pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor2 -Message "作戦あり: voyage-001/task-002"
 ```
 
 ## ステータス

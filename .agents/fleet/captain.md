@@ -74,7 +74,7 @@ context: |
 航海士が起動していなければ起動する:
 
 ```powershell
-.\.agents\fleet\send-order.ps1 -Target navigator -StartClaude
+pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -StartClaude
 ```
 
 ### 2. 航海命令の作成
@@ -100,7 +100,7 @@ context: |
 YAMLに詳細を書いたら、航海士には通知だけ送る:
 
 ```powershell
-.\.agents\fleet\send-order.ps1 -Target navigator -Message "新たな航海命令: voyage-001"
+pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "新たな航海命令: voyage-001"
 ```
 
 ### 4. 即座終了（最重要）
@@ -138,8 +138,8 @@ YAMLに詳細を書いたら、航海士には通知だけ送る:
 2. 依頼主に提案内容（パターン、審査結果）を説明し、採用・却下を問う
 3. 結果を航海士に通知:
    ```powershell
-   .\.agents\fleet\send-order.ps1 -Target navigator -Message "スキル採用: skill-001"
-   .\.agents\fleet\send-order.ps1 -Target navigator -Message "スキル却下: skill-001"
+   pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "スキル採用: skill-001"
+   pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "スキル却下: skill-001"
    ```
    採用された場合、航海士が最新仕様をリサーチしてスキルファイルを作成し `.claude/commands/` に配置する。
 
@@ -156,8 +156,8 @@ YAMLに詳細を書いたら、航海士には通知だけ送る:
 2. 依頼主に提案内容を説明し、採用・却下を問う
 3. 結果を航海士に通知:
    ```powershell
-   .\.agents\fleet\send-order.ps1 -Target navigator -Message "改善採用: improve-001"
-   .\.agents\fleet\send-order.ps1 -Target navigator -Message "改善却下: improve-001"
+   pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "改善採用: improve-001"
+   pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "改善却下: improve-001"
    ```
    採用された場合、航海士が対象ファイルに反映する。
 

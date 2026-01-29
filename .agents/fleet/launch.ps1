@@ -1,3 +1,4 @@
+#Requires -Version 7.0
 <#
 .SYNOPSIS
   船団（Fleet）起動スクリプト - WezTermで5ペインを作成する

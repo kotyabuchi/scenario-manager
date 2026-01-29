@@ -85,7 +85,7 @@
 タスクの `files` に記載されたファイルのロックを取得する。取得に失敗したら航海士に報告して待機する。
 
 ```powershell
-.\.agents\fleet\filelock.ps1 -Action lock -File "src/path/to/file.ts" -Owner sailor1
+pwsh -File .\.agents\fleet\filelock.ps1 -Action lock -File "src/path/to/file.ts" -Owner sailor1
 ```
 
 ### 4. タスクの実行
@@ -98,7 +98,7 @@
 作業完了後、取得したロックをすべて解放する:
 
 ```powershell
-.\.agents\fleet\filelock.ps1 -Action unlock -File "src/path/to/file.ts" -Owner sailor1
+pwsh -File .\.agents\fleet\filelock.ps1 -Action unlock -File "src/path/to/file.ts" -Owner sailor1
 ```
 
 ### 6. 完了報告の作成
@@ -124,7 +124,7 @@ learnings: []  # 今後役立つ知見があれば記載
 `.agents/fleet/panes.json` を読んでペインIDを確認し、航海士に通知する:
 
 ```powershell
-.\.agents\fleet\send-order.ps1 -Target navigator -Message "報告: voyage-001/task-001 完了"
+pwsh -File .\.agents\fleet\send-order.ps1 -Target navigator -Message "報告: voyage-001/task-001 完了"
 ```
 
 ### 8. 即座終了

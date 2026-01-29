@@ -1,3 +1,4 @@
+#Requires -Version 7.0
 <#
 .SYNOPSIS
   船団（Fleet）一括終了スクリプト - 船長以外の全ペインを閉じる

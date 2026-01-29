@@ -1,3 +1,4 @@
+#Requires -Version 7.0
 <#
 .SYNOPSIS
   ファイルロック管理 - 水夫同士のコンフリクトを防止する

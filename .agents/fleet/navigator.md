@@ -148,7 +148,7 @@ tasks:
 - 同じファイルを含むタスクは同時に実行させない。`depends_on` で順序を強制する
 - 水夫への通知前に、対象ファイルがロック中でないか確認する:
   ```powershell
-  .\.agents\fleet\filelock.ps1 -Action check -File "src/path/to/file.ts"
+  pwsh -File .\.agents\fleet\filelock.ps1 -Action check -File "src/path/to/file.ts"
   ```
 - ロック中なら、先行タスクの完了を待たせる
 
@@ -156,16 +156,16 @@ tasks:
 `.agents/fleet/panes.json` を読み、必要な水夫が起動していなければ起動する:
 
 ```powershell
-.\.agents\fleet\send-order.ps1 -Target sailor1 -StartClaude
-.\.agents\fleet\send-order.ps1 -Target sailor2 -StartClaude
-.\.agents\fleet\send-order.ps1 -Target sailor3 -StartClaude
+pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor1 -StartClaude
+pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor2 -StartClaude
+pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor3 -StartClaude
 ```
 
 ### 6. 水夫への通知
 YAMLに詳細指示を書いたら、水夫には通知だけ送る:
 
 ```powershell
-.\.agents\fleet\send-order.ps1 -Target sailor1 -Message "作戦あり: voyage-001/task-001"
+pwsh -File .\.agents\fleet\send-order.ps1 -Target sailor1 -Message "作戦あり: voyage-001/task-001"
 ```
 
 依存関係（`depends_on`）があるタスクは、先行タスクが完了するまで通知しない。

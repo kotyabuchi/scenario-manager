@@ -1,3 +1,4 @@
+#Requires -Version 7.0
 <#
 .SYNOPSIS
   指示送信ユーティリティ - 指定ペインにClaude Codeコマンドを送信する
@@ -62,11 +63,13 @@ if ($StartClaude) {
     $cmd += " '$Message'"
   }
 
-  wezterm cli send-text --pane-id $paneId --no-paste "$cmd`n"
+  $cmd | wezterm cli send-text --pane-id $paneId
+  wezterm cli send-text --no-paste --pane-id $paneId -- "`r"
   Write-Host "[$Target] Claude Code を起動しました (Pane $paneId)" -ForegroundColor Green
 }
 elseif ($Message) {
-  wezterm cli send-text --pane-id $paneId --no-paste "$Message`n"
+  $Message | wezterm cli send-text --pane-id $paneId
+  wezterm cli send-text --no-paste --pane-id $paneId -- "`r"
   Write-Host "[$Target] メッセージを送信しました (Pane $paneId)" -ForegroundColor Green
 }
 else {
