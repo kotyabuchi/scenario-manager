@@ -16,6 +16,7 @@ import {
   type SelectItem,
   type SelectValueChangeDetails,
 } from '@/components/elements/select/select';
+import { getAppLogger } from '@/lib/logger';
 
 import type {
   ScenarioSystem,
@@ -133,7 +134,7 @@ export const ScenariosContent = ({
           setSearchResult(data);
         }
       } catch (error) {
-        console.error('Search failed:', error);
+        getAppLogger(['app', 'scenarios']).error`Search failed: ${error}`;
       }
     },
     [queryParams.sort, setQueryParams],
@@ -158,7 +159,7 @@ export const ScenariosContent = ({
           setSearchResult(data);
         }
       } catch (error) {
-        console.error('Sort failed:', error);
+        getAppLogger(['app', 'scenarios']).error`Sort failed: ${error}`;
       }
     },
     [currentParams, setQueryParams],
@@ -181,7 +182,7 @@ export const ScenariosContent = ({
         setOffset(newOffset);
       }
     } catch (error) {
-      console.error('Load more failed:', error);
+      getAppLogger(['app', 'scenarios']).error`Load more failed: ${error}`;
     }
   }, [currentParams, queryParams.sort, offset]);
 

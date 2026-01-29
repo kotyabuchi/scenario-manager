@@ -6,6 +6,7 @@ import { getAllSystems, getAllTags, searchScenarios } from './adapter';
 import { searchParamsCache, toSearchParams } from './searchParams';
 
 import { Spinner } from '@/components/elements';
+import { getAppLogger } from '@/lib/logger';
 
 import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 
@@ -41,10 +42,12 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
   if (!systemsResult.success || !tagsResult.success) {
     // エラーの詳細をログ出力
     if (!systemsResult.success) {
-      console.error('Systems fetch error:', systemsResult.error);
+      getAppLogger(['app', 'scenarios'])
+        .error`Systems fetch error: ${systemsResult.error}`;
     }
     if (!tagsResult.success) {
-      console.error('Tags fetch error:', tagsResult.error);
+      getAppLogger(['app', 'scenarios'])
+        .error`Tags fetch error: ${tagsResult.error}`;
     }
     return (
       <main className={styles.pageContainer}>

@@ -12,6 +12,7 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { Select } from '@/components/elements/select/select';
+import { getAppLogger } from '@/lib/logger';
 
 import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type {
@@ -118,7 +119,7 @@ export const HistoryTab = ({
           setSearchResult(data);
         }
       } catch (error) {
-        console.error('Filter change failed:', error);
+        getAppLogger(['app', 'sessions']).error`Filter change failed: ${error}`;
       }
     },
     [queryParams.historySort, setQueryParams, buildQueryString],
@@ -145,7 +146,7 @@ export const HistoryTab = ({
           setSearchResult(data);
         }
       } catch (error) {
-        console.error('Sort change failed:', error);
+        getAppLogger(['app', 'sessions']).error`Sort change failed: ${error}`;
       }
     },
     [
@@ -179,7 +180,7 @@ export const HistoryTab = ({
         setOffset(newOffset);
       }
     } catch (error) {
-      console.error('Load more failed:', error);
+      getAppLogger(['app', 'sessions']).error`Load more failed: ${error}`;
     }
   }, [
     offset,

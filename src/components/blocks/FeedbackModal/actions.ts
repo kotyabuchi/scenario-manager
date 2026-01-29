@@ -5,6 +5,7 @@ import { ulid } from 'ulid';
 
 import { feedbackFormSchema } from './schema';
 
+import { getAppLogger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
@@ -77,7 +78,8 @@ export const createFeedbackAction = async (
 
     return ok({ feedbackId });
   } catch (error) {
-    console.error('Failed to create feedback:', error);
+    getAppLogger(['app', 'feedback'])
+      .error`Failed to create feedback: ${error}`;
     return err(new Error('フィードバックの送信に失敗しました'));
   }
 };

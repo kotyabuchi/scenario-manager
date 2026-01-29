@@ -13,6 +13,7 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { Select } from '@/components/elements/select/select';
+import { getAppLogger } from '@/lib/logger';
 
 import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type {
@@ -128,7 +129,7 @@ export const PublicTab = ({
           setSearchResult(data);
         }
       } catch (error) {
-        console.error('Search failed:', error);
+        getAppLogger(['app', 'sessions']).error`Search failed: ${error}`;
       }
     },
     [queryParams.publicSort, setQueryParams],
@@ -152,7 +153,7 @@ export const PublicTab = ({
           setSearchResult(data);
         }
       } catch (error) {
-        console.error('Sort failed:', error);
+        getAppLogger(['app', 'sessions']).error`Sort failed: ${error}`;
       }
     },
     [currentParams, setQueryParams],
@@ -178,7 +179,7 @@ export const PublicTab = ({
         setOffset(newOffset);
       }
     } catch (error) {
-      console.error('Load more failed:', error);
+      getAppLogger(['app', 'sessions']).error`Load more failed: ${error}`;
     }
   }, [currentParams, queryParams.publicSort, offset]);
 

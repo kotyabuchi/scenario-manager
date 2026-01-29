@@ -17,6 +17,7 @@ import {
 import { searchParamsCache, toPublicSearchParams } from './searchParams';
 
 import { Spinner } from '@/components/elements';
+import { getAppLogger } from '@/lib/logger';
 
 import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 import type {
@@ -58,7 +59,8 @@ export default async function SessionsPage({ searchParams }: PageProps) {
   const systemsResult = await getAllSystems();
 
   if (!systemsResult.success) {
-    console.error('Systems fetch error:', systemsResult.error);
+    getAppLogger(['app', 'sessions'])
+      .error`Systems fetch error: ${systemsResult.error}`;
     return (
       <main className={styles.pageContainer}>
         <div className={styles.emptyState}>

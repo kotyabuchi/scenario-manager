@@ -1,6 +1,8 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { getAppLogger } from '@/lib/logger';
+
 type CloudflareEnv = {
   SCENARIO_IMAGES?: R2Bucket;
 };
@@ -49,9 +51,8 @@ export async function POST(request: NextRequest) {
 
     // ローカル開発環境ではR2が利用できないため、ダミーURLを返す
     if (process.env.NODE_ENV === 'development') {
-      console.warn(
-        'R2 bucket not available in development, returning placeholder URL',
-      );
+      getAppLogger(['app', 'upload'])
+        .warn`R2 bucket not available in development, returning placeholder URL`;
       return NextResponse.json({
         url: `https://placehold.co/600x600/eee/999?text=${encodeURIComponent('Preview')}`,
         key: `dev/${Date.now()}-${file.name}`,
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
       key,
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    getAppLogger(['app', 'upload']).error`Upload error: ${error}`;
     return NextResponse.json(
       { error: 'アップロードに失敗しました' },
       { status: 500 },

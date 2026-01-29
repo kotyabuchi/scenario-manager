@@ -13,6 +13,7 @@ import * as styles from './styles';
 import { Button } from '@/components/elements/button/button';
 import { Select } from '@/components/elements/select/select';
 import { ToggleGroup } from '@/components/elements/toggle-group/toggle-group';
+import { getAppLogger } from '@/lib/logger';
 import { css, cx } from '@/styled-system/css';
 
 import type { SelectValueChangeDetails } from '@/components/elements/select/select';
@@ -91,7 +92,7 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
           setOffset(0);
         }
       } catch (error) {
-        console.error('Sort change failed:', error);
+        getAppLogger(['app', 'sessions']).error`Sort change failed: ${error}`;
       }
     },
     [setQueryParams],
@@ -113,7 +114,7 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
         setOffset(newOffset);
       }
     } catch (error) {
-      console.error('Load more failed:', error);
+      getAppLogger(['app', 'sessions']).error`Load more failed: ${error}`;
     }
   }, [offset, queryParams.upcomingSort]);
 
