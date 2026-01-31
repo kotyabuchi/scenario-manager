@@ -4,7 +4,7 @@
   船団（Fleet）一括終了スクリプト - 船長以外の全ペインを閉じる
 
 .DESCRIPTION
-  panes.json を読み取り、船長ペイン以外（航海士・水夫1〜3）を閉じる。
+  panes.json を読み取り、船長ペイン以外（航海士・甲板長・見張り番・船大工）を閉じる。
   船長ペインは残るので、通常のターミナルとして使える。
 
 .EXAMPLE
@@ -28,9 +28,9 @@ Write-Host "船団を解散します..." -ForegroundColor Yellow
 
 # 船長以外のペインを閉じる（逆順で閉じる）
 $targets = @(
-  @{ Name = "Sailor-3";  Id = $panes.sailor3 }
-  @{ Name = "Sailor-2";  Id = $panes.sailor2 }
-  @{ Name = "Sailor-1";  Id = $panes.sailor1 }
+  @{ Name = "Carpenter"; Id = $panes.carpenter }
+  @{ Name = "Lookout";   Id = $panes.lookout }
+  @{ Name = "Bosun";     Id = $panes.bosun }
   @{ Name = "Navigator"; Id = $panes.navigator }
 )
 

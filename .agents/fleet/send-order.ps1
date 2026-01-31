@@ -4,7 +4,7 @@
   指示送信ユーティリティ - 指定ペインにClaude Codeコマンドを送信する
 
 .PARAMETER Target
-  送信先: captain, navigator, sailor1, sailor2, sailor3
+  送信先: captain, navigator, bosun, lookout, carpenter
 
 .PARAMETER Message
   送信するメッセージ
@@ -16,16 +16,16 @@
   # 航海士にメッセージを送信
   .\.agents\fleet\send-order.ps1 -Target navigator -Message "voyage-001を確認せよ"
 
-  # 水夫1でClaude Codeを起動
-  .\.agents\fleet\send-order.ps1 -Target sailor1 -StartClaude
+  # 甲板長でClaude Codeを起動
+  .\.agents\fleet\send-order.ps1 -Target bosun -StartClaude
 
-  # 水夫2にClaude Codeでタスクを実行させる
-  .\.agents\fleet\send-order.ps1 -Target sailor2 -Message "src/components/Button/styles.tsを修正して"
+  # 見張り番にレビューを通知
+  .\.agents\fleet\send-order.ps1 -Target lookout -Message "レビュー依頼: voyage-001/task-002"
 #>
 
 param(
   [Parameter(Mandatory)]
-  [ValidateSet("captain", "navigator", "sailor1", "sailor2", "sailor3")]
+  [ValidateSet("captain", "navigator", "bosun", "lookout", "carpenter")]
   [string]$Target,
 
   [string]$Message = "",
@@ -54,7 +54,9 @@ if ($StartClaude) {
   $promptFile = switch ($Target) {
     "captain"   { "$FleetDir\captain.md" }
     "navigator" { "$FleetDir\navigator.md" }
-    default     { "$FleetDir\sailor.md" }
+    "bosun"     { "$FleetDir\bosun.md" }
+    "lookout"   { "$FleetDir\lookout.md" }
+    "carpenter" { "$FleetDir\carpenter.md" }
   }
 
   # ペイン側でファイルを読み込んでclaude起動するコマンドを送信

@@ -4,7 +4,7 @@
   船団（Fleet）起動スクリプト - WezTermで5ペインを作成する
 
 .DESCRIPTION
-  現在のペインを分割して 船長(1) + 航海士(1) + 水夫(3) の5ペインを作成する。
+  現在のペインを分割して 船長(1) + 航海士(1) + 甲板長(1) + 見張り番(1) + 船大工(1) の5ペインを作成する。
   Claude Codeは船長ペインのみ起動。他のペインは船長の指示で起動される。
 
 .EXAMPLE
@@ -19,9 +19,9 @@ $FleetDir = "$ProjectDir\.agents\fleet"
 New-Item -ItemType Directory -Force -Path "$FleetDir\voyages" | Out-Null
 New-Item -ItemType Directory -Force -Path "$FleetDir\reports" | Out-Null
 
-# 古い報告をクリア
+# 古い報告・航海命令をクリア
 Remove-Item "$FleetDir\reports\*" -Force -ErrorAction SilentlyContinue
-Remove-Item "$FleetDir\voyages\*" -Force -ErrorAction SilentlyContinue
+Remove-Item "$FleetDir\voyages\*" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "=== Fleet Launch ===" -ForegroundColor Cyan
 Write-Host "船団を出港させます..." -ForegroundColor Yellow
@@ -33,29 +33,29 @@ if (-not $captainPaneId) {
 }
 Write-Host "[Captain] Pane ID: $captainPaneId" -ForegroundColor Green
 
-# 水夫1ペイン（船長の右に分割 — 左55:右45）
-$sailor1PaneId = (wezterm cli split-pane --right --percent 45 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
-Write-Host "[Sailor-1] Pane ID: $sailor1PaneId" -ForegroundColor Magenta
+# 甲板長ペイン（船長の右に分割 — 左55:右45）
+$bosunPaneId = (wezterm cli split-pane --right --percent 45 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
+Write-Host "[Bosun] Pane ID: $bosunPaneId" -ForegroundColor Magenta
 
 # 航海士ペイン（船長(左)の下に分割 — 上55:下45）
 $navigatorPaneId = (wezterm cli split-pane --bottom --percent 45 --cwd $ProjectDir --pane-id $captainPaneId).Trim()
 Write-Host "[Navigator] Pane ID: $navigatorPaneId" -ForegroundColor Blue
 
-# 水夫2ペイン（水夫1(右上)の下に分割 — 上33:下67）
-$sailor2PaneId = (wezterm cli split-pane --bottom --percent 67 --cwd $ProjectDir --pane-id $sailor1PaneId).Trim()
-Write-Host "[Sailor-2] Pane ID: $sailor2PaneId" -ForegroundColor Magenta
+# 見張り番ペイン（甲板長(右上)の下に分割 — 上33:下67）
+$lookoutPaneId = (wezterm cli split-pane --bottom --percent 67 --cwd $ProjectDir --pane-id $bosunPaneId).Trim()
+Write-Host "[Lookout] Pane ID: $lookoutPaneId" -ForegroundColor Yellow
 
-# 水夫3ペイン（水夫2の下に分割 — 上50:下50）
-$sailor3PaneId = (wezterm cli split-pane --bottom --percent 50 --cwd $ProjectDir --pane-id $sailor2PaneId).Trim()
-Write-Host "[Sailor-3] Pane ID: $sailor3PaneId" -ForegroundColor Magenta
+# 船大工ペイン（見張り番の下に分割 — 上50:下50）
+$carpenterPaneId = (wezterm cli split-pane --bottom --percent 50 --cwd $ProjectDir --pane-id $lookoutPaneId).Trim()
+Write-Host "[Carpenter] Pane ID: $carpenterPaneId" -ForegroundColor DarkYellow
 
 # ペインIDをファイルに保存
 @{
   captain   = [int]$captainPaneId
   navigator = [int]$navigatorPaneId
-  sailor1   = [int]$sailor1PaneId
-  sailor2   = [int]$sailor2PaneId
-  sailor3   = [int]$sailor3PaneId
+  bosun     = [int]$bosunPaneId
+  lookout   = [int]$lookoutPaneId
+  carpenter = [int]$carpenterPaneId
 } | ConvertTo-Json | Set-Content "$FleetDir\panes.json" -Encoding UTF8
 
 Write-Host @"
@@ -65,9 +65,9 @@ Write-Host @"
 船団構成（左2 + 右3）:
   [Captain]    Pane $captainPaneId  - 左上（このペイン）
   [Navigator]  Pane $navigatorPaneId  - 左下
-  [Sailor-1]   Pane $sailor1PaneId  - 右上
-  [Sailor-2]   Pane $sailor2PaneId  - 右中
-  [Sailor-3]   Pane $sailor3PaneId  - 右下
+  [Bosun]      Pane $bosunPaneId  - 右上
+  [Lookout]    Pane $lookoutPaneId  - 右中
+  [Carpenter]  Pane $carpenterPaneId  - 右下
 
 船長を起動します...
 

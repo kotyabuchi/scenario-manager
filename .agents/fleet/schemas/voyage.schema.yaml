@@ -1,0 +1,58 @@
+# Voyage Schema — 航海命令（メタ情報）のスキーマ定義
+# 作成者: Captain → 読み手: Navigator
+# ファイルパス: voyages/voyage-XXX/voyage.yaml
+#
+# タスク定義は別ファイル（task.schema.yaml）で管理する
+#
+# JSON Schema Draft 2020-12 (YAML表記)
+# バリデーション: pwsh -File .agents/fleet/validate.ps1 -Schema voyage -File <path>
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Voyage
+description: 船長が発行する航海命令（メタ情報）
+
+type: object
+required:
+  - voyage_id
+  - title
+  - status
+  - created_at
+  - objective
+
+properties:
+  voyage_id:
+    type: string
+    pattern: "^voyage-\\d{3,}$"
+    description: "航海ID (例: voyage-011)"
+
+  title:
+    type: string
+    minLength: 1
+    maxLength: 200
+    description: "航海の件名"
+
+  status:
+    type: string
+    enum: [docked, underway, anchored, aground]
+    description: |
+      航海の状態:
+        docked   — 準備中（未着手）
+        underway — 航行中（作業中）
+        anchored — 完了（成功）
+        aground  — 座礁（失敗）
+
+  created_at:
+    type: string
+    format: date-time
+    description: "作成日時 (ISO 8601)"
+
+  objective:
+    type: string
+    minLength: 1
+    description: "航海の目的・ゴール"
+
+  context:
+    type: string
+    description: "背景情報、関連メモリ、前提知識"
+
+additionalProperties: false

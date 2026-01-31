@@ -14,10 +14,10 @@
 
 .EXAMPLE
   # ロック取得
-  .\.agents\fleet\filelock.ps1 -Action lock -File "src/app/(main)/sessions/_components/styles.ts" -Owner sailor1
+  .\.agents\fleet\filelock.ps1 -Action lock -File "src/app/(main)/sessions/_components/styles.ts" -Owner bosun
 
   # ロック解放
-  .\.agents\fleet\filelock.ps1 -Action unlock -File "src/app/(main)/sessions/_components/styles.ts" -Owner sailor1
+  .\.agents\fleet\filelock.ps1 -Action unlock -File "src/app/(main)/sessions/_components/styles.ts" -Owner bosun
 
   # ロック確認（ロック中ならexit code 1）
   .\.agents\fleet\filelock.ps1 -Action check -File "src/app/(main)/sessions/_components/styles.ts"

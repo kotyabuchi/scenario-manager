@@ -1,0 +1,84 @@
+# Task Schema — 個別タスクのスキーマ定義
+# 作成者: Navigator → 読み手: Bosun/Lookout/Carpenter
+# ファイルパス: voyages/voyage-XXX/task-XXX.yaml
+#
+# JSON Schema Draft 2020-12 (YAML表記)
+# バリデーション: pwsh -File .agents/fleet/validate.ps1 -Schema task -File <path>
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Task
+description: 航海士が作成する個別タスク定義
+
+type: object
+required:
+  - voyage_id
+  - task_id
+  - assigned_to
+  - status
+  - description
+  - instructions
+
+properties:
+  voyage_id:
+    type: string
+    pattern: "^voyage-\\d{3,}$"
+    description: "所属する航海ID"
+
+  task_id:
+    type: string
+    pattern: "^task-\\d{3,}$"
+    description: "タスクID (例: task-001)"
+
+  assigned_to:
+    type: string
+    enum: [bosun, lookout, carpenter]
+    description: "担当乗組員"
+
+  persona:
+    type: string
+    minLength: 1
+    description: "乗組員に付与するペルソナ（例: シニアフロントエンドエンジニア）"
+
+  phase:
+    type: string
+    enum: [green, review, refactor]
+    description: |
+      TDDフェーズ:
+        green    — 実装（テストを通す最小実装）
+        review   — レビュー（品質検証）
+        refactor — リファクタ（品質改善）
+
+  status:
+    type: string
+    enum: [docked, underway, anchored, aground]
+    description: "タスクの状態"
+
+  description:
+    type: string
+    minLength: 1
+    description: "タスクの概要（1-2行）"
+
+  instructions:
+    type: string
+    minLength: 1
+    description: "具体的な作業手順（Markdown可）"
+
+  files:
+    type: array
+    items:
+      type: string
+    description: "編集対象ファイルパス一覧"
+
+  review_target:
+    type: string
+    pattern: "^task-\\d{3,}$"
+    description: "レビュー対象のタスクID（phase=review の場合）"
+
+  depends_on:
+    type: array
+    items:
+      type: string
+      pattern: "^task-\\d{3,}$"
+    description: "依存タスクID一覧（これらが完了するまで着手不可）"
+
+additionalProperties: false

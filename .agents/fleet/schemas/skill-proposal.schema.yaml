@@ -1,0 +1,88 @@
+# Skill Proposal Schema — スキル/改善提案のスキーマ定義
+# 作成者: Navigator → 読み手: Captain
+#
+# JSON Schema Draft 2020-12 (YAML表記)
+# バリデーション: pwsh -File .agents/fleet/validate.ps1 -Schema skill-proposal -File <path>
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: SkillProposal
+description: 航海士が上申するスキルまたは改善の提案
+
+type: object
+required:
+  - proposal_id
+  - type
+  - title
+  - status
+  - created_at
+  - reason
+  - target
+
+properties:
+  proposal_id:
+    type: string
+    pattern: "^(skill|improve)-\\d{3,}$"
+    description: "提案ID (例: skill-001, improve-002)"
+
+  type:
+    type: string
+    enum: [skill, improvement]
+    description: |
+      提案種別:
+        skill       — 再利用可能なスキル（/commandとして登録）
+        improvement — プロセス改善（ルール・プロンプト修正）
+
+  title:
+    type: string
+    minLength: 1
+    maxLength: 200
+    description: "提案の件名"
+
+  status:
+    type: string
+    enum: [proposed, approved, rejected, implemented]
+    description: "提案の状態"
+
+  created_at:
+    type: string
+    format: date-time
+    description: "作成日時 (ISO 8601)"
+
+  reason:
+    type: string
+    minLength: 1
+    description: "提案理由・背景"
+
+  evidence:
+    type: array
+    items:
+      type: string
+    description: "根拠となるメモリID・voyage ID一覧"
+
+  target:
+    type: string
+    minLength: 1
+    description: |
+      適用先:
+        skill: .claude/commands/<name>.md
+        improvement: 対象ファイルパス（例: .claude/rules/xxx.md）
+
+  category:
+    type: string
+    enum: [rule_addition, coding_standards, prompt_fix, claude_md]
+    description: "改善提案のカテゴリ（type=improvement の場合）"
+
+  draft_file:
+    type: string
+    description: "実装ドラフトファイルのパス（例: skill-proposals/improve-001-draft.md）"
+
+additionalProperties: false
+
+# type=improvement の場合、category は必須
+if:
+  properties:
+    type:
+      const: improvement
+then:
+  required:
+    - category
