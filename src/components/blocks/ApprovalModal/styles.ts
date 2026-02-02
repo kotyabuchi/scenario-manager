@@ -7,7 +7,7 @@ export const content = css({
 });
 
 export const applicantInfo = css({
-  bg: 'surface.subtle',
+  bg: '[surface.subtle]',
   rounded: 'lg',
   p: '4',
 });
@@ -22,12 +22,12 @@ export const applicantHeader = css({
 export const applicantName = css({
   fontSize: 'lg',
   fontWeight: 'semibold',
-  color: 'text.default',
+  color: '[text.default]',
 });
 
 export const appliedAt = css({
   fontSize: 'sm',
-  color: 'text.muted',
+  color: '[text.muted]',
 });
 
 export const messageSection = css({
@@ -39,17 +39,17 @@ export const messageSection = css({
 export const label = css({
   fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'text.muted',
+  color: '[text.muted]',
 });
 
 export const applicantMessage = css({
-  color: 'text.default',
+  color: '[text.default]',
   whiteSpace: 'pre-wrap',
-  lineHeight: '1.6',
+  lineHeight: '[1.6]',
 });
 
 export const noMessage = css({
-  color: 'text.muted',
+  color: '[text.muted]',
   fontStyle: 'italic',
 });
 
@@ -63,17 +63,17 @@ export const textarea = css({
   px: '3',
   py: '2',
   rounded: 'md',
-  bg: 'surface.input',
+  bg: '[surface.input]',
   border: 'none',
   outline: 'none',
-  color: 'text.default',
-  minH: '80px',
+  color: '[text.default]',
+  minH: '[80px]',
   resize: 'vertical',
   _placeholder: {
-    color: 'text.placeholder',
+    color: '[text.placeholder]',
   },
   _focus: {
-    ring: '2',
-    ringColor: 'primary.500',
+    ring: '[2]',
+    ringColor: '[primary.500]',
   },
 });

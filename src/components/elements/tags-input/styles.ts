@@ -6,8 +6,8 @@ import { css } from '@/styled-system/css';
 export const tagsInputContainer = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
-  width: '100%',
+  gap: '2',
+  width: 'full',
 });
 
 /**
@@ -16,17 +16,17 @@ export const tagsInputContainer = css({
 export const tagsInputLabel = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '4px',
-  fontSize: '13px',
-  fontWeight: 500,
-  color: '#374151',
+  gap: '1',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
+  color: 'gray.700',
 });
 
 /**
  * 必須マーク
  */
 export const tagsInputRequired = css({
-  color: '#EF4444',
+  color: 'red.500',
 });
 
 /**
@@ -36,10 +36,10 @@ export const tagsInputList = css({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '6px',
-  padding: '8px',
-  bg: '#F3F4F6',
-  borderRadius: '8px',
+  gap: '1.5',
+  padding: '2',
+  bg: 'gray.100',
+  borderRadius: 'md',
   position: 'relative',
 });
 
@@ -50,11 +50,11 @@ export const tagsInputListError = css({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '6px',
-  padding: '8px',
-  bg: '#FEF2F2',
-  borderRadius: '8px',
-  border: '1px solid #EF4444',
+  gap: '1.5',
+  padding: '2',
+  bg: 'red.50',
+  borderRadius: 'md',
+  border: '[1px solid #EF4444]',
   position: 'relative',
 });
 
@@ -65,10 +65,10 @@ export const tagsInputListDisabled = css({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '6px',
-  padding: '8px',
-  bg: '#E5E7EB',
-  borderRadius: '8px',
+  gap: '1.5',
+  padding: '2',
+  bg: 'gray.200',
+  borderRadius: 'md',
   position: 'relative',
 });
 
@@ -78,13 +78,14 @@ export const tagsInputListDisabled = css({
 export const tagsInputItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '6px',
-  padding: '4px 8px',
+  gap: '1.5',
+  py: '1',
+  px: '2',
   bg: 'white',
-  borderRadius: '4px',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-  fontSize: '13px',
-  color: '#374151',
+  borderRadius: 'xs',
+  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.05)]',
+  fontSize: '[13px]',
+  color: 'gray.700',
 });
 
 /**
@@ -98,22 +99,22 @@ export const tagsInputRemoveButton = css({
   bg: 'transparent',
   border: 'none',
   cursor: 'pointer',
-  color: '#9CA3AF',
-  _hover: { color: '#6B7280' },
+  color: 'gray.400',
+  _hover: { color: 'gray.500' },
 });
 
 /**
  * 入力フィールド
  */
 export const tagsInputField = css({
-  flex: 1,
-  minWidth: '80px',
+  flex: '1',
+  minWidth: '[80px]',
   bg: 'transparent',
   border: 'none',
   outline: 'none',
-  fontSize: '14px',
-  color: '#1F2937',
-  _placeholder: { color: '#9CA3AF' },
+  fontSize: '[14px]',
+  color: 'gray.800',
+  _placeholder: { color: 'gray.400' },
   _disabled: { cursor: 'not-allowed' },
 });
 
@@ -122,15 +123,15 @@ export const tagsInputField = css({
  */
 export const tagsInputSuggestions = css({
   position: 'absolute',
-  top: '100%',
-  left: 0,
-  right: 0,
-  mt: '4px',
+  top: '[100%]',
+  left: '0',
+  right: '0',
+  mt: '1',
   bg: 'white',
-  borderRadius: '8px',
-  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-  padding: '4px',
-  zIndex: 10,
+  borderRadius: 'md',
+  boxShadow: '[0 4px 16px rgba(0, 0, 0, 0.08)]',
+  padding: '1',
+  zIndex: '[10]',
 });
 
 /**
@@ -140,25 +141,26 @@ export const tagsInputSuggestionItem = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  width: '100%',
-  height: '36px',
-  padding: '0 12px',
+  width: 'full',
+  height: '9',
+  py: '0',
+  px: '3',
   bg: 'transparent',
   border: 'none',
-  borderRadius: '6px',
-  fontSize: '13px',
-  color: '#374151',
+  borderRadius: 'sm',
+  fontSize: '[13px]',
+  color: 'gray.700',
   cursor: 'pointer',
   textAlign: 'left',
-  _hover: { bg: '#F0FDF4', color: '#10B981' },
+  _hover: { bg: 'green.50', color: 'primary.500' },
 });
 
 /**
  * エラーメッセージ
  */
 export const tagsInputError = css({
-  fontSize: '12px',
-  color: '#EF4444',
+  fontSize: '[12px]',
+  color: 'red.500',
 });
 
 /**

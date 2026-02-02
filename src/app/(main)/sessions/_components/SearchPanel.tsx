@@ -52,46 +52,47 @@ const phaseItems = [
 ];
 
 const panel = css({
-  bg: '#FFFFFF',
+  bg: 'white',
   shadow: 'subHeader.default',
-  p: '24px 32px',
+  py: '6',
+  px: '8',
   display: 'flex',
   flexDir: 'column',
-  gap: '16px',
+  gap: '4',
 });
 
 const searchRow = css({
   display: 'flex',
   alignItems: 'flex-end',
-  gap: '16px',
+  gap: '4',
 });
 
 const fieldWrapper = css({
   display: 'flex',
   flexDir: 'column',
-  gap: '6px',
+  gap: '1.5',
 });
 
 const fieldLabel = css({
-  fontSize: '13px',
-  fontWeight: '500',
-  color: '#6B7280',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
+  color: 'gray.500',
 });
 
 const dateRow = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '2',
 });
 
 const dateSep = css({
-  fontSize: '14px',
-  color: '#6B7280',
+  fontSize: '[14px]',
+  color: 'gray.500',
 });
 
 const searchBtn = css({
-  w: '100px',
-  flexShrink: 0,
+  w: '[100px]',
+  flexShrink: '0',
 });
 
 /** 日付文字列(YYYY-MM-DD)をArk UI DateValue配列に変換 */

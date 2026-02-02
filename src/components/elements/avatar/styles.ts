@@ -15,31 +15,31 @@ export const avatar = cva({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '50%',
+    borderRadius: 'full',
     overflow: 'hidden',
-    flexShrink: 0,
+    flexShrink: '0',
   },
   variants: {
     size: {
       xs: {
-        width: '24px',
-        height: '24px',
+        width: '6',
+        height: '6',
       },
       sm: {
-        width: '32px',
-        height: '32px',
+        width: '8',
+        height: '8',
       },
       md: {
-        width: '40px',
-        height: '40px',
+        width: '10',
+        height: '10',
       },
       lg: {
-        width: '48px',
-        height: '48px',
+        width: '12',
+        height: '12',
       },
       xl: {
-        width: '64px',
-        height: '64px',
+        width: '16',
+        height: '16',
       },
     },
   },
@@ -56,10 +56,10 @@ export const avatarFallback = cva({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    bg: '#D1FAE5', // primary.100相当
-    color: '#10B981', // primary.default相当
+    width: 'full',
+    height: 'full',
+    bg: 'primary.100', // primary.100相当
+    color: 'primary.500', // primary.default相当
   },
 });
 
@@ -68,8 +68,8 @@ export const avatarFallback = cva({
  */
 export const avatarImage = cva({
   base: {
-    width: '100%',
-    height: '100%',
+    width: 'full',
+    height: 'full',
     objectFit: 'cover',
   },
 });

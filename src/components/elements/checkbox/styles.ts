@@ -6,7 +6,7 @@ import { css, cva } from '@/styled-system/css';
 export const checkboxRoot = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '2',
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',
@@ -19,34 +19,36 @@ export const checkboxRoot = css({
  */
 export const checkboxControl = cva({
   base: {
-    width: '20px',
-    height: '20px',
-    borderRadius: '4px',
+    width: '[20px]',
+    height: '[20px]',
+    borderRadius: 'xs',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all {durations.fast} ease-out',
-    flexShrink: 0,
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
+    flexShrink: '0',
     _focusVisible: {
-      outline: '2px solid',
+      outline: '[2px solid]',
       outlineColor: 'border.focus',
-      outlineOffset: '2px',
+      outlineOffset: '[2px]',
     },
   },
   variants: {
     checked: {
       true: {
-        backgroundColor: '#10B981',
+        backgroundColor: 'primary.500',
         color: 'white',
       },
       false: {
-        backgroundColor: '#FFFFFF',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+        backgroundColor: 'white',
+        boxShadow: '[0 1px 2px rgba(0,0,0,0.08)]',
       },
     },
     disabled: {
       true: {
-        backgroundColor: '#E5E7EB',
+        backgroundColor: 'gray.200',
         opacity: 'disabled',
       },
     },
@@ -62,16 +64,16 @@ export const checkboxControl = cva({
  */
 export const checkboxLabel = cva({
   base: {
-    fontSize: '14px',
+    fontSize: '[14px]',
     userSelect: 'none',
   },
   variants: {
     disabled: {
       true: {
-        color: '#9CA3AF',
+        color: 'gray.400',
       },
       false: {
-        color: '#374151',
+        color: 'gray.700',
       },
     },
   },

@@ -7,7 +7,7 @@ export const content = css({
 });
 
 export const sessionInfo = css({
-  bg: 'surface.subtle',
+  bg: '[surface.subtle]',
   rounded: 'lg',
   p: '4',
 });
@@ -15,7 +15,7 @@ export const sessionInfo = css({
 export const sessionName = css({
   fontSize: 'lg',
   fontWeight: 'semibold',
-  color: 'text.default',
+  color: '[text.default]',
   mb: '3',
 });
 
@@ -31,13 +31,13 @@ export const infoItem = css({
 });
 
 export const infoLabel = css({
-  color: 'text.muted',
-  minW: '80px',
-  flexShrink: 0,
+  color: '[text.muted]',
+  minW: '[80px]',
+  flexShrink: '0',
 });
 
 export const infoValue = css({
-  color: 'text.default',
+  color: '[text.default]',
 });
 
 export const field = css({
@@ -48,29 +48,29 @@ export const field = css({
 
 export const label = css({
   fontWeight: 'medium',
-  color: 'text.default',
+  color: '[text.default]',
 });
 
 export const textarea = css({
   px: '3',
   py: '2',
   rounded: 'md',
-  bg: 'surface.input',
+  bg: '[surface.input]',
   border: 'none',
   outline: 'none',
-  color: 'text.default',
-  minH: '100px',
+  color: '[text.default]',
+  minH: '[100px]',
   resize: 'vertical',
   _placeholder: {
-    color: 'text.placeholder',
+    color: '[text.placeholder]',
   },
   _focus: {
-    ring: '2',
-    ringColor: 'primary.500',
+    ring: '[2]',
+    ringColor: '[primary.500]',
   },
 });
 
 export const hint = css({
   fontSize: 'sm',
-  color: 'text.muted',
+  color: '[text.muted]',
 });

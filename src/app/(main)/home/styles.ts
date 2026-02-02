@@ -1,10 +1,10 @@
 import { css } from '@/styled-system/css';
 
 export const pageContainer = css({
-  maxW: '1200px',
+  maxW: '[1200px]',
   mx: 'auto',
-  px: 'lg',
-  py: 'xl',
+  px: '6',
+  py: '8',
 });
 
 export const pageHeader = css({
@@ -14,13 +14,13 @@ export const pageHeader = css({
 export const pageTitle = css({
   fontSize: '2xl',
   fontWeight: 'bold',
-  color: 'text.primary',
+  color: 'text.title',
   mb: 'xs',
 });
 
 export const pageSubtitle = css({
   fontSize: 'md',
-  color: 'text.muted',
+  color: 'text.secondary',
 });
 
 export const section = css({
@@ -37,7 +37,7 @@ export const sectionHeader = css({
 export const sectionTitle = css({
   fontSize: 'xl',
   fontWeight: 'bold',
-  color: 'text.primary',
+  color: 'text.title',
 });
 
 export const sectionLink = css({
@@ -48,7 +48,7 @@ export const sectionLink = css({
   alignItems: 'center',
   gap: 'xs',
   _hover: {
-    color: 'primary.emphasized',
+    color: 'primary.hover',
     textDecoration: 'underline',
   },
 });
@@ -56,7 +56,7 @@ export const sectionLink = css({
 export const sessionsList = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
+  gap: '4',
 });
 
 export const sessionCard = css({
@@ -64,13 +64,14 @@ export const sessionCard = css({
   flexDirection: 'column',
   bg: 'bg.card',
   borderRadius: 'xl',
-  p: 'md',
+  p: '4',
   shadow: 'card.default',
   cursor: 'pointer',
-  transition: 'all {durations.slow}',
+  transitionProperty: 'common',
+  transitionDuration: 'slow',
   _hover: {
     shadow: 'card.hover',
-    transform: 'translateY(-2px)',
+    transform: '[translateY(-2px)]',
   },
 });
 
@@ -84,25 +85,25 @@ export const sessionHeader = css({
 export const sessionTitle = css({
   fontSize: 'md',
   fontWeight: 'bold',
-  color: 'text.primary',
-  flex: 1,
+  color: 'text.title',
+  flex: '1',
 });
 
 export const sessionPhase = css({
-  px: 'sm',
+  px: '2',
   py: '1',
   fontSize: 'xs',
   fontWeight: 'medium',
   borderRadius: 'md',
-  shadow: 'chip.default',
+  shadow: 'sm',
 });
 
 export const sessionMeta = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
   fontSize: 'sm',
-  color: 'text.muted',
+  color: 'text.secondary',
 });
 
 export const sessionMetaItem = css({
@@ -113,8 +114,8 @@ export const sessionMetaItem = css({
 
 export const scenarioGrid = css({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-  gap: 'lg',
+  gridTemplateColumns: '[repeat(auto-fill, minmax(280px, 1fr))]',
+  gap: '6',
 });
 
 export const emptyState = css({
@@ -123,8 +124,8 @@ export const emptyState = css({
   alignItems: 'center',
   justifyContent: 'center',
   py: '2xl',
-  gap: 'md',
-  color: 'text.muted',
+  gap: '4',
+  color: 'text.secondary',
 });
 
 export const emptyStateIcon = css({

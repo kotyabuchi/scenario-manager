@@ -7,10 +7,10 @@ export const subHeader = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  h: '56px',
-  w: '100%',
-  px: '32px',
-  py: '8px',
+  h: '[56px]',
+  w: 'full',
+  px: '8',
+  py: '2',
   bg: 'white',
   shadow: 'subHeader.default',
 });
@@ -18,21 +18,22 @@ export const subHeader = css({
 export const subHeader_left = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
 });
 
 export const subHeader_backBtn = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '36px',
-  h: '36px',
+  w: '9',
+  h: '9',
   borderRadius: 'lg',
   bg: 'gray.100',
   color: 'gray.500',
-  flexShrink: 0,
+  flexShrink: '0',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     bg: 'gray.200',
     color: 'gray.700',
@@ -40,7 +41,7 @@ export const subHeader_backBtn = css({
 });
 
 export const subHeader_title = css({
-  fontSize: '18px',
+  fontSize: '[18px]',
   fontWeight: 'bold',
   color: 'gray.800',
   overflow: 'hidden',
@@ -51,17 +52,18 @@ export const subHeader_title = css({
 export const subHeader_favBtn = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '6px',
-  h: '36px',
-  px: '14px',
-  py: '8px',
+  gap: '1.5',
+  h: '9',
+  px: '3.5',
+  py: '2',
   borderRadius: 'lg',
   bg: 'orange.100',
   color: 'orange.800',
-  fontSize: '13px',
+  fontSize: '[13px]',
   fontWeight: 'medium',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   border: 'none',
   _hover: {
     bg: 'orange.200',
@@ -77,51 +79,51 @@ export const subHeader_favIcon = css({
 // ========================================
 export const firstView = css({
   display: 'flex',
-  gap: '32px',
-  w: '100%',
+  gap: '8',
+  w: 'full',
 });
 
 export const firstView_thumbnail = css({
   position: 'relative',
-  w: '400px',
-  h: '300px',
-  borderRadius: '16px',
+  w: '[400px]',
+  h: '[300px]',
+  borderRadius: '2xl',
   overflow: 'hidden',
   bg: 'gray.200',
   shadow: 'card.default',
-  flexShrink: 0,
+  flexShrink: '0',
 });
 
 export const firstView_thumbnailPlaceholder = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '400px',
-  h: '300px',
-  borderRadius: '16px',
+  w: '[400px]',
+  h: '[300px]',
+  borderRadius: '2xl',
   bg: 'gray.200',
   color: 'gray.400',
   shadow: 'card.default',
-  flexShrink: 0,
+  flexShrink: '0',
 });
 
 export const firstView_content = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
-  flex: 1,
+  gap: '4',
+  flex: '1',
 });
 
 export const scenarioInfo_top = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
 });
 
 export const scenarioInfo_system = css({
   display: 'inline-flex',
   alignItems: 'center',
-  px: 'md',
+  px: '4',
   py: 'xs',
   bg: 'green.100',
   color: 'green.800',
@@ -139,7 +141,7 @@ export const scenarioInfo_rating = css({
 export const scenarioInfo_ratingStars = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '1px',
+  gap: '[1px]',
   color: 'orange.400',
 });
 
@@ -150,7 +152,7 @@ export const scenarioInfo_ratingText = css({
 });
 
 export const scenarioInfo_title = css({
-  fontSize: '28px',
+  fontSize: '[28px]',
   fontWeight: 'bold',
   color: 'gray.800',
   lineHeight: 'tight',
@@ -159,32 +161,32 @@ export const scenarioInfo_title = css({
 export const scenarioInfo_metaRow = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'xl',
+  gap: '8',
   flexWrap: 'wrap',
 });
 
 export const scenarioInfo_metaItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   color: 'gray.500',
   fontSize: 'sm',
 });
 
 export const scenarioInfo_metaIcon = css({
-  w: '16px',
-  h: '16px',
+  w: '4',
+  h: '4',
   color: 'gray.500',
 });
 
 export const scenarioInfo_tags = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'sm',
+  gap: '2',
 });
 
 export const scenarioInfo_tag = css({
-  px: 'md',
+  px: '4',
   py: 'xs',
   fontSize: 'xs',
   bg: 'gray.200',
@@ -195,13 +197,13 @@ export const scenarioInfo_tag = css({
 export const scenarioInfo_description = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'sm',
+  gap: '2',
 });
 
 export const scenarioInfo_descText = css({
   fontSize: 'sm',
   color: 'gray.600',
-  lineHeight: '1.6',
+  lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
 
@@ -219,9 +221,9 @@ export const scenarioInfo_distributeBtn = css({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 'xs',
-  w: 'max-content',
-  px: 'md',
-  py: 'sm',
+  w: '[max-content]',
+  px: '4',
+  py: '2',
   borderRadius: 'md',
   bg: 'primary.500',
   color: 'white',
@@ -229,7 +231,8 @@ export const scenarioInfo_distributeBtn = css({
   fontWeight: 'medium',
   shadow: 'button.primary',
   textDecoration: 'none',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     bg: 'primary.600',
     transform: 'translateY(-1px)',
@@ -240,7 +243,7 @@ export const scenarioInfo_distributeBtn = css({
 // セクション共通（Pencil準拠）
 // ========================================
 export const section = css({
-  w: '100%',
+  w: 'full',
 });
 
 export const section_title = css({
@@ -260,7 +263,7 @@ export const section_header = css({
 export const section_headerActions = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
 });
 
 export const section_count = css({
@@ -273,8 +276,8 @@ export const section_empty = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: 'md',
-  py: 'xl',
+  gap: '4',
+  py: '8',
   textAlign: 'center',
   color: 'gray.400',
   fontSize: 'sm',
@@ -290,15 +293,16 @@ export const section_ctaButton = css({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 'xs',
-  px: 'lg',
-  py: 'sm',
+  px: '6',
+  py: '2',
   bg: 'primary.500',
   color: 'white',
   fontSize: 'sm',
   fontWeight: 'medium',
   borderRadius: 'lg',
   textDecoration: 'none',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     bg: 'primary.600',
     transform: 'translateY(-1px)',
@@ -309,7 +313,7 @@ export const section_actionButton = css({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 'xs',
-  px: 'md',
+  px: '4',
   py: 'xs',
   bg: 'primary.500',
   color: 'white',
@@ -318,7 +322,8 @@ export const section_actionButton = css({
   borderRadius: 'md',
   border: 'none',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     bg: 'primary.600',
   },
@@ -329,15 +334,15 @@ export const section_actionButton = css({
 // ========================================
 export const horizontalSection = css({
   position: 'relative',
-  w: '100%',
+  w: 'full',
 });
 
 export const horizontalScroll = css({
   display: 'flex',
-  gap: 'md',
+  gap: '4',
   overflowX: 'auto',
   pb: 'md',
-  scrollbarWidth: 'none',
+  scrollbarWidth: '[none]',
   _scrollbar: {
     display: 'none',
   },
@@ -345,30 +350,31 @@ export const horizontalScroll = css({
 
 export const horizontalScroll_fade = css({
   position: 'absolute',
-  top: '45px',
-  right: 0,
-  w: '80px',
-  h: 'calc(100% - 45px - 24px)',
-  background: 'linear-gradient(to right, transparent, token(colors.bg.page))',
+  top: '[45px]',
+  right: '0',
+  w: '[80px]',
+  h: '[calc(100% - 45px - 24px)]',
+  background: '[linear-gradient(to right, transparent, token(colors.bg.page))]',
   pointerEvents: 'none',
 });
 
 export const horizontalScroll_btn = css({
   position: 'absolute',
-  top: '50%',
-  right: 0,
+  top: '[50%]',
+  right: '0',
   transform: 'translateY(-50%)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '40px',
-  h: '40px',
+  w: '10',
+  h: '10',
   borderRadius: 'full',
   bg: 'white',
   shadow: 'scrollButton.default',
   color: 'gray.500',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   border: 'none',
   _hover: {
     shadow: 'card.hover',
@@ -377,15 +383,15 @@ export const horizontalScroll_btn = css({
 });
 
 export const horizontalScroll_track = css({
-  w: '100%',
-  h: '6px',
+  w: 'full',
+  h: '1.5',
   bg: 'gray.200',
   borderRadius: 'sm',
   mt: 'sm',
 });
 
 export const horizontalScroll_thumb = css({
-  h: '6px',
+  h: '1.5',
   bg: 'primary.500',
   borderRadius: 'sm',
 });
@@ -396,14 +402,15 @@ export const horizontalScroll_thumb = css({
 export const sessionCard = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
-  p: 'md',
-  w: '280px',
+  gap: '4',
+  p: '4',
+  w: '[280px]',
   bg: 'white',
   borderRadius: 'xl',
   shadow: 'card.default',
-  flexShrink: 0,
-  transition: 'all {durations.fast}',
+  flexShrink: '0',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -424,14 +431,14 @@ export const sessionCard_name = css({
 export const sessionCard_meta = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   color: 'gray.400',
   fontSize: 'xs',
 });
 
 export const sessionList = css({
   display: 'flex',
-  gap: 'md',
+  gap: '4',
   overflowX: 'auto',
   pb: 'md',
 });
@@ -442,14 +449,15 @@ export const sessionList = css({
 export const videoCard = css({
   display: 'flex',
   flexDirection: 'column',
-  w: '280px',
+  w: '[280px]',
   bg: 'white',
   borderRadius: 'xl',
   shadow: 'card.default',
   overflow: 'hidden',
-  flexShrink: 0,
+  flexShrink: '0',
   textDecoration: 'none',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     shadow: 'card.hover',
     transform: 'translateY(-2px)',
@@ -458,38 +466,39 @@ export const videoCard = css({
 
 export const videoCard_thumbnail = css({
   position: 'relative',
-  w: '100%',
-  h: '160px',
+  w: 'full',
+  h: '[160px]',
   bg: 'gray.800',
   overflow: 'hidden',
 });
 
 export const videoCard_playIcon = css({
   position: 'absolute',
-  top: '50%',
-  left: '50%',
+  top: '[50%]',
+  left: '[50%]',
   transform: 'translate(-50%, -50%)',
-  color: 'white/50',
+  color: '[white/50]',
 });
 
 export const videoCard_spoilerOverlay = css({
   position: 'absolute',
-  inset: 0,
+  inset: '0',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 'sm',
+  gap: '2',
   bg: 'overlay.dark',
-  backdropFilter: 'blur(8px)',
+  backdropFilter: '[blur(8px)]',
   color: 'white',
   cursor: 'pointer',
-  transition: 'opacity {durations.fast}',
+  transitionProperty: '[opacity]',
+  transitionDuration: 'fast',
   border: 'none',
-  width: '100%',
-  height: '100%',
+  width: 'full',
+  height: 'full',
   _hover: {
-    opacity: 'hover',
+    opacity: '[hover]',
   },
 });
 
@@ -497,14 +506,14 @@ export const videoCard_placeholder = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '100%',
-  height: '100%',
+  width: 'full',
+  height: 'full',
   bg: 'gray.700',
-  color: 'white/50',
+  color: '[white/50]',
 });
 
 export const videoCard_info = css({
-  p: 'md',
+  p: '4',
 });
 
 export const videoCard_title = css({
@@ -517,7 +526,7 @@ export const videoCard_title = css({
 export const videoCard_meta = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   mt: 'sm',
   color: 'gray.400',
   fontSize: 'xs',
@@ -528,12 +537,12 @@ export const video_thumbnailImage = css({
 });
 
 export const video_spoilerHint = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
 });
 
 export const videoGrid = css({
   display: 'flex',
-  gap: 'md',
+  gap: '4',
   overflowX: 'auto',
   pb: 'md',
 });
@@ -541,7 +550,7 @@ export const videoGrid = css({
 export const spoilerToggle = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   fontSize: 'sm',
   color: 'gray.500',
 });
@@ -559,15 +568,15 @@ export const reviewsHeader = css({
 export const reviewsControls = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
 });
 
 export const reviewsSort = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
-  px: 'md',
-  py: 'sm',
+  gap: '2',
+  px: '4',
+  py: '2',
   bg: 'white',
   borderRadius: 'lg',
   shadow: 'sm',
@@ -580,7 +589,7 @@ export const reviewsSort = css({
 export const reviewsHiddenToggle = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   color: 'gray.500',
   fontSize: 'sm',
   cursor: 'pointer',
@@ -590,9 +599,9 @@ export const reviewFilter = css({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
   mb: 'lg',
-  p: 'md',
+  p: '4',
   bg: 'gray.50',
   borderRadius: 'lg',
 });
@@ -604,7 +613,7 @@ export const reviewFilter_sortTabs = css({
 
 export const reviewFilter_sortTabButton = cva({
   base: {
-    px: 'md',
+    px: '4',
     py: 'xs',
     fontSize: 'sm',
     fontWeight: 'medium',
@@ -613,7 +622,8 @@ export const reviewFilter_sortTabButton = cva({
     border: 'none',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all {durations.fast}',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
     _hover: {
       color: 'gray.600',
       bg: 'gray.100',
@@ -650,40 +660,40 @@ export const reviewFilter_toggle = css({
 export const reviewList = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
+  gap: '4',
 });
 
 // ========================================
 // レビューカード（Pencil準拠）
 // ========================================
 export const reviewCard = css({
-  p: 'lg',
+  p: '6',
   bg: 'white',
   borderRadius: 'xl',
   shadow: 'card.default',
 });
 
 export const reviewCard_hidden = css({
-  opacity: 0.5,
+  opacity: '[0.5]',
 });
 
 export const reviewCard_header = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  w: '100%',
+  w: 'full',
 });
 
 export const reviewCard_left = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
+  gap: '4',
 });
 
 export const reviewCard_stars = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
+  gap: '[2px]',
   color: 'orange.400',
 });
 
@@ -700,7 +710,7 @@ export const reviewCard_ratingValue = css({
 export const reviewCard_actions = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
 });
 
 export const reviewCard_actionText = css({
@@ -715,13 +725,13 @@ export const reviewCard_actionText = css({
 export const reviewCard_userInfo = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   mt: 'md',
 });
 
 export const reviewCard_avatar = css({
-  w: '32px',
-  h: '32px',
+  w: '8',
+  h: '8',
   borderRadius: 'full',
   bg: 'gray.200',
   overflow: 'hidden',
@@ -731,8 +741,8 @@ export const reviewCard_avatarPlaceholder = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '32px',
-  h: '32px',
+  w: '8',
+  h: '8',
   borderRadius: 'full',
   bg: 'gray.200',
   color: 'gray.500',
@@ -758,7 +768,7 @@ export const reviewCard_date = css({
 export const reviewCard_content = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'md',
+  gap: '4',
   mt: 'md',
 });
 
@@ -771,14 +781,14 @@ export const reviewCard_commentLabel = css({
 export const reviewCard_commentText = css({
   fontSize: 'sm',
   color: 'gray.600',
-  lineHeight: '1.6',
+  lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
 
 export const reviewCard_spoilerToggle = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   color: 'primary.500',
   fontSize: 'sm',
   fontWeight: 'medium',
@@ -792,14 +802,14 @@ export const reviewCard_spoilerContent = css({
   mt: 'sm',
   fontSize: 'sm',
   color: 'gray.600',
-  lineHeight: '1.6',
+  lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
 
 export const reviewCard_user = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
 });
 
 export const reviewCard_userInfo_text = css({
@@ -821,14 +831,14 @@ export const reviewCard_username = css({
 export const reviewCard_rating = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
   mb: 'sm',
 });
 
 export const reviewCard_openComment = css({
   fontSize: 'sm',
   color: 'gray.600',
-  lineHeight: '1.6',
+  lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
 
@@ -847,7 +857,8 @@ export const reviewCard_actionButton = css({
   color: 'gray.400',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     bg: 'gray.100',
     color: 'gray.600',
@@ -859,20 +870,20 @@ export const reviewCard_actionButton = css({
 // ========================================
 export const fabContainer = css({
   position: 'fixed',
-  bottom: 'xl',
-  right: 'xl',
+  bottom: '8',
+  right: '8',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-end',
-  gap: 'sm',
-  zIndex: 50,
+  gap: '2',
+  zIndex: '[50]',
 });
 
 export const fabMenu = css({
   display: 'flex',
   flexDirection: 'column',
   gap: 'xs',
-  p: 'sm',
+  p: '2',
   bg: 'white',
   borderRadius: 'xl',
   shadow: 'card.hover',
@@ -881,18 +892,19 @@ export const fabMenu = css({
 export const fabMenuItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'md',
-  px: 'md',
-  py: 'md',
+  gap: '4',
+  px: '4',
+  py: '4',
   borderRadius: 'lg',
   color: 'gray.800',
   fontSize: 'sm',
   cursor: 'pointer',
-  transition: 'background {durations.fast}',
+  transitionProperty: '[background]',
+  transitionDuration: 'fast',
   textDecoration: 'none',
   border: 'none',
   bg: 'transparent',
-  w: '100%',
+  w: 'full',
   textAlign: 'left',
   _hover: {
     bg: 'gray.50',
@@ -900,8 +912,8 @@ export const fabMenuItem = css({
 });
 
 export const fabMenuItem_icon = css({
-  w: '18px',
-  h: '18px',
+  w: '[18px]',
+  h: '[18px]',
 });
 
 export const fabMenuItem_iconPrimary = css({
@@ -916,14 +928,15 @@ export const fabButton = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '56px',
-  h: '56px',
+  w: '[56px]',
+  h: '[56px]',
   borderRadius: 'full',
   bg: 'primary.500',
   color: 'white',
   shadow: 'fab.default',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   border: 'none',
   _hover: {
     transform: 'scale(1.1)',
@@ -945,9 +958,9 @@ export const loadMore = css({
 // ========================================
 export const divider = css({
   border: 'none',
-  h: '1px',
+  h: '[1px]',
   bg: 'gray.200',
-  my: 'xl',
+  my: '8',
 });
 
 // ========================================
@@ -967,7 +980,8 @@ export const header_backButton = css({
   color: 'gray.500',
   fontSize: 'sm',
   cursor: 'pointer',
-  transition: 'color {durations.fast}',
+  transitionProperty: 'colors',
+  transitionDuration: 'fast',
   _hover: {
     color: 'gray.800',
   },
@@ -975,9 +989,9 @@ export const header_backButton = css({
 
 export const fab = css({
   position: 'fixed',
-  bottom: 'xl',
-  right: 'xl',
-  zIndex: 50,
+  bottom: '8',
+  right: '8',
+  zIndex: '[50]',
 });
 
 export const fabButton_old = cva({
@@ -985,11 +999,12 @@ export const fabButton_old = cva({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '56px',
-    height: '56px',
+    width: '[56px]',
+    height: '[56px]',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all {durations.fast}',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
     shadow: 'lg',
     _hover: {
       transform: 'scale(1.1)',
@@ -1018,14 +1033,14 @@ export const fabButton_old = cva({
 export const actions = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 'sm',
+  gap: '2',
   mt: 'lg',
 });
 
 export const header_actions = css({
   display: 'flex',
   alignItems: 'center',
-  gap: 'sm',
+  gap: '2',
 });
 
 export const review_avatarImage = css({

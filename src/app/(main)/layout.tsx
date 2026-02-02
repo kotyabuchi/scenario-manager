@@ -48,7 +48,7 @@ export default async function MainLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <Flex direction="column" minHeight="100dvh" bg="bg.page">
+    <Flex direction="column" minHeight="[100dvh]" bg="bg.page">
       <AuthProvider
         initialUser={initialUser}
         initialDiscordMeta={initialDiscordMeta}

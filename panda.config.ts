@@ -4,6 +4,8 @@ import customPreset from '@/styles/preset';
 
 export default defineConfig({
   preflight: true,
+  strictTokens: true,
+  strictPropertyValues: true,
   presets: ['@pandacss/preset-panda', customPreset],
   include: ['./src/**/*.{js,jsx,ts,tsx}', './stories/**/*.{js,jsx,ts,tsx}'],
   jsxFramework: 'react', // or 'solid' or 'vue'

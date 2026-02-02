@@ -4,8 +4,8 @@ export const header = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  width: '100%',
-  height: '64px',
+  width: 'full',
+  height: '[64px]',
   px: '8',
   bg: 'white',
   shadow: 'xs',
@@ -23,20 +23,20 @@ export const logoIconFrame = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '32px',
-  height: '32px',
+  width: '8',
+  height: '8',
   borderRadius: 'md',
-  bg: 'oklch(0.92 0.05 160)',
+  bg: '[oklch(0.92 0.05 160)]',
 });
 
 export const logoIcon = css({
-  color: 'oklch(0.55 0.15 160)',
+  color: '[oklch(0.55 0.15 160)]',
 });
 
 export const logoText = css({
   fontSize: 'lg',
   fontWeight: 'bold',
-  color: 'oklch(0.55 0.15 160)',
+  color: '[oklch(0.55 0.15 160)]',
 });
 
 export const navLinks = css({
@@ -53,7 +53,8 @@ export const navLink = cva({
     gap: '1',
     cursor: 'pointer',
     textDecoration: 'none',
-    transition: 'all {durations.normal}',
+    transitionProperty: 'common',
+    transitionDuration: 'normal',
     _hover: {
       opacity: 'hover',
     },
@@ -74,11 +75,11 @@ export const navLinkText = cva({
     active: {
       true: {
         fontWeight: 'semibold',
-        color: 'oklch(0.55 0.15 160)',
+        color: '[oklch(0.55 0.15 160)]',
       },
       false: {
         fontWeight: 'medium',
-        color: 'oklch(0.45 0.02 150)',
+        color: '[oklch(0.45 0.02 150)]',
       },
     },
   },
@@ -86,15 +87,16 @@ export const navLinkText = cva({
 
 export const navLinkLine = cva({
   base: {
-    width: '100%',
-    height: '2px',
+    width: 'full',
+    height: '[2px]',
     borderRadius: 'full',
-    transition: 'all {durations.normal}',
+    transitionProperty: 'common',
+    transitionDuration: 'normal',
   },
   variants: {
     active: {
       true: {
-        bg: 'oklch(0.55 0.15 160)',
+        bg: '[oklch(0.55 0.15 160)]',
       },
       false: {
         bg: 'transparent',
@@ -110,17 +112,17 @@ export const userArea = css({
 });
 
 export const avatar = css({
-  width: '36px',
-  height: '36px',
+  width: '9',
+  height: '9',
   borderRadius: 'full',
-  bg: 'oklch(0.90 0.01 150)',
+  bg: '[oklch(0.90 0.01 150)]',
   overflow: 'hidden',
   cursor: 'pointer',
 });
 
 export const avatarImage = css({
-  width: '100%',
-  height: '100%',
+  width: 'full',
+  height: 'full',
   objectFit: 'cover',
 });
 
@@ -129,7 +131,7 @@ export const registerButton = css({
   alignItems: 'center',
   gap: '2',
   px: '4',
-  height: '36px',
+  height: '9',
   fontSize: 'sm',
   fontWeight: 'semibold',
   color: 'button.primaryText',
@@ -137,7 +139,8 @@ export const registerButton = css({
   boxShadow: 'button.primary',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transitionProperty: 'common',
+  transitionDuration: 'normal',
   textDecoration: 'none',
   _hover: {
     bg: 'button.primaryBgHover',
@@ -155,22 +158,23 @@ export const authButton = cva({
     fontWeight: 'medium',
     borderRadius: 'md',
     cursor: 'pointer',
-    transition: 'all {durations.normal}',
+    transitionProperty: 'common',
+    transitionDuration: 'normal',
   },
   variants: {
     variant: {
       login: {
-        color: 'oklch(0.55 0.15 160)',
+        color: '[oklch(0.55 0.15 160)]',
         bg: 'transparent',
         _hover: {
-          bg: 'oklch(0.95 0.02 150)',
+          bg: '[oklch(0.95 0.02 150)]',
         },
       },
       signup: {
         color: 'white',
-        bg: 'oklch(0.55 0.15 160)',
+        bg: '[oklch(0.55 0.15 160)]',
         _hover: {
-          bg: 'oklch(0.50 0.15 160)',
+          bg: '[oklch(0.50 0.15 160)]',
         },
       },
     },

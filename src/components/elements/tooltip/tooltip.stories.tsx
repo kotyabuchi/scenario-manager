@@ -29,10 +29,11 @@ export const Default: Story = {
       <button
         type="button"
         className={css({
-          padding: '8px 16px',
-          bg: '#10B981',
+          py: '2',
+          px: '4',
+          bg: 'primary.500',
           color: 'white',
-          borderRadius: '8px',
+          borderRadius: 'lg',
           border: 'none',
           cursor: 'pointer',
         })}
@@ -54,10 +55,11 @@ export const Bottom: Story = {
       <button
         type="button"
         className={css({
-          padding: '8px 16px',
-          bg: '#3B82F6',
+          py: '2',
+          px: '4',
+          bg: 'info.500',
           color: 'white',
-          borderRadius: '8px',
+          borderRadius: 'lg',
           border: 'none',
           cursor: 'pointer',
         })}
@@ -79,10 +81,11 @@ export const Left: Story = {
       <button
         type="button"
         className={css({
-          padding: '8px 16px',
-          bg: '#8B5CF6',
+          py: '2',
+          px: '4',
+          bg: 'purple.500',
           color: 'white',
-          borderRadius: '8px',
+          borderRadius: 'lg',
           border: 'none',
           cursor: 'pointer',
         })}
@@ -104,10 +107,11 @@ export const Right: Story = {
       <button
         type="button"
         className={css({
-          padding: '8px 16px',
-          bg: '#F59E0B',
+          py: '2',
+          px: '4',
+          bg: 'orange.500',
           color: 'white',
-          borderRadius: '8px',
+          borderRadius: 'lg',
           border: 'none',
           cursor: 'pointer',
         })}
@@ -129,10 +133,11 @@ export const NoDelay: Story = {
       <button
         type="button"
         className={css({
-          padding: '8px 16px',
-          bg: '#EF4444',
+          py: '2',
+          px: '4',
+          bg: 'red.500',
           color: 'white',
-          borderRadius: '8px',
+          borderRadius: 'lg',
           border: 'none',
           cursor: 'pointer',
         })}
@@ -156,14 +161,14 @@ export const WithIconButton: Story = {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '32px',
-          height: '32px',
+          width: '8',
+          height: '8',
           bg: 'transparent',
-          border: '1px solid #E5E7EB',
-          borderRadius: '8px',
+          border: '[1px solid #E5E7EB]',
+          borderRadius: 'lg',
           cursor: 'pointer',
-          color: '#6B7280',
-          _hover: { bg: '#F3F4F6' },
+          color: 'gray.500',
+          _hover: { bg: 'gray.100' },
         })}
         aria-label="ヘルプ"
       >
@@ -184,10 +189,11 @@ export const LongContent: Story = {
       <button
         type="button"
         className={css({
-          padding: '8px 16px',
-          bg: '#6B7280',
+          py: '2',
+          px: '4',
+          bg: 'gray.500',
           color: 'white',
-          borderRadius: '8px',
+          borderRadius: 'lg',
           border: 'none',
           cursor: 'pointer',
         })}
@@ -212,18 +218,19 @@ export const AllPlacements: Story = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '32px',
-        padding: '64px',
+        gap: '8',
+        padding: '16',
       })}
     >
       <Tooltip content="上に表示" placement="top">
         <button
           type="button"
           className={css({
-            padding: '8px 16px',
-            bg: '#10B981',
+            py: '2',
+            px: '4',
+            bg: 'primary.500',
             color: 'white',
-            borderRadius: '8px',
+            borderRadius: 'lg',
             border: 'none',
             cursor: 'pointer',
           })}
@@ -231,15 +238,16 @@ export const AllPlacements: Story = {
           Top
         </button>
       </Tooltip>
-      <div className={css({ display: 'flex', gap: '64px' })}>
+      <div className={css({ display: 'flex', gap: '16' })}>
         <Tooltip content="左に表示" placement="left">
           <button
             type="button"
             className={css({
-              padding: '8px 16px',
-              bg: '#8B5CF6',
+              py: '2',
+              px: '4',
+              bg: 'purple.500',
               color: 'white',
-              borderRadius: '8px',
+              borderRadius: 'lg',
               border: 'none',
               cursor: 'pointer',
             })}
@@ -251,10 +259,11 @@ export const AllPlacements: Story = {
           <button
             type="button"
             className={css({
-              padding: '8px 16px',
-              bg: '#F59E0B',
+              py: '2',
+              px: '4',
+              bg: 'orange.500',
               color: 'white',
-              borderRadius: '8px',
+              borderRadius: 'lg',
               border: 'none',
               cursor: 'pointer',
             })}
@@ -267,10 +276,11 @@ export const AllPlacements: Story = {
         <button
           type="button"
           className={css({
-            padding: '8px 16px',
-            bg: '#3B82F6',
+            py: '2',
+            px: '4',
+            bg: 'info.500',
             color: 'white',
-            borderRadius: '8px',
+            borderRadius: 'lg',
             border: 'none',
             cursor: 'pointer',
           })}

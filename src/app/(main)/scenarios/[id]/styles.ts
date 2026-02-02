@@ -4,7 +4,7 @@ import { css } from '@/styled-system/css';
 export const pageContainer = css({
   display: 'flex',
   flexDirection: 'column',
-  minH: '100vh',
+  minH: 'screen',
   bg: 'gray.50', // #F9FAFB
 });
 
@@ -12,17 +12,17 @@ export const pageContainer = css({
 export const mainContent = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'xl',
-  maxW: '1440px',
-  w: '100%',
+  gap: '8',
+  maxW: '[1440px]',
+  w: 'full',
   mx: 'auto',
-  px: '120px',
-  py: 'xl',
+  px: '[120px]',
+  py: '8',
 });
 
 export const divider = css({
   border: 'none',
-  h: '1px',
+  h: '[1px]',
   bg: 'gray.200',
-  my: 'md',
+  my: '4',
 });

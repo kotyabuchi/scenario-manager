@@ -6,7 +6,7 @@ import { css } from '@/styled-system/css';
 export const radioGroupRoot = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
+  gap: '4',
 });
 
 /**
@@ -15,7 +15,7 @@ export const radioGroupRoot = css({
 export const radioItem = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '2',
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',
@@ -30,25 +30,26 @@ export const radioControl = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '20px',
-  h: '20px',
-  borderRadius: '50%',
+  w: '5',
+  h: '5',
+  borderRadius: 'full',
   bg: 'white',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
-  transition: 'all {durations.fast}',
-  flexShrink: 0,
+  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.08)]',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  flexShrink: '0',
   _checked: {
-    bg: '#10B981',
-    boxShadow: 'none',
+    bg: 'primary.500',
+    boxShadow: '[none]',
   },
   _disabled: {
-    bg: '#E5E7EB',
-    boxShadow: 'none',
+    bg: 'gray.200',
+    boxShadow: '[none]',
   },
   _focus: {
-    outline: '2px solid',
+    outline: '[2px solid]',
     outlineColor: 'border.focus',
-    outlineOffset: '2px',
+    outlineOffset: '2',
   },
 });
 
@@ -56,9 +57,9 @@ export const radioControl = css({
  * RadioIndicatorのスタイル
  */
 export const radioIndicator = css({
-  w: '8px',
-  h: '8px',
-  borderRadius: '50%',
+  w: '2',
+  h: '2',
+  borderRadius: 'full',
   bg: 'white',
 });
 
@@ -66,9 +67,9 @@ export const radioIndicator = css({
  * RadioTextのスタイル
  */
 export const radioText = css({
-  fontSize: '14px',
-  color: '#374151',
+  fontSize: '[14px]',
+  color: 'gray.700',
   _disabled: {
-    color: '#9CA3AF',
+    color: 'gray.400',
   },
 });

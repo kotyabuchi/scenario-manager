@@ -16,10 +16,10 @@ export const card_header = css({
 });
 
 export const card_avatar = css({
-  w: '128px',
-  h: '128px',
+  w: '[128px]',
+  h: '[128px]',
   borderRadius: 'full',
-  border: '3px solid',
+  border: '[3px solid]',
   borderColor: 'gray.200',
 });
 
@@ -40,7 +40,7 @@ export const card_userName = css({
 
 export const card_divider = css({
   border: 'none',
-  h: '1px',
+  h: '[1px]',
   bg: 'gray.100',
   my: '4',
 });
@@ -55,7 +55,7 @@ export const card_sectionTitle = css({
 export const card_bio = css({
   fontSize: 'sm',
   color: 'gray.600',
-  lineHeight: '1.6',
+  lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
 
@@ -98,13 +98,14 @@ export const card_editButton = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'background-color {durations.fast}',
+  transitionProperty: 'colors',
+  transitionDuration: 'fast',
   border: 'none',
   _hover: {
     bg: 'primary.50',
   },
   _focusVisible: {
-    outline: '2px solid',
+    outline: '[2px solid]',
     outlineColor: 'border.focus',
   },
 });
@@ -169,12 +170,13 @@ export const editForm_input = css({
   w: 'full',
   px: '3',
   py: '2',
-  border: '1px solid',
+  border: '[1px solid]',
   borderColor: 'gray.300',
   borderRadius: 'md',
   fontSize: 'sm',
   outline: 'none',
-  transition: 'border-color {durations.fast}',
+  transitionProperty: 'colors',
+  transitionDuration: 'fast',
   _focusVisible: {
     borderColor: 'primary.500',
     outline: 'none',
@@ -188,7 +190,7 @@ export const editForm_inputDisabled = css({
   w: 'full',
   px: '3',
   py: '2',
-  border: '1px solid',
+  border: '[1px solid]',
   borderColor: 'gray.200',
   borderRadius: 'md',
   fontSize: 'sm',
@@ -201,14 +203,15 @@ export const editForm_textarea = css({
   w: 'full',
   px: '3',
   py: '2',
-  border: '1px solid',
+  border: '[1px solid]',
   borderColor: 'gray.300',
   borderRadius: 'md',
   fontSize: 'sm',
   outline: 'none',
   resize: 'vertical',
-  minH: '100px',
-  transition: 'border-color {durations.fast}',
+  minH: '[100px]',
+  transitionProperty: 'colors',
+  transitionDuration: 'fast',
   _focusVisible: {
     borderColor: 'primary.500',
     outline: 'none',
@@ -228,11 +231,12 @@ export const editForm_submitButton = css({
   py: '3',
   px: '4',
   bg: 'primary.600',
-  color: 'primary.foreground.white',
+  color: 'primary.textOnPrimary',
   borderRadius: 'lg',
   fontWeight: 'medium',
   cursor: 'pointer',
-  transition: 'background {durations.fast}',
+  transitionProperty: 'background',
+  transitionDuration: 'fast',
   border: 'none',
   fontSize: 'md',
   mt: '2',

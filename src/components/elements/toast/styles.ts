@@ -6,12 +6,12 @@ import { css } from '@/styled-system/css';
 export const toastContainer = css({
   display: 'flex',
   alignItems: 'flex-start',
-  gap: '12px',
-  width: '320px',
-  padding: '16px',
-  bg: '#FFFFFF',
-  borderRadius: '8px',
-  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+  gap: '3',
+  width: '[320px]',
+  padding: '4',
+  bg: 'white',
+  borderRadius: 'md',
+  boxShadow: '[0 4px 12px rgba(0, 0, 0, 0.08)]',
 });
 
 /**
@@ -21,36 +21,36 @@ export const toastIconContainer = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '24px',
-  height: '24px',
-  borderRadius: '12px',
-  flexShrink: 0,
+  width: '6',
+  height: '6',
+  borderRadius: 'lg',
+  flexShrink: '0',
 });
 
 /**
  * コンテンツコンテナスタイル
  */
 export const toastContent = css({
-  flex: 1,
-  minWidth: 0,
+  flex: '1',
+  minWidth: '0',
 });
 
 /**
  * タイトルスタイル
  */
 export const toastTitle = css({
-  fontSize: '14px',
-  fontWeight: 500,
-  color: '#1F2937',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
+  color: 'gray.800',
 });
 
 /**
  * 説明スタイル
  */
 export const toastDescription = css({
-  fontSize: '13px',
-  color: '#6B7280',
-  mt: '2px',
+  fontSize: '[13px]',
+  color: 'gray.500',
+  mt: '[2px]',
 });
 
 /**
@@ -64,9 +64,9 @@ export const toastCloseButton = css({
   bg: 'transparent',
   border: 'none',
   cursor: 'pointer',
-  color: '#9CA3AF',
-  flexShrink: 0,
-  _hover: { color: '#6B7280' },
+  color: 'gray.400',
+  flexShrink: '0',
+  _hover: { color: 'gray.500' },
 });
 
 /**
@@ -74,20 +74,20 @@ export const toastCloseButton = css({
  */
 export const statusConfig = {
   success: {
-    iconBg: '#D1FAE5',
-    iconColor: '#10B981',
+    iconBg: 'primary.100',
+    iconColor: 'primary.500',
   },
   error: {
-    iconBg: '#FEE2E2',
-    iconColor: '#EF4444',
+    iconBg: 'red.100',
+    iconColor: 'red.500',
   },
   info: {
-    iconBg: '#DBEAFE',
-    iconColor: '#3B82F6',
+    iconBg: 'info.100',
+    iconColor: 'info.500',
   },
   warning: {
-    iconBg: '#FEF3C7',
-    iconColor: '#F59E0B',
+    iconBg: 'orange.100',
+    iconColor: 'orange.500',
   },
 } as const;
 
@@ -98,12 +98,12 @@ export const toastIconContainerSuccess = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '24px',
-  height: '24px',
-  borderRadius: '12px',
-  flexShrink: 0,
-  backgroundColor: '#D1FAE5',
-  color: '#10B981',
+  width: '6',
+  height: '6',
+  borderRadius: 'lg',
+  flexShrink: '0',
+  backgroundColor: 'primary.100',
+  color: 'primary.500',
 });
 
 /**
@@ -113,12 +113,12 @@ export const toastIconContainerError = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '24px',
-  height: '24px',
-  borderRadius: '12px',
-  flexShrink: 0,
-  backgroundColor: '#FEE2E2',
-  color: '#EF4444',
+  width: '6',
+  height: '6',
+  borderRadius: 'lg',
+  flexShrink: '0',
+  backgroundColor: 'red.100',
+  color: 'red.500',
 });
 
 /**
@@ -128,12 +128,12 @@ export const toastIconContainerInfo = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '24px',
-  height: '24px',
-  borderRadius: '12px',
-  flexShrink: 0,
-  backgroundColor: '#DBEAFE',
-  color: '#3B82F6',
+  width: '6',
+  height: '6',
+  borderRadius: 'lg',
+  flexShrink: '0',
+  backgroundColor: 'info.100',
+  color: 'info.500',
 });
 
 /**
@@ -143,10 +143,10 @@ export const toastIconContainerWarning = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '24px',
-  height: '24px',
-  borderRadius: '12px',
-  flexShrink: 0,
-  backgroundColor: '#FEF3C7',
-  color: '#F59E0B',
+  width: '6',
+  height: '6',
+  borderRadius: 'lg',
+  flexShrink: '0',
+  backgroundColor: 'orange.100',
+  color: 'orange.500',
 });

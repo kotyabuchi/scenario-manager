@@ -7,12 +7,12 @@ import { css } from '@/styled-system/css';
 export const fieldError = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '4px',
-  fontSize: '12px',
+  gap: '1',
+  fontSize: '[12px]',
   color: 'text.error',
-  mt: '4px',
+  mt: '1',
 });
 
 export const fieldError_message = css({
-  lineHeight: '1.4',
+  lineHeight: '[1.4]',
 });

@@ -8,38 +8,38 @@ import { css } from '@/styled-system/css';
 export const formField_container = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4px',
+  gap: '1',
 });
 
 // fieldset用のスタイル（グループ入力用）
 export const formField_fieldset = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4px',
+  gap: '1',
   border: 'none',
-  padding: 0,
-  margin: 0,
+  padding: '0',
+  margin: '0',
   '& > legend': {
-    mb: '4px',
+    mb: '1',
   },
 });
 
 // ラベル共通スタイル
 export const formField_label = css({
-  fontSize: '14px',
-  fontWeight: '500',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
   color: 'input.label',
-  letterSpacing: '0.01em',
+  letterSpacing: '[0.01em]',
 });
 
 // 必須マーク
 export const formField_required = css({
   color: 'error.default',
-  ml: '2px',
+  ml: '[2px]',
 });
 
 // ヒントテキスト
 export const formField_hint = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
   color: 'text.secondary',
 });

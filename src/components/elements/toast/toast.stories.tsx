@@ -98,7 +98,7 @@ export const AllVariants: Story = {
   },
   render: () => (
     <div
-      className={css({ display: 'flex', flexDirection: 'column', gap: '16px' })}
+      className={css({ display: 'flex', flexDirection: 'column', gap: '4' })}
     >
       <Toast
         title="Success"

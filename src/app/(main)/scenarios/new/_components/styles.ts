@@ -10,29 +10,30 @@ import { css } from '@/styled-system/css';
 // フォームカード（Pencil: formCard）
 export const form_card = css({
   bg: 'white',
-  borderRadius: '16px',
+  borderRadius: '2xl',
   shadow: 'card.default',
-  p: '32px',
+  p: '8',
   w: 'full',
-  maxW: '1200px',
+  maxW: '[1200px]',
   display: 'flex',
   flexDirection: 'column',
-  gap: '32px',
+  gap: '8',
 });
 
 // エラーメッセージ
 export const form_error = css({
   bg: 'red.50',
   color: 'red.600',
-  p: '12px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
+  py: '3',
+  px: '4',
+  borderRadius: 'lg',
+  fontSize: '[14px]',
 });
 
 // トップ行（画像 + フィールド群）
 export const form_topRow = css({
   display: 'flex',
-  gap: '32px',
+  gap: '8',
   flexDirection: 'column',
   lg: {
     flexDirection: 'row',
@@ -43,12 +44,12 @@ export const form_topRow = css({
 export const form_imageRow = css({
   display: 'flex',
   justifyContent: 'center',
-  w: '280px',
-  h: '280px',
-  flexShrink: 0,
+  w: '[280px]',
+  h: '[280px]',
+  flexShrink: '0',
   mx: 'auto',
   lg: {
-    mx: 0,
+    mx: '0',
   },
 });
 
@@ -58,14 +59,15 @@ export const form_imageUpload = css({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '12px',
-  w: '280px',
-  h: '280px',
+  gap: '3',
+  w: '[280px]',
+  h: '[280px]',
   bg: 'gray.50',
-  borderRadius: '12px',
+  borderRadius: 'xl',
   shadow: 'sm',
   cursor: 'pointer',
-  transition: 'all {durations.normal}',
+  transitionProperty: 'common',
+  transitionDuration: 'normal',
   _hover: {
     bg: 'gray.100',
   },
@@ -78,32 +80,32 @@ export const form_uploadIcon = css({
 
 // 画像アップロードテキスト（Pencil: uploadText - fontSize:13, color:#6B7280）
 export const form_uploadText = css({
-  fontSize: '13px',
+  fontSize: '[13px]',
   color: 'gray.500',
   textAlign: 'center',
 });
 
 // 画像アップロードヒント（Pencil: uploadHint - fontSize:12, color:#9CA3AF）
 export const form_uploadHint = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
   color: 'gray.400',
 });
 
 // 画像アップロードラッパー
 export const form_imageUploadWrapper = css({
-  w: '280px',
-  h: '280px',
+  w: '[280px]',
+  h: '[280px]',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
+  gap: '2',
 });
 
 // 画像プレビュー
 export const form_imagePreview = css({
   position: 'relative',
-  w: '280px',
-  h: '280px',
-  borderRadius: '12px',
+  w: '[280px]',
+  h: '[280px]',
+  borderRadius: 'xl',
   overflow: 'hidden',
   shadow: 'sm',
 });
@@ -118,25 +120,26 @@ export const form_previewImage = css({
 // 画像削除ボタン
 export const form_imageRemove = css({
   position: 'absolute',
-  bottom: '8px',
-  right: '8px',
-  px: '12px',
-  py: '6px',
-  bg: 'rgba(0, 0, 0, 0.6)',
+  bottom: '2',
+  right: '2',
+  px: '3',
+  py: '1.5',
+  bg: '[rgba(0, 0, 0, 0.6)]',
   color: 'white',
-  fontSize: '12px',
-  fontWeight: '500',
-  borderRadius: '6px',
+  fontSize: '[12px]',
+  fontWeight: 'medium',
+  borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'background {durations.normal}',
+  transitionProperty: '[background]',
+  transitionDuration: 'normal',
   _hover: {
-    bg: 'rgba(0, 0, 0, 0.8)',
+    bg: '[rgba(0, 0, 0, 0.8)]',
   },
 });
 
 // 画像アップロードエラー
 export const form_uploadError = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
   color: 'red.500',
   textAlign: 'center',
 });
@@ -145,36 +148,36 @@ export const form_uploadError = css({
 export const form_rightFields = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
-  flex: 1,
-  minW: 0,
+  gap: '4',
+  flex: '1',
+  minW: '0',
 });
 
 // フィールド行（2カラム）
 export const form_fieldRow = css({
   display: 'flex',
-  gap: '24px',
+  gap: '6',
   flexDirection: 'column',
   sm: {
     flexDirection: 'row',
   },
   '& > *': {
-    flex: 1,
-    minW: 0,
+    flex: '[1]',
+    minW: '0',
   },
 });
 
 // フィールド行（2カラム、間隔狭め）
 export const form_fieldRow_narrow = css({
   display: 'flex',
-  gap: '20px',
+  gap: '5',
   flexDirection: 'column',
   sm: {
     flexDirection: 'row',
   },
   '& > *': {
-    flex: 1,
-    minW: 0,
+    flex: '[1]',
+    minW: '0',
   },
 });
 
@@ -182,15 +185,15 @@ export const form_fieldRow_narrow = css({
 export const form_field = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
-  flex: 1,
-  minW: 0,
+  gap: '2',
+  flex: '1',
+  minW: '0',
 });
 
 // ラベル（Pencil: fontSize:13, fontWeight:500, color:#374151）
 export const form_label = css({
-  fontSize: '13px',
-  fontWeight: '500',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
   color: 'gray.700',
 });
 
@@ -198,19 +201,19 @@ export const form_label = css({
 export const form_rangeInputRow = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '12px',
+  gap: '3',
 });
 
 // 範囲セパレータ（Pencil: "〜", fontSize:14, fontWeight:500, color:#6B7280）
 export const form_rangeSeparator = css({
-  fontSize: '14px',
-  fontWeight: '500',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
   color: 'gray.500',
 });
 
 // 範囲単位（Pencil: fontSize:14, color:#6B7280）
 export const form_rangeUnit = css({
-  fontSize: '14px',
+  fontSize: '[14px]',
   color: 'gray.500',
 });
 
@@ -218,13 +221,13 @@ export const form_rangeUnit = css({
 export const form_sliderControls = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '12px',
+  gap: '3',
 });
 
 // スライダーの現在値表示
 export const form_sliderValue = css({
-  fontSize: '13px',
-  fontWeight: '500',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
   color: 'primary.500',
   textAlign: 'center',
 });
@@ -233,7 +236,7 @@ export const form_sliderValue = css({
 export const form_sliderMinMax = css({
   display: 'flex',
   justifyContent: 'space-between',
-  fontSize: '12px',
+  fontSize: '[12px]',
   color: 'gray.400',
 });
 
@@ -241,13 +244,13 @@ export const form_sliderMinMax = css({
 export const form_chips = css({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '8px',
+  gap: '2',
 });
 
 // フッター（Pencil: footer - justifyContent:end, gap:16）
 export const form_footer = css({
   display: 'flex',
   justifyContent: 'flex-end',
-  gap: '16px',
-  mt: '16px',
+  gap: '4',
+  mt: '4',
 });

@@ -6,7 +6,7 @@ import { css } from '@/styled-system/css';
 export const switchRoot = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '2',
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',
@@ -19,13 +19,14 @@ export const switchRoot = css({
  */
 export const switchControl = css({
   position: 'relative',
-  w: '44px',
-  h: '24px',
-  borderRadius: '12px',
-  bg: '#E5E7EB',
-  transition: 'all {durations.fast}',
+  w: '[44px]',
+  h: '6',
+  borderRadius: 'lg',
+  bg: 'gray.200',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _checked: {
-    bg: '#10B981',
+    bg: 'primary.500',
   },
 });
 
@@ -34,16 +35,17 @@ export const switchControl = css({
  */
 export const switchThumb = css({
   position: 'absolute',
-  top: '2px',
-  left: '2px',
-  w: '20px',
-  h: '20px',
-  borderRadius: '10px',
+  top: '[2px]',
+  left: '[2px]',
+  w: '5',
+  h: '5',
+  borderRadius: '[10px]',
   bg: 'white',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.12)',
-  transition: 'transform {durations.fast}',
+  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.12)]',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _checked: {
-    transform: 'translateX(20px)',
+    transform: '[translateX(20px)]',
   },
 });
 
@@ -51,9 +53,9 @@ export const switchThumb = css({
  * Switchのラベルスタイル
  */
 export const switchLabel = css({
-  fontSize: '14px',
-  color: '#374151',
+  fontSize: '[14px]',
+  color: 'gray.700',
   _disabled: {
-    color: '#9CA3AF',
+    color: 'gray.400',
   },
 });

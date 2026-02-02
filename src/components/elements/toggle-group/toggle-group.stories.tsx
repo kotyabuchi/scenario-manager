@@ -86,7 +86,7 @@ export const Interactive: Story = {
           onValueChange={(details) => setValue(details.value)}
           items={defaultItems}
         />
-        <p className={css({ mt: '16px', fontSize: '14px', color: '#6B7280' })}>
+        <p className={css({ mt: '4', fontSize: '[14px]', color: 'gray.500' })}>
           選択中: {value.join(', ') || 'なし'}
         </p>
       </div>
@@ -112,7 +112,7 @@ export const MultipleInteractive: Story = {
           items={defaultItems}
           multiple
         />
-        <p className={css({ mt: '16px', fontSize: '14px', color: '#6B7280' })}>
+        <p className={css({ mt: '4', fontSize: '[14px]', color: 'gray.500' })}>
           選択中: {value.join(', ') || 'なし'}
         </p>
       </div>

@@ -4,7 +4,7 @@ import { css } from '@/styled-system/css';
  * バー形式のルートスタイル
  */
 export const progressBarRoot = css({
-  w: '100%',
+  w: 'full',
 });
 
 /**
@@ -14,34 +14,34 @@ export const progressLabel = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  mb: '4px',
+  mb: '1',
 });
 
 /**
  * ラベルテキストスタイル
  */
 export const progressLabelText = css({
-  fontSize: '13px',
-  color: '#374151',
+  fontSize: '[13px]',
+  color: 'gray.700',
 });
 
 /**
  * 値テキストスタイル
  */
 export const progressValueText = css({
-  fontSize: '13px',
-  fontWeight: 500,
-  color: '#10B981',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
+  color: 'primary.500',
 });
 
 /**
  * トラックスタイル
  */
 export const progressTrack = css({
-  w: '100%',
-  h: '8px',
-  bg: '#E5E7EB',
-  borderRadius: '4px',
+  w: 'full',
+  h: '2',
+  bg: 'gray.200',
+  borderRadius: 'xs',
   overflow: 'hidden',
 });
 
@@ -49,10 +49,12 @@ export const progressTrack = css({
  * フィルスタイル
  */
 export const progressFill = css({
-  h: '100%',
-  bg: '#10B981',
-  borderRadius: '4px',
-  transition: 'width {durations.slow} ease',
+  h: 'full',
+  bg: 'primary.500',
+  borderRadius: 'xs',
+  transitionProperty: 'size',
+  transitionDuration: 'slow',
+  transitionTimingFunction: 'ease-in-out',
 });
 
 /**
@@ -70,8 +72,8 @@ export const progressCircleRoot = css({
  */
 export const progressCircleBg = css({
   position: 'absolute',
-  borderRadius: '50%',
-  bg: '#E5E7EB',
+  borderRadius: 'full',
+  bg: 'gray.200',
 });
 
 /**
@@ -79,7 +81,7 @@ export const progressCircleBg = css({
  */
 export const progressCircleInner = css({
   position: 'absolute',
-  borderRadius: '50%',
+  borderRadius: 'full',
   bg: 'white',
 });
 
@@ -88,15 +90,15 @@ export const progressCircleInner = css({
  */
 export const progressCircleValue = css({
   position: 'relative',
-  color: '#10B981',
-  fontWeight: 600,
+  color: 'primary.500',
+  fontWeight: 'semibold',
 });
 
 /**
  * サイズマップ
  */
 export const circleSizeMap = {
-  sm: { outer: 48, inner: 40, fontSize: '12px' },
-  md: { outer: 64, inner: 56, fontSize: '14px' },
-  lg: { outer: 80, inner: 72, fontSize: '16px' },
+  sm: { outer: 48, inner: 40, fontSize: '[12px]' },
+  md: { outer: 64, inner: 56, fontSize: '[14px]' },
+  lg: { outer: 80, inner: 72, fontSize: '[16px]' },
 } as const;

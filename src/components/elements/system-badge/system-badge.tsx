@@ -27,17 +27,19 @@ export const SystemBadge = ({ system, size = 'md' }: SystemBadgeProps) => {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontWeight: 600,
+        fontWeight: 'semibold',
         color: 'white',
-        borderRadius: '0 0 8px 0',
+        borderRadius: '[0 0 8px 0]',
         ...(size === 'sm'
           ? {
-              fontSize: '10px',
-              padding: '4px 8px',
+              fontSize: '[10px]',
+              py: '1',
+              px: '2',
             }
           : {
-              fontSize: '11px',
-              padding: '6px 12px',
+              fontSize: '[11px]',
+              py: '1.5',
+              px: '3',
             }),
       })}
       style={{ backgroundColor: bgColor }}

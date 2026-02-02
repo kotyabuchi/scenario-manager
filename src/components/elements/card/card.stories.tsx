@@ -30,9 +30,9 @@ type Story = StoryObj<typeof meta>;
 const containerStyle = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'lg',
-  p: 'lg',
-  bg: 'layer.base',
+  gap: '6',
+  p: '6',
+  bg: 'bg.card',
 });
 
 export const Default: Story = {

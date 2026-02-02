@@ -13,22 +13,24 @@ export const chip = cva({
   base: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '4px',
-    px: '12px',
-    py: '6px',
-    fontSize: '13px',
-    fontWeight: '500',
-    fontFamily: 'Inter, sans-serif',
+    gap: '1',
+    px: '3',
+    py: '1.5',
+    fontSize: '[13px]',
+    fontWeight: 'medium',
+    fontFamily: '[Inter, sans-serif]',
     borderRadius: 'full',
     cursor: 'pointer',
-    transition: 'all {durations.fast} ease-out',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
     border: 'none',
     outline: 'none',
     userSelect: 'none',
     _focusVisible: {
-      outline: '2px solid',
+      outline: '[2px solid]',
       outlineColor: 'border.focus',
-      outlineOffset: '2px',
+      outlineOffset: '[2px]',
     },
   },
   variants: {
@@ -57,7 +59,7 @@ export const chip = cva({
       outline: {
         bg: 'chip.outlineBg',
         color: 'chip.outlineText',
-        boxShadow: 'inset 0 0 0 1px token(colors.chip.outlineBorder)',
+        boxShadow: '[inset 0 0 0 1px token(colors.chip.outlineBorder)]',
       },
     },
     /** 選択状態（selectable バリアント用） */
@@ -68,19 +70,19 @@ export const chip = cva({
     /** サイズバリアント */
     size: {
       sm: {
-        px: '8px',
-        py: '4px',
-        fontSize: '12px',
+        px: '2',
+        py: '1',
+        fontSize: '[12px]',
       },
       md: {
-        px: '12px',
-        py: '6px',
-        fontSize: '13px',
+        px: '3',
+        py: '1.5',
+        fontSize: '[13px]',
       },
       lg: {
-        px: '16px',
-        py: '8px',
-        fontSize: '14px',
+        px: '4',
+        py: '2',
+        fontSize: '[14px]',
       },
     },
   },
@@ -101,7 +103,7 @@ export const chip = cva({
       css: {
         bg: 'chip.outlineBg',
         color: 'chip.outlineText',
-        boxShadow: 'inset 0 0 0 1px token(colors.chip.outlineBorder)',
+        boxShadow: '[inset 0 0 0 1px token(colors.chip.outlineBorder)]',
         _hover: {
           bg: 'gray.50',
         },

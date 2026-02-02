@@ -7,7 +7,7 @@ import { css } from '@/styled-system/css';
 export const slider_root = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
+  gap: '2',
   w: 'full',
 });
 
@@ -19,9 +19,9 @@ export const slider_header = css({
 });
 
 export const slider_label = css({
-  fontSize: '13px',
-  fontWeight: '500',
-  color: '#374151',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
+  color: 'gray.700',
 });
 
 export const slider_rangeLabels = css({
@@ -31,9 +31,9 @@ export const slider_rangeLabels = css({
 });
 
 export const slider_rangeLabel = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
   fontWeight: 'normal',
-  color: '#6B7280',
+  color: 'gray.500',
 });
 
 export const slider_valueContainer = css({
@@ -42,16 +42,16 @@ export const slider_valueContainer = css({
 });
 
 export const slider_output = css({
-  fontSize: '13px',
-  fontWeight: '500',
-  color: '#10B981',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
+  color: 'primary.500',
 });
 
 export const slider_control = css({
   display: 'flex',
   alignItems: 'center',
   position: 'relative',
-  h: '24px',
+  h: '6',
   cursor: 'pointer',
   _disabled: {
     opacity: 'disabled',
@@ -62,7 +62,7 @@ export const slider_control = css({
 export const slider_track = css({
   position: 'relative',
   w: 'full',
-  h: '6px',
+  h: '1.5',
   borderRadius: 'full',
   bg: 'slider.track',
 });
@@ -78,24 +78,26 @@ export const slider_thumb = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  w: '20px',
-  h: '20px',
+  w: '5',
+  h: '5',
   borderRadius: 'full',
   bg: 'slider.thumb',
   boxShadow: 'slider.thumb',
   cursor: 'grab',
-  transition: 'transform {durations.fast} ease-out',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'ease-out',
   _hover: {
-    transform: 'scale(1.1)',
+    transform: '[scale(1.1)]',
   },
   _active: {
     cursor: 'grabbing',
-    transform: 'scale(1.15)',
+    transform: '[scale(1.15)]',
   },
   _focus: {
-    outline: '2px solid',
+    outline: '[2px solid]',
     outlineColor: 'border.focus',
-    outlineOffset: '-1px',
+    outlineOffset: '[-1px]',
   },
   _disabled: {
     cursor: 'not-allowed',
@@ -108,12 +110,12 @@ export const slider_thumb = css({
 export const slider_markerGroup = css({
   position: 'relative',
   w: 'full',
-  mt: '4px',
+  mt: '1',
 });
 
 export const slider_marker = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
   color: 'text.secondary',
   position: 'absolute',
-  transform: 'translateX(-50%)',
+  transform: '[translateX(-50%)]',
 });

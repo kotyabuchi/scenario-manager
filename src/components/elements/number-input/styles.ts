@@ -13,50 +13,50 @@ import { css } from '@/styled-system/css';
 export const numberInput_root = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
+  gap: '2',
   w: 'full',
-  minW: 0,
+  minW: '0',
 });
 
 export const numberInput_label = css({
-  fontSize: '13px',
-  fontWeight: '500',
+  fontSize: '[13px]',
+  fontWeight: 'medium',
   color: 'gray.700',
-  letterSpacing: '0.01em',
+  letterSpacing: '[0.01em]',
 });
 
 export const numberInput_wrapper = css({
   display: 'flex',
   alignItems: 'stretch',
-  h: '44px',
-  borderRadius: '8px',
+  h: '[44px]',
+  borderRadius: 'md',
   bg: 'white',
   overflow: 'hidden',
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  boxShadow: '[0 1px 3px rgba(0, 0, 0, 0.1)]',
   _focusWithin: {
-    outline: '2px solid',
+    outline: '[2px solid]',
     outlineColor: 'border.focus',
-    outlineOffset: '2px',
+    outlineOffset: '2',
   },
 });
 
 export const numberInput_control = css({
   display: 'flex',
   flexDirection: 'column',
-  width: '32px',
-  flexShrink: 0,
+  width: '8',
+  flexShrink: '0',
 });
 
 export const numberInput_input = css({
-  flex: 1,
-  minWidth: 0,
-  px: '12px',
-  py: '8px',
+  flex: '1',
+  minWidth: '0',
+  px: '3',
+  py: '2',
   border: 'none',
   bg: 'transparent',
   color: 'gray.800',
-  fontSize: '14px',
-  fontFamily: 'Inter, sans-serif',
+  fontSize: '[14px]',
+  fontFamily: '[Inter, sans-serif]',
   outline: 'none',
   _placeholder: {
     color: 'gray.400',
@@ -71,13 +71,15 @@ export const numberInput_button = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flex: 1,
-  w: '32px',
+  flex: '1',
+  w: '8',
   border: 'none',
   bg: 'gray.50',
   color: 'gray.500',
   cursor: 'pointer',
-  transition: 'all {durations.fast} ease-out',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'ease-out',
   _hover: {
     bg: 'gray.100',
     color: 'gray.700',
@@ -92,9 +94,9 @@ export const numberInput_button = css({
 });
 
 export const numberInput_incrementButton = css({
-  borderTopRightRadius: '8px',
+  borderTopRightRadius: 'md',
 });
 
 export const numberInput_decrementButton = css({
-  borderBottomRightRadius: '8px',
+  borderBottomRightRadius: 'md',
 });

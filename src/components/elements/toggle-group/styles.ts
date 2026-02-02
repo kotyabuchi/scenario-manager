@@ -5,10 +5,10 @@ import { css } from '@/styled-system/css';
  */
 export const toggleGroupRoot = css({
   display: 'flex',
-  gap: '4px',
-  padding: '4px',
-  bg: '#F3F4F6',
-  borderRadius: '8px',
+  gap: '1',
+  padding: '1',
+  bg: 'gray.100',
+  borderRadius: 'md',
 });
 
 /**
@@ -18,25 +18,26 @@ export const toggleGroupItem = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '40px',
-  height: '40px',
-  borderRadius: '6px',
+  width: '10',
+  height: '10',
+  borderRadius: 'sm',
   cursor: 'pointer',
-  transition: 'all {durations.fast}',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   bg: 'transparent',
   border: 'none',
-  color: '#9CA3AF',
+  color: 'gray.400',
   '&[data-state=on]': {
-    bg: '#FFFFFF',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-    color: '#1F2937',
+    bg: 'white',
+    boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.05)]',
+    color: 'gray.800',
   },
   _hover: {
-    color: '#6B7280',
-    bg: '#E5E7EB',
+    color: 'gray.500',
+    bg: 'gray.200',
   },
   _disabled: {
-    color: '#D1D5DB',
+    color: 'gray.300',
     cursor: 'not-allowed',
   },
 });

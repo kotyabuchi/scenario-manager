@@ -6,23 +6,25 @@ import { cva } from '@/styled-system/css';
 export const textarea = cva({
   base: {
     w: 'full',
-    px: '12px',
-    py: '12px',
+    px: '3',
+    py: '3',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: 'md',
     bg: 'input.bg',
     color: 'input.text',
-    fontSize: '14px',
-    fontFamily: 'Inter, sans-serif',
+    fontSize: '[14px]',
+    fontFamily: '[Inter, sans-serif]',
     outline: 'none',
     resize: 'vertical',
-    minH: '120px',
-    transition: 'all {durations.fast} ease-out',
+    minH: '[120px]',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
     _hover: {
       bg: 'gray.200',
     },
     _focus: {
-      outline: '2px solid',
+      outline: '[2px solid]',
       outlineColor: 'border.focus',
     },
     _placeholder: {
@@ -42,7 +44,7 @@ export const textarea = cva({
     hasError: {
       true: {
         bg: 'input.bgError',
-        outline: '1px solid',
+        outline: '[1px solid]',
         outlineColor: 'input.errorBorder',
         _focus: {
           outlineColor: 'input.errorBorder',
@@ -52,22 +54,22 @@ export const textarea = cva({
     /** サイズバリアント */
     size: {
       sm: {
-        px: '8px',
-        py: '8px',
-        fontSize: '13px',
-        minH: '80px',
+        px: '2',
+        py: '2',
+        fontSize: '[13px]',
+        minH: '[80px]',
       },
       md: {
-        px: '12px',
-        py: '12px',
-        fontSize: '14px',
-        minH: '120px',
+        px: '3',
+        py: '3',
+        fontSize: '[14px]',
+        minH: '[120px]',
       },
       lg: {
-        px: '16px',
-        py: '16px',
-        fontSize: '14px',
-        minH: '160px',
+        px: '4',
+        py: '4',
+        fontSize: '[14px]',
+        minH: '[160px]',
       },
     },
   },

@@ -6,21 +6,23 @@ import { cva } from '@/styled-system/css';
 export const input = cva({
   base: {
     w: 'full',
-    h: '44px',
-    px: '12px',
+    h: '[44px]',
+    px: '3',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: 'md',
     bg: 'input.bg',
     color: 'input.text',
-    fontSize: '14px',
-    fontFamily: 'Inter, sans-serif',
+    fontSize: '[14px]',
+    fontFamily: '[Inter, sans-serif]',
     outline: 'none',
-    transition: 'all {durations.fast} ease-out',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
     _hover: {
       bg: 'gray.200',
     },
     _focus: {
-      outline: '2px solid',
+      outline: '[2px solid]',
       outlineColor: 'border.focus',
     },
     _placeholder: {
@@ -40,7 +42,7 @@ export const input = cva({
     hasError: {
       true: {
         bg: 'input.bgError',
-        outline: '1px solid',
+        outline: '[1px solid]',
         outlineColor: 'input.errorBorder',
         _focus: {
           outlineColor: 'input.errorBorder',
@@ -50,16 +52,16 @@ export const input = cva({
     /** サイズバリアント */
     size: {
       sm: {
-        h: '36px',
-        fontSize: '13px',
+        h: '9',
+        fontSize: '[13px]',
       },
       md: {
-        h: '44px',
-        fontSize: '14px',
+        h: '[44px]',
+        fontSize: '[14px]',
       },
       lg: {
-        h: '48px',
-        fontSize: '14px',
+        h: '12',
+        fontSize: '[14px]',
       },
     },
   },

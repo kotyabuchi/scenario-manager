@@ -1,7 +1,7 @@
 import { css } from '@/styled-system/css';
 
 export const container = css({
-  maxW: '800px',
+  maxW: '[800px]',
   mx: 'auto',
   px: '4',
   py: '8',
@@ -32,13 +32,14 @@ export const viewProfileLink = css({
   bg: 'transparent',
   borderRadius: 'md',
   cursor: 'pointer',
-  transition: 'background-color {durations.fast}',
+  transitionProperty: 'colors',
+  transitionDuration: 'fast',
   textDecoration: 'none',
   _hover: {
     bg: 'primary.50',
   },
   _focusVisible: {
-    outline: '2px solid',
+    outline: '[2px solid]',
     outlineColor: 'border.focus',
   },
 });

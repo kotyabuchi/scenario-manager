@@ -91,7 +91,7 @@ export const AllColors: Story = {
   },
   render: () => (
     <div
-      className={css({ display: 'flex', flexDirection: 'column', gap: '8px' })}
+      className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}
     >
       <SystemBadge system={{ name: 'CoC7版', color: 'green' }} />
       <SystemBadge system={{ name: 'SW2.5', color: 'purple' }} />

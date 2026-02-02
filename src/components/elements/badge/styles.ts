@@ -13,29 +13,29 @@ export const badge = cva({
   base: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '4px',
-    padding: '4px 10px',
-    borderRadius: '12px',
-    fontSize: '12px',
-    fontWeight: 500,
+    gap: '1',
+    padding: '[4px 10px]',
+    borderRadius: 'lg',
+    fontSize: '[12px]',
+    fontWeight: 'medium',
   },
   variants: {
     variant: {
       success: {
-        backgroundColor: '#D1FAE5',
-        color: '#065F46',
+        backgroundColor: 'primary.100',
+        color: 'primary.800',
       },
       warning: {
-        backgroundColor: '#FEF3C7',
-        color: '#92400E',
+        backgroundColor: 'orange.100',
+        color: 'orange.800',
       },
       error: {
-        backgroundColor: '#FEE2E2',
-        color: '#991B1B',
+        backgroundColor: 'red.100',
+        color: 'red.800',
       },
       neutral: {
-        backgroundColor: '#F3F4F6',
-        color: '#374151',
+        backgroundColor: 'gray.100',
+        color: 'gray.700',
       },
     },
   },
@@ -49,23 +49,23 @@ export const badge = cva({
  */
 export const badgeDot = cva({
   base: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '3px',
+    width: '1.5',
+    height: '1.5',
+    borderRadius: '[3px]',
   },
   variants: {
     variant: {
       success: {
-        backgroundColor: '#10B981',
+        backgroundColor: 'primary.500',
       },
       warning: {
-        backgroundColor: '#F59E0B',
+        backgroundColor: 'orange.500',
       },
       error: {
-        backgroundColor: '#EF4444',
+        backgroundColor: 'red.500',
       },
       neutral: {
-        backgroundColor: '#6B7280',
+        backgroundColor: 'gray.500',
       },
     },
   },
@@ -79,22 +79,22 @@ export const badgeDot = cva({
  */
 export const badgeText = cva({
   base: {
-    fontSize: '12px',
-    fontWeight: 500,
+    fontSize: '[12px]',
+    fontWeight: 'medium',
   },
   variants: {
     variant: {
       success: {
-        color: '#065F46',
+        color: 'primary.800',
       },
       warning: {
-        color: '#92400E',
+        color: 'orange.800',
       },
       error: {
-        color: '#991B1B',
+        color: 'red.800',
       },
       neutral: {
-        color: '#374151',
+        color: 'gray.700',
       },
     },
   },

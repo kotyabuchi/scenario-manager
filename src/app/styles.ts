@@ -5,8 +5,8 @@ import { css } from '@/styled-system/css';
 // ========================================
 
 export const bodyStyle = css({
-  minH: '100vh',
-  bg: 'linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})',
+  minH: '[100vh]',
+  bg: '[linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})]',
 });
 
 // ========================================
@@ -17,7 +17,7 @@ export const bodyStyle = css({
 export const page = css({
   display: 'flex',
   flexDirection: 'column',
-  minHeight: '100dvh',
+  minHeight: '[100dvh]',
   bg: 'white',
 });
 
@@ -28,51 +28,51 @@ export const heroSection = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '32px',
-  padding: '120px 80px 80px 80px',
-  minHeight: '600px',
+  gap: '8',
+  padding: '[120px 80px 80px 80px]',
+  minHeight: '[600px]',
 });
 
 export const heroContent = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '24px',
-  maxWidth: '800px',
-  width: '100%',
+  gap: '6',
+  maxWidth: '[800px]',
+  width: 'full',
 });
 
 export const heroLogo = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '12px',
+  gap: '3',
 });
 
 export const heroLogoIcon = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
+  width: '12',
+  height: '12',
+  borderRadius: '[3]',
   bg: 'primary.100',
 });
 
 export const heroLogoText = css({
-  fontSize: '32px',
-  fontWeight: '700',
+  fontSize: '[32px]',
+  fontWeight: 'bold',
   color: 'primary.default',
 });
 
 export const heroCatch = css({
-  fontSize: '48px',
-  fontWeight: '700',
+  fontSize: '[48px]',
+  fontWeight: 'bold',
   color: 'gray.800',
   textAlign: 'center',
 });
 
 export const heroSub = css({
-  fontSize: '18px',
+  fontSize: '[18px]',
   fontWeight: 'normal',
   color: 'gray.500',
   textAlign: 'center',
@@ -81,7 +81,7 @@ export const heroSub = css({
 export const heroCTA = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '16px',
+  gap: '4',
   flexWrap: 'wrap',
   justifyContent: 'center',
 });
@@ -89,14 +89,16 @@ export const heroCTA = css({
 export const browseBtn = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
-  height: '56px',
-  padding: '0 32px',
-  borderRadius: '12px',
+  gap: '2',
+  height: '[56px]',
+  padding: '[0 32px]',
+  borderRadius: '[3]',
   bg: 'white',
   shadow: 'landing.browseBtn',
   cursor: 'pointer',
-  transition: 'all {durations.fast} ease-out',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'ease-out',
   _hover: {
     shadow: 'md',
   },
@@ -107,22 +109,24 @@ export const browseBtnIcon = css({
 });
 
 export const browseBtnText = css({
-  fontSize: '16px',
-  fontWeight: '600',
+  fontSize: '[16px]',
+  fontWeight: 'semibold',
   color: 'gray.500',
 });
 
 export const heroCTABtn = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
-  height: '56px',
-  padding: '0 32px',
-  borderRadius: '12px',
+  gap: '2',
+  height: '[56px]',
+  padding: '[0 32px]',
+  borderRadius: '[3]',
   bg: 'primary.default',
   shadow: 'landing.heroCta',
   cursor: 'pointer',
-  transition: 'all {durations.fast} ease-out',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'ease-out',
   _hover: {
     bg: 'primary.hover',
   },
@@ -133,8 +137,8 @@ export const heroCTABtnIcon = css({
 });
 
 export const heroCTABtnText = css({
-  fontSize: '16px',
-  fontWeight: '600',
+  fontSize: '[16px]',
+  fontWeight: 'semibold',
   color: 'white',
 });
 
@@ -145,26 +149,26 @@ export const featuresSection = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '48px',
-  padding: '80px 0',
+  gap: '12',
+  padding: '[80px 0]',
   overflow: 'hidden',
 });
 
 export const featuresTitle = css({
-  fontSize: '32px',
-  fontWeight: '700',
+  fontSize: '[32px]',
+  fontWeight: 'bold',
   color: 'gray.800',
 });
 
 export const featuresGrid = css({
   display: 'flex',
-  gap: '24px',
+  gap: '6',
   overflowX: 'auto',
-  maxWidth: '100%',
-  px: '24px',
-  pb: '8px',
+  maxWidth: 'full',
+  px: '6',
+  pb: '2',
   // Hide scrollbar but keep functionality
-  scrollbarWidth: 'none',
+  scrollbarWidth: '[none]',
   '&::-webkit-scrollbar': {
     display: 'none',
   },
@@ -173,10 +177,10 @@ export const featuresGrid = css({
 export const featureCard = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
-  width: '280px',
-  padding: '24px',
-  borderRadius: '16px',
+  gap: '4',
+  width: '[280px]',
+  padding: '6',
+  borderRadius: '[4]',
   bg: 'white',
   shadow: 'landing.featureCard',
 });
@@ -185,9 +189,9 @@ export const featureIcon = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
+  width: '12',
+  height: '12',
+  borderRadius: '[3]',
 });
 
 // Feature icon variants (with background colors)
@@ -195,9 +199,9 @@ export const featureIcon_search = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
+  width: '12',
+  height: '12',
+  borderRadius: '[3]',
   bg: 'primary.50',
 });
 
@@ -205,9 +209,9 @@ export const featureIcon_calendar = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
+  width: '12',
+  height: '12',
+  borderRadius: '[3]',
   bg: 'indigo.50',
 });
 
@@ -215,9 +219,9 @@ export const featureIcon_star = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
+  width: '12',
+  height: '12',
+  borderRadius: '[3]',
   bg: 'orange.100',
 });
 
@@ -225,9 +229,9 @@ export const featureIcon_shield = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
+  width: '12',
+  height: '12',
+  borderRadius: '[3]',
   bg: 'red.100',
 });
 
@@ -249,13 +253,13 @@ export const iconColor_red = css({
 });
 
 export const featureTitle = css({
-  fontSize: '18px',
-  fontWeight: '600',
+  fontSize: '[18px]',
+  fontWeight: 'semibold',
   color: 'gray.800',
 });
 
 export const featureDesc = css({
-  fontSize: '14px',
+  fontSize: '[14px]',
   fontWeight: 'normal',
   color: 'gray.500',
   whiteSpace: 'pre-line',
@@ -268,20 +272,20 @@ export const howtoSection = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '48px',
-  padding: '80px 120px',
+  gap: '12',
+  padding: '[80px 120px]',
   bg: 'gray.50',
 });
 
 export const howtoTitle = css({
-  fontSize: '32px',
-  fontWeight: '700',
+  fontSize: '[32px]',
+  fontWeight: 'bold',
   color: 'gray.800',
 });
 
 export const howtoSteps = css({
   display: 'flex',
-  gap: '48px',
+  gap: '12',
   justifyContent: 'center',
   // Stack vertically on smaller screens
   flexDirection: 'column',
@@ -296,34 +300,34 @@ export const stepCard = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '16px',
-  width: '280px',
+  gap: '4',
+  width: '[280px]',
 });
 
 export const stepNum = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '48px',
-  height: '48px',
-  borderRadius: '24px',
+  width: '12',
+  height: '12',
+  borderRadius: '[6]',
   bg: 'primary.default',
 });
 
 export const stepNumText = css({
-  fontSize: '20px',
-  fontWeight: '700',
+  fontSize: '[20px]',
+  fontWeight: 'bold',
   color: 'white',
 });
 
 export const stepTitle = css({
-  fontSize: '18px',
-  fontWeight: '600',
+  fontSize: '[18px]',
+  fontWeight: 'semibold',
   color: 'gray.800',
 });
 
 export const stepDesc = css({
-  fontSize: '14px',
+  fontSize: '[14px]',
   fontWeight: 'normal',
   color: 'gray.500',
   textAlign: 'center',
@@ -337,18 +341,18 @@ export const systemsSection = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '32px',
-  padding: '80px 120px',
+  gap: '8',
+  padding: '[80px 120px]',
 });
 
 export const systemsTitle = css({
-  fontSize: '32px',
-  fontWeight: '700',
+  fontSize: '[32px]',
+  fontWeight: 'bold',
   color: 'gray.800',
 });
 
 export const systemsSub = css({
-  fontSize: '16px',
+  fontSize: '[16px]',
   fontWeight: 'normal',
   color: 'gray.500',
   textAlign: 'center',
@@ -357,27 +361,29 @@ export const systemsSub = css({
 export const systemsGrid = css({
   display: 'flex',
   justifyContent: 'center',
-  gap: '16px',
+  gap: '4',
   flexWrap: 'wrap',
 });
 
 export const systemBadge = css({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
+  py: '2',
+  px: '4',
+  borderRadius: '[2]',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
 });
 
 // System badge variants (with colors)
 export const systemBadge_coc = css({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
+  py: '2',
+  px: '4',
+  borderRadius: '[2]',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
   bg: 'green.50',
   color: 'green.700',
 });
@@ -385,10 +391,11 @@ export const systemBadge_coc = css({
 export const systemBadge_sw = css({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
+  py: '2',
+  px: '4',
+  borderRadius: '[2]',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
   bg: 'blue.50',
   color: 'blue.800',
 });
@@ -396,21 +403,23 @@ export const systemBadge_sw = css({
 export const systemBadge_insane = css({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
-  bg: '#F3E8FF',
+  py: '2',
+  px: '4',
+  borderRadius: '[2]',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
+  bg: '[#F3E8FF]',
   color: 'purple.600',
 });
 
 export const systemBadge_shinobigami = css({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
+  py: '2',
+  px: '4',
+  borderRadius: '[2]',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
   bg: 'pink.50',
   color: 'pink.700',
 });
@@ -418,10 +427,11 @@ export const systemBadge_shinobigami = css({
 export const systemBadge_emochloa = css({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  fontSize: '14px',
-  fontWeight: '500',
+  py: '2',
+  px: '4',
+  borderRadius: '[2]',
+  fontSize: '[14px]',
+  fontWeight: 'medium',
   bg: 'orange.100',
   color: 'orange.800',
 });
@@ -433,19 +443,19 @@ export const ctaSection = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '24px',
-  padding: '80px 120px',
+  gap: '6',
+  padding: '[80px 120px]',
   bg: 'primary.default',
 });
 
 export const ctaTitle = css({
-  fontSize: '32px',
-  fontWeight: '700',
+  fontSize: '[32px]',
+  fontWeight: 'bold',
   color: 'white',
 });
 
 export const ctaSub = css({
-  fontSize: '16px',
+  fontSize: '[16px]',
   fontWeight: 'normal',
   color: 'primary.100',
 });
@@ -453,14 +463,16 @@ export const ctaSub = css({
 export const ctaBtn = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
-  height: '56px',
-  padding: '0 32px',
-  borderRadius: '12px',
+  gap: '2',
+  height: '[56px]',
+  padding: '[0 32px]',
+  borderRadius: '[3]',
   bg: 'white',
   shadow: 'landing.ctaBtn',
   cursor: 'pointer',
-  transition: 'all {durations.fast} ease-out',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'ease-out',
   _hover: {
     shadow: 'xl',
   },
@@ -471,8 +483,8 @@ export const ctaBtnIcon = css({
 });
 
 export const ctaBtnText = css({
-  fontSize: '16px',
-  fontWeight: '600',
+  fontSize: '[16px]',
+  fontWeight: 'semibold',
   color: 'primary.default',
 });
 
@@ -483,35 +495,35 @@ export const footer = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '24px',
-  padding: '48px 120px',
+  gap: '6',
+  padding: '[48px 120px]',
   bg: 'gray.800',
 });
 
 export const footerLogo = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '2',
 });
 
 export const footerLogoIcon = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '32px',
-  height: '32px',
-  borderRadius: '8px',
+  width: '8',
+  height: '8',
+  borderRadius: '[2]',
   bg: 'gray.700',
 });
 
 export const footerLogoText = css({
-  fontSize: '16px',
-  fontWeight: '600',
+  fontSize: '[16px]',
+  fontWeight: 'semibold',
   color: 'white',
 });
 
 export const footerCopy = css({
-  fontSize: '12px',
+  fontSize: '[12px]',
   fontWeight: 'normal',
   color: 'gray.400',
 });

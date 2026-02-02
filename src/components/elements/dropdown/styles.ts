@@ -14,22 +14,24 @@ export const dropdownRoot = css({
 export const dropdownTrigger = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
-  px: '12px',
-  py: '8px',
+  gap: '2',
+  px: '3',
+  py: '2',
   bg: 'white',
-  borderRadius: '8px',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
-  fontSize: '14px',
+  borderRadius: 'md',
+  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.08)]',
+  fontSize: '[14px]',
   cursor: 'pointer',
-  transition: 'all {durations.fast} ease-out',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'ease-out',
   _hover: {
-    bg: '#F9FAFB',
+    bg: 'gray.50',
   },
   _focus: {
-    outline: '2px solid',
+    outline: '[2px solid]',
     outlineColor: 'border.focus',
-    outlineOffset: '2px',
+    outlineOffset: '[2px]',
   },
 });
 
@@ -38,15 +40,15 @@ export const dropdownTrigger = css({
  */
 export const dropdownMenu = css({
   position: 'absolute',
-  top: '100%',
-  left: 0,
-  mt: '4px',
+  top: '[100%]',
+  left: '0',
+  mt: '1',
   bg: 'white',
-  borderRadius: '8px',
-  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-  p: '4px',
-  minW: '160px',
-  zIndex: 10,
+  borderRadius: 'md',
+  boxShadow: '[0 4px 16px rgba(0, 0, 0, 0.08)]',
+  p: '1',
+  minW: '[160px]',
+  zIndex: '[10]',
 });
 
 /**
@@ -57,36 +59,38 @@ export const dropdownItem = cva({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    w: '100%',
-    px: '12px',
-    py: '8px',
-    borderRadius: '6px',
-    fontSize: '13px',
+    w: 'full',
+    px: '3',
+    py: '2',
+    borderRadius: 'sm',
+    fontSize: '[13px]',
     textAlign: 'left',
     cursor: 'pointer',
-    transition: 'all {durations.fast} ease-out',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
     _hover: {
-      bg: '#F3F4F6',
+      bg: 'gray.100',
     },
   },
   variants: {
     selected: {
       true: {
-        bg: '#F0FDF4',
-        color: '#10B981',
+        bg: 'green.50',
+        color: 'primary.500',
         _hover: {
-          bg: '#F0FDF4',
+          bg: 'green.50',
         },
       },
       false: {
         bg: 'transparent',
-        color: '#374151',
+        color: 'gray.700',
       },
     },
     disabled: {
       true: {
         cursor: 'not-allowed',
-        color: '#9CA3AF',
+        color: 'gray.400',
         opacity: 'disabled',
         _hover: {
           bg: 'transparent',

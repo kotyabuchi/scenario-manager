@@ -45,7 +45,7 @@ export const Default: Story = {
  */
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '[16px]' }}>
       <Textarea size="sm" placeholder="Small" />
       <Textarea size="md" placeholder="Medium（デフォルト）" />
       <Textarea size="lg" placeholder="Large" />
