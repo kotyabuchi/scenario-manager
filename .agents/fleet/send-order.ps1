@@ -65,12 +65,12 @@ if ($StartClaude) {
     $cmd += " '$Message'"
   }
 
-  $cmd | wezterm cli send-text --pane-id $paneId
+  wezterm cli send-text --no-paste --pane-id $paneId -- $cmd
   wezterm cli send-text --no-paste --pane-id $paneId -- "`r"
   Write-Host "[$Target] Claude Code を起動しました (Pane $paneId)" -ForegroundColor Green
 }
 elseif ($Message) {
-  $Message | wezterm cli send-text --pane-id $paneId
+  wezterm cli send-text --no-paste --pane-id $paneId -- $Message
   wezterm cli send-text --no-paste --pane-id $paneId -- "`r"
   Write-Host "[$Target] メッセージを送信しました (Pane $paneId)" -ForegroundColor Green
 }
