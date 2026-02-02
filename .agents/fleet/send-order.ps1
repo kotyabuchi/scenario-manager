@@ -44,7 +44,7 @@ if (-not (Test-Path $panesFile)) {
 $panes = Get-Content $panesFile | ConvertFrom-Json
 $paneId = $panes.$Target
 
-if (-not $paneId) {
+if ($null -eq $paneId) {
   Write-Error "ターゲット '$Target' のペインIDが見つかりません。"
   exit 1
 }
