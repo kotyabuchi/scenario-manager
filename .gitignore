@@ -77,8 +77,8 @@ src/lib/db/migrations
 # Test results
 test-results/
 
-# Null
-nulsupabase/.temp/
+# Ai agents tempfiles
+nul
 
 # Fleet (multi-agent runtime files)
 .agents/fleet/panes.json
