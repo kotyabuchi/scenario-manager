@@ -80,29 +80,31 @@ export const GlobalHeader = () => {
 
       {/* User Area */}
       <div className={styles.userArea}>
-        {showScenarioRegisterButton && (
-          <Link href="/scenarios/new" className={styles.registerButton}>
-            <Plus size={16} />
-            シナリオを登録
-          </Link>
-        )}
         {isLoggedIn ? (
-          <button
-            type="button"
-            className={styles.avatar}
-            onClick={handleClickProfile}
-            aria-label="プロフィール"
-          >
-            {userAvatarUrl ? (
-              <Image
-                src={userAvatarUrl}
-                alt="ユーザーアバター"
-                width={36}
-                height={36}
-                className={styles.avatarImage}
-              />
-            ) : null}
-          </button>
+          <>
+            {showScenarioRegisterButton && (
+              <Link href="/scenarios/new" className={styles.registerButton}>
+                <Plus size={16} />
+                シナリオを登録
+              </Link>
+            )}
+            <button
+              type="button"
+              className={styles.avatar}
+              onClick={handleClickProfile}
+              aria-label="プロフィール"
+            >
+              {userAvatarUrl ? (
+                <Image
+                  src={userAvatarUrl}
+                  alt="ユーザーアバター"
+                  width={36}
+                  height={36}
+                  className={styles.avatarImage}
+                />
+              ) : null}
+            </button>
+          </>
         ) : (
           <button
             type="button"

@@ -1,5 +1,7 @@
 import { GlobalHeader } from './index';
 
+import { AuthProvider } from '@/context';
+
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -15,6 +17,13 @@ const meta = {
       },
     },
   },
+  decorators: [
+    (Story) => (
+      <AuthProvider initialUser={null} initialDiscordMeta={null}>
+        <Story />
+      </AuthProvider>
+    ),
+  ],
 } satisfies Meta<typeof GlobalHeader>;
 
 export default meta;
