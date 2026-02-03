@@ -5,11 +5,13 @@
 ## 開発フロー
 
 ```
-/requirements → /pencil-design → レビュー → /gen-test → /implement-tests → /refactor
-    ↓                ↓              ↓           ↓              ↓               ↓
- 要件定義        UIデザイン        承認        Red           Green          Refactor
- (仕様策定)     (.penファイル)              (失敗テスト)   (最小実装)     (品質改善)
+/requirements → [Plan] → /pencil-design → レビュー → /gen-test → /implement-tests → /refactor
+    ↓             ↓            ↓              ↓           ↓              ↓               ↓
+ 要件定義      実装計画     UIデザイン        承認        Red           Green          Refactor
+ (仕様策定)   (複雑な場合)  (.penファイル)              (失敗テスト)   (最小実装)     (品質改善)
 ```
+
+**Note**: `[Plan]`は複雑な機能（3ファイル以上、100行以上）の場合のみ。詳細は`plan-mode.md`を参照。
 
 ## UI開発フロー（Design First）
 
@@ -37,6 +39,7 @@ docs/designs/
 | 名前 | 種別 | フェーズ | 説明 |
 |------|------|---------|------|
 | `/requirements` | スキル | 要件定義 | ユーザーと対話しながら詳細仕様を策定 |
+| `Plan` | エージェント | 計画 | 複雑な機能の実装計画を設計（3ファイル以上、100行以上の変更） |
 | `/pencil-design` | スキル | UIデザイン | 要件定義を元にPencilでUIデザインを作成 |
 | `/component-spec` | スキル | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義 |
 | `/gen-test` | スキル | Red | 要件定義書から失敗するテストを生成 |

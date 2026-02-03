@@ -76,6 +76,7 @@ src/
 | `logging.md` | LogTape使用方法 |
 | `icons.md` | lucide-react使用規約 |
 | `accessibility.md` | WCAG 2.1 AA準拠 |
+| `plan-mode.md` | Planエージェント使用ガイド |
 | `agent-strategy.md` | サブエージェント活用、プロセス管理 |
 | `tdd-workflow.md` | TDD開発フロー、スキル一覧 |
 | `bash-rules.md` | Bashコマンド実行ルール |
