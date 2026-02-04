@@ -1,34 +1,57 @@
 ---
-allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__serena__read_memory, mcp__serena__list_memories, mcp__pencil__get_editor_state, mcp__pencil__open_document, mcp__pencil__get_guidelines, mcp__pencil__get_style_guide, mcp__pencil__get_style_guide_tags, mcp__pencil__batch_design, mcp__pencil__batch_get, mcp__pencil__get_screenshot, mcp__pencil__snapshot_layout, mcp__pencil__find_empty_space_on_canvas, mcp__pencil__get_variables, mcp__pencil__set_variables
-description: 要件定義を元にPencilでUIデザインを作成する。新機能の画面デザインやUIコンポーネントの設計に使用。
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__serena__read_memory, mcp__serena__list_memories, mcp__penpot__execute_code, mcp__penpot__high_level_overview, mcp__penpot__penpot_api_info, mcp__penpot__export_shape, mcp__penpot__import_image
+description: 要件定義を元にPenpotでUIデザインを作成する。新機能の画面デザインやUIコンポーネントの設計に使用。
 ---
 
-# /pencil-design コマンド
+# /penpot-design コマンド
 
 ## 概要
 
 **TDD開発フローのUIデザインフェーズを担当するスキル**
 
-要件定義書を元に、Pencil MCPツールを使用してUIデザインを作成する。
+要件定義書を元に、Penpot MCPツールを使用してUIデザインを作成する。
 画面ごとにスクリーンショットを見せてユーザーの承認を得ながら進める。
 
 ```
-/requirements → [/pencil-design] → レビュー → /gen-test → ...
+/requirements → [/penpot-design] → レビュー → /gen-test → ...
                       ↓
-              Pencilでデザイン作成
+              Penpotでデザイン作成
                       ↓
               画面ごとに確認・承認
                       ↓
               要件定義への反映確認
 ```
 
+## 前提条件（Penpot使用時）
+
+このスキルを使用する前に、以下を確認してください：
+
+1. **Penpot MCPサーバーが起動していること**
+   - 確認: `http://localhost:4401/mcp` にアクセス可能
+   - 起動方法: penpot-mcpディレクトリで `npm run bootstrap`
+
+2. **ブラウザでPenpotデザインファイルを開いていること**
+   - Penpotにログイン
+   - 対象プロジェクトを開く
+   - MCPプラグインを接続（「Connect to MCP server」をクリック）
+
+3. **対象のページ/フレームを選択していること**（任意）
+   - 操作対象を事前に選択しておくとスムーズ
+
+4. **ネットワーク接続が安定していること**
+   - Penpotはクラウドベースのため、オフライン時は使用不可
+
+5. **トラブルシューティング**
+   - 接続できない場合: MCPプラグインを再接続
+   - 操作が反映されない場合: ブラウザをリロード
+
 ## 使用方法
 
 ```bash
-/pencil-design                                    # 対話で要件定義書を選択
-/pencil-design feedback                           # requirements-feedback.md から作成
-/pencil-design .claude/requirements/feedback.md   # ファイルパスを直接指定
-/pencil-design セッション募集画面を作りたい          # 自然言語で要件を指定
+/penpot-design                                    # 対話で要件定義書を選択
+/penpot-design feedback                           # requirements-feedback.md から作成
+/penpot-design .claude/requirements/feedback.md   # ファイルパスを直接指定
+/penpot-design セッション募集画面を作りたい          # 自然言語で要件を指定
 ```
 
 ---
@@ -64,30 +87,20 @@ $ARGUMENTS を解析:
 
 4. **指定なしの場合**: AskUserQuestion で選択
 
-#### Step 1.3: 出力先の確認
+#### Step 1.3: Penpot接続の確認
 
-既存の.penファイルを確認:
+1. `mcp__penpot__high_level_overview` で現在の状態を確認
+2. 対象のページが開かれているか確認
 
-```bash
-# デザインファイルの一覧を取得
-ls docs/designs/*.pen
-```
-
-**ユーザーに確認（AskUserQuestion）**:
+**ユーザーに確認（必要な場合）**:
 
 ```
-デザインの出力先を選択してください:
+Penpotで対象のプロジェクトを開いていますか？
 
-[docs/designs/scenarios.pen に追加]
-[新規ファイルを作成]
-[既存ファイルを開いて確認]
+[はい、開いています]
+[今から開きます]
+[接続方法を教えて]
 ```
-
-#### Step 1.4: Pencilエディタの準備
-
-1. `get_editor_state()` で現在の状態を確認
-2. 対象の.penファイルを `open_document(filePath)` で開く
-3. `get_guidelines('landing-page')` または `get_guidelines('table')` でガイドラインを取得
 
 ---
 
@@ -147,36 +160,43 @@ Feedback / 投稿モーダル
 
 #### Step 2.5.1: リユーザブルコンポーネントの調査
 
-1. `batch_get` で `{ "reusable": true }` の全コンポーネントを一覧取得する
-2. 使用予定のコンポーネント（Input, Button, Dialog, Textarea, Chip, Avatar等）の **ID と内部ノード名** をメモする
-3. デザイン中は必ず `ref` で参照する。**手作りは禁止**（既存コンポーネントにないものだけ例外）
+1. `mcp__penpot__execute_code` で全コンポーネントを一覧取得する
+2. 使用予定のコンポーネント（Input, Button, Dialog, Textarea, Chip, Avatar等）の **ID と名前** をメモする
+3. デザイン中は必ずコンポーネントを参照する。**手作りは禁止**（既存コンポーネントにないものだけ例外）
 
-```typescript
-// 全リユーザブルコンポーネント一覧を取得
-batch_get({
-  filePath: "docs/designs/scenarios.pen",
-  patterns: [{ reusable: true }],
-  readDepth: 2,
-  searchDepth: 3
-})
+```javascript
+// 全コンポーネント一覧を取得
+const components = penpot.library.local.components;
+return components.map(c => ({
+  id: c.id,
+  name: c.name
+}));
 ```
 
 #### Step 2.5.2: 既存デザインの参考調査
 
 1. 作成する画面に最も近い既存画面を特定する（例: フォーム画面 → Feedbackモーダル）
-2. その画面の **スクリーンショット** を取得して品質基準を確認する
-3. `batch_get` で内部構造を確認し、以下の値を踏襲する:
+2. その画面の **スクリーンショット** を `mcp__penpot__export_shape` で取得して品質基準を確認する
+3. `mcp__penpot__execute_code` で内部構造を確認し、以下の値を踏襲する:
    - パディング、gap、角丸（cornerRadius）
-   - 影（effect）の値
+   - 影（shadow）の値
    - フォントサイズ・ウェイト
-   - レイアウト（layout, alignItems, justifyContent）
+   - レイアウト（flex layout設定）
+
+```javascript
+// 選択した要素の構造を確認
+const selected = penpot.selection[0];
+if (selected) {
+  return penpotUtils.shapeStructure(selected, 3);
+}
+```
 
 #### Step 2.5.3: チェックリスト確認
 
 デザイン作成に進む前に、以下を満たしていることを確認:
 
 - [ ] リユーザブルコンポーネントのID一覧を把握した
-- [ ] Input, Button, Textarea等の内部ノード名（ラベル、プレースホルダー等）を把握した
+- [ ] Input, Button, Textarea等の内部ノード名を把握した
 - [ ] 最も近い既存画面のスクリーンショットを確認した
 - [ ] 既存画面の構造（パディング、影、角丸）を確認した
 
@@ -186,32 +206,29 @@ batch_get({
 
 #### Step 3.1: キャンバス上の配置位置を決定
 
-```typescript
-// 空きスペースを探す
-find_empty_space_on_canvas({
-  direction: 'right',  // または 'down'
-  width: 1440,         // 画面幅
-  height: 900,         // 想定高さ
-})
+```javascript
+// 現在のページ構造を確認して空きスペースを探す
+const page = penpot.getPage();
+const shapes = penpotUtils.findShapes(s => s.type === 'board', page.root);
+return shapes.map(s => ({
+  name: s.name,
+  x: s.x,
+  y: s.y,
+  width: s.width,
+  height: s.height
+}));
 ```
 
 #### Step 3.2: フレームの作成
 
-```typescript
-// batch_design で画面フレームを作成
-batch_design({
-  operations: `
-    frame1=I("root", {
-      type: "FRAME",
-      name: "Feedback / 一覧画面",
-      x: ${x},
-      y: ${y},
-      width: 1440,
-      height: 900,
-      fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
-    })
-  `
-})
+```javascript
+// Boardを作成
+const board = penpot.createBoard();
+board.name = "Feedback / 一覧画面";
+board.x = 1500;  // 空きスペースに配置
+board.y = 0;
+board.resize(1440, 900);
+board.fills = [{ fillColor: '#FFFFFF' }];
 ```
 
 #### Step 3.3: コンポーネントの配置
@@ -229,14 +246,23 @@ batch_design({
 - チップ: `bg: 'chip.default'`
 - 入力フィールド: `border: none`, `bg: 'input.bg'`
 
+```javascript
+// コンポーネントをインスタンス化
+const buttonComponent = penpot.library.local.components.find(c => c.name === 'Button');
+if (buttonComponent) {
+  const instance = buttonComponent.instance();
+  instance.x = 100;
+  instance.y = 100;
+  board.insertChild(board.children.length, instance);
+}
+```
+
 #### Step 3.4: スクリーンショットで確認
 
-```typescript
-// 作成した画面のスクリーンショットを取得
-get_screenshot({
-  nodeId: "frame1のID",
-  scale: 1
-})
+```javascript
+// 作成した画面をエクスポート
+// mcp__penpot__export_shape ツールを使用
+// nodeId: board.id
 ```
 
 #### Step 3.5: ユーザーの承認を得る
@@ -254,7 +280,7 @@ get_screenshot({
 
 **「修正を依頼」の場合**:
 - ユーザーから具体的なフィードバックを受け取る
-- 該当箇所を `batch_design` で修正
+- `mcp__penpot__execute_code` で修正
 - 再度スクリーンショットで確認
 
 #### Step 3.6: 次の画面へ
@@ -344,8 +370,8 @@ Phase 3 のデザイン作成・修正を通じて追加された、要件定義
 | Feedback / 詳細画面 | def456 | ✅ 承認済 |
 | Feedback / 投稿モーダル | ghi789 | ✅ 承認済 |
 
-### 出力ファイル
-- `docs/designs/scenarios.pen`
+### 出力先
+- Penpotプロジェクト: scenario-manager
 ```
 
 #### Step 5.2: 次のステップを案内
@@ -357,7 +383,7 @@ Phase 3 のデザイン作成・修正を通じて追加された、要件定義
 【次のステップ】
 
 1. デザインの最終確認
-   - Pencilエディタで全画面を確認
+   - Penpotエディタで全画面を確認
 
 2. コンポーネント仕様の作成（任意）:
    /component-spec feedback
@@ -441,19 +467,25 @@ Components                    # 共通コンポーネント定義
 
 ---
 
-## Pencil MCPツール早見表
+## Penpot MCPツール早見表
 
 | ツール | 用途 | 使用タイミング |
 |--------|------|---------------|
-| `get_editor_state` | エディタ状態確認 | 最初に実行 |
-| `open_document` | ファイルを開く | Phase 1 |
-| `get_guidelines` | ガイドライン取得 | Phase 1 |
-| `get_style_guide` | スタイルガイド取得 | Phase 1（任意） |
-| `find_empty_space_on_canvas` | 空きスペース探索 | 各画面作成前 |
-| `batch_design` | デザイン操作 | メイン作業 |
-| `batch_get` | ノード取得 | 確認・修正時 |
-| `get_screenshot` | スクリーンショット | 確認時 |
-| `snapshot_layout` | レイアウト確認 | デバッグ時 |
+| `execute_code` | デザイン操作・情報取得 | メイン作業 |
+| `high_level_overview` | デザイン概要確認 | 最初に実行 |
+| `penpot_api_info` | API仕様確認 | 操作方法を調べる時 |
+| `export_shape` | スクリーンショット取得 | 確認時 |
+| `import_image` | 画像インポート | 画像素材追加時 |
+
+### penpotUtils 主要メソッド
+
+```javascript
+penpotUtils.getPages()                      // ページ一覧取得
+penpotUtils.shapeStructure(shape, depth)    // 階層構造確認
+penpotUtils.findShapeById(id)               // ID検索
+penpotUtils.findShapes(predicate, root)     // 条件検索
+penpotUtils.setParentXY(shape, x, y)        // 相対位置設定
+```
 
 ---
 
@@ -462,23 +494,20 @@ Components                    # 共通コンポーネント定義
 ユーザーから修正依頼があった場合:
 
 1. **具体的な指示を確認**
-   - 「カードの影をもっと強く」→ shadow トークンを変更
+   - 「カードの影をもっと強く」→ shadow 値を変更
    - 「余白を広げて」→ padding/margin を調整
    - 「色を変えて」→ fill を変更
 
 2. **該当ノードを特定**
-   - `batch_get` でノードIDを取得
-   - `snapshot_layout` でレイアウト構造を確認
+   - `penpotUtils.findShapes` でノードを取得
+   - `penpotUtils.shapeStructure` で構造を確認
 
-3. **batch_designで修正**
-   ```typescript
-   batch_design({
-     operations: `
-       U("nodeId", {
-         fills: [{ type: "SOLID", color: { r: 0.9, g: 0.9, b: 0.95 } }]
-       })
-     `
-   })
+3. **execute_codeで修正**
+   ```javascript
+   const shape = penpotUtils.findShapeById("nodeId");
+   if (shape) {
+     shape.fills = [{ fillColor: '#F5F7FA' }];
+   }
    ```
 
 4. **再度スクリーンショットで確認**
@@ -492,32 +521,35 @@ Components                    # 共通コンポーネント定義
 | `.claude/requirements/requirements-*.md` | 要件定義書 |
 | `ui-design-system` メモリ | デザインシステム |
 | `user-personas` メモリ | ペルソナ情報 |
-| `docs/designs/*.pen` | デザインファイル |
 | `CLAUDE.md` | プロジェクト方針 |
 
 ---
 
 ## トラブルシューティング
 
-### デザインファイルが開けない
+### Penpotに接続できない
 
-```typescript
-// 新規作成
-open_document('new')
+```
+⚠ Penpot MCPサーバーに接続できません
 
-// または既存ファイルのパスを確認
-ls docs/designs/
+対応:
+1. サーバーが起動しているか確認（http://localhost:4401/mcp）
+2. ブラウザでPenpotを開いてMCPプラグインを接続
+3. 接続ボタン（「Connect to MCP server」）をクリック
+
+どうしますか？
+[再接続を試す] [接続方法を確認]
 ```
 
 ### 要素がはみ出す
 
 - 親フレームのサイズを確認
-- `clipsContent: true` を設定して切り抜き
+- `overflow: 'hidden'` を設定して切り抜き
 
 ### 色が反映されない
 
-- セマンティックトークンではなくRGB値で指定
 - `fills` 配列の形式を確認
+- `fillColor` プロパティを使用（HEX形式）
 
 ---
 
@@ -528,7 +560,7 @@ ls docs/designs/
 ```
 デザインが完了しました。
 
-📁 デザインファイル: docs/designs/scenarios.pen
+📁 Penpotプロジェクト: scenario-manager
 📐 作成画面: Feedback / 一覧画面, 詳細画面, 投稿モーダル
 
 次のフェーズ:

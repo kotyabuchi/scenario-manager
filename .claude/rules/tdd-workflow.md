@@ -5,29 +5,27 @@
 ## 開発フロー
 
 ```
-/requirements → [Plan] → /pencil-design → レビュー → /gen-test → /implement-tests → /refactor
+/requirements → [Plan] → /penpot-design → レビュー → /gen-test → /implement-tests → /refactor
     ↓             ↓            ↓              ↓           ↓              ↓               ↓
  要件定義      実装計画     UIデザイン        承認        Red           Green          Refactor
- (仕様策定)   (複雑な場合)  (.penファイル)              (失敗テスト)   (最小実装)     (品質改善)
+ (仕様策定)   (複雑な場合)  (Penpotクラウド)            (失敗テスト)   (最小実装)     (品質改善)
 ```
 
 **Note**: `[Plan]`は複雑な機能（3ファイル以上、100行以上）の場合のみ。詳細は`plan-mode.md`を参照。
 
 ## UI開発フロー（Design First）
 
-**UIを含む機能開発では、実装前にPencilでデザインを作成する。**
+**UIを含む機能開発では、実装前にPenpotでデザインを作成する。**
 
 1. **要件定義** (`/requirements`) - ユーザーと対話しながら詳細仕様を策定
-2. **UIデザイン** (`/pencil-design`) - `.pen`ファイルでUIデザインを作成
+2. **UIデザイン** (`/penpot-design`) - Penpotクラウドでデザインを作成
 3. **レビュー・承認** - ユーザーにデザインを確認してもらう
 4. **TDD実装** (`/gen-test` → `/implement-tests` → `/refactor`)
 
-## デザインファイルの配置
+## デザインの管理
 
-```
-docs/designs/
-└── scenarios.pen            # 全画面・コンポーネント集約
-```
+**Penpotクラウド**でデザインを管理する。
+プロジェクト名: `scenario-manager`
 
 フレーム名は `セクション名 / 画面名` 形式で統一:
 - `Components` - 共通コンポーネント定義
@@ -40,13 +38,13 @@ docs/designs/
 |------|------|---------|------|
 | `/requirements` | スキル | 要件定義 | ユーザーと対話しながら詳細仕様を策定 |
 | `Plan` | エージェント | 計画 | 複雑な機能の実装計画を設計（3ファイル以上、100行以上の変更） |
-| `/pencil-design` | スキル | UIデザイン | 要件定義を元にPencilでUIデザインを作成 |
-| `/component-spec` | スキル | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義 |
+| `/penpot-design` | スキル | UIデザイン | 要件定義を元にPenpotでUIデザインを作成 |
+| `/component-spec` | スキル | 要件定義 | Penpotデザインを元にコンポーネント仕様を定義 |
 | `/gen-test` | スキル | Red | 要件定義書から失敗するテストを生成 |
 | `tdd-implementer` | エージェント | Green | テストを通過させる最小限の実装（自律実行） |
 | `tdd-refactorer` | エージェント | Refactor | テストを維持しながらコード品質を改善（自律実行） |
 | `/fix-bug` | スキル | バグ修正 | テストケース見直し → 再現テスト → 修正 |
-| `/redesign` | スキル | UI更新 | Pencilデザインを唯一の情報源としてUIをリデザイン |
+| `/redesign` | スキル | UI更新 | Penpotデザインを唯一の情報源としてUIをリデザイン |
 
 **スキル vs エージェントの使い分け**:
 - スキル: ユーザーとの対話が必要（確認・選択）
