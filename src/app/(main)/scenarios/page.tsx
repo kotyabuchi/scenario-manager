@@ -51,14 +51,10 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
     }
     return (
       <main className={styles.pageContainer}>
-        <div className={styles.resultsArea}>
-          <div className={styles.resultsAreaContent}>
-            <div className={styles.scenarioListEmpty}>
-              <span className={styles.scenarioListEmptyText}>
-                データの取得に失敗しました
-              </span>
-            </div>
-          </div>
+        <div className={styles.scenarioListEmpty}>
+          <span className={styles.scenarioListEmptyText}>
+            データの取得に失敗しました
+          </span>
         </div>
       </main>
     );
@@ -75,7 +71,6 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
           systems={systemsResult.data}
           tags={tagsResult.data}
           initialResult={initialResult}
-          initialParams={params}
         />
       </Suspense>
     </main>

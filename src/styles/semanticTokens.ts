@@ -365,6 +365,16 @@ export const semanticTokens = {
     },
 
     // ========================================
+    // サイドバー
+    // ========================================
+    sidebar: {
+      bg: { value: '{colors.white}' },
+      toggleBg: { value: '{colors.gray.100}' },
+      toggleBgHover: { value: '{colors.gray.200}' },
+      toggleIcon: { value: '{colors.gray.500}' },
+    },
+
+    // ========================================
     // システムバッジ（TRPGシステム識別用）
     // ========================================
     systemBadge: {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { Check, Trash2, X } from 'lucide-react';
+import { RotateCcw, Search, Trash2, X } from 'lucide-react';
 
 import * as styles from './styles';
 
@@ -38,7 +38,7 @@ export const FilterBottomSheet = ({
   tags,
   filterState,
 }: FilterBottomSheetProps) => {
-  const { clearAll, activeFilterCount } = filterState;
+  const { clearAll } = filterState;
 
   // Escapeキーで閉じる
   const handleKeyDown = useCallback(
@@ -67,11 +67,21 @@ export const FilterBottomSheet = ({
     };
   }, [isOpen]);
 
+  // 条件をリセット（ドラフトのみクリア）
   const handleClear = () => {
     clearAll();
   };
 
+  // すべてクリアして検索（クリア＋commit＋閉じる）
+  const handleClearAndSearch = () => {
+    clearAll();
+    filterState.commit?.();
+    onClose();
+  };
+
+  // この条件で検索（commit＋閉じる）
   const handleApply = () => {
+    filterState.commit?.();
     onClose();
   };
 
@@ -118,35 +128,43 @@ export const FilterBottomSheet = ({
             systems={systems}
             tags={tags}
             filterState={filterState}
+            showSystems={false}
           />
         </div>
 
-        {/* フッター */}
+        {/* フッター（3ボタンレイアウト） */}
         <div className={styles.footer}>
-          <div className={styles.footerButton}>
+          <div className={styles.footerActions}>
+            <Button
+              type="button"
+              variant="ghost"
+              status="primary"
+              onClick={handleClear}
+            >
+              <RotateCcw size={16} />
+              条件をリセット
+            </Button>
+
             <Button
               type="button"
               variant="outline"
               status="primary"
-              onClick={handleClear}
-              disabled={activeFilterCount === 0}
-              style={{ width: '100%' }}
+              onClick={handleClearAndSearch}
             >
               <Trash2 size={16} />
-              クリア
+              すべてクリアして検索
             </Button>
           </div>
-          <div className={styles.footerButton}>
-            <Button
-              type="button"
-              status="primary"
-              onClick={handleApply}
-              style={{ width: '100%' }}
-            >
-              <Check size={16} />
-              適用する
-            </Button>
-          </div>
+
+          <Button
+            type="button"
+            status="primary"
+            onClick={handleApply}
+            className={styles.fullWidthButton}
+          >
+            <Search size={16} />
+            この条件で検索
+          </Button>
         </div>
       </div>
     </>

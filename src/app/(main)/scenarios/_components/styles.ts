@@ -279,176 +279,38 @@ export const scenarioListEmptyActions = css({
   gap: '4',
 });
 
-// SearchPanel スタイル（ヘッダーと一体化）
-export const searchPanel = css({
+// ページスタイル
+export const pageContainer = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4',
-  px: '8',
-  py: '6',
+  flex: '1',
+});
+
+// ===== 新レイアウト: 3段階レスポンシブ =====
+
+// キーワード検索バー（SP のみ表示、lg 以上は SearchTopBar に置換）
+export const keywordSearchBar = css({
   bg: 'white',
-  // ヘッダーと一体化するため、上部のborderRadiusなし、影は下方向のみ
-  borderRadius: '[0]',
+  py: '4',
+  px: '6',
   shadow: 'subHeader.default',
+  lg: {
+    display: 'none',
+  },
 });
 
-// 検索パネルのメイン行（横並び）
-export const searchPanelMainRow = css({
-  display: 'flex',
-  alignItems: 'flex-end',
-  gap: '6',
-});
-
-// システム選択フィールド
-export const searchPanelSystemField = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
-  width: '[320px]',
-  minW: '[280px]',
-});
-
-// シナリオ名フィールド
-export const searchPanelNameField = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
-  flex: '1',
-  minW: '[200px]',
-});
-
-// ボタングループ
-export const searchPanelButtons = css({
+export const keywordSearchContent = css({
   display: 'flex',
   alignItems: 'center',
   gap: '4',
-  flexShrink: 0,
+  maxW: '[1400px]',
+  mx: 'auto',
 });
 
-export const clearButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'xs',
-  px: '4',
+export const keywordSearchInput = css({
+  flex: '1',
   height: '[44px]',
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'gray.700',
-  bg: 'white',
-  border: 'none',
-  borderRadius: 'md',
-  cursor: 'pointer',
-  boxShadow: '[0 1px 3px rgba(0, 0, 0, 0.1)]',
-  whiteSpace: 'nowrap',
-  _hover: {
-    bg: 'gray.50',
-  },
-});
-
-export const seachConditions = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4',
-});
-
-export const searchPanelRow = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '4',
-  alignItems: 'flex-end',
-});
-
-export const searchPanelField = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
-  minW: '[200px]',
-  flex: '1',
-  border: 'none',
-  padding: '0',
-  margin: '0',
-  '& > legend': {
-    mb: 'sm',
-  },
-});
-
-export const searchPanelLabel = css({
-  fontSize: '[13px]',
-  fontWeight: 'medium',
-  color: 'gray.700',
-  letterSpacing: '[0.01em]',
-});
-
-export const searchPanelChips = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '2',
-});
-
-// スライダーフィールド（固定幅280px - Pencilデザイン準拠）
-export const sliderField = css({
-  width: '[280px]',
-  flexShrink: '0',
-});
-
-// タグ選択フィールド
-export const tagField = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
-  flex: '1',
-  minW: '[200px]',
-});
-
-// 詳細条件行（プレイ人数、プレイ時間、タグを横並び）
-export const detailedConditionsRow = css({
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '6',
-});
-
-// システム選択の入力風コンテナ
-export const systemSelectContainer = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-  flexWrap: 'wrap',
-  minH: '[44px]',
   px: '4',
-  py: '2',
-  bg: 'gray.100',
-  borderRadius: 'md',
-});
-
-// 選択されたシステムのタグ（Pencilデザイン準拠）
-export const systemTag = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1.5',
-  px: '2',
-  py: '1',
-  fontSize: '[13px]',
-  fontWeight: 'normal',
-  bg: 'white',
-  color: 'gray.700',
-  borderRadius: 'sm',
-  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.05)]',
-});
-
-export const systemTagRemove = css({
-  cursor: 'pointer',
-  color: 'gray.400',
-  w: '3',
-  h: '3',
-  _hover: {
-    color: 'gray.500',
-  },
-});
-
-// 入力フィールドスタイル（Pencilデザイン準拠）
-export const searchInput = css({
-  height: '[44px]',
-  px: '3',
   border: 'none',
   borderRadius: 'md',
   bg: 'gray.100',
@@ -470,148 +332,169 @@ export const searchInput = css({
   },
 });
 
-// 詳細条件トグルボタン（展開/折りたたみで異なるスタイル）- Pencilデザイン準拠
-export const expandButton = cva({
-  base: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '1.5',
-    px: '6',
-    height: '8',
-    fontSize: '[13px]',
-    fontWeight: 'normal',
-    border: 'none',
-    borderRadius: 'full',
-    cursor: 'pointer',
-    transitionProperty: 'common',
-    transitionDuration: 'fast',
-  },
-  variants: {
-    expanded: {
-      true: {
-        color: 'primary.500',
-        bg: 'green.50',
-        _hover: {
-          bg: 'green.100',
-        },
-      },
-      false: {
-        color: 'gray.400',
-        bg: 'transparent',
-        _hover: {
-          color: 'gray.500',
-          bg: 'gray.100',
-        },
-      },
-    },
-  },
-  defaultVariants: {
-    expanded: false,
-  },
-});
-
-// 詳細条件トグル行
-export const expandButtonRow = css({
+// メインコンテンツエリア（サイドバー + 結果グリッド）
+export const mainContent = css({
   display: 'flex',
-  justifyContent: 'center',
-});
-
-export const detailedConditions = cva({
-  base: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4',
-    transitionProperty: 'common',
-    transitionDuration: 'normal',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  variants: {
-    expanded: {
-      true: {
-        maxHeight: '[1000px]',
-        opacity: '[1]',
-        overflow: 'visible',
-      },
-      false: {
-        maxHeight: '0',
-        opacity: '[0]',
-        overflow: 'hidden',
-      },
-    },
-  },
-  defaultVariants: {
-    expanded: false,
-  },
-});
-
-export const searchDivider = css({
-  border: 'none',
-  h: '[1px]',
-  bg: 'gray.100',
-  my: '4',
-});
-
-export const searchActions = css({
-  display: 'flex',
-  gap: '2',
-});
-
-export const rangeInput = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-  fontSize: 'sm',
-  color: 'gray.700',
-});
-
-export const rangeInputField = css({
-  w: '20',
-});
-
-// ページスタイル
-export const pageContainer = css({
-  display: 'flex',
-  flexDirection: 'column',
   flex: '1',
-});
-
-// 検索エリア（白背景、ヘッダーと一体化）
-export const searchArea = css({
-  bg: 'white',
-});
-
-// 検索エリア内のコンテンツ
-export const searchAreaContent = css({
   maxW: '[1400px]',
   mx: 'auto',
   px: '6',
-});
-
-// 結果エリア（グラデーション背景）
-export const resultsArea = css({
-  flex: '1',
   py: '6',
+  gap: '8',
+  transitionProperty: 'all',
+  transitionDuration: 'normal',
+  transitionTimingFunction: 'ease-in-out',
 });
 
-// 結果エリア内のコンテンツ
-export const resultsAreaContent = css({
-  maxW: '[1400px]',
-  mx: 'auto',
-  px: '6',
+// サイドバー（デスクトップのみ表示、折りたたみ対応）
+export const sidebar = cva({
+  base: {
+    display: 'none',
+    lg: {
+      display: 'flex',
+      flexDirection: 'column',
+      flexShrink: '0',
+      position: 'sticky',
+      top: '[132px]', // GlobalHeader(64px) + SearchTopBar(68px)
+      height: '[calc(100vh - 132px)]',
+      overflowY: 'auto',
+      bg: 'sidebar.bg',
+      borderRadius: 'xl',
+      shadow: 'card.default',
+      transitionProperty: '[width, opacity]',
+      transitionDuration: 'normal',
+      transitionTimingFunction: 'ease-in-out',
+      scrollbarWidth: '[none]',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    },
+  },
+  variants: {
+    collapsed: {
+      true: {
+        lg: {
+          width: '[48px]',
+          overflow: 'hidden',
+          padding: '1',
+          alignItems: 'center',
+        },
+      },
+      false: {
+        lg: {
+          width: '[280px]',
+          padding: '2',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    collapsed: false,
+  },
 });
 
-export const pageHeader = css({
+// 結果コンテンツエリア（ローディングオーバーレイの基準位置）
+export const resultsContent = css({
+  flex: '1',
+  position: 'relative',
+  minW: '0',
+});
+
+// 検索結果ローディングオーバーレイ（isPending 時に表示）
+export const resultsLoadingOverlay = css({
+  position: 'absolute',
+  inset: '0',
+  bg: 'overlay.light',
+  zIndex: 'overlay',
   display: 'flex',
-  justifyContent: 'space-between',
   alignItems: 'center',
-  py: '4',
+  justifyContent: 'center',
+  borderRadius: 'xl',
 });
 
-export const pageTitle = css({
-  fontSize: 'xl',
-  fontWeight: 'bold',
-  color: 'gray.800',
+// モバイル用フィルターボタン（lg 未満のみ表示）
+export const mobileFilterRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '3',
+  py: '3',
+  px: '6',
+  bg: 'white',
+  borderBottomWidth: '1px',
+  borderBottomStyle: 'solid',
+  borderBottomColor: 'gray.100',
+  lg: {
+    display: 'none',
+  },
+});
+
+export const mobileFilterButton = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  px: '4',
+  height: '[36px]',
+  bg: 'white',
+  borderRadius: 'md',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: 'gray.700',
+  cursor: 'pointer',
+  shadow: 'sm',
+  _hover: {
+    bg: 'gray.50',
+  },
+});
+
+export const mobileFilterBadge = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minW: '[20px]',
+  h: '[20px]',
+  px: '1.5',
+  borderRadius: 'full',
+  bg: 'primary.500',
+  color: 'white',
+  fontSize: 'xs',
+  fontWeight: 'semibold',
+});
+
+export const mobileFilterChips = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  flex: '1',
+  overflow: 'hidden',
+});
+
+export const mobileFilterChip = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1',
+  px: '2',
+  height: '[28px]',
+  bg: 'primary.100',
+  color: 'primary.800',
+  borderRadius: 'md',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  flexShrink: '0',
+});
+
+export const mobileFilterChipRemove = css({
+  cursor: 'pointer',
+  opacity: '[0.7]',
+  _hover: {
+    opacity: '[1]',
+  },
+});
+
+export const mobileResultCount = css({
+  fontSize: 'xs',
+  color: 'gray.500',
+  flexShrink: '0',
 });
 
 // 検索結果ヘッダー（件数 + ソート）
@@ -664,74 +547,164 @@ export const loadMoreIcon = css({
   color: 'gray.500',
 });
 
-export const sortSelect = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-  height: '9',
-  px: '3',
-  bg: 'white',
+// ===== SearchTopBar（PC 上部検索バー、lg 以上のみ表示） =====
+
+export const searchTopBar = css({
+  display: 'none',
+  lg: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4',
+    bg: 'white',
+    px: '8',
+    py: '4',
+    shadow: 'subHeader.default',
+    position: 'sticky',
+    top: '[64px]', // GlobalHeader の高さ
+    zIndex: 'sticky',
+  },
+});
+
+export const searchTopBar_systemSelect = css({
+  width: '[280px]',
+  flexShrink: '0',
+});
+
+export const searchTopBar_keywordInput = css({
+  flex: '1',
+  height: '[44px]',
+  px: '4',
+  border: 'none',
   borderRadius: 'md',
-  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.05)]',
-  cursor: 'pointer',
+  bg: 'gray.100',
+  color: 'gray.800',
+  fontSize: 'sm',
+  outline: 'none',
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _hover: {
-    boxShadow: '[0 4px 16px rgba(0, 0, 0, 0.06)]',
+    bg: 'gray.200',
+  },
+  _focus: {
+    bg: 'gray.100',
+    outline: '[2px solid]',
+    outlineColor: 'primary.500',
+  },
+  _placeholder: {
+    color: 'gray.400',
   },
 });
 
-export const sortSelectText = css({
-  fontSize: '[13px]',
-  fontWeight: 'medium',
-  color: 'gray.700',
-});
-
-export const sortSelectIcon = css({
-  fontSize: '[10px]',
-  color: 'gray.500',
-});
-
-// 旧タブスタイル（互換性のため残す）
-export const sortTabs = css({
+export const searchTopBar_actions = css({
   display: 'flex',
-  gap: 'xs',
-  bg: 'white',
-  p: 'xs',
-  borderRadius: 'lg',
-  boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.05)]',
+  alignItems: 'center',
+  gap: '3',
+  flexShrink: '0',
 });
 
-export const sortTabButton = cva({
+// ===== SearchSidebar（サイドバー内コンテンツ） =====
+
+// サイドバー内のフィルターコンテンツ（折りたたみ時はフェードアウト）
+export const sidebarContent = cva({
   base: {
-    px: '4',
-    py: '2',
-    fontSize: '[13px]',
-    fontWeight: 'medium',
-    color: 'gray.500',
-    bg: 'transparent',
-    border: 'none',
-    borderRadius: 'md',
-    cursor: 'pointer',
-    transitionProperty: 'common',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: '1',
+    overflow: 'hidden',
+    transitionProperty: '[opacity, visibility]',
     transitionDuration: 'fast',
-    _hover: {
-      color: 'primary.500',
-      bg: 'green.50',
-    },
+    transitionTimingFunction: 'ease-in-out',
   },
   variants: {
-    active: {
+    visible: {
       true: {
-        color: 'primary.500',
-        bg: 'green.50',
-        fontWeight: 'bold',
-        boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.05)]',
-        _hover: {
-          color: 'primary.500',
-          bg: 'green.50',
-        },
+        opacity: '[1]',
+        visibility: 'visible',
+      },
+      false: {
+        opacity: '[0]',
+        visibility: 'hidden',
       },
     },
   },
+  defaultVariants: {
+    visible: true,
+  },
+});
+
+// サイドバー内の検索ボタン
+export const sidebarSearchButton = css({
+  mt: '4',
+  px: '4',
+  pb: '2',
+});
+
+// トグルボタン
+export const sidebarToggle = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '2',
+  width: 'full',
+  py: '2',
+  px: '2',
+  borderRadius: 'md',
+  bg: 'sidebar.toggleBg',
+  color: 'sidebar.toggleIcon',
+  cursor: 'pointer',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  _hover: {
+    bg: 'sidebar.toggleBgHover',
+  },
+});
+
+// 折りたたみ時のフィルターバッジ
+export const sidebarCollapsedBadge = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minW: '[20px]',
+  h: '[20px]',
+  px: '1.5',
+  borderRadius: 'full',
+  bg: 'primary.500',
+  color: 'white',
+  fontSize: 'xs',
+  fontWeight: 'semibold',
+});
+
+// ===== MobileSearchBar（SP 検索バー、lg 未満のみ表示） =====
+
+export const mobileSearchBar = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '3',
+  bg: 'white',
+  px: '6',
+  py: '4',
+  shadow: 'subHeader.default',
+  lg: {
+    display: 'none',
+  },
+});
+
+export const mobileSearchBar_row = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '3',
+});
+
+export const mobileSearchBar_systemSelect = css({
+  flex: '1',
+  minW: '0',
+});
+
+// ===== ユーティリティ =====
+
+// インラインスタイル禁止のため、width: 100% はクラスで定義
+export const fullWidthButton = css({
+  width: 'full',
 });

@@ -1,15 +1,19 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { ChevronDown, Filter, Search, X } from 'lucide-react';
+import { ChevronDown, Filter } from 'lucide-react';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { isNil } from 'ramda';
 
+import { sortOptions } from '../searchParams';
+import { MobileSearchBar } from './MobileSearchBar';
 import { ScenarioList } from './ScenarioList';
+import { SearchSidebar } from './SearchSidebar';
+import { SearchTopBar } from './SearchTopBar';
 import * as styles from './styles';
 
 import { FilterBottomSheet } from '@/components/blocks/FilterBottomSheet';
-import { FilterChipBar } from '@/components/blocks/FilterChipBar';
-import { FilterPanel, useFilterState } from '@/components/blocks/FilterPanel';
+import { useFilterDraft } from '@/components/blocks/FilterPanel';
 import { Button } from '@/components/elements/button/button';
 import {
   Select,
@@ -26,8 +30,8 @@ import type {
   Tag,
 } from '../interface';
 
-// ソートオプションの定義
-const sortOptions: SelectItem[] = [
+// ソートオプションの表示ラベル
+const sortSelectItems: SelectItem[] = [
   { value: 'newest', label: '新着順' },
   { value: 'rating', label: '高評価順' },
   { value: 'playtime_asc', label: '短時間順' },
@@ -94,13 +98,14 @@ export const ScenariosContent = ({
   tags,
   initialResult,
 }: ScenariosContentProps) => {
-  // フィルター状態（URLと同期）
-  const filterState = useFilterState();
-  const { params, isPending, activeFilterCount, toggleSystem, clearAll } =
-    filterState;
+  // ドラフト式フィルター状態
+  const draftState = useFilterDraft();
 
-  // ソート状態
-  const [sort, setSort] = useState<SortOption>('newest');
+  // ソート状態（URLと同期）
+  const [sort, setSort] = useQueryState(
+    'sort',
+    parseAsStringLiteral(sortOptions).withDefault('newest'),
+  );
 
   // 検索結果状態
   const [searchResult, setSearchResult] = useState<SearchResult>(initialResult);
@@ -109,10 +114,8 @@ export const ScenariosContent = ({
   // モバイル用ボトムシートの開閉状態
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-  // タブレット用ドロップダウンの開閉状態（将来的にPopoverで実装）
-  const [_activeDropdown, setActiveDropdown] = useState<
-    'system' | 'tag' | 'player' | 'time' | null
-  >(null);
+  // サイドバーの折りたたみ状態
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // SystemItem/TagItem 形式に変換
   const systemItems: SystemItem[] = systems.map((s) => ({
@@ -125,18 +128,18 @@ export const ScenariosContent = ({
     name: t.name,
   }));
 
-  // フィルターパラメータが変更されたら検索を実行
+  // committed の変更で検索を実行（ドラフトではなく確定値のみ監視）
   useEffect(() => {
     const fetchResults = async () => {
       try {
         const queryString = buildApiQueryString({
-          systems: params.systems,
-          tags: params.tags,
-          minPlayer: params.minPlayer,
-          maxPlayer: params.maxPlayer,
-          minPlaytime: params.minPlaytime,
-          maxPlaytime: params.maxPlaytime,
-          q: params.q,
+          systems: draftState.committed.systems,
+          tags: draftState.committed.tags,
+          minPlayer: draftState.committed.minPlayer,
+          maxPlayer: draftState.committed.maxPlayer,
+          minPlaytime: draftState.committed.minPlaytime,
+          maxPlaytime: draftState.committed.maxPlaytime,
+          q: draftState.committed.q,
           sort,
         });
         const response = await fetch(
@@ -154,13 +157,13 @@ export const ScenariosContent = ({
 
     fetchResults();
   }, [
-    params.systems,
-    params.tags,
-    params.minPlayer,
-    params.maxPlayer,
-    params.minPlaytime,
-    params.maxPlaytime,
-    params.q,
+    draftState.committed.systems,
+    draftState.committed.tags,
+    draftState.committed.minPlayer,
+    draftState.committed.maxPlayer,
+    draftState.committed.minPlaytime,
+    draftState.committed.maxPlaytime,
+    draftState.committed.q,
     sort,
   ]);
 
@@ -169,7 +172,7 @@ export const ScenariosContent = ({
     (details: SelectValueChangeDetails<SelectItem>) => {
       setSort(details.value[0] as SortOption);
     },
-    [],
+    [setSort],
   );
 
   // もっと見る
@@ -178,13 +181,13 @@ export const ScenariosContent = ({
 
     try {
       const queryString = buildApiQueryString({
-        systems: params.systems,
-        tags: params.tags,
-        minPlayer: params.minPlayer,
-        maxPlayer: params.maxPlayer,
-        minPlaytime: params.minPlaytime,
-        maxPlaytime: params.maxPlaytime,
-        q: params.q,
+        systems: draftState.committed.systems,
+        tags: draftState.committed.tags,
+        minPlayer: draftState.committed.minPlayer,
+        maxPlayer: draftState.committed.maxPlayer,
+        minPlaytime: draftState.committed.minPlaytime,
+        maxPlaytime: draftState.committed.maxPlaytime,
+        q: draftState.committed.q,
         sort,
       });
       const response = await fetch(
@@ -201,49 +204,19 @@ export const ScenariosContent = ({
     } catch (error) {
       getAppLogger(['app', 'scenarios']).error`Load more failed: ${error}`;
     }
-  }, [params, sort, offset]);
-
-  // 検索条件をリセット
-  const handleReset = useCallback(() => {
-    clearAll();
-  }, [clearAll]);
-
-  // タブレット用ドロップダウンを開く
-  const handleOpenDropdown = useCallback(
-    (type: 'system' | 'tag' | 'player' | 'time') => {
-      setActiveDropdown(type);
-      // TODO: Popover実装時にここでドロップダウンを開く
-    },
-    [],
-  );
+  }, [draftState.committed, sort, offset]);
 
   const hasMore = searchResult.scenarios.length < searchResult.totalCount;
 
-  // 選択中のシステム（モバイル用チップ表示）
-  const selectedSystems = params.systems
-    .map((id) => {
-      const system = systems.find((s) => s.systemId === id);
-      return system ? { systemId: id, name: system.name } : null;
-    })
-    .filter((s): s is { systemId: string; name: string } => s !== null);
-
   return (
     <>
-      {/* キーワード検索バー */}
-      <div className={styles.keywordSearchBar}>
-        <div className={styles.keywordSearchContent}>
-          <Search size={20} color="#9CA3AF" />
-          <input
-            type="text"
-            placeholder="シナリオを検索..."
-            className={styles.keywordSearchInput}
-            value={params.q}
-            onChange={(e) => filterState.setKeyword(e.target.value)}
-          />
-        </div>
-      </div>
+      {/* PC: 上部検索バー（lg 以上） */}
+      <SearchTopBar systems={systemItems} draftState={draftState} />
 
-      {/* モバイル用フィルターボタン行（768px未満） */}
+      {/* SP: 検索バー（lg 未満） */}
+      <MobileSearchBar systems={systemItems} draftState={draftState} />
+
+      {/* SP: フィルターボタン + 結果件数（lg 未満） */}
       <div className={styles.mobileFilterRow}>
         <button
           type="button"
@@ -252,63 +225,36 @@ export const ScenariosContent = ({
         >
           <Filter size={16} />
           フィルター
-          {activeFilterCount > 0 && (
+          {draftState.activeFilterCount > 0 && (
             <span className={styles.mobileFilterBadge}>
-              {activeFilterCount}
+              {draftState.activeFilterCount}
             </span>
           )}
         </button>
-
-        {/* 選択中のフィルターをチップで表示 */}
-        <div className={styles.mobileFilterChips}>
-          {selectedSystems.slice(0, 2).map((system) => (
-            <div key={system.systemId} className={styles.mobileFilterChip}>
-              {system.name}
-              <button
-                type="button"
-                className={styles.mobileFilterChipRemove}
-                onClick={() => toggleSystem(system.systemId)}
-                aria-label={`${system.name}を削除`}
-              >
-                <X size={12} />
-              </button>
-            </div>
-          ))}
-        </div>
-
         <span className={styles.mobileResultCount}>
           {searchResult.totalCount}件
         </span>
       </div>
 
-      {/* タブレット用フィルターバー（768px〜1023px） */}
-      <div className={styles.filterChipBarWrapper}>
-        <div className={styles.filterChipBarContent}>
-          <FilterChipBar
-            systems={systemItems}
-            tags={tagItems}
-            filterState={filterState}
-            onOpenDropdown={handleOpenDropdown}
-          />
-        </div>
-      </div>
-
       {/* メインコンテンツエリア */}
       <div className={styles.mainContent}>
-        {/* サイドバー（デスクトップのみ、1024px以上） */}
-        <aside className={styles.sidebar}>
-          <div className={styles.sidebarPanel}>
-            <FilterPanel
-              variant="sidebar"
-              systems={systemItems}
-              tags={tagItems}
-              filterState={filterState}
-            />
-          </div>
-        </aside>
+        {/* PC: サイドバー（lg 以上） */}
+        <SearchSidebar
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed((p) => !p)}
+          systems={systemItems}
+          tags={tagItems}
+          draftState={draftState}
+        />
 
-        {/* 結果コンテンツ */}
-        <div className={styles.resultsContent}>
+        {/* 結果コンテンツ（isPending 時はローディングオーバーレイ表示） */}
+        <div className={styles.resultsContent} aria-busy={draftState.isPending}>
+          {draftState.isPending && (
+            <output
+              className={styles.resultsLoadingOverlay}
+              aria-label="検索中"
+            />
+          )}
           <div className={styles.resultHeader}>
             <div className={styles.resultCount}>
               検索結果：{searchResult.totalCount}件
@@ -318,7 +264,7 @@ export const ScenariosContent = ({
               <span className={styles.sortLabel}>並び替え：</span>
               <div className={styles.sortSelectWrapper}>
                 <Select
-                  items={sortOptions}
+                  items={sortSelectItems}
                   value={[sort]}
                   onValueChange={handleSortChange}
                   variant="minimal"
@@ -329,8 +275,11 @@ export const ScenariosContent = ({
 
           <ScenarioList
             scenarios={searchResult.scenarios}
-            isLoading={isPending}
-            onReset={handleReset}
+            isLoading={draftState.isPending}
+            onReset={() => {
+              draftState.clearAll();
+              draftState.commit();
+            }}
           />
 
           {hasMore && (
@@ -349,13 +298,13 @@ export const ScenariosContent = ({
         </div>
       </div>
 
-      {/* モバイル用フィルターボトムシート */}
+      {/* SP: フィルターボトムシート */}
       <FilterBottomSheet
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
         systems={systemItems}
         tags={tagItems}
-        filterState={filterState}
+        filterState={draftState}
       />
     </>
   );

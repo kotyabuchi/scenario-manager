@@ -10,7 +10,7 @@ import { isNotNil } from 'ramda';
 import type { SortOption } from './interface';
 
 // ソートオプションの定義
-const sortOptions = [
+export const sortOptions = [
   'newest',
   'rating',
   'playtime_asc',
