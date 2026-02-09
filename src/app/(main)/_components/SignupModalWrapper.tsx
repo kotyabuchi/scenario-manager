@@ -5,13 +5,13 @@ import { useCallback, useState } from 'react';
 import { SignupModal } from '@/components/blocks/SignupModal';
 import { registerUser } from '@/components/blocks/SignupModal/actions';
 import { useAuth } from '@/context';
-import { useSystemMessage } from '@/hooks/useSystemMessage';
+import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 
 import type { SignupFormData } from '@/components/blocks/SignupModal';
 
 export const SignupModalWrapper = () => {
   const { isNewUser, discordMeta, setUser } = useAuth();
-  const { showSuccess, showError } = useSystemMessage();
+  const { addMessage } = useSystemMessageActions();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = useCallback(
@@ -25,18 +25,18 @@ export const SignupModalWrapper = () => {
           favoriteScenarios: data.favoriteScenarios,
         });
         if (!result.success) {
-          showError(result.error);
+          addMessage('danger', result.error);
           setIsSubmitting(false);
           return false;
         }
         return true;
       } catch {
-        showError('ユーザー登録に失敗しました');
+        addMessage('danger', 'ユーザー登録に失敗しました');
         setIsSubmitting(false);
         return false;
       }
     },
-    [showError],
+    [addMessage],
   );
 
   const handleComplete = useCallback(() => {
@@ -49,8 +49,8 @@ export const SignupModalWrapper = () => {
         role: 'MEMBER',
       });
     }
-    showSuccess('登録が完了しました！');
-  }, [discordMeta, setUser, showSuccess]);
+    addMessage('success', '登録が完了しました！');
+  }, [discordMeta, setUser, addMessage]);
 
   if (!isNewUser || !discordMeta) return null;
 

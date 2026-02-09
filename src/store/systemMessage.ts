@@ -4,7 +4,7 @@ import { ulid } from 'ulid';
 /**
  * メッセージのレベル（種類）
  */
-export type MessageLevel = 'success' | 'error' | 'warning' | 'info';
+export type MessageLevel = 'success' | 'danger' | 'warning' | 'info';
 
 /**
  * システムメッセージの型定義
@@ -17,41 +17,51 @@ export type SystemMessage = {
 };
 
 /**
+ * システムメッセージアクションの型定義
+ */
+export type SystemMessageAction =
+  | { type: 'add'; level: MessageLevel; message: string }
+  | { type: 'remove'; id: string }
+  | { type: 'clear' };
+
+/**
  * システムメッセージのリストを管理するatom
  */
 export const systemMessagesAtom = atom<SystemMessage[]>([]);
 
 /**
- * メッセージを追加するための書き込み専用atom
+ * システムメッセージを操作するための統合atom
+ * - add: メッセージを追加
+ * - remove: 指定IDのメッセージを削除
+ * - clear: 全メッセージをクリア
  */
-export const addSystemMessageAtom = atom(
+export const systemMessageActionsAtom = atom(
   null,
-  (get, set, payload: { level: MessageLevel; message: string }) => {
-    const newMessage: SystemMessage = {
-      id: ulid(),
-      level: payload.level,
-      message: payload.message,
-      createdAt: Date.now(),
-    };
+  (get, set, action: SystemMessageAction) => {
     const currentMessages = get(systemMessagesAtom);
-    set(systemMessagesAtom, [...currentMessages, newMessage]);
+
+    switch (action.type) {
+      case 'add': {
+        const newMessage: SystemMessage = {
+          id: ulid(),
+          level: action.level,
+          message: action.message,
+          createdAt: Date.now(),
+        };
+        set(systemMessagesAtom, [...currentMessages, newMessage]);
+        break;
+      }
+      case 'remove': {
+        set(
+          systemMessagesAtom,
+          currentMessages.filter((msg) => msg.id !== action.id),
+        );
+        break;
+      }
+      case 'clear': {
+        set(systemMessagesAtom, []);
+        break;
+      }
+    }
   },
 );
-
-/**
- * メッセージを削除するための書き込み専用atom
- */
-export const removeSystemMessageAtom = atom(null, (get, set, id: string) => {
-  const currentMessages = get(systemMessagesAtom);
-  set(
-    systemMessagesAtom,
-    currentMessages.filter((msg) => msg.id !== id),
-  );
-});
-
-/**
- * 全メッセージをクリアするための書き込み専用atom
- */
-export const clearAllSystemMessagesAtom = atom(null, (_get, set) => {
-  set(systemMessagesAtom, []);
-});

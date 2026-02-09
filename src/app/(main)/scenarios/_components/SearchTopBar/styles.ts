@@ -13,7 +13,7 @@ export const searchTopBar = css({
     py: '4',
     shadow: 'subHeader.default',
     position: 'sticky',
-    top: '[64px]', // GlobalHeader の高さ
+    top: '0',
     zIndex: 'sticky',
   },
 });

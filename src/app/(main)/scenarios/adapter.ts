@@ -89,7 +89,7 @@ export const searchScenarios = async (
       query = query.in('scenario_id', tagFilteredScenarioIds);
     }
 
-    // ソート
+    // ソート（scenario_id をタイブレーカーに追加し、ページネーションの安定性を保証）
     switch (sort) {
       case 'newest':
         query = query.order('created_at', { ascending: false });
@@ -104,6 +104,7 @@ export const searchScenarios = async (
         query = query.order('created_at', { ascending: false });
         break;
     }
+    query = query.order('scenario_id', { ascending: false });
 
     // ページネーション
     query = query.range(offset, offset + limit - 1);

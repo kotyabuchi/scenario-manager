@@ -1,63 +1,44 @@
 import { useCallback } from 'react';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
-  addSystemMessageAtom,
-  clearAllSystemMessagesAtom,
   type MessageLevel,
-  removeSystemMessageAtom,
+  systemMessageActionsAtom,
+  systemMessagesAtom,
 } from '@/store/systemMessage';
 
 /**
- * システムメッセージを操作するためのカスタムフック
+ * システムメッセージの一覧を取得するフック（読み取り専用）
+ * メッセージの変更を監視するため、表示コンポーネントで使用する
  */
-export const useSystemMessage = () => {
-  const addMessage = useSetAtom(addSystemMessageAtom);
-  const removeMessage = useSetAtom(removeSystemMessageAtom);
-  const clearAll = useSetAtom(clearAllSystemMessagesAtom);
+export const useSystemMessages = () => {
+  return useAtomValue(systemMessagesAtom);
+};
 
-  const showMessage = useCallback(
+/**
+ * システムメッセージを操作するためのフック（書き込み専用）
+ * atom を購読しないため、メッセージ変更による再レンダリングが発生しない
+ */
+export const useSystemMessageActions = () => {
+  const dispatch = useSetAtom(systemMessageActionsAtom);
+
+  const addMessage = useCallback(
     (level: MessageLevel, message: string) => {
-      addMessage({ level, message });
+      dispatch({ type: 'add', level, message });
     },
-    [addMessage],
+    [dispatch],
   );
 
-  const showSuccess = useCallback(
-    (message: string) => {
-      showMessage('success', message);
+  const removeMessage = useCallback(
+    (id: string) => {
+      dispatch({ type: 'remove', id });
     },
-    [showMessage],
+    [dispatch],
   );
 
-  const showError = useCallback(
-    (message: string) => {
-      showMessage('error', message);
-    },
-    [showMessage],
-  );
+  const clearAll = useCallback(() => {
+    dispatch({ type: 'clear' });
+  }, [dispatch]);
 
-  const showWarning = useCallback(
-    (message: string) => {
-      showMessage('warning', message);
-    },
-    [showMessage],
-  );
-
-  const showInfo = useCallback(
-    (message: string) => {
-      showMessage('info', message);
-    },
-    [showMessage],
-  );
-
-  return {
-    showMessage,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo,
-    removeMessage,
-    clearAll,
-  };
+  return { addMessage, removeMessage, clearAll };
 };

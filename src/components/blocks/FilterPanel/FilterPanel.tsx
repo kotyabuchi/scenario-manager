@@ -77,11 +77,7 @@ export const FilterPanel = ({
     <div className={styles.filterPanel({ variant })}>
       {/* システム選択 */}
       {showSystems && (
-        <FilterSection
-          label="システム"
-          totalCount={systems.length}
-          initialShowCount={INITIAL_SHOW_COUNT}
-        >
+        <FilterSection label="システム">
           <div className={styles.chipContainer}>
             {visibleSystems.map((system) => {
               const isSelected = params.systems.includes(system.systemId);
@@ -115,11 +111,7 @@ export const FilterPanel = ({
       )}
 
       {/* タグ選択 */}
-      <FilterSection
-        label="タグ"
-        totalCount={tags.length}
-        initialShowCount={INITIAL_SHOW_COUNT}
-      >
+      <FilterSection label="タグ">
         <div className={styles.chipContainer}>
           {visibleTags.map((tag) => {
             const isSelected = params.tags.includes(tag.tagId);

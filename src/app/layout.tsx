@@ -1,5 +1,7 @@
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
+import { DevTools } from './_components/DevTools';
+
 import { SystemMessage } from '@/components/blocks/SystemMessage';
 import { JotaiProvider } from '@/components/providers/JotaiProvider';
 
@@ -27,6 +29,7 @@ export default function RootLayout({
             {children}
           </NuqsAdapter>
         </JotaiProvider>
+        <DevTools />
       </body>
     </html>
   );

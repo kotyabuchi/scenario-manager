@@ -6,7 +6,7 @@ export const overlay = cva({
     position: 'fixed',
     inset: '0',
     bg: 'overlay.backdrop',
-    zIndex: '[40]',
+    zIndex: 'overlay',
     transition: 'opacity',
     transitionDuration: 'normal',
     // ボタン要素用スタイル
@@ -37,7 +37,7 @@ export const container = cva({
     bottom: '0',
     left: '0',
     right: '0',
-    zIndex: '[50]',
+    zIndex: 'modal',
     bg: 'white',
     borderTopLeftRadius: '3xl',
     borderTopRightRadius: '3xl',

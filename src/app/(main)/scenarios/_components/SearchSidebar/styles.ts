@@ -9,19 +9,15 @@ export const sidebar = cva({
       flexDirection: 'column',
       flexShrink: '0',
       position: 'sticky',
-      top: '[132px]', // GlobalHeader(64px) + SearchTopBar(68px)
-      height: '[calc(100vh - 132px)]',
-      overflowY: 'auto',
+      top: '[84px]', // SearchTopBar(76) + margin-top(8)
+      maxHeight: '[calc(100vh - 84px - 64px - 8px)]', // top(84) + GlobalHeader(64) + margin-bottom(8)
+      overflow: 'hidden',
       bg: 'sidebar.bg',
       borderRadius: 'xl',
       shadow: 'card.default',
       transitionProperty: '[width, opacity]',
       transitionDuration: 'normal',
       transitionTimingFunction: 'ease-in-out',
-      scrollbarWidth: '[none]',
-      '&::-webkit-scrollbar': {
-        display: 'none',
-      },
     },
   },
   variants: {
@@ -30,7 +26,8 @@ export const sidebar = cva({
         lg: {
           width: '[48px]',
           overflow: 'hidden',
-          padding: '1',
+          padding: '2',
+          margin: '2',
           alignItems: 'center',
         },
       },
@@ -38,6 +35,8 @@ export const sidebar = cva({
         lg: {
           width: '[280px]',
           padding: '2',
+          margin: '2',
+          gap: '[20px]',
         },
       },
     },
@@ -53,7 +52,12 @@ export const sidebarContent = cva({
     display: 'flex',
     flexDirection: 'column',
     flex: '1',
-    overflow: 'hidden',
+    minH: '0',
+    overflowY: 'auto',
+    scrollbarWidth: '[none]',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
     transitionProperty: '[opacity, visibility]',
     transitionDuration: 'fast',
     transitionTimingFunction: 'ease-in-out',
@@ -77,7 +81,7 @@ export const sidebarContent = cva({
 
 // サイドバー内の検索ボタン
 export const sidebarSearchButton = css({
-  mt: '4',
+  flexShrink: '0',
   px: '4',
   pb: '2',
 });
@@ -87,6 +91,7 @@ export const sidebarToggle = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  flexShrink: '0',
   gap: '2',
   width: 'full',
   py: '2',

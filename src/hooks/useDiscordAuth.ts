@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useSystemMessage } from './useSystemMessage';
+import { useSystemMessageActions } from './useSystemMessage';
 
 import { createClient } from '@/lib/supabase/client';
 
@@ -24,7 +24,7 @@ const POPUP_HEIGHT = 700;
 
 export const useDiscordAuth = () => {
   const router = useRouter();
-  const { showError, showSuccess } = useSystemMessage();
+  const { addMessage } = useSystemMessageActions();
   const channelRef = useRef<BroadcastChannel | null>(null);
   const [isNewUser, setIsNewUser] = useState(false);
 
@@ -42,7 +42,8 @@ export const useDiscordAuth = () => {
         if (data.isNewUser) {
           setIsNewUser(true);
         } else {
-          showSuccess(
+          addMessage(
+            'success',
             data.nickname
               ? `おかえりなさい、${data.nickname}さん`
               : 'ログインしました',
@@ -51,14 +52,14 @@ export const useDiscordAuth = () => {
         router.refresh();
         router.push(data.redirectTo);
       } else if (data.type === 'error') {
-        showError(data.message);
+        addMessage('danger', data.message);
       }
     };
 
     return () => {
       channel.close();
     };
-  }, [router, showError, showSuccess]);
+  }, [router, addMessage]);
 
   const login = useCallback(async () => {
     const supabase = createClient();
@@ -72,7 +73,10 @@ export const useDiscordAuth = () => {
     });
 
     if (error || !data.url) {
-      showError('認証の開始に失敗しました。もう一度お試しください。');
+      addMessage(
+        'danger',
+        '認証の開始に失敗しました。もう一度お試しください。',
+      );
       return;
     }
 
@@ -88,7 +92,7 @@ export const useDiscordAuth = () => {
       'discord-auth',
       `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top}`,
     );
-  }, [showError]);
+  }, [addMessage]);
 
   return { login, isNewUser, clearNewUser };
 };

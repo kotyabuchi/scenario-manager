@@ -93,6 +93,10 @@ src/
 | `/fix-bug` | バグ修正 | 再現テスト → 修正 |
 | `/redesign` | UI更新 | Pencilデザインからリデザイン |
 | `/review-fix` | レビュー | コード規約準拠チェック |
+| `/review-diff` | レビュー | 未コミット差分の多角的レビュー |
+| `/review-plan` | レビュー | 実装計画の多角的レビュー |
+| `/apply-review` | レビュー反映 | コードレビュー指摘をコードに反映 |
+| `/apply-plan-review` | レビュー反映 | 計画レビュー指摘を計画に反映 |
 | `/serena` | 汎用 | 調査・設計・実装 |
 | `/vibe` | Worktree | git worktree管理 |
 

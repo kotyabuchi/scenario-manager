@@ -59,6 +59,7 @@
     "@types/react-dom": "19.2.3",
     "@types/ws": "^8.18.1",
     "@vitest/coverage-v8": "^3.1.4",
+    "agentation": "^2.1.1",
     "jsdom": "^27.4.0",
     "lefthook": "^1.12.2",
     "playwright": "^1.52.0",

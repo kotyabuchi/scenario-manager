@@ -38,8 +38,8 @@ export const Info: Story = {
     title: 'Browser Update available',
     description:
       'A new version of your browser is available. Please update to continue.',
-    onClick: () => {
-      console.log('clicked');
+    onActionClick() {
+      console.log('close');
     },
   },
   render: (args) => <Alert {...args} />,

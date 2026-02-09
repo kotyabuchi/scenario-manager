@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { RotateCcw, Search, Trash2, X } from 'lucide-react';
+import { RotateCcw, Search, X } from 'lucide-react';
 
 import * as styles from './styles';
 
@@ -72,13 +72,6 @@ export const FilterBottomSheet = ({
     clearAll();
   };
 
-  // すべてクリアして検索（クリア＋commit＋閉じる）
-  const handleClearAndSearch = () => {
-    clearAll();
-    filterState.commit?.();
-    onClose();
-  };
-
   // この条件で検索（commit＋閉じる）
   const handleApply = () => {
     filterState.commit?.();
@@ -132,7 +125,7 @@ export const FilterBottomSheet = ({
           />
         </div>
 
-        {/* フッター（3ボタンレイアウト） */}
+        {/* フッター */}
         <div className={styles.footer}>
           <div className={styles.footerActions}>
             <Button
@@ -143,16 +136,6 @@ export const FilterBottomSheet = ({
             >
               <RotateCcw size={16} />
               条件をリセット
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              status="primary"
-              onClick={handleClearAndSearch}
-            >
-              <Trash2 size={16} />
-              すべてクリアして検索
             </Button>
           </div>
 

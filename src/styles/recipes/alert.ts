@@ -19,14 +19,13 @@ export const alert = defineSlotRecipe({
       borderRadius: '12px',
       display: 'flex',
       gap: '16px',
-      p: '24px',
+      px: '16px',
+      py: '12px',
       width: 'full',
+      alignItems: 'center',
     },
     icon: {
       flexShrink: '0',
-      width: '20px',
-      height: '20px',
-      mt: '2px',
     },
     content: {
       display: 'flex',
@@ -44,8 +43,8 @@ export const alert = defineSlotRecipe({
     },
     actionButton: {
       flexShrink: '0',
-      width: '20px',
-      height: '20px',
+      width: '24px',
+      height: '24px',
       cursor: 'pointer',
       transition: 'opacity {durations.fast} ease-out',
       opacity: '0.7',

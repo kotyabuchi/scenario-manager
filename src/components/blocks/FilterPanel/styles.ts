@@ -27,7 +27,7 @@ export const filterPanel = cva({
     variant: {
       sidebar: {
         width: 'full',
-        gap: '5',
+        gap: '4',
       },
       bottomsheet: {
         width: 'full',

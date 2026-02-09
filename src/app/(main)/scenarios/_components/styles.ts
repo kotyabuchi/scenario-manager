@@ -292,6 +292,7 @@ export const pageContainer = css({
 export const keywordSearchInput = css({
   flex: '1',
   height: '[44px]',
+  minH: '[44px]',
   px: '4',
   border: 'none',
   borderRadius: 'md',
@@ -318,11 +319,6 @@ export const keywordSearchInput = css({
 export const mainContent = css({
   display: 'flex',
   flex: '1',
-  maxW: '[1400px]',
-  mx: 'auto',
-  px: '6',
-  py: '6',
-  gap: '8',
   transitionProperty: 'all',
   transitionDuration: 'normal',
   transitionTimingFunction: 'ease-in-out',
@@ -333,25 +329,13 @@ export const resultsContent = css({
   flex: '1',
   position: 'relative',
   minW: '0',
-});
-
-// 検索結果ローディングオーバーレイ（isPending 時に表示）
-export const resultsLoadingOverlay = css({
-  position: 'absolute',
-  inset: '0',
-  bg: 'overlay.light',
-  zIndex: 'overlay',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 'xl',
+  p: '6',
 });
 
 // モバイル用フィルターボタン（lg 未満のみ表示）
 export const mobileFilterRow = css({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
   gap: '3',
   py: '3',
   px: '6',
@@ -376,7 +360,6 @@ export const mobileFilterButton = css({
   fontWeight: 'medium',
   color: 'gray.700',
   cursor: 'pointer',
-  shadow: 'sm',
   _hover: {
     bg: 'gray.50',
   },
@@ -426,24 +409,13 @@ export const mobileFilterChipRemove = css({
   },
 });
 
-export const mobileResultCount = css({
-  fontSize: 'xs',
-  color: 'gray.500',
-  flexShrink: '0',
-});
-
 // 検索結果ヘッダー（件数 + ソート）
 export const resultHeader = css({
   display: 'flex',
-  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'space-between',
   gap: '2',
   mb: 'lg',
-  // タブレット以上で横並び
-  md: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
 });
 
 export const resultCount = css({

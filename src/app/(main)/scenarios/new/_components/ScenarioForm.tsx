@@ -39,7 +39,7 @@ import {
 } from '@/components/elements/slider';
 import { Textarea } from '@/components/elements/textarea';
 import { HandoutTypes } from '@/db/enum';
-import { useSystemMessage } from '@/hooks/useSystemMessage';
+import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 import { resizeImage } from '@/lib/image';
 
 import type { ScenarioSystem, Tag } from '../../interface';
@@ -52,7 +52,7 @@ type ScenarioFormProps = {
 export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const { showError, showSuccess } = useSystemMessage();
+  const { addMessage } = useSystemMessageActions();
 
   // 画像プレビュー用の状態
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -236,13 +236,16 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
           };
 
           if (!response.ok) {
-            showError(uploadResult.error ?? '画像のアップロードに失敗しました');
+            addMessage(
+              'danger',
+              uploadResult.error ?? '画像のアップロードに失敗しました',
+            );
             return;
           }
 
           imageUrl = uploadResult.url ?? '';
         } catch {
-          showError('画像のアップロードに失敗しました');
+          addMessage('danger', '画像のアップロードに失敗しました');
           return;
         }
       }
@@ -253,13 +256,13 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
       });
 
       if (!result.success) {
-        showError(result.error?.message ?? '登録に失敗しました');
+        addMessage('danger', result.error?.message ?? '登録に失敗しました');
       } else {
         // プレビューURLをクリーンアップ
         if (!isNil(previewUrl)) {
           URL.revokeObjectURL(previewUrl);
         }
-        showSuccess('シナリオを登録しました');
+        addMessage('success', 'シナリオを登録しました');
         router.push(`/scenarios/${result.data.scenarioId}`);
       }
     });

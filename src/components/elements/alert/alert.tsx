@@ -55,10 +55,10 @@ export const Alert = ({
         asChild
       >
         {match(status)
-          .with('info', () => <InfoIcon />)
-          .with('success', () => <CheckIcon />)
-          .with('warning', () => <TriangleAlert />)
-          .with('danger', () => <CircleAlert />)
+          .with('info', () => <InfoIcon size="20" />)
+          .with('success', () => <CheckIcon size="20" />)
+          .with('warning', () => <TriangleAlert size="20" />)
+          .with('danger', () => <CircleAlert size="20" />)
           .exhaustive()}
       </ark.svg>
       <ark.div className={recipe.content}>
@@ -82,8 +82,13 @@ export const Alert = ({
             onActionClick?.();
           }}
         >
-          <ark.svg role="img" aria-label="Close icon" className={recipe.icon}>
-            {subIcon || <X />}
+          <ark.svg
+            role="img"
+            aria-label="Close icon"
+            className={recipe.icon}
+            asChild
+          >
+            {subIcon || <X size="20" />}
           </ark.svg>
         </ark.button>
       )}

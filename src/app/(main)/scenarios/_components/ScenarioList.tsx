@@ -2,6 +2,7 @@ import { Plus, RotateCcw, SearchX } from 'lucide-react';
 import Link from 'next/link';
 
 import { ScenarioCard } from './ScenarioCard';
+import { ScenarioCardSkeletonGrid } from './ScenarioCardSkeleton';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -18,11 +19,7 @@ export const ScenarioList = ({
   onReset,
 }: ScenarioListWithActionsProps) => {
   if (isLoading) {
-    return (
-      <div className={styles.scenarioListEmpty}>
-        <span className={styles.scenarioListEmptyText}>読み込み中...</span>
-      </div>
-    );
+    return <ScenarioCardSkeletonGrid />;
   }
 
   if (scenarios.length === 0) {

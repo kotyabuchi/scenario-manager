@@ -64,7 +64,18 @@ export const SearchSidebar = ({
         </>
       ) : (
         <>
-          {/* 展開時: FilterPanel + 検索ボタン + トグル */}
+          {/* 展開時: トグル（上部） + FilterPanel（スクロール可） + 検索ボタン */}
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            className={styles.sidebarToggle}
+            aria-label="フィルターを閉じる"
+            aria-expanded={true}
+          >
+            <PanelLeftClose size={16} />
+            閉じる
+          </button>
+
           <div className={styles.sidebarContent({ visible: !isCollapsed })}>
             <FilterPanel
               variant="sidebar"
@@ -86,17 +97,6 @@ export const SearchSidebar = ({
               検索
             </Button>
           </div>
-
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            className={styles.sidebarToggle}
-            aria-label="フィルターを閉じる"
-            aria-expanded={true}
-          >
-            <PanelLeftClose size={16} />
-            閉じる
-          </button>
         </>
       )}
     </aside>

@@ -90,7 +90,7 @@ const buildApiQueryString = (params: {
   }
 
   const qs = query.toString();
-  return qs ? `?${qs}` : '?';
+  return qs === '' ? '' : `?${qs}`;
 };
 
 export const ScenariosContent = ({
@@ -130,6 +130,9 @@ export const ScenariosContent = ({
 
   // committed の変更で検索を実行（ドラフトではなく確定値のみ監視）
   useEffect(() => {
+    // フィルター変更時はページネーションを即座にリセット
+    setOffset(0);
+
     const fetchResults = async () => {
       try {
         const queryString = buildApiQueryString({
@@ -148,7 +151,6 @@ export const ScenariosContent = ({
         if (response.ok) {
           const data = (await response.json()) as SearchResult;
           setSearchResult(data);
-          setOffset(0);
         }
       } catch (error) {
         getAppLogger(['app', 'scenarios']).error`Search failed: ${error}`;
@@ -216,7 +218,7 @@ export const ScenariosContent = ({
       {/* SP: 検索バー（lg 未満） */}
       <MobileSearchBar systems={systemItems} draftState={draftState} />
 
-      {/* SP: フィルターボタン + 結果件数（lg 未満） */}
+      {/* SP: フィルターボタン（lg 未満） */}
       <div className={styles.mobileFilterRow}>
         <button
           type="button"
@@ -231,9 +233,6 @@ export const ScenariosContent = ({
             </span>
           )}
         </button>
-        <span className={styles.mobileResultCount}>
-          {searchResult.totalCount}件
-        </span>
       </div>
 
       {/* メインコンテンツエリア */}
@@ -249,12 +248,6 @@ export const ScenariosContent = ({
 
         {/* 結果コンテンツ（isPending 時はローディングオーバーレイ表示） */}
         <div className={styles.resultsContent} aria-busy={draftState.isPending}>
-          {draftState.isPending && (
-            <output
-              className={styles.resultsLoadingOverlay}
-              aria-label="検索中"
-            />
-          )}
           <div className={styles.resultHeader}>
             <div className={styles.resultCount}>
               検索結果：{searchResult.totalCount}件
