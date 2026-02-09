@@ -1,15 +1,15 @@
 'use client';
 
-import { useCallback, useState, useTransition } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { useQueryStates } from 'nuqs';
+import { useCallback, useEffect, useState } from 'react';
+import { ChevronDown, Filter, Search, X } from 'lucide-react';
 import { isNil } from 'ramda';
 
-import { searchParamsParsers } from '../searchParams';
 import { ScenarioList } from './ScenarioList';
-import { SearchPanel } from './SearchPanel';
 import * as styles from './styles';
 
+import { FilterBottomSheet } from '@/components/blocks/FilterBottomSheet';
+import { FilterChipBar } from '@/components/blocks/FilterChipBar';
+import { FilterPanel, useFilterState } from '@/components/blocks/FilterPanel';
 import { Button } from '@/components/elements/button/button';
 import {
   Select,
@@ -18,9 +18,9 @@ import {
 } from '@/components/elements/select/select';
 import { getAppLogger } from '@/lib/logger';
 
+import type { SystemItem, TagItem } from '@/components/blocks/FilterPanel';
 import type {
   ScenarioSystem,
-  SearchParams,
   SearchResult,
   SortOption,
   Tag,
@@ -38,48 +38,51 @@ type ScenariosContentProps = {
   systems: ScenarioSystem[];
   tags: Tag[];
   initialResult: SearchResult;
-  initialParams: SearchParams;
 };
 
 // API用のクエリ文字列を構築
-const buildApiQueryString = (
-  params: SearchParams,
-  sort: SortOption,
-): string => {
+const buildApiQueryString = (params: {
+  systems: string[];
+  tags: string[];
+  minPlayer: number | null;
+  maxPlayer: number | null;
+  minPlaytime: number | null;
+  maxPlaytime: number | null;
+  q: string;
+  sort: SortOption;
+}): string => {
   const query = new URLSearchParams();
 
-  if (!isNil(params.systemIds) && params.systemIds.length > 0) {
-    query.set('systems', params.systemIds.join(','));
+  if (params.systems.length > 0) {
+    query.set('systems', params.systems.join(','));
   }
 
-  if (!isNil(params.tagIds) && params.tagIds.length > 0) {
-    query.set('tags', params.tagIds.join(','));
+  if (params.tags.length > 0) {
+    query.set('tags', params.tags.join(','));
   }
 
-  if (!isNil(params.playerCount)) {
-    if (params.playerCount.min !== 1) {
-      query.set('minPlayer', params.playerCount.min.toString());
-    }
-    if (params.playerCount.max !== 20) {
-      query.set('maxPlayer', params.playerCount.max.toString());
-    }
+  if (!isNil(params.minPlayer)) {
+    query.set('minPlayer', params.minPlayer.toString());
   }
 
-  if (!isNil(params.playtime)) {
-    if (params.playtime.min !== 1) {
-      query.set('minPlaytime', params.playtime.min.toString());
-    }
-    if (params.playtime.max !== 240) {
-      query.set('maxPlaytime', params.playtime.max.toString());
-    }
+  if (!isNil(params.maxPlayer)) {
+    query.set('maxPlayer', params.maxPlayer.toString());
   }
 
-  if (!isNil(params.scenarioName) && params.scenarioName !== '') {
-    query.set('q', params.scenarioName);
+  if (!isNil(params.minPlaytime)) {
+    query.set('minPlaytime', params.minPlaytime.toString());
   }
 
-  if (sort !== 'newest') {
-    query.set('sort', sort);
+  if (!isNil(params.maxPlaytime)) {
+    query.set('maxPlaytime', params.maxPlaytime.toString());
+  }
+
+  if (params.q !== '') {
+    query.set('q', params.q);
+  }
+
+  if (params.sort !== 'newest') {
+    query.set('sort', params.sort);
   }
 
   const qs = query.toString();
@@ -90,86 +93,100 @@ export const ScenariosContent = ({
   systems,
   tags,
   initialResult,
-  initialParams,
 }: ScenariosContentProps) => {
-  const [isPending, startTransition] = useTransition();
+  // フィルター状態（URLと同期）
+  const filterState = useFilterState();
+  const { params, isPending, activeFilterCount, toggleSystem, clearAll } =
+    filterState;
 
-  // nuqsで型安全にURL状態を管理
-  const [queryParams, setQueryParams] = useQueryStates(searchParamsParsers, {
-    history: 'push',
-    scroll: false,
-    shallow: false,
-    startTransition,
-  });
+  // ソート状態
+  const [sort, setSort] = useState<SortOption>('newest');
 
+  // 検索結果状態
   const [searchResult, setSearchResult] = useState<SearchResult>(initialResult);
-  const [currentParams, setCurrentParams] =
-    useState<SearchParams>(initialParams);
   const [offset, setOffset] = useState(0);
 
-  const handleSearch = useCallback(
-    async (params: SearchParams) => {
-      setCurrentParams(params);
-      setOffset(0);
+  // モバイル用ボトムシートの開閉状態
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-      // nuqsでURL更新（自動で反映される）
-      await setQueryParams({
-        systems: params.systemIds ?? [],
-        tags: params.tagIds ?? [],
-        minPlayer: params.playerCount?.min ?? null,
-        maxPlayer: params.playerCount?.max ?? null,
-        minPlaytime: params.playtime?.min ?? null,
-        maxPlaytime: params.playtime?.max ?? null,
-        q: params.scenarioName ?? '',
-      });
+  // タブレット用ドロップダウンの開閉状態（将来的にPopoverで実装）
+  const [_activeDropdown, setActiveDropdown] = useState<
+    'system' | 'tag' | 'player' | 'time' | null
+  >(null);
 
-      // サーバーから検索結果を取得
+  // SystemItem/TagItem 形式に変換
+  const systemItems: SystemItem[] = systems.map((s) => ({
+    systemId: s.systemId,
+    name: s.name,
+  }));
+
+  const tagItems: TagItem[] = tags.map((t) => ({
+    tagId: t.tagId,
+    name: t.name,
+  }));
+
+  // フィルターパラメータが変更されたら検索を実行
+  useEffect(() => {
+    const fetchResults = async () => {
       try {
-        const queryString = buildApiQueryString(params, queryParams.sort);
+        const queryString = buildApiQueryString({
+          systems: params.systems,
+          tags: params.tags,
+          minPlayer: params.minPlayer,
+          maxPlayer: params.maxPlayer,
+          minPlaytime: params.minPlaytime,
+          maxPlaytime: params.maxPlaytime,
+          q: params.q,
+          sort,
+        });
         const response = await fetch(
           `/api/scenarios/search${queryString}&limit=20&offset=0`,
         );
         if (response.ok) {
           const data = (await response.json()) as SearchResult;
           setSearchResult(data);
+          setOffset(0);
         }
       } catch (error) {
         getAppLogger(['app', 'scenarios']).error`Search failed: ${error}`;
       }
-    },
-    [queryParams.sort, setQueryParams],
-  );
+    };
 
+    fetchResults();
+  }, [
+    params.systems,
+    params.tags,
+    params.minPlayer,
+    params.maxPlayer,
+    params.minPlaytime,
+    params.maxPlaytime,
+    params.q,
+    sort,
+  ]);
+
+  // ソート変更
   const handleSortChange = useCallback(
-    async (details: SelectValueChangeDetails<SelectItem>) => {
-      const newSort = details.value[0] as SortOption;
-      setOffset(0);
-
-      // nuqsでソート更新
-      await setQueryParams({ sort: newSort });
-
-      // サーバーから検索結果を取得
-      try {
-        const queryString = buildApiQueryString(currentParams, newSort);
-        const response = await fetch(
-          `/api/scenarios/search${queryString}&limit=20&offset=0`,
-        );
-        if (response.ok) {
-          const data = (await response.json()) as SearchResult;
-          setSearchResult(data);
-        }
-      } catch (error) {
-        getAppLogger(['app', 'scenarios']).error`Sort failed: ${error}`;
-      }
+    (details: SelectValueChangeDetails<SelectItem>) => {
+      setSort(details.value[0] as SortOption);
     },
-    [currentParams, setQueryParams],
+    [],
   );
 
+  // もっと見る
   const handleLoadMore = useCallback(async () => {
     const newOffset = offset + 20;
 
     try {
-      const queryString = buildApiQueryString(currentParams, queryParams.sort);
+      const queryString = buildApiQueryString({
+        systems: params.systems,
+        tags: params.tags,
+        minPlayer: params.minPlayer,
+        maxPlayer: params.maxPlayer,
+        minPlaytime: params.minPlaytime,
+        maxPlaytime: params.maxPlaytime,
+        q: params.q,
+        sort,
+      });
       const response = await fetch(
         `/api/scenarios/search${queryString}&limit=20&offset=${newOffset}`,
       );
@@ -184,31 +201,114 @@ export const ScenariosContent = ({
     } catch (error) {
       getAppLogger(['app', 'scenarios']).error`Load more failed: ${error}`;
     }
-  }, [currentParams, queryParams.sort, offset]);
+  }, [params, sort, offset]);
 
   // 検索条件をリセット
-  const handleReset = useCallback(async () => {
-    const emptyParams: SearchParams = {};
-    await handleSearch(emptyParams);
-  }, [handleSearch]);
+  const handleReset = useCallback(() => {
+    clearAll();
+  }, [clearAll]);
+
+  // タブレット用ドロップダウンを開く
+  const handleOpenDropdown = useCallback(
+    (type: 'system' | 'tag' | 'player' | 'time') => {
+      setActiveDropdown(type);
+      // TODO: Popover実装時にここでドロップダウンを開く
+    },
+    [],
+  );
 
   const hasMore = searchResult.scenarios.length < searchResult.totalCount;
 
+  // 選択中のシステム（モバイル用チップ表示）
+  const selectedSystems = params.systems
+    .map((id) => {
+      const system = systems.find((s) => s.systemId === id);
+      return system ? { systemId: id, name: system.name } : null;
+    })
+    .filter((s): s is { systemId: string; name: string } => s !== null);
+
   return (
     <>
-      {/* 検索エリア（白背景、ヘッダーと一体化） */}
-      <div className={styles.searchArea}>
-        <SearchPanel
-          systems={systems}
-          tags={tags}
-          defaultParams={currentParams}
-          onSearch={handleSearch}
-        />
+      {/* キーワード検索バー */}
+      <div className={styles.keywordSearchBar}>
+        <div className={styles.keywordSearchContent}>
+          <Search size={20} color="#9CA3AF" />
+          <input
+            type="text"
+            placeholder="シナリオを検索..."
+            className={styles.keywordSearchInput}
+            value={params.q}
+            onChange={(e) => filterState.setKeyword(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* 結果エリア（グラデーション背景） */}
-      <div className={styles.resultsArea}>
-        <div className={styles.resultsAreaContent}>
+      {/* モバイル用フィルターボタン行（768px未満） */}
+      <div className={styles.mobileFilterRow}>
+        <button
+          type="button"
+          className={styles.mobileFilterButton}
+          onClick={() => setIsBottomSheetOpen(true)}
+        >
+          <Filter size={16} />
+          フィルター
+          {activeFilterCount > 0 && (
+            <span className={styles.mobileFilterBadge}>
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+
+        {/* 選択中のフィルターをチップで表示 */}
+        <div className={styles.mobileFilterChips}>
+          {selectedSystems.slice(0, 2).map((system) => (
+            <div key={system.systemId} className={styles.mobileFilterChip}>
+              {system.name}
+              <button
+                type="button"
+                className={styles.mobileFilterChipRemove}
+                onClick={() => toggleSystem(system.systemId)}
+                aria-label={`${system.name}を削除`}
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <span className={styles.mobileResultCount}>
+          {searchResult.totalCount}件
+        </span>
+      </div>
+
+      {/* タブレット用フィルターバー（768px〜1023px） */}
+      <div className={styles.filterChipBarWrapper}>
+        <div className={styles.filterChipBarContent}>
+          <FilterChipBar
+            systems={systemItems}
+            tags={tagItems}
+            filterState={filterState}
+            onOpenDropdown={handleOpenDropdown}
+          />
+        </div>
+      </div>
+
+      {/* メインコンテンツエリア */}
+      <div className={styles.mainContent}>
+        {/* サイドバー（デスクトップのみ、1024px以上） */}
+        <aside className={styles.sidebar}>
+          <div className={styles.sidebarPanel}>
+            <FilterPanel
+              variant="sidebar"
+              systems={systemItems}
+              tags={tagItems}
+              filterState={filterState}
+            />
+          </div>
+        </aside>
+
+        {/* 結果コンテンツ */}
+        <div className={styles.resultsContent}>
           <div className={styles.resultHeader}>
             <div className={styles.resultCount}>
               検索結果：{searchResult.totalCount}件
@@ -219,7 +319,7 @@ export const ScenariosContent = ({
               <div className={styles.sortSelectWrapper}>
                 <Select
                   items={sortOptions}
-                  value={[queryParams.sort]}
+                  value={[sort]}
                   onValueChange={handleSortChange}
                   variant="minimal"
                 />
@@ -248,6 +348,15 @@ export const ScenariosContent = ({
           )}
         </div>
       </div>
+
+      {/* モバイル用フィルターボトムシート */}
+      <FilterBottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        systems={systemItems}
+        tags={tagItems}
+        filterState={filterState}
+      />
     </>
   );
 };

@@ -17,8 +17,8 @@ const sortOptions = [
   'playtime_desc',
 ] as const;
 
-// 検索パラメータのパーサー定義
-export const searchParamsParsers = {
+// フィルターUI用パーサー（Client Component で useQueryStates に使用）
+export const filterParsers = {
   systems: parseAsArrayOf(parseAsString, ',').withDefault([]),
   tags: parseAsArrayOf(parseAsString, ',').withDefault([]),
   minPlayer: parseAsInteger,
@@ -26,6 +26,21 @@ export const searchParamsParsers = {
   minPlaytime: parseAsInteger,
   maxPlaytime: parseAsInteger,
   q: parseAsString.withDefault(''),
+};
+
+export type FilterParams = {
+  systems: string[];
+  tags: string[];
+  minPlayer: number | null;
+  maxPlayer: number | null;
+  minPlaytime: number | null;
+  maxPlaytime: number | null;
+  q: string;
+};
+
+// Server Component 用パーサー（filterParsers + sort）
+export const searchParamsParsers = {
+  ...filterParsers,
   sort: parseAsStringLiteral(sortOptions).withDefault('newest'),
 };
 

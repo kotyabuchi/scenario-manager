@@ -1,20 +1,11 @@
 import { css, cva } from '@/styled-system/css';
 
-// サイドバー（デスクトップ）
+// サイドバー（デスクトップ）— レイアウト責務は SearchSidebar に委譲
 export const sidebar = css({
   display: 'flex',
   flexDirection: 'column',
-  width: '[280px]',
-  height: '[fit-content]',
-  maxHeight: '[calc(100vh - 140px)]',
-  overflowY: 'auto',
-  position: 'sticky',
-  top: '[140px]',
-  bg: 'white',
-  borderRadius: '2xl',
-  padding: '5',
-  gap: '6',
-  shadow: 'card.default',
+  width: 'full',
+  gap: '5',
 });
 
 // インライン（タブレット用フィルターバー内）
@@ -43,17 +34,8 @@ export const filterPanel = cva({
   variants: {
     variant: {
       sidebar: {
-        width: '[280px]',
-        height: '[fit-content]',
-        maxHeight: '[calc(100vh - 140px)]',
-        overflowY: 'auto',
-        position: 'sticky',
-        top: '[140px]',
-        bg: 'white',
-        borderRadius: '2xl',
-        padding: '5',
-        gap: '6',
-        shadow: 'card.default',
+        width: 'full',
+        gap: '5',
       },
       inline: {
         width: 'full',
@@ -187,13 +169,6 @@ export const expandableArea = cva({
   defaultVariants: {
     expanded: false,
   },
-});
-
-// プレイ時間チップ（単一選択）
-export const durationChips = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '2',
 });
 
 // クリアボタン

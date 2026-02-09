@@ -1,34 +1,17 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useTransition } from 'react';
+import { useQueryStates } from 'nuqs';
+
 import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsString,
-  useQueryStates,
-} from 'nuqs';
+  type FilterParams,
+  filterParsers,
+} from '@/app/(main)/scenarios/searchParams';
 
-// フィルターパーサー定義
-export const filterParsers = {
-  systems: parseAsArrayOf(parseAsString, ',').withDefault([]),
-  tags: parseAsArrayOf(parseAsString, ',').withDefault([]),
-  minPlayer: parseAsInteger,
-  maxPlayer: parseAsInteger,
-  duration: parseAsString, // '~1h' | '1~3h' | '3~6h' | '6h~'
-  q: parseAsString.withDefault(''),
-};
-
-export type FilterParams = {
-  systems: string[];
-  tags: string[];
-  minPlayer: number | null;
-  maxPlayer: number | null;
-  duration: string | null;
-  q: string;
-};
+export type { FilterParams } from '@/app/(main)/scenarios/searchParams';
 
 /**
- * フィルター状態管理フック
+ * フィルター状態管理フック（即時適用モード）
  * - URLクエリパラメータと同期
  * - 即時適用（チップ選択）とdebounce適用（スライダー、キーワード）をサポート
  */
@@ -103,12 +86,17 @@ export const useFilterState = () => {
     [setParams],
   );
 
-  // プレイ時間の選択
-  const setDuration = useCallback(
-    (duration: string | null) => {
-      applyFilter('duration', duration);
+  // プレイ時間の変更（debounce）
+  const setPlaytimeRange = useCallback(
+    (min: number, max: number) => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        setParams({ minPlaytime: min, maxPlaytime: max });
+      }, 300);
     },
-    [applyFilter],
+    [setParams],
   );
 
   // キーワード検索（debounce）
@@ -126,7 +114,8 @@ export const useFilterState = () => {
       tags: [],
       minPlayer: null,
       maxPlayer: null,
-      duration: null,
+      minPlaytime: null,
+      maxPlaytime: null,
       q: '',
     });
   }, [setParams]);
@@ -137,20 +126,21 @@ export const useFilterState = () => {
     if (params.systems.length > 0) count += params.systems.length;
     if (params.tags.length > 0) count += params.tags.length;
     if (params.minPlayer !== null || params.maxPlayer !== null) count += 1;
-    if (params.duration !== null) count += 1;
+    if (params.minPlaytime !== null || params.maxPlaytime !== null) count += 1;
     return count;
   }, [params]);
 
   return {
+    mode: 'immediate' as const,
     params,
     isPending,
     activeFilterCount,
     // 即時適用
     toggleSystem,
     toggleTag,
-    setDuration,
     // debounce適用
     setPlayerRange,
+    setPlaytimeRange,
     setKeyword,
     // その他
     applyFilter,

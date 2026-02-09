@@ -4,30 +4,32 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 
 import { FilterSection } from './FilterSection';
-import { DURATION_OPTIONS, type FilterPanelProps } from './interface';
 import * as styles from './styles';
 
 import { Slider } from '@/components/elements/slider/slider';
+
+import type { FilterPanelProps } from './interface';
 
 const INITIAL_SHOW_COUNT = 5;
 
 /**
  * フィルターパネルコンポーネント
  * - variant: 'sidebar' (デスクトップ), 'inline' (タブレット), 'bottomsheet' (モバイル)
- * - フィルターの状態管理はuseFilterStateフックで行う
+ * - フィルターの状態管理はuseFilterState / useFilterDraftフックで行う
  */
 export const FilterPanel = ({
   variant = 'sidebar',
   systems,
   tags,
   filterState,
+  showSystems = true,
 }: FilterPanelProps) => {
   const {
     params,
     toggleSystem,
     toggleTag,
     setPlayerRange,
-    setDuration,
+    setPlaytimeRange,
     clearAll,
     activeFilterCount,
   } = filterState;
@@ -40,6 +42,12 @@ export const FilterPanel = ({
   const [playerRange, setPlayerRangeLocal] = useState<number[]>([
     params.minPlayer ?? 1,
     params.maxPlayer ?? 10,
+  ]);
+
+  // プレイ時間のローカル状態（スライダー操作中のUI更新用）
+  const [playtimeRange, setPlaytimeRangeLocal] = useState<number[]>([
+    params.minPlaytime ?? 1,
+    params.maxPlaytime ?? 8,
   ]);
 
   // 表示するシステム
@@ -58,44 +66,53 @@ export const FilterPanel = ({
     setPlayerRange(min, max);
   };
 
+  const handlePlaytimeRangeChange = (values: number[]) => {
+    setPlaytimeRangeLocal(values);
+    const min = values[0] ?? 1;
+    const max = values[1] ?? 8;
+    setPlaytimeRange(min, max);
+  };
+
   return (
     <div className={styles.filterPanel({ variant })}>
       {/* システム選択 */}
-      <FilterSection
-        label="システム"
-        totalCount={systems.length}
-        initialShowCount={INITIAL_SHOW_COUNT}
-      >
-        <div className={styles.chipContainer}>
-          {visibleSystems.map((system) => {
-            const isSelected = params.systems.includes(system.systemId);
-            return (
+      {showSystems && (
+        <FilterSection
+          label="システム"
+          totalCount={systems.length}
+          initialShowCount={INITIAL_SHOW_COUNT}
+        >
+          <div className={styles.chipContainer}>
+            {visibleSystems.map((system) => {
+              const isSelected = params.systems.includes(system.systemId);
+              return (
+                <button
+                  key={system.systemId}
+                  type="button"
+                  onClick={() => toggleSystem(system.systemId)}
+                  className={styles.selectableChip({ selected: isSelected })}
+                >
+                  {system.name}
+                  {isSelected && (
+                    <X size={14} className={styles.chipRemoveIcon} />
+                  )}
+                </button>
+              );
+            })}
+            {systems.length > INITIAL_SHOW_COUNT && (
               <button
-                key={system.systemId}
                 type="button"
-                onClick={() => toggleSystem(system.systemId)}
-                className={styles.selectableChip({ selected: isSelected })}
+                onClick={() => setExpandedSystems(!expandedSystems)}
+                className={styles.showAllButton}
               >
-                {system.name}
-                {isSelected && (
-                  <X size={14} className={styles.chipRemoveIcon} />
-                )}
+                {expandedSystems
+                  ? '閉じる'
+                  : `+${systems.length - INITIAL_SHOW_COUNT}`}
               </button>
-            );
-          })}
-          {systems.length > INITIAL_SHOW_COUNT && (
-            <button
-              type="button"
-              onClick={() => setExpandedSystems(!expandedSystems)}
-              className={styles.showAllButton}
-            >
-              {expandedSystems
-                ? '閉じる'
-                : `+${systems.length - INITIAL_SHOW_COUNT}`}
-            </button>
-          )}
-        </div>
-      </FilterSection>
+            )}
+          </div>
+        </FilterSection>
+      )}
 
       {/* タグ選択 */}
       <FilterSection
@@ -152,34 +169,30 @@ export const FilterPanel = ({
 
       {/* プレイ時間 */}
       <FilterSection label="プレイ時間">
-        <div className={styles.durationChips}>
-          {DURATION_OPTIONS.map((option) => {
-            const isSelected = params.duration === option.value;
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setDuration(isSelected ? null : option.value)}
-                className={styles.selectableChip({ selected: isSelected })}
-              >
-                {option.label}
-              </button>
-            );
-          })}
+        <div className={styles.sliderContainer}>
+          <Slider
+            value={playtimeRange}
+            onValueChange={(details) =>
+              handlePlaytimeRangeChange(details.value)
+            }
+            min={1}
+            max={8}
+            step={1}
+            range
+            showValue
+            formatValue={(v) => `${v}h`}
+            minLabel="1h"
+            maxLabel="8h+"
+          />
         </div>
       </FilterSection>
 
-      {/* クリアボタン（サイドバー・ボトムシートのみ） */}
-      {(variant === 'sidebar' || variant === 'bottomsheet') &&
-        activeFilterCount > 0 && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className={styles.clearButton}
-          >
-            フィルターをクリア
-          </button>
-        )}
+      {/* クリアボタン（bottomsheetは3ボタンフッターと重複するため非表示） */}
+      {variant !== 'bottomsheet' && activeFilterCount > 0 && (
+        <button type="button" onClick={clearAll} className={styles.clearButton}>
+          フィルターをクリア
+        </button>
+      )}
     </div>
   );
 };
