@@ -1,6 +1,6 @@
 ---
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, mcp__serena__list_memories, mcp__serena__read_memory, mcp__serena__write_memory, mcp__penpot__execute_code, mcp__penpot__high_level_overview, mcp__penpot__export_shape
-description: コンポーネントの要件を対話的に定義する。Penpotデザインを元にProps・振る舞い・テスト観点を明確化し、/gen-testへ引き継ぐ。
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, mcp__serena__list_memories, mcp__serena__read_memory, mcp__serena__write_memory, mcp__pencil__batch_get, mcp__pencil__get_editor_state, mcp__pencil__get_screenshot, mcp__pencil__snapshot_layout
+description: コンポーネントの要件を対話的に定義する。Pencilデザインを元にProps・振る舞い・テスト観点を明確化し、/gen-testへ引き継ぐ。
 ---
 
 # /component-spec コマンド
@@ -9,11 +9,11 @@ description: コンポーネントの要件を対話的に定義する。Penpot�
 
 **コンポーネント専用の要件定義スキル**
 
-Penpotで作成したデザインを元に、対話的にコンポーネントの詳細仕様を決定する。
+Pencilで作成したデザインを元に、対話的にコンポーネントの詳細仕様を決定する。
 Props設計、インタラクション、状態遷移、アクセシビリティなどを明確化し、テスト可能な要件定義書を作成する。
 
 ```
-Penpot → [/component-spec] → /gen-test → /implement-tests → /refactor
+Pencil → [/component-spec] → /gen-test → /implement-tests → /refactor
             ↓
       デザイン確認
             ↓
@@ -22,20 +22,20 @@ Penpot → [/component-spec] → /gen-test → /implement-tests → /refactor
       要件定義書作成
 ```
 
-## 前提条件（Penpot使用時）
+## 前提条件（Pencil使用時）
 
 このスキルを使用する前に、以下を確認してください：
 
-1. **Penpot MCPサーバーが起動していること**
+1. **Pencil MCPサーバーが起動していること**
    - 確認: `http://localhost:4401/mcp` にアクセス可能
 
-2. **ブラウザでPenpotデザインファイルを開いていること**
-   - Penpotにログイン
+2. **ブラウザでPencilデザインファイルを開いていること**
+   - Pencilにログイン
    - 対象プロジェクトを開く
    - MCPプラグインを接続
 
 3. **ネットワーク接続が安定していること**
-   - Penpotはクラウドベースのため、オフライン時は使用不可
+   - Pencilはクラウドベースのため、オフライン時は使用不可
 
 ## 使用方法
 
@@ -57,27 +57,23 @@ Penpot → [/component-spec] → /gen-test → /implement-tests → /refactor
 
 ## 実行手順
 
-### Step 1: Penpotデザインの確認（必須）
+### Step 1: Pencilデザインの確認（必須）
 
-**デザインファーストの原則に従い、先にPenpotでデザインを確認する。**
+**デザインファーストの原則に従い、先にPencilでデザインを確認する。**
 
 ```javascript
 // 1. デザイン概要を確認
-// mcp__penpot__high_level_overview を使用
+// mcp__pencil__get_editor_state を使用
 
 // 2. 対象コンポーネントを取得
-// mcp__penpot__execute_code
-const shape = penpotUtils.findShape(
-  s => s.name.includes("コンポーネント名"),
-  penpot.root
-);
-return penpotUtils.shapeStructure(shape, 3);
+// mcp__pencil__batch_get でパターン検索
+// patterns: ["*コンポーネント名*"] を指定
 
 // 3. スクリーンショットで視覚的に確認
-// mcp__penpot__export_shape を使用（shape.id を指定）
+// mcp__pencil__get_screenshot を使用（nodeId を指定）
 ```
 
-**デザインがない場合**: 先にPenpotでデザインを作成するよう促す。
+**デザインがない場合**: 先にPencilでデザインを作成するよう促す。
 
 ### Step 2: メモリの確認
 
@@ -278,7 +274,7 @@ Q: 異常系や境界値の挙動を確認します
 
 **作成日**: YYYY-MM-DD
 **TDDフェーズ**: 要件定義
-**Penpotデザイン**: Penpotプロジェクト > ページ名 > フレーム名
+**Pencilデザイン**: Pencilプロジェクト > ページ名 > フレーム名
 
 ---
 
@@ -502,7 +498,7 @@ src/components/elements/Button/
 
 ## ヒアリングのコツ
 
-1. **デザインを見ながら**: Penpotのスクリーンショットを参照しながら確認
+1. **デザインを見ながら**: Pencilのスクリーンショットを参照しながら確認
 2. **具体例を出す**: 「例えばこのボタンがdisabledの時は...」
 3. **選択肢を提示**: 「truncateとwrap、どちらにする？」
 4. **アクセシビリティを忘れない**: 視覚的なデザインだけでなくキーボード操作も
@@ -514,7 +510,7 @@ src/components/elements/Button/
 
 要件定義完了前に確認:
 
-- [ ] Penpotデザインを確認した
+- [ ] Pencilデザインを確認した
 - [ ] ui-design-systemメモリを参照した
 - [ ] すべてのPropsを定義した
 - [ ] すべてのvariantsを定義した
@@ -536,7 +532,7 @@ src/components/elements/Button/
 
 📄 要件定義書: .claude/requirements/components/<コンポーネント名>.md
 📊 PROGRESS.md: 更新済み
-🎨 Penpotデザイン: Penpotプロジェクト > ページ名 > フレーム名
+🎨 Pencilデザイン: Pencilプロジェクト > ページ名 > フレーム名
 
 次のフェーズ:
 /gen-test <コンポーネント名>

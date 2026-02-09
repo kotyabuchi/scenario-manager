@@ -43,6 +43,12 @@
         "C:\\Development\\Nextjs\\scenario-manager"
       ],
       "env": {}
+    },
+    "agentation": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "agentation-mcp", "server"],
+      "env": {}
     }
   }
 }

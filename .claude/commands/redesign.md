@@ -1,47 +1,47 @@
 ---
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion, mcp__penpot__execute_code, mcp__penpot__high_level_overview, mcp__penpot__export_shape
-description: Penpotデザインを唯一の情報源として、既存実装に引きずられずにUIをリデザインする。テストも確実に通過させる。
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion, mcp__pencil__batch_design, mcp__pencil__batch_get, mcp__pencil__get_editor_state, mcp__pencil__get_screenshot, mcp__pencil__get_guidelines, mcp__pencil__snapshot_layout
+description: Pencilデザインを唯一の情報源として、既存実装に引きずられずにUIをリデザインする。テストも確実に通過させる。
 ---
 
 # /redesign コマンド
 
 ## 概要
 
-**Penpotデザインを唯一の情報源（Single Source of Truth）として、UIをリデザインするスキル**
+**Pencilデザインを唯一の情報源（Single Source of Truth）として、UIをリデザインするスキル**
 
-既存実装を参照せず、Penpotデザインから仕様を抽出して純粋に実装する。
+既存実装を参照せず、Pencilデザインから仕様を抽出して純粋に実装する。
 実装後はテストを実行し、すべてパスするまで修正を行う。
 
 ```
-Penpotデザイン読み込み → 仕様抽出 → 実装 → テスト → 完了
+Pencilデザイン読み込み → 仕様抽出 → 実装 → テスト → 完了
         ↑                              ↓
         └── 失敗なら修正 ←─────────────┘
 ```
 
-## 前提条件（Penpot使用時）
+## 前提条件（Pencil使用時）
 
 このスキルを使用する前に、以下を確認してください：
 
-1. **Penpot MCPサーバーが起動していること**
+1. **Pencil MCPサーバーが起動していること**
    - 確認: `http://localhost:4401/mcp` にアクセス可能
 
-2. **ブラウザでPenpotデザインファイルを開いていること**
-   - Penpotにログイン
+2. **ブラウザでPencilデザインファイルを開いていること**
+   - Pencilにログイン
    - 対象プロジェクトを開く
    - MCPプラグインを接続
 
 3. **ネットワーク接続が安定していること**
-   - Penpotはクラウドベースのため、オフライン時は使用不可
+   - Pencilはクラウドベースのため、オフライン時は使用不可
 
 ## 重要な原則
 
-### 1. Penpot First（デザイン優先）
+### 1. Pencil First（デザイン優先）
 
-**絶対に既存実装を先に読まない。** Penpotデザインを先に読み、仕様を完全に把握してから実装する。
+**絶対に既存実装を先に読まない。** Pencilデザインを先に読み、仕様を完全に把握してから実装する。
 
 | 順序 | 正しいアプローチ | 間違ったアプローチ |
 |------|-----------------|-------------------|
-| 1 | Penpotを読む | 既存コードを読む |
+| 1 | Pencilを読む | 既存コードを読む |
 | 2 | 仕様を抽出する | 「ここを変えればいい」と判断 |
 | 3 | 実装を書く | 既存コードをベースに修正 |
 
@@ -49,10 +49,10 @@ Penpotデザイン読み込み → 仕様抽出 → 実装 → テスト → 完
 
 既存コードを見ることで無意識に影響を受ける。以下を徹底する:
 
-- **要素の順序**: Penpotの children 配列の順序をそのまま使う
-- **色・サイズ**: Penpotの値を使う（既存と同じでも確認する）
-- **レイアウト**: Penpotの padding, gap, alignment を使う
-- **アイコン**: Penpotで指定されたアイコンを使う
+- **要素の順序**: Pencilの children 配列の順序をそのまま使う
+- **色・サイズ**: Pencilの値を使う（既存と同じでも確認する）
+- **レイアウト**: Pencilの padding, gap, alignment を使う
+- **アイコン**: Pencilで指定されたアイコンを使う
 
 ### 3. テストによる品質保証
 
@@ -74,44 +74,44 @@ Penpotデザイン読み込み → 仕様抽出 → 実装 → テスト → 完
 
 ## 実行手順
 
-### Phase 1: Penpotデザインの読み込み
+### Phase 1: Pencilデザインの読み込み
 
 #### Step 1.1: 接続状態の確認
 
 ```javascript
-// mcp__penpot__high_level_overview でデザイン概要を取得
+// mcp__pencil__get_editor_state でデザイン概要を取得
 ```
 
-現在開いているPenpotプロジェクトと、利用可能なページ/フレームを確認する。
+現在開いているPencilプロジェクトと、利用可能なページ/フレームを確認する。
 
 #### Step 1.2: 対象要素の特定
 
 $ARGUMENTS を解析し、対象のデザイン要素を特定:
 
-1. **日本語名で指定された場合**: Penpotの `name` プロパティで検索
+1. **日本語名で指定された場合**: Pencilの `name` プロパティで検索
    ```javascript
-   // mcp__penpot__execute_code
-   const shape = penpotUtils.findShape(
+   // mcp__pencil__batch_get / mcp__pencil__batch_design
+   const shape = pencilUtils.findShape(
      s => s.name.includes("もっと見る"),
-     penpot.root
+     pencil.root
    );
-   return penpotUtils.shapeStructure(shape, 3);
+   return pencilUtils.shapeStructure(shape, 3);
    ```
 
 2. **英語名/コンポーネント名の場合**: 同様にnameで検索
 
 3. **画面名の場合**: トップレベルBoardを検索
    ```javascript
-   const board = penpotUtils.findShape(
+   const board = pencilUtils.findShape(
      s => s.type === 'board' && s.name.includes("検索画面"),
-     penpot.root
+     pencil.root
    );
-   return penpotUtils.shapeStructure(board, 4);
+   return pencilUtils.shapeStructure(board, 4);
    ```
 
 #### Step 1.3: 完全な仕様抽出
 
-**すべての仕様をPenpotから抽出する。** 抽出項目:
+**すべての仕様をPencilから抽出する。** 抽出項目:
 
 | カテゴリ | 抽出項目 |
 |---------|---------|
@@ -178,19 +178,19 @@ grep -n "もっと見る" src/app/(main)/scenarios/_components/ScenariosContent.
 
 ---
 
-### Phase 3: Penpot仕様に基づく実装
+### Phase 3: Pencil仕様に基づく実装
 
 #### Step 3.1: 既存の削除または置換
 
-Penpotの仕様に基づいて、対象部分を完全に書き換える。
+Pencilの仕様に基づいて、対象部分を完全に書き換える。
 
-**重要**: 既存コードをベースに「修正」するのではなく、Penpotの仕様から「新規実装」する感覚で書く。
+**重要**: 既存コードをベースに「修正」するのではなく、Pencilの仕様から「新規実装」する感覚で書く。
 
 #### Step 3.2: 色のトークン化
 
 ハードコードされた色は使用しない。セマンティックトークンを使用する。
 
-| Penpotの値 | トークン | 備考 |
+| Pencilの値 | トークン | 備考 |
 |-----------|---------|------|
 | #FFFFFF | white | 基本色 |
 | #F5F7FA | bg.page | ページ背景 |
@@ -202,16 +202,16 @@ Penpotの仕様に基づいて、対象部分を完全に書き換える。
 
 #### Step 3.3: 要素順序の確認
 
-**Penpotの children 配列の順序をそのまま反映する。**
+**Pencilの children 配列の順序をそのまま反映する。**
 
 ```typescript
-// Penpot: children = [icon, text]
+// Pencil: children = [icon, text]
 <Button>
   <ChevronDown /> {/* 1. アイコンが先 */}
   もっと見る       {/* 2. テキストが後 */}
 </Button>
 
-// NG: 既存実装の順序を維持（Penpotと異なる場合）
+// NG: 既存実装の順序を維持（Pencilと異なる場合）
 <Button>
   もっと見る <ChevronDown />
 </Button>
@@ -220,20 +220,20 @@ Penpotの仕様に基づいて、対象部分を完全に書き換える。
 #### Step 3.4: 実装コード例
 
 ```typescript
-// Penpot仕様に完全準拠した実装
+// Pencil仕様に完全準拠した実装
 <Button
   variant="outline"
   status="primary"
   onClick={handleLoadMore}
   className={css({
-    px: '32px',           // Penpot: padding [0, 32]
-    shadow: 'header.default', // Penpot: blur:8, y:2, #0000000D
+    px: '32px',           // Pencil: padding [0, 32]
+    shadow: 'header.default', // Pencil: blur:8, y:2, #0000000D
   })}
 >
-  {/* Penpot children順序: 1.icon, 2.text */}
+  {/* Pencil children順序: 1.icon, 2.text */}
   <ChevronDown
-    size={18}  // Penpot: width/height: 18
-    className={css({ color: 'gray.500' })}  // Penpot: fill: #6B7280
+    size={18}  // Pencil: width/height: 18
+    className={css({ color: 'gray.500' })}  // Pencil: fill: #6B7280
   />
   もっと見る
 </Button>
@@ -257,7 +257,7 @@ pnpm vitest run
 
 テストが失敗した場合:
 
-1. **デザインは維持**: Penpotの仕様は変えない
+1. **デザインは維持**: Pencilの仕様は変えない
 2. **テストの期待値を確認**: aria-label、テキスト内容など
 3. **必要に応じてテストを更新**: デザイン変更に伴う正当な変更の場合
 
@@ -268,7 +268,7 @@ pnpm vitest run
 - ScenariosContent > もっと見るボタン > テキストが「もっと見る」である
 
 原因:
-- Penpotの仕様にはアイコンが含まれているが、テストはテキストのみを期待
+- Pencilの仕様にはアイコンが含まれているが、テストはテキストのみを期待
 
 対応:
 [テストを更新] [実装を修正] [確認して判断]
@@ -300,8 +300,8 @@ pnpm build
 - ファイル: src/app/(main)/scenarios/_components/ScenariosContent.tsx
 - 要素: もっと見るボタン
 
-### Penpotからの変更点
-| 項目 | Before | After (Penpot準拠) |
+### Pencilからの変更点
+| 項目 | Before | After (Pencil準拠) |
 |------|--------|-------------------|
 | バリアント | subtle | outline |
 | 背景色 | gray.100 | white |
@@ -324,12 +324,12 @@ pnpm build
 リデザイン時に確認すべき項目:
 
 ### デザイン準拠
-- [ ] Penpotの fill（背景色）を使用しているか
-- [ ] Penpotの shadow を使用しているか
-- [ ] Penpotの padding/gap を使用しているか
-- [ ] Penpotの children 順序を守っているか
-- [ ] Penpotのアイコン名・サイズ・色を使用しているか
-- [ ] Penpotのテキストスタイル（fontSize, fontWeight, fill）を使用しているか
+- [ ] Pencilの fill（背景色）を使用しているか
+- [ ] Pencilの shadow を使用しているか
+- [ ] Pencilの padding/gap を使用しているか
+- [ ] Pencilの children 順序を守っているか
+- [ ] Pencilのアイコン名・サイズ・色を使用しているか
+- [ ] Pencilのテキストスタイル（fontSize, fontWeight, fill）を使用しているか
 
 ### コード品質
 - [ ] 色はセマンティックトークンを使用しているか
@@ -345,7 +345,7 @@ pnpm build
 
 ## トラブルシューティング
 
-### Penpotに該当要素が見つからない
+### Pencilに該当要素が見つからない
 
 ```
 ⚠ "もっと見る" が見つかりません
@@ -362,7 +362,7 @@ pnpm build
 ### 色がトークンに存在しない
 
 ```
-⚠ Penpotの色 #F5F7FA に対応するトークンがありません
+⚠ Pencilの色 #F5F7FA に対応するトークンがありません
 
 対応:
 1. semanticTokens.ts に追加する
@@ -374,14 +374,14 @@ pnpm build
 ### テストとデザインが競合
 
 ```
-⚠ テストの期待値がPenpotデザインと異なります
+⚠ テストの期待値がPencilデザインと異なります
 
 テスト: アイコンはボタンの右側にある
-Penpot: アイコンはボタンの左側
+Pencil: アイコンはボタンの左側
 
 対応:
-1. Penpotが正（デザイン優先）
-2. テストを更新してPenpotに準拠させる
+1. Pencilが正（デザイン優先）
+2. テストを更新してPencilに準拠させる
 ```
 
 ---
@@ -390,7 +390,7 @@ Penpot: アイコンはボタンの左側
 
 | ファイル | 用途 |
 |----------|------|
-| Penpotプロジェクト | デザインファイル |
+| Pencilプロジェクト | デザインファイル |
 | `src/styles/semanticTokens.ts` | セマンティックトークン |
 | `src/styles/tokens/colors.ts` | 基本カラートークン |
 | `.serena/memories/ui-design-system.md` | UIデザインシステム |

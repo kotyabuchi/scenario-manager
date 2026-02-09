@@ -88,10 +88,10 @@ src/
 | スキル | フェーズ | 用途 |
 |--------|---------|------|
 | `/requirements` | 要件定義 | 詳細仕様の策定 |
-| `/penpot-design` | UIデザイン | Penpotでデザイン作成 |
+| `/pencil-design` | UIデザイン | Pencilでデザイン作成 |
 | `/gen-test` | Red | 失敗するテストを生成 |
 | `/fix-bug` | バグ修正 | 再現テスト → 修正 |
-| `/redesign` | UI更新 | Penpotデザインからリデザイン |
+| `/redesign` | UI更新 | Pencilデザインからリデザイン |
 | `/review-fix` | レビュー | コード規約準拠チェック |
 | `/serena` | 汎用 | 調査・設計・実装 |
 | `/vibe` | Worktree | git worktree管理 |
