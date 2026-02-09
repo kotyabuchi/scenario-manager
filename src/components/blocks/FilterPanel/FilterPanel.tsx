@@ -14,7 +14,7 @@ const INITIAL_SHOW_COUNT = 5;
 
 /**
  * フィルターパネルコンポーネント
- * - variant: 'sidebar' (デスクトップ), 'inline' (タブレット), 'bottomsheet' (モバイル)
+ * - variant: 'sidebar' (デスクトップ), 'bottomsheet' (モバイル)
  * - フィルターの状態管理はuseFilterState / useFilterDraftフックで行う
  */
 export const FilterPanel = ({

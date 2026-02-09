@@ -58,13 +58,6 @@ type ScenarioListProps = {
   isLoading?: boolean;
 };
 
-type SearchPanelProps = {
-  systems: ScenarioSystem[];
-  tags: Tag[];
-  defaultParams?: SearchParams;
-  onSearch: (params: SearchParams) => void;
-};
-
 export type {
   Scenario,
   ScenarioSystem,
@@ -76,5 +69,4 @@ export type {
   CreateScenarioInput,
   ScenarioCardProps,
   ScenarioListProps,
-  SearchPanelProps,
 };

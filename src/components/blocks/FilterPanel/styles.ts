@@ -8,14 +8,6 @@ export const sidebar = css({
   gap: '5',
 });
 
-// インライン（タブレット用フィルターバー内）
-export const inline = css({
-  display: 'flex',
-  flexDirection: 'column',
-  width: 'full',
-  gap: '4',
-});
-
 // ボトムシート内
 export const bottomsheet = css({
   display: 'flex',
@@ -36,10 +28,6 @@ export const filterPanel = cva({
       sidebar: {
         width: 'full',
         gap: '5',
-      },
-      inline: {
-        width: 'full',
-        gap: '4',
       },
       bottomsheet: {
         width: 'full',

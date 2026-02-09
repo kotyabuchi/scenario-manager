@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { PanelLeftClose, PanelLeftOpen, Search } from 'lucide-react';
 
+import { fullWidthButton } from '../styles';
 import * as styles from './styles';
 
 import { FilterPanel } from '@/components/blocks/FilterPanel';
@@ -79,7 +80,7 @@ export const SearchSidebar = ({
               type="button"
               status="primary"
               onClick={handleSearch}
-              className={styles.fullWidthButton}
+              className={fullWidthButton}
             >
               <Search size={16} />
               検索

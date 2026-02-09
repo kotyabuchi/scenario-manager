@@ -2,6 +2,7 @@
 
 import { Search } from 'lucide-react';
 
+import { keywordSearchInput } from '../styles';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -46,7 +47,7 @@ export const MobileSearchBar = ({
         type="text"
         placeholder="シナリオを検索..."
         aria-label="シナリオ名で検索"
-        className={styles.keywordSearchInput}
+        className={keywordSearchInput}
         value={draft.q}
         onChange={(e) => setKeyword(e.target.value)}
         onKeyDown={handleKeyDown}

@@ -29,7 +29,7 @@ export type FilterStateBase = {
   commit?: () => void;
 };
 
-export type FilterPanelVariant = 'sidebar' | 'inline' | 'bottomsheet';
+export type FilterPanelVariant = 'sidebar' | 'bottomsheet';
 
 export type FilterPanelProps = {
   /** 表示バリアント */
