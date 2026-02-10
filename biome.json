@@ -64,5 +64,24 @@
         }
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.tsx", "!**/*.stories.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@/styled-system/css": "styles.tsにスタイルを分離してください"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
