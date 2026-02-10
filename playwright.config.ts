@@ -17,7 +17,7 @@ export default defineConfig({
 
   use: {
     baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
     /* 個々のアクション（click, fill等）のタイムアウト */
     actionTimeout: 5_000,
