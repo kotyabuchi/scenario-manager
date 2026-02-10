@@ -7,30 +7,44 @@ import { ScenariosPage } from '../pages/scenarios-page';
  * シナリオ詳細ページのE2Eテスト
  */
 test.describe('シナリオ詳細', () => {
-  test('一覧からシナリオ詳細に遷移して情報が表示される', async ({ page }) => {
-    const scenariosPage = new ScenariosPage(page);
-    const detailPage = new ScenarioDetailPage(page);
+  let scenariosPage: ScenariosPage;
+  let detailPage: ScenarioDetailPage;
 
-    // 一覧ページから最初のカードをクリック
+  test.beforeEach(async ({ page }) => {
+    scenariosPage = new ScenariosPage(page);
+    detailPage = new ScenarioDetailPage(page);
     await scenariosPage.goto();
     await scenariosPage.clickScenarioCard(0);
+  });
 
-    // 詳細ページのURLパターンを確認
+  test('一覧からシナリオ詳細に遷移して情報が表示される', async ({ page }) => {
     await expect(page).toHaveURL(/\/scenarios\/[A-Za-z0-9]+$/);
-
-    // タイトルが表示される
     await expect(detailPage.title).toBeVisible();
   });
 
-  test('シナリオの基本情報が表示される', async ({ page }) => {
-    const scenariosPage = new ScenariosPage(page);
-    const detailPage = new ScenarioDetailPage(page);
-
-    await scenariosPage.goto();
-    await scenariosPage.clickScenarioCard(0);
-
-    // タイトルと主要情報が表示される
+  test('シナリオの基本情報が表示される', async () => {
     await expect(detailPage.title).not.toBeEmpty();
     await expect(detailPage.playerCount).toBeVisible();
+  });
+
+  test('プレイ時間が表示される', async () => {
+    await expect(detailPage.playTime).toBeVisible();
+  });
+
+  test('戻るリンクをクリックすると一覧に戻る', async ({ page }) => {
+    await detailPage.backLink.click();
+    await expect(page).toHaveURL(/\/scenarios$/);
+  });
+
+  test('関連セッションセクションが表示される', async () => {
+    await expect(detailPage.sessionHeading).toBeVisible();
+  });
+
+  test('プレイ動画セクションが表示される', async () => {
+    await expect(detailPage.videoHeading).toBeVisible();
+  });
+
+  test('レビューセクションが表示される', async () => {
+    await expect(detailPage.reviewHeading).toBeVisible();
   });
 });
