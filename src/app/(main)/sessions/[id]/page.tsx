@@ -17,9 +17,9 @@ export default async function SessionDetailPage({ params }: PageProps) {
   }
 
   return (
-    <main>
+    <div>
       <h1>セッション詳細: {id}</h1>
       <p>この機能は準備中です。</p>
-    </main>
+    </div>
   );
 }

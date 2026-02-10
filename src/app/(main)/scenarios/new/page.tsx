@@ -38,7 +38,7 @@ export default async function ScenarioNewPage() {
   const tags = tagsResult.data;
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       {/* ページヘッダー */}
       <header className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
@@ -53,6 +53,6 @@ export default async function ScenarioNewPage() {
       <div className={styles.mainContent}>
         <ScenarioForm systems={systems} tags={tags} />
       </div>
-    </main>
+    </div>
   );
 }

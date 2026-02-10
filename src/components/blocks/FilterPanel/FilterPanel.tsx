@@ -145,6 +145,7 @@ export const FilterPanel = ({
       <FilterSection label="プレイ人数">
         <div className={styles.sliderContainer}>
           <Slider
+            aria-label="プレイ人数"
             value={playerRange}
             onValueChange={(details) => handlePlayerRangeChange(details.value)}
             min={1}
@@ -163,6 +164,7 @@ export const FilterPanel = ({
       <FilterSection label="プレイ時間">
         <div className={styles.sliderContainer}>
           <Slider
+            aria-label="プレイ時間"
             value={playtimeRange}
             onValueChange={(details) =>
               handlePlaytimeRangeChange(details.value)

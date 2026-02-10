@@ -9,14 +9,14 @@ import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
 import type { ScenarioCardProps } from '../interface';
 
-// システム名に基づいて色を決定
+// システム名に基づいて色を決定（cvaバリアントの背景色と同期）
 const getSystemColor = (systemName: string): string => {
   const name = systemName.toLowerCase();
-  if (name.includes('coc') && name.includes('7')) return '#10B981'; // CoC7版
-  if (name.includes('sw') && name.includes('2.5')) return '#8B5CF6'; // SW2.5
+  if (name.includes('coc') && name.includes('7')) return '#10B981'; // primary.500
+  if (name.includes('sw') && name.includes('2.5')) return '#8B5CF6'; // purple.500
   if (name.includes('coc') && name.includes('6')) return '#F59E0B'; // CoC6版
-  if (name.includes('coc')) return '#10B981'; // その他CoC
-  return '#6B7280'; // デフォルト
+  if (name.includes('coc')) return '#10B981'; // primary.500
+  return '#6B7280'; // gray.500
 };
 
 // システムバリアントを決定

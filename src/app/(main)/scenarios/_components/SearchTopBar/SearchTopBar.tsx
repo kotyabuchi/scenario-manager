@@ -57,6 +57,7 @@ export const SearchTopBar = ({ systems, draftState }: SearchTopBarProps) => {
           value={draft.systems}
           onValueChange={handleSystemChange}
           placeholder="システムを選択"
+          aria-label="TRPGシステムで絞り込み"
           multiple
         />
       </div>

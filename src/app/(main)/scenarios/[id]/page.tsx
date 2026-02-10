@@ -97,7 +97,7 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
   };
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       {/* Sub Header（戻るボタン + お気に入り） */}
       <ScenarioHeader
         scenarioName={scenario.name}
@@ -142,6 +142,6 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
           onTogglePlayed={handleTogglePlayed}
         />
       )}
-    </main>
+    </div>
   );
 }

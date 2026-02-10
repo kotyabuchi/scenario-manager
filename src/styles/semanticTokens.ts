@@ -173,8 +173,8 @@ export const semanticTokens = {
       disabledBg: { value: '{colors.gray.200}' },
       disabledText: { value: '{colors.gray.400}' },
       // Ghost Button
-      ghostText: { value: '{colors.gray.400}' },
-      ghostTextHover: { value: '{colors.gray.500}' },
+      ghostText: { value: '{colors.gray.600}' },
+      ghostTextHover: { value: '{colors.gray.700}' },
     },
 
     // ========================================
@@ -371,7 +371,7 @@ export const semanticTokens = {
       bg: { value: '{colors.white}' },
       toggleBg: { value: '{colors.gray.100}' },
       toggleBgHover: { value: '{colors.gray.200}' },
-      toggleIcon: { value: '{colors.gray.500}' },
+      toggleIcon: { value: '{colors.gray.600}' },
     },
 
     // ========================================

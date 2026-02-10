@@ -5,7 +5,7 @@ import { GlobalHeader } from '@/components/blocks/GlobalHeader';
 import { SimpleFooter } from '@/components/blocks/SimpleFooter';
 import { AuthProvider } from '@/context';
 import { createClient } from '@/lib/supabase/server';
-import { Flex } from '@/styled-system/jsx';
+import { Flex, styled } from '@/styled-system/jsx';
 
 import type { PropsWithChildren } from 'react';
 import type { AuthUser, DiscordMeta } from '@/context';
@@ -54,9 +54,9 @@ export default async function MainLayout({ children }: PropsWithChildren) {
         initialDiscordMeta={initialDiscordMeta}
       >
         <GlobalHeader />
-        <Flex flex="1" direction="column">
+        <styled.main flex="1" display="flex" flexDirection="column">
           {children}
-        </Flex>
+        </styled.main>
         <SimpleFooter />
         <FeedbackButton />
         <SignupModalWrapper />

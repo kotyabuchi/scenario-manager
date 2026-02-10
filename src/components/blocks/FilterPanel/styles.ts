@@ -124,13 +124,13 @@ export const showAllButton = css({
   paddingY: '1',
   fontSize: 'xs',
   fontWeight: 'medium',
-  color: 'gray.500',
+  color: 'gray.600',
   bg: 'gray.100',
   borderRadius: 'sm',
   cursor: 'pointer',
   _hover: {
     bg: 'gray.200',
-    color: 'gray.600',
+    color: 'gray.700',
   },
 });
 

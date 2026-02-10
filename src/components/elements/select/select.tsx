@@ -82,6 +82,8 @@ type SelectProps = {
   multiple?: boolean;
   /** スタイルバリアント: form（灰色背景）/ minimal（白背景） */
   variant?: SelectVariant;
+  /** トリガーボタンのアクセシブル名 */
+  'aria-label'?: string;
 } & Omit<
   SelectRootProps<SelectItem>,
   'collection' | 'value' | 'onValueChange' | 'multiple'
@@ -114,6 +116,7 @@ export const Select = ({
   name,
   multiple = false,
   variant = 'form',
+  'aria-label': ariaLabel,
   ...rest
 }: SelectProps) => {
   const collection = createListCollection({ items });
@@ -131,7 +134,7 @@ export const Select = ({
     >
       <ArkSelect.HiddenSelect />
       <ArkSelect.Control>
-        <Trigger>
+        <Trigger aria-label={ariaLabel}>
           <ArkSelect.ValueText placeholder={placeholder} />
           <Indicator>
             <ChevronDown size={16} />

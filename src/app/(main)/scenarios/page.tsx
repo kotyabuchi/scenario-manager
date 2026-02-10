@@ -50,13 +50,13 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
         .error`Tags fetch error: ${tagsResult.error}`;
     }
     return (
-      <main className={styles.pageContainer}>
+      <div className={styles.pageContainer}>
         <div className={styles.scenarioListEmpty}>
           <span className={styles.scenarioListEmptyText}>
             データの取得に失敗しました
           </span>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -65,7 +65,7 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
     : { scenarios: [], totalCount: 0 };
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       <Suspense fallback={<ScenariosLoading />}>
         <ScenariosContent
           systems={systemsResult.data}
@@ -73,6 +73,6 @@ export default async function ScenariosPage({ searchParams }: PageProps) {
           initialResult={initialResult}
         />
       </Suspense>
-    </main>
+    </div>
   );
 }

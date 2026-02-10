@@ -90,7 +90,7 @@ const buildApiQueryString = (params: {
   }
 
   const qs = query.toString();
-  return qs === '' ? '' : `?${qs}`;
+  return qs ? `?${qs}` : '?';
 };
 
 export const ScenariosContent = ({
@@ -261,6 +261,7 @@ export const ScenariosContent = ({
                   value={[sort]}
                   onValueChange={handleSortChange}
                   variant="minimal"
+                  aria-label="並び替え"
                 />
               </div>
             </div>

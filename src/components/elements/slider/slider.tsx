@@ -28,8 +28,10 @@ type SliderProps = {
   max?: number;
   /** ステップ値 */
   step?: number;
-  /** ラベル */
+  /** ラベル（表示用） */
   label?: string;
+  /** スクリーンリーダー用ラベル（labelが未指定の場合に使用） */
+  'aria-label'?: string;
   /** 値を表示 */
   showValue?: boolean;
   /** 値のフォーマット関数 */
@@ -46,7 +48,7 @@ type SliderProps = {
   minLabel?: string;
   /** 最大値ラベル（スライダー上部右側に表示） */
   maxLabel?: string;
-} & Omit<SliderRootProps, 'value' | 'onValueChange'>;
+} & Omit<SliderRootProps, 'value' | 'onValueChange' | 'aria-label'>;
 
 // 固定のthumb識別子（indexをkeyとして使用するのを避けるため）
 const THUMB_IDS = ['thumb-first', 'thumb-second'] as const;
@@ -127,6 +129,7 @@ export const Slider = ({
   max = 100,
   step = 1,
   label,
+  'aria-label': ariaLabel,
   showValue = false,
   formatValue = (v) => String(v),
   markers,
@@ -154,11 +157,11 @@ export const Slider = ({
       className={styles.slider_root}
       {...rest}
     >
-      {label && (
-        <ArkSlider.Label className={styles.slider_label}>
-          {label}
-        </ArkSlider.Label>
-      )}
+      <ArkSlider.Label
+        className={label ? styles.slider_label : styles.slider_labelHidden}
+      >
+        {label ?? ariaLabel ?? 'スライダー'}
+      </ArkSlider.Label>
       {hasRangeLabels && (
         <div className={styles.slider_rangeLabels}>
           <span className={styles.slider_rangeLabel}>{minLabel}</span>

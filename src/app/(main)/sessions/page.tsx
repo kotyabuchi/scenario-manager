@@ -62,13 +62,13 @@ export default async function SessionsPage({ searchParams }: PageProps) {
     getAppLogger(['app', 'sessions'])
       .error`Systems fetch error: ${systemsResult.error}`;
     return (
-      <main className={styles.pageContainer}>
+      <div className={styles.pageContainer}>
         <div className={styles.emptyState}>
           <span className={styles.emptyState_title}>
             データの取得に失敗しました
           </span>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -119,7 +119,7 @@ export default async function SessionsPage({ searchParams }: PageProps) {
       : { sessions: [], totalCount: 0 };
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       <div className={styles.pageLayout}>
         {/* Pencil準拠: 白bg、h56、center、padding 0 32 のタブバー */}
         <div className={styles.tabBar}>
@@ -181,6 +181,6 @@ export default async function SessionsPage({ searchParams }: PageProps) {
           )}
         </Suspense>
       </div>
-    </main>
+    </div>
   );
 }

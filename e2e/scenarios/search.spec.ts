@@ -53,9 +53,7 @@ test.describe('シナリオ検索', () => {
     await expect(page).toHaveURL(/sort=rating/);
   });
 
-  // FIXME: buildApiQueryStringがフィルタ未設定時に空文字を返し、
-  // URLが「/api/scenarios/search&limit=20&offset=20」（?なし）になるアプリ側バグ
-  test.fixme('もっと見るボタンで追加のシナリオが読み込まれる', async () => {
+  test('もっと見るボタンで追加のシナリオが読み込まれる', async () => {
     // カードの初期表示を待つ
     await scenariosPage.scenarioCards.first().waitFor({ state: 'visible' });
 

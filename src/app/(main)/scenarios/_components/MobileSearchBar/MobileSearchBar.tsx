@@ -60,6 +60,7 @@ export const MobileSearchBar = ({
             value={draft.systems}
             onValueChange={handleSystemChange}
             placeholder="システム"
+            aria-label="TRPGシステムで絞り込み"
             multiple
           />
         </div>

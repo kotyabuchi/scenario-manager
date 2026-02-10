@@ -56,7 +56,7 @@ export default async function UserProfilePage({
   }
 
   return (
-    <main className={styles.container}>
+    <div className={styles.container}>
       <h1 className={styles.title}>{user.nickname}のプロフィール</h1>
 
       <div className={styles.content}>
@@ -68,6 +68,6 @@ export default async function UserProfilePage({
         {/* 将来実装: 投稿動画セクション */}
         {/* 将来実装: レビュー一覧セクション */}
       </div>
-    </main>
+    </div>
   );
 }

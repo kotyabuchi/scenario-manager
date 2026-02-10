@@ -5,8 +5,8 @@ export const metadata = {
 
 export default function ScenariosPage() {
   return (
-    <main>
+    <div>
       <h1>ユーザー</h1>
-    </main>
+    </div>
   );
 }

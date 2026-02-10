@@ -32,7 +32,7 @@ export default async function ProfilePage() {
   const user = result.data;
 
   return (
-    <main className={styles.container}>
+    <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>プロフィール設定</h1>
         <Link href={`/users/${user.userId}`} className={styles.viewProfileLink}>
@@ -49,6 +49,6 @@ export default async function ProfilePage() {
         {/* 将来実装: 通知設定セクション */}
         {/* 将来実装: その他設定項目 */}
       </div>
-    </main>
+    </div>
   );
 }

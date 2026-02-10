@@ -24,7 +24,7 @@ export default async function NewSessionPage() {
   }
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       <div className={styles.pageHeader}>
         <Link href="/sessions" className={styles.pageBackButton}>
           <ArrowLeft size={20} />
@@ -33,6 +33,6 @@ export default async function NewSessionPage() {
       </div>
 
       <SessionFormContainer />
-    </main>
+    </div>
   );
 }

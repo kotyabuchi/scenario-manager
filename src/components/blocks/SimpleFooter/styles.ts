@@ -11,5 +11,5 @@ export const footer = css({
 export const copyright = css({
   fontSize: '[12px]',
   fontWeight: 'normal',
-  color: 'gray.400',
+  color: 'gray.600',
 });

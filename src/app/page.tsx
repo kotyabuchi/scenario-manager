@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className={styles.page}>
+    <main className={styles.page}>
       {/* Hero Section */}
       <section className={styles.heroSection}>
         <div className={styles.heroContent}>
@@ -47,7 +47,12 @@ export default function Home() {
       {/* Features Section */}
       <section className={styles.featuresSection}>
         <h2 className={styles.featuresTitle}>主な機能</h2>
-        <div className={styles.featuresGrid}>
+        <section
+          className={styles.featuresGrid}
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: スクロール可能な領域にキーボードアクセスを提供
+          tabIndex={0}
+          aria-label="主な機能一覧"
+        >
           {/* Feature 1: シナリオ検索 */}
           <div className={styles.featureCard}>
             <div className={styles.featureIcon_search}>
@@ -93,7 +98,7 @@ export default function Home() {
               {'未プレイユーザーへの配慮を\n徹底して安心・安全に利用できる'}
             </p>
           </div>
-        </div>
+        </section>
       </section>
 
       {/* How to Use Section */}
@@ -178,6 +183,6 @@ export default function Home() {
           © 2026 シナプレ管理くん. All rights reserved.
         </p>
       </footer>
-    </div>
+    </main>
   );
 }

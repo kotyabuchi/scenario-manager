@@ -1,7 +1,7 @@
 export default function SchedulesPage() {
   return (
-    <main>
+    <div>
       <h1>スケジュール</h1>
-    </main>
+    </div>
   );
 }

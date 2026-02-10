@@ -38,7 +38,7 @@ export default async function HomePage() {
     : [];
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       {/* ページヘッダー */}
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>ホーム</h1>
@@ -70,6 +70,6 @@ export default async function HomePage() {
         </div>
         <NewScenarios scenarios={newScenarios} />
       </section>
-    </main>
+    </div>
   );
 }

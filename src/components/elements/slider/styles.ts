@@ -24,6 +24,10 @@ export const slider_label = css({
   color: 'gray.700',
 });
 
+export const slider_labelHidden = css({
+  srOnly: true,
+});
+
 export const slider_rangeLabels = css({
   display: 'flex',
   alignItems: 'center',
@@ -44,7 +48,7 @@ export const slider_valueContainer = css({
 export const slider_output = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
-  color: 'primary.500',
+  color: 'slider.valueText',
 });
 
 export const slider_control = css({
