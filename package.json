@@ -17,7 +17,11 @@
     "format": "biome format --write",
     "check": "biome check --write",
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "vitest": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@ark-ui/react": "^5.9.0",
@@ -40,6 +44,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@biomejs/biome": "2.3.10",
     "@cloudflare/workers-types": "^4.20260127.0",
     "@opennextjs/cloudflare": "^1.14.9",

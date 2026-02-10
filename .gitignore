@@ -57,11 +57,12 @@ dist
 # Database migrations
 src/lib/db/migrations
 
-# Playwright screenshots
+# Playwright
 /screenshots/*.png
 /screenshots/*.jpeg
 .playwright-mcp/
 .playwright-cli/
+playwright-report/
 
 # Cursor IDE
 .cursor
