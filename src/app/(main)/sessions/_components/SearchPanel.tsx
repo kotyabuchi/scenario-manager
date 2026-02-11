@@ -17,7 +17,6 @@ import {
 import { Input } from '@/components/elements/input/input';
 import { Select } from '@/components/elements/select/select';
 import { SessionPhases } from '@/db/enum';
-import { css, cx } from '@/styled-system/css';
 
 import type { DatePickerValueChangeDetails } from '@/components/elements/date-picker/date-picker';
 import type { ScenarioSystem } from '../interface';
@@ -50,50 +49,6 @@ const phaseItems = [
     label: SessionPhases.COMPLETED.label,
   },
 ];
-
-const panel = css({
-  bg: 'white',
-  shadow: 'subHeader.default',
-  py: '6',
-  px: '8',
-  display: 'flex',
-  flexDir: 'column',
-  gap: '4',
-});
-
-const searchRow = css({
-  display: 'flex',
-  alignItems: 'flex-end',
-  gap: '4',
-});
-
-const fieldWrapper = css({
-  display: 'flex',
-  flexDir: 'column',
-  gap: '1.5',
-});
-
-const fieldLabel = css({
-  fontSize: '[13px]',
-  fontWeight: 'medium',
-  color: 'gray.500',
-});
-
-const dateRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-});
-
-const dateSep = css({
-  fontSize: '[14px]',
-  color: 'gray.500',
-});
-
-const searchBtn = css({
-  w: '[100px]',
-  flexShrink: '0',
-});
 
 /** 日付文字列(YYYY-MM-DD)をArk UI DateValue配列に変換 */
 const toDateValue = (dateStr: string) => {
@@ -146,11 +101,13 @@ export const SearchPanel = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={panel}>
-      <div className={searchRow}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.searchPanel}>
+      <div className={styles.searchPanel_row}>
         {/* システム: width 200 */}
-        <div className={cx(fieldWrapper, styles.searchPanel_systemField)}>
-          <span className={fieldLabel}>システム</span>
+        <div
+          className={`${styles.searchPanel_field} ${styles.searchPanel_systemField}`}
+        >
+          <span className={styles.searchPanel_label}>システム</span>
           <Controller
             name="systems"
             control={control}
@@ -168,9 +125,11 @@ export const SearchPanel = ({
         </div>
 
         {/* 開催日: width 280 */}
-        <div className={cx(fieldWrapper, styles.searchPanel_dateField)}>
-          <span className={fieldLabel}>開催日</span>
-          <div className={dateRow}>
+        <div
+          className={`${styles.searchPanel_field} ${styles.searchPanel_dateField}`}
+        >
+          <span className={styles.searchPanel_label}>開催日</span>
+          <div className={styles.searchPanel_dateRow}>
             <Controller
               name="dateFrom"
               control={control}
@@ -184,7 +143,7 @@ export const SearchPanel = ({
                 />
               )}
             />
-            <span className={dateSep}>〜</span>
+            <span className={styles.searchPanel_dateSep}>〜</span>
             <Controller
               name="dateTo"
               control={control}
@@ -204,8 +163,10 @@ export const SearchPanel = ({
         </div>
 
         {/* ステータス: width 160 */}
-        <div className={cx(fieldWrapper, styles.searchPanel_statusField)}>
-          <span className={fieldLabel}>ステータス</span>
+        <div
+          className={`${styles.searchPanel_field} ${styles.searchPanel_statusField}`}
+        >
+          <span className={styles.searchPanel_label}>ステータス</span>
           <Controller
             name="phases"
             control={control}
@@ -223,8 +184,10 @@ export const SearchPanel = ({
         </div>
 
         {/* シナリオ名: fill */}
-        <div className={cx(fieldWrapper, styles.searchPanel_scenarioField)}>
-          <label htmlFor="scenarioName" className={fieldLabel}>
+        <div
+          className={`${styles.searchPanel_field} ${styles.searchPanel_scenarioField}`}
+        >
+          <label htmlFor="scenarioName" className={styles.searchPanel_label}>
             シナリオ名
           </label>
           <Input
@@ -235,7 +198,7 @@ export const SearchPanel = ({
         </div>
 
         {/* 検索ボタン: width 100 */}
-        <div className={searchBtn}>
+        <div className={styles.searchPanel_fieldSearchButton}>
           <Button
             type="submit"
             status="primary"

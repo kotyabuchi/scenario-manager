@@ -982,3 +982,75 @@ export const searchPanel_scenarioField = css({
 export const searchPanel_submitButton = css({
   width: 'full',
 });
+
+// ===== SearchPanel: date row =====
+
+export const searchPanel_dateRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+});
+
+export const searchPanel_dateSep = css({
+  fontSize: '[14px]',
+  color: 'gray.500',
+});
+
+// ===== UpcomingTab: view container =====
+
+export const viewContainer = css({
+  display: 'flex',
+  gap: '0',
+  overflow: 'hidden',
+  position: 'relative',
+});
+
+export const viewContainer_pending = css({
+  opacity: 'disabled',
+  transitionProperty: '[opacity]',
+  transitionDuration: 'normal',
+});
+
+export const listPanel = cva({
+  base: {
+    transitionProperty: 'common',
+    transitionDuration: 'slower',
+    transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
+    flexShrink: '0',
+    overflow: 'hidden',
+  },
+  variants: {
+    calendarView: {
+      true: {
+        width: '[320px]',
+        minWidth: '[320px]',
+      },
+      false: {
+        width: 'full',
+        minWidth: '[0]',
+      },
+    },
+  },
+});
+
+export const calendarPanel = cva({
+  base: {
+    transitionProperty: 'common',
+    transitionDuration: 'slower',
+    transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
+    overflow: 'hidden',
+    flexShrink: '0',
+  },
+  variants: {
+    calendarView: {
+      true: {
+        width: '[calc(100% - 320px)]',
+        opacity: '[1]',
+      },
+      false: {
+        width: '[0]',
+        opacity: '[0]',
+      },
+    },
+  },
+});

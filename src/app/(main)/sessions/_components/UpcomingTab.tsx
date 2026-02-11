@@ -14,7 +14,6 @@ import { Button } from '@/components/elements/button/button';
 import { Select } from '@/components/elements/select/select';
 import { ToggleGroup } from '@/components/elements/toggle-group/toggle-group';
 import { getAppLogger } from '@/lib/logger';
-import { css, cx } from '@/styled-system/css';
 
 import type { SelectValueChangeDetails } from '@/components/elements/select/select';
 import type { ToggleItem } from '@/components/elements/toggle-group/toggle-group';
@@ -33,36 +32,6 @@ const viewToggleItems: ToggleItem[] = [
   { value: 'list', icon: <List size={18} />, label: 'リスト表示' },
   { value: 'calendar', icon: <Calendar size={18} />, label: 'カレンダー表示' },
 ];
-
-// アニメーション用スタイル
-const viewContainer = css({
-  display: 'flex',
-  gap: '0',
-  overflow: 'hidden',
-  position: 'relative',
-});
-
-const listPanel = (isCalendarView: boolean) =>
-  css({
-    transitionProperty: 'common',
-    transitionDuration: 'slower',
-    transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
-    width: isCalendarView ? '[320px]' : 'full',
-    minWidth: isCalendarView ? '[320px]' : '[0]',
-    flexShrink: '0',
-    overflow: 'hidden',
-  });
-
-const calendarPanel = (isCalendarView: boolean) =>
-  css({
-    transitionProperty: 'common',
-    transitionDuration: 'slower',
-    transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
-    width: isCalendarView ? '[calc(100% - 320px)]' : '[0]',
-    opacity: isCalendarView ? '[1]' : '[0]',
-    overflow: 'hidden',
-    flexShrink: '0',
-  });
 
 export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
   const [isPending, startTransition] = useTransition();
@@ -169,17 +138,10 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
         <EmptyState type="upcoming" />
       ) : (
         <div
-          className={cx(
-            viewContainer,
-            css({
-              opacity: isPending ? 'disabled' : '[1]',
-              transitionProperty: '[opacity]',
-              transitionDuration: 'normal',
-            }),
-          )}
+          className={`${styles.viewContainer} ${isPending ? styles.viewContainer_pending : ''}`}
         >
           {/* リストパネル: カレンダー時は右サイドパネルに縮小 */}
-          <div className={listPanel(isCalendarView)}>
+          <div className={styles.listPanel({ calendarView: isCalendarView })}>
             <SessionList sessions={searchResult.sessions} variant="my" />
             {hasMore && !isCalendarView && (
               <div className={styles.moreButtonArea}>
@@ -191,7 +153,9 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
           </div>
 
           {/* カレンダーパネル: 左から展開 */}
-          <div className={calendarPanel(isCalendarView)}>
+          <div
+            className={styles.calendarPanel({ calendarView: isCalendarView })}
+          >
             {isCalendarView && (
               <CalendarView sessions={searchResult.sessions} />
             )}
