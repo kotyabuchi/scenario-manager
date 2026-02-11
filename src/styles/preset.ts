@@ -22,12 +22,40 @@ export default definePreset({
             transform: 'translateY(0)',
           },
         },
+        slideInUp: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(16px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
+        slideOutDown: {
+          '0%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+          '100%': {
+            opacity: '0',
+            transform: 'translateY(16px)',
+          },
+        },
         fadeIn: {
           '0%': {
             opacity: '0',
           },
           '100%': {
             opacity: '1',
+          },
+        },
+        fadeOut: {
+          '0%': {
+            opacity: '1',
+          },
+          '100%': {
+            opacity: '0',
           },
         },
         shimmer: {

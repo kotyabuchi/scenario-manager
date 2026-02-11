@@ -203,6 +203,7 @@ export const semanticTokens = {
       bg: { value: '{colors.gray.100}' },
       bgDisabled: { value: '{colors.gray.200}' },
       bgError: { value: '{colors.red.50}' },
+      bgReadonly: { value: '{colors.gray.50}' },
       text: { value: '{colors.gray.800}' },
       placeholder: { value: '{colors.gray.400}' },
       label: { value: '{colors.gray.700}' },
