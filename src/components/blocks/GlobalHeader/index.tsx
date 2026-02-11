@@ -70,6 +70,7 @@ export const GlobalHeader = () => {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={active ? 'page' : undefined}
               className={styles.navLink({ active })}
             >
               <span className={styles.navLinkText({ active })}>

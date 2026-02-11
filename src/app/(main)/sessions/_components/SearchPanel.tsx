@@ -119,6 +119,7 @@ export const SearchPanel = ({
                 placeholder="すべて"
                 multiple
                 variant="form"
+                aria-label="システム"
               />
             )}
           />
@@ -178,6 +179,7 @@ export const SearchPanel = ({
                 placeholder="すべて"
                 multiple
                 variant="form"
+                aria-label="ステータス"
               />
             )}
           />

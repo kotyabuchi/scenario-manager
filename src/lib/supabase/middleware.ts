@@ -36,7 +36,6 @@ export const updateSession = async (request: NextRequest) => {
 
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith('/home') ||
-    request.nextUrl.pathname.startsWith('/sessions') ||
     request.nextUrl.pathname.startsWith('/profile');
 
   // 未ログインで保護ルートにアクセス → ランディングへ

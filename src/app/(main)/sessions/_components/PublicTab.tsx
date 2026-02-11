@@ -222,6 +222,7 @@ export const PublicTab = ({
                 if (val) handleSortChange(val);
               }}
               variant="minimal"
+              aria-label="並び替え"
             />
           </div>
         </div>
