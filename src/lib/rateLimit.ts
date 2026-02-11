@@ -25,6 +25,7 @@ type RateLimitParams = {
 const RATE_LIMITS: Record<string, { maxActions: number; windowMs: number }> = {
   create_scenario: { maxActions: 5, windowMs: 60 * 60 * 1000 }, // 1時間に5件
   create_session: { maxActions: 10, windowMs: 60 * 60 * 1000 }, // 1時間に10件
+  parse_scenario_url: { maxActions: 5, windowMs: 60 * 1000 }, // 1分に5回
 };
 
 /**

@@ -63,6 +63,7 @@ src/lib/db/migrations
 .playwright-mcp/
 .playwright-cli/
 playwright-report/
+e2e/.auth/
 
 # Cursor IDE
 .cursor
