@@ -1,54 +1,8 @@
 import { css, cva } from '@/styled-system/css';
 
 // ========================================
-// Sub Header（Pencil準拠）
+// Sub Header アクション（Pencil準拠）
 // ========================================
-export const subHeader = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  h: '[56px]',
-  w: 'full',
-  px: '8',
-  py: '2',
-  bg: 'white',
-  shadow: 'subHeader.default',
-});
-
-export const subHeader_left = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '4',
-});
-
-export const subHeader_backBtn = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '9',
-  h: '9',
-  borderRadius: 'lg',
-  bg: 'gray.100',
-  color: 'gray.500',
-  flexShrink: '0',
-  cursor: 'pointer',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    bg: 'gray.200',
-    color: 'gray.700',
-  },
-});
-
-export const subHeader_title = css({
-  fontSize: '[18px]',
-  fontWeight: 'bold',
-  color: 'gray.800',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-});
-
 export const subHeader_favBtn = css({
   display: 'flex',
   alignItems: 'center',
@@ -210,7 +164,7 @@ export const scenarioInfo_descText = css({
 export const scenarioInfo_readMore = css({
   fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'primary.500',
+  color: 'primary.700',
   cursor: 'pointer',
   _hover: {
     textDecoration: 'underline',
@@ -237,6 +191,26 @@ export const scenarioInfo_distributeBtn = css({
     bg: 'primary.600',
     transform: 'translateY(-1px)',
   },
+});
+
+// ソース情報バッジ
+export const scenarioInfo_sourceInfo = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+});
+
+export const scenarioInfo_sourceBadge = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '1',
+  px: '2',
+  py: '0.5',
+  borderRadius: 'md',
+  bg: 'primary.50',
+  color: 'primary.800',
+  fontSize: '[12px]',
+  fontWeight: 'medium',
 });
 
 // ========================================

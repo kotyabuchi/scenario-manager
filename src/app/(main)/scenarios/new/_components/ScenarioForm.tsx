@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check } from 'lucide-react';
@@ -19,28 +19,20 @@ import * as styles from './styles';
 import { Button } from '@/components/elements/button/button';
 import { Chip } from '@/components/elements/Chip';
 import { FieldError } from '@/components/elements/field-error/field-error';
-import {
-  FileUpload,
-  type FileUploadFileAcceptDetails,
-} from '@/components/elements/file-upload';
+import { FileUpload } from '@/components/elements/file-upload';
 import { FormField } from '@/components/elements/form-field';
 import { Input } from '@/components/elements/input';
-import {
-  NumberInput,
-  type NumberInputValueChangeDetails,
-} from '@/components/elements/number-input';
+import { NumberInput } from '@/components/elements/number-input';
 import {
   Select,
   type SelectValueChangeDetails,
 } from '@/components/elements/select';
-import {
-  Slider,
-  type SliderValueChangeDetails,
-} from '@/components/elements/slider';
+import { Slider } from '@/components/elements/slider';
 import { Textarea } from '@/components/elements/textarea';
 import { HandoutTypes } from '@/db/enum';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { useRangeInputs } from '@/hooks/useRangeInputs';
 import { useSystemMessageActions } from '@/hooks/useSystemMessage';
-import { resizeImage } from '@/lib/image';
 
 import type { ScenarioSystem, Tag } from '../../interface';
 
@@ -53,15 +45,6 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { addMessage } = useSystemMessageActions();
-
-  // 画像プレビュー用の状態
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  // スライダー用の状態
-  const [playerRange, setPlayerRange] = useState<[number, number]>([1, 4]);
-  const [playtimeRange, setPlaytimeRange] = useState<[number, number]>([
-    60, 180,
-  ]);
 
   const {
     register,
@@ -86,6 +69,30 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
       distributeUrl: '',
       tagIds: [],
     },
+  });
+
+  // 画像アップロード
+  const { previewUrl, handleImageSelect, handleImageRemove, cleanupPreview } =
+    useImageUpload({
+      setImageValue: (file) =>
+        setValue('scenarioImage', file, { shouldValidate: true }),
+      clearImageUrl: () => setValue('scenarioImageUrl', ''),
+    });
+
+  // プレイ人数レンジ
+  const playerInputs = useRangeInputs({
+    initialMin: 1,
+    initialMax: 4,
+    setMinValue: (v) => setValue('minPlayer', v),
+    setMaxValue: (v) => setValue('maxPlayer', v),
+  });
+
+  // プレイ時間レンジ
+  const playtimeInputs = useRangeInputs({
+    initialMin: 60,
+    initialMax: 180,
+    setMinValue: (v) => setValue('minPlaytime', v),
+    setMaxValue: (v) => setValue('maxPlaytime', v),
   });
 
   const selectedSystemId = watch('scenarioSystemId');
@@ -123,96 +130,6 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
     } else {
       setValue('tagIds', [...current, tagId]);
     }
-  };
-
-  // プレイ人数スライダー変更
-  const handlePlayerSliderChange = (details: SliderValueChangeDetails) => {
-    const [min, max] = details.value;
-    setPlayerRange([min ?? 1, max ?? 4]);
-    setValue('minPlayer', min);
-    setValue('maxPlayer', max);
-  };
-
-  // プレイ時間スライダー変更
-  const handlePlaytimeSliderChange = (details: SliderValueChangeDetails) => {
-    const [min, max] = details.value;
-    setPlaytimeRange([min ?? 60, max ?? 180]);
-    setValue('minPlaytime', min);
-    setValue('maxPlaytime', max);
-  };
-
-  // NumberInput変更ハンドラ（スライダーと連動）
-  const handleMinPlayerChange = (details: NumberInputValueChangeDetails) => {
-    const val = details.valueAsNumber;
-    if (!Number.isNaN(val)) {
-      setPlayerRange([val, playerRange[1]]);
-      setValue('minPlayer', val);
-    }
-  };
-
-  const handleMaxPlayerChange = (details: NumberInputValueChangeDetails) => {
-    const val = details.valueAsNumber;
-    if (!Number.isNaN(val)) {
-      setPlayerRange([playerRange[0], val]);
-      setValue('maxPlayer', val);
-    }
-  };
-
-  const handleMinPlaytimeChange = (details: NumberInputValueChangeDetails) => {
-    const val = details.valueAsNumber;
-    if (!Number.isNaN(val)) {
-      setPlaytimeRange([val, playtimeRange[1]]);
-      setValue('minPlaytime', val);
-    }
-  };
-
-  const handleMaxPlaytimeChange = (details: NumberInputValueChangeDetails) => {
-    const val = details.valueAsNumber;
-    if (!Number.isNaN(val)) {
-      setPlaytimeRange([playtimeRange[0], val]);
-      setValue('maxPlaytime', val);
-    }
-  };
-
-  // 画像選択処理（リサイズ・プレビュー）
-  const handleImageSelect = async (details: FileUploadFileAcceptDetails) => {
-    const file = details.files[0];
-    if (!file) return;
-
-    try {
-      // 600x600px、JPEG 80%にリサイズ・圧縮
-      const resizedFile = await resizeImage(file, {
-        size: 600,
-        quality: 0.8,
-        format: 'image/jpeg',
-      });
-
-      // React Hook Formでファイルを管理
-      setValue('scenarioImage', resizedFile, { shouldValidate: true });
-
-      // プレビュー用のObject URLを生成
-      if (!isNil(previewUrl)) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(URL.createObjectURL(resizedFile));
-    } catch {
-      // リサイズに失敗した場合は元のファイルを使用
-      setValue('scenarioImage', file, { shouldValidate: true });
-      if (!isNil(previewUrl)) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  // 画像削除処理
-  const handleImageRemove = () => {
-    if (!isNil(previewUrl)) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setValue('scenarioImage', null);
-    setPreviewUrl(null);
-    setValue('scenarioImageUrl', '');
   };
 
   const onSubmit = (data: ScenarioFormValues) => {
@@ -258,10 +175,7 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
       if (!result.success) {
         addMessage('danger', result.error?.message ?? '登録に失敗しました');
       } else {
-        // プレビューURLをクリーンアップ
-        if (!isNil(previewUrl)) {
-          URL.revokeObjectURL(previewUrl);
-        }
+        cleanupPreview();
         addMessage('success', 'シナリオを登録しました');
         router.push(`/scenarios/${result.data.scenarioId}`);
       }
@@ -396,8 +310,8 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
                 <span className={styles.form_label}>プレイ人数</span>
                 <div className={styles.form_sliderControls}>
                   <Slider
-                    value={playerRange}
-                    onValueChange={handlePlayerSliderChange}
+                    value={playerInputs.range}
+                    onValueChange={playerInputs.handleSliderChange}
                     min={1}
                     max={20}
                     step={1}
@@ -408,20 +322,20 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
                     <span>20+</span>
                   </div>
                   <div className={styles.form_sliderValue}>
-                    {playerRange[0]} 〜 {playerRange[1]} 人
+                    {playerInputs.range[0]} 〜 {playerInputs.range[1]} 人
                   </div>
                   <div className={styles.form_rangeInputRow}>
                     <NumberInput
-                      value={String(playerRange[0])}
-                      onValueChange={handleMinPlayerChange}
+                      value={String(playerInputs.range[0])}
+                      onValueChange={playerInputs.handleMinChange}
                       min={1}
                       max={20}
                       placeholder="最小"
                     />
                     <span className={styles.form_rangeSeparator}>〜</span>
                     <NumberInput
-                      value={String(playerRange[1])}
-                      onValueChange={handleMaxPlayerChange}
+                      value={String(playerInputs.range[1])}
+                      onValueChange={playerInputs.handleMaxChange}
                       min={1}
                       max={20}
                       placeholder="最大"
@@ -438,8 +352,8 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
                 <span className={styles.form_label}>プレイ時間</span>
                 <div className={styles.form_sliderControls}>
                   <Slider
-                    value={playtimeRange}
-                    onValueChange={handlePlaytimeSliderChange}
+                    value={playtimeInputs.range}
+                    onValueChange={playtimeInputs.handleSliderChange}
                     min={30}
                     max={480}
                     step={30}
@@ -450,12 +364,12 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
                     <span>480+</span>
                   </div>
                   <div className={styles.form_sliderValue}>
-                    {playtimeRange[0]} 〜 {playtimeRange[1]} 分
+                    {playtimeInputs.range[0]} 〜 {playtimeInputs.range[1]} 分
                   </div>
                   <div className={styles.form_rangeInputRow}>
                     <NumberInput
-                      value={String(playtimeRange[0])}
-                      onValueChange={handleMinPlaytimeChange}
+                      value={String(playtimeInputs.range[0])}
+                      onValueChange={playtimeInputs.handleMinChange}
                       min={30}
                       max={480}
                       step={30}
@@ -463,8 +377,8 @@ export const ScenarioForm = ({ systems, tags }: ScenarioFormProps) => {
                     />
                     <span className={styles.form_rangeSeparator}>〜</span>
                     <NumberInput
-                      value={String(playtimeRange[1])}
-                      onValueChange={handleMaxPlaytimeChange}
+                      value={String(playtimeInputs.range[1])}
+                      onValueChange={playtimeInputs.handleMaxChange}
                       min={30}
                       max={480}
                       step={30}

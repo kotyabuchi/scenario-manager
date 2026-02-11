@@ -1,10 +1,11 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
-import { ArrowLeft, Star } from 'lucide-react';
-import Link from 'next/link';
+import { Star } from 'lucide-react';
 
 import * as styles from './styles';
+
+import { PageHeader } from '@/components/blocks/PageHeader';
 
 type ScenarioHeaderProps = {
   scenarioName: string;
@@ -31,34 +32,28 @@ export const ScenarioHeader = ({
   };
 
   return (
-    <header className={styles.subHeader}>
-      <div className={styles.subHeader_left}>
-        <Link
-          href="/scenarios"
-          className={styles.subHeader_backBtn}
-          aria-label="シナリオ一覧に戻る"
-        >
-          <ArrowLeft size={18} />
-        </Link>
-
-        <h1 className={styles.subHeader_title}>{scenarioName}</h1>
-      </div>
-
-      {isLoggedIn && onToggleFavorite && (
-        <button
-          type="button"
-          className={styles.subHeader_favBtn}
-          onClick={handleToggleFavorite}
-          aria-label={optimisticFavorite ? 'お気に入り解除' : 'お気に入り登録'}
-        >
-          <Star
-            size={16}
-            className={styles.subHeader_favIcon}
-            fill={optimisticFavorite ? 'currentColor' : 'none'}
-          />
-          <span>お気に入り</span>
-        </button>
-      )}
-    </header>
+    <PageHeader
+      backHref="/scenarios"
+      title={scenarioName}
+      actions={
+        isLoggedIn && onToggleFavorite ? (
+          <button
+            type="button"
+            className={styles.subHeader_favBtn}
+            onClick={handleToggleFavorite}
+            aria-label={
+              optimisticFavorite ? 'お気に入り解除' : 'お気に入り登録'
+            }
+          >
+            <Star
+              size={16}
+              className={styles.subHeader_favIcon}
+              fill={optimisticFavorite ? 'currentColor' : 'none'}
+            />
+            <span>お気に入り</span>
+          </button>
+        ) : undefined
+      }
+    />
   );
 };

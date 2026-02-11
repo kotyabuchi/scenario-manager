@@ -5,7 +5,7 @@ export const pageContainer = css({
   display: 'flex',
   flexDirection: 'column',
   minH: 'screen',
-  bg: 'gray.50', // #F9FAFB
+  bg: 'gray.50',
 });
 
 // メインコンテンツエリア（Pencil: padding [32, 120]）

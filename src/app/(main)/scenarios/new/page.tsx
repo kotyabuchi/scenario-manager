@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { Link2 } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -6,6 +6,7 @@ import { getAllSystems, getAllTags } from '../adapter';
 import { ScenarioForm } from './_components';
 import * as styles from './styles';
 
+import { PageHeader } from '@/components/blocks/PageHeader';
 import { createClient } from '@/lib/supabase/server';
 
 export const metadata = {
@@ -39,15 +40,16 @@ export default async function ScenarioNewPage() {
 
   return (
     <div className={styles.pageContainer}>
-      {/* ページヘッダー */}
-      <header className={styles.pageHeader}>
-        <div className={styles.pageHeaderLeft}>
-          <Link href="/scenarios" className={styles.pageBackButton}>
-            <ArrowLeft size={20} />
+      <PageHeader
+        backHref="/scenarios"
+        title="シナリオを登録"
+        actions={
+          <Link href="/scenarios/import" className={styles.pageHeaderLink}>
+            <Link2 size={14} />
+            URLからインポート
           </Link>
-          <h1 className={styles.pageTitle}>シナリオを登録</h1>
-        </div>
-      </header>
+        }
+      />
 
       {/* メインコンテンツ */}
       <div className={styles.mainContent}>

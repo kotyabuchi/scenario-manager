@@ -1,10 +1,9 @@
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { SessionFormContainer } from './_components/SessionFormContainer';
 import * as styles from './styles';
 
+import { PageHeader } from '@/components/blocks/PageHeader';
 import { createClient } from '@/lib/supabase/server';
 
 export const metadata = {
@@ -25,12 +24,7 @@ export default async function NewSessionPage() {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.pageHeader}>
-        <Link href="/sessions" className={styles.pageBackButton}>
-          <ArrowLeft size={20} />
-        </Link>
-        <h1 className={styles.pageTitle}>セッション募集</h1>
-      </div>
+      <PageHeader backHref="/sessions" title="セッション募集" />
 
       <SessionFormContainer />
     </div>
