@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+import { ScenariosPage } from './pages/scenarios-page';
+
 /**
  * 全公開ページのスモークテスト
  * 各ページが正常にレンダリングされ、主要要素が表示されることを確認する
@@ -22,23 +24,39 @@ test.describe('アクセシビリティ', () => {
   // デザイン上の意図的な選択のため、カラーコントラストは除外して他の違反を検証
   const disabledRules = ['color-contrast'];
 
+  const a11yScope = (page: import('@playwright/test').Page) =>
+    new AxeBuilder({ page })
+      .include('header')
+      .include('main')
+      .include('footer')
+      .disableRules(disabledRules);
+
   test('ランディングページにa11y違反がない', async ({ page }) => {
     await page.goto('/');
-    const results = await new AxeBuilder({ page })
-      .include('main')
-      .disableRules(disabledRules)
-      .analyze();
+    const results = await a11yScope(page).analyze();
     expect(results.violations).toEqual([]);
   });
 
   test('シナリオ一覧ページにa11y違反がない', async ({ page }) => {
     await page.goto('/scenarios');
-    const results = await new AxeBuilder({ page })
-      .include('header')
-      .include('main')
-      .include('footer')
-      .disableRules(disabledRules)
-      .analyze();
+    const results = await a11yScope(page).analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test('セッション一覧ページにa11y違反がない', async ({ page }) => {
+    await page.goto('/sessions');
+    await page.waitForLoadState('domcontentloaded');
+    const results = await a11yScope(page).analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test('シナリオ詳細ページにa11y違反がない', async ({ page }) => {
+    // シナリオ一覧から最初のカードをクリックして詳細に遷移
+    const scenariosPage = new ScenariosPage(page);
+    await scenariosPage.goto();
+    await scenariosPage.clickScenarioCard(0);
+    await page.waitForLoadState('domcontentloaded');
+    const results = await a11yScope(page).analyze();
     expect(results.violations).toEqual([]);
   });
 });
