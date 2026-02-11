@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -28,13 +29,42 @@ export default defineConfig({
   },
 
   projects: [
+    /* 認証セットアップ（auth.setup.ts のみ実行） */
+    {
+      name: 'auth-setup',
+      testMatch: /auth\.setup\.ts/,
+    },
+
+    /* 公開ページ用（認証不要） */
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: [/auth/],
     },
     {
       name: 'mobile-chrome',
       use: { ...devices['Pixel 7'] },
+      testIgnore: [/auth/],
+    },
+
+    /* 認証必須ページ用 */
+    {
+      name: 'chromium-auth',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'e2e/.auth/user.json',
+      },
+      testDir: 'e2e/auth',
+      dependencies: ['auth-setup'],
+    },
+    {
+      name: 'mobile-chrome-auth',
+      use: {
+        ...devices['Pixel 7'],
+        storageState: 'e2e/.auth/user.json',
+      },
+      testDir: 'e2e/auth',
+      dependencies: ['auth-setup'],
     },
   ],
 

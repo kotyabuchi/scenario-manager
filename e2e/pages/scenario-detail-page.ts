@@ -26,7 +26,7 @@ export class ScenarioDetailPage extends BasePage {
     // ヘッダー
     // ScenarioInfo内のh1（メインタイトル、article内）
     this.title = page.locator('article h1');
-    this.backLink = page.getByRole('link', { name: 'シナリオ一覧に戻る' });
+    this.backLink = page.getByRole('link', { name: '戻る' });
 
     // ScenarioInfo（article内にスコープし、ページ内の他テキストとの誤マッチを防止）
     this.article = page.locator('article');
