@@ -97,6 +97,7 @@ src/
 | `/review-plan` | レビュー | 実装計画の多角的レビュー |
 | `/apply-review` | レビュー反映 | コードレビュー指摘をコードに反映 |
 | `/apply-plan-review` | レビュー反映 | 計画レビュー指摘を計画に反映 |
+| `/exec-plan` | 実装 | 計画をTodoList化して順次実装 |
 | `/serena` | 汎用 | 調査・設計・実装 |
 | `/vibe` | Worktree | git worktree管理 |
 
