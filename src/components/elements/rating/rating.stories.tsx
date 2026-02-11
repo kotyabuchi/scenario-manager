@@ -92,7 +92,7 @@ export const Interactive: Story = {
     return (
       <div>
         <Rating value={value} onValueChange={setValue} />
-        <p style={{ marginTop: 8, fontSize: 14, color: '#6B7280' }}>
+        <p style={{ marginTop: 8, fontSize: 14, color: '#777E8C' }}>
           選択: {value}つ星
         </p>
       </div>

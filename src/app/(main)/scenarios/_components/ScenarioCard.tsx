@@ -12,11 +12,11 @@ import type { ScenarioCardProps } from '../interface';
 // システム名に基づいて色を決定（cvaバリアントの背景色と同期）
 const getSystemColor = (systemName: string): string => {
   const name = systemName.toLowerCase();
-  if (name.includes('coc') && name.includes('7')) return '#10B981'; // primary.500
-  if (name.includes('sw') && name.includes('2.5')) return '#8B5CF6'; // purple.500
-  if (name.includes('coc') && name.includes('6')) return '#F59E0B'; // CoC6版
-  if (name.includes('coc')) return '#10B981'; // primary.500
-  return '#6B7280'; // gray.500
+  if (name.includes('coc') && name.includes('7')) return '#059568'; // primary.500
+  if (name.includes('sw') && name.includes('2.5')) return '#9659DA'; // purple.500
+  if (name.includes('coc') && name.includes('6')) return '#A57230'; // CoC6版
+  if (name.includes('coc')) return '#059568'; // primary.500
+  return '#777E8C'; // gray.500
 };
 
 // システムバリアントを決定

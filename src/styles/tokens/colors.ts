@@ -8,123 +8,124 @@ export const colors = defineTokens.colors({
   // White
   white: { value: '#FFFFFF' },
 
-  // Gray Scale (Tailwind Gray)
+  // Gray Scale (H=264, blue-gray tint)
   gray: {
-    50: { value: '#F9FAFB' },
-    100: { value: '#F3F4F6' },
-    200: { value: '#E5E7EB' },
-    300: { value: '#D1D5DB' },
-    400: { value: '#9CA3AF' },
-    500: { value: '#6B7280' },
-    600: { value: '#4B5563' },
-    700: { value: '#374151' },
-    800: { value: '#1F2937' },
-    900: { value: '#111827' },
+    50: { value: '#F6F7F7' },
+    100: { value: '#EAEBED' },
+    200: { value: '#D5D7DB' },
+    300: { value: '#B4B7BF' },
+    400: { value: '#9398A3' },
+    500: { value: '#777E8C' },
+    600: { value: '#5B6374' },
+    700: { value: '#475061' },
+    800: { value: '#383F4C' },
+    900: { value: '#292F3A' },
   },
 
-  // Primary: Emerald (緑)
+  // Primary: Brand Green (#059568 base)
   primary: {
-    50: { value: '#ECFDF5' },
-    100: { value: '#D1FAE5' },
-    200: { value: '#A7F3D0' },
-    300: { value: '#6EE7B7' },
-    400: { value: '#34D399' },
-    500: { value: '#10B981' },
-    600: { value: '#059669' },
-    700: { value: '#047857' },
-    800: { value: '#065F46' },
-    900: { value: '#064E3B' },
+    50: { value: '#E9FCF2' },
+    100: { value: '#D1F5E3' },
+    200: { value: '#AAE8C9' },
+    300: { value: '#6FCEA3' },
+    400: { value: '#34B181' },
+    500: { value: '#059568' },
+    600: { value: '#0B7552' },
+    700: { value: '#085F41' },
+    800: { value: '#074A33' },
+    900: { value: '#083826' },
   },
 
-  // Purple (システムバッジ用)
+  // Purple (H=303)
   purple: {
-    50: { value: '#F5F3FF' },
-    100: { value: '#EDE9FE' },
-    200: { value: '#DDD6FE' },
-    300: { value: '#C4B5FD' },
-    400: { value: '#A78BFA' },
-    500: { value: '#8B5CF6' },
-    600: { value: '#7C3AED' },
-    700: { value: '#6D28D9' },
-    800: { value: '#5B21B6' },
-    900: { value: '#4C1D95' },
+    50: { value: '#F8F5FD' },
+    100: { value: '#EEE8F9' },
+    200: { value: '#DED0F3' },
+    300: { value: '#C4A9EA' },
+    400: { value: '#AB80E1' },
+    500: { value: '#9659DA' },
+    600: { value: '#7A3DB8' },
+    700: { value: '#633096' },
+    800: { value: '#4E2478' },
+    900: { value: '#3C195E' },
   },
 
-  // Indigo (ランディングページ Feature用)
+  // Indigo (H=278)
   indigo: {
-    50: { value: '#EEF2FF' },
-    100: { value: '#E0E7FF' },
-    200: { value: '#C7D2FE' },
-    300: { value: '#A5B4FC' },
-    400: { value: '#818CF8' },
-    500: { value: '#6366F1' },
-    600: { value: '#4F46E5' },
-    700: { value: '#4338CA' },
-    800: { value: '#3730A3' },
-    900: { value: '#312E81' },
+    50: { value: '#F5F6FD' },
+    100: { value: '#E8EAF9' },
+    200: { value: '#D0D5F3' },
+    300: { value: '#ABB3EA' },
+    400: { value: '#8790E1' },
+    500: { value: '#6A70DA' },
+    600: { value: '#504AD1' },
+    700: { value: '#3F37B2' },
+    800: { value: '#312A8F' },
+    900: { value: '#241E71' },
   },
 
-  // Pink (ランディングページ システムバッジ用)
+  // Pink (H=350)
   pink: {
-    50: { value: '#FCE7F3' },
-    100: { value: '#FBCFE8' },
-    200: { value: '#F9A8D4' },
-    500: { value: '#EC4899' },
-    700: { value: '#BE185D' },
+    50: { value: '#FCF4F8' },
+    100: { value: '#F8E5ED' },
+    200: { value: '#F2CBDC' },
+    500: { value: '#C14E8C' },
+    700: { value: '#7D2F59' },
   },
 
-  // Green (ランディングページ システムバッジ用)
+  // Green (H=145)
   green: {
-    50: { value: '#DCFCE7' },
-    700: { value: '#166534' },
-    800: { value: '#166534' },
+    50: { value: '#EBFDEA' },
+    700: { value: '#285D2C' },
+    800: { value: '#1D4A20' },
   },
 
-  // Blue (ランディングページ システムバッジ用)
+  // Blue (H=260)
   blue: {
-    50: { value: '#DBEAFE' },
-    800: { value: '#1E40AF' },
+    50: { value: '#F3F7FD' },
+    800: { value: '#173C78' },
   },
 
-  // Orange/Amber (警告、お気に入り)
+  // Orange/Amber (H=70)
   orange: {
-    50: { value: '#FFFBEB' },
-    100: { value: '#FEF3C7' },
-    200: { value: '#FDE68A' },
-    300: { value: '#FCD34D' },
-    400: { value: '#FBBF24' },
-    500: { value: '#F59E0B' },
-    600: { value: '#D97706' },
-    700: { value: '#B45309' },
-    800: { value: '#92400E' },
-    900: { value: '#78350F' },
+    50: { value: '#FEF5EC' },
+    100: { value: '#FBE8D2' },
+    200: { value: '#F8D0A3' },
+    300: { value: '#EEA74B' },
+    400: { value: '#C78A3C' },
+    500: { value: '#A57230' },
+    600: { value: '#835923' },
+    700: { value: '#6B471A' },
+    800: { value: '#553711' },
+    900: { value: '#422908' },
   },
 
-  // Red (エラー、削除)
+  // Red (H=25)
   red: {
-    50: { value: '#FEF2F2' },
-    100: { value: '#FEE2E2' },
-    200: { value: '#FECACA' },
-    300: { value: '#FCA5A5' },
-    400: { value: '#F87171' },
-    500: { value: '#EF4444' },
-    600: { value: '#DC2626' },
-    700: { value: '#B91C1C' },
-    800: { value: '#991B1B' },
-    900: { value: '#7F1D1D' },
+    50: { value: '#FDF4F4' },
+    100: { value: '#FAE6E3' },
+    200: { value: '#F6CCC8' },
+    300: { value: '#EF9F98' },
+    400: { value: '#E96C66' },
+    500: { value: '#D54443' },
+    600: { value: '#AA3433' },
+    700: { value: '#8A2827' },
+    800: { value: '#6F1D1D' },
+    900: { value: '#561314' },
   },
 
+  // Info (H=260)
   info: {
-    50: { value: '#EFF6FF' },
-    100: { value: '#DBEAFE' },
-    200: { value: '#BFDBFE' },
-    300: { value: '#93C5FD' },
-    400: { value: '#60A5FA' },
-    500: { value: '#3B82F6' },
-    600: { value: '#2563EB' },
-    700: { value: '#1D4ED8' },
-    800: { value: '#1E40AF' },
-    900: { value: '#1E3A8A' },
+    50: { value: '#F3F7FD' },
+    100: { value: '#E3ECF9' },
+    200: { value: '#C8D9F3' },
+    300: { value: '#9AB9EA' },
+    400: { value: '#6C98E1' },
+    500: { value: '#437BD9' },
+    600: { value: '#2C60B5' },
+    700: { value: '#214D95' },
+    800: { value: '#173C78' },
+    900: { value: '#0D2C5F' },
   },
 
   // Overlay colors
@@ -141,11 +142,11 @@ export const colors = defineTokens.colors({
 
   // Primary shadow colors
   primaryShadow: {
-    25: { value: 'rgba(16, 185, 129, 0.25)' },
+    25: { value: 'rgba(5, 149, 104, 0.25)' },
   },
 
   // Red shadow colors
   redShadow: {
-    25: { value: 'rgba(239, 68, 68, 0.25)' },
+    25: { value: 'rgba(213, 68, 67, 0.25)' },
   },
 });

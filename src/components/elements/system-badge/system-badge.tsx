@@ -9,11 +9,11 @@ type SystemBadgeProps = {
 };
 
 const colorMap = {
-  green: '#10B981',
-  purple: '#8B5CF6',
-  orange: '#F59E0B',
-  blue: '#3B82F6',
-  red: '#EF4444',
+  green: '#059568',
+  purple: '#9659DA',
+  orange: '#A57230',
+  blue: '#437BD9',
+  red: '#D54443',
 };
 
 export const SystemBadge = ({ system, size = 'md' }: SystemBadgeProps) => {

@@ -54,7 +54,7 @@ export const tagsInputListError = css({
   padding: '2',
   bg: 'red.50',
   borderRadius: 'md',
-  border: '[1px solid #EF4444]',
+  border: '[1px solid #D54443]',
   position: 'relative',
 });
 

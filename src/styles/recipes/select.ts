@@ -74,14 +74,14 @@ export const select = defineSlotRecipe({
       borderRadius: '4px',
       transition: 'background-color {durations.faster} ease-out',
       _hover: {
-        bg: 'oklch(0.98 0.03 150)',
+        bg: 'oklch(0.975 0.025 163)',
       },
       _highlighted: {
-        bg: 'oklch(0.98 0.03 150)',
+        bg: 'oklch(0.975 0.025 163)',
       },
       _selected: {
-        bg: 'oklch(0.95 0.05 150)',
-        color: 'oklch(0.40 0.15 160)',
+        bg: 'oklch(0.94 0.045 163)',
+        color: 'oklch(0.43 0.09 163)',
         fontWeight: '500',
       },
       _disabled: {
@@ -93,7 +93,7 @@ export const select = defineSlotRecipe({
       },
     },
     itemIndicator: {
-      color: 'oklch(0.40 0.15 160)',
+      color: 'oklch(0.43 0.09 163)',
     },
     itemGroup: {
       py: '4px',

@@ -26,17 +26,17 @@ export const logoIconFrame = css({
   width: '8',
   height: '8',
   borderRadius: 'md',
-  bg: '[oklch(0.92 0.05 160)]',
+  bg: '[oklch(0.94 0.045 163)]',
 });
 
 export const logoIcon = css({
-  color: '[oklch(0.55 0.15 160)]',
+  color: '[oklch(0.59 0.13 163)]',
 });
 
 export const logoText = css({
   fontSize: 'lg',
   fontWeight: 'bold',
-  color: '[oklch(0.55 0.15 160)]',
+  color: '[oklch(0.59 0.13 163)]',
 });
 
 export const navLinks = css({
@@ -75,7 +75,7 @@ export const navLinkText = cva({
     active: {
       true: {
         fontWeight: 'semibold',
-        color: '[oklch(0.55 0.15 160)]',
+        color: '[oklch(0.59 0.13 163)]',
       },
       false: {
         fontWeight: 'medium',
@@ -96,7 +96,7 @@ export const navLinkLine = cva({
   variants: {
     active: {
       true: {
-        bg: '[oklch(0.55 0.15 160)]',
+        bg: '[oklch(0.59 0.13 163)]',
       },
       false: {
         bg: 'transparent',
@@ -165,7 +165,7 @@ export const authButton = cva({
   variants: {
     variant: {
       login: {
-        color: '[oklch(0.55 0.15 160)]',
+        color: '[oklch(0.59 0.13 163)]',
         bg: 'transparent',
         _hover: {
           bg: '[oklch(0.95 0.02 150)]',
@@ -173,9 +173,9 @@ export const authButton = cva({
       },
       signup: {
         color: 'white',
-        bg: '[oklch(0.55 0.15 160)]',
+        bg: '[oklch(0.59 0.13 163)]',
         _hover: {
-          bg: '[oklch(0.50 0.15 160)]',
+          bg: '[oklch(0.50 0.105 163)]',
         },
       },
     },

@@ -192,7 +192,7 @@ export const primaryButton = css({
   alignItems: 'center',
   justifyContent: 'center',
   gap: '2',
-  boxShadow: '[0 2px 4px rgba(16, 185, 129, 0.25)]',
+  boxShadow: '[0 2px 4px rgba(5, 149, 104, 0.25)]',
   _hover: {
     bg: '[primary.600]',
   },
@@ -216,7 +216,7 @@ export const primaryButtonFullWidth = css({
   alignItems: 'center',
   justifyContent: 'center',
   gap: '2',
-  boxShadow: '[0 2px 4px rgba(16, 185, 129, 0.25)]',
+  boxShadow: '[0 2px 4px rgba(5, 149, 104, 0.25)]',
   _hover: {
     bg: '[primary.600]',
   },

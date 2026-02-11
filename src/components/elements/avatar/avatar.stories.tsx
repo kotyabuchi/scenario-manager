@@ -112,7 +112,7 @@ export const AllSizes: Story = {
 export const CustomFallback: Story = {
   args: {
     fallback: (
-      <span style={{ color: '#10B981', fontWeight: 'bold', fontSize: '14px' }}>
+      <span style={{ color: '#059568', fontWeight: 'bold', fontSize: '14px' }}>
         AB
       </span>
     ),

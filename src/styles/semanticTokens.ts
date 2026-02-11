@@ -452,9 +452,9 @@ export const semanticTokens = {
     // ========================================
     // ボタン
     button: {
-      primary: { value: '0 2px 4px rgba(16, 185, 129, 0.25)' },
+      primary: { value: '0 2px 4px rgba(5, 149, 104, 0.25)' },
       secondary: { value: '0 1px 3px rgba(0, 0, 0, 0.10)' },
-      destructive: { value: '0 2px 4px rgba(239, 68, 68, 0.25)' },
+      destructive: { value: '0 2px 4px rgba(213, 68, 67, 0.25)' },
     },
     // カード
     card: {
@@ -499,7 +499,7 @@ export const semanticTokens = {
     },
     // FAB
     fab: {
-      default: { value: '0 4px 12px rgba(16, 185, 129, 0.25)' },
+      default: { value: '0 4px 12px rgba(5, 149, 104, 0.25)' },
     },
     // スクロールボタン
     scrollButton: {
@@ -510,7 +510,7 @@ export const semanticTokens = {
       // ブラウズボタン
       browseBtn: { value: '0 2px 8px rgba(0, 0, 0, 0.06)' },
       // CTAボタン（Hero）
-      heroCta: { value: '0 4px 12px rgba(16, 185, 129, 0.19)' },
+      heroCta: { value: '0 4px 12px rgba(5, 149, 104, 0.19)' },
       // Feature カード
       featureCard: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
       // CTAボタン（白背景）

@@ -81,7 +81,7 @@ export const Interactive: Story = {
         >
           通知を有効にする
         </Switch>
-        <p style={{ marginTop: 8, fontSize: 14, color: '#6B7280' }}>
+        <p style={{ marginTop: 8, fontSize: 14, color: '#777E8C' }}>
           状態: {checked ? 'オン' : 'オフ'}
         </p>
       </div>

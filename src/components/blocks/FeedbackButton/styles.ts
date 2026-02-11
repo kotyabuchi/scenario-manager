@@ -14,7 +14,7 @@ export const button = css({
   w: '[56px]',
   h: '[56px]',
   borderRadius: 'xl',
-  bg: '[oklch(0.45 0.15 160)]',
+  bg: '[oklch(0.50 0.105 163)]',
   color: 'white',
   cursor: 'pointer',
   border: 'none',
@@ -22,7 +22,7 @@ export const button = css({
   transitionProperty: 'common',
   transitionDuration: 'normal',
   _hover: {
-    bg: '[oklch(0.40 0.15 160)]',
+    bg: '[oklch(0.43 0.09 163)]',
     transform: '[translateY(-2px)]',
     boxShadow: '[0 6px 16px rgba(0, 0, 0, 0.20)]',
   },
