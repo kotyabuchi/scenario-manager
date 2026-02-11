@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import * as styles from './styles';
 
+import { ScenarioRegisterDialog } from '@/components/blocks/ScenarioRegisterDialog';
 import { useAuth } from '@/context';
 import { useDiscordAuth } from '@/hooks/useDiscordAuth';
 
@@ -37,7 +38,9 @@ export const GlobalHeader = () => {
     pathname === href || pathname.startsWith(`${href}/`);
 
   const showScenarioRegisterButton =
-    pathname.startsWith('/scenarios') && pathname !== '/scenarios/new';
+    pathname.startsWith('/scenarios') &&
+    pathname !== '/scenarios/new' &&
+    pathname !== '/scenarios/import';
 
   const handleClickLogin = () => {
     login();
@@ -83,10 +86,12 @@ export const GlobalHeader = () => {
         {isLoggedIn ? (
           <>
             {showScenarioRegisterButton && (
-              <Link href="/scenarios/new" className={styles.registerButton}>
-                <Plus size={16} />
-                シナリオを登録
-              </Link>
+              <ScenarioRegisterDialog>
+                <button type="button" className={styles.registerButton}>
+                  <Plus size={16} />
+                  シナリオを登録
+                </button>
+              </ScenarioRegisterDialog>
             )}
             <button
               type="button"

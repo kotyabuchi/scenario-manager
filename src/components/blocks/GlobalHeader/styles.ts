@@ -142,6 +142,7 @@ export const registerButton = css({
   transitionProperty: 'common',
   transitionDuration: 'normal',
   textDecoration: 'none',
+  border: 'none',
   _hover: {
     bg: 'button.primaryBgHover',
   },

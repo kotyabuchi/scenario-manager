@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { ExternalLink, FileText, Star, Timer, User, Users } from 'lucide-react';
+import {
+  ExternalLink,
+  FileText,
+  Link2,
+  Star,
+  Timer,
+  User,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -160,17 +168,26 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
           </div>
         )}
 
-        {/* 配布URL */}
+        {/* 配布URL + ソース情報 */}
         {!isNil(scenario.distributeUrl) && (
-          <a
-            href={scenario.distributeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.scenarioInfo_distributeBtn}
-          >
-            <ExternalLink size={14} />
-            <span>シナリオ配布ページへ</span>
-          </a>
+          <div className={styles.scenarioInfo_sourceInfo}>
+            {!isNil(scenario.sourceType) &&
+              scenario.sourceType !== 'manual' && (
+                <span className={styles.scenarioInfo_sourceBadge}>
+                  <Link2 size={12} />
+                  {scenario.sourceType === 'booth' ? 'Booth' : 'TALTO'}
+                </span>
+              )}
+            <a
+              href={scenario.distributeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.scenarioInfo_distributeBtn}
+            >
+              <ExternalLink size={14} />
+              <span>シナリオ配布ページへ</span>
+            </a>
+          </div>
         )}
       </div>
     </article>

@@ -372,6 +372,11 @@ export type Database = {
           scenario_id: string;
           scenario_image_url: string | null;
           scenario_system_id: string;
+          source_fetched_at: string | null;
+          source_type:
+            | Database['public']['Enums']['scenario_source_type']
+            | null;
+          source_url: string | null;
           updated_at: string;
         };
         Insert: {
@@ -389,6 +394,11 @@ export type Database = {
           scenario_id: string;
           scenario_image_url?: string | null;
           scenario_system_id: string;
+          source_fetched_at?: string | null;
+          source_type?:
+            | Database['public']['Enums']['scenario_source_type']
+            | null;
+          source_url?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -406,6 +416,11 @@ export type Database = {
           scenario_id?: string;
           scenario_image_url?: string | null;
           scenario_system_id?: string;
+          source_fetched_at?: string | null;
+          source_type?:
+            | Database['public']['Enums']['scenario_source_type']
+            | null;
+          source_url?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -828,6 +843,7 @@ export type Database = {
       participant_status: 'PENDING' | 'CONFIRMED';
       participant_type: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
       role: 'MODERATOR' | 'MEMBER';
+      scenario_source_type: 'manual' | 'booth' | 'talto';
       schedule_availability: 'OK' | 'MAYBE' | 'NG';
       schedule_phase: 'ADJUSTING' | 'CONFIRMED';
       session_link_type: 'DISCORD' | 'CCFOLIA' | 'OTHER';
@@ -988,6 +1004,7 @@ export const Constants = {
       participant_status: ['PENDING', 'CONFIRMED'],
       participant_type: ['KEEPER', 'PLAYER', 'SPECTATOR'],
       role: ['MODERATOR', 'MEMBER'],
+      scenario_source_type: ['manual', 'booth', 'talto'],
       schedule_availability: ['OK', 'MAYBE', 'NG'],
       schedule_phase: ['ADJUSTING', 'CONFIRMED'],
       session_link_type: ['DISCORD', 'CCFOLIA', 'OTHER'],

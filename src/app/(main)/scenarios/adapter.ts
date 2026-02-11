@@ -340,6 +340,9 @@ export const createScenario = async (
       scenario_image_url: input.scenarioImageUrl ?? null,
       distribute_url: normalizedDistributeUrl,
       created_by_id: userId,
+      source_type: input.sourceType ?? 'manual',
+      source_url: input.sourceUrl ?? null,
+      source_fetched_at: input.sourceFetchedAt ?? null,
     });
 
     if (insertError) {

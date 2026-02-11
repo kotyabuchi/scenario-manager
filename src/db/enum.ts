@@ -201,6 +201,21 @@ export const ScheduleAvailabilities = {
   },
 } as const;
 
+export const SourceTypes = {
+  MANUAL: {
+    value: 'manual',
+    label: '手動入力',
+  },
+  BOOTH: {
+    value: 'booth',
+    label: 'Booth',
+  },
+  TALTO: {
+    value: 'talto',
+    label: 'TALTO',
+  },
+} as const;
+
 export const SessionLinkTypes = {
   DISCORD: {
     value: 'DISCORD',

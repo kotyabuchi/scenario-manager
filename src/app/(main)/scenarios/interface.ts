@@ -46,6 +46,9 @@ type CreateScenarioInput = {
   scenarioImageUrl?: string | undefined;
   distributeUrl?: string | undefined;
   tagIds?: string[];
+  sourceType?: 'manual' | 'booth' | 'talto';
+  sourceUrl?: string | undefined;
+  sourceFetchedAt?: string | undefined;
 };
 
 // Props型
