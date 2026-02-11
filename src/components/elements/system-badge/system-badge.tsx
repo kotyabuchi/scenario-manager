@@ -1,4 +1,4 @@
-import { css } from '@/styled-system/css';
+import * as styles from './styles';
 
 type SystemBadgeProps = {
   system: {
@@ -23,25 +23,7 @@ export const SystemBadge = ({ system, size = 'md' }: SystemBadgeProps) => {
     <span
       role="img"
       aria-label={`システム: ${system.name}`}
-      className={css({
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 'semibold',
-        color: 'white',
-        borderRadius: '[0 0 8px 0]',
-        ...(size === 'sm'
-          ? {
-              fontSize: '[10px]',
-              py: '1',
-              px: '2',
-            }
-          : {
-              fontSize: '[11px]',
-              py: '1.5',
-              px: '3',
-            }),
-      })}
+      className={styles.badge(size)}
       style={{ backgroundColor: bgColor }}
       data-color={system.color}
       data-size={size}

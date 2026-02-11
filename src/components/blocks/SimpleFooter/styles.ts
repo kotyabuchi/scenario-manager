@@ -5,11 +5,11 @@ export const footer = css({
   alignItems: 'center',
   justifyContent: 'center',
   height: '12',
-  bg: 'white',
+  bg: 'gray.800',
 });
 
 export const copyright = css({
   fontSize: '[12px]',
   fontWeight: 'normal',
-  color: 'gray.600',
+  color: 'gray.400',
 });

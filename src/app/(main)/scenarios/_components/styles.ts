@@ -249,8 +249,6 @@ export const scenarioListEmptyIconFrame = css({
   justifyContent: 'center',
   w: '20',
   h: '20',
-  borderRadius: '[40px]',
-  bg: 'gray.100',
 });
 
 export const scenarioListEmptyIcon = css({
@@ -319,7 +317,7 @@ export const keywordSearchInput = css({
 export const mainContent = css({
   display: 'flex',
   flex: '1',
-  transitionProperty: 'all',
+  transitionProperty: '[all]',
   transitionDuration: 'normal',
   transitionTimingFunction: 'ease-in-out',
 });

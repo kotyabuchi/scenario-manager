@@ -9,7 +9,7 @@ export const backdrop = css({
   inset: '0',
   bg: 'overlay.dark',
   backdropFilter: '[blur(4px)]',
-  zIndex: '[9998]',
+  zIndex: 'overlay',
   _open: {
     animation: '[fadeIn var(--durations-normal) ease-out]',
   },
@@ -24,7 +24,7 @@ export const positioner = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: '[9999]',
+  zIndex: 'modal',
   p: '4',
 });
 

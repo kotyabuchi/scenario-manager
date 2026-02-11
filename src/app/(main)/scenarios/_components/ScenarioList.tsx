@@ -1,10 +1,10 @@
 import { Plus, RotateCcw, SearchX } from 'lucide-react';
-import Link from 'next/link';
 
 import { ScenarioCard } from './ScenarioCard';
 import { ScenarioCardSkeletonGrid } from './ScenarioCardSkeleton';
 import * as styles from './styles';
 
+import { ScenarioRegisterDialog } from '@/components/blocks/ScenarioRegisterDialog';
 import { Button } from '@/components/elements/button/button';
 
 import type { ScenarioListProps } from '../interface';
@@ -46,12 +46,12 @@ export const ScenarioList = ({
             <RotateCcw size={16} />
             条件をリセット
           </Button>
-          <Link href="/scenarios/new">
+          <ScenarioRegisterDialog>
             <Button status="primary">
               <Plus size={18} />
               シナリオを登録する
             </Button>
-          </Link>
+          </ScenarioRegisterDialog>
         </div>
       </div>
     );

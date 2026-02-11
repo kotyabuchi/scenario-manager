@@ -5,7 +5,7 @@ export const backdrop = css({
   inset: '0',
   bg: '[overlay.backdrop]',
   backdropFilter: '[blur(4px)]',
-  zIndex: '[9998]',
+  zIndex: 'overlay',
 });
 
 export const positioner = css({
@@ -14,7 +14,7 @@ export const positioner = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: '[9999]',
+  zIndex: 'modal',
   p: '4',
 });
 
