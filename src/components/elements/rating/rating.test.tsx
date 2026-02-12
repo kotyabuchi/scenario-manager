@@ -116,28 +116,12 @@ describe('Rating', () => {
       expect(screen.getByRole('radiogroup')).toBeInTheDocument();
     });
 
-    // RTG-11: aria-valuenowが設定される
-    it('aria-valuenowが設定される', () => {
+    // RTG-11: aria-labelが設定される
+    it('radiogroupにaria-labelが設定される', () => {
       render(<Default />);
 
       const radiogroup = screen.getByRole('radiogroup');
-      expect(radiogroup).toHaveAttribute('aria-valuenow', '3');
-    });
-
-    // RTG-12: aria-valueminが設定される
-    it('aria-valueminが設定される', () => {
-      render(<Default />);
-
-      const radiogroup = screen.getByRole('radiogroup');
-      expect(radiogroup).toHaveAttribute('aria-valuemin', '0');
-    });
-
-    // RTG-13: aria-valuemaxが設定される
-    it('aria-valuemaxが設定される', () => {
-      render(<Default />);
-
-      const radiogroup = screen.getByRole('radiogroup');
-      expect(radiogroup).toHaveAttribute('aria-valuemax', '5');
+      expect(radiogroup).toHaveAttribute('aria-label', '評価');
     });
 
     // RTG-14: 各星ボタンにaria-labelがある

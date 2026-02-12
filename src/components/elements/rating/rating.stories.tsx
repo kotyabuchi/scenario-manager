@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Rating } from './Rating';
+import { Rating } from './rating';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

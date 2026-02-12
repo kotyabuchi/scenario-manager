@@ -1,3 +1,3 @@
-export { Rating } from './Rating';
+export { Rating } from './rating';
 
-export type { RatingProps } from './Rating';
+export type { RatingProps } from './rating';
