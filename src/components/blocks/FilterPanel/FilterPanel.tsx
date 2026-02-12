@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react/ssr';
 
 import { FilterSection } from './FilterSection';
 import * as styles from './styles';

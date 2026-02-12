@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import * as styles from './styles';

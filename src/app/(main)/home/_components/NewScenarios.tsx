@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react';
+import { BookOpen } from '@phosphor-icons/react/ssr';
 
 import * as styles from '../styles';
 

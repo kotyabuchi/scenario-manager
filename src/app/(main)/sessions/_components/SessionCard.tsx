@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Check, Users, Video } from 'lucide-react';
+import { Calendar, Check, FilmSlate, Users } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -228,7 +228,7 @@ const MySessionCard = ({
             )}
             {session.hasVideo && (
               <span className={styles.sessionCard_badge}>
-                <Video size={12} />
+                <FilmSlate size={12} />
                 動画あり
               </span>
             )}

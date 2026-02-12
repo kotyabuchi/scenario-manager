@@ -1,13 +1,13 @@
 import {
-  CopyIcon,
-  LinkIcon,
-  LogOutIcon,
-  PencilIcon,
-  PlusIcon,
-  SettingsIcon,
-  TrashIcon,
-  UserIcon,
-} from 'lucide-react';
+  Copy,
+  GearSix,
+  Link,
+  PencilSimple,
+  Plus,
+  SignOut,
+  Trash,
+  User,
+} from '@phosphor-icons/react/ssr';
 
 import { Button } from '../button/button';
 import { Menu } from './menu';
@@ -43,20 +43,20 @@ export const Basic: Story = {
       <Menu.Positioner>
         <Menu.Content>
           <Menu.Item value="edit">
-            <PencilIcon />
+            <PencilSimple />
             <Menu.ItemText>編集</Menu.ItemText>
           </Menu.Item>
           <Menu.Item value="copy">
-            <CopyIcon />
+            <Copy />
             <Menu.ItemText>コピー</Menu.ItemText>
           </Menu.Item>
           <Menu.Item value="link">
-            <LinkIcon />
+            <Link />
             <Menu.ItemText>リンクをコピー</Menu.ItemText>
           </Menu.Item>
           <Menu.Separator />
           <Menu.Item value="delete">
-            <TrashIcon />
+            <Trash />
             <Menu.ItemText>削除</Menu.ItemText>
           </Menu.Item>
         </Menu.Content>
@@ -79,11 +79,11 @@ export const WithGroups: Story = {
           <Menu.ItemGroup>
             <Menu.ItemGroupLabel>アカウント</Menu.ItemGroupLabel>
             <Menu.Item value="profile">
-              <UserIcon />
+              <User />
               <Menu.ItemText>プロフィール</Menu.ItemText>
             </Menu.Item>
             <Menu.Item value="settings">
-              <SettingsIcon />
+              <GearSix />
               <Menu.ItemText>設定</Menu.ItemText>
             </Menu.Item>
           </Menu.ItemGroup>
@@ -91,13 +91,13 @@ export const WithGroups: Story = {
           <Menu.ItemGroup>
             <Menu.ItemGroupLabel>セッション</Menu.ItemGroupLabel>
             <Menu.Item value="new-session">
-              <PlusIcon />
+              <Plus />
               <Menu.ItemText>新規セッション</Menu.ItemText>
             </Menu.Item>
           </Menu.ItemGroup>
           <Menu.Separator />
           <Menu.Item value="logout">
-            <LogOutIcon />
+            <SignOut />
             <Menu.ItemText>ログアウト</Menu.ItemText>
           </Menu.Item>
         </Menu.Content>
@@ -118,15 +118,15 @@ export const WithDisabledItems: Story = {
       <Menu.Positioner>
         <Menu.Content>
           <Menu.Item value="edit">
-            <PencilIcon />
+            <PencilSimple />
             <Menu.ItemText>編集</Menu.ItemText>
           </Menu.Item>
           <Menu.Item value="copy">
-            <CopyIcon />
+            <Copy />
             <Menu.ItemText>コピー</Menu.ItemText>
           </Menu.Item>
           <Menu.Item value="delete" disabled>
-            <TrashIcon />
+            <Trash />
             <Menu.ItemText>削除（権限なし）</Menu.ItemText>
           </Menu.Item>
         </Menu.Content>
@@ -177,15 +177,15 @@ export const LargeSize: Story = {
       <Menu.Positioner>
         <Menu.Content>
           <Menu.Item value="option1">
-            <PencilIcon />
+            <PencilSimple />
             <Menu.ItemText>オプション1</Menu.ItemText>
           </Menu.Item>
           <Menu.Item value="option2">
-            <CopyIcon />
+            <Copy />
             <Menu.ItemText>オプション2</Menu.ItemText>
           </Menu.Item>
           <Menu.Item value="option3">
-            <TrashIcon />
+            <Trash />
             <Menu.ItemText>オプション3</Menu.ItemText>
           </Menu.Item>
         </Menu.Content>

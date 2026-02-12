@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AlertTriangle, Check, Info, X } from 'lucide-react';
+import { Check, Info, Warning, X } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -43,9 +43,9 @@ export type ToastProps = {
 
 const iconMap = {
   success: Check,
-  error: AlertTriangle,
+  error: Warning,
   info: Info,
-  warning: AlertTriangle,
+  warning: Warning,
 } as const;
 
 /**

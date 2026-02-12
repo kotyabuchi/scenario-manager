@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react';
+import { ArrowSquareOut } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { isNil } from 'ramda';
@@ -36,7 +36,7 @@ export default async function ProfilePage() {
       <div className={styles.header}>
         <h1 className={styles.title}>プロフィール設定</h1>
         <Link href={`/users/${user.userId}`} className={styles.viewProfileLink}>
-          <ExternalLink size={16} />
+          <ArrowSquareOut size={16} />
           公開プロフィールを見る
         </Link>
       </div>

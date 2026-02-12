@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { CaretDown, CaretUp } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -40,12 +40,12 @@ export const FilterSection = ({
           >
             {isExpanded ? (
               <>
-                <ChevronUp size={12} />
+                <CaretUp size={12} />
                 閉じる
               </>
             ) : (
               <>
-                <ChevronDown size={12} />+{totalCount - initialShowCount}件
+                <CaretDown size={12} />+{totalCount - initialShowCount}件
               </>
             )}
           </button>

@@ -1,7 +1,11 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { RotateCcw, Search, X } from 'lucide-react';
+import {
+  ArrowCounterClockwise,
+  MagnifyingGlass,
+  X,
+} from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -134,7 +138,7 @@ export const FilterBottomSheet = ({
               status="primary"
               onClick={handleClear}
             >
-              <RotateCcw size={16} />
+              <ArrowCounterClockwise size={16} />
               条件をリセット
             </Button>
           </div>
@@ -145,7 +149,7 @@ export const FilterBottomSheet = ({
             onClick={handleApply}
             className={styles.fullWidthButton}
           >
-            <Search size={16} />
+            <MagnifyingGlass size={16} />
             この条件で検索
           </Button>
         </div>

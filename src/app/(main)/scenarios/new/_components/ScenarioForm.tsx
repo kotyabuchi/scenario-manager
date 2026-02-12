@@ -3,7 +3,7 @@
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check } from 'lucide-react';
+import { Check } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { isNil } from 'ramda';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { PanelLeftClose, PanelLeftOpen, Search } from 'lucide-react';
+import { MagnifyingGlass, SidebarSimple } from '@phosphor-icons/react/ssr';
 
 import { fullWidthButton } from '../styles';
 import * as styles from './styles';
@@ -54,7 +54,7 @@ export const SearchSidebar = ({
             aria-label="フィルターを展開"
             aria-expanded={false}
           >
-            <PanelLeftOpen size={18} />
+            <SidebarSimple size={18} />
           </button>
           {activeFilterCount > 0 && (
             <span className={styles.sidebarCollapsedBadge}>
@@ -72,7 +72,7 @@ export const SearchSidebar = ({
             aria-label="フィルターを閉じる"
             aria-expanded={true}
           >
-            <PanelLeftClose size={16} />
+            <SidebarSimple size={16} />
             閉じる
           </button>
 
@@ -93,7 +93,7 @@ export const SearchSidebar = ({
               onClick={handleSearch}
               className={fullWidthButton}
             >
-              <Search size={16} />
+              <MagnifyingGlass size={16} />
               検索
             </Button>
           </div>

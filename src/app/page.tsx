@@ -1,4 +1,10 @@
-import { BookOpen, Calendar, Search, Shield, Star } from 'lucide-react';
+import {
+  BookOpen,
+  Calendar,
+  MagnifyingGlass,
+  Shield,
+  Star,
+} from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import { DiscordLoginButton } from './_components/DiscordLoginButton';
@@ -32,7 +38,7 @@ export default function Home() {
           {/* CTA buttons */}
           <div className={styles.heroCTA}>
             <Link href="/scenarios" className={styles.browseBtn}>
-              <Search size={20} className={styles.browseBtnIcon} />
+              <MagnifyingGlass size={20} className={styles.browseBtnIcon} />
               <span className={styles.browseBtnText}>まずは見てみる</span>
             </Link>
             <DiscordLoginButton
@@ -56,7 +62,7 @@ export default function Home() {
           {/* Feature 1: シナリオ検索 */}
           <div className={styles.featureCard}>
             <div className={styles.featureIcon_search}>
-              <Search size={24} className={styles.iconColor_primary} />
+              <MagnifyingGlass size={24} className={styles.iconColor_primary} />
             </div>
             <h3 className={styles.featureTitle}>シナリオ検索</h3>
             <p className={styles.featureDesc}>

@@ -1,4 +1,4 @@
-import { HelpCircle } from 'lucide-react';
+import { Question } from '@phosphor-icons/react/ssr';
 
 import { Tooltip } from './tooltip';
 
@@ -172,7 +172,7 @@ export const WithIconButton: Story = {
         })}
         aria-label="ヘルプ"
       >
-        <HelpCircle size={16} />
+        <Question size={16} />
       </button>
     ),
   },

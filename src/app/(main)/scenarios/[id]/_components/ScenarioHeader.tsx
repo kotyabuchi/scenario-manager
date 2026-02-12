@@ -1,7 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
-import { Star } from 'lucide-react';
+import { Star } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -48,7 +48,7 @@ export const ScenarioHeader = ({
             <Star
               size={16}
               className={styles.subHeader_favIcon}
-              fill={optimisticFavorite ? 'currentColor' : 'none'}
+              weight={optimisticFavorite ? 'fill' : 'regular'}
             />
             <span>お気に入り</span>
           </button>

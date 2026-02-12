@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageSquarePlus } from 'lucide-react';
+import { ChatText } from '@phosphor-icons/react/ssr';
 
 import { FeedbackModal } from '../FeedbackModal';
 import * as styles from './styles';
@@ -23,7 +23,7 @@ export const FeedbackButton = () => {
           aria-label="フィードバックを送る"
           title="フィードバックを送る"
         >
-          <MessageSquarePlus size={24} />
+          <ChatText size={24} />
         </button>
       </div>
 

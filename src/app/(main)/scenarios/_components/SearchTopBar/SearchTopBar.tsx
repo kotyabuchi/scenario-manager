@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, X } from 'lucide-react';
+import { MagnifyingGlass, X } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -84,7 +84,7 @@ export const SearchTopBar = ({ systems, draftState }: SearchTopBarProps) => {
         </Button>
 
         <Button type="button" status="primary" onClick={handleSearch}>
-          <Search size={16} />
+          <MagnifyingGlass size={16} />
           検索
         </Button>
       </div>

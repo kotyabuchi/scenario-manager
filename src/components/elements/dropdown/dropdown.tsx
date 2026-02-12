@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Check, ChevronDown } from 'lucide-react';
+import { CaretDown, Check } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -137,7 +137,7 @@ export const Dropdown = ({
         className={styles.dropdownTrigger}
       >
         {trigger || selectedItem?.label || '選択してください'}
-        <ChevronDown size={16} />
+        <CaretDown size={16} />
       </button>
 
       {isOpen && (

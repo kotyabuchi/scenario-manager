@@ -1,4 +1,4 @@
-import { Calendar, ChevronRight, Users } from 'lucide-react';
+import { Calendar, CaretRight, Users } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import * as styles from '../styles';
@@ -16,7 +16,7 @@ export const UpcomingSessions = ({ sessions }: UpcomingSessionsProps) => {
           公開卓を探してみませんか？
         </p>
         <Link href="/sessions?tab=public">
-          <ChevronRight size={16} />
+          <CaretRight size={16} />
           公開卓を探す
         </Link>
       </div>

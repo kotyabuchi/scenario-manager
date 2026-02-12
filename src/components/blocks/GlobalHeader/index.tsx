@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, LogIn, Plus } from 'lucide-react';
+import { BookOpen, Plus, SignIn } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -117,7 +117,7 @@ export const GlobalHeader = () => {
             className={styles.authButton({ variant: 'login' })}
             onClick={handleClickLogin}
           >
-            <LogIn size={16} />
+            <SignIn size={16} />
             ログイン
           </button>
         )}

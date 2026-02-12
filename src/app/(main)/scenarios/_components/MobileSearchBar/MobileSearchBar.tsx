@@ -1,6 +1,6 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { MagnifyingGlass } from '@phosphor-icons/react/ssr';
 
 import { keywordSearchInput } from '../styles';
 import * as styles from './styles';
@@ -65,7 +65,7 @@ export const MobileSearchBar = ({
           />
         </div>
         <Button type="button" status="primary" onClick={commit}>
-          <Search size={16} />
+          <MagnifyingGlass size={16} />
           検索
         </Button>
       </div>

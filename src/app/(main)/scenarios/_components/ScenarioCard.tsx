@@ -1,4 +1,4 @@
-import { Clock, ImageOff, Star, Users } from 'lucide-react';
+import { Clock, ImageBroken, Star, Users } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
@@ -59,7 +59,7 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
           />
         ) : (
           <div className={styles.cardThumbnailPlaceholder}>
-            <ImageOff className={styles.cardThumbnailPlaceholderIcon} />
+            <ImageBroken className={styles.cardThumbnailPlaceholderIcon} />
             <span className={styles.cardThumbnailPlaceholderText}>
               No Image
             </span>

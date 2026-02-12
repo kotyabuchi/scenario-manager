@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState, useTransition } from 'react';
-import { Calendar, ChevronDown, List } from 'lucide-react';
+import { Calendar, CaretDown, ListBullets } from '@phosphor-icons/react/ssr';
 import { useQueryStates } from 'nuqs';
 
 import { searchParamsParsers } from '../searchParams';
@@ -29,7 +29,7 @@ type UpcomingTabProps = {
 };
 
 const viewToggleItems: ToggleItem[] = [
-  { value: 'list', icon: <List size={18} />, label: 'リスト表示' },
+  { value: 'list', icon: <ListBullets size={18} />, label: 'リスト表示' },
   { value: 'calendar', icon: <Calendar size={18} />, label: 'カレンダー表示' },
 ];
 
@@ -146,7 +146,7 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
             {hasMore && !isCalendarView && (
               <div className={styles.moreButtonArea}>
                 <Button variant="subtle" onClick={handleLoadMore}>
-                  <ChevronDown size={16} /> もっと見る
+                  <CaretDown size={16} /> もっと見る
                 </Button>
               </div>
             )}

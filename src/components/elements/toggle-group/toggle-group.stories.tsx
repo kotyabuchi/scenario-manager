@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { LayoutGrid, List, Menu, Table } from 'lucide-react';
+import {
+  List,
+  ListBullets,
+  SquaresFour,
+  Table,
+} from '@phosphor-icons/react/ssr';
 
 import { ToggleGroup } from './toggle-group';
 
@@ -22,9 +27,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const defaultItems: ToggleItem[] = [
-  { value: 'menu', icon: <Menu size={20} />, label: 'メニュー表示' },
-  { value: 'list', icon: <List size={20} />, label: 'リスト表示' },
-  { value: 'grid', icon: <LayoutGrid size={20} />, label: 'グリッド表示' },
+  { value: 'menu', icon: <List size={20} />, label: 'メニュー表示' },
+  { value: 'list', icon: <ListBullets size={20} />, label: 'リスト表示' },
+  { value: 'grid', icon: <SquaresFour size={20} />, label: 'グリッド表示' },
   { value: 'table', icon: <Table size={20} />, label: 'テーブル表示' },
 ];
 

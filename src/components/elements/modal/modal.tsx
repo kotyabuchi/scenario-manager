@@ -2,7 +2,7 @@
 
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 

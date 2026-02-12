@@ -9,7 +9,7 @@ import {
 } from '@ark-ui/react/combobox';
 import { useFilter } from '@ark-ui/react/locale';
 import { Portal } from '@ark-ui/react/portal';
-import { Check, ChevronDown, X } from 'lucide-react';
+import { CaretDown, Check, X } from '@phosphor-icons/react/ssr';
 
 import { noResultsStyle } from './styles';
 
@@ -165,7 +165,7 @@ export const Combobox = ({
           <X size={16} />
         </ClearTrigger>
         <Trigger>
-          <ChevronDown size={16} />
+          <CaretDown size={16} />
         </Trigger>
       </Control>
       <Portal>

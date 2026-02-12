@@ -1,4 +1,4 @@
-import { Dices, Users } from 'lucide-react';
+import { DiceFive, Users } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -59,7 +59,7 @@ export const SessionSection = ({
       {sessions.length === 0 ? (
         <div className={styles.section_empty}>
           <p className={styles.section_emptyText}>
-            <Dices size={16} />
+            <DiceFive size={16} />
             このシナリオで初めてのセッションを開催してみませんか？
           </p>
           <Link

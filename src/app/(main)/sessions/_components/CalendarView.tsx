@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import * as styles from './styles';
@@ -155,7 +155,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
             onClick={handlePrevMonth}
             aria-label="前月"
           >
-            <ChevronLeft size={20} />
+            <CaretLeft size={20} />
           </button>
           <h2 className={styles.calendarTitle}>
             {currentYear}年{currentMonth + 1}月
@@ -166,7 +166,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
             onClick={handleNextMonth}
             aria-label="次月"
           >
-            <ChevronRight size={20} />
+            <CaretRight size={20} />
           </button>
         </div>
 

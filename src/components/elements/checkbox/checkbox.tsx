@@ -1,5 +1,5 @@
 import { Checkbox as ArkCheckbox } from '@ark-ui/react/checkbox';
-import { Check } from 'lucide-react';
+import { Check } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 

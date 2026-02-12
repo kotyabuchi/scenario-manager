@@ -7,7 +7,7 @@ import {
   type NumberInputValueChangeDetails,
   useNumberInputContext,
 } from '@ark-ui/react/number-input';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { CaretDown, CaretUp } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
@@ -38,12 +38,12 @@ const NumberInputControl = () => {
       <ArkNumberInput.IncrementTrigger
         className={`${styles.numberInput_button} ${styles.numberInput_incrementButton}`}
       >
-        <ChevronUp size={14} />
+        <CaretUp size={14} />
       </ArkNumberInput.IncrementTrigger>
       <ArkNumberInput.DecrementTrigger
         className={`${styles.numberInput_button} ${styles.numberInput_decrementButton}`}
       >
-        <ChevronDown size={14} />
+        <CaretDown size={14} />
       </ArkNumberInput.DecrementTrigger>
     </ArkNumberInput.Control>
   );

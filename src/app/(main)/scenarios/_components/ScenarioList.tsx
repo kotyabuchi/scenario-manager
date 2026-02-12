@@ -1,4 +1,8 @@
-import { Plus, RotateCcw, SearchX } from 'lucide-react';
+import {
+  ArrowCounterClockwise,
+  MagnifyingGlassMinus,
+  Plus,
+} from '@phosphor-icons/react/ssr';
 
 import { ScenarioCard } from './ScenarioCard';
 import { ScenarioCardSkeletonGrid } from './ScenarioCardSkeleton';
@@ -27,7 +31,7 @@ export const ScenarioList = ({
       <div className={styles.scenarioListEmpty}>
         {/* アイコン（円形フレーム内） */}
         <div className={styles.scenarioListEmptyIconFrame}>
-          <SearchX className={styles.scenarioListEmptyIcon} />
+          <MagnifyingGlassMinus className={styles.scenarioListEmptyIcon} />
         </div>
 
         {/* タイトル */}
@@ -43,7 +47,7 @@ export const ScenarioList = ({
         {/* アクションボタン */}
         <div className={styles.scenarioListEmptyActions}>
           <Button variant="outline" status="primary" onClick={onReset}>
-            <RotateCcw size={16} />
+            <ArrowCounterClockwise size={16} />
             条件をリセット
           </Button>
           <ScenarioRegisterDialog>

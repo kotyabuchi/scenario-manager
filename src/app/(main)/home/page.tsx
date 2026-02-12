@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { CaretRight } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import { NewScenarios } from './_components/NewScenarios';
@@ -53,7 +53,7 @@ export default async function HomePage() {
           <h2 className={styles.sectionTitle}>参加予定のセッション</h2>
           <Link href="/sessions?tab=upcoming" className={styles.sectionLink}>
             すべて見る
-            <ChevronRight size={16} />
+            <CaretRight size={16} />
           </Link>
         </div>
         <UpcomingSessions sessions={upcomingSessions} />
@@ -65,7 +65,7 @@ export default async function HomePage() {
           <h2 className={styles.sectionTitle}>新着シナリオ</h2>
           <Link href="/scenarios" className={styles.sectionLink}>
             すべて見る
-            <ChevronRight size={16} />
+            <CaretRight size={16} />
           </Link>
         </div>
         <NewScenarios scenarios={newScenarios} />

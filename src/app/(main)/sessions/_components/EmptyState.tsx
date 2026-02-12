@@ -1,6 +1,12 @@
 'use client';
 
-import { CalendarX, History, Plus, Search, SearchX } from 'lucide-react';
+import {
+  CalendarX,
+  ClockCounterClockwise,
+  MagnifyingGlass,
+  MagnifyingGlassMinus,
+  Plus,
+} from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import * as styles from './styles';
@@ -25,7 +31,7 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
         </p>
         <Link href="/sessions?tab=public">
           <Button status="primary">
-            <Search size={16} />
+            <MagnifyingGlass size={16} />
             公開卓を探す
           </Button>
         </Link>
@@ -36,14 +42,14 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
   if (type === 'history') {
     return (
       <div className={styles.emptyState}>
-        <History className={styles.emptyState_icon} />
+        <ClockCounterClockwise className={styles.emptyState_icon} />
         <p className={styles.emptyState_title}>参加履歴はまだありません</p>
         <p className={styles.emptyState_subtitle}>
           セッションに参加すると、ここに履歴が表示されます
         </p>
         <Link href="/sessions?tab=public">
           <Button status="primary">
-            <Search size={16} />
+            <MagnifyingGlass size={16} />
             公開卓を探す
           </Button>
         </Link>
@@ -53,7 +59,7 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
 
   return (
     <div className={styles.emptyState}>
-      <SearchX className={styles.emptyState_icon} />
+      <MagnifyingGlassMinus className={styles.emptyState_icon} />
       <p className={styles.emptyState_title}>
         条件に一致するセッションが見つかりませんでした
       </p>

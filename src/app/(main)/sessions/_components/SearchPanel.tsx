@@ -2,7 +2,7 @@
 
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Search } from 'lucide-react';
+import { MagnifyingGlass } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import { type SearchFormValues, searchFormSchema } from './schema';
@@ -206,7 +206,7 @@ export const SearchPanel = ({
             status="primary"
             className={styles.searchPanel_submitButton}
           >
-            <Search size={16} />
+            <MagnifyingGlass size={16} />
             検索
           </Button>
         </div>

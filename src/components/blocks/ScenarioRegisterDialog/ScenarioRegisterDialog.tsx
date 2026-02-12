@@ -2,8 +2,8 @@
 
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
-import { Link2, PenLine, X } from 'lucide-react';
-import Link from 'next/link';
+import { Link, PencilLine, X } from '@phosphor-icons/react/ssr';
+import NextLink from 'next/link';
 
 import * as styles from './styles';
 
@@ -32,16 +32,16 @@ export const ScenarioRegisterDialog = ({ children }: PropsWithChildren) => {
             </header>
             <nav className={styles.nav}>
               <Dialog.CloseTrigger asChild>
-                <Link href="/scenarios/new" className={styles.navItem}>
-                  <PenLine size={20} />
+                <NextLink href="/scenarios/new" className={styles.navItem}>
+                  <PencilLine size={20} />
                   <span>手動で入力</span>
-                </Link>
+                </NextLink>
               </Dialog.CloseTrigger>
               <Dialog.CloseTrigger asChild>
-                <Link href="/scenarios/import" className={styles.navItem}>
-                  <Link2 size={20} />
+                <NextLink href="/scenarios/import" className={styles.navItem}>
+                  <Link size={20} />
                   <span>URLからインポート</span>
-                </Link>
+                </NextLink>
               </Dialog.CloseTrigger>
             </nav>
           </Dialog.Content>

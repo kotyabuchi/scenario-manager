@@ -1,4 +1,4 @@
-import { Link2 } from 'lucide-react';
+import { Link as LinkIcon } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -45,7 +45,7 @@ export default async function ScenarioNewPage() {
         title="シナリオを登録"
         actions={
           <Link href="/scenarios/import" className={styles.pageHeaderLink}>
-            <Link2 size={14} />
+            <LinkIcon size={14} />
             URLからインポート
           </Link>
         }

@@ -3,7 +3,12 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Camera, Info, Lightbulb, Send } from 'lucide-react';
+import {
+  Camera,
+  Info,
+  Lightbulb,
+  PaperPlaneTilt,
+} from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import { createFeedbackAction } from './actions';
@@ -128,7 +133,7 @@ export const FeedbackModal = ({ open, onOpenChange }: FeedbackModalProps) => {
         loadingText="送信中..."
         form="feedback-form"
       >
-        <Send size={16} />
+        <PaperPlaneTilt size={16} />
         送信する
       </Button>
     </>

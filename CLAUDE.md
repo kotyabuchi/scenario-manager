@@ -60,7 +60,7 @@ src/
 | Null/Undefinedチェック | `ramda` の `isNil` を使用 | `error-handling.md` |
 | スタイル分離 | 同階層の `styles.ts` に定義 | `styling-rules.md` |
 | 楽観的更新 | `useOptimistic` + `useTransition` | `react-rules.md` |
-| アイコン | lucide-react を使用（絵文字禁止） | `icons.md` |
+| アイコン | @phosphor-icons/react を使用（絵文字禁止） | `icons.md` |
 | ログ出力 | LogTape を使用（console禁止） | `logging.md` |
 
 ## Rules Reference
@@ -74,7 +74,7 @@ src/
 | `form-rules.md` | React Hook Form + Zod、nuqs |
 | `error-handling.md` | Result型、isNil |
 | `logging.md` | LogTape使用方法 |
-| `icons.md` | lucide-react使用規約 |
+| `icons.md` | @phosphor-icons/react 使用規約 |
 | `accessibility.md` | WCAG 2.1 AA準拠 |
 | `plan-mode.md` | Planエージェント使用ガイド |
 | `agent-strategy.md` | サブエージェント活用、プロセス管理 |

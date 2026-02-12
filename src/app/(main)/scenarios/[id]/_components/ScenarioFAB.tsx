@@ -7,7 +7,13 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { Check, Menu, Pencil, Plus, Share2 } from 'lucide-react';
+import {
+  Check,
+  List,
+  PencilSimple,
+  Plus,
+  ShareNetwork,
+} from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import * as styles from './styles';
@@ -95,7 +101,7 @@ export const ScenarioFAB = ({
             className={styles.fabMenuItem}
             onClick={handleShare}
           >
-            <Share2 size={18} className={styles.fabMenuItem_iconGray} />
+            <ShareNetwork size={18} className={styles.fabMenuItem_iconGray} />
             <span>シェア</span>
           </button>
 
@@ -105,7 +111,7 @@ export const ScenarioFAB = ({
               className={styles.fabMenuItem}
               onClick={() => setIsMenuOpen(false)}
             >
-              <Pencil size={18} className={styles.fabMenuItem_iconGray} />
+              <PencilSimple size={18} className={styles.fabMenuItem_iconGray} />
               <span>シナリオ編集</span>
             </Link>
           )}
@@ -120,7 +126,7 @@ export const ScenarioFAB = ({
         aria-label="メニューを開く"
         aria-expanded={isMenuOpen}
       >
-        <Menu size={24} />
+        <List size={24} />
       </button>
     </div>
   );

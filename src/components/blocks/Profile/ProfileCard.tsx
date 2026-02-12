@@ -1,4 +1,4 @@
-import { Settings } from 'lucide-react';
+import { GearSix } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
@@ -60,7 +60,7 @@ export const ProfileCard = ({
       {showEditButton && (
         <div className={styles.card_editButtonWrapper}>
           <Link href="/profile" className={styles.card_editButton}>
-            <Settings size={16} />
+            <GearSix size={16} />
             プロフィール設定
           </Link>
         </div>

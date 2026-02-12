@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import {
-  ExternalLink,
+  ArrowSquareOut,
   FileText,
-  Link2,
+  Link,
   Star,
   Timer,
   User,
   Users,
-} from 'lucide-react';
+} from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -37,7 +37,7 @@ const StarRating = ({ rating }: { rating: number | null }) => {
         <Star
           key={star}
           size={18}
-          fill={star <= rating ? 'currentColor' : 'none'}
+          weight={star <= rating ? 'fill' : 'regular'}
           style={{ opacity: star <= rating ? 1 : 0.3 }}
         />
       ))}
@@ -174,7 +174,7 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
             {!isNil(scenario.sourceType) &&
               scenario.sourceType !== 'manual' && (
                 <span className={styles.scenarioInfo_sourceBadge}>
-                  <Link2 size={12} />
+                  <Link size={12} />
                   {scenario.sourceType === 'booth' ? 'Booth' : 'TALTO'}
                 </span>
               )}
@@ -184,7 +184,7 @@ export const ScenarioInfo = ({ scenario }: ScenarioInfoProps) => {
               rel="noopener noreferrer"
               className={styles.scenarioInfo_distributeBtn}
             >
-              <ExternalLink size={14} />
+              <ArrowSquareOut size={14} />
               <span>シナリオ配布ページへ</span>
             </a>
           </div>

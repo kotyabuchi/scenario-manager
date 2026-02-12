@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader } from 'lucide-react';
+import { SpinnerGap } from '@phosphor-icons/react/ssr';
 
 import { spinner } from '@/styled-system/recipes/spinner';
 
@@ -14,10 +14,10 @@ export const Spinner = ({
   loadingLabel = 'Loading...',
 }: SpinnerProps) => {
   return (
-    <Loader
+    <SpinnerGap
       aria-label={loadingLabel}
       className={spinner({ size })}
-      strokeWidth={3}
+      weight="bold"
     />
   );
 };

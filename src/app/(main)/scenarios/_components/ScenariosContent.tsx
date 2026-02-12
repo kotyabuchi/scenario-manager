@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { ChevronDown, Filter } from 'lucide-react';
+import { CaretDown, Funnel } from '@phosphor-icons/react/ssr';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { isNil } from 'ramda';
 
@@ -225,7 +225,7 @@ export const ScenariosContent = ({
           className={styles.mobileFilterButton}
           onClick={() => setIsBottomSheetOpen(true)}
         >
-          <Filter size={16} />
+          <Funnel size={16} />
           フィルター
           {draftState.activeFilterCount > 0 && (
             <span className={styles.mobileFilterBadge}>
@@ -284,7 +284,7 @@ export const ScenariosContent = ({
                 onClick={handleLoadMore}
                 className={styles.loadMoreButton}
               >
-                <ChevronDown size={18} className={styles.loadMoreIcon} />
+                <CaretDown size={18} className={styles.loadMoreIcon} />
                 もっと見る
               </Button>
             </div>

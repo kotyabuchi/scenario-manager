@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -105,7 +105,7 @@ export const Pagination = ({
           aria-label="前のページ"
           className={styles.paginationButton({ variant: 'nav' })}
         >
-          <ChevronLeft size={16} />
+          <CaretLeft size={16} />
         </button>
 
         {pages.map((p, index) =>
@@ -140,7 +140,7 @@ export const Pagination = ({
           aria-label="次のページ"
           className={styles.paginationButton({ variant: 'nav' })}
         >
-          <ChevronRight size={16} />
+          <CaretRight size={16} />
         </button>
       </div>
     </nav>

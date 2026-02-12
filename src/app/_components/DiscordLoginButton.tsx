@@ -1,6 +1,6 @@
 'use client';
 
-import { LogIn } from 'lucide-react';
+import { SignIn } from '@phosphor-icons/react/ssr';
 
 import { useDiscordAuth } from '@/hooks/useDiscordAuth';
 
@@ -19,7 +19,7 @@ export const DiscordLoginButton = ({
 
   return (
     <button type="button" onClick={login} className={className}>
-      <LogIn size={20} className={iconClassName} />
+      <SignIn size={20} className={iconClassName} />
       <span className={textClassName}>Discordではじめる</span>
     </button>
   );

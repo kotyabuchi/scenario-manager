@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Star } from 'lucide-react';
+import { Star } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
@@ -112,9 +112,8 @@ export const Rating = ({
           >
             <Star
               size={iconSize}
-              fill={isFilled ? styles.colors.filled : 'none'}
-              stroke={isFilled ? styles.colors.filled : styles.colors.empty}
-              strokeWidth={2}
+              weight={isFilled ? 'fill' : 'regular'}
+              color={isFilled ? styles.colors.filled : styles.colors.empty}
             />
           </button>
         );

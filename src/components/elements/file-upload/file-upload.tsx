@@ -7,7 +7,7 @@ import {
   type FileUploadFileRejectDetails,
   type FileUploadRootProps,
 } from '@ark-ui/react/file-upload';
-import { File, Trash2, Upload } from 'lucide-react';
+import { File, Trash, UploadSimple } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
@@ -108,7 +108,10 @@ export const FileUpload = ({
         </ArkFileUpload.Label>
       )}
       <ArkFileUpload.Dropzone className={styles.fileUpload_dropzone}>
-        <Upload size={compact ? 20 : 32} className={styles.fileUpload_icon} />
+        <UploadSimple
+          size={compact ? 20 : 32}
+          className={styles.fileUpload_icon}
+        />
         <div className={styles.fileUpload_text}>{dropzoneText}</div>
         {!isNil(hint) && <div className={styles.fileUpload_hint}>{hint}</div>}
         <ArkFileUpload.Trigger className={styles.fileUpload_trigger}>
@@ -148,7 +151,7 @@ export const FileUpload = ({
                   <ArkFileUpload.ItemDeleteTrigger
                     className={styles.fileUpload_itemDeleteTrigger}
                   >
-                    <Trash2 size={16} />
+                    <Trash size={16} />
                   </ArkFileUpload.ItemDeleteTrigger>
                 </div>
               </ArkFileUpload.Item>

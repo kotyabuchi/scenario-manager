@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowRight, Check, User } from 'lucide-react';
+import { ArrowRight, Check, User } from '@phosphor-icons/react/ssr';
 
 import { signupFormSchema, signupStep2Schema } from './schema';
 import * as styles from './styles';

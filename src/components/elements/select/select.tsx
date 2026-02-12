@@ -7,7 +7,7 @@ import {
   type SelectRootProps,
   type SelectValueChangeDetails,
 } from '@ark-ui/react/select';
-import { Check, ChevronDown } from 'lucide-react';
+import { CaretDown, Check } from '@phosphor-icons/react/ssr';
 
 import { createStyleContext } from '@/lib/create-style-context';
 import { type SelectVariantProps, select } from '@/styled-system/recipes';
@@ -137,7 +137,7 @@ export const Select = ({
         <Trigger aria-label={ariaLabel}>
           <ArkSelect.ValueText placeholder={placeholder} />
           <Indicator>
-            <ChevronDown size={16} />
+            <CaretDown size={16} />
           </Indicator>
         </Trigger>
       </ArkSelect.Control>

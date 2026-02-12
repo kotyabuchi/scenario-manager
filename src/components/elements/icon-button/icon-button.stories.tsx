@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react';
+import { Heart } from '@phosphor-icons/react/ssr';
 
 import { IconButton } from './icon-button';
 
@@ -48,7 +48,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <IconButton aria-label="Like" {...args}>
-      <Heart />
+      <Heart size={24} />
     </IconButton>
   ),
 };

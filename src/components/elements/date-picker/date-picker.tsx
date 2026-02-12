@@ -6,7 +6,7 @@ import {
   type DatePickerValueChangeDetails,
 } from '@ark-ui/react/date-picker';
 import { Portal } from '@ark-ui/react/portal';
-import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Calendar, CaretLeft, CaretRight, X } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
@@ -109,7 +109,7 @@ export const DatePicker = ({
                       <ArkDatePicker.PrevTrigger
                         className={styles.datePicker_navButton}
                       >
-                        <ChevronLeft size={16} />
+                        <CaretLeft size={16} />
                       </ArkDatePicker.PrevTrigger>
                       <ArkDatePicker.ViewTrigger
                         className={styles.datePicker_viewTrigger}
@@ -119,7 +119,7 @@ export const DatePicker = ({
                       <ArkDatePicker.NextTrigger
                         className={styles.datePicker_navButton}
                       >
-                        <ChevronRight size={16} />
+                        <CaretRight size={16} />
                       </ArkDatePicker.NextTrigger>
                     </ArkDatePicker.ViewControl>
                     <ArkDatePicker.Table className={styles.datePicker_table}>
@@ -186,7 +186,7 @@ export const DatePicker = ({
                       <ArkDatePicker.PrevTrigger
                         className={styles.datePicker_navButton}
                       >
-                        <ChevronLeft size={16} />
+                        <CaretLeft size={16} />
                       </ArkDatePicker.PrevTrigger>
                       <ArkDatePicker.ViewTrigger
                         className={styles.datePicker_viewTrigger}
@@ -196,7 +196,7 @@ export const DatePicker = ({
                       <ArkDatePicker.NextTrigger
                         className={styles.datePicker_navButton}
                       >
-                        <ChevronRight size={16} />
+                        <CaretRight size={16} />
                       </ArkDatePicker.NextTrigger>
                     </ArkDatePicker.ViewControl>
                     <ArkDatePicker.Table className={styles.datePicker_table}>
@@ -239,7 +239,7 @@ export const DatePicker = ({
                       <ArkDatePicker.PrevTrigger
                         className={styles.datePicker_navButton}
                       >
-                        <ChevronLeft size={16} />
+                        <CaretLeft size={16} />
                       </ArkDatePicker.PrevTrigger>
                       <ArkDatePicker.ViewTrigger
                         className={styles.datePicker_viewTrigger}
@@ -249,7 +249,7 @@ export const DatePicker = ({
                       <ArkDatePicker.NextTrigger
                         className={styles.datePicker_navButton}
                       >
-                        <ChevronRight size={16} />
+                        <CaretRight size={16} />
                       </ArkDatePicker.NextTrigger>
                     </ArkDatePicker.ViewControl>
                     <ArkDatePicker.Table className={styles.datePicker_table}>

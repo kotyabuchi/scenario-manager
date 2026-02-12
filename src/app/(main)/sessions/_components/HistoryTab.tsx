@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState, useTransition } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { CaretDown } from '@phosphor-icons/react/ssr';
 import { useQueryStates } from 'nuqs';
 
 import { searchParamsParsers } from '../searchParams';
@@ -248,7 +248,7 @@ export const HistoryTab = ({
                   onClick={handleLoadMore}
                   disabled={isPending}
                 >
-                  <ChevronDown size={16} />
+                  <CaretDown size={16} />
                   もっと見る
                 </Button>
               </div>

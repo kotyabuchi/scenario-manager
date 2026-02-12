@@ -1,4 +1,4 @@
-import { User } from 'lucide-react';
+import { User } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 
 import * as styles from './styles';

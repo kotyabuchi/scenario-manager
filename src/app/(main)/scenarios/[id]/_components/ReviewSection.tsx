@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronDown, FileText, Sparkles, Star } from 'lucide-react';
+import { CaretDown, FileText, Sparkle, Star } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import { isNil } from 'ramda';
 
@@ -44,7 +44,7 @@ const StarRating = ({ rating }: { rating: number | null }) => {
         <Star
           key={star}
           size={16}
-          fill={star <= rating ? 'currentColor' : 'none'}
+          weight={star <= rating ? 'fill' : 'regular'}
           className={star <= rating ? '' : styles.reviewCard_starEmpty}
         />
       ))}
@@ -176,7 +176,7 @@ const ReviewCard = ({
                   className={styles.reviewCard_spoilerToggle}
                   onClick={() => setIsSpoilerExpanded(!isSpoilerExpanded)}
                 >
-                  <ChevronDown size={14} />
+                  <CaretDown size={14} />
                   <span>
                     {isSpoilerExpanded
                       ? 'ネタバレを非表示'
@@ -289,7 +289,7 @@ export const ReviewSection = ({
               {sortOption === 'rating_high' && '高評価順'}
               {sortOption === 'rating_low' && '低評価順'}
             </span>
-            <ChevronDown size={16} />
+            <CaretDown size={16} />
           </button>
 
           <label className={styles.reviewsHiddenToggle}>
@@ -309,7 +309,7 @@ export const ReviewSection = ({
           {isPlayed ? (
             <>
               <p className={styles.section_emptyText}>
-                <Sparkles size={16} />
+                <Sparkle size={16} />
                 最初のレビュアーになりませんか？あなたの感想を共有してください！
               </p>
               <button type="button" className={styles.section_ctaButton}>
@@ -343,7 +343,7 @@ export const ReviewSection = ({
       {totalCount > reviews.length && (
         <div className={styles.loadMore}>
           <Button variant="subtle">
-            もっと見る <ChevronDown size={16} />
+            もっと見る <CaretDown size={16} />
           </Button>
         </div>
       )}

@@ -1,7 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { EyeOff, PlayCircle, Plus, Video } from 'lucide-react';
+import {
+  EyeSlash,
+  FilmSlate,
+  PlayCircle,
+  Plus,
+} from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 
 import * as styles from './styles';
@@ -113,7 +118,7 @@ const VideoCard = ({
               onReveal();
             }}
           >
-            <EyeOff size={24} />
+            <EyeSlash size={24} />
             <span>ネタバレを含む可能性があります</span>
             <span className={styles.video_spoilerHint}>クリックで表示</span>
           </button>
@@ -126,7 +131,7 @@ const VideoCard = ({
       <div className={styles.videoCard_info}>
         <div className={styles.videoCard_title}>{getVideoTitle(video)}</div>
         <div className={styles.videoCard_meta}>
-          <Video size={12} />
+          <FilmSlate size={12} />
           <span>投稿者: {video.user.nickname}</span>
         </div>
       </div>
@@ -187,7 +192,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
           {isPlayed ? (
             <>
               <p className={styles.section_emptyText}>
-                <Video size={16} />
+                <FilmSlate size={16} />
                 プレイ動画を投稿して、セッションの思い出を共有しましょう！
               </p>
               <button type="button" className={styles.section_ctaButton}>
@@ -196,7 +201,7 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
             </>
           ) : (
             <p className={styles.section_emptyText}>
-              <Video size={16} /> まだプレイ動画がありません
+              <FilmSlate size={16} /> まだプレイ動画がありません
             </p>
           )}
         </div>

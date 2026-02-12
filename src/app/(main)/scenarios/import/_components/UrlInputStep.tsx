@@ -3,7 +3,7 @@
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link2 } from 'lucide-react';
+import { Link as LinkIcon } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 
 import { parseScenarioUrlAction } from '../actions';
@@ -79,7 +79,7 @@ export const UrlInputStep = ({ onParsed }: UrlInputStepProps) => {
             loading={isPending}
             loadingText="解析中..."
           >
-            <Link2 size={18} />
+            <LinkIcon size={18} />
             取り込む
           </Button>
         </div>

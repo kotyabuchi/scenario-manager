@@ -3,7 +3,7 @@
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ExternalLink, Info, Lock } from 'lucide-react';
+import { ArrowSquareOut, Check, Info, Lock } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { isNil } from 'ramda';
@@ -248,7 +248,7 @@ export const ImportScenarioForm = ({
           className={styles.form_sourceLink}
         >
           配布ページを見る
-          <ExternalLink size={14} />
+          <ArrowSquareOut size={14} />
         </a>
       </div>
 

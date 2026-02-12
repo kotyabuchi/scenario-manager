@@ -2,12 +2,12 @@
 
 import { ark } from '@ark-ui/react/factory';
 import {
-  CheckIcon,
-  CircleAlert,
-  InfoIcon,
-  TriangleAlert,
+  Check,
+  Info,
+  Warning,
+  WarningCircle,
   X,
-} from 'lucide-react';
+} from '@phosphor-icons/react/ssr';
 import { match } from 'ts-pattern';
 
 import { alert } from '@/styled-system/recipes';
@@ -55,10 +55,10 @@ export const Alert = ({
         asChild
       >
         {match(status)
-          .with('info', () => <InfoIcon size="20" />)
-          .with('success', () => <CheckIcon size="20" />)
-          .with('warning', () => <TriangleAlert size="20" />)
-          .with('danger', () => <CircleAlert size="20" />)
+          .with('info', () => <Info size="20" />)
+          .with('success', () => <Check size="20" />)
+          .with('warning', () => <Warning size="20" />)
+          .with('danger', () => <WarningCircle size="20" />)
           .exhaustive()}
       </ark.svg>
       <ark.div className={recipe.content}>
