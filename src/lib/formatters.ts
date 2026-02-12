@@ -48,3 +48,31 @@ export const formatPlayerCount = (
   if (min === max) return `${min}人`;
   return `${min}〜${max}人`;
 };
+
+/**
+ * ISO日付文字列を相対時間表示にフォーマット（サーバーサイド専用）
+ * UTCベースで計算（Supabaseのタイムスタンプは ISO 8601/UTC）
+ */
+export const formatRelativeTime = (isoDateString: string): string => {
+  const now = Date.now();
+  const target = new Date(isoDateString).getTime();
+  const diffMs = now - target;
+
+  if (diffMs < 0) return 'たった今';
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+
+  if (minutes < 1) return 'たった今';
+  if (hours < 1) return `${minutes}分前`;
+  if (hours < 24) return `${hours}時間前`;
+  if (days === 1) return '昨日';
+  if (days < 7) return `${days}日前`;
+  if (days < 30) return `${weeks}週間前`;
+  if (months < 12) return `${months}ヶ月前`;
+  return new Date(isoDateString).toLocaleDateString('ja-JP');
+};

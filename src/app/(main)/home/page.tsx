@@ -1,9 +1,16 @@
-import { CaretRight } from '@phosphor-icons/react/ssr';
-import Link from 'next/link';
-
+import { ActivityTimeline } from './_components/ActivityTimeline';
+import { HeroSection } from './_components/HeroSection';
+import { MiniCalendar } from './_components/MiniCalendar';
 import { NewScenarios } from './_components/NewScenarios';
+import { SystemNotice } from './_components/SystemNotice';
 import { UpcomingSessions } from './_components/UpcomingSessions';
-import { getNewScenarios, getUpcomingSessions } from './adapter';
+import {
+  getDashboardUser,
+  getNewScenarios,
+  getRecentActivity,
+  getSessionDatesForRange,
+  getUpcomingSessions,
+} from './adapter';
 import * as styles from './styles';
 
 import { createClient } from '@/lib/supabase/server';
@@ -19,57 +26,59 @@ export default async function HomePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 未ログインの場合はルートページにリダイレクト
   if (!user) {
     return null;
   }
 
-  // データ取得
-  const [upcomingSessionsResult, newScenariosResult] = await Promise.all([
-    getUpcomingSessions(user.id),
-    getNewScenarios(),
-  ]);
+  // discord_id → user_id 解決
+  const dbUserResult = await getDashboardUser(user.id);
+  if (!dbUserResult.success) {
+    return null;
+  }
+  const dbUser = dbUserResult.data;
 
-  const upcomingSessions = upcomingSessionsResult.success
-    ? upcomingSessionsResult.data
-    : [];
-  const newScenarios = newScenariosResult.success
-    ? newScenariosResult.data
-    : [];
+  // 当月±1ヶ月のカレンダー日程範囲
+  const now = new Date();
+  const startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endDate = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+  const startDateStr = startDate.toISOString().slice(0, 10);
+  const endDateStr = endDate.toISOString().slice(0, 10);
+
+  // データを並列取得
+  const [upcomingResult, scenariosResult, activityResult, calendarResult] =
+    await Promise.all([
+      getUpcomingSessions(dbUser.userId),
+      getNewScenarios(),
+      getRecentActivity(dbUser.userId),
+      getSessionDatesForRange(dbUser.userId, startDateStr, endDateStr),
+    ]);
+
+  const sessions = upcomingResult.success ? upcomingResult.data : [];
+  const scenarios = scenariosResult.success ? scenariosResult.data : [];
+  const activities = activityResult.success ? activityResult.data : [];
+  const calendarDates = calendarResult.success ? calendarResult.data : [];
 
   return (
     <div className={styles.pageContainer}>
-      {/* ページヘッダー */}
-      <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>ホーム</h1>
-        <p className={styles.pageSubtitle}>
-          ようこそ、{user.user_metadata?.full_name ?? user.email}さん
-        </p>
+      <HeroSection
+        userName={dbUser.nickname}
+        nextSession={sessions[0] ?? null}
+      />
+
+      <div className={styles.pageGrid}>
+        <div className={styles.mainColumn}>
+          <UpcomingSessions sessions={sessions} />
+          <ActivityTimeline activities={activities} />
+          <NewScenarios scenarios={scenarios} />
+        </div>
+        <div className={styles.sidebarColumn}>
+          <section className={styles.sidebarCard}>
+            <MiniCalendar sessionDates={calendarDates} />
+            <hr className={styles.sidebarDivider} />
+            <SystemNotice />
+          </section>
+        </div>
       </div>
-
-      {/* 参加予定のセッション */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>参加予定のセッション</h2>
-          <Link href="/sessions?tab=upcoming" className={styles.sectionLink}>
-            すべて見る
-            <CaretRight size={16} />
-          </Link>
-        </div>
-        <UpcomingSessions sessions={upcomingSessions} />
-      </section>
-
-      {/* 新着シナリオ */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>新着シナリオ</h2>
-          <Link href="/scenarios" className={styles.sectionLink}>
-            すべて見る
-            <CaretRight size={16} />
-          </Link>
-        </div>
-        <NewScenarios scenarios={newScenarios} />
-      </section>
     </div>
   );
 }

@@ -5,7 +5,7 @@ export const semanticTokens = {
     // ========================================
     bg: {
       // ページ背景（淡い青みがかった白）
-      page: { value: '#F5F7FA' },
+      page: { value: '#f5f8f7' },
       // カード・パネル背景
       card: { value: '{colors.white}' },
       // 入力フィールド背景
@@ -390,6 +390,34 @@ export const semanticTokens = {
     scrollbar: {
       track: { value: '{colors.gray.200}' },
       thumb: { value: '{colors.primary.500}' },
+    },
+
+    // ========================================
+    // ダッシュボード
+    // ========================================
+    hero: {
+      gradient: {
+        from: { value: '{colors.primary.700}' },
+        to: { value: '{colors.primary.600}' },
+      },
+      glass: {
+        bg: { value: 'rgba(0, 0, 0, 0.1)' },
+        surface: { value: 'rgba(255, 255, 255, 0.1)' },
+        border: { value: 'rgba(255, 255, 255, 0.2)' },
+        text: { value: 'rgba(255, 255, 255, 0.9)' },
+      },
+    },
+    notice: {
+      bg: { value: '{colors.info.50}' },
+      border: { value: '{colors.info.200}' },
+    },
+    stats: {
+      blue: { value: '{colors.blue.100}' },
+      green: { value: '{colors.primary.100}' },
+      amber: { value: '{colors.orange.100}' },
+      iconBlue: { value: '{colors.blue.600}' },
+      iconGreen: { value: '{colors.primary.600}' },
+      iconAmber: { value: '{colors.orange.600}' },
     },
 
     // ========================================
