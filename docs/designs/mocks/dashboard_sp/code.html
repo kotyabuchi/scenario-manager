@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shinapre Kanri-kun Mobile Dashboard Fixed</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#047857",
+                        "primary-light": "#10b981",
+                        "primary-soft": "#D1FAE5",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                        "surface": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem", 
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'soft-hover': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'nav': '0 -4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}.mobile-container {
+            max-width: 375px;
+            margin: 0 auto;
+            background-color: #f5f8f7;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }.mobile-fixed-header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            max-width: 375px;
+            z-index: 50;
+        }
+        .mobile-fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 375px;
+            z-index: 50;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-display min-h-screen flex justify-center">
+<div class="mobile-container pb-24">
+<header class="mobile-fixed-header bg-surface/90 backdrop-blur-md shadow-sm border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30">
+                S
+            </div>
+<span class="text-lg font-bold text-gray-800 tracking-tight">シナプレ管理くん</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="relative w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons-round text-2xl">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<div class="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbLMVHvHs5rv6L6zdy_8xIKfY4J10mPp_6a8QJBHv_eAiVgL-DNYxWhRKBfCApq0Amc-boNOjgP86Ux35Hw3UyxH5oVhsnhoU6pXB_83l8MCPO5ywAJBKHI5MAWVPWgzSTkx9DgT35yVF-CD3zJJvJ8cVQOQShjKaRpYhPUwAg6jUk4gsuh-aNRq-47vmO3fHBCGdp5kLvvyfVQnE27CHbKgHcHAmhS1-FfC3lNEF-ceI-tdvXuXzjm8tR2C_VwCU2jh5Ly3ClUzw"/>
+</div>
+</div>
+</header>
+<main class="flex-1 px-4 py-6 flex flex-col gap-8 w-full">
+<section>
+<div class="mb-5">
+<h1 class="text-xl font-bold text-gray-900 mb-1">ようこそ、田中タロウさん</h1>
+<p class="text-sm text-gray-500">次の冒険の準備はできていますか？</p>
+</div>
+<div class="bg-gradient-to-br from-primary to-primary-light text-white rounded-2xl p-5 shadow-lg shadow-primary/20 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+<div class="absolute -left-4 -bottom-4 w-32 h-32 bg-black/10 rounded-full blur-xl"></div>
+<div class="relative z-10 flex justify-between items-start">
+<div>
+<div class="text-primary-soft text-xs font-medium mb-1 flex items-center gap-1">
+<span class="material-icons-round text-sm">event</span> 次のセッション
+                        </div>
+<h2 class="text-lg font-bold leading-tight mb-3">狂気山脈<br/>〜邪神の山嶺〜</h2>
+<div class="flex items-center gap-1.5 text-xs text-white/90 bg-black/10 w-fit px-2.5 py-1 rounded-full backdrop-blur-sm">
+<span class="material-icons-round text-xs">schedule</span> 10月24日 20:00〜
+                        </div>
+</div>
+<div class="flex flex-col items-center justify-center bg-white/10 rounded-xl p-2.5 backdrop-blur-md border border-white/20 min-w-[70px]">
+<span class="text-[10px] text-primary-soft uppercase tracking-wider font-semibold">あと</span>
+<span class="text-3xl font-bold font-display leading-none">3<span class="text-xs font-normal ml-0.5">日</span></span>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 snap-x">
+<div class="min-w-[120px] bg-surface rounded-xl p-4 shadow-soft flex flex-col gap-2 border border-gray-50 snap-start">
+<div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+<span class="material-icons-round text-lg">menu_book</span>
+</div>
+<div>
+<div class="text-xl font-bold text-gray-800">12</div>
+<div class="text-[10px] text-gray-500 font-medium uppercase tracking-wide">シナリオ</div>
+</div>
+</div>
+<div class="min-w-[120px] bg-surface rounded-xl p-4 shadow-soft flex flex-col gap-2 border border-gray-50 snap-start">
+<div class="w-8 h-8 rounded-full bg-primary-soft text-primary flex items-center justify-center">
+<span class="material-icons-round text-lg">people</span>
+</div>
+<div>
+<div class="text-xl font-bold text-gray-800">48</div>
+<div class="text-[10px] text-gray-500 font-medium uppercase tracking-wide">プレイヤー</div>
+</div>
+</div>
+<div class="min-w-[120px] bg-surface rounded-xl p-4 shadow-soft flex flex-col gap-2 border border-gray-50 snap-start">
+<div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+<span class="material-icons-round text-lg">emoji_events</span>
+</div>
+<div>
+<div class="text-xl font-bold text-gray-800">5</div>
+<div class="text-[10px] text-gray-500 font-medium uppercase tracking-wide">キャンペーン</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+<span class="w-1 h-5 bg-primary rounded-full"></span>
+                最近のアクティビティ
+            </h3>
+<div class="bg-surface rounded-xl p-5 shadow-soft">
+<div class="relative">
+<div class="absolute left-3.5 top-0 bottom-0 w-0.5 bg-gray-100"></div>
+<div class="relative pl-9 pb-5">
+<div class="absolute left-0 top-0.5 w-7 h-7 bg-blue-50 rounded-full border-2 border-white flex items-center justify-center z-10 shadow-sm">
+<span class="material-icons-round text-blue-500 text-[10px]">person_add</span>
+</div>
+<div>
+<p class="text-xs text-gray-800 leading-relaxed mb-0.5">「狂気山脈」に <span class="font-bold text-primary">鈴木ハナコ</span> さんが参加。</p>
+<span class="text-[10px] text-gray-400">2時間前</span>
+</div>
+</div>
+<div class="relative pl-9 pb-5">
+<div class="absolute left-0 top-0.5 w-7 h-7 bg-amber-50 rounded-full border-2 border-white flex items-center justify-center z-10 shadow-sm">
+<span class="material-icons-round text-amber-500 text-[10px]">edit</span>
+</div>
+<div>
+<p class="text-xs text-gray-800 leading-relaxed mb-0.5">シナリオ「虚空への招待状」を更新。</p>
+<span class="text-[10px] text-gray-400">昨日</span>
+</div>
+</div>
+<div class="relative pl-9">
+<div class="absolute left-0 top-0.5 w-7 h-7 bg-green-50 rounded-full border-2 border-white flex items-center justify-center z-10 shadow-sm">
+<span class="material-icons-round text-green-500 text-[10px]">check_circle</span>
+</div>
+<div>
+<p class="text-xs text-gray-800 leading-relaxed mb-0.5">「ゴブリンの洞窟」ログ保存完了。</p>
+<span class="text-[10px] text-gray-400">2日前</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col items-start gap-2 p-4 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+<div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm">
+<span class="material-icons-round text-white text-lg">edit_note</span>
+</div>
+<div class="text-left">
+<div class="font-bold text-sm">シナリオ登録</div>
+<div class="text-[10px] text-primary-soft opacity-80">物語を追加</div>
+</div>
+</button>
+<button class="flex flex-col items-start gap-2 p-4 bg-surface border border-gray-100 text-gray-700 rounded-xl shadow-sm active:scale-95 transition-transform">
+<div class="w-8 h-8 rounded-lg bg-gray-50 text-primary flex items-center justify-center border border-gray-100">
+<span class="material-icons-round text-lg">add_box</span>
+</div>
+<div class="text-left">
+<div class="font-bold text-sm">セッション作成</div>
+<div class="text-[10px] text-gray-400">募集を開始</div>
+</div>
+</button>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+<span class="w-1 h-5 bg-primary rounded-full"></span>
+                    予定セッション
+                </h3>
+<a class="text-xs text-primary font-medium p-2 -mr-2" href="#">すべて見る</a>
+</div>
+<div class="flex flex-col gap-3">
+<div class="bg-surface rounded-xl p-3 shadow-soft border border-gray-50 flex gap-3 items-center">
+<div class="w-16 h-16 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+<img alt="Fantasy map" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhWdsOV1dFX-qk_ySADz8jVcCxBQ89PZBbcZ8YZHrl-Aun6M4eHX5kXotXU8hqsDh7GmGxEDiYPTzr3HAMdHJ9_cdJHOsaXv6Bi0RLTNYC_o_UMmgMe_2o0aKkqRXHTx4iK4Yy6Vab7AICg_sxH87sIstXDK1VxBHMM42mRsVwaV8E3L9DO-6VygD8wkM0WZ-jrjzhAQYX84_LIBbwrUZaVWoSpyKkybCXk9o0ttu6qRG-SAhDa8TneJAoIdhWZTz6oy-JUI9PjYI"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase tracking-wide">募集中</span>
+<span class="text-[10px] text-gray-400 truncate">CoC 6版</span>
+</div>
+<h4 class="font-bold text-gray-800 text-sm truncate mb-1">虚空への招待状</h4>
+<div class="flex items-center justify-between">
+<div class="text-xs text-gray-500 font-medium">11/02 21:00〜</div>
+<div class="flex -space-x-1.5">
+<img alt="User 1" class="w-5 h-5 rounded-full border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCs1dP3GIIiAySGXCqf0S7xBptGY0-Qp0bA7-0GyNu8kVrZJXUuw-6JO29x5RrCd9tGelg1AM9_w5g0OEqL8dnvYjH3aIauIzedMv2Voz6EbOH_lbLWFMMmSTtLxbMGY66WlOnI8XuAIa_xlW61sorijfZ2kPLB6o261Jr5KItUMqvSV8dWw1BsChli9vLqaP3cEP-KEw5mB_kc_1vD7KGG7fFOriVPwd7XlkkphrAaXF2rMWNo4ONDeaqyjIYpY0653bxfUhxQfVs"/>
+<img alt="User 2" class="w-5 h-5 rounded-full border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAzVw3_rgrpjeuRWvQ9GsS-dW-VAAg5zot1NyO4PgZ4f8Pqj0j87KfxcCOTFhDkVfKZCkOUVITWDHmefeAf40WpRM0RPDiYWrVPPTgsqYArHRFtWUplxu5KiHE68TXcJAyfXEKLNE1VxfhqQOWm7T4-x6BJuvF_M91AMd9rnu9ZWNlBn-pyyQxsp4xR9NYpbWqUNv5Vmi-JLMpC4VhhZDlTJzlgKVZmjpdz2ZkgIl2m2onyxB-H0dTjjYGGYHA-IMcBmdeJ_9UfqA"/>
+<div class="w-5 h-5 rounded-full border border-white bg-gray-100 flex items-center justify-center text-[8px] text-gray-500 font-medium">+2</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface rounded-xl p-3 shadow-soft border border-gray-50 flex gap-3 items-center">
+<div class="w-16 h-16 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+<img alt="Cyberpunk city" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzDCBMIS09gsAzD39uMboM5r6kdDhFvgRmfyLnJZLI5ONC44wJhMgmUQiWSeF-HZGBKt8l99Dscz06xEOWUH25s-02vRcHNbGMj53hZGVUgRs_AQ9lRu6ShNNDIkpKhSbI2pJduy_LBknIIm-Fmp903PEdq8V7oxpc1CJ_dWBLLbfEE77QvMnLncqEbKA2zfTGedGpDDmRAznIU8sf7odowICt8sJH4YK_v0FUAl-gCipI5CuD-2miTIO7he1afAv_gYpTxo4aJVQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wide">準備中</span>
+<span class="text-[10px] text-gray-400 truncate">エモクロア</span>
+</div>
+<h4 class="font-bold text-gray-800 text-sm truncate mb-1">ネオン・ドリームス</h4>
+<div class="flex items-center justify-between">
+<div class="text-xs text-gray-500 font-medium">11/08 20:00〜</div>
+<div class="flex -space-x-1.5">
+<img alt="User 3" class="w-5 h-5 rounded-full border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2tAxq5ZtYesbWNKCkssaUMhCfSk5IchREuKD43kSAX6U-fa6fZlYiFQwIUsyp2oL-JTTa-WaVNxP61dLCa7yG162H5dAm0U6VbVYlEukM88mMrTBeTNNKg7ZAYB5v_eAJOB4d7M5snW8KjDSLELlOGC9RffEDfCjk4C2hfXkiMglGayGtUNeqaO2spMQdKdhs6aCpCc_BDhJVhM87vwlaQjhM1EZPnWYNt4qmT0-A-GmYxlqc7QL0a6OfITTlRGhwXm7YCgagqN0"/>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface rounded-xl p-3 shadow-soft border border-gray-50 flex gap-3 items-center opacity-70">
+<div class="w-16 h-16 rounded-lg bg-gray-100 shrink-0 overflow-hidden grayscale">
+<img alt="Dark forest" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABVVaN7YY_pxucx8-aWCZmWzeYmAnxp2pT_PsLLEu1L63nImLmcp-kkN8thH5L3is4QdguCoQjlcVgVY6TMlvk9_f2RGgGQekrEsttznE14_fGniVKs_XGmNfNhiUSMqi_KKql3jA-yz46kAGk2OjBi8NhBUudJ4wCLdisRW8aJgEok8oslmR90ove5AZXW9Do2eCQFYcLjesbmgO7qFW1iVAck1P2Ypezd7IP6QzkWS3LmFeuEb3IJuKP0sQvNzNANr1fw4ZFA4w"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-500 uppercase tracking-wide">終了</span>
+<span class="text-[10px] text-gray-400 truncate">D&amp;D 5e</span>
+</div>
+<h4 class="font-bold text-gray-600 text-sm truncate mb-1 line-through">ゴブリンの洞窟</h4>
+<div class="flex items-center justify-between">
+<div class="text-xs text-gray-400 font-medium">10/15 済</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="pb-6">
+<h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+<span class="w-1 h-5 bg-primary rounded-full"></span>
+                新着シナリオ
+            </h3>
+<div class="flex flex-col gap-4">
+<div class="bg-surface rounded-xl overflow-hidden shadow-soft border border-gray-50">
+<div class="h-28 bg-gray-200 relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<img alt="Mysterious forest" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBh1HHva9t-vaXOc2JVNiH-NjENq8ZXg2nzQo26l7EnAYFxQm8loJWH0aM-RhXCd2Ne6lMYqPak8rRWOi47YYuo9M4peZQmn5l5WmA6DKO4uz8dqIeXQR8iPmX-4Dm81r9PClOk7vzBcbvhq8ORtQHDFC8Eq5zD9fsZakPn7Fr9Gs0R6zxSFGX1OvAfx19Ne1Lf-4TIo6AnvgxdBCcep8BtHhdW55N8U5KtqC_ovSLzpAbZEIMsI3ypCDwtBQBD-N1wAbLo0tJKidM"/>
+<span class="absolute bottom-2 left-3 z-20 text-[10px] font-bold text-white bg-primary/90 px-2 py-0.5 rounded backdrop-blur-sm">CoC 6版</span>
+</div>
+<div class="p-3">
+<h4 class="font-bold text-gray-800 text-sm mb-1.5">静寂の森の館</h4>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">ホラー</span>
+<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">クローズド</span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-gray-400">
+<span class="flex items-center gap-1"><span class="material-icons-round text-[12px]">schedule</span> 3-4時間</span>
+<span class="flex items-center gap-1"><span class="material-icons-round text-[12px]">group</span> 2-4人</span>
+</div>
+</div>
+</div>
+<div class="bg-surface rounded-xl overflow-hidden shadow-soft border border-gray-50">
+<div class="h-28 bg-gray-200 relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<img alt="Space station" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4-ND8mT4m9BxZn0qZ9EsNr8ytUVFLxNAiKXstOxD6ZciBS5ww2fTai1udwiUnlwSgNm-4TdRf8UFcNpNlygQ8pngfvy7F1bzYk-rRUQ0rQuyAFUtKuJPhvv3CkD0tfdDHZrJL6JfUcJ43WoueN6pxxWN_tLntUDu7gC6GY4ZX8j3FKyean4qixpwo2hGIWTBdadUX7-fIXufA4XF35RceOGo8pKw838jSNzxGH8qvCH78rOYaMO7PmJ6qgf6Ri0AGFywMMGPnMZ0"/>
+<span class="absolute bottom-2 left-3 z-20 text-[10px] font-bold text-white bg-blue-600/90 px-2 py-0.5 rounded backdrop-blur-sm">SF RPG</span>
+</div>
+<div class="p-3">
+<h4 class="font-bold text-gray-800 text-sm mb-1.5">星屑のロンド</h4>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">SF</span>
+<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">シティ</span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-gray-400">
+<span class="flex items-center gap-1"><span class="material-icons-round text-[12px]">schedule</span> 5-6時間</span>
+<span class="flex items-center gap-1"><span class="material-icons-round text-[12px]">group</span> 3-5人</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="mobile-fixed-bottom bg-surface border-t border-gray-100 shadow-nav pb-safe">
+<div class="grid grid-cols-5 h-16 items-center">
+<a class="flex flex-col items-center justify-center w-full h-full text-primary" href="#">
+<span class="material-icons-round text-2xl mb-0.5">dashboard</span>
+<span class="text-[10px] font-medium">ホーム</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-icons-round text-2xl mb-0.5">event_note</span>
+<span class="text-[10px] font-medium">セッション</span>
+</a>
+<div class="relative w-full h-full flex justify-center items-center">
+<button class="absolute -top-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center hover:scale-105 transition-transform ring-4 ring-gray-100/50">
+<span class="material-icons-round text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-icons-round text-2xl mb-0.5">auto_stories</span>
+<span class="text-[10px] font-medium">シナリオ</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-icons-round text-2xl mb-0.5">account_circle</span>
+<span class="text-[10px] font-medium">マイページ</span>
+</a>
+</div>
+</nav>
+</div>
+
+</body></html>
