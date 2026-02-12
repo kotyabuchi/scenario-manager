@@ -76,9 +76,25 @@ import { button } from '@/styled-system/recipes'
 
 ## トークンの活用
 
-- 色: `src/styles/tokens/colors.ts` で定義されたものを使用
+- **トークンの確認にはPandaCSS MCPツールを使用する**（ファイル直読みより優先）
 - スペーシング: 数値トークン (`4`, `8`, `16`) を使用
 - マジックナンバー禁止
+
+### PandaCSS MCP（トークン確認時は必ず使用）
+
+トークン・レシピ・パターンを確認する際は、ファイルを直接読む前にPandaCSS MCPツールを使用すること。
+MCPツールはPandaCSSが設定を解析済みの構造化データとして返すため、正確な実効値を取得できる。
+
+| 用途 | MCPツール | 従来の方法（非推奨） |
+|------|-----------|-------------------|
+| トークン値の確認 | `get_tokens` | `src/styles/tokens/*.ts` を読む |
+| セマンティックトークン確認 | `get_semantic_tokens` | `src/styles/semanticTokens.ts` を読む |
+| カラーパレット確認 | `get_color_palette` | `src/styles/tokens/colors.ts` を読む |
+| レシピ・バリアント確認 | `get_recipes` | `src/styles/recipes/*.ts` を読む |
+| パターン確認 | `get_patterns` | ドキュメントを確認 |
+| 使用状況分析 | `get_usage_report` | Grep で検索 |
+
+**注意**: トークンの**追加・変更**時は引き続き該当ファイルを直接編集する。MCPは読み取り専用。
 
 ## UI Design Guidelines
 

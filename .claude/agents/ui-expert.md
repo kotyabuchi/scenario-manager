@@ -88,9 +88,9 @@ agent-browserに依頼する内容：
 
 ### スタイリング
 - PandaCSS（`@/styled-system/*`）
-- セマンティックトークン: `src/styles/semanticTokens.ts`
-- トークン: `src/styles/tokens/`
-- レシピ: `src/styles/recipes/`
+- セマンティックトークン: PandaCSS MCP `get_semantic_tokens` で取得（追加時は `src/styles/semanticTokens.ts` を編集）
+- トークン: PandaCSS MCP `get_tokens` で取得（追加時は `src/styles/tokens/` を編集）
+- レシピ: PandaCSS MCP `get_recipes` で取得（追加時は `src/styles/recipes/` を編集）
 
 ### UIコンポーネント
 - Ark UI（アクセシブルなプリミティブ）

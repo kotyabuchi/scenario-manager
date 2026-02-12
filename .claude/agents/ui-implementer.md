@@ -50,17 +50,11 @@ You are a UI implementation specialist. You design and implement UI components b
    - `src/components/elements/` - 基本コンポーネント
    - `src/components/blocks/` - 複合コンポーネント
 
-2. **セマンティックトークン確認**
-   - `src/styles/semanticTokens.ts` - 必ずここを確認
-   - 利用可能なトークン:
-     - `shadow: 'card.default'`, `'card.hover'`
-     - `shadow: 'chip.default'`, `'chip.hover'`, `'chip.selected'`
-     - `bg: 'chip.default'`, `'chip.hover'`
-     - `bg: 'overlay.light'`, `'overlay.dark'`
-
-3. **デザイントークン確認**
-   - `src/styles/tokens/colors.ts`
-   - `src/styles/tokens/spacing.ts`
+2. **セマンティックトークン確認** — PandaCSS MCPツールを使用
+   - `get_semantic_tokens` で利用可能なセマンティックトークンを取得
+   - `get_tokens` でデザイントークン（色、スペーシング等）を取得
+   - `get_color_palette` でカラーパレットを取得
+   - ファイル直読みは不要（MCPが解析済みデータを返す）
 
 ### Phase 3: 実装
 
@@ -268,6 +262,7 @@ import { Xxx } from '@/components/elements/Xxx'
 
 - **必ずui-design-systemメモリを最初に読み込む**
 - セマンティックトークンを使用していない実装は許可しない
+- トークンの確認にはPandaCSS MCPツール（`get_semantic_tokens`等）を使用する
 - 新しいトークンが必要な場合は `src/styles/semanticTokens.ts` に追加
 - AI臭いデザインパターンを絶対に避ける
 - 実装完了時はチェックリストを全て確認

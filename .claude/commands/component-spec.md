@@ -262,9 +262,9 @@ Q: 異常系や境界値の挙動を確認します
 | spacing | `{spacing.4}` | `tokens/spacing.ts` | `16px` |
 | size | `{sizes.10}` | `tokens/sizes.ts` | `40px` |
 | color | `{colors.primary.500}` | `tokens/colors.ts` | `oklch(...)` |
-| shadow | `card.default` 等 | `semanticTokens.ts` | `0 2px 4px ...` |
-| opacity | `disabled` / `hover` / `muted` | `semanticTokens.ts` | `0.5` / `0.8` / `0.3` |
-| focus ring | `{borders.focusRing}` | `semanticTokens.ts` | `2px solid ...` |
+| shadow | `card.default` 等 | MCP `get_semantic_tokens` | `0 2px 4px ...` |
+| opacity | `disabled` / `hover` / `muted` | MCP `get_semantic_tokens` | `0.5` / `0.8` / `0.3` |
+| focus ring | `{borders.focusRing}` | MCP `get_semantic_tokens` | `2px solid ...` |
 | font size | `{fontSizes.sm}` 等 | PandaCSS preset-panda | `14px` |
 
 > **borderRadius は例外**: 親の `padding - borderRadius` で計算した値を使うケースがあるため、固定値（`4px`等）の直接指定を許可する。トークンの使用は推奨だが必須ではない。

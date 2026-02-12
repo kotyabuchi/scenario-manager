@@ -198,7 +198,8 @@ Pencilの仕様に基づいて、対象部分を完全に書き換える。
 | #374151 | gray.700 | テキスト色 |
 | shadow 0 2px 8px | header.default | 既存トークンを確認 |
 
-トークンが存在しない場合は `semanticTokens.ts` に追加する。
+トークンの存在確認にはPandaCSS MCP `get_semantic_tokens` を使用する。
+トークンが存在しない場合は `src/styles/semanticTokens.ts` に追加する。
 
 #### Step 3.3: 要素順序の確認
 
@@ -365,8 +366,8 @@ pnpm build
 ⚠ Pencilの色 #F5F7FA に対応するトークンがありません
 
 対応:
-1. semanticTokens.ts に追加する
-2. 近い既存トークンを確認（gray.50など）
+1. PandaCSS MCP `get_semantic_tokens` で既存トークンを検索
+2. 見つからなければ `src/styles/semanticTokens.ts` に追加する
 
 推奨: セマンティックトークンに追加して使用
 ```
@@ -391,6 +392,6 @@ Pencil: アイコンはボタンの左側
 | ファイル | 用途 |
 |----------|------|
 | Pencilプロジェクト | デザインファイル |
-| `src/styles/semanticTokens.ts` | セマンティックトークン |
-| `src/styles/tokens/colors.ts` | 基本カラートークン |
+| PandaCSS MCP `get_semantic_tokens` | セマンティックトークン確認（追加時は `src/styles/semanticTokens.ts`） |
+| PandaCSS MCP `get_color_palette` | カラートークン確認（追加時は `src/styles/tokens/colors.ts`） |
 | `.serena/memories/ui-design-system.md` | UIデザインシステム |

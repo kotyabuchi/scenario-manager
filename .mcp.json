@@ -49,6 +49,12 @@
       "command": "cmd",
       "args": ["/c", "npx", "-y", "agentation-mcp", "server"],
       "env": {}
+    },
+    "panda": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "panda", "mcp"],
+      "env": {}
     }
   }
 }
