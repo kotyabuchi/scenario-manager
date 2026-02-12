@@ -1,5 +1,6 @@
 import { SignupModalWrapper } from './_components/SignupModalWrapper';
 
+import { BottomNav } from '@/components/blocks/BottomNav';
 import { FeedbackButton } from '@/components/blocks/FeedbackButton';
 import { GlobalHeader } from '@/components/blocks/GlobalHeader';
 import { SimpleFooter } from '@/components/blocks/SimpleFooter';
@@ -54,10 +55,16 @@ export default async function MainLayout({ children }: PropsWithChildren) {
         initialDiscordMeta={initialDiscordMeta}
       >
         <GlobalHeader />
-        <styled.main flex="1" display="flex" flexDirection="column">
+        <styled.main
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          pb={{ base: '20', md: '0' }}
+        >
           {children}
         </styled.main>
         <SimpleFooter />
+        <BottomNav />
         <FeedbackButton />
         <SignupModalWrapper />
       </AuthProvider>

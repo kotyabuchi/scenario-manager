@@ -5,10 +5,14 @@ export const header = css({
   alignItems: 'center',
   justifyContent: 'space-between',
   width: 'full',
-  height: '[64px]',
-  px: '8',
+  height: '[56px]',
+  px: '4',
   bg: 'white',
   shadow: 'xs',
+  md: {
+    height: '[64px]',
+    px: '8',
+  },
 });
 
 export const logo = css({
@@ -40,9 +44,12 @@ export const logoText = css({
 });
 
 export const navLinks = css({
-  display: 'flex',
+  display: 'none',
   alignItems: 'center',
   gap: '6',
+  md: {
+    display: 'flex',
+  },
 });
 
 export const navLink = cva({
@@ -127,8 +134,11 @@ export const avatarImage = css({
 });
 
 export const registerButton = css({
-  display: 'flex',
+  display: 'none',
   alignItems: 'center',
+  md: {
+    display: 'flex',
+  },
   gap: '2',
   px: '4',
   height: '9',

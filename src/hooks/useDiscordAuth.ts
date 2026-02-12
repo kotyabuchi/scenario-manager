@@ -62,8 +62,21 @@ export const useDiscordAuth = () => {
   }, [router, addMessage]);
 
   const login = useCallback(async () => {
+    const isMobile = window.innerWidth < 768;
     const supabase = createClient();
 
+    if (isMobile) {
+      // SP: リダイレクト方式（ポップアップはブロックされるため）
+      await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      return;
+    }
+
+    // PC: ポップアップ方式
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'discord',
       options: {

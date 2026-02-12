@@ -5,6 +5,10 @@ export const container = css({
   bottom: '8',
   right: '8',
   zIndex: 'fixed',
+  display: 'none',
+  md: {
+    display: 'block',
+  },
 });
 
 export const button = css({
