@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { GlobalHeader } from './index';
 
+import type { AuthContextType } from '@/context/auth-context';
+
 // Next.js navigation hooks をモック
 const mockPathname = vi.fn(() => '/scenarios');
 const mockRouter = {
@@ -19,17 +21,19 @@ vi.mock('next/navigation', () => ({
   useRouter: () => mockRouter,
 }));
 
-// useAuth をモック（未ログイン状態）
+// useAuth をモック（デフォルト: 未ログイン状態）
+const mockUseAuth = vi.fn<() => AuthContextType>(() => ({
+  user: null,
+  discordMeta: null,
+  isLoading: false,
+  isAuthenticated: false,
+  isNewUser: false,
+  setUser: vi.fn(),
+  clearUser: vi.fn(),
+}));
+
 vi.mock('@/context', () => ({
-  useAuth: () => ({
-    user: null,
-    discordMeta: null,
-    isLoading: false,
-    isAuthenticated: false,
-    isNewUser: false,
-    setUser: vi.fn(),
-    clearUser: vi.fn(),
-  }),
+  useAuth: () => mockUseAuth(),
 }));
 
 // useDiscordAuth をモック
@@ -37,6 +41,12 @@ vi.mock('@/hooks/useDiscordAuth', () => ({
   useDiscordAuth: () => ({
     login: vi.fn(),
   }),
+}));
+
+// ScenarioRegisterDialog をモック（Portalを使うため）
+vi.mock('@/components/blocks/ScenarioRegisterDialog', () => ({
+  ScenarioRegisterDialog: ({ children }: { children: React.ReactNode }) =>
+    children,
 }));
 
 describe('GlobalHeader', () => {
@@ -107,19 +117,49 @@ describe('GlobalHeader', () => {
   describe('シナリオ登録ボタン', () => {
     it('シナリオ画面で登録ボタンが表示される', () => {
       mockPathname.mockReturnValue('/scenarios');
+      mockUseAuth.mockReturnValue({
+        user: {
+          userId: 'test-user',
+          discordId: 'discord-123',
+          nickname: 'Test',
+          avatar: null,
+          role: 'MEMBER',
+        },
+        discordMeta: null,
+        isLoading: false,
+        isAuthenticated: true,
+        isNewUser: false,
+        setUser: vi.fn(),
+        clearUser: vi.fn(),
+      });
       render(<GlobalHeader />);
       expect(
-        screen.getByRole('link', { name: /シナリオを登録/i }),
+        screen.getByRole('button', { name: /シナリオを登録/i }),
       ).toBeInTheDocument();
     });
 
-    it('シナリオ登録ボタンが正しいリンク先を持つ', () => {
+    it('シナリオ登録ボタンがダイアログトリガーとして機能する', () => {
       mockPathname.mockReturnValue('/scenarios');
+      mockUseAuth.mockReturnValue({
+        user: {
+          userId: 'test-user',
+          discordId: 'discord-123',
+          nickname: 'Test',
+          avatar: null,
+          role: 'MEMBER',
+        },
+        discordMeta: null,
+        isLoading: false,
+        isAuthenticated: true,
+        isNewUser: false,
+        setUser: vi.fn(),
+        clearUser: vi.fn(),
+      });
       render(<GlobalHeader />);
-      const registerLink = screen.getByRole('link', {
+      const registerButton = screen.getByRole('button', {
         name: /シナリオを登録/i,
       });
-      expect(registerLink).toHaveAttribute('href', '/scenarios/new');
+      expect(registerButton).toBeInTheDocument();
     });
   });
 

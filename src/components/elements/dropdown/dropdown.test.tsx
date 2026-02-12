@@ -52,16 +52,16 @@ describe('Dropdown', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByRole('menuitem', { name: '新着順' }),
+          screen.getByRole('menuitemradio', { name: '新着順' }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('menuitem', { name: '高評価順' }),
+          screen.getByRole('menuitemradio', { name: '高評価順' }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('menuitem', { name: 'プレイ時間順' }),
+          screen.getByRole('menuitemradio', { name: 'プレイ時間順' }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('menuitem', { name: '人数順' }),
+          screen.getByRole('menuitemradio', { name: '人数順' }),
         ).toBeInTheDocument();
       });
     });
@@ -75,7 +75,9 @@ describe('Dropdown', () => {
       await user.click(screen.getByRole('button'));
 
       await waitFor(() => {
-        const selectedItem = screen.getByRole('menuitem', { name: /新着順/i });
+        const selectedItem = screen.getByRole('menuitemradio', {
+          name: /新着順/i,
+        });
         expect(selectedItem).toHaveAttribute('aria-checked', 'true');
       });
     });
@@ -95,7 +97,7 @@ describe('Dropdown', () => {
         expect(screen.getByRole('menu')).toBeInTheDocument();
       });
 
-      await user.click(screen.getByRole('menuitem', { name: '高評価順' }));
+      await user.click(screen.getByRole('menuitemradio', { name: '高評価順' }));
 
       expect(handleValueChange).toHaveBeenCalledWith('rating');
     });
@@ -112,7 +114,7 @@ describe('Dropdown', () => {
         expect(screen.getByRole('menu')).toBeInTheDocument();
       });
 
-      await user.click(screen.getByRole('menuitem', { name: '高評価順' }));
+      await user.click(screen.getByRole('menuitemradio', { name: '高評価順' }));
 
       await waitFor(() => {
         expect(screen.queryByRole('menu')).not.toBeInTheDocument();
@@ -134,7 +136,7 @@ describe('Dropdown', () => {
         expect(screen.getByRole('menu')).toBeInTheDocument();
       });
 
-      const disabledItem = screen.getByRole('menuitem', {
+      const disabledItem = screen.getByRole('menuitemradio', {
         name: 'プレイ時間順',
       });
       expect(disabledItem).toBeDisabled();

@@ -132,8 +132,8 @@ describe('Avatar', () => {
       render(<Default />);
 
       const avatar = screen.getByTestId('avatar');
-      // PandaCSSのユーティリティクラス（bdr_50%）が適用されていることを確認
-      expect(avatar.className).toContain('bdr_50%');
+      // PandaCSSのユーティリティクラス（bdr_full）が適用されていることを確認
+      expect(avatar.className).toContain('bdr_full');
     });
   });
 });
