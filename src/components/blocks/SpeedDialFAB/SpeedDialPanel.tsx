@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   BookOpenText,
   CalendarPlus,
@@ -11,8 +10,6 @@ import {
 } from '@phosphor-icons/react/ssr';
 import { useRouter } from 'next/navigation';
 
-import { FeedbackModal } from '../FeedbackModal';
-import { shareCurrentPage } from './share';
 import * as styles from './styles';
 
 import { useDiscordAuth } from '@/hooks/useDiscordAuth';
@@ -22,38 +19,29 @@ import type { Route } from 'next';
 type SpeedDialPanelProps = {
   isAuthenticated: boolean;
   onClose: () => void;
+  onFeedbackOpen: () => void;
+  onScenarioRegister: () => void;
+  onShare: () => void;
 };
 
 export const SpeedDialPanel = ({
   isAuthenticated,
   onClose,
+  onFeedbackOpen,
+  onScenarioRegister,
+  onShare,
 }: SpeedDialPanelProps) => {
   const router = useRouter();
   const { login } = useDiscordAuth();
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const handleNavigate = (path: Route<string>) => {
     onClose();
     router.push(path);
   };
 
-  const handleShare = async () => {
-    await shareCurrentPage();
-    onClose();
-  };
-
-  const handleFeedback = () => {
-    onClose();
-    setIsFeedbackOpen(true);
-  };
-
   const handleLogin = () => {
     onClose();
     login();
-  };
-
-  const handleFeedbackOpenChange = (details: { open: boolean }) => {
-    setIsFeedbackOpen(details.open);
   };
 
   const iconClass = styles.speedDialFAB_menuIcon;
@@ -66,7 +54,7 @@ export const SpeedDialPanel = ({
             type="button"
             className={styles.speedDialFAB_menuItem}
             role="menuitem"
-            onClick={() => handleNavigate('/scenarios/new' as Route)}
+            onClick={onScenarioRegister}
           >
             <BookOpenText size={20} className={iconClass} />
             シナリオ登録
@@ -94,7 +82,7 @@ export const SpeedDialPanel = ({
             type="button"
             className={styles.speedDialFAB_menuItem}
             role="menuitem"
-            onClick={handleShare}
+            onClick={onShare}
           >
             <ShareNetwork size={20} className={iconClass} />
             シェア
@@ -103,7 +91,7 @@ export const SpeedDialPanel = ({
             type="button"
             className={styles.speedDialFAB_menuItem}
             role="menuitem"
-            onClick={handleFeedback}
+            onClick={onFeedbackOpen}
           >
             <ChatText size={20} className={iconClass} />
             フィードバック
@@ -124,7 +112,7 @@ export const SpeedDialPanel = ({
             type="button"
             className={styles.speedDialFAB_menuItem}
             role="menuitem"
-            onClick={handleShare}
+            onClick={onShare}
           >
             <ShareNetwork size={20} className={iconClass} />
             シェア
@@ -140,10 +128,6 @@ export const SpeedDialPanel = ({
           </button>
         </>
       )}
-      <FeedbackModal
-        open={isFeedbackOpen}
-        onOpenChange={handleFeedbackOpenChange}
-      />
     </>
   );
 };
