@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   ArrowCounterClockwise,
   MagnifyingGlass,
@@ -43,6 +43,60 @@ export const FilterBottomSheet = ({
   filterState,
 }: FilterBottomSheetProps) => {
   const { clearAll } = filterState;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef({ isDragging: false, startY: 0, currentY: 0 });
+
+  const SWIPE_CLOSE_THRESHOLD = 100;
+
+  // isOpen変更時にインラインスタイルをクリア
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      containerRef.current.style.transform = '';
+      containerRef.current.style.transition = '';
+    }
+  }, [isOpen]);
+
+  // ハンドルのスワイプで閉じる
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches.item(0);
+    if (!touch) return;
+    dragRef.current = {
+      isDragging: true,
+      startY: touch.clientY,
+      currentY: 0,
+    };
+    if (containerRef.current) {
+      containerRef.current.style.transition = 'none';
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!dragRef.current.isDragging) return;
+    const touch = e.touches.item(0);
+    if (!touch) return;
+    const deltaY = Math.max(0, touch.clientY - dragRef.current.startY);
+    dragRef.current.currentY = deltaY;
+    if (containerRef.current) {
+      containerRef.current.style.transform = `translateY(${deltaY}px)`;
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!dragRef.current.isDragging) return;
+    dragRef.current.isDragging = false;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.style.transition = '';
+
+    if (dragRef.current.currentY > SWIPE_CLOSE_THRESHOLD) {
+      container.style.transform = 'translateY(100%)';
+      onClose();
+    } else {
+      container.style.transform = '';
+    }
+  }, [onClose]);
 
   // Escapeキーで閉じる
   const handleKeyDown = useCallback(
@@ -95,13 +149,19 @@ export const FilterBottomSheet = ({
 
       {/* ボトムシート */}
       <div
+        ref={containerRef}
         className={styles.container({ visible: isOpen })}
         role="dialog"
         aria-modal="true"
         aria-label="フィルター"
       >
-        {/* ハンドルバー */}
-        <div className={styles.handle}>
+        {/* ハンドルバー（スワイプで閉じる） */}
+        <div
+          className={styles.handle}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className={styles.handleBar} />
         </div>
 

@@ -64,13 +64,15 @@ export const container = cva({
   },
 });
 
-// ハンドルバー
+// ハンドルバー（スワイプ操作のタッチ領域）
 export const handle = css({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  height: '6', // 24px
+  height: '8', // 32px - タッチしやすいサイズ
   flexShrink: '0',
+  cursor: 'grab',
+  touchAction: 'none',
 });
 
 export const handleBar = css({
