@@ -1,5 +1,3 @@
-import * as cheerio from 'cheerio';
-
 import { sanitizePositiveInt, sanitizeText } from './sanitizer';
 
 import { err, ok } from '@/types/result';
@@ -7,15 +5,20 @@ import { err, ok } from '@/types/result';
 import type { ParsedField, ScenarioParser } from './types';
 
 /**
- * Booth商品ページのJSON-LD（schema.org/Product）から構造化データを抽出
+ * HTML文字列からJSON-LD（schema.org/Product）を抽出
+ * cheerio不要: <script type="application/ld+json"> を正規表現で取得
  */
 const extractJsonLd = (
-  $: cheerio.CheerioAPI,
+  html: string,
 ): { name: string; brand: string } | null => {
-  const scripts = $('script[type="application/ld+json"]');
-  for (let i = 0; i < scripts.length; i++) {
+  const scriptRegex =
+    /<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  const matches = html.matchAll(scriptRegex);
+  for (const match of matches) {
     try {
-      const json = JSON.parse($(scripts[i]).html() ?? '');
+      const content = match[1];
+      if (!content) continue;
+      const json = JSON.parse(content);
       if (json['@type'] === 'Product' && json.name) {
         return {
           name: sanitizeText(json.name),
@@ -27,6 +30,50 @@ const extractJsonLd = (
     }
   }
   return null;
+};
+
+/**
+ * HTML文字列から指定クラスを持つ要素のテキスト内容を抽出
+ * ネストされた div にも対応
+ */
+const extractTextByClass = (html: string, className: string): string => {
+  const idx = html.indexOf(className);
+  if (idx === -1) return '';
+
+  // クラス名を含むタグの終了 '>' を見つける
+  const tagEnd = html.indexOf('>', idx);
+  if (tagEnd === -1) return '';
+
+  // 対応する </div> を見つける（ネスト対応）
+  let depth = 1;
+  let pos = tagEnd + 1;
+  const contentStart = pos;
+
+  while (pos < html.length && depth > 0) {
+    const nextOpen = html.indexOf('<div', pos);
+    const nextClose = html.indexOf('</div>', pos);
+
+    if (nextClose === -1) break;
+
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth++;
+      pos = nextOpen + 4;
+    } else {
+      depth--;
+      if (depth === 0) {
+        pos = nextClose;
+        break;
+      }
+      pos = nextClose + 6;
+    }
+  }
+
+  const content = html.substring(contentStart, pos);
+  // HTMLタグ除去 → 空白正規化
+  return content
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 };
 
 /**
@@ -184,10 +231,8 @@ const extractPlaytime = (
  */
 export const boothParser: ScenarioParser = {
   parse: (html, url) => {
-    const $ = cheerio.load(html);
-
     // JSON-LDからタイトルと販売者名を取得
-    const jsonLd = extractJsonLd($);
+    const jsonLd = extractJsonLd(html);
     if (!jsonLd) {
       return err(
         new Error(
@@ -197,7 +242,7 @@ export const boothParser: ScenarioParser = {
     }
 
     // 商品説明文のテキストを取得（プレイ人数・時間の抽出用）
-    const descriptionText = $('.js-market-item-detail').text();
+    const descriptionText = extractTextByClass(html, 'js-market-item-detail');
 
     const playerCount = extractPlayerCount(descriptionText);
     const playtime = extractPlaytime(descriptionText);
