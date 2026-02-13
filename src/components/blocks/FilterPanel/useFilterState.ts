@@ -75,7 +75,7 @@ export const useFilterState = () => {
 
   // プレイ人数の変更（debounce）
   const setPlayerRange = useCallback(
-    (min: number, max: number) => {
+    (min: number | null, max: number | null) => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
@@ -88,7 +88,7 @@ export const useFilterState = () => {
 
   // プレイ時間の変更（debounce）
   const setPlaytimeRange = useCallback(
-    (min: number, max: number) => {
+    (min: number | null, max: number | null) => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }

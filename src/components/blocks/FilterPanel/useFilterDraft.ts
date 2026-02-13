@@ -97,13 +97,19 @@ export const useFilterDraft = () => {
     }));
   }, []);
 
-  const setPlayerRange = useCallback((min: number, max: number) => {
-    setDraft((prev) => ({ ...prev, minPlayer: min, maxPlayer: max }));
-  }, []);
+  const setPlayerRange = useCallback(
+    (min: number | null, max: number | null) => {
+      setDraft((prev) => ({ ...prev, minPlayer: min, maxPlayer: max }));
+    },
+    [],
+  );
 
-  const setPlaytimeRange = useCallback((min: number, max: number) => {
-    setDraft((prev) => ({ ...prev, minPlaytime: min, maxPlaytime: max }));
-  }, []);
+  const setPlaytimeRange = useCallback(
+    (min: number | null, max: number | null) => {
+      setDraft((prev) => ({ ...prev, minPlaytime: min, maxPlaytime: max }));
+    },
+    [],
+  );
 
   const setKeyword = useCallback((q: string) => {
     setDraft((prev) => ({ ...prev, q }));

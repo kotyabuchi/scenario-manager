@@ -21,8 +21,8 @@ export type FilterStateBase = {
   activeFilterCount: number;
   toggleSystem: (systemId: string) => void;
   toggleTag: (tagId: string) => void;
-  setPlayerRange: (min: number, max: number) => void;
-  setPlaytimeRange: (min: number, max: number) => void;
+  setPlayerRange: (min: number | null, max: number | null) => void;
+  setPlaytimeRange: (min: number | null, max: number | null) => void;
   setKeyword: (q: string) => void;
   clearAll: () => void;
   /** ドラフトモード時のみ存在。検索ボタン押下でURLに一括反映 */
