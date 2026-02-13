@@ -9,16 +9,6 @@ import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
 import type { ScenarioCardProps } from '../interface';
 
-// システム名に基づいて色を決定（cvaバリアントの背景色と同期）
-const getSystemColor = (systemName: string): string => {
-  const name = systemName.toLowerCase();
-  if (name.includes('coc') && name.includes('7')) return '#059568'; // primary.500
-  if (name.includes('sw') && name.includes('2.5')) return '#9659DA'; // purple.500
-  if (name.includes('coc') && name.includes('6')) return '#A57230'; // CoC6版
-  if (name.includes('coc')) return '#059568'; // primary.500
-  return '#777E8C'; // gray.500
-};
-
 // システムバリアントを決定
 const getSystemVariant = (
   systemName: string,
@@ -38,7 +28,6 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
       ? scenario.scenarioTags.map((st) => st.tag).slice(0, 3)
       : [];
 
-  const systemColor = getSystemColor(scenario.system.name);
   const systemVariant = getSystemVariant(scenario.system.name);
 
   return (
@@ -66,27 +55,13 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
           </div>
         )}
 
-        {/* システム名ラベル（リキッドカーブ付き） */}
-        <div className={styles.cardSystemLabelWrapper}>
-          <div className={styles.cardSystemLabel({ system: systemVariant })}>
-            <span className={styles.cardSystemLabelText}>
-              {scenario.system.name}
-            </span>
-          </div>
-          {/* 右側のリキッドカーブ */}
-          <div
-            className={styles.cardSystemLabelCurveRight}
-            style={{
-              background: `radial-gradient(circle 16px at 100% 100%, transparent 15.5px, ${systemColor} 16px)`,
-            }}
-          />
-          {/* 下側のリキッドカーブ */}
-          <div
-            className={styles.cardSystemLabelCurveBottom}
-            style={{
-              background: `radial-gradient(circle 16px at 100% 100%, transparent 15.5px, ${systemColor} 16px)`,
-            }}
-          />
+        {/* システム名ラベル（逆角丸カットアウト） */}
+        <div className={styles.cardSystemLabel}>
+          <span
+            className={styles.cardSystemLabelText({ system: systemVariant })}
+          >
+            {scenario.system.name}
+          </span>
         </div>
 
         {/* お気に入りボタン */}

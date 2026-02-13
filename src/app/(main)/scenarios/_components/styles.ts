@@ -8,9 +8,10 @@ import { css, cva } from '@/styled-system/css';
 export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
+  gap: '3',
   bg: 'white',
-  borderRadius: 'xl',
-  overflow: 'hidden',
+  borderRadius: '2xl',
+  p: '3',
   cursor: 'pointer',
   transitionProperty: 'common',
   transitionDuration: 'normal',
@@ -27,6 +28,10 @@ export const cardThumbnail = css({
   height: '[180px]',
   bg: 'gray.100',
   overflow: 'hidden',
+  borderTopLeftRadius: '0',
+  borderTopRightRadius: 'xl',
+  borderBottomLeftRadius: 'xl',
+  borderBottomRightRadius: 'xl',
 });
 
 export const cardThumbnailImage = css({
@@ -66,61 +71,64 @@ export const cardThumbnailPlaceholderText = css({
   color: 'white',
 });
 
-// システム名ラベル（リキッドカーブ付き）- Pencilデザイン準拠
-export const cardSystemLabelWrapper = css({
+// システム名ラベル（CSS mask による逆角丸カットアウト）
+export const cardSystemLabel = css({
   position: 'absolute',
   top: '0',
   left: '0',
   maxW: '[70%]',
-  zIndex: '[1]',
+  pt: '0',
+  pb: '1',
+  pl: '0',
+  pr: '1',
+  display: 'flex',
+  alignItems: 'center',
+  bg: 'white',
+  borderBottomRightRadius: '2xl',
+  _before: {
+    content: '""',
+    position: 'absolute',
+    top: '0',
+    left: '[100%]',
+    w: '[14px]',
+    h: '[14px]',
+    bg: '[inherit]',
+    maskImage:
+      '[radial-gradient(circle at 100% 100%, transparent 13.5px, black calc(13.5px + 1px))]',
+  },
+  _after: {
+    content: '""',
+    position: 'absolute',
+    top: '[100%]',
+    left: '0',
+    w: '[14px]',
+    h: '[14px]',
+    bg: '[inherit]',
+    maskImage:
+      '[radial-gradient(circle at 100% 100%, transparent 13.5px, black calc(13.5px + 1px))]',
+  },
 });
 
-// システムバッジのベーススタイル（色はcvaで制御）
-export const cardSystemLabel = cva({
+// システム名テキスト（色はシステム別）
+export const cardSystemLabelText = cva({
   base: {
-    position: 'relative',
-    px: '3',
-    py: '1.5',
-    display: 'flex',
-    alignItems: 'center',
-    borderBottomRightRadius: 'md',
+    px: '2',
+    py: '0.5',
+    fontSize: 'xs',
+    fontWeight: 'bold',
+    truncate: true,
   },
   variants: {
     system: {
-      coc7: { bg: 'primary.500' },
-      sw25: { bg: 'purple.500' },
-      coc6: { bg: 'orange.500' },
-      default: { bg: 'gray.500' },
+      coc7: { color: 'primary.600' },
+      sw25: { color: 'purple.600' },
+      coc6: { color: 'orange.600' },
+      default: { color: 'gray.600' },
     },
   },
   defaultVariants: {
     system: 'default',
   },
-});
-
-export const cardSystemLabelText = css({
-  fontSize: '[11px]',
-  fontWeight: 'semibold',
-  color: 'white',
-  truncate: true,
-});
-
-// リキッドカーブ（右側）- 色はpropsで制御するためベーススタイルのみ
-export const cardSystemLabelCurveRight = css({
-  position: 'absolute',
-  top: '0',
-  right: '-4',
-  w: '4',
-  h: '4',
-});
-
-// リキッドカーブ（下側）- 色はpropsで制御するためベーススタイルのみ
-export const cardSystemLabelCurveBottom = css({
-  position: 'absolute',
-  bottom: '-4',
-  left: '0',
-  w: '4',
-  h: '4',
 });
 
 // お気に入りボタン - Pencilデザイン準拠
@@ -166,7 +174,6 @@ export const cardContent = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '3',
-  p: '4',
   flex: '1',
 });
 
