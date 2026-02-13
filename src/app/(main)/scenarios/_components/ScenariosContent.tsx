@@ -33,7 +33,7 @@ import type {
 // ソートオプションの表示ラベル
 const sortSelectItems: SelectItem[] = [
   { value: 'newest', label: '新着順' },
-  { value: 'rating', label: '高評価順' },
+  { value: 'oldest', label: '古い順' },
   { value: 'playtime_asc', label: '短時間順' },
   { value: 'playtime_desc', label: '長時間順' },
 ];
@@ -110,6 +110,7 @@ export const ScenariosContent = ({
   // 検索結果状態
   const [searchResult, setSearchResult] = useState<SearchResult>(initialResult);
   const [offset, setOffset] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // モバイル用ボトムシートの開閉状態
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -130,6 +131,8 @@ export const ScenariosContent = ({
 
   // committed の変更で検索を実行（ドラフトではなく確定値のみ監視）
   useEffect(() => {
+    const abortController = new AbortController();
+
     // フィルター変更時はページネーションを即座にリセット
     setOffset(0);
 
@@ -147,17 +150,24 @@ export const ScenariosContent = ({
         });
         const response = await fetch(
           `/api/scenarios/search${queryString}&limit=20&offset=0`,
+          { signal: abortController.signal },
         );
         if (response.ok) {
           const data = (await response.json()) as SearchResult;
           setSearchResult(data);
         }
       } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError')
+          return;
         getAppLogger(['app', 'scenarios']).error`Search failed: ${error}`;
       }
     };
 
     fetchResults();
+
+    return () => {
+      abortController.abort();
+    };
   }, [
     draftState.committed.systems,
     draftState.committed.tags,
@@ -180,6 +190,7 @@ export const ScenariosContent = ({
   // もっと見る
   const handleLoadMore = useCallback(async () => {
     const newOffset = offset + 20;
+    setIsLoadingMore(true);
 
     try {
       const queryString = buildApiQueryString({
@@ -205,6 +216,8 @@ export const ScenariosContent = ({
       }
     } catch (error) {
       getAppLogger(['app', 'scenarios']).error`Load more failed: ${error}`;
+    } finally {
+      setIsLoadingMore(false);
     }
   }, [draftState.committed, sort, offset]);
 
@@ -282,6 +295,8 @@ export const ScenariosContent = ({
                 variant="outline"
                 status="primary"
                 onClick={handleLoadMore}
+                loading={isLoadingMore}
+                loadingText="読み込み中..."
                 className={styles.loadMoreButton}
               >
                 <CaretDown size={18} className={styles.loadMoreIcon} />
