@@ -233,11 +233,20 @@ describe.skip('searchScenarios', () => {
       }
     });
 
-    it.skip('T-205-2: 高評価順でソートできる（TODO: レビュー機能実装後）', async () => {
-      const result = await searchScenarios({}, 'rating');
+    it('T-205-2: 登録順（古い順）でソートできる', async () => {
+      const result = await searchScenarios({}, 'oldest');
 
       expect(result.success).toBe(true);
-      // TODO: レビューテーブルと結合後に実装
+      if (result.success && result.data.scenarios.length >= 2) {
+        const dates = result.data.scenarios.map((s) => s.createdAt);
+        for (let i = 0; i < dates.length - 1; i++) {
+          const current = dates[i];
+          const next = dates[i + 1];
+          if (current !== undefined && next !== undefined) {
+            expect(current <= next).toBe(true);
+          }
+        }
+      }
     });
 
     it('T-205-3: プレイ時間順（短い順）でソートできる', async () => {

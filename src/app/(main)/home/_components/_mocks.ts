@@ -49,6 +49,8 @@ const baseScenario = {
   minPlayer: 3,
   minPlaytime: 120,
   scenarioImageUrl: null,
+  sortPlaytimeAsc: 120,
+  sortPlaytimeDesc: 240,
   sourceType: null,
   sourceUrl: null,
   sourceFetchedAt: null,

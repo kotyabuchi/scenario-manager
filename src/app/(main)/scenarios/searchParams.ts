@@ -12,7 +12,7 @@ import type { SortOption } from './interface';
 // ソートオプションの定義
 export const sortOptions = [
   'newest',
-  'rating',
+  'oldest',
   'playtime_asc',
   'playtime_desc',
 ] as const;

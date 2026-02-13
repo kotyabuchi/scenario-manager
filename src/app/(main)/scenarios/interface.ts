@@ -24,7 +24,7 @@ type SearchParams = {
 };
 
 // ソートオプション
-type SortOption = 'newest' | 'rating' | 'playtime_asc' | 'playtime_desc';
+type SortOption = 'newest' | 'oldest' | 'playtime_asc' | 'playtime_desc';
 
 // 検索結果
 type SearchResult = {

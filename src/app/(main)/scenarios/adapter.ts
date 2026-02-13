@@ -16,6 +16,79 @@ import type {
 } from './interface';
 
 /**
+ * タグANDフィルタ: 全タグを持つシナリオIDを取得
+ */
+const getTagFilteredIds = async (
+  supabase: Awaited<ReturnType<typeof createDbClient>>,
+  tagIds: string[],
+): Promise<string[] | null> => {
+  const { data: tagData } = await supabase
+    .from('scenario_tags')
+    .select('scenario_id')
+    .in('tag_id', tagIds);
+
+  if (!tagData) return null;
+
+  const scenarioTagCounts = new Map<string, number>();
+  for (const row of tagData) {
+    const count = scenarioTagCounts.get(row.scenario_id) ?? 0;
+    scenarioTagCounts.set(row.scenario_id, count + 1);
+  }
+
+  const ids: string[] = [];
+  for (const [scenarioId, count] of scenarioTagCounts) {
+    if (count >= tagIds.length) {
+      ids.push(scenarioId);
+    }
+  }
+  return ids;
+};
+
+/**
+ * ベースクエリにフィルタを適用する
+ */
+const applyFilters = <
+  T extends {
+    in: (col: string, values: string[]) => T;
+    ilike: (col: string, pattern: string) => T;
+    lte: (col: string, value: number) => T;
+    gte: (col: string, value: number) => T;
+  },
+>(
+  query: T,
+  params: SearchParams,
+  tagFilteredScenarioIds: string[] | null,
+): T => {
+  let q = query;
+
+  if (!isNil(params.systemIds) && params.systemIds.length > 0) {
+    q = q.in('scenario_system_id', params.systemIds);
+  }
+
+  if (!isNil(params.scenarioName) && params.scenarioName.trim() !== '') {
+    q = q.ilike('name', `%${params.scenarioName}%`);
+  }
+
+  if (!isNil(params.playerCount)) {
+    q = q
+      .lte('min_player', params.playerCount.max)
+      .gte('max_player', params.playerCount.min);
+  }
+
+  if (!isNil(params.playtime)) {
+    const minMinutes = params.playtime.min * 60;
+    const maxMinutes = params.playtime.max * 60;
+    q = q.lte('min_playtime', maxMinutes).gte('max_playtime', minMinutes);
+  }
+
+  if (tagFilteredScenarioIds) {
+    q = q.in('scenario_id', tagFilteredScenarioIds);
+  }
+
+  return q;
+};
+
+/**
  * シナリオを検索する
  */
 export const searchScenarios = async (
@@ -27,104 +100,88 @@ export const searchScenarios = async (
   try {
     const supabase = await createDbClient();
 
-    // タグANDフィルタ: 先にタグ条件に合うシナリオIDを取得
+    // タグANDフィルタ
     let tagFilteredScenarioIds: string[] | null = null;
     if (!isNil(params.tagIds) && params.tagIds.length > 0) {
-      const { data: tagData } = await supabase
-        .from('scenario_tags')
-        .select('scenario_id')
-        .in('tag_id', params.tagIds);
-
-      if (tagData) {
-        // 全タグを持つシナリオのみ（ANDフィルタ）
-        const scenarioTagCounts = new Map<string, number>();
-        for (const row of tagData) {
-          const count = scenarioTagCounts.get(row.scenario_id) ?? 0;
-          scenarioTagCounts.set(row.scenario_id, count + 1);
-        }
-        tagFilteredScenarioIds = [];
-        for (const [scenarioId, count] of scenarioTagCounts) {
-          if (count >= params.tagIds.length) {
-            tagFilteredScenarioIds.push(scenarioId);
-          }
-        }
-        if (tagFilteredScenarioIds.length === 0) {
-          return ok({ scenarios: [], totalCount: 0 });
-        }
+      const ids = await getTagFilteredIds(supabase, params.tagIds);
+      if (ids !== null && ids.length === 0) {
+        return ok({ scenarios: [], totalCount: 0 });
       }
+      tagFilteredScenarioIds = ids;
     }
 
-    // ベースクエリ
-    let query = supabase
-      .from('scenarios')
-      .select(
-        '*, system:scenario_systems(*), scenarioTags:scenario_tags(tag:tags(*))',
-        { count: 'exact' },
-      );
-
-    // フィルタ適用
-    if (!isNil(params.systemIds) && params.systemIds.length > 0) {
-      query = query.in('scenario_system_id', params.systemIds);
-    }
-
-    if (!isNil(params.scenarioName) && params.scenarioName.trim() !== '') {
-      query = query.ilike('name', `%${params.scenarioName}%`);
-    }
-
-    if (!isNil(params.playerCount)) {
-      query = query
-        .lte('min_player', params.playerCount.max)
-        .gte('max_player', params.playerCount.min);
-    }
-
-    if (!isNil(params.playtime)) {
-      const minMinutes = params.playtime.min * 60;
-      const maxMinutes = params.playtime.max * 60;
-      query = query
-        .lte('min_playtime', maxMinutes)
-        .gte('max_playtime', minMinutes);
-    }
-
-    if (tagFilteredScenarioIds) {
-      query = query.in('scenario_id', tagFilteredScenarioIds);
-    }
-
-    // ソート（scenario_id をタイブレーカーに追加し、ページネーションの安定性を保証）
-    switch (sort) {
-      case 'newest':
-        query = query.order('created_at', { ascending: false });
-        break;
-      case 'playtime_asc':
-        query = query.order('min_playtime', { ascending: true });
-        break;
-      case 'playtime_desc':
-        query = query.order('min_playtime', { ascending: false });
-        break;
-      case 'rating':
-        query = query.order('created_at', { ascending: false });
-        break;
-    }
-    query = query.order('scenario_id', { ascending: false });
-
-    // ページネーション
-    query = query.range(offset, offset + limit - 1);
-
-    const { data, error, count } = await query;
-
-    if (error) {
-      return err(new Error(error.message));
-    }
-
-    return ok({
-      scenarios: (data ?? []).map(
-        (s) =>
-          camelCaseKeys(s as Record<string, unknown>) as ScenarioWithRelations,
-      ),
-      totalCount: count ?? 0,
-    });
+    // 全ソートオプションはDB側ソート＋ページネーション
+    return searchWithDbSort(
+      supabase,
+      params,
+      tagFilteredScenarioIds,
+      sort,
+      limit,
+      offset,
+    );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
+};
+
+/**
+ * DB側ソート
+ */
+const searchWithDbSort = async (
+  supabase: Awaited<ReturnType<typeof createDbClient>>,
+  params: SearchParams,
+  tagFilteredScenarioIds: string[] | null,
+  sort: SortOption,
+  limit: number,
+  offset: number,
+): Promise<Result<SearchResult>> => {
+  let query = supabase
+    .from('scenarios')
+    .select(
+      '*, system:scenario_systems(*), scenarioTags:scenario_tags(tag:tags(*))',
+      { count: 'exact' },
+    );
+
+  query = applyFilters(query, params, tagFilteredScenarioIds);
+
+  // ソート（生成カラムで COALESCE 済みの値を使用、scenario_id をタイブレーカーに）
+  switch (sort) {
+    case 'newest':
+      query = query.order('created_at', { ascending: false });
+      break;
+    case 'oldest':
+      query = query.order('created_at', { ascending: true });
+      break;
+    case 'playtime_asc':
+      query = query.order('sort_playtime_asc', {
+        ascending: true,
+        nullsFirst: false,
+      });
+      break;
+    case 'playtime_desc':
+      query = query.order('sort_playtime_desc', {
+        ascending: false,
+        nullsFirst: false,
+      });
+      break;
+  }
+  query = query
+    .order('scenario_id', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    return err(new Error(error.message));
+  }
+
+  return ok({
+    scenarios: (data ?? []).map(
+      (s) =>
+        camelCaseKeys(s as Record<string, unknown>) as ScenarioWithRelations,
+    ),
+    totalCount: count ?? 0,
+  });
 };
 
 /**

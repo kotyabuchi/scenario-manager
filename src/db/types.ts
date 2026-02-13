@@ -372,6 +372,8 @@ export type Database = {
           scenario_id: string;
           scenario_image_url: string | null;
           scenario_system_id: string;
+          sort_playtime_asc: number | null;
+          sort_playtime_desc: number | null;
           source_fetched_at: string | null;
           source_type:
             | Database['public']['Enums']['scenario_source_type']
@@ -394,6 +396,8 @@ export type Database = {
           scenario_id: string;
           scenario_image_url?: string | null;
           scenario_system_id: string;
+          sort_playtime_asc?: number | null;
+          sort_playtime_desc?: number | null;
           source_fetched_at?: string | null;
           source_type?:
             | Database['public']['Enums']['scenario_source_type']
@@ -416,6 +420,8 @@ export type Database = {
           scenario_id?: string;
           scenario_image_url?: string | null;
           scenario_system_id?: string;
+          sort_playtime_asc?: number | null;
+          sort_playtime_desc?: number | null;
           source_fetched_at?: string | null;
           source_type?:
             | Database['public']['Enums']['scenario_source_type']
