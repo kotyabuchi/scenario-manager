@@ -191,15 +191,36 @@
 | feedbackFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | createFeedbackAction | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
 | FeedbackModal | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| FeedbackButton | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| FeedbackButton | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 廃止予定（SpeedDialFABに統合） |
 
 **テストファイル**:
 - `src/components/blocks/FeedbackModal/__tests__/schema.test.ts`
 - `src/components/blocks/FeedbackModal/__tests__/actions.test.ts`
 
 **UIコンポーネント**:
-- `src/components/blocks/FeedbackButton/` - 右下固定のFABボタン
+- `src/components/blocks/FeedbackButton/` - 右下固定のFABボタン → **SpeedDialFABに置換予定**
 - `src/components/blocks/FeedbackModal/` - フィードバック投稿モーダル
+
+---
+
+### FABリニューアル（requirements-fab-redesign.md）
+
+| 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
+|------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
+| SpeedDialFAB | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了 |
+| useSpeedDial | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了 |
+| shareCurrentPage | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了 |
+| BottomNav統合 | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了 |
+| QuickSearchModal | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済（Phase 2） |
+| searchScenariosQuick | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済（Phase 2） |
+
+**要件定義書**: `.claude/requirements/requirements-fab-redesign.md`
+
+**テストファイル**:
+- `src/components/blocks/SpeedDialFAB/__tests__/useSpeedDial.test.ts` - フック Unit Tests (6項目)
+- `src/components/blocks/SpeedDialFAB/__tests__/share.test.ts` - シェアユーティリティ Unit Tests (3項目)
+- `src/components/blocks/SpeedDialFAB/SpeedDialFAB.test.tsx` - コンポーネント Tests (14項目)
+- `src/components/blocks/SpeedDialFAB/SpeedDialFAB.stories.tsx` - Storybook Stories
 
 ---
 

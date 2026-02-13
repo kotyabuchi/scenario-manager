@@ -22,8 +22,23 @@ export default defineConfig({
             'src/**/__tests__/**/*.test.ts',
             'src/**/__tests__/**/*.test.tsx',
           ],
-          exclude: ['node_modules', '.next', 'e2e'],
+          exclude: [
+            'node_modules',
+            '.next',
+            'e2e',
+            // DOM APIが必要なテストは除外（後続のプロジェクトで処理）
+            'src/components/blocks/SpeedDialFAB/__tests__/*.test.ts',
+          ],
           environment: 'node',
+        },
+      },
+      // SpeedDialFAB のユニットテスト用（DOM APIが必要）
+      {
+        extends: true,
+        test: {
+          name: 'unit-dom',
+          include: ['src/components/blocks/SpeedDialFAB/__tests__/*.test.ts'],
+          environment: 'jsdom',
         },
       },
       // コンポーネントテスト用（composeStoriesを使用）

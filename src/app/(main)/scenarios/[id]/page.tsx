@@ -3,13 +3,12 @@ import { isNil } from 'ramda';
 
 import {
   ReviewSection,
-  ScenarioFAB,
   ScenarioHeader,
   ScenarioInfo,
   SessionSection,
   VideoSection,
 } from './_components';
-import { toggleFavoriteAction, togglePlayedAction } from './actions';
+import { toggleFavoriteAction } from './actions';
 import {
   getScenarioDetail,
   getScenarioReviews,
@@ -78,8 +77,6 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
 
   const isFavorite = userPreference?.isLike ?? false;
   const isPlayed = userPreference?.isPlayed ?? false;
-  const canEdit =
-    !isNil(currentUserId) && currentUserId === scenario.createdById;
   const isLoggedIn = !isNil(currentUserId);
 
   // お気に入りトグルのServer Action
@@ -87,13 +84,6 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
     'use server';
     if (isNil(currentUserId)) return;
     await toggleFavoriteAction(id, currentUserId);
-  };
-
-  // プレイ済みトグルのServer Action
-  const handleTogglePlayed = async () => {
-    'use server';
-    if (isNil(currentUserId)) return;
-    await togglePlayedAction(id, currentUserId);
   };
 
   return (
@@ -133,15 +123,8 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
         />
       </div>
 
-      {/* FAB（メニュー） */}
-      {isLoggedIn && (
-        <ScenarioFAB
-          scenarioId={id}
-          isPlayed={isPlayed}
-          canEdit={canEdit}
-          onTogglePlayed={handleTogglePlayed}
-        />
-      )}
+      {/* ScenarioFAB は SpeedDialFAB に統合済み */}
+      {/* プレイ済み登録・シナリオ編集のページ内UI移設は別タスクで対応 */}
     </div>
   );
 }

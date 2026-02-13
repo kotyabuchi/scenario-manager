@@ -11,6 +11,8 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { SpeedDialPanel } from '../SpeedDialFAB/SpeedDialPanel';
+import { useSpeedDial } from '../SpeedDialFAB/useSpeedDial';
 import * as styles from './styles';
 
 import type { Route } from 'next';
@@ -31,10 +33,15 @@ const navItems: NavItem[] = [
 
 const SCROLL_THRESHOLD = 10;
 
-export const BottomNav = () => {
+type BottomNavProps = {
+  isAuthenticated: boolean;
+};
+
+export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
   const pathname = usePathname();
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const { isOpen, close, toggle } = useSpeedDial();
 
   const handleScroll = useCallback(() => {
     const currentY = window.scrollY;
@@ -83,11 +90,35 @@ export const BottomNav = () => {
         );
       })}
 
-      {/* Center FAB */}
+      {/* Center Speed Dial FAB */}
       <div className={styles.fabWrapper}>
-        <Link href={'/scenarios/new' as Route} className={styles.fab}>
-          <Plus size={28} weight="bold" />
-        </Link>
+        {isOpen && (
+          <>
+            <button
+              type="button"
+              className={styles.speedDial_overlay}
+              onClick={close}
+              aria-label="メニューを閉じる"
+            />
+            <div className={styles.speedDial_menu} role="menu">
+              <SpeedDialPanel
+                isAuthenticated={isAuthenticated}
+                onClose={close}
+              />
+            </div>
+          </>
+        )}
+        <button
+          type="button"
+          className={styles.fab}
+          onClick={toggle}
+          aria-label="メニューを開く"
+          aria-expanded={isOpen}
+        >
+          <span className={styles.fabIcon({ open: isOpen })}>
+            <Plus size={28} weight="bold" />
+          </span>
+        </button>
       </div>
 
       {/* 右2つ */}

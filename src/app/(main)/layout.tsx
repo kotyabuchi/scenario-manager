@@ -1,9 +1,9 @@
 import { SignupModalWrapper } from './_components/SignupModalWrapper';
 
 import { BottomNav } from '@/components/blocks/BottomNav';
-import { FeedbackButton } from '@/components/blocks/FeedbackButton';
 import { GlobalHeader } from '@/components/blocks/GlobalHeader';
 import { SimpleFooter } from '@/components/blocks/SimpleFooter';
+import { SpeedDialFAB } from '@/components/blocks/SpeedDialFAB';
 import { AuthProvider } from '@/context';
 import { createClient } from '@/lib/supabase/server';
 import { Flex, styled } from '@/styled-system/jsx';
@@ -64,8 +64,8 @@ export default async function MainLayout({ children }: PropsWithChildren) {
           {children}
         </styled.main>
         <SimpleFooter />
-        <BottomNav />
-        <FeedbackButton />
+        <BottomNav isAuthenticated={!!initialUser} />
+        <SpeedDialFAB isAuthenticated={!!initialUser} />
         <SignupModalWrapper />
       </AuthProvider>
     </Flex>

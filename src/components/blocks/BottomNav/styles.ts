@@ -78,6 +78,7 @@ export const fab = css({
   justifyContent: 'center',
   shadow: 'lg',
   cursor: 'pointer',
+  border: 'none',
   transition: 'transform',
   transitionDuration: 'fast',
   _hover: {
@@ -86,4 +87,53 @@ export const fab = css({
   _active: {
     transform: 'scale(0.95)',
   },
+});
+
+export const fabIcon = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'transform',
+    transitionDuration: 'normal',
+    transitionTimingFunction: 'ease-in-out',
+  },
+  variants: {
+    open: {
+      true: {
+        transform: 'rotate(45deg)',
+      },
+      false: {
+        transform: 'rotate(0deg)',
+      },
+    },
+  },
+  defaultVariants: {
+    open: false,
+  },
+});
+
+export const speedDial_overlay = css({
+  position: 'fixed',
+  inset: '0',
+  zIndex: '[1]',
+  bg: 'transparent',
+  border: 'none',
+  appearance: 'none',
+  cursor: 'default',
+  padding: '0',
+});
+
+export const speedDial_menu = css({
+  position: 'absolute',
+  bottom: '[calc(100%+token(spacing.5))]',
+  left: '[50%]',
+  transform: '[translateX(-50%)]',
+  bg: 'white',
+  borderRadius: 'xl',
+  shadow: 'card.default',
+  minWidth: 'xs',
+  px: '2',
+  py: '2',
+  zIndex: '[2]',
 });
