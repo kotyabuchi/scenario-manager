@@ -48,7 +48,7 @@ export const hintRow = css({
 });
 
 export const hintIcon = css({
-  color: 'warning.default',
+  color: 'yellow.500',
   flexShrink: '0',
 });
 

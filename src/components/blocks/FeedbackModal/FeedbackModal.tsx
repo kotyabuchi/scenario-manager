@@ -133,7 +133,7 @@ export const FeedbackModal = ({ open, onOpenChange }: FeedbackModalProps) => {
         loadingText="送信中..."
         form="feedback-form"
       >
-        <PaperPlaneTilt size={16} />
+        <PaperPlaneTilt size={16} weight="fill" />
         送信する
       </Button>
     </>
@@ -223,7 +223,7 @@ export const FeedbackModal = ({ open, onOpenChange }: FeedbackModalProps) => {
           {/* ヒントボックス */}
           <div className={styles.hintBox}>
             <div className={styles.hintRow}>
-              <Lightbulb size={16} className={styles.hintIcon} />
+              <Lightbulb size={16} weight="fill" className={styles.hintIcon} />
               <span className={styles.hintText}>
                 似た声がないか覗いてみませんか？
               </span>
