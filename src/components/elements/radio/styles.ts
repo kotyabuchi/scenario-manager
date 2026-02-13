@@ -46,10 +46,10 @@ export const radioControl = css({
     bg: 'gray.200',
     boxShadow: '[none]',
   },
-  _focus: {
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'border.focus',
-    outlineOffset: '2',
+    outlineOffset: '[2px]',
   },
 });
 
