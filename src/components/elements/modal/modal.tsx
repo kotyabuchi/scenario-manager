@@ -42,8 +42,14 @@ export const Modal = ({
                 <X size={20} />
               </Dialog.CloseTrigger>
             </header>
+            <hr className={styles.divider} />
             <div className={styles.body}>{children}</div>
-            {footer && <footer className={styles.footer}>{footer}</footer>}
+            {footer && (
+              <>
+                <hr className={styles.divider} />
+                <footer className={styles.footer}>{footer}</footer>
+              </>
+            )}
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>

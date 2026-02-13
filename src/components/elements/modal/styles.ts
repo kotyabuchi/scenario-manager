@@ -49,8 +49,6 @@ export const header = css({
   alignItems: 'center',
   justifyContent: 'space-between',
   p: '6',
-  borderBottom: '[1px solid]',
-  borderColor: 'border.subtle',
 });
 
 export const title = css({
@@ -87,6 +85,11 @@ export const footer = css({
   justifyContent: 'flex-end',
   gap: '2',
   p: '6',
-  borderTop: '[1px solid]',
-  borderColor: 'border.subtle',
+});
+
+export const divider = css({
+  height: '[1px]',
+  bg: 'border.subtle',
+  border: 'none',
+  m: '0',
 });
