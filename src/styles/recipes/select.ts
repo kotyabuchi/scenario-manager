@@ -29,7 +29,7 @@ export const select = defineSlotRecipe({
       fontFamily: 'Inter, sans-serif',
       cursor: 'pointer',
       transition: 'all {durations.fast} ease-out',
-      _focus: {
+      _focusVisible: {
         outline: '2px solid',
         outlineColor: 'input.focusBorder',
       },

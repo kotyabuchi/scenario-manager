@@ -30,7 +30,7 @@ export const chip = cva({
     _focusVisible: {
       outline: '[2px solid]',
       outlineColor: 'border.focus',
-      outlineOffset: '[2px]',
+      outlineOffset: '[-1px]',
     },
   },
   variants: {

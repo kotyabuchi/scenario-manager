@@ -51,6 +51,8 @@ export const input = css({
   _focus: {
     borderColor: '[primary.500]',
     bg: '[bg.emphasized]',
+  },
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: '[border.focus]',
   },
@@ -82,6 +84,8 @@ export const textarea = css({
   _focus: {
     borderColor: '[primary.500]',
     bg: '[bg.emphasized]',
+  },
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: '[border.focus]',
   },
@@ -109,6 +113,8 @@ export const select = css({
   _focus: {
     borderColor: '[primary.500]',
     bg: '[bg.emphasized]',
+  },
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: '[border.focus]',
   },

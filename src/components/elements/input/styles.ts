@@ -21,7 +21,7 @@ export const input = cva({
     _hover: {
       bg: 'gray.200',
     },
-    _focus: {
+    _focusVisible: {
       outline: '[2px solid]',
       outlineColor: 'border.focus',
     },
@@ -44,7 +44,7 @@ export const input = cva({
         bg: 'input.bgError',
         outline: '[1px solid]',
         outlineColor: 'input.errorBorder',
-        _focus: {
+        _focusVisible: {
           outlineColor: 'input.errorBorder',
         },
       },
