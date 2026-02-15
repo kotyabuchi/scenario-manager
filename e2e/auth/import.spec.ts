@@ -121,6 +121,19 @@ test.describe('インポートページ - Tier 2: URL解析フロー', () => {
     await expect(importPage.nameInput).not.toHaveValue('');
   });
 
+  test('TALTO解析後にプレイ人数・時間が表示される', async ({ page }) => {
+    test.skip(!taltoUrl, 'E2E_TEST_TALTO_URL が未設定');
+    if (!taltoUrl) return;
+    test.slow();
+
+    await importPage.submitUrl(taltoUrl);
+    await importPage.waitForFormStep();
+
+    // min=null でも readonly 表示 or スライダーとして表示されること
+    await expect(page.getByText('プレイ人数').first()).toBeVisible();
+    await expect(page.getByText('プレイ時間').first()).toBeVisible();
+  });
+
   test('戻るボタンでURL入力ステップに戻れる', async () => {
     test.skip(!boothUrl && !taltoUrl, 'テスト用URL環境変数が未設定');
     const testUrl = boothUrl ?? taltoUrl;
