@@ -3,9 +3,9 @@ import { err, ok, type Result } from '@/types/result';
 /**
  * 許可するドメインのホワイトリスト
  */
-const ALLOWED_DOMAINS = ['booth.pm', 'talto.cc'] as const;
+export const ALLOWED_DOMAINS = ['booth.pm', 'talto.cc'] as const;
 
-type AllowedDomain = (typeof ALLOWED_DOMAINS)[number];
+export type AllowedDomain = (typeof ALLOWED_DOMAINS)[number];
 
 /**
  * プライベートIP・ローカルホストのパターン
@@ -60,4 +60,20 @@ export const validateScenarioUrl = (
   }
 
   return ok({ url, domain: matchedDomain });
+};
+
+/**
+ * URLがインポート対応サイト（BOOTH/TALTO）かどうかを判定する（クライアント用）
+ * SSRF検証は行わない。UIでの表示判定のみに使用すること。
+ */
+export const isImportableUrl = (urlString: string): boolean => {
+  try {
+    const url = new URL(urlString);
+    return ALLOWED_DOMAINS.some(
+      (domain) =>
+        url.hostname === domain || url.hostname.endsWith(`.${domain}`),
+    );
+  } catch {
+    return false;
+  }
 };
