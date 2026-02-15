@@ -146,7 +146,8 @@ export const form_rightFields = css({
 // ラジオボタン横並び
 export const form_radioRow = css({
   flexDirection: 'row',
-  gap: '5',
+  alignItems: 'center',
+  h: '[44px]',
 });
 
 // フル幅セクション（概要、タグ等）

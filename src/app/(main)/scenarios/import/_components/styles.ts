@@ -163,6 +163,13 @@ export const form_fieldRow_narrow = css({
   },
 });
 
+// ラジオボタン横並び
+export const form_radioRow = css({
+  flexDirection: 'row',
+  alignItems: 'center',
+  h: '[44px]',
+});
+
 // フィールドコンテナ
 export const form_field = css({
   display: 'flex',

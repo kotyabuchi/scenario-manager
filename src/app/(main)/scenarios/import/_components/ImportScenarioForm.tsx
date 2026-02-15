@@ -23,6 +23,7 @@ import { FileUpload } from '@/components/elements/file-upload';
 import { FormField } from '@/components/elements/form-field';
 import { Input } from '@/components/elements/input';
 import { NumberInput } from '@/components/elements/number-input';
+import { Radio } from '@/components/elements/radio';
 import {
   Select,
   type SelectValueChangeDetails,
@@ -150,12 +151,10 @@ export const ImportScenarioForm = ({
   };
 
   // ハンドアウト選択変更
-  const handleHandoutChange = (
-    details: SelectValueChangeDetails<{ label: string; value: string }>,
-  ) => {
-    const value = details.value[0];
-    if (!isNil(value))
-      setValue('handoutType', value as 'NONE' | 'PUBLIC' | 'SECRET');
+  const handleHandoutChange = (details: { value: string | null }) => {
+    if (!isNil(details.value)) {
+      setValue('handoutType', details.value as 'NONE' | 'PUBLIC' | 'SECRET');
+    }
   };
 
   // タグ選択/解除
@@ -219,10 +218,6 @@ export const ImportScenarioForm = ({
   const systemItems = systems.map((s) => ({
     label: s.name,
     value: s.systemId,
-  }));
-  const handoutItems = Object.values(HandoutTypes).map((t) => ({
-    label: t.label,
-    value: t.value,
   }));
   const selectedTags = tags.filter((t) => selectedTagIds.includes(t.tagId));
   const unselectedTags = tags.filter((t) => !selectedTagIds.includes(t.tagId));
@@ -493,7 +488,7 @@ export const ImportScenarioForm = ({
               {/* システム + ハンドアウト */}
               <div className={styles.form_fieldRow_narrow}>
                 <FormField
-                  label="シナリオシステム"
+                  label="ゲームシステム"
                   required
                   error={errors.scenarioSystemId}
                 >
@@ -505,16 +500,18 @@ export const ImportScenarioForm = ({
                   />
                 </FormField>
 
-                <FormField
-                  label="ハンドアウトタイプ"
-                  error={errors.handoutType}
-                >
-                  <Select
-                    items={handoutItems}
-                    value={selectedHandoutType ? [selectedHandoutType] : []}
+                <FormField label="ハンドアウト形式" error={errors.handoutType}>
+                  <Radio
+                    value={selectedHandoutType}
                     onValueChange={handleHandoutChange}
-                    placeholder="なし"
-                  />
+                    className={styles.form_radioRow}
+                  >
+                    {Object.values(HandoutTypes).map((type) => (
+                      <Radio.Item key={type.value} value={type.value}>
+                        {type.label}
+                      </Radio.Item>
+                    ))}
+                  </Radio>
                 </FormField>
               </div>
 
