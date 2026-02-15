@@ -483,6 +483,7 @@ export const ImportScenarioForm = ({
                     dropzoneText="クリックまたはドラッグで画像をアップロード"
                     hint="PNG, JPG, WebP, GIF（最大5MB）※600×600pxに自動リサイズ"
                     compact
+                    square
                   />
                 </div>
               )}

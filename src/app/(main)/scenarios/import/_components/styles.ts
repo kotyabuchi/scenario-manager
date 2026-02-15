@@ -15,7 +15,7 @@ export const urlStep_container = css({
 });
 
 export const urlStep_title = css({
-  fontSize: '[18px]',
+  fontSize: 'lg',
   fontWeight: 'bold',
   color: 'text.title',
 });
@@ -31,7 +31,38 @@ export const urlStep_error = css({
   py: '3',
   px: '4',
   borderRadius: 'lg',
-  fontSize: '[14px]',
+  fontSize: 'sm',
+});
+
+// 自動解析エラーバナー
+export const urlStep_autoParseError = css({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '2',
+  bg: 'red.50',
+  color: 'text.error',
+  py: '3',
+  px: '4',
+  borderRadius: 'lg',
+  fontSize: 'sm',
+  lineHeight: '[1.5]',
+  outline: 'none',
+});
+
+// 自動解析ローディング
+export const urlStep_loading = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '3',
+  py: '4',
+  color: 'text.secondary',
+  fontSize: 'sm',
+});
+
+// スピナーアニメーション
+export const urlStep_spinner = css({
+  animation: 'spin',
 });
 
 // フォームカード（Step 2）
@@ -56,7 +87,7 @@ export const form_sourceBanner = css({
   px: '4',
   py: '3',
   borderRadius: 'lg',
-  fontSize: '[14px]',
+  fontSize: 'sm',
 });
 
 export const form_sourceLabel = css({
@@ -86,7 +117,7 @@ export const form_divider = css({
 
 // セクション見出し
 export const form_sectionTitle = css({
-  fontSize: '[14px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
   color: 'text.title',
 });
@@ -156,13 +187,13 @@ export const form_rangeInputRow = css({
 });
 
 export const form_rangeSeparator = css({
-  fontSize: '[14px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
   color: 'text.secondary',
 });
 
 export const form_rangeUnit = css({
-  fontSize: '[14px]',
+  fontSize: 'sm',
   color: 'text.secondary',
 });
 
@@ -183,7 +214,7 @@ export const form_sliderValue = css({
 export const form_sliderMinMax = css({
   display: 'flex',
   justifyContent: 'space-between',
-  fontSize: '[12px]',
+  fontSize: 'xs',
   color: 'text.placeholder',
 });
 
@@ -218,10 +249,6 @@ export const form_imageArea = css({
 
 export const form_imageUploadWrapper = css({
   w: '[280px]',
-  h: '[280px]',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
 });
 
 export const form_imagePreview = css({
@@ -247,7 +274,7 @@ export const form_imageRemove = css({
   py: '1.5',
   bg: 'overlay.darkHover',
   color: 'text.white',
-  fontSize: '[12px]',
+  fontSize: 'xs',
   fontWeight: 'medium',
   borderRadius: 'md',
   cursor: 'pointer',
@@ -284,7 +311,7 @@ export const form_sectionFields = css({
 
 // セクション見出し（上マージン付き）
 export const form_sectionTitle_mt = css({
-  fontSize: '[14px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
   color: 'text.title',
   mt: '6',
