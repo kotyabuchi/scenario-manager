@@ -1,4 +1,9 @@
-import { configure, getConsoleSink, getLogger } from '@logtape/logtape';
+import {
+  configure,
+  getAnsiColorFormatter,
+  getConsoleSink,
+  getLogger,
+} from '@logtape/logtape';
 
 let configured = false;
 
@@ -12,11 +17,22 @@ export const setupLogger = async () => {
 
   const isProduction = process.env.NODE_ENV === 'production';
 
+  const formatter = getAnsiColorFormatter({
+    timestamp: 'time',
+    level: 'ABBR',
+    category: '::',
+  });
+
   await configure({
     sinks: {
-      console: getConsoleSink(),
+      console: getConsoleSink({ formatter }),
     },
     loggers: [
+      {
+        category: ['logtape', 'meta'],
+        lowestLevel: 'warning',
+        sinks: ['console'],
+      },
       {
         category: ['app'],
         lowestLevel: isProduction ? 'warning' : 'debug',
