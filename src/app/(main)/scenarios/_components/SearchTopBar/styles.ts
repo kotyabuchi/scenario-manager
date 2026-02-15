@@ -40,6 +40,8 @@ export const searchTopBar_keywordInput = css({
   },
   _focus: {
     bg: 'gray.100',
+  },
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'primary.500',
   },

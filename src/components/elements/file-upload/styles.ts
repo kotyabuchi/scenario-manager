@@ -48,7 +48,7 @@ export const fileUpload_dropzone = css({
   _hover: {
     bg: 'gray.200',
   },
-  _focus: {
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'border.focus',
   },

@@ -312,6 +312,8 @@ export const keywordSearchInput = css({
   },
   _focus: {
     bg: 'gray.100',
+  },
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'primary.500',
   },
