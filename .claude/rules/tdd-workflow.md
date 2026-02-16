@@ -39,6 +39,7 @@
 | `/requirements` | スキル | 要件定義 | ユーザーと対話しながら詳細仕様を策定 |
 | `Plan` | エージェント | 計画 | 複雑な機能の実装計画を設計（3ファイル以上、100行以上の変更） |
 | `/pencil-design` | スキル | UIデザイン | 要件定義を元にPencilでUIデザインを作成 |
+| `/stitch-design` | スキル | UIデザイン | 要件定義を元にGoogle Stitch MCPでデザインを生成 |
 | `/component-spec` | スキル | 要件定義 | Pencilデザインを元にコンポーネント仕様を定義 |
 | `/gen-test` | スキル | Red | 要件定義書から失敗するテストを生成 |
 | `tdd-implementer` | エージェント | Green | テストを通過させる最小限の実装（自律実行） |

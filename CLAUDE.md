@@ -89,6 +89,7 @@ src/
 |--------|---------|------|
 | `/requirements` | 要件定義 | 詳細仕様の策定 |
 | `/pencil-design` | UIデザイン | Pencilでデザイン作成 |
+| `/stitch-design` | UIデザイン | Google Stitch MCPでデザイン生成 |
 | `/gen-test` | Red | 失敗するテストを生成 |
 | `/fix-bug` | バグ修正 | 再現テスト → 修正 |
 | `/redesign` | UI更新 | Pencilデザインからリデザイン |
