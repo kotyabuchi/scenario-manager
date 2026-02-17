@@ -55,10 +55,6 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
-    backgrounds: {
-      default: 'page',
-      values: [{ name: 'page', value: '#f5f8f7' }],
-    },
   },
 } satisfies Meta<typeof DashboardPage>;
 
