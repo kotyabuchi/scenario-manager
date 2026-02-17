@@ -12,8 +12,12 @@ export class ImportPage extends BasePage {
   readonly manualInputLink: Locator;
   readonly supportedSitesText: Locator;
 
-  // エラー表示
+  // エラー表示（Server Action からのバリデーションエラー）
   readonly urlError: Locator;
+
+  // 自動解析: エラーバナー・ローディング
+  readonly autoParseError: Locator;
+  readonly loadingIndicator: Locator;
 
   // Step 2: フォーム
   readonly sourceBanner: Locator;
@@ -32,8 +36,11 @@ export class ImportPage extends BasePage {
     this.manualInputLink = page.getByRole('link', { name: /手動で入力/ });
     this.supportedSitesText = page.getByText('対応サイト: Booth, TALTO');
 
-    // エラー表示（Server Action からのバリデーションエラー）
     this.urlError = page.locator('#url ~ [role="alert"]');
+
+    // 自動解析: エラー・ローディング
+    this.autoParseError = page.getByTestId('auto-parse-error');
+    this.loadingIndicator = page.getByText('URLを解析中...');
 
     // Step 2: フォームステップ
     this.sourceBanner = page.getByText(/インポート元:/);
@@ -47,6 +54,11 @@ export class ImportPage extends BasePage {
   /** インポートページに遷移 */
   async goto() {
     await this.navigate('/scenarios/import');
+  }
+
+  /** URLクエリパラメータ付きでインポートページに遷移 */
+  async gotoWithUrl(url: string) {
+    await this.navigate(`/scenarios/import?url=${encodeURIComponent(url)}`);
   }
 
   /** URLを入力して送信 */

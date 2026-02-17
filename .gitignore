@@ -65,9 +65,10 @@ src/lib/db/migrations
 playwright-report/
 e2e/.auth/
 
-# Cursor IDE
+# AI
 .cursor
 .claude/settings.local.json
+.mcp.json
 
 # OpenNext / Cloudflare build output
 .open-next

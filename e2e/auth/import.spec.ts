@@ -121,6 +121,19 @@ test.describe('インポートページ - Tier 2: URL解析フロー', () => {
     await expect(importPage.nameInput).not.toHaveValue('');
   });
 
+  test('TALTO解析後にプレイ人数・時間が表示される', async ({ page }) => {
+    test.skip(!taltoUrl, 'E2E_TEST_TALTO_URL が未設定');
+    if (!taltoUrl) return;
+    test.slow();
+
+    await importPage.submitUrl(taltoUrl);
+    await importPage.waitForFormStep();
+
+    // min=null でも readonly 表示 or スライダーとして表示されること
+    await expect(page.getByText('プレイ人数').first()).toBeVisible();
+    await expect(page.getByText('プレイ時間').first()).toBeVisible();
+  });
+
   test('戻るボタンでURL入力ステップに戻れる', async () => {
     test.skip(!boothUrl && !taltoUrl, 'テスト用URL環境変数が未設定');
     const testUrl = boothUrl ?? taltoUrl;
@@ -144,5 +157,74 @@ test.describe('インポートページ - Tier 2: URL解析フロー', () => {
 
     // Booth パーサーはタイトルを high confidence で返すため readOnly が付与される
     await expect(importPage.nameInput).toHaveAttribute('readonly', '');
+  });
+});
+
+test.describe('インポートページ - Tier 3: URLクエリパラメータ自動解析', () => {
+  test.describe.configure({ retries: 2 });
+
+  const boothUrl = process.env.E2E_TEST_BOOTH_URL;
+
+  test('クエリなしでアクセスすると通常のURL入力フローが表示される', async ({
+    page,
+  }) => {
+    const importPage = new ImportPage(page);
+    await importPage.goto();
+
+    await expect(importPage.urlInput).toBeVisible();
+    await expect(importPage.submitButton).toBeVisible();
+    await expect(importPage.loadingIndicator).not.toBeVisible();
+  });
+
+  test('有効なBooth URLクエリで自動解析→フォーム表示される', async ({
+    page,
+  }) => {
+    test.skip(!boothUrl, 'E2E_TEST_BOOTH_URL が未設定');
+    if (!boothUrl) return;
+    test.slow();
+
+    const importPage = new ImportPage(page);
+    await importPage.gotoWithUrl(boothUrl);
+
+    // ローディング表示 or 直接フォーム（速い場合）
+    await importPage.waitForFormStep();
+
+    await expect(importPage.sourceBanner).toContainText('Booth');
+    await expect(importPage.nameInput).not.toHaveValue('');
+  });
+
+  test('無効なURLクエリで自動解析→エラーバナー + URL入力済み', async ({
+    page,
+  }) => {
+    const invalidUrl = 'https://booth.pm/ja/items/99999999999';
+
+    const importPage = new ImportPage(page);
+    await importPage.gotoWithUrl(invalidUrl);
+
+    // エラーが表示されるまで待機（解析には時間がかかる）
+    await importPage.autoParseError.waitFor({
+      state: 'visible',
+      timeout: 30_000,
+    });
+
+    // URL入力フィールドにURLがプリフィルされている
+    await expect(importPage.urlInput).toHaveValue(invalidUrl);
+
+    // 取り込むボタンで手動リトライ可能
+    await expect(importPage.submitButton).toBeEnabled();
+  });
+
+  test('対応外ドメインのURLクエリでエラーが表示される', async ({ page }) => {
+    const importPage = new ImportPage(page);
+    await importPage.gotoWithUrl('https://example.com/page');
+
+    // Server Action の対応サイトバリデーションエラー
+    await importPage.autoParseError.waitFor({
+      state: 'visible',
+      timeout: 30_000,
+    });
+
+    // URL入力フィールドにURLがプリフィルされている
+    await expect(importPage.urlInput).toHaveValue('https://example.com/page');
   });
 });

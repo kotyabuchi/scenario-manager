@@ -11,6 +11,17 @@ export const fileUpload_root = css({
   w: 'full',
 });
 
+/** square=true 時にルートに追加するスタイル */
+export const fileUpload_rootSquare = css({
+  aspectRatio: 'square',
+});
+
+/** square=true 時にドロップゾーンに追加するスタイル */
+export const fileUpload_dropzoneSquare = css({
+  flex: '1',
+  minH: '0',
+});
+
 export const fileUpload_label = css({
   fontSize: '[14px]',
   fontWeight: 'medium',
@@ -25,7 +36,10 @@ export const fileUpload_dropzone = css({
   justifyContent: 'center',
   gap: '2',
   p: '8',
-  borderRadius: 'md',
+  borderRadius: 'xl',
+  borderStyle: 'dashed',
+  borderWidth: '[2px]',
+  borderColor: 'gray.200',
   bg: 'input.bg',
   cursor: 'pointer',
   transitionProperty: 'common',
@@ -34,7 +48,7 @@ export const fileUpload_dropzone = css({
   _hover: {
     bg: 'gray.200',
   },
-  _focus: {
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'border.focus',
   },
@@ -66,6 +80,7 @@ export const fileUpload_text = css({
 export const fileUpload_hint = css({
   fontSize: '[12px]',
   color: 'text.secondary',
+  textAlign: 'center',
 });
 
 export const fileUpload_itemGroup = css({

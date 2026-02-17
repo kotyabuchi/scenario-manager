@@ -8,10 +8,6 @@ const meta = {
   component: SessionSection,
   parameters: {
     layout: 'padded',
-    backgrounds: {
-      default: 'gray',
-      values: [{ name: 'gray', value: '#F9FAFB' }],
-    },
   },
   decorators: [
     (Story) => (

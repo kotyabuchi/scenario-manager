@@ -3,34 +3,32 @@ import { css } from '@/styled-system/css';
 /**
  * シナリオ登録フォーム スタイル
  *
- * Pencilデザイン準拠: docs/designs/scenarios.pen - Scenarios / 登録画面
- * 既存コンポーネント（FormField, Input, Select, NumberInput, Chip, Button, Textarea）を活用
+ * モック準拠: docs/designs/mocks/scenario_create_pc/screen.png
  */
 
-// フォームカード（Pencil: formCard）
+// フォームカード（maxW: 800px, overflow hidden でフッターの hr がカード端まで伸びる）
 export const form_card = css({
   bg: 'white',
-  borderRadius: '2xl',
-  shadow: 'card.default',
-  p: '8',
+  borderRadius: '0',
+  shadow: '[none]',
   w: 'full',
-  maxW: '[1200px]',
+  maxW: '[800px]',
+  overflow: 'hidden',
+  lg: {
+    borderRadius: '2xl',
+    shadow: 'card.default',
+  },
+});
+
+// カード内部のコンテンツエリア
+export const form_body = css({
+  p: '8',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8',
+  gap: '10',
 });
 
-// エラーメッセージ
-export const form_error = css({
-  bg: 'red.50',
-  color: 'red.600',
-  py: '3',
-  px: '4',
-  borderRadius: 'lg',
-  fontSize: '[14px]',
-});
-
-// トップ行（画像 + フィールド群）
+// トップ行（画像 + 右フィールド群）
 export const form_topRow = css({
   display: 'flex',
   gap: '8',
@@ -40,20 +38,16 @@ export const form_topRow = css({
   },
 });
 
-// 画像アップロード行
-export const form_imageRow = css({
-  display: 'flex',
-  justifyContent: 'center',
-  w: '[280px]',
-  h: '[280px]',
+// 画像セクション
+export const form_imageSection = css({
   flexShrink: '0',
-  mx: 'auto',
+  alignSelf: 'center',
   lg: {
-    mx: '0',
+    alignSelf: 'flex-start',
   },
 });
 
-// 画像アップロードエリア（Pencil: imageUpload - 280x280, cornerRadius:12, bg:#F9FAFB）
+// 画像アップロードエリア
 export const form_imageUpload = css({
   display: 'flex',
   flexDirection: 'column',
@@ -73,31 +67,27 @@ export const form_imageUpload = css({
   },
 });
 
-// 画像アップロードアイコン（Pencil: uploadIcon - 40x40, color:#9CA3AF）
+// 画像アップロードアイコン
 export const form_uploadIcon = css({
   color: 'gray.400',
 });
 
-// 画像アップロードテキスト（Pencil: uploadText - fontSize:13, color:#6B7280）
+// 画像アップロードテキスト
 export const form_uploadText = css({
   fontSize: '[13px]',
   color: 'gray.500',
   textAlign: 'center',
 });
 
-// 画像アップロードヒント（Pencil: uploadHint - fontSize:12, color:#9CA3AF）
+// 画像アップロードヒント
 export const form_uploadHint = css({
-  fontSize: '[12px]',
+  fontSize: 'xs',
   color: 'gray.400',
 });
 
 // 画像アップロードラッパー
 export const form_imageUploadWrapper = css({
   w: '[280px]',
-  h: '[280px]',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
 });
 
 // 画像プレビュー
@@ -126,7 +116,7 @@ export const form_imageRemove = css({
   py: '1.5',
   bg: '[rgba(0, 0, 0, 0.6)]',
   color: 'white',
-  fontSize: '[12px]',
+  fontSize: 'xs',
   fontWeight: 'medium',
   borderRadius: 'md',
   cursor: 'pointer',
@@ -139,49 +129,45 @@ export const form_imageRemove = css({
 
 // 画像アップロードエラー
 export const form_uploadError = css({
-  fontSize: '[12px]',
+  fontSize: 'xs',
   color: 'red.500',
   textAlign: 'center',
 });
 
-// 右側フィールド群（Pencil: rightFields）
+// 右側フィールド群（name → system → handout → author を縦積み）
 export const form_rightFields = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4',
+  gap: '5',
   flex: '1',
   minW: '0',
 });
 
-// フィールド行（2カラム）
-export const form_fieldRow = css({
+// ラジオボタン横並び
+export const form_radioRow = css({
+  flexDirection: 'row',
+  alignItems: 'center',
+  h: '[44px]',
+});
+
+// フル幅セクション（概要、タグ等）
+export const form_section = css({
   display: 'flex',
+  flexDirection: 'column',
   gap: '6',
-  flexDirection: 'column',
+});
+
+// スライダーグリッド（プレイ人数 + プレイ時間の2カラム）
+export const form_sliderGrid = css({
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '6',
   sm: {
-    flexDirection: 'row',
-  },
-  '& > *': {
-    flex: '[1]',
-    minW: '0',
+    gridTemplateColumns: '1fr 1fr',
   },
 });
 
-// フィールド行（2カラム、間隔狭め）
-export const form_fieldRow_narrow = css({
-  display: 'flex',
-  gap: '5',
-  flexDirection: 'column',
-  sm: {
-    flexDirection: 'row',
-  },
-  '& > *': {
-    flex: '[1]',
-    minW: '0',
-  },
-});
-
-// フィールドコンテナ（NumberInput用）
+// スライダーフィールドコンテナ
 export const form_field = css({
   display: 'flex',
   flexDirection: 'column',
@@ -190,31 +176,11 @@ export const form_field = css({
   minW: '0',
 });
 
-// ラベル（Pencil: fontSize:13, fontWeight:500, color:#374151）
+// ラベル
 export const form_label = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
   color: 'gray.700',
-});
-
-// 範囲入力行（min ~ max 単位）
-export const form_rangeInputRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-});
-
-// 範囲セパレータ（Pencil: "〜", fontSize:14, fontWeight:500, color:#6B7280）
-export const form_rangeSeparator = css({
-  fontSize: '[14px]',
-  fontWeight: 'medium',
-  color: 'gray.500',
-});
-
-// 範囲単位（Pencil: fontSize:14, color:#6B7280）
-export const form_rangeUnit = css({
-  fontSize: '[14px]',
-  color: 'gray.500',
 });
 
 // スライダーコントロール群
@@ -228,7 +194,7 @@ export const form_sliderControls = css({
 export const form_sliderValue = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
-  color: 'primary.500',
+  color: 'primary.700',
   textAlign: 'center',
 });
 
@@ -236,8 +202,29 @@ export const form_sliderValue = css({
 export const form_sliderMinMax = css({
   display: 'flex',
   justifyContent: 'space-between',
-  fontSize: '[12px]',
+  fontSize: 'xs',
   color: 'gray.400',
+});
+
+// URL入力ラッパー（Linkアイコン配置用）
+export const form_urlInputWrapper = css({
+  position: 'relative',
+});
+
+// URLアイコン（入力フィールド左端）
+export const form_urlIcon = css({
+  position: 'absolute',
+  left: '3',
+  top: '[50%]',
+  transform: 'translateY(-50%)',
+  color: 'gray.400',
+  pointerEvents: 'none',
+  zIndex: '[1]',
+});
+
+// URL入力フィールド（左パディングでアイコン分確保）
+export const form_urlInput = css({
+  pl: '9',
 });
 
 // チップ群
@@ -247,10 +234,51 @@ export const form_chips = css({
   gap: '2',
 });
 
-// フッター（Pencil: footer - justifyContent:end, gap:16）
+// インポート誘導バナー
+export const form_importBanner = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '3',
+  bg: 'primary.50',
+  borderRadius: 'lg',
+  px: '4',
+  py: '3',
+  overflow: 'hidden',
+});
+
+export const form_importBanner_content = css({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '2',
+});
+
+export const form_importBanner_icon = css({
+  color: 'primary.700',
+  flexShrink: '0',
+  mt: '0.5',
+});
+
+export const form_importBanner_text = css({
+  color: 'primary.700',
+  fontSize: 'sm',
+  lineHeight: '[1.5]',
+});
+
+// フッター区切り線
+export const form_divider = css({
+  borderStyle: 'none',
+  borderTopStyle: 'solid',
+  borderTopWidth: '[1px]',
+  borderTopColor: 'gray.200',
+  m: '0',
+});
+
+// フッター（キャンセル + 登録を右寄せ）
 export const form_footer = css({
   display: 'flex',
   justifyContent: 'flex-end',
+  alignItems: 'center',
   gap: '4',
-  mt: '4',
+  px: '8',
+  py: '6',
 });

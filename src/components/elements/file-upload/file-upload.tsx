@@ -39,6 +39,8 @@ type FileUploadProps = {
   name?: string;
   /** コンパクトモード（ドロップゾーンを小さく） */
   compact?: boolean;
+  /** 正方形モード（ドロップゾーンを1:1比率にする） */
+  square?: boolean;
 } & Omit<FileUploadRootProps, 'onFileChange' | 'onFileAccept' | 'onFileReject'>;
 
 /**
@@ -81,6 +83,7 @@ export const FileUpload = ({
   disabled,
   name,
   compact = false,
+  square = false,
   ...rest
 }: FileUploadProps) => {
   const acceptArray = isNil(accept)
@@ -99,7 +102,11 @@ export const FileUpload = ({
       maxFiles={maxFiles}
       disabled={disabled}
       name={name}
-      className={styles.fileUpload_root}
+      className={
+        square
+          ? `${styles.fileUpload_root} ${styles.fileUpload_rootSquare}`
+          : styles.fileUpload_root
+      }
       {...rest}
     >
       {!isNil(label) && (
@@ -107,7 +114,13 @@ export const FileUpload = ({
           {label}
         </ArkFileUpload.Label>
       )}
-      <ArkFileUpload.Dropzone className={styles.fileUpload_dropzone}>
+      <ArkFileUpload.Dropzone
+        className={
+          square
+            ? `${styles.fileUpload_dropzone} ${styles.fileUpload_dropzoneSquare}`
+            : styles.fileUpload_dropzone
+        }
+      >
         <UploadSimple
           size={compact ? 20 : 32}
           className={styles.fileUpload_icon}

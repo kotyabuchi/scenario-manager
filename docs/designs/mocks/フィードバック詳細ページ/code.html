@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="" lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>フィードバック詳細（管理者設定付き） - シナプレ管理くん</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,FILL@0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059568",
+                        "primary-dark": "#047857",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                        "emerald-soft": "#D1F5E3",
+                        "blue-status": "#437BD9",
+                        "blue-banner": "#E3ECF9",
+                        "input-bg": "#EAEBED",
+                        "gray-text": "#777E8C",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "16px",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'soft-lg': '0 10px 25px -5px rgba(0, 0, 0, 0.05)',
+                        'modal': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }.results-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .results-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .results-scroll::-webkit-scrollbar-thumb {
+            background-color: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 min-h-screen font-display">
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+<div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-modal overflow-hidden flex flex-col">
+<div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">他の投稿と統合する</h2>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-2">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300">統合先の投稿を検索</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="キーワードやIDで検索..." type="text"/>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-wider">検索結果</span>
+<span class="text-xs text-slate-400">3件見つかりました</span>
+</div>
+<div class="results-scroll max-h-[280px] overflow-y-auto space-y-2 pr-1">
+<div class="group relative flex items-center justify-between p-4 bg-primary/10 border border-primary/30 rounded-xl cursor-pointer transition-all">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold rounded">機能要望</span>
+<span class="text-xs text-slate-400 font-mono">#3210</span>
+</div>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">フィルター条件の保存について</h3>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-icons text-sm">keyboard_arrow_up</span>
+<span class="text-xs font-bold">128 投票</span>
+</div>
+</div>
+<div class="flex items-center justify-center w-6 h-6 bg-primary rounded-full">
+<span class="material-symbols-outlined text-white text-base">check</span>
+</div>
+</div>
+<div class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/50 cursor-pointer transition-all shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold rounded">機能要望</span>
+<span class="text-xs text-slate-400 font-mono">#2948</span>
+</div>
+<h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">検索クエリをURLに保持してほしい</h3>
+<div class="flex items-center gap-1 text-slate-400">
+<span class="material-icons text-sm">keyboard_arrow_up</span>
+<span class="text-xs font-bold">45 投票</span>
+</div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/50 cursor-pointer transition-all shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold rounded">UI/UX</span>
+<span class="text-xs text-slate-400 font-mono">#1582</span>
+</div>
+<h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">一覧画面のソート状態を記憶する</h3>
+<div class="flex items-center gap-1 text-slate-400">
+<span class="material-icons text-sm">keyboard_arrow_up</span>
+<span class="text-xs font-bold">12 投票</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg flex gap-3">
+<span class="material-symbols-outlined text-gray-text text-xl shrink-0">info</span>
+<p class="text-[12px] text-gray-text leading-relaxed">
+                    ※ 統合すると、この投稿の投票数とコメントは選択した投稿に引き継がれ、この投稿は非公開になります。
+                </p>
+</div>
+</div>
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-end gap-3">
+<button class="px-5 py-2 text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors">
+                キャンセル
+            </button>
+<button class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-lg text-sm transition-all shadow-md shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">call_merge</span>
+                統合を実行する
+            </button>
+</div>
+</div>
+</div>
+<nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
+<div class="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+<a class="flex items-center text-slate-500 hover:text-primary transition-colors duration-200 text-sm font-medium group" href="#">
+<span class="material-icons text-lg mr-1 group-hover:-translate-x-1 transition-transform">arrow_back</span>
+            フィードバック詳細
+        </a>
+<div class="flex items-center gap-3">
+<button class="relative p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-slate-200 overflow-hidden border border-slate-100">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiG547va1_ylP0IzyNL78qa0wpn7QOccQsIypy5arakY-JXVKSy00P5k7Mu0WXAV3HrBczU6T2gNyFaTgQGlqtI09Yhn5-Yl4uc_pO1zDDdmpcsPMgtQKHXWe4g4ZhHBuxglBH2Uzm2frxeUuIRsd3PO8Shj3Is-Jefamay194e6r6SJkMV5g0L7CFT6vsVbXu9qcmIYAY1BQEYtkyZnjZCcQg3_vViDxpq6osX97KH_ec-4fVQZDPJkUnmpb5TPoDyADzqykrl0U"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-3xl mx-auto px-4 py-8 space-y-8">
+<article class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-6 md:p-8 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 to-blue-status/40"></div>
+<div class="flex flex-wrap items-center gap-3 mb-6">
+<span class="px-3 py-1 bg-primary/20 text-primary dark:text-primary-light text-xs font-semibold rounded-full">
+                機能要望
+            </span>
+<span class="px-3 py-1 bg-blue-status text-white text-xs font-semibold rounded-full shadow-sm shadow-blue-status/30">
+                対応予定
+            </span>
+<span class="ml-auto text-xs text-slate-400 dark:text-slate-500 font-mono">ID: #4829</span>
+</div>
+<h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
+            検索結果の保存機能が欲しい
+        </h1>
+<div class="flex items-center gap-3 mb-8 text-sm text-slate-500 dark:text-slate-400 pb-6 border-b border-slate-100 dark:border-slate-700/50">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Yamada Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmcHSW7vb2bd4mXgi2gK9XSg-O9Cn5GCBSRWE6c9FTZ9i3c_NOZZKY7fEK51Rc3Sc9Uk_WXV4o-7uoAEBnRoGpyc2vR4XyHjm3lBjuKzyflJqFQ4M6iMs_MUQSrjCWaMJAmhFod3gLDZH454QPMiG4taa9mhgchnYimPBhir-lAEC_9c7C5qNz6VTZNtvlnREGD3XP_coT5LJZUo7am8HYCzyoKxRGsbdsTww2mFsP5GjsJMr40EfdEOlWofgfiK6kt0eXDDKdsDg"/>
+</div>
+<span>投稿者: <span class="font-medium text-slate-700 dark:text-slate-300">yamada</span></span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300"></span>
+<span>2026/01/15</span>
+</div>
+<div class="prose prose-slate dark:prose-invert max-w-none mb-10 text-slate-600 dark:text-slate-300 leading-relaxed">
+<p>いつも便利に使わせていただいています。キャラクター一覧画面での検索について要望です。</p>
+<p>現在、属性やレベルで絞り込みを行っても、画面を移動するとリセットされてしまいます。キャンペーンの管理中など、同じ条件で何度もリストを確認したい場面が多いため、検索条件をブラウザに保存するか、URLパラメータとして保持してほしいです。</p>
+<p>特に「未承認キャラクター」かつ「戦士クラス」のような複合条件を指定するのが毎回手間になっています。ご検討よろしくお願いいたします。</p>
+</div>
+<div class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-slate-50 dark:bg-slate-700/30 rounded-lg p-4 md:px-6">
+<div class="text-sm text-slate-500 dark:text-slate-400 text-center sm:text-left">
+                この機能が欲しいと思ったら<br class="hidden sm:inline"/>投票してください！
+            </div>
+<button class="group flex items-center gap-3 bg-emerald-soft hover:bg-emerald-200 dark:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 rounded-lg px-6 py-3 shadow-sm hover:shadow-md cursor-pointer w-full sm:w-auto justify-center">
+<span class="material-icons text-primary group-hover:-translate-y-0.5 transition-transform duration-300">keyboard_arrow_up</span>
+<span class="text-2xl font-bold text-primary">42</span>
+<span class="text-sm font-bold text-primary ml-1">この要望に投票する</span>
+</button>
+</div>
+</article>
+<div class="bg-blue-banner dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-lg p-4 flex items-start gap-3">
+<span class="material-icons text-blue-500 dark:text-blue-400 mt-0.5">info</span>
+<div class="text-sm text-blue-800 dark:text-blue-100 font-medium">
+            このフィードバックには3件の類似投稿が統合されています。
+            <a class="underline hover:text-blue-600 ml-1" href="#">詳細を見る</a>
+</div>
+</div>
+<section class="bg-slate-100 dark:bg-slate-900/40 rounded-xl p-6 md:p-8 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
+<span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+<h2 class="text-lg font-bold text-slate-800 dark:text-white">管理者設定</h2>
+<span class="ml-auto px-2 py-0.5 bg-slate-200 dark:bg-slate-800 text-slate-500 text-[10px] font-bold rounded uppercase">Moderator Only</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">ステータスを変更</label>
+<select class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-primary focus:border-primary">
+<option value="受付中">受付中</option>
+<option value="検討中">検討中</option>
+<option value="対応中">対応中</option>
+<option selected="" value="対応予定">対応予定</option>
+<option value="完了">完了</option>
+<option value="却下">却下</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">優先度</label>
+<div class="inline-flex p-1 bg-slate-200 dark:bg-slate-800 rounded-lg w-full">
+<label class="flex-1">
+<input class="sr-only peer" name="priority" type="radio" value="low"/>
+<span class="flex items-center justify-center py-2 text-xs font-medium text-slate-500 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-900 dark:peer-checked:text-white peer-checked:shadow-sm rounded transition-all cursor-pointer">低</span>
+</label>
+<label class="flex-1">
+<input checked="" class="sr-only peer" name="priority" type="radio" value="medium"/>
+<span class="flex items-center justify-center py-2 text-xs font-medium text-slate-500 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-900 dark:peer-checked:text-white peer-checked:shadow-sm rounded transition-all cursor-pointer">中</span>
+</label>
+<label class="flex-1">
+<input class="sr-only peer" name="priority" type="radio" value="high"/>
+<span class="flex items-center justify-center py-2 text-xs font-medium text-slate-500 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-900 dark:peer-checked:text-white peer-checked:shadow-sm rounded transition-all cursor-pointer">高</span>
+</label>
+</div>
+</div>
+<div>
+<button class="w-full py-2.5 px-4 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-base">call_merge</span>
+                        他の投稿と統合する
+                    </button>
+</div>
+</div>
+<div class="flex flex-col">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">運営メモ（非公開）</label>
+<textarea class="flex-grow bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg p-3 text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:ring-primary focus:border-primary text-sm min-h-[140px]" placeholder="社内向けのメモを残すことができます..."></textarea>
+</div>
+</div>
+<div class="mt-8 flex justify-end">
+<button class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-10 rounded-lg text-sm transition-all shadow-md shadow-primary/20 hover:shadow-primary/40 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">save</span>
+                設定を保存する
+            </button>
+</div>
+</section>
+<section class="space-y-6">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+<span class="material-icons text-slate-400">chat_bubble_outline</span>
+                コメント <span class="text-slate-500 text-base font-normal">(5件)</span>
+</h2>
+<div class="flex text-xs text-slate-400">
+<button class="hover:text-primary mr-3 font-medium text-slate-600 dark:text-slate-300">新しい順</button>
+<button class="hover:text-primary">古い順</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-4 md:p-6">
+<div class="flex gap-4">
+<div class="flex-shrink-0 hidden sm:block">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
+<img alt="Current User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD09ClH51UyRqV9e8V8Ml0S5OAl8g5-OZbXW60CbjqLZZ3ujbpunoA1xOJ90JaF4Pe_A0ygwECPRUIzgiW0sVYCUegblq3NIxh7aT6LXC-QJF_PrgL0_MqDmhVcoQBg3WCttdER7OKw5iB_DPGkArqyeplL5kMj_qJ77SkdA8mVU65sy9kb2LfEkGuVk6lC9cOuKiUsaG3qwcM9H5eQQuBIBHxHCq8PtPp2mUwdB0bfxfempVMc3iJA7Q3UWv9X6mGeg-xn7sPjutc"/>
+</div>
+</div>
+<div class="flex-grow space-y-3">
+<textarea class="w-full bg-input-bg dark:bg-slate-900/50 border-none rounded-lg p-3 text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-slate-900 transition-all resize-none min-h-[100px] text-sm" placeholder="議論に参加したり、応援コメントを書きましょう..."></textarea>
+<div class="flex justify-end">
+<button class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded-lg text-sm transition-all shadow-md shadow-primary/20 flex items-center gap-2">
+<span>コメントする</span>
+<span class="material-icons text-base">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-5 border-l-4 border-primary relative">
+<div class="flex gap-4">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-full border-2 border-primary p-0.5 bg-white overflow-hidden">
+<img alt="Admin Avatar" class="rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAczFzlTx9UnU73ai2_vs8WfTNJ8Pu_Z6sN46B6UGmvA6KQbenYanji4OGbUsDi3dIqPhQaKlnhHrrzl3zwnVtQUb3b9j1BgqIh80gIca4a9lT6hlQbTD0Xi6XJI4aqYrri7wXjgh86MJkpnTDxHwe958rJ-HkHCgKLMp7ACT07aKO_tD7fgOQXmO769lDj6RW7FS86P2SevszWGG7Rnv7FfRFkt3n4cv4zdZTqRZSs2htSF0giTFkDBZGf7aF87lnjhOMELE0f-pA"/>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex flex-wrap items-center gap-2 mb-2">
+<span class="font-bold text-slate-900 dark:text-white">運営チーム</span>
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Official</span>
+<span class="text-xs text-slate-400 ml-auto">1/18 13:00</span>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                            フィードバックありがとうございます！<br/>
+                            検索条件の保持については、多くのユーザー様からご要望をいただいております。<br/>
+                            次回の大型アップデート（v2.1）にて、URLパラメータによる検索条件の保持を実装する予定です。これによりブックマークも可能になります。もう少々お待ちください！
+                        </p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-5">
+<div class="flex gap-4">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Suzuki Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-waxzuyPsEkmgr-O5DQvhjSRbgIrlzfaAiHy7fWq02-7BBbLjsiCz5Ia5Wj9hSXQFCOav-lIGeZ6ycTn4z-ESTu-gUXrOQOzffm1BcFiP2Ynk7ego1FwRZWxnsDkrYOuXlTp_OWfsIHkbdQVpHMSTHlInZDFk_fnSmHdborWB95OXJMO8D4lDMRxNIzZ5pzC8jBt44P3hktlDPlgTdboo823XrgBUsNbaUmIN1_VwPrpCXV8RJodA1xzfKZdhmOKAMHahYygCa9c"/>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-2">
+<span class="font-bold text-slate-800 dark:text-slate-200">suzuki</span>
+<span class="text-xs text-slate-400 ml-auto">1/16 10:30</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            私もこれ欲しいです！特にスマホで見ているときに、戻るボタンで一覧に戻ると全部リセットされていて悲しくなることがよくあります...😭
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="mt-12 py-8 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+<div class="max-w-3xl mx-auto px-4 text-center">
+<p class="text-xs text-slate-400">© 2026 Shinapre Kanri-kun. All rights reserved.</p>
+</div>
+</footer>
+
+</body></html>

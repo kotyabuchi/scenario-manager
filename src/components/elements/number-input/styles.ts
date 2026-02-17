@@ -36,7 +36,6 @@ export const numberInput_wrapper = css({
   _focusWithin: {
     outline: '[2px solid]',
     outlineColor: 'border.focus',
-    outlineOffset: '2',
   },
 });
 

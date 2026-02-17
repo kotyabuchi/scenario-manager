@@ -98,7 +98,7 @@ export const slider_thumb = css({
     cursor: 'grabbing',
     transform: '[scale(1.15)]',
   },
-  _focus: {
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'border.focus',
     outlineOffset: '[-1px]',

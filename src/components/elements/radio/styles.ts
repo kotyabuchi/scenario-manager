@@ -6,7 +6,6 @@ import { css } from '@/styled-system/css';
 export const radioGroupRoot = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4',
 });
 
 /**
@@ -16,6 +15,7 @@ export const radioItem = css({
   display: 'flex',
   alignItems: 'center',
   gap: '2',
+  pr: '4',
   cursor: 'pointer',
   _disabled: {
     cursor: 'not-allowed',

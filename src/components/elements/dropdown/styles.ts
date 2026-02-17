@@ -28,7 +28,7 @@ export const dropdownTrigger = css({
   _hover: {
     bg: 'gray.50',
   },
-  _focus: {
+  _focusVisible: {
     outline: '[2px solid]',
     outlineColor: 'border.focus',
     outlineOffset: '[2px]',

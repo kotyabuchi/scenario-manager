@@ -72,7 +72,7 @@ export const textarea = css({
   _placeholder: {
     color: '[text.placeholder]',
   },
-  _focus: {
+  _focusVisible: {
     ring: '[2]',
     ringColor: '[primary.500]',
   },

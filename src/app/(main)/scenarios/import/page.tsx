@@ -2,17 +2,27 @@ import { redirect } from 'next/navigation';
 
 import { getAllSystems, getAllTags } from '../adapter';
 import { ImportPageContent } from './_components';
+import { importSearchParamsCache } from './searchParams';
 import * as styles from './styles';
 
 import { PageHeader } from '@/components/blocks/PageHeader';
 import { createClient } from '@/lib/supabase/server';
+
+import type { SearchParams as NuqsSearchParams } from 'nuqs/server';
 
 export const metadata = {
   title: 'シナリオをインポート',
   description: 'URLからシナリオ情報を取り込みます',
 };
 
-export default async function ScenarioImportPage() {
+type PageProps = {
+  searchParams: Promise<NuqsSearchParams>;
+};
+
+export default async function ScenarioImportPage({ searchParams }: PageProps) {
+  // URLクエリパラメータをパース
+  const { url: initialUrl } = await importSearchParamsCache.parse(searchParams);
+
   // 認証チェック
   const supabase = await createClient();
   const {
@@ -42,7 +52,11 @@ export default async function ScenarioImportPage() {
 
       {/* メインコンテンツ */}
       <div className={styles.mainContent}>
-        <ImportPageContent systems={systems} tags={tags} />
+        <ImportPageContent
+          systems={systems}
+          tags={tags}
+          initialUrl={initialUrl ?? undefined}
+        />
       </div>
     </div>
   );

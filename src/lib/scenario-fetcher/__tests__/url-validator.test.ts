@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateScenarioUrl } from '../url-validator';
+import { isImportableUrl, validateScenarioUrl } from '../url-validator';
 
 describe('validateScenarioUrl', () => {
   describe('有効なURL', () => {
@@ -67,6 +67,50 @@ describe('validateScenarioUrl', () => {
     it('file:// プロトコルを拒否する', () => {
       const result = validateScenarioUrl('file:///etc/passwd');
       expect(result.success).toBe(false);
+    });
+  });
+});
+
+describe('isImportableUrl', () => {
+  describe('インポート可能なURL', () => {
+    it('booth.pm のHTTPS URLを判定する', () => {
+      expect(isImportableUrl('https://booth.pm/ja/items/12345')).toBe(true);
+    });
+
+    it('talto.cc のHTTPS URLを判定する', () => {
+      expect(
+        isImportableUrl('https://talto.cc/projects/oMjPyDsyzMEvAdQ2CpkZe'),
+      ).toBe(true);
+    });
+
+    it('サブドメイン付きの booth.pm を判定する', () => {
+      expect(isImportableUrl('https://dizm.booth.pm/items/12345')).toBe(true);
+    });
+
+    it('HTTP の booth.pm も判定する（SSRF検証なし）', () => {
+      expect(isImportableUrl('http://booth.pm/ja/items/12345')).toBe(true);
+    });
+  });
+
+  describe('インポート不可なURL', () => {
+    it('無関係なドメインを拒否する', () => {
+      expect(isImportableUrl('https://example.com/page')).toBe(false);
+    });
+
+    it('空文字を拒否する', () => {
+      expect(isImportableUrl('')).toBe(false);
+    });
+
+    it('不正なURLを拒否する', () => {
+      expect(isImportableUrl('not-a-url')).toBe(false);
+    });
+
+    it('部分一致のドメインを拒否する（notbooth.pm）', () => {
+      expect(isImportableUrl('https://notbooth.pm/items/123')).toBe(false);
+    });
+
+    it('入力途中のURLを拒否する', () => {
+      expect(isImportableUrl('https://boo')).toBe(false);
     });
   });
 });

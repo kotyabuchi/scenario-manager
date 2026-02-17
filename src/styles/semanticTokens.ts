@@ -5,7 +5,7 @@ export const semanticTokens = {
     // ========================================
     bg: {
       // ページ背景（淡い青みがかった白）
-      page: { value: '#f5f8f7' },
+      page: { value: '#f6f8f7' },
       // カード・パネル背景
       card: { value: '{colors.white}' },
       // 入力フィールド背景

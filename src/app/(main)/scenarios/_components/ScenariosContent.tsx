@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { CaretDown, Funnel } from '@phosphor-icons/react/ssr';
+import { CaretDown, Faders } from '@phosphor-icons/react/ssr';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { isNil } from 'ramda';
 
@@ -238,7 +238,7 @@ export const ScenariosContent = ({
           className={styles.mobileFilterButton}
           onClick={() => setIsBottomSheetOpen(true)}
         >
-          <Funnel size={16} />
+          <Faders size={16} />
           フィルター
           {draftState.activeFilterCount > 0 && (
             <span className={styles.mobileFilterBadge}>

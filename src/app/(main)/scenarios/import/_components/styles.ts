@@ -15,13 +15,13 @@ export const urlStep_container = css({
 });
 
 export const urlStep_title = css({
-  fontSize: '[18px]',
+  fontSize: 'lg',
   fontWeight: 'bold',
   color: 'text.title',
 });
 
 export const urlStep_supportedSites = css({
-  fontSize: '[13px]',
+  fontSize: 'xs',
   color: 'text.secondary',
 });
 
@@ -31,20 +31,68 @@ export const urlStep_error = css({
   py: '3',
   px: '4',
   borderRadius: 'lg',
-  fontSize: '[14px]',
+  fontSize: 'sm',
 });
 
-// フォームカード（Step 2）
+// 自動解析エラーバナー
+export const urlStep_autoParseError = css({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '2',
+  bg: 'red.50',
+  color: 'text.error',
+  py: '3',
+  px: '4',
+  borderRadius: 'lg',
+  fontSize: 'sm',
+  lineHeight: '[1.5]',
+  outline: 'none',
+});
+
+// 自動解析ローディング
+export const urlStep_loading = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '3',
+  py: '4',
+  color: 'text.secondary',
+  fontSize: 'sm',
+});
+
+// スピナーアニメーション
+export const urlStep_spinner = css({
+  animation: 'spin',
+});
+
+// URL入力ステップのアクション行
+export const urlStep_actions = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  mt: '6',
+});
+
+// フォームカード（手動登録に統一: maxW 800px, レスポンシブ）
 export const form_card = css({
   bg: 'white',
-  borderRadius: '2xl',
-  shadow: 'card.default',
-  p: '8',
+  borderRadius: '0',
+  shadow: '[none]',
   w: 'full',
-  maxW: '[1200px]',
+  maxW: '[800px]',
+  overflow: 'hidden',
+  lg: {
+    borderRadius: '2xl',
+    shadow: 'card.default',
+  },
+});
+
+// カード内部のコンテンツエリア
+export const form_body = css({
+  p: '8',
   display: 'flex',
   flexDirection: 'column',
-  gap: '6',
+  gap: '10',
 });
 
 // ソース情報バナー
@@ -56,7 +104,7 @@ export const form_sourceBanner = css({
   px: '4',
   py: '3',
   borderRadius: 'lg',
-  fontSize: '[14px]',
+  fontSize: 'sm',
 });
 
 export const form_sourceLabel = css({
@@ -66,7 +114,7 @@ export const form_sourceLabel = css({
 
 export const form_sourceLink = css({
   color: 'primary.700',
-  fontSize: '[13px]',
+  fontSize: 'xs',
   textDecoration: 'underline',
   display: 'flex',
   alignItems: 'center',
@@ -76,32 +124,34 @@ export const form_sourceLink = css({
   },
 });
 
-// セクション区切り線
+// フッター区切り線
 export const form_divider = css({
-  border: 'none',
-  h: '[1px]',
-  bg: 'border.subtle',
+  borderStyle: 'none',
+  borderTopStyle: 'solid',
+  borderTopWidth: '[1px]',
+  borderTopColor: 'gray.200',
   m: '0',
 });
 
 // セクション見出し
 export const form_sectionTitle = css({
-  fontSize: '[14px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
   color: 'text.title',
 });
 
-// readOnly フィールドの視覚的区別
-export const form_readonlyField = css({
-  position: 'relative',
+// インポート済み情報セクション
+export const form_infoSection = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4',
 });
 
-export const form_readonlyIcon = css({
-  position: 'absolute',
-  right: '3',
-  top: '[50%]',
-  transform: '[translateY(-50%)]',
-  color: 'text.placeholder',
+// 手動入力セクション
+export const form_manualSection = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '6',
 });
 
 // フィールド行（2カラム）
@@ -118,17 +168,115 @@ export const form_fieldRow = css({
   },
 });
 
-// フィールド行（2カラム、間隔狭め）
-export const form_fieldRow_narrow = css({
+// readOnly フィールドの視覚的区別
+export const form_readonlyField = css({
+  position: 'relative',
+});
+
+export const form_readonlyIcon = css({
+  position: 'absolute',
+  right: '3',
+  top: '[50%]',
+  transform: '[translateY(-50%)]',
+  color: 'text.placeholder',
+});
+
+// readOnly入力フィールドの背景
+export const form_readonlyInput = css({
+  bg: 'input.bgReadonly',
+});
+
+// トップ行（画像 + 右フィールド群）
+export const form_topRow = css({
   display: 'flex',
-  gap: '5',
+  gap: '8',
   flexDirection: 'column',
-  sm: {
+  lg: {
     flexDirection: 'row',
   },
-  '& > *': {
-    flex: '[1]',
-    minW: '0',
+});
+
+// 画像セクション
+export const form_imageSection = css({
+  flexShrink: '0',
+  alignSelf: 'center',
+  lg: {
+    alignSelf: 'flex-start',
+  },
+});
+
+// 画像アップロードラッパー
+export const form_imageUploadWrapper = css({
+  w: '[280px]',
+});
+
+// 画像プレビュー
+export const form_imagePreview = css({
+  position: 'relative',
+  w: '[280px]',
+  h: '[280px]',
+  borderRadius: 'xl',
+  overflow: 'hidden',
+  shadow: 'sm',
+});
+
+// プレビュー画像
+export const form_previewImage = css({
+  w: 'full',
+  h: 'full',
+  objectFit: 'cover',
+});
+
+// 画像削除ボタン
+export const form_imageRemove = css({
+  position: 'absolute',
+  bottom: '2',
+  right: '2',
+  px: '3',
+  py: '1.5',
+  bg: '[rgba(0, 0, 0, 0.6)]',
+  color: 'white',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  borderRadius: 'md',
+  cursor: 'pointer',
+  transitionProperty: '[background]',
+  transitionDuration: 'normal',
+  _hover: {
+    bg: '[rgba(0, 0, 0, 0.8)]',
+  },
+});
+
+// 右側フィールド群
+export const form_rightFields = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '5',
+  flex: '1',
+  minW: '0',
+});
+
+// ラジオボタン横並び
+export const form_radioRow = css({
+  flexDirection: 'row',
+  alignItems: 'center',
+  h: '[44px]',
+});
+
+// チップ群
+export const form_chips = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '2',
+});
+
+// スライダーグリッド（プレイ人数 + プレイ時間の2カラム）
+export const form_sliderGrid = css({
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '6',
+  sm: {
+    gridTemplateColumns: '1fr 1fr',
   },
 });
 
@@ -145,25 +293,7 @@ export const form_field = css({
 export const form_label = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
-  color: 'text.body',
-});
-
-// 範囲入力行
-export const form_rangeInputRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-});
-
-export const form_rangeSeparator = css({
-  fontSize: '[14px]',
-  fontWeight: 'medium',
-  color: 'text.secondary',
-});
-
-export const form_rangeUnit = css({
-  fontSize: '[14px]',
-  color: 'text.secondary',
+  color: 'gray.700',
 });
 
 // スライダーコントロール群
@@ -173,6 +303,7 @@ export const form_sliderControls = css({
   gap: '3',
 });
 
+// スライダーの現在値表示
 export const form_sliderValue = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
@@ -180,119 +311,12 @@ export const form_sliderValue = css({
   textAlign: 'center',
 });
 
+// スライダーの最小/最大値表示
 export const form_sliderMinMax = css({
   display: 'flex',
   justifyContent: 'space-between',
-  fontSize: '[12px]',
-  color: 'text.placeholder',
-});
-
-// チップ群
-export const form_chips = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '2',
-});
-
-// 画像アップロード
-export const form_imageSection = css({
-  display: 'flex',
-  gap: '8',
-  flexDirection: 'column',
-  lg: {
-    flexDirection: 'row',
-  },
-});
-
-export const form_imageArea = css({
-  display: 'flex',
-  justifyContent: 'center',
-  w: '[280px]',
-  h: '[280px]',
-  flexShrink: '0',
-  mx: 'auto',
-  lg: {
-    mx: '0',
-  },
-});
-
-export const form_imageUploadWrapper = css({
-  w: '[280px]',
-  h: '[280px]',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2',
-});
-
-export const form_imagePreview = css({
-  position: 'relative',
-  w: '[280px]',
-  h: '[280px]',
-  borderRadius: 'xl',
-  overflow: 'hidden',
-  shadow: 'sm',
-});
-
-export const form_previewImage = css({
-  w: 'full',
-  h: 'full',
-  objectFit: 'cover',
-});
-
-export const form_imageRemove = css({
-  position: 'absolute',
-  bottom: '2',
-  right: '2',
-  px: '3',
-  py: '1.5',
-  bg: 'overlay.darkHover',
-  color: 'text.white',
-  fontSize: '[12px]',
-  fontWeight: 'medium',
-  borderRadius: 'md',
-  cursor: 'pointer',
-  transitionProperty: '[background]',
-  transitionDuration: 'normal',
-  _hover: {
-    bg: '[rgba(0, 0, 0, 0.8)]',
-  },
-});
-
-export const form_fieldsArea = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4',
-  flex: '1',
-  minW: '0',
-});
-
-// URL入力ステップのアクション行
-export const urlStep_actions = css({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  mt: '6',
-});
-
-// セクション内フィールド群
-export const form_sectionFields = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4',
-  mt: '4',
-});
-
-// セクション見出し（上マージン付き）
-export const form_sectionTitle_mt = css({
-  fontSize: '[14px]',
-  fontWeight: 'medium',
-  color: 'text.title',
-  mt: '6',
-});
-
-// readOnly入力フィールドの背景
-export const form_readonlyInput = css({
-  bg: 'input.bgReadonly',
+  fontSize: 'xs',
+  color: 'gray.400',
 });
 
 // 著作権注意メッセージ
@@ -300,8 +324,7 @@ export const form_notice = css({
   display: 'flex',
   alignItems: 'flex-start',
   gap: '2',
-  mt: '2',
-  fontSize: '[13px]',
+  fontSize: 'xs',
   color: 'text.secondary',
   lineHeight: '[1.6]',
 });
@@ -312,10 +335,12 @@ export const form_noticeIcon = css({
   color: 'text.placeholder',
 });
 
-// フッター
+// フッター（キャンセル + 登録を右寄せ）
 export const form_footer = css({
   display: 'flex',
   justifyContent: 'flex-end',
+  alignItems: 'center',
   gap: '4',
-  mt: '4',
+  px: '8',
+  py: '6',
 });
