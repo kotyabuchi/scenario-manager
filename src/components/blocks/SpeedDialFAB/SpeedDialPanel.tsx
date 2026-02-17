@@ -4,6 +4,7 @@ import {
   BookOpenText,
   CalendarPlus,
   ChatText,
+  ListBullets,
   MagnifyingGlass,
   ShareNetwork,
   SignIn,
@@ -95,6 +96,15 @@ export const SpeedDialPanel = ({
           >
             <ChatText size={20} className={iconClass} />
             フィードバック
+          </button>
+          <button
+            type="button"
+            className={styles.speedDialFAB_menuItem}
+            role="menuitem"
+            onClick={() => handleNavigate('/feedback' as Route)}
+          >
+            <ListBullets size={20} className={iconClass} />
+            みんなのフィードバックを見る
           </button>
         </>
       ) : (

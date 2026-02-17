@@ -100,6 +100,7 @@ export type Database = {
           admin_note: string | null;
           browser_info: string | null;
           category: Database['public']['Enums']['feedback_category'];
+          comment_count: number;
           created_at: string;
           description: string;
           feedback_id: string;
@@ -118,6 +119,7 @@ export type Database = {
           admin_note?: string | null;
           browser_info?: string | null;
           category?: Database['public']['Enums']['feedback_category'];
+          comment_count?: number;
           created_at?: string;
           description: string;
           feedback_id: string;
@@ -136,6 +138,7 @@ export type Database = {
           admin_note?: string | null;
           browser_info?: string | null;
           category?: Database['public']['Enums']['feedback_category'];
+          comment_count?: number;
           created_at?: string;
           description?: string;
           feedback_id?: string;

@@ -88,8 +88,8 @@ describe('SpeedDialFAB', () => {
   });
 
   describe('認証済みユーザー', () => {
-    // SD-C03: 認証済みユーザーに5項目表示される
-    it('5項目のメニューが表示される', async () => {
+    // SD-C03: 認証済みユーザーに6項目表示される
+    it('6項目のメニューが表示される', async () => {
       const user = userEvent.setup();
       render(<Authenticated />);
 
@@ -98,12 +98,13 @@ describe('SpeedDialFAB', () => {
       const menu = screen.getByRole('menu');
       const items = within(menu).getAllByRole('menuitem');
 
-      expect(items).toHaveLength(5);
+      expect(items).toHaveLength(6);
       expect(items[0]).toHaveTextContent('シナリオ登録');
       expect(items[1]).toHaveTextContent('セッション募集');
       expect(items[2]).toHaveTextContent('シナリオ検索');
       expect(items[3]).toHaveTextContent('シェア');
       expect(items[4]).toHaveTextContent('フィードバック');
+      expect(items[5]).toHaveTextContent('みんなのフィードバックを見る');
     });
 
     // SD-C05: 認証済みメニューにディバイダーがある
