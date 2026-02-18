@@ -89,6 +89,10 @@ export const ParticipantStatuses = {
     value: 'CONFIRMED',
     label: '確定',
   },
+  WITHDRAWN: {
+    value: 'WITHDRAWN',
+    label: '辞退',
+  },
 } as const;
 
 export const FeedbackCategories = {
@@ -228,5 +232,20 @@ export const SessionLinkTypes = {
   OTHER: {
     value: 'OTHER',
     label: 'その他',
+  },
+} as const;
+
+export const ScheduleCandidateStatuses = {
+  PENDING: {
+    value: 'PENDING',
+    label: '未確定',
+  },
+  CONFIRMED: {
+    value: 'CONFIRMED',
+    label: '確定',
+  },
+  CANCELLED: {
+    value: 'CANCELLED',
+    label: 'キャンセル',
   },
 } as const;

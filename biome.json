@@ -67,6 +67,12 @@
   },
   "overrides": [
     {
+      "includes": ["docs/designs/mocks/**"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["**/*.tsx", "!**/*.stories.tsx"],
       "linter": {
         "rules": {

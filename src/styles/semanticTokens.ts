@@ -305,6 +305,10 @@ export const semanticTokens = {
       neutralBg: { value: '{colors.gray.100}' },
       neutralDot: { value: '{colors.gray.500}' },
       neutralText: { value: '{colors.gray.700}' },
+      // ロールバッジ（白テキスト10pxでWCAG 4.5:1を確保するため700番台を使用）
+      keeperBg: { value: '{colors.primary.700}' },
+      playerBg: { value: '{colors.blue.700}' },
+      spectatorBg: { value: '{colors.gray.600}' },
     },
 
     // ========================================

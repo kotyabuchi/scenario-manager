@@ -197,6 +197,7 @@ export type Database = {
       };
       game_sessions: {
         Row: {
+          completed_at: string | null;
           completion_note: string | null;
           created_at: string;
           game_session_id: string;
@@ -212,8 +213,11 @@ export type Database = {
           tools: string | null;
           updated_at: string;
           visibility: Database['public']['Enums']['session_visibility'];
+          cancel_reason: string | null;
+          created_by_id: string;
         };
         Insert: {
+          completed_at?: string | null;
           completion_note?: string | null;
           created_at?: string;
           game_session_id: string;
@@ -229,8 +233,11 @@ export type Database = {
           tools?: string | null;
           updated_at?: string;
           visibility?: Database['public']['Enums']['session_visibility'];
+          cancel_reason?: string | null;
+          created_by_id: string;
         };
         Update: {
+          completed_at?: string | null;
           completion_note?: string | null;
           created_at?: string;
           game_session_id?: string;
@@ -246,6 +253,8 @@ export type Database = {
           tools?: string | null;
           updated_at?: string;
           visibility?: Database['public']['Enums']['session_visibility'];
+          cancel_reason?: string | null;
+          created_by_id?: string;
         };
         Relationships: [
           {
@@ -261,6 +270,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'scenarios';
             referencedColumns: ['scenario_id'];
+          },
+          {
+            foreignKeyName: 'game_sessions_created_by_id_users_user_id_fk';
+            columns: ['created_by_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -449,13 +465,61 @@ export type Database = {
           },
         ];
       };
+      schedule_candidates: {
+        Row: {
+          candidate_id: string;
+          session_id: string;
+          candidate_date: string;
+          end_time: string | null;
+          status: Database['public']['Enums']['schedule_candidate_status'];
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          candidate_id: string;
+          session_id: string;
+          candidate_date: string;
+          end_time?: string | null;
+          status?: Database['public']['Enums']['schedule_candidate_status'];
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          candidate_id?: string;
+          session_id?: string;
+          candidate_date?: string;
+          end_time?: string | null;
+          status?: Database['public']['Enums']['schedule_candidate_status'];
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'schedule_candidates_session_id_game_sessions_game_session_id_fk';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_sessions';
+            referencedColumns: ['game_session_id'];
+          },
+          {
+            foreignKeyName: 'schedule_candidates_created_by_users_user_id_fk';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
+          },
+        ];
+      };
       schedule_responses: {
         Row: {
           availability: Database['public']['Enums']['schedule_availability'];
           comment: string | null;
           created_at: string;
           response_id: string;
-          schedule_id: string;
+          candidate_id: string;
           updated_at: string;
           user_id: string;
         };
@@ -464,7 +528,7 @@ export type Database = {
           comment?: string | null;
           created_at?: string;
           response_id: string;
-          schedule_id: string;
+          candidate_id: string;
           updated_at?: string;
           user_id: string;
         };
@@ -473,17 +537,17 @@ export type Database = {
           comment?: string | null;
           created_at?: string;
           response_id?: string;
-          schedule_id?: string;
+          candidate_id?: string;
           updated_at?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'schedule_responses_schedule_id_game_schedules_session_id_fk';
-            columns: ['schedule_id'];
+            foreignKeyName: 'schedule_responses_candidate_id_fkey';
+            columns: ['candidate_id'];
             isOneToOne: false;
-            referencedRelation: 'game_schedules';
-            referencedColumns: ['session_id'];
+            referencedRelation: 'schedule_candidates';
+            referencedColumns: ['candidate_id'];
           },
           {
             foreignKeyName: 'schedule_responses_user_id_users_user_id_fk';
@@ -544,6 +608,7 @@ export type Database = {
           session_id: string;
           updated_at: string;
           user_id: string;
+          withdrawal_reason: string | null;
         };
         Insert: {
           application_message?: string | null;
@@ -556,6 +621,7 @@ export type Database = {
           session_id: string;
           updated_at?: string;
           user_id: string;
+          withdrawal_reason?: string | null;
         };
         Update: {
           application_message?: string | null;
@@ -568,6 +634,7 @@ export type Database = {
           session_id?: string;
           updated_at?: string;
           user_id?: string;
+          withdrawal_reason?: string | null;
         };
         Relationships: [
           {
@@ -831,7 +898,13 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      confirm_schedule: {
+        Args: {
+          p_candidate_id: string;
+          p_session_id: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       feedback_category: 'BUG' | 'FEATURE' | 'UI_UX' | 'OTHER';
@@ -849,11 +922,12 @@ export type Database = {
         | 'FEEDBACK_STATUS_CHANGED'
         | 'FEEDBACK_COMMENT'
         | 'FEEDBACK_MERGED';
-      participant_status: 'PENDING' | 'CONFIRMED';
+      participant_status: 'PENDING' | 'CONFIRMED' | 'WITHDRAWN';
       participant_type: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
       role: 'MODERATOR' | 'MEMBER';
       scenario_source_type: 'manual' | 'booth' | 'talto';
       schedule_availability: 'OK' | 'MAYBE' | 'NG';
+      schedule_candidate_status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
       schedule_phase: 'ADJUSTING' | 'CONFIRMED';
       session_link_type: 'DISCORD' | 'CCFOLIA' | 'OTHER';
       session_phase:
@@ -1010,11 +1084,12 @@ export const Constants = {
         'FEEDBACK_COMMENT',
         'FEEDBACK_MERGED',
       ],
-      participant_status: ['PENDING', 'CONFIRMED'],
+      participant_status: ['PENDING', 'CONFIRMED', 'WITHDRAWN'],
       participant_type: ['KEEPER', 'PLAYER', 'SPECTATOR'],
       role: ['MODERATOR', 'MEMBER'],
       scenario_source_type: ['manual', 'booth', 'talto'],
       schedule_availability: ['OK', 'MAYBE', 'NG'],
+      schedule_candidate_status: ['PENDING', 'CONFIRMED', 'CANCELLED'],
       schedule_phase: ['ADJUSTING', 'CONFIRMED'],
       session_link_type: ['DISCORD', 'CCFOLIA', 'OTHER'],
       session_phase: [
