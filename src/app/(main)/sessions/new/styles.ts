@@ -1,8 +1,8 @@
 import { css } from '@/styled-system/css';
 
 export const pageContainer = css({
-  maxW: '[800px]',
-  mx: 'auto',
-  px: '6',
+  bg: 'bg.page',
+  minH: '[100vh]',
   py: '8',
+  px: '6',
 });

@@ -43,7 +43,7 @@ export const Filled: Story = {
     defaultValues: {
       sessionName: '週末CoC7版セッション',
       sessionDescription: '週末にCoC7版を遊びませんか？初心者歓迎です！',
-      // scenarioIdはセレクトで選択するため、ここでは設定しない（未定状態）
+      scheduleType: 'specify',
       scheduledAt: '2026-02-01T20:00',
       recruitedPlayerCount: 4,
       tools: 'Discord + ココフォリア',

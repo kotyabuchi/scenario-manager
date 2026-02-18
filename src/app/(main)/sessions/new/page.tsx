@@ -24,7 +24,7 @@ export default async function NewSessionPage() {
 
   return (
     <div className={styles.pageContainer}>
-      <PageHeader backHref="/sessions" title="セッション募集" />
+      <PageHeader backHref="/sessions" title="セッションを作成" />
 
       <SessionFormContainer />
     </div>

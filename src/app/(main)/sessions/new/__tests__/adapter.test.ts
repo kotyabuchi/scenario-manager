@@ -66,6 +66,7 @@ describe('Session Management Adapter', () => {
         tools: 'Discord + ココフォリア',
         isBeginnerFriendly: true,
         visibility: 'PUBLIC',
+        scheduleType: 'specify',
       };
 
       const result = await createSession(input, testUserId);
@@ -86,6 +87,7 @@ describe('Session Management Adapter', () => {
         sessionDescription: '週末に何か遊びませんか？',
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
 
       const result = await createSession(input, testUserId);
@@ -108,6 +110,7 @@ describe('Session Management Adapter', () => {
         scenarioId: null,
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
 
       const result = await createSession(input, testUserId);
@@ -127,6 +130,7 @@ describe('Session Management Adapter', () => {
         scheduledAt: null,
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
 
       const result = await createSession(input, testUserId);
@@ -146,6 +150,7 @@ describe('Session Management Adapter', () => {
         recruitedPlayerCount: null,
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
 
       const result = await createSession(input, testUserId);
@@ -164,6 +169,7 @@ describe('Session Management Adapter', () => {
         sessionDescription: 'フォロワーさん向けの卓です',
         visibility: 'FOLLOWERS_ONLY',
         isBeginnerFriendly: false,
+        scheduleType: 'later',
       };
 
       const result = await createSession(input, testUserId);
@@ -182,6 +188,7 @@ describe('Session Management Adapter', () => {
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
       const nonExistentUserId = 'non-existent-user-id';
 
@@ -200,6 +207,7 @@ describe('Session Management Adapter', () => {
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
 
       const result = await createSession(input, testUserId);
@@ -228,6 +236,7 @@ describe('Session Management Adapter', () => {
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
       const createResult = await createSession(input, testUserId);
       expect(createResult.success).toBe(true);
@@ -268,6 +277,7 @@ describe('Session Management Adapter', () => {
         scenarioId,
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
       const createResult = await createSession(input, testUserId);
       if (!createResult.success) return;
@@ -293,6 +303,7 @@ describe('Session Management Adapter', () => {
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
         visibility: 'PUBLIC',
+        scheduleType: 'later',
       };
       const createResult = await createSession(input, testUserId);
       if (!createResult.success) return;

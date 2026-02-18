@@ -40,7 +40,8 @@ export const sessionFormSchema = z.object({
         if (!val) return true;
         // datetime-local形式またはISO8601形式
         const datetimeLocalPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
-        const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+        const iso8601Pattern =
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})?$/;
         return datetimeLocalPattern.test(val) || iso8601Pattern.test(val);
       },
       { message: '日時の形式が正しくありません' },
@@ -70,6 +71,9 @@ export const sessionFormSchema = z.object({
       message: '公開範囲を選択してください',
     })
     .default('PUBLIC'),
+
+  // 日程選択方式（UIのみ。「後で調整」選択時は scheduledAt を null にする）
+  scheduleType: z.enum(['later', 'specify']).default('later'),
 });
 
 // フォーム入力型（defaultValues用）- .default()適用前の型
