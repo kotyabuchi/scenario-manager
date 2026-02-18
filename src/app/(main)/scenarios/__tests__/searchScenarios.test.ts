@@ -1,12 +1,19 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { searchScenarios } from '../adapter';
 
+import {
+  cleanupScenarios,
+  cleanupSystems,
+  cleanupTags,
+  createTestScenario,
+  createTestScenarioTag,
+  createTestSystem,
+  createTestTag,
+} from '@/__tests__/helpers/fixtures';
+
 /**
  * シナリオ検索機能の統合テスト
- *
- * 注意: Supabase接続が必要なため、Vitest単体実行時はスキップされる。
- * `cookies()` がリクエストコンテキスト外で呼ばれるとエラーになるため。
  *
  * 対応ユーザーストーリー:
  * - US-201: システムを選ぶだけでシナリオ一覧を見られる
@@ -19,7 +26,146 @@ import { searchScenarios } from '../adapter';
  * - 5.11 エッジケース: null値のシナリオは常に含める
  * - 5.12 日本語検索の正規化
  */
-describe.skip('searchScenarios', () => {
+describe('searchScenarios', () => {
+  // テストデータのID
+  let systemCoc7Id: string;
+  let systemSw25Id: string;
+  let tagHorrorId: string;
+  let tagMysteryId: string;
+  const scenarioIds: string[] = [];
+
+  beforeAll(async () => {
+    // システム作成
+    const systemCoc7 = await createTestSystem('CoC7版');
+    const systemSw25 = await createTestSystem('SW2.5');
+    systemCoc7Id = systemCoc7.system_id;
+    systemSw25Id = systemSw25.system_id;
+
+    // タグ作成
+    const tagHorror = await createTestTag('ホラー');
+    const tagMystery = await createTestTag('ミステリー');
+    tagHorrorId = tagHorror.tag_id;
+    tagMysteryId = tagMystery.tag_id;
+
+    // シナリオ1: 狂気の山脈（CoC7, 3-5人, 180-300分, ホラー）
+    const s1 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: '狂気の山脈',
+      min_player: 3,
+      max_player: 5,
+      min_playtime: 180,
+      max_playtime: 300,
+    });
+    scenarioIds.push(s1.scenario_id);
+    await createTestScenarioTag({
+      scenarioId: s1.scenario_id,
+      tagId: tagHorrorId,
+    });
+
+    // シナリオ2: クトゥルフの呼び声（CoC7, 2-4人, 120-240分, ホラー+ミステリー）
+    const s2 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: 'クトゥルフの呼び声',
+      min_player: 2,
+      max_player: 4,
+      min_playtime: 120,
+      max_playtime: 240,
+    });
+    scenarioIds.push(s2.scenario_id);
+    await createTestScenarioTag({
+      scenarioId: s2.scenario_id,
+      tagId: tagHorrorId,
+    });
+    await createTestScenarioTag({
+      scenarioId: s2.scenario_id,
+      tagId: tagMysteryId,
+    });
+
+    // シナリオ3: 蒼白の城（SW2.5, 4-6人, 60-120分）
+    const s3 = await createTestScenario({
+      systemId: systemSw25Id,
+      name: '蒼白の城',
+      min_player: 4,
+      max_player: 6,
+      min_playtime: 60,
+      max_playtime: 120,
+    });
+    scenarioIds.push(s3.scenario_id);
+
+    // シナリオ4: 人数nullシナリオ（CoC7, null値）
+    const s4 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: 'null値テストシナリオ',
+      min_player: null,
+      max_player: null,
+      min_playtime: null,
+      max_playtime: null,
+    });
+    scenarioIds.push(s4.scenario_id);
+
+    // シナリオ5: CoC名前検索用
+    const s5 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: 'CoC7版テストシナリオ',
+    });
+    scenarioIds.push(s5.scenario_id);
+
+    // シナリオ6: 2-3人専用（CoC7, 2-3人, 60-120分）
+    const s6 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: '少人数専用シナリオ',
+      min_player: 2,
+      max_player: 3,
+      min_playtime: 60,
+      max_playtime: 120,
+    });
+    scenarioIds.push(s6.scenario_id);
+
+    // シナリオ7: 長時間シナリオ（CoC7, 3-5人, 300-480分）
+    const s7 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: '長時間キャンペーン',
+      min_player: 3,
+      max_player: 5,
+      min_playtime: 300,
+      max_playtime: 480,
+    });
+    scenarioIds.push(s7.scenario_id);
+
+    // シナリオ8: 片方null（CoC7, minPlayer:3, maxPlayer:null）
+    const s8 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: '片方null人数シナリオ',
+      min_player: 3,
+      max_player: null,
+    });
+    scenarioIds.push(s8.scenario_id);
+
+    // シナリオ9: ソート検証用（CoC7, 短時間）
+    const s9 = await createTestScenario({
+      systemId: systemCoc7Id,
+      name: 'ソート検証短時間シナリオ',
+      min_playtime: 30,
+      max_playtime: 60,
+    });
+    scenarioIds.push(s9.scenario_id);
+
+    // シナリオ10: ソート検証用（SW2.5, 中時間）
+    const s10 = await createTestScenario({
+      systemId: systemSw25Id,
+      name: 'ソート検証中時間シナリオ',
+      min_playtime: 150,
+      max_playtime: 210,
+    });
+    scenarioIds.push(s10.scenario_id);
+  });
+
+  afterAll(async () => {
+    await cleanupScenarios(scenarioIds);
+    await cleanupSystems([systemCoc7Id, systemSw25Id]);
+    await cleanupTags([tagHorrorId, tagMysteryId]);
+  });
+
   describe('US-201: システムフィルタ', () => {
     it('T-201-1: システム未選択時は全シナリオが対象になる', async () => {
       const result = await searchScenarios({});
@@ -32,22 +178,18 @@ describe.skip('searchScenarios', () => {
     });
 
     it('T-201-2: 単一システム選択時はそのシステムのみ絞り込む', async () => {
-      // テスト用のシステムIDが必要
-      // TODO: テストデータのセットアップ後に実装
-      const systemId = 'test-system-coc7';
-
-      const result = await searchScenarios({ systemIds: [systemId] });
+      const result = await searchScenarios({ systemIds: [systemCoc7Id] });
 
       expect(result.success).toBe(true);
       if (result.success) {
         for (const scenario of result.data.scenarios) {
-          expect(scenario.scenarioSystemId).toBe(systemId);
+          expect(scenario.scenarioSystemId).toBe(systemCoc7Id);
         }
       }
     });
 
     it('T-201-3: 複数システム選択時はOR条件で絞り込む', async () => {
-      const systemIds = ['test-system-coc7', 'test-system-coc6'];
+      const systemIds = [systemCoc7Id, systemSw25Id];
 
       const result = await searchScenarios({ systemIds });
 
@@ -152,9 +294,7 @@ describe.skip('searchScenarios', () => {
 
   describe('US-203: タグフィルタ', () => {
     it('T-203-1: 単一タグで絞り込める', async () => {
-      const tagId = 'test-tag-horror';
-
-      const result = await searchScenarios({ tagIds: [tagId] });
+      const result = await searchScenarios({ tagIds: [tagHorrorId] });
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -162,13 +302,13 @@ describe.skip('searchScenarios', () => {
           const tagIds = (scenario.scenarioTags ?? []).map(
             (st) => st.tag.tagId,
           );
-          expect(tagIds).toContain(tagId);
+          expect(tagIds).toContain(tagHorrorId);
         }
       }
     });
 
     it('T-203-2: 複数タグはAND条件で絞り込む', async () => {
-      const tagIds = ['test-tag-horror', 'test-tag-mystery'];
+      const tagIds = [tagHorrorId, tagMysteryId];
 
       const result = await searchScenarios({ tagIds });
 
@@ -345,7 +485,6 @@ describe.skip('searchScenarios', () => {
           (s) => s.minPlayer === null || s.maxPlayer === null,
         );
         // null値シナリオは除外されていないこと（存在すれば含まれる）
-        // テストデータにnull値シナリオがあれば、それらも検索結果に含まれる
         expect(nullPlayerScenarios.length).toBeGreaterThanOrEqual(0);
       }
     });

@@ -32,6 +32,29 @@ export async function cleanupE2ESessions(): Promise<void> {
   if (sessions && sessions.length > 0) {
     const sessionIds = sessions.map((s) => s.game_session_id);
 
+    // 関連テーブルを先に削除（外部キー制約）
+    await supabase
+      .from('schedule_responses')
+      .delete()
+      .in(
+        'candidate_id',
+        (
+          await supabase
+            .from('schedule_candidates')
+            .select('candidate_id')
+            .in('session_id', sessionIds)
+        ).data?.map((c) => c.candidate_id) ?? [],
+      );
+
+    await supabase
+      .from('schedule_candidates')
+      .delete()
+      .in('session_id', sessionIds);
+
+    await supabase.from('session_links').delete().in('session_id', sessionIds);
+
+    await supabase.from('game_schedules').delete().in('session_id', sessionIds);
+
     await supabase
       .from('session_participants')
       .delete()

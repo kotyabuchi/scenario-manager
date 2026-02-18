@@ -1,6 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { createScenario, getUserByDiscordId } from '../../adapter';
+
+import {
+  cleanupScenarios,
+  cleanupSystems,
+  cleanupTags,
+  cleanupUsers,
+  createTestSystem,
+  createTestTag,
+  createTestUser,
+} from '@/__tests__/helpers/fixtures';
 
 /**
  * シナリオ登録アダプター関数のテスト
@@ -10,9 +20,37 @@ import { createScenario, getUserByDiscordId } from '../../adapter';
  * - US-103: ユーザーとして、新規シナリオを登録できる
  *
  * 注意: これらはデータベースに接続する統合テストです。
- * テスト環境でDBに接続できない場合、テストは警告を出してスキップ扱いになります。
  */
 describe('createScenario adapter', () => {
+  let userId: string;
+  let userDiscordId: string;
+  let systemId: string;
+  let tag1Id: string;
+  let tag2Id: string;
+  const createdScenarioIds: string[] = [];
+
+  beforeAll(async () => {
+    const user = await createTestUser();
+    userId = user.user_id;
+    userDiscordId = user.discord_id;
+
+    const system = await createTestSystem();
+    systemId = system.system_id;
+
+    const tag1 = await createTestTag('[TEST] タグ1');
+    tag1Id = tag1.tag_id;
+
+    const tag2 = await createTestTag('[TEST] タグ2');
+    tag2Id = tag2.tag_id;
+  });
+
+  afterAll(async () => {
+    await cleanupScenarios(createdScenarioIds);
+    await cleanupUsers([userId]);
+    await cleanupSystems([systemId]);
+    await cleanupTags([tag1Id, tag2Id]);
+  });
+
   describe('getUserByDiscordId', () => {
     // T-CS-001: 存在しないDiscordIDでnullを返す
     it('存在しないDiscordIDでnullを返す', async () => {
@@ -30,11 +68,8 @@ describe('createScenario adapter', () => {
     });
 
     // T-CS-002: 存在するDiscordIDでユーザーを取得できる
-    it.skip('存在するDiscordIDでユーザーを取得できる', async () => {
-      // テスト用のDiscordID（実際のテストデータに応じて変更）
-      const discordId = 'test-discord-id';
-
-      const result = await getUserByDiscordId(discordId);
+    it('存在するDiscordIDでユーザーを取得できる', async () => {
+      const result = await getUserByDiscordId(userDiscordId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
@@ -45,11 +80,10 @@ describe('createScenario adapter', () => {
 
   describe('createScenario', () => {
     // T-CS-101: 必須項目のみでシナリオを作成できる
-    it.skip('必須項目のみでシナリオを作成できる', async () => {
-      const userId = 'test-user-id';
+    it('必須項目のみでシナリオを作成できる', async () => {
       const input = {
         name: `テストシナリオ_${Date.now()}`,
-        scenarioSystemId: 'test-system-id',
+        scenarioSystemId: systemId,
         handoutType: 'NONE' as const,
       };
 
@@ -59,16 +93,16 @@ describe('createScenario adapter', () => {
       if (result.success) {
         expect(result.data.scenarioId).toBeDefined();
         expect(result.data.scenarioId.length).toBe(26); // ULIDは26文字
+        createdScenarioIds.push(result.data.scenarioId);
       }
     });
 
     // T-CS-102: 全項目を指定してシナリオを作成できる
-    it.skip('全項目を指定してシナリオを作成できる', async () => {
-      const userId = 'test-user-id';
+    it('全項目を指定してシナリオを作成できる', async () => {
       const timestamp = Date.now();
       const input = {
         name: `テストシナリオ_${timestamp}`,
-        scenarioSystemId: 'test-system-id',
+        scenarioSystemId: systemId,
         handoutType: 'SECRET' as const,
         author: 'テスト作者',
         description: 'テスト概要',
@@ -78,7 +112,7 @@ describe('createScenario adapter', () => {
         maxPlaytime: 240,
         scenarioImageUrl: 'https://example.com/image.jpg',
         distributeUrl: 'https://example.com/scenario',
-        tagIds: ['test-tag-1', 'test-tag-2'],
+        tagIds: [tag1Id, tag2Id],
       };
 
       const result = await createScenario(input, userId);
@@ -86,12 +120,12 @@ describe('createScenario adapter', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.scenarioId).toBeDefined();
+        createdScenarioIds.push(result.data.scenarioId);
       }
     });
 
     // T-CS-103: 存在しないシステムIDでエラー
     it('存在しないシステムIDでエラー', async () => {
-      const userId = 'test-user-id';
       const input = {
         name: `テストシナリオ_${Date.now()}`,
         scenarioSystemId: 'non-existent-system-id-12345',
@@ -110,11 +144,11 @@ describe('createScenario adapter', () => {
     });
 
     // T-CS-104: 存在しないユーザーIDでもシナリオは作成される（nullable FK）
-    it.skip('存在しないユーザーIDでもシナリオは作成される（nullable FK）', async () => {
+    it('存在しないユーザーIDでもシナリオは作成される（nullable FK）', async () => {
       const nonExistentUserId = 'non-existent-user-id-12345';
       const input = {
         name: `テストシナリオ_${Date.now()}`,
-        scenarioSystemId: 'test-system-id',
+        scenarioSystemId: systemId,
         handoutType: 'NONE' as const,
       };
 
@@ -124,15 +158,17 @@ describe('createScenario adapter', () => {
       // この挙動はDB設定に依存
       // FK制約がない場合は成功、ある場合は失敗
       expect(result.success === true || result.success === false).toBe(true);
+      if (result.success) {
+        createdScenarioIds.push(result.data.scenarioId);
+      }
     });
 
     // T-CS-105: タグ紐付けが正しく行われる
-    it.skip('タグ紐付けが正しく行われる', async () => {
-      const userId = 'test-user-id';
-      const tagIds = ['test-tag-1', 'test-tag-2'];
+    it('タグ紐付けが正しく行われる', async () => {
+      const tagIds = [tag1Id, tag2Id];
       const input = {
         name: `テストシナリオ_${Date.now()}`,
-        scenarioSystemId: 'test-system-id',
+        scenarioSystemId: systemId,
         handoutType: 'NONE' as const,
         tagIds,
       };
@@ -144,6 +180,7 @@ describe('createScenario adapter', () => {
         // タグ紐付けはscenarioTagsテーブルに別途insert
         // 検証するにはgetScenarioByIdで取得して確認
         expect(result.data.scenarioId).toBeDefined();
+        createdScenarioIds.push(result.data.scenarioId);
       }
     });
   });
