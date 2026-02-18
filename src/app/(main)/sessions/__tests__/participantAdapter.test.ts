@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   applyToSession,
@@ -9,6 +9,14 @@ import {
   rejectApplication,
   withdrawFromSession,
 } from '../participantAdapter';
+
+import {
+  addParticipant,
+  cleanupSessions,
+  cleanupUsers,
+  createTestSession,
+  createTestUser,
+} from '@/__tests__/helpers/fixtures';
 
 /**
  * セッション参加申請・管理機能のアダプターテスト
@@ -23,152 +31,218 @@ import {
  * - US-S111: PLとして、承認待ちの申請を取り消しできる
  *
  * 注意: これらはデータベースに接続する統合テストです。
- * CI環境ではスキップされます。
  */
 
-// CI環境または DB 未接続時はスキップ
-const isIntegrationTestEnabled =
-  process.env.DATABASE_URL &&
-  !process.env.CI &&
-  process.env.RUN_INTEGRATION_TESTS === 'true';
-
 describe('Session Participant Adapter', () => {
+  let gmUserId: string;
+  let recruitingSessionId: string;
+  let preparationSessionId: string;
+  let completedSessionId: string;
+  let cancelledSessionId: string;
+  const createdUserIds: string[] = [];
+
+  beforeAll(async () => {
+    // GM ユーザー作成
+    const gmUser = await createTestUser();
+    gmUserId = gmUser.user_id;
+    createdUserIds.push(gmUserId);
+
+    // RECRUITING セッション
+    const recruitingSession = await createTestSession({
+      keeperUserId: gmUserId,
+    });
+    recruitingSessionId = recruitingSession.game_session_id;
+
+    // PREPARATION セッション
+    const preparationSession = await createTestSession({
+      keeperUserId: gmUserId,
+      phase: 'PREPARATION',
+    });
+    preparationSessionId = preparationSession.game_session_id;
+
+    // COMPLETED セッション
+    const completedSession = await createTestSession({
+      keeperUserId: gmUserId,
+      phase: 'COMPLETED',
+    });
+    completedSessionId = completedSession.game_session_id;
+
+    // CANCELLED セッション
+    const cancelledSession = await createTestSession({
+      keeperUserId: gmUserId,
+      phase: 'CANCELLED',
+    });
+    cancelledSessionId = cancelledSession.game_session_id;
+  });
+
+  afterAll(async () => {
+    await cleanupSessions([
+      recruitingSessionId,
+      preparationSessionId,
+      completedSessionId,
+      cancelledSessionId,
+    ]);
+    await cleanupUsers(createdUserIds);
+  });
+
   describe('applyToSession - 参加申請', () => {
+    let applicantUserId: string;
+
+    beforeEach(async () => {
+      const applicant = await createTestUser();
+      applicantUserId = applicant.user_id;
+      createdUserIds.push(applicantUserId);
+    });
+
     // T-AP-001: プレイヤーとして参加申請できる
-    it.skipIf(!isIntegrationTestEnabled)(
-      'プレイヤーとして参加申請できる',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'test-user-id';
-        const input = {
-          participantType: 'PLAYER' as const,
-          applicationMessage: 'よろしくお願いします！',
-        };
+    it('プレイヤーとして参加申請できる', async () => {
+      const input = {
+        participantType: 'PLAYER' as const,
+        applicationMessage: 'よろしくお願いします！',
+      };
 
-        const result = await applyToSession(sessionId, userId, input);
+      const result = await applyToSession(
+        recruitingSessionId,
+        applicantUserId,
+        input,
+      );
 
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.participantType).toBe('PLAYER');
-          expect(result.data.participantStatus).toBe('PENDING');
-          expect(result.data.applicationMessage).toBe('よろしくお願いします！');
-        }
-      },
-    );
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.participantType).toBe('PLAYER');
+        expect(result.data.participantStatus).toBe('PENDING');
+        expect(result.data.applicationMessage).toBe('よろしくお願いします！');
+      }
+    });
 
     // T-AP-002: 観戦者として参加申請できる
-    it.skipIf(!isIntegrationTestEnabled)(
-      '観戦者として参加申請できる',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'test-user-id';
-        const input = {
-          participantType: 'SPECTATOR' as const,
-          applicationMessage: '見学させてください',
-        };
+    it('観戦者として参加申請できる', async () => {
+      const input = {
+        participantType: 'SPECTATOR' as const,
+        applicationMessage: '見学させてください',
+      };
 
-        const result = await applyToSession(sessionId, userId, input);
+      const result = await applyToSession(
+        recruitingSessionId,
+        applicantUserId,
+        input,
+      );
 
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.participantType).toBe('SPECTATOR');
-        }
-      },
-    );
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.participantType).toBe('SPECTATOR');
+      }
+    });
 
     // T-AP-003: メッセージなしで参加申請できる
-    it.skipIf(!isIntegrationTestEnabled)(
-      'メッセージなしで参加申請できる',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'test-user-id';
-        const input = {
-          participantType: 'PLAYER' as const,
-        };
+    it('メッセージなしで参加申請できる', async () => {
+      const input = {
+        participantType: 'PLAYER' as const,
+      };
 
-        const result = await applyToSession(sessionId, userId, input);
+      const result = await applyToSession(
+        recruitingSessionId,
+        applicantUserId,
+        input,
+      );
 
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.applicationMessage).toBeNull();
-        }
-      },
-    );
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.applicationMessage).toBeNull();
+      }
+    });
 
     // T-AP-004: 既に申請済みの場合エラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '既に申請済みの場合エラー',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'already-applied-user-id';
-        const input = {
-          participantType: 'PLAYER' as const,
-        };
+    it('既に申請済みの場合エラー', async () => {
+      // 事前にPENDING参加者を追加
+      await addParticipant({
+        sessionId: recruitingSessionId,
+        userId: applicantUserId,
+        type: 'PLAYER',
+        status: 'PENDING',
+      });
 
-        const result = await applyToSession(sessionId, userId, input);
+      const input = {
+        participantType: 'PLAYER' as const,
+      };
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.ALREADY_APPLIED,
-          );
-        }
-      },
-    );
+      const result = await applyToSession(
+        recruitingSessionId,
+        applicantUserId,
+        input,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.ALREADY_APPLIED,
+        );
+      }
+    });
 
     // T-AP-005: 募集中以外のセッションに申請するとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '募集中以外のセッションに申請するとエラー',
-      async () => {
-        const sessionId = 'preparation-session-id'; // PREPARATION状態
-        const userId = 'test-user-id';
-        const input = {
-          participantType: 'PLAYER' as const,
-        };
+    it('募集中以外のセッションに申請するとエラー', async () => {
+      const input = {
+        participantType: 'PLAYER' as const,
+      };
 
-        const result = await applyToSession(sessionId, userId, input);
+      const result = await applyToSession(
+        preparationSessionId,
+        applicantUserId,
+        input,
+      );
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.RECRUITMENT_CLOSED,
-          );
-        }
-      },
-    );
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.RECRUITMENT_CLOSED,
+        );
+      }
+    });
 
     // T-AP-006: 存在しないセッションに申請するとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '存在しないセッションに申請するとエラー',
-      async () => {
-        const sessionId = 'non-existent-session-id';
-        const userId = 'test-user-id';
-        const input = {
-          participantType: 'PLAYER' as const,
-        };
+    it('存在しないセッションに申請するとエラー', async () => {
+      const input = {
+        participantType: 'PLAYER' as const,
+      };
 
-        const result = await applyToSession(sessionId, userId, input);
+      const result = await applyToSession(
+        'non-existent-session-id',
+        applicantUserId,
+        input,
+      );
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.SESSION_NOT_FOUND,
-          );
-        }
-      },
-    );
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.SESSION_NOT_FOUND,
+        );
+      }
+    });
   });
 
   describe('approveApplication - 申請承認', () => {
-    // T-AA-001: GMが申請を承認できる
-    it.skipIf(!isIntegrationTestEnabled)('GMが申請を承認できる', async () => {
-      const sessionId = 'test-session-id';
-      const applicantUserId = 'pending-applicant-user-id';
-      const gmUserId = 'gm-user-id';
+    let pendingApplicantUserId: string;
 
+    beforeEach(async () => {
+      const applicant = await createTestUser();
+      pendingApplicantUserId = applicant.user_id;
+      createdUserIds.push(pendingApplicantUserId);
+
+      // PENDING参加者を作成
+      await addParticipant({
+        sessionId: recruitingSessionId,
+        userId: pendingApplicantUserId,
+        type: 'PLAYER',
+        status: 'PENDING',
+      });
+    });
+
+    // T-AA-001: GMが申請を承認できる
+    it('GMが申請を承認できる', async () => {
       const result = await approveApplication(
-        sessionId,
-        applicantUserId,
+        recruitingSessionId,
+        pendingApplicantUserId,
         gmUserId,
       );
 
@@ -179,62 +253,71 @@ describe('Session Participant Adapter', () => {
     });
 
     // T-AA-002: GM以外が承認しようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      'GM以外が承認しようとするとエラー',
-      async () => {
-        const sessionId = 'test-session-id';
-        const applicantUserId = 'pending-applicant-user-id';
-        const otherUserId = 'other-user-id';
+    it('GM以外が承認しようとするとエラー', async () => {
+      const otherUser = await createTestUser();
+      createdUserIds.push(otherUser.user_id);
 
-        const result = await approveApplication(
-          sessionId,
-          applicantUserId,
-          otherUserId,
+      const result = await approveApplication(
+        recruitingSessionId,
+        pendingApplicantUserId,
+        otherUser.user_id,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.NO_PERMISSION,
         );
-
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.NO_PERMISSION,
-          );
-        }
-      },
-    );
+      }
+    });
 
     // T-AA-003: 既に承認済みの申請を承認しようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '既に承認済みの申請を承認しようとするとエラー',
-      async () => {
-        const sessionId = 'test-session-id';
-        const applicantUserId = 'confirmed-participant-user-id';
-        const gmUserId = 'gm-user-id';
+    it('既に承認済みの申請を承認しようとするとエラー', async () => {
+      // まず承認する
+      await approveApplication(
+        recruitingSessionId,
+        pendingApplicantUserId,
+        gmUserId,
+      );
 
-        const result = await approveApplication(
-          sessionId,
-          applicantUserId,
-          gmUserId,
+      // 再度承認しようとする
+      const result = await approveApplication(
+        recruitingSessionId,
+        pendingApplicantUserId,
+        gmUserId,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.ALREADY_PROCESSED,
         );
-
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.ALREADY_PROCESSED,
-          );
-        }
-      },
-    );
+      }
+    });
   });
 
   describe('rejectApplication - 申請拒否', () => {
-    // T-RA-001: GMが申請を拒否できる
-    it.skipIf(!isIntegrationTestEnabled)('GMが申請を拒否できる', async () => {
-      const sessionId = 'test-session-id';
-      const applicantUserId = 'pending-applicant-user-id';
-      const gmUserId = 'gm-user-id';
+    let pendingApplicantUserId: string;
 
+    beforeEach(async () => {
+      const applicant = await createTestUser();
+      pendingApplicantUserId = applicant.user_id;
+      createdUserIds.push(pendingApplicantUserId);
+
+      // PENDING参加者を作成
+      await addParticipant({
+        sessionId: recruitingSessionId,
+        userId: pendingApplicantUserId,
+        type: 'PLAYER',
+        status: 'PENDING',
+      });
+    });
+
+    // T-RA-001: GMが申請を拒否できる
+    it('GMが申請を拒否できる', async () => {
       const result = await rejectApplication(
-        sessionId,
-        applicantUserId,
+        recruitingSessionId,
+        pendingApplicantUserId,
         gmUserId,
       );
 
@@ -242,185 +325,222 @@ describe('Session Participant Adapter', () => {
     });
 
     // T-RA-002: GM以外が拒否しようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      'GM以外が拒否しようとするとエラー',
-      async () => {
-        const sessionId = 'test-session-id';
-        const applicantUserId = 'pending-applicant-user-id';
-        const otherUserId = 'other-user-id';
+    it('GM以外が拒否しようとするとエラー', async () => {
+      const otherUser = await createTestUser();
+      createdUserIds.push(otherUser.user_id);
 
-        const result = await rejectApplication(
-          sessionId,
-          applicantUserId,
-          otherUserId,
+      const result = await rejectApplication(
+        recruitingSessionId,
+        pendingApplicantUserId,
+        otherUser.user_id,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.NO_PERMISSION,
         );
-
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.NO_PERMISSION,
-          );
-        }
-      },
-    );
+      }
+    });
   });
 
   describe('withdrawFromSession - 辞退', () => {
+    let confirmedUserId: string;
+
+    beforeEach(async () => {
+      const user = await createTestUser();
+      confirmedUserId = user.user_id;
+      createdUserIds.push(confirmedUserId);
+
+      // CONFIRMED参加者を作成
+      await addParticipant({
+        sessionId: recruitingSessionId,
+        userId: confirmedUserId,
+        type: 'PLAYER',
+        status: 'CONFIRMED',
+      });
+    });
+
     // T-WS-001: 承認済みの参加者が辞退できる
-    it.skipIf(!isIntegrationTestEnabled)(
-      '承認済みの参加者が辞退できる',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'confirmed-participant-user-id';
-        const reason = '予定が入ってしまいました';
+    it('承認済みの参加者が辞退できる', async () => {
+      const reason = '予定が入ってしまいました';
 
-        const result = await withdrawFromSession(sessionId, userId, reason);
+      const result = await withdrawFromSession(
+        recruitingSessionId,
+        confirmedUserId,
+        reason,
+      );
 
-        expect(result.success).toBe(true);
-      },
-    );
+      expect(result.success).toBe(true);
+    });
 
     // T-WS-002: 完了済みセッションから辞退しようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '完了済みセッションから辞退しようとするとエラー',
-      async () => {
-        const sessionId = 'completed-session-id';
-        const userId = 'participant-user-id';
+    it('完了済みセッションから辞退しようとするとエラー', async () => {
+      // completedSession に参加者を追加
+      await addParticipant({
+        sessionId: completedSessionId,
+        userId: confirmedUserId,
+        type: 'PLAYER',
+        status: 'CONFIRMED',
+      });
 
-        const result = await withdrawFromSession(sessionId, userId);
+      const result = await withdrawFromSession(
+        completedSessionId,
+        confirmedUserId,
+      );
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.CANNOT_WITHDRAW,
-          );
-        }
-      },
-    );
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.CANNOT_WITHDRAW,
+        );
+      }
+    });
 
     // T-WS-003: 参加していないセッションから辞退しようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '参加していないセッションから辞退しようとするとエラー',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'non-participant-user-id';
+    it('参加していないセッションから辞退しようとするとエラー', async () => {
+      const nonParticipant = await createTestUser();
+      createdUserIds.push(nonParticipant.user_id);
 
-        const result = await withdrawFromSession(sessionId, userId);
+      const result = await withdrawFromSession(
+        recruitingSessionId,
+        nonParticipant.user_id,
+      );
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.NOT_PARTICIPANT,
-          );
-        }
-      },
-    );
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.NOT_PARTICIPANT,
+        );
+      }
+    });
   });
 
   describe('cancelApplication - 申請取り消し', () => {
+    let pendingUserId: string;
+
+    beforeEach(async () => {
+      const user = await createTestUser();
+      pendingUserId = user.user_id;
+      createdUserIds.push(pendingUserId);
+
+      // PENDING参加者を作成
+      await addParticipant({
+        sessionId: recruitingSessionId,
+        userId: pendingUserId,
+        type: 'PLAYER',
+        status: 'PENDING',
+      });
+    });
+
     // T-CA-001: PENDING状態の申請を取り消せる
-    it.skipIf(!isIntegrationTestEnabled)(
-      'PENDING状態の申請を取り消せる',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'pending-applicant-user-id';
+    it('PENDING状態の申請を取り消せる', async () => {
+      const result = await cancelApplication(
+        recruitingSessionId,
+        pendingUserId,
+      );
 
-        const result = await cancelApplication(sessionId, userId);
-
-        expect(result.success).toBe(true);
-      },
-    );
+      expect(result.success).toBe(true);
+    });
 
     // T-CA-002: CONFIRMED状態の申請は取り消せない
-    it.skipIf(!isIntegrationTestEnabled)(
-      'CONFIRMED状態の申請は取り消せない',
-      async () => {
-        const sessionId = 'test-session-id';
-        const userId = 'confirmed-participant-user-id';
+    it('CONFIRMED状態の申請は取り消せない', async () => {
+      const confirmedUser = await createTestUser();
+      createdUserIds.push(confirmedUser.user_id);
 
-        const result = await cancelApplication(sessionId, userId);
+      await addParticipant({
+        sessionId: recruitingSessionId,
+        userId: confirmedUser.user_id,
+        type: 'PLAYER',
+        status: 'CONFIRMED',
+      });
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.USE_WITHDRAW,
-          );
-        }
-      },
-    );
+      const result = await cancelApplication(
+        recruitingSessionId,
+        confirmedUser.user_id,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.USE_WITHDRAW,
+        );
+      }
+    });
   });
 
   describe('cancelSession - セッションキャンセル', () => {
     // T-CSS-001: GMがセッションをキャンセルできる
-    it.skipIf(!isIntegrationTestEnabled)(
-      'GMがセッションをキャンセルできる',
-      async () => {
-        const sessionId = 'test-session-id';
-        const gmUserId = 'gm-user-id';
-        const reason = '急用が入ってしまいました';
+    it('GMがセッションをキャンセルできる', async () => {
+      // キャンセル用に別のRECRUITINGセッションを作成
+      const cancelTargetSession = await createTestSession({
+        keeperUserId: gmUserId,
+      });
+      const reason = '急用が入ってしまいました';
 
-        const result = await cancelSession(sessionId, gmUserId, reason);
+      const result = await cancelSession(
+        cancelTargetSession.game_session_id,
+        gmUserId,
+        reason,
+      );
 
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.sessionPhase).toBe('CANCELLED');
-        }
-      },
-    );
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.sessionPhase).toBe('CANCELLED');
+      }
+
+      // クリーンアップ
+      await cleanupSessions([cancelTargetSession.game_session_id]);
+    });
 
     // T-CSS-002: GM以外がキャンセルしようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      'GM以外がキャンセルしようとするとエラー',
-      async () => {
-        const sessionId = 'test-session-id';
-        const otherUserId = 'other-user-id';
+    it('GM以外がキャンセルしようとするとエラー', async () => {
+      const otherUser = await createTestUser();
+      createdUserIds.push(otherUser.user_id);
 
-        const result = await cancelSession(sessionId, otherUserId);
+      // キャンセル用セッション
+      const cancelTargetSession = await createTestSession({
+        keeperUserId: gmUserId,
+      });
 
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.NO_PERMISSION,
-          );
-        }
-      },
-    );
+      const result = await cancelSession(
+        cancelTargetSession.game_session_id,
+        otherUser.user_id,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.NO_PERMISSION,
+        );
+      }
+
+      await cleanupSessions([cancelTargetSession.game_session_id]);
+    });
 
     // T-CSS-003: 完了済みセッションはキャンセルできない
-    it.skipIf(!isIntegrationTestEnabled)(
-      '完了済みセッションはキャンセルできない',
-      async () => {
-        const sessionId = 'completed-session-id';
-        const gmUserId = 'gm-user-id';
+    it('完了済みセッションはキャンセルできない', async () => {
+      const result = await cancelSession(completedSessionId, gmUserId);
 
-        const result = await cancelSession(sessionId, gmUserId);
-
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.COMPLETED_CANNOT_CANCEL,
-          );
-        }
-      },
-    );
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.COMPLETED_CANNOT_CANCEL,
+        );
+      }
+    });
 
     // T-CSS-004: 既にキャンセル済みのセッションをキャンセルしようとするとエラー
-    it.skipIf(!isIntegrationTestEnabled)(
-      '既にキャンセル済みのセッションをキャンセルしようとするとエラー',
-      async () => {
-        const sessionId = 'cancelled-session-id';
-        const gmUserId = 'gm-user-id';
+    it('既にキャンセル済みのセッションをキャンセルしようとするとエラー', async () => {
+      const result = await cancelSession(cancelledSessionId, gmUserId);
 
-        const result = await cancelSession(sessionId, gmUserId);
-
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.message).toBe(
-            PARTICIPANT_ERROR_MESSAGES.ALREADY_CANCELLED,
-          );
-        }
-      },
-    );
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe(
+          PARTICIPANT_ERROR_MESSAGES.ALREADY_CANCELLED,
+        );
+      }
+    });
   });
 
   describe('エラーメッセージの検証', () => {

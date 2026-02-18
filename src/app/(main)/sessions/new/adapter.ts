@@ -95,6 +95,7 @@ export const createSession = async (
         session_description: input.sessionDescription,
         scenario_id: input.scenarioId ?? null,
         keeper_id: userId,
+        created_by_id: userId,
         session_phase: SessionPhases.RECRUITING.value,
         scheduled_at: input.scheduledAt
           ? new Date(input.scheduledAt).toISOString()
@@ -112,14 +113,20 @@ export const createSession = async (
     }
 
     // 作成者をKEEPERとして参加者に追加（確定済み状態）
-    await supabase.from('session_participants').insert({
-      session_id: gameSessionId,
-      user_id: userId,
-      participant_type: ParticipantTypes.KEEPER.value,
-      participant_status: ParticipantStatuses.CONFIRMED.value,
-      applied_at: new Date().toISOString(),
-      approved_at: new Date().toISOString(),
-    });
+    const { error: participantError } = await supabase
+      .from('session_participants')
+      .insert({
+        session_id: gameSessionId,
+        user_id: userId,
+        participant_type: ParticipantTypes.KEEPER.value,
+        participant_status: ParticipantStatuses.CONFIRMED.value,
+        applied_at: new Date().toISOString(),
+        approved_at: new Date().toISOString(),
+      });
+
+    if (participantError) {
+      return err(new Error(participantError.message));
+    }
 
     const session = camelCaseKeys(
       createdSession as Record<string, unknown>,

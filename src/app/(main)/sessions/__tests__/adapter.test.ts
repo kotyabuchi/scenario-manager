@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
   getAllSystems,
@@ -7,6 +7,19 @@ import {
   getUpcomingSessions,
   searchPublicSessions,
 } from '../adapter';
+
+import {
+  addParticipant,
+  cleanupScenarios,
+  cleanupSessions,
+  cleanupSystems,
+  cleanupUsers,
+  createTestScenario,
+  createTestSession,
+  createTestSystem,
+  createTestUser,
+} from '@/__tests__/helpers/fixtures';
+import { getTestClient } from '@/__tests__/helpers/testClient';
 
 /**
  * セッション一覧ページのアダプター関数テスト
@@ -24,6 +37,91 @@ import {
  */
 
 describe('Session List Adapter', () => {
+  let userId: string;
+  let player1Id: string;
+  let systemId: string;
+  let scenarioId: string;
+  let recruitingSessionId: string;
+  let completedSessionId: string;
+  let cancelledSessionId: string;
+
+  beforeAll(async () => {
+    // テストユーザー作成
+    const user = await createTestUser();
+    userId = user.user_id;
+
+    // テストシステム作成
+    const system = await createTestSystem();
+    systemId = system.system_id;
+
+    // テストシナリオ作成
+    const scenario = await createTestScenario({
+      systemId,
+      createdById: userId,
+    });
+    scenarioId = scenario.scenario_id;
+
+    // RECRUITING セッション（scenarioId付き）
+    const recruitingSession = await createTestSession({
+      keeperUserId: userId,
+      scenario_id: scenarioId,
+    });
+    recruitingSessionId = recruitingSession.game_session_id;
+
+    // COMPLETED セッション
+    const completedSession = await createTestSession({
+      keeperUserId: userId,
+      phase: 'COMPLETED',
+      scenario_id: scenarioId,
+    });
+    completedSessionId = completedSession.game_session_id;
+
+    // CANCELLED セッション
+    const cancelledSession = await createTestSession({
+      keeperUserId: userId,
+      phase: 'CANCELLED',
+      scenario_id: scenarioId,
+    });
+    cancelledSessionId = cancelledSession.game_session_id;
+
+    // RECRUITING セッションに PLAYER 参加者を追加（CONFIRMED）
+    const player1 = await createTestUser();
+    player1Id = player1.user_id;
+    await addParticipant({
+      sessionId: recruitingSessionId,
+      userId: player1Id,
+      type: 'PLAYER',
+      status: 'CONFIRMED',
+    });
+
+    // COMPLETED セッションにも PLAYER 参加者を追加（CONFIRMED）
+    await addParticipant({
+      sessionId: completedSessionId,
+      userId: player1Id,
+      type: 'PLAYER',
+      status: 'CONFIRMED',
+    });
+
+    // game_schedules を追加（scheduledセッション用）
+    const client = getTestClient();
+    await client.from('game_schedules').insert({
+      session_id: recruitingSessionId,
+      schedule_date: '2026-03-15T10:00:00+09:00',
+      schedule_phase: 'CONFIRMED',
+    });
+  });
+
+  afterAll(async () => {
+    await cleanupSessions([
+      recruitingSessionId,
+      completedSessionId,
+      cancelledSessionId,
+    ]);
+    await cleanupScenarios([scenarioId]);
+    await cleanupUsers([userId, player1Id]);
+    await cleanupSystems([systemId]);
+  });
+
   describe('getAllSystems', () => {
     // T-AS-001: 全システムを取得できる
     it('全システムを取得できる', async () => {
@@ -77,11 +175,8 @@ describe('Session List Adapter', () => {
     });
 
     // T-PS-002: システムIDでフィルタできる
-    it.skip('システムIDでフィルタできる', async () => {
-      // テスト用のシステムID（実際のテストデータに応じて変更）
-      const systemIds = ['test-system-id'];
-
-      const result = await searchPublicSessions({ systemIds });
+    it('システムIDでフィルタできる', async () => {
+      const result = await searchPublicSessions({ systemIds: [systemId] });
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -91,8 +186,8 @@ describe('Session List Adapter', () => {
     });
 
     // T-PS-003: シナリオ名で検索できる
-    it.skip('シナリオ名で検索できる', async () => {
-      const result = await searchPublicSessions({ scenarioName: 'テスト' });
+    it('シナリオ名で検索できる', async () => {
+      const result = await searchPublicSessions({ scenarioName: '[TEST]' });
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -102,7 +197,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-PS-004: 日付範囲でフィルタできる
-    it.skip('日付範囲でフィルタできる', async () => {
+    it('日付範囲でフィルタできる', async () => {
       const dateFrom = new Date('2026-01-01');
       const dateTo = new Date('2026-12-31');
 
@@ -116,7 +211,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-PS-005: ソートオプションが適用される
-    it.skip('ソートオプションが適用される', async () => {
+    it('ソートオプションが適用される', async () => {
       // 新着順
       const createdResult = await searchPublicSessions({}, 'created_desc');
       expect(createdResult.success).toBe(true);
@@ -127,7 +222,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-PS-006: ページネーションが正しく動作する
-    it.skip('ページネーションが正しく動作する', async () => {
+    it('ページネーションが正しく動作する', async () => {
       const page1 = await searchPublicSessions({}, 'date_asc', 5, 0);
       const page2 = await searchPublicSessions({}, 'date_asc', 5, 5);
 
@@ -161,9 +256,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-US-002: 存在するユーザーで参加予定を取得できる
-    it.skip('存在するユーザーで参加予定を取得できる', async () => {
-      const userId = 'test-user-id';
-
+    it('存在するユーザーで参加予定を取得できる', async () => {
       const result = await getUpcomingSessions(userId);
 
       expect(result.success).toBe(true);
@@ -178,9 +271,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-US-003: ソートオプションが適用される
-    it.skip('ソートオプションが適用される', async () => {
-      const userId = 'test-user-id';
-
+    it('ソートオプションが適用される', async () => {
       // 開催日順
       const dateResult = await getUpcomingSessions(userId, 'date_asc');
       expect(dateResult.success).toBe(true);
@@ -209,9 +300,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-HS-002: 存在するユーザーで履歴を取得できる
-    it.skip('存在するユーザーで履歴を取得できる', async () => {
-      const userId = 'test-user-id';
-
+    it('存在するユーザーで履歴を取得できる', async () => {
       const result = await getHistorySessions(userId);
 
       expect(result.success).toBe(true);
@@ -225,9 +314,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-HS-003: 役割でフィルタできる
-    it.skip('役割でフィルタできる', async () => {
-      const userId = 'test-user-id';
-
+    it('役割でフィルタできる', async () => {
       // KEEPERのみ
       const keeperResult = await getHistorySessions(userId, ['keeper']);
       expect(keeperResult.success).toBe(true);
@@ -244,9 +331,7 @@ describe('Session List Adapter', () => {
     });
 
     // T-HS-004: ステータスでフィルタできる
-    it.skip('ステータスでフィルタできる', async () => {
-      const userId = 'test-user-id';
-
+    it('ステータスでフィルタできる', async () => {
       // 完了のみ
       const completedResult = await getHistorySessions(
         userId,
@@ -265,19 +350,14 @@ describe('Session List Adapter', () => {
     });
 
     // T-HS-005: システムでフィルタできる
-    it.skip('システムでフィルタできる', async () => {
-      const userId = 'test-user-id';
-      const systemIds = ['test-system-id'];
-
-      const result = await getHistorySessions(userId, [], [], systemIds);
+    it('システムでフィルタできる', async () => {
+      const result = await getHistorySessions(userId, [], [], [systemId]);
 
       expect(result.success).toBe(true);
     });
 
     // T-HS-006: ソートオプションが適用される
-    it.skip('ソートオプションが適用される', async () => {
-      const userId = 'test-user-id';
-
+    it('ソートオプションが適用される', async () => {
       // 降順
       const descResult = await getHistorySessions(
         userId,
@@ -320,10 +400,9 @@ describe('Session List Adapter', () => {
     });
 
     // T-CS-002: 存在するユーザーでカレンダーデータを取得できる
-    it.skip('存在するユーザーでカレンダーデータを取得できる', async () => {
-      const userId = 'test-user-id';
+    it('存在するユーザーでカレンダーデータを取得できる', async () => {
       const year = 2026;
-      const month = 1;
+      const month = 3; // スケジュールは3月に設定済み
 
       const result = await getCalendarSessions(userId, year, month);
 
@@ -337,10 +416,9 @@ describe('Session List Adapter', () => {
     });
 
     // T-CS-003: カレンダーセッションに必要な情報が含まれる
-    it.skip('カレンダーセッションに必要な情報が含まれる', async () => {
-      const userId = 'test-user-id';
+    it('カレンダーセッションに必要な情報が含まれる', async () => {
       const year = 2026;
-      const month = 1;
+      const month = 3;
 
       const result = await getCalendarSessions(userId, year, month);
 
@@ -356,10 +434,9 @@ describe('Session List Adapter', () => {
     });
 
     // T-CS-004: 日程未確定セッションが別配列で返される
-    it.skip('日程未確定セッションが別配列で返される', async () => {
-      const userId = 'test-user-id';
+    it('日程未確定セッションが別配列で返される', async () => {
       const year = 2026;
-      const month = 1;
+      const month = 3;
 
       const result = await getCalendarSessions(userId, year, month);
 

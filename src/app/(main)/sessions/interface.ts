@@ -3,9 +3,13 @@ import type {
   GameSessionRow,
   ScenarioRow,
   ScenarioSystemRow,
+  ScheduleCandidateRow,
+  ScheduleResponseRow,
+  SessionLinkRow,
   SessionParticipantRow,
   UserRow,
 } from '@/db/helpers';
+import type { Database } from '@/db/types';
 
 // 基本型
 type GameSession = GameSessionRow;
@@ -14,10 +18,44 @@ type Scenario = ScenarioRow;
 type ScenarioSystem = ScenarioSystemRow;
 type SessionParticipant = SessionParticipantRow;
 type User = UserRow;
+type ScheduleCandidate = ScheduleCandidateRow;
+type ScheduleResponse = ScheduleResponseRow;
+type SessionLink = SessionLinkRow;
 
 // 参加者（ユーザー情報付き）
 type ParticipantWithUser = SessionParticipant & {
   user: User;
+};
+
+// 日程候補 + 回答集計
+type ScheduleCandidateWithResponses = ScheduleCandidate & {
+  responses: (ScheduleResponse & { user: Pick<User, 'userId' | 'userName'> })[];
+  okCount: number;
+  maybeCount: number;
+  ngCount: number;
+};
+
+// タイムラインイベント
+type TimelineEvent = {
+  type: 'created' | 'applied' | 'approved' | 'date_confirmed' | 'completed';
+  date: string;
+  actor?: Pick<User, 'userId' | 'userName'>;
+  description: string;
+};
+
+// セッション詳細ページ用の統合型
+type SessionDetail = GameSession & {
+  scenario:
+    | (Scenario & {
+        system: ScenarioSystem;
+      })
+    | null;
+  schedule: GameSchedule | null;
+  participants: ParticipantWithUser[];
+  links: SessionLink[];
+  candidates: ScheduleCandidateWithResponses[];
+  keeper: Pick<User, 'userId' | 'userName'> | null;
+  creator: Pick<User, 'userId' | 'userName'>;
 };
 
 // セッション（リレーション込み）
@@ -78,13 +116,8 @@ type RoleFilterValue = 'keeper' | 'player' | 'spectator';
 // ステータスフィルタ（複数選択）
 type StatusFilterValue = 'completed' | 'cancelled';
 
-// セッションフェーズ
-type SessionPhase =
-  | 'RECRUITING'
-  | 'PREPARATION'
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'CANCELLED';
+// セッションフェーズ（Supabase生成型から導出: SSoT）
+type SessionPhase = Database['public']['Enums']['session_phase'];
 
 // 公開卓検索パラメータ
 type PublicSearchParams = {
@@ -110,7 +143,7 @@ type CalendarSession = {
   sessionName: string;
   sessionPhase: string;
   scenarioName: string;
-  scheduleDate: string;
+  scheduleDate: string | null;
   myRole: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
 };
 
@@ -126,7 +159,13 @@ export type {
   ScenarioSystem,
   SessionParticipant,
   User,
+  ScheduleCandidate,
+  ScheduleResponse,
+  SessionLink,
   ParticipantWithUser,
+  ScheduleCandidateWithResponses,
+  TimelineEvent,
+  SessionDetail,
   SessionWithRelations,
   MySessionWithRole,
   PublicSession,
@@ -144,3 +183,6 @@ export type {
   CalendarSession,
   CalendarData,
 };
+
+/** ユーザーのセッションにおける役割 */
+export type UserRole = 'manager' | 'participant' | 'guest';

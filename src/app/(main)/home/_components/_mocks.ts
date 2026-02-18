@@ -10,12 +10,15 @@ import type {
 const baseSession = {
   sessionDescription: '',
   sessionMemo: null,
+  completedAt: null,
   completionNote: null,
+  cancelReason: null,
   isBeginnerFriendly: true,
   recruitedPlayerCount: 4,
   scheduledAt: null,
   tools: 'ココフォリア',
   visibility: 'PUBLIC' as const,
+  createdById: 'user-1',
   createdAt: '2025-12-01T00:00:00Z',
   updatedAt: '2025-12-01T00:00:00Z',
 } satisfies Partial<UpcomingSession>;
@@ -35,6 +38,7 @@ const baseParticipant = {
   appliedAt: '2025-12-01T00:00:00Z',
   approvedAt: '2025-12-01T00:00:00Z',
   characterSheetUrl: null,
+  withdrawalReason: null,
   createdAt: '2025-12-01T00:00:00Z',
   updatedAt: '2025-12-01T00:00:00Z',
 };
