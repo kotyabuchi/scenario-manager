@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>セッション作成フォーム（改訂版） - シナプレ管理くん</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059568",
+                        "primary-hover": "#047854",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                        "input-bg": "#EAEBED",
+                        "input-bg-dark": "#1a332b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-display min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 dark:border-primary/20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex-shrink-0 flex items-center gap-2">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-xl">
+                    シ
+                </div>
+<span class="font-bold text-lg tracking-tight text-primary dark:text-primary">シナプレ管理くん</span>
+</div>
+<nav class="hidden md:flex space-x-1">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="#">ホーム</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="#">シナリオ</a>
+<a class="text-primary dark:text-primary px-4 py-2 text-sm font-bold border-b-2 border-primary" href="#">セッション</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="#">スケジュール</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="#">ユーザー</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-slate-500 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none transition-colors">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+<div class="flex items-center gap-2 cursor-pointer group">
+<img alt="User Avatar" class="h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-primary transition-colors ring-2 ring-white dark:ring-background-dark shadow-sm" data-alt="User avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgaqXt2DI44gQyN2hTTBCUgsUW8UzGNNIsjpiCoZIg40DQf9njB2RGip-URxg_zA-Kfxqpe84m0EjtSLZLjQnT2kbexR-cW2NbPJdlfgIkKxjB7Ia1wfUE-Cgy6-AzmRvQUh0kKe-0Kc_FO5uRbeBDbweBy1yb00aESzKHz-bXP3i5QzifPxyJYFOZUHVgSfLtpeX0Nl51hp8fnHGfq5ITVIZ-NQWM1BmEHzKTskUIAwkv19j8Sr7er4ILyUJ64BS-h1-o_Vix3mQ"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow py-10 px-4 sm:px-6">
+<div class="max-w-[720px] mx-auto">
+<div class="mb-8">
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">セッションを作成</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm">新しい冒険の舞台を整えましょう。仲間を集めるための情報を入力してください。</p>
+</div>
+<form class="bg-white dark:bg-[#152e26] rounded-2xl shadow-xl shadow-primary/5 p-8 border border-slate-100 dark:border-primary/20 space-y-10">
+<section class="space-y-6">
+<h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_note</span>
+                    基本情報
+                </h2>
+<div class="space-y-6">
+<div class="group">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2" for="session_name">
+                            セッション名 <span class="text-red-500 text-xs ml-1 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded">必須</span>
+</label>
+<input class="w-full bg-input-bg dark:bg-input-bg-dark border-transparent focus:border-primary focus:bg-white dark:focus:bg-background-dark focus:ring-0 rounded-lg py-3 px-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all duration-200" id="session_name" name="session_name" placeholder="例: 週末CoC7版セッション" required="" type="text"/>
+</div>
+<div class="relative">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2" for="description">
+                            募集文 <span class="text-red-500 text-xs ml-1 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded">必須</span>
+</label>
+<textarea class="w-full bg-input-bg dark:bg-input-bg-dark border-transparent focus:border-primary focus:bg-white dark:focus:bg-background-dark focus:ring-0 rounded-lg py-3 px-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 resize-none transition-all duration-200" id="description" name="description" placeholder="セッションの概要や参加者への呼びかけを書いてください" required="" rows="5"></textarea>
+<div class="absolute bottom-3 right-3 text-xs text-slate-400 font-medium bg-white/50 dark:bg-black/20 px-1 rounded">0/500</div>
+</div>
+</div>
+</section>
+<hr class="border-slate-100 dark:border-slate-700/50"/>
+<section class="space-y-6 relative">
+<h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">group_add</span>
+                    参加者
+                </h2>
+<div class="relative">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">メンバーを追加</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-lg">alternate_email</span>
+<input class="w-full bg-input-bg dark:bg-input-bg-dark border-transparent focus:border-primary focus:bg-white dark:focus:bg-background-dark focus:ring-0 rounded-lg py-3 pl-10 pr-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all duration-200" placeholder="@ユーザーIDで追加..." type="text" value="@suz"/>
+<div class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden z-20">
+<div class="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer flex items-center gap-3 transition-colors">
+<div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">H</div>
+<div class="flex flex-col">
+<span class="text-sm font-medium text-slate-800 dark:text-slate-200">鈴木花子</span>
+<span class="text-xs text-slate-500">@suzuki</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3 bg-slate-50 dark:bg-slate-800/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+<div class="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-800 dark:text-slate-100">田中太郎</span>
+<span class="text-xs text-slate-400">@tanaka</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 mt-0.5">
+<span class="material-symbols-outlined text-[10px] mr-1">star</span> GM
+                                </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">H</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-800 dark:text-slate-100">鈴木花子</span>
+<span class="text-xs text-slate-400">@suzuki</span>
+</div>
+<div class="mt-1">
+<select class="text-xs py-0.5 pl-1.5 pr-6 rounded border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 focus:ring-0 focus:border-primary cursor-pointer">
+<option>Player</option>
+<option>Sub GM</option>
+<option>Observer</option>
+</select>
+</div>
+</div>
+</div>
+<button class="text-slate-400 hover:text-red-500 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" type="button">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm">J</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-800 dark:text-slate-100">佐藤次郎</span>
+<span class="text-xs text-slate-400">@sato</span>
+</div>
+<div class="mt-1">
+<select class="text-xs py-0.5 pl-1.5 pr-6 rounded border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 focus:ring-0 focus:border-primary cursor-pointer">
+<option>Player</option>
+<option>Sub GM</option>
+<option>Observer</option>
+</select>
+</div>
+</div>
+</div>
+<button class="text-slate-400 hover:text-red-500 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" type="button">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+</div>
+</section>
+<hr class="border-slate-100 dark:border-slate-700/50"/>
+<section class="space-y-6">
+<h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_stories</span>
+                    シナリオ
+                </h2>
+<div class="bg-slate-50 dark:bg-slate-800/30 rounded-xl p-1">
+<div class="flex p-1 bg-slate-200 dark:bg-slate-700 rounded-lg mb-4">
+<button class="flex-1 py-1.5 text-sm font-medium rounded-md shadow bg-white dark:bg-slate-600 text-primary dark:text-white transition-all" type="button">検索して選ぶ</button>
+<button class="flex-1 py-1.5 text-sm font-medium rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all" type="button">IDで指定</button>
+<button class="flex-1 py-1.5 text-sm font-medium rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all" type="button">URLで指定</button>
+</div>
+<div class="flex flex-col items-center justify-center py-8 px-4 text-center border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800/50">
+<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-slate-400 text-2xl">search_off</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 font-medium mb-1">未定（後から設定できます）</p>
+<p class="text-xs text-slate-400">シナリオが決まっている場合は検索してください</p>
+<button class="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-lg">search</span> シナリオを検索
+                        </button>
+</div>
+</div>
+</section>
+<hr class="border-slate-100 dark:border-slate-700/50"/>
+<section class="space-y-8">
+<h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+                    日程・その他
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="col-span-1 md:col-span-2">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">開催日時</label>
+<div class="flex flex-wrap gap-4">
+<label class="flex items-center gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5 cursor-pointer transition-all">
+<div class="relative flex items-center">
+<input checked="" class="peer sr-only" name="date_type" type="radio" value="later"/>
+<div class="w-5 h-5 border-2 border-primary rounded-full peer-checked:border-[6px] transition-all duration-200 bg-white dark:bg-slate-800"></div>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-100">後で調整</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all">
+<div class="relative flex items-center">
+<input class="peer sr-only" name="date_type" type="radio" value="specify"/>
+<div class="w-5 h-5 border-2 border-slate-300 dark:border-slate-500 rounded-full peer-checked:border-primary peer-checked:border-[6px] transition-all duration-200 bg-white dark:bg-slate-800"></div>
+</div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-300">日時を指定</span>
+</label>
+</div>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2" for="tools">使用ツール</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-lg">construction</span>
+<input class="w-full bg-input-bg dark:bg-input-bg-dark border-transparent focus:border-primary focus:bg-white dark:focus:bg-background-dark focus:ring-0 rounded-lg py-2.5 pl-10 pr-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all duration-200" id="tools" name="tools" placeholder="例: Discord + ココフォリア" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2" for="player_count">追加募集人数</label>
+<div class="flex items-center">
+<button class="w-10 h-10 rounded-l-lg bg-input-bg dark:bg-input-bg-dark hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<input class="w-full text-center bg-input-bg dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 py-2 h-10 text-slate-800 dark:text-slate-100 font-bold" id="player_count" max="10" min="0" name="player_count" type="number" value="0"/>
+<button class="w-10 h-10 rounded-r-lg bg-input-bg dark:bg-input-bg-dark hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+<p class="text-xs text-slate-400 mt-1.5 ml-1">※ 0人の場合、募集は開始されません</p>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/30 rounded-xl p-5 space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                初心者歓迎
+                                <span class="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-[10px] px-2 py-0.5 rounded-full font-medium border border-green-200 dark:border-green-800">おすすめ</span>
+</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">TRPGに不慣れな方の参加も歓迎します</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-300 rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="h-px bg-slate-200 dark:bg-slate-700"></div>
+<div>
+<span class="block text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">公開範囲</span>
+<div class="flex gap-6">
+<label class="flex items-center gap-2 cursor-pointer group">
+<div class="relative flex items-center">
+<input checked="" class="peer sr-only" name="privacy" type="radio" value="public"/>
+<div class="w-4 h-4 border-2 border-slate-400 dark:border-slate-500 rounded-full peer-checked:border-primary peer-checked:border-[5px] transition-all duration-200 bg-white dark:bg-slate-800"></div>
+</div>
+<span class="text-sm text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">全体公開</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<div class="relative flex items-center">
+<input class="peer sr-only" name="privacy" type="radio" value="followers"/>
+<div class="w-4 h-4 border-2 border-slate-400 dark:border-slate-500 rounded-full peer-checked:border-primary peer-checked:border-[5px] transition-all duration-200 bg-white dark:bg-slate-800"></div>
+</div>
+<span class="text-sm text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">フォロワーのみ</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<div class="pt-4 flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-base" type="submit">
+<span class="material-symbols-outlined">rocket_launch</span>
+                    セッションを作成
+                </button>
+<button class="w-full bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm" type="button">
+<span class="material-symbols-outlined text-lg">save_as</span>
+                    下書き保存
+                </button>
+</div>
+</form>
+<p class="text-center text-xs text-slate-400 mt-8 mb-12">
+            作成ボタンを押すことで、<a class="underline hover:text-primary decoration-slate-300 underline-offset-2" href="#">利用規約</a>と<a class="underline hover:text-primary decoration-slate-300 underline-offset-2" href="#">ガイドライン</a>に同意したものとみなされます。
+        </p>
+</div>
+</main>
+
+</body></html>

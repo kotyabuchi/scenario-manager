@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>日程候補選択画面 - シナプレ管理くん</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059568",
+                        "primary-dark": "#047854",
+                        "primary-light": "#e6f4f0",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                        "neutral-surface": "#eaebed",
+                    },
+                    fontFamily: {
+                        "display": ["'Inter'", "sans-serif"],
+                        "sans": ["'Inter'", "sans-serif"],
+                        "serif": ["'Noto Serif JP'", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(5, 149, 104, 0.1)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .user-dot {
+            transition: transform 0.2s;
+        }
+        .user-dot:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center py-12 px-4 font-display text-slate-800 dark:text-slate-100 transition-colors duration-300">
+<main class="w-full max-w-[640px] bg-white dark:bg-[#1a2c26] rounded-xl shadow-soft p-8 relative overflow-hidden">
+<header class="mb-8 text-center">
+<h1 class="text-2xl font-bold text-slate-800 dark:text-white mb-2 font-serif">日程候補を選択してください</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400">プレイヤーに提案する候補日を選びましょう</p>
+</header>
+<div class="space-y-8">
+<section aria-label="カレンダー">
+<div class="flex items-center justify-between mb-6 px-4">
+<button class="p-2 hover:bg-neutral-surface dark:hover:bg-primary/20 rounded-full transition-colors text-slate-600 dark:text-slate-300">
+<span class="material-icons-round">chevron_left</span>
+</button>
+<h2 class="text-xl font-bold text-slate-800 dark:text-white font-serif">2026年 1月</h2>
+<button class="p-2 hover:bg-neutral-surface dark:hover:bg-primary/20 rounded-full transition-colors text-slate-600 dark:text-slate-300">
+<span class="material-icons-round">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 mb-2 text-center">
+<div class="text-red-500 text-sm font-semibold py-2">日</div>
+<div class="text-slate-500 dark:text-slate-400 text-sm font-semibold py-2">月</div>
+<div class="text-slate-500 dark:text-slate-400 text-sm font-semibold py-2">火</div>
+<div class="text-slate-500 dark:text-slate-400 text-sm font-semibold py-2">水</div>
+<div class="text-slate-500 dark:text-slate-400 text-sm font-semibold py-2">木</div>
+<div class="text-slate-500 dark:text-slate-400 text-sm font-semibold py-2">金</div>
+<div class="text-blue-500 text-sm font-semibold py-2">土</div>
+</div>
+<div class="grid grid-cols-7 gap-y-2 gap-x-1 text-center text-sm">
+<div class="h-14 py-2 text-slate-300 dark:text-slate-700 flex flex-col items-center justify-start"><span>28</span></div>
+<div class="h-14 py-2 text-slate-300 dark:text-slate-700 flex flex-col items-center justify-start"><span>29</span></div>
+<div class="h-14 py-2 text-slate-300 dark:text-slate-700 flex flex-col items-center justify-start"><span>30</span></div>
+<div class="h-14 py-2 text-slate-300 dark:text-slate-700 flex flex-col items-center justify-start"><span>31</span></div>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">1</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">2</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">3</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">4</span>
+<div class="flex -space-x-1 mt-1">
+<div class="w-4 h-4 rounded-full bg-blue-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User A"></div>
+</div>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-800 dark:text-slate-200 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full bg-[#EAEBED] font-bold relative">
+                        5
+                        <span class="absolute -top-1 -right-1 flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">6</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">7</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">8</span>
+<div class="flex -space-x-1 mt-1">
+<div class="w-4 h-4 rounded-full bg-orange-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User B"></div>
+<div class="w-4 h-4 rounded-full bg-purple-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User C"></div>
+</div>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">9</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">10</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white shadow-md shadow-primary/30 transition-transform hover:scale-105 z-10">11</span>
+<div class="flex -space-x-1 mt-1 z-0">
+<div class="w-4 h-4 rounded-full bg-blue-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User A"></div>
+<div class="w-4 h-4 rounded-full bg-orange-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User B"></div>
+<div class="w-4 h-4 rounded-full bg-gray-200 border-2 border-white dark:border-[#1a2c26] text-[8px] flex items-center justify-center font-bold text-slate-600">+2</div>
+</div>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">12</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">13</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">14</span>
+<div class="flex -space-x-1 mt-1">
+<div class="w-4 h-4 rounded-full bg-purple-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User C"></div>
+</div>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">15</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">16</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">17</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white shadow-md shadow-primary/30 transition-transform hover:scale-105 z-10">18</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">19</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">20</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">21</span>
+<div class="flex -space-x-1 mt-1">
+<div class="w-4 h-4 rounded-full bg-blue-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User A"></div>
+</div>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">22</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">23</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">24</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">25</span>
+<div class="flex -space-x-1 mt-1">
+<div class="w-4 h-4 rounded-full bg-orange-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User B"></div>
+<div class="w-4 h-4 rounded-full bg-pink-400 border-2 border-white dark:border-[#1a2c26] user-dot" title="User D"></div>
+<div class="w-4 h-4 rounded-full bg-gray-200 border-2 border-white dark:border-[#1a2c26] text-[8px] flex items-center justify-center font-bold text-slate-600">+1</div>
+</div>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">26</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">27</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">28</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">29</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">30</span>
+</button>
+<button class="h-14 w-full flex flex-col items-center justify-start pt-2 rounded-lg hover:bg-neutral-surface dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300 transition-colors group relative">
+<span class="w-8 h-8 flex items-center justify-center rounded-full">31</span>
+</button>
+</div>
+<div class="flex items-center justify-end mt-4 gap-4 text-xs text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-1.5">
+<div class="w-3 h-3 rounded-full bg-blue-400"></div>
+<span>田中</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3 h-3 rounded-full bg-orange-400"></div>
+<span>佐藤</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3 h-3 rounded-full bg-purple-400"></div>
+<span>鈴木</span>
+</div>
+</div>
+</section>
+<div class="border-t border-slate-100 dark:border-primary/10"></div>
+<section aria-label="選択された日付" class="space-y-3">
+<h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">選択中の日程</h3>
+<div class="flex flex-wrap gap-3">
+<div class="inline-flex items-center bg-primary-light dark:bg-primary/20 border border-primary/20 rounded-full px-4 py-1.5 text-primary dark:text-primary-light transition-all hover:bg-primary/10">
+<span class="text-sm font-medium mr-2">1/11 (土)</span>
+<button class="flex items-center justify-center rounded-full w-5 h-5 hover:bg-primary/20 dark:hover:bg-primary/40 transition-colors focus:outline-none">
+<span class="material-icons-round text-sm">close</span>
+</button>
+</div>
+<div class="inline-flex items-center bg-primary-light dark:bg-primary/20 border border-primary/20 rounded-full px-4 py-1.5 text-primary dark:text-primary-light transition-all hover:bg-primary/10">
+<span class="text-sm font-medium mr-2">1/18 (土)</span>
+<button class="flex items-center justify-center rounded-full w-5 h-5 hover:bg-primary/20 dark:hover:bg-primary/40 transition-colors focus:outline-none">
+<span class="material-icons-round text-sm">close</span>
+</button>
+</div>
+</div>
+</section>
+<section aria-label="時間設定" class="space-y-4 bg-background-light dark:bg-background-dark/50 p-6 rounded-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+<span class="material-icons-round text-primary">schedule</span>
+                    時間設定
+                </h3>
+<div class="flex bg-white dark:bg-background-dark p-1 rounded-lg border border-slate-200 dark:border-primary/20">
+<label class="relative flex items-center justify-center px-4 py-1.5 cursor-pointer">
+<input checked="" class="peer sr-only" name="time-setting" type="radio"/>
+<span class="relative z-10 text-xs font-medium text-slate-500 dark:text-slate-400 peer-checked:text-primary dark:peer-checked:text-white transition-colors">一括設定</span>
+<div class="absolute inset-0 bg-primary-light dark:bg-primary/30 rounded opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</label>
+<label class="relative flex items-center justify-center px-4 py-1.5 cursor-pointer">
+<input class="peer sr-only" name="time-setting" type="radio"/>
+<span class="relative z-10 text-xs font-medium text-slate-500 dark:text-slate-400 peer-checked:text-primary dark:peer-checked:text-white transition-colors">個別設定</span>
+<div class="absolute inset-0 bg-primary-light dark:bg-primary/30 rounded opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</label>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex-1">
+<label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">開始</label>
+<div class="relative">
+<select class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 text-slate-800 dark:text-slate-200 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 appearance-none cursor-pointer hover:border-primary/50 transition-colors">
+<option>20:00</option>
+<option>20:30</option>
+<option selected="">21:00</option>
+<option>21:30</option>
+<option>22:00</option>
+</select>
+<span class="material-icons-round absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
+</div>
+</div>
+<span class="text-slate-400 mt-5">~</span>
+<div class="flex-1">
+<label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">終了</label>
+<div class="relative">
+<select class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 text-slate-800 dark:text-slate-200 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 appearance-none cursor-pointer hover:border-primary/50 transition-colors">
+<option>23:00</option>
+<option>23:30</option>
+<option selected="">24:00</option>
+<option>24:30</option>
+<option>25:00</option>
+</select>
+<span class="material-icons-round absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<footer class="mt-8 pt-6 border-t border-slate-100 dark:border-primary/10 flex justify-center">
+<button class="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-12 rounded-lg shadow-lg shadow-primary/30 transition-all active:scale-95 flex items-center gap-2">
+<span class="material-icons-round">check_circle</span>
+            候補を確定する
+        </button>
+</footer>
+</main>
+<div class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none overflow-hidden">
+<div class="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-3xl" data-alt="Soft green gradient abstract background shape top right"></div>
+<div class="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] bg-gradient-to-tr from-primary/5 to-transparent rounded-full blur-3xl" data-alt="Soft green gradient abstract background shape bottom left"></div>
+</div>
+
+</body></html>

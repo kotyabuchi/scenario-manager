@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>参加申請ダイアログ - シナプレ管理くん</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059568",
+                        "primary-hover": "#047854",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                        "input-bg": "#EAEBED",
+                        "input-bg-dark": "#1a332b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "Noto Serif JP", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', 'Noto Serif JP', sans-serif;
+        }body.modal-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-display min-h-screen relative modal-open">
+<div class="filter blur-[2px] pointer-events-none select-none h-screen overflow-hidden flex flex-col">
+<header class="sticky top-0 z-10 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 dark:border-primary/20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex-shrink-0 flex items-center gap-2">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-xl">シ</div>
+<span class="font-bold text-lg tracking-tight text-primary dark:text-primary">シナプレ管理くん</span>
+</div>
+<nav class="hidden md:flex space-x-8">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary px-3 py-2 text-sm font-medium" href="#">ホーム</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary px-3 py-2 text-sm font-medium" href="#">シナリオ</a>
+<a class="text-primary dark:text-primary px-3 py-2 text-sm font-bold border-b-2 border-primary" href="#">セッション</a>
+</nav>
+<div class="flex items-center gap-4">
+<img alt="User Avatar" class="h-9 w-9 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgaqXt2DI44gQyN2hTTBCUgsUW8UzGNNIsjpiCoZIg40DQf9njB2RGip-URxg_zA-Kfxqpe84m0EjtSLZLjQnT2kbexR-cW2NbPJdlfgIkKxjB7Ia1wfUE-Cgy6-AzmRvQUh0kKe-0Kc_FO5uRbeBDbweBy1yb00aESzKHz-bXP3i5QzifPxyJYFOZUHVgSfLtpeX0Nl51hp8fnHGfq5ITVIZ-NQWM1BmEHzKTskUIAwkv19j8Sr7er4ILyUJ64BS-h1-o_Vix3mQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow py-12 px-4 sm:px-6 flex items-center justify-center">
+<div class="w-full max-w-4xl mx-auto h-96 bg-white dark:bg-[#152e26] rounded-xl shadow-sm border border-slate-100 dark:border-slate-800"></div>
+</main>
+</div>
+<div aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm" role="dialog">
+<div class="bg-white dark:bg-[#152e26] w-full max-w-[480px] rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-fade-in-up">
+<button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="px-6 pt-6 pb-2">
+<h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">waving_hand</span>
+                    セッションに参加申請
+                </h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">希望する参加枠を選択してください</p>
+</div>
+<div class="px-6 py-4 space-y-6">
+<div class="bg-input-bg dark:bg-input-bg-dark rounded-xl p-4 flex flex-col gap-2 text-sm">
+<div class="flex items-start gap-3">
+<span class="text-slate-500 dark:text-slate-400 whitespace-nowrap w-16 text-xs font-bold uppercase tracking-wider mt-0.5">Scenario</span>
+<span class="font-bold text-slate-800 dark:text-white">狂気山脈 〜邪神の山嶺〜</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-slate-500 dark:text-slate-400 whitespace-nowrap w-16 text-xs font-bold uppercase tracking-wider">Member</span>
+<span class="text-slate-700 dark:text-slate-200">現2人 (GM募集中)</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-slate-500 dark:text-slate-400 whitespace-nowrap w-16 text-xs font-bold uppercase tracking-wider">Date</span>
+<span class="text-slate-700 dark:text-slate-200">メンバー決定後に調整</span>
+</div>
+</div>
+<div class="space-y-3">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">参加タイプ</label>
+<label class="relative flex items-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-primary/50 dark:hover:border-primary/50 cursor-pointer transition-all group">
+<input class="peer sr-only" name="role" type="radio" value="gm"/>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 mr-4 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">manage_accounts</span> 
+</div>
+<div class="flex-1">
+<div class="font-bold text-slate-800 dark:text-slate-200 text-sm">GMとして参加</div>
+<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">このセッションのGMを担当します</div>
+</div>
+<div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-500 peer-checked:bg-primary peer-checked:border-primary"></div>
+</label>
+<label class="relative flex items-center p-3 rounded-xl border border-primary/30 bg-[#E9FCF2] dark:bg-primary/10 cursor-pointer transition-all overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<input checked="" class="peer sr-only" name="role" type="radio" value="player"/>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-primary/20 text-primary mr-4">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<div class="flex-1">
+<div class="font-bold text-primary-hover dark:text-primary-hover text-sm">プレイヤーとして参加</div>
+<div class="text-xs text-primary/80 dark:text-primary/80 mt-0.5">キャラクターを操作して参加します</div>
+</div>
+<div class="w-4 h-4 rounded-full border border-primary bg-primary flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+</div>
+</label>
+<label class="relative flex items-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-primary/50 dark:hover:border-primary/50 cursor-pointer transition-all group">
+<input class="peer sr-only" name="role" type="radio" value="observer"/>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 mr-4 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</div>
+<div class="flex-1">
+<div class="font-bold text-slate-800 dark:text-slate-200 text-sm">観戦者として参加</div>
+<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">セッションを見学します</div>
+</div>
+<div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-500 peer-checked:bg-primary peer-checked:border-primary"></div>
+</label>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">一言メッセージ</label>
+<textarea class="w-full bg-input-bg dark:bg-input-bg-dark border-transparent focus:border-primary focus:bg-white dark:focus:bg-background-dark focus:ring-0 rounded-lg py-3 px-4 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 resize-none transition-all duration-200 min-h-[80px]" placeholder="よろしくお願いします！" rows="2"></textarea>
+</div>
+</div>
+<div class="px-6 pb-6 pt-2 flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-6 rounded-lg shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transform active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">send</span>
+                    申請を送る
+                </button>
+<button class="w-full text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium py-2 px-6 rounded-lg transition-colors text-sm">
+                    キャンセル
+                </button>
+</div>
+</div>
+</div>
+
+</body></html>
