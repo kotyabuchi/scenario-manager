@@ -35,6 +35,14 @@
 
 {実装内容の詳細}
 
+### Review Checkpoint: Batch 1
+
+- [ ] `pnpm check` 通過
+- [ ] `pnpm vitest` 関連テスト通過
+- [ ] `/review-diff` 実行（ファイル数 > 5 or 変更行数 > 100 の場合）
+- [ ] 指摘修正
+- [ ] レビュー通過後にコミット作成
+
 ## Batch 2: {バッチ名}
 
 ### Step 2-1. {ステップ名}
@@ -44,6 +52,14 @@
 ### Step 2-2. {ステップ名}
 
 {実装内容の詳細}
+
+### Review Checkpoint: Batch 2
+
+- [ ] `pnpm check` 通過
+- [ ] `pnpm vitest` 関連テスト通過
+- [ ] コミット作成
+- [ ] `/review-diff` 実行（ファイル数 > 5 or 変更行数 > 100 の場合）
+- [ ] 指摘修正 → 追加コミット
 
 ---
 
