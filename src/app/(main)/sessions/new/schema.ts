@@ -48,11 +48,11 @@ export const sessionFormSchema = z.object({
     )
     .nullish(),
 
-  // 募集人数（任意）- 未定の場合はnull/undefined
+  // 募集人数（任意）- 未定の場合はnull/undefined。0人 = 募集未開始
   recruitedPlayerCount: z
     .number()
     .int('募集人数は整数で入力してください')
-    .min(1, '募集人数は1人以上で入力してください')
+    .min(0, '募集人数は0人以上で入力してください')
     .max(10, '募集人数は10人以下で入力してください')
     .nullish(),
 
@@ -71,6 +71,16 @@ export const sessionFormSchema = z.object({
       message: '公開範囲を選択してください',
     })
     .default('PUBLIC'),
+
+  // 招待メンバー（任意）- フォーム上で追加されたメンバー一覧
+  invitedMembers: z
+    .array(
+      z.object({
+        userId: z.string(),
+        participantType: z.enum(['PLAYER', 'SPECTATOR']),
+      }),
+    )
+    .default([]),
 
   // 日程選択方式（UIのみ。「後で調整」選択時は scheduledAt を null にする）
   scheduleType: z.enum(['later', 'specify']).default('later'),

@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Controller,
   type FieldErrors,
+  useFieldArray,
   useForm,
   useWatch,
 } from 'react-hook-form';
@@ -19,6 +21,8 @@ import {
   type SessionFormValues,
   sessionFormSchema,
 } from '../schema';
+import { MemberListItem, type ParticipantType } from './MemberListItem';
+import { MemberSearchInput } from './MemberSearchInput';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -31,6 +35,8 @@ import {
 } from '@/components/elements/radio-group';
 import { Switch } from '@/components/elements/switch';
 import { Textarea } from '@/components/elements/textarea';
+
+import type { UserSummary } from '../actions';
 
 const visibilityItems: RadioGroupItem[] = [
   { label: '全体公開', value: 'PUBLIC' },
@@ -76,8 +82,41 @@ export const SessionForm = ({
     },
   });
 
+  const { fields, append, remove, update } = useFieldArray({
+    control,
+    name: 'invitedMembers',
+  });
+  const [memberUsers, setMemberUsers] = useState<Map<string, UserSummary>>(
+    new Map(),
+  );
+
   const descriptionValue = useWatch({ name: 'sessionDescription', control });
   const scheduleType = useWatch({ name: 'scheduleType', control });
+
+  const handleMemberSelect = (user: UserSummary) => {
+    if (fields.some((f) => f.userId === user.user_id)) return;
+    append({ userId: user.user_id, participantType: 'PLAYER' });
+    setMemberUsers((prev) => new Map(prev).set(user.user_id, user));
+  };
+
+  const handleMemberRemove = (index: number) => {
+    const field = fields[index];
+    remove(index);
+    if (field) {
+      setMemberUsers((prev) => {
+        const next = new Map(prev);
+        next.delete(field.userId);
+        return next;
+      });
+    }
+  };
+
+  const handleRoleChange = (index: number, role: ParticipantType) => {
+    const field = fields[index];
+    if (field) {
+      update(index, { ...field, participantType: role });
+    }
+  };
 
   const onFormSubmit = (data: SessionFormInput) => {
     const normalizedData: SessionFormValues = {
@@ -90,6 +129,7 @@ export const SessionForm = ({
       tools: data.tools || null,
       isBeginnerFriendly: data.isBeginnerFriendly ?? false,
       visibility: data.visibility ?? 'PUBLIC',
+      invitedMembers: data.invitedMembers ?? [],
       scheduleType: data.scheduleType ?? 'later',
     };
     onSubmit?.(normalizedData);
@@ -142,13 +182,39 @@ export const SessionForm = ({
 
       <hr className={styles.form_divider} />
 
-      {/* セクション2: 参加者（Batch 2で実装） */}
+      {/* セクション2: 参加者 */}
       <section className={styles.form_section}>
         <h2 className={styles.form_sectionHeader}>
           <Users className={styles.form_sectionIcon} />
           参加者
         </h2>
-        {/* Batch 2で実装 */}
+
+        <MemberSearchInput
+          onSelect={handleMemberSelect}
+          excludeUserIds={fields.map((f) => f.userId)}
+        />
+
+        {fields.length > 0 ? (
+          <div className={styles.form_membersList}>
+            {fields.map((field, index) => {
+              const user = memberUsers.get(field.userId);
+              if (!user) return null;
+              return (
+                <MemberListItem
+                  key={field.id}
+                  user={user}
+                  role={field.participantType as ParticipantType}
+                  onRoleChange={(role) => handleRoleChange(index, role)}
+                  onRemove={() => handleMemberRemove(index)}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <p className={styles.form_membersEmpty}>
+            メンバーを招待するとここに表示されます
+          </p>
+        )}
       </section>
 
       <hr className={styles.form_divider} />

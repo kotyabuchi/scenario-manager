@@ -199,6 +199,31 @@ describe('SessionForm', () => {
     });
   });
 
+  // 参加者セクションテスト
+  describe('参加者セクション', () => {
+    it('参加者セクションの見出しが表示される', () => {
+      render(<Default />);
+
+      expect(
+        screen.getByRole('heading', { name: /参加者/i }),
+      ).toBeInTheDocument();
+    });
+
+    it('メンバー検索入力が表示される', () => {
+      render(<Default />);
+
+      expect(screen.getByLabelText(/メンバー検索/i)).toBeInTheDocument();
+    });
+
+    it('メンバーが未追加の場合に空メッセージが表示される', () => {
+      render(<Default />);
+
+      expect(
+        screen.getByText(/メンバーを招待するとここに表示されます/i),
+      ).toBeInTheDocument();
+    });
+  });
+
   // 全項目入力テスト
   describe('統合テスト', () => {
     it('全項目を入力して送信できる', async () => {

@@ -125,7 +125,42 @@ export const createSession = async (
       });
 
     if (participantError) {
+      // クリーンアップ: 作成済みセッションを削除
+      await supabase
+        .from('game_sessions')
+        .delete()
+        .eq('game_session_id', gameSessionId);
       return err(new Error(participantError.message));
+    }
+
+    // 招待メンバーを参加者として一括追加
+    if (input.invitedMembers.length > 0) {
+      const now = new Date().toISOString();
+      const memberInserts = input.invitedMembers.map((m) => ({
+        session_id: gameSessionId,
+        user_id: m.userId,
+        participant_type: m.participantType,
+        participant_status: ParticipantStatuses.CONFIRMED.value,
+        applied_at: now,
+        approved_at: now,
+      }));
+
+      const { error: membersError } = await supabase
+        .from('session_participants')
+        .insert(memberInserts);
+
+      if (membersError) {
+        // クリーンアップ: セッションと既存参加者を削除
+        await supabase
+          .from('session_participants')
+          .delete()
+          .eq('session_id', gameSessionId);
+        await supabase
+          .from('game_sessions')
+          .delete()
+          .eq('game_session_id', gameSessionId);
+        return err(new Error('招待メンバーの追加に失敗しました'));
+      }
     }
 
     const session = camelCaseKeys(

@@ -57,6 +57,19 @@ export const form_scheduleRadio = css({
   gap: '3',
 });
 
+export const form_membersList = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
+});
+
+export const form_membersEmpty = css({
+  fontSize: 'sm',
+  color: 'text.secondary',
+  textAlign: 'center',
+  py: '4',
+});
+
 export const form_submitArea = css({
   display: 'flex',
   justifyContent: 'flex-end',

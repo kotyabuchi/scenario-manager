@@ -58,6 +58,7 @@ describe('Session Management Adapter', () => {
     // T-CS-001: 全項目を指定してセッションを作成できる
     it('全項目を指定してセッションを作成できる', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '週末CoC7版卓',
         sessionDescription: '週末にCoC7版を遊びませんか？初心者歓迎！',
         scenarioId,
@@ -83,6 +84,7 @@ describe('Session Management Adapter', () => {
     // T-CS-002: 必須項目のみでセッションを作成できる（柔軟な募集）
     it('必須項目のみでセッションを作成できる', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '週末に何か遊ぶ卓',
         sessionDescription: '週末に何か遊びませんか？',
         isBeginnerFriendly: false,
@@ -105,6 +107,7 @@ describe('Session Management Adapter', () => {
     // T-CS-003: シナリオ未定（null）でセッションを作成できる
     it('シナリオ未定でセッションを作成できる', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: 'シナリオ相談卓',
         sessionDescription: 'シナリオは参加者と相談して決めます',
         scenarioId: null,
@@ -125,6 +128,7 @@ describe('Session Management Adapter', () => {
     // T-CS-004: 日程未定でセッションを作成できる
     it('日程未定でセッションを作成できる', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '日程調整中卓',
         sessionDescription: '日程は後で調整します',
         scheduledAt: null,
@@ -145,6 +149,7 @@ describe('Session Management Adapter', () => {
     // T-CS-005: 人数未定でセッションを作成できる
     it('人数未定でセッションを作成できる', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '人数調整中卓',
         sessionDescription: '人数は集まり次第決めます',
         recruitedPlayerCount: null,
@@ -165,6 +170,7 @@ describe('Session Management Adapter', () => {
     // T-CS-006: フォロワー限定でセッションを作成できる
     it('フォロワー限定でセッションを作成できる', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '身内卓',
         sessionDescription: 'フォロワーさん向けの卓です',
         visibility: 'FOLLOWERS_ONLY',
@@ -184,6 +190,7 @@ describe('Session Management Adapter', () => {
     // T-CS-007: 存在しないユーザーIDでエラー
     it('存在しないユーザーIDでエラー', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: 'テスト卓',
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
@@ -203,6 +210,7 @@ describe('Session Management Adapter', () => {
     // T-CS-008: 作成時にGMとして参加者に追加される
     it('作成時にGMとして参加者に追加される', async () => {
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: 'GM自動追加テスト',
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
@@ -232,6 +240,7 @@ describe('Session Management Adapter', () => {
     it('存在するセッションIDでセッションを取得できる', async () => {
       // まずセッションを作成
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '取得テスト用セッション',
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,
@@ -272,6 +281,7 @@ describe('Session Management Adapter', () => {
     it('セッションにシナリオ情報が含まれる', async () => {
       // シナリオ付きでセッションを作成
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: 'シナリオ付きセッション',
         sessionDescription: 'テスト',
         scenarioId,
@@ -299,6 +309,7 @@ describe('Session Management Adapter', () => {
     it('セッションに参加者情報が含まれる', async () => {
       // セッションを作成（KEEPERが自動追加される）
       const input: CreateSessionInput = {
+        invitedMembers: [],
         sessionName: '参加者情報テスト',
         sessionDescription: 'テスト',
         isBeginnerFriendly: false,

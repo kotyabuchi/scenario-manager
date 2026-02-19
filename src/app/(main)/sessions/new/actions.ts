@@ -11,7 +11,16 @@ import { sessionFormSchema } from './schema';
 import { createClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
+import type { Database } from '@/db/types';
 import type { SessionFormValues } from './schema';
+
+type UserRow = Database['public']['Tables']['users']['Row'];
+
+/** ユーザー検索結果の型 */
+export type UserSummary = Pick<
+  UserRow,
+  'user_id' | 'user_name' | 'nickname' | 'image'
+>;
 
 type CreateSessionActionResult = {
   gameSessionId: string;
@@ -82,4 +91,43 @@ export const createSessionAndRedirect = async (
   }
 
   // エラー時はフォームに戻る（エラーはクライアント側で処理）
+};
+
+/**
+ * ユーザーを名前で検索するServer Action
+ *
+ * セキュリティ:
+ * - 認証必須
+ * - 2文字未満のクエリは空配列を即座に返す（ユーザー列挙攻撃の防止）
+ * - 上限10件
+ */
+export const searchUsersAction = async (
+  query: string,
+): Promise<Result<UserSummary[]>> => {
+  const supabase = await createClient();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return err(new Error('ログインが必要です'));
+  }
+
+  if (query.length < 2) {
+    return ok([]);
+  }
+
+  const escaped = query.replace(/%/g, '\\%').replace(/_/g, '\\_');
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('user_id, user_name, nickname, image')
+    .or(`user_name.ilike.%${escaped}%,nickname.ilike.%${escaped}%`)
+    .limit(10);
+
+  if (error) {
+    return err(new Error('ユーザーの検索に失敗しました'));
+  }
+
+  return ok(data);
 };
