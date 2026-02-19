@@ -254,5 +254,33 @@ describe('Input', () => {
       expect(input).toBeInTheDocument();
       expect(input.tagName).toBe('INPUT');
     });
+
+    // INP-22: hasError + prefix でラッパーにエラースタイルが適用される
+    it('hasError + prefix でも入力欄がレンダリングされる', () => {
+      render(<Input prefix={<span>$</span>} placeholder="金額" hasError />);
+
+      expect(screen.getByText('$')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('金額')).toBeInTheDocument();
+    });
+
+    // INP-23: suffix 付きでも入力・変更が正しく動作する
+    it('suffix 付きでも入力できる', async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+
+      render(
+        <Input
+          suffix={<span>円</span>}
+          placeholder="金額"
+          onChange={handleChange}
+        />,
+      );
+
+      const input = screen.getByPlaceholderText('金額');
+      await user.type(input, '500');
+
+      expect(handleChange).toHaveBeenCalled();
+      expect(input).toHaveValue('500');
+    });
   });
 });

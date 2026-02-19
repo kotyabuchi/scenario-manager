@@ -11,11 +11,15 @@ const StyledInput = styled(ark.input, input);
 
 type StyledInputProps = ComponentProps<typeof StyledInput>;
 
-type InputProps = Omit<StyledInputProps, 'prefix' | 'suffix'> & {
+type InputSize = 'sm' | 'md' | 'lg';
+
+type InputProps = Omit<StyledInputProps, 'prefix' | 'suffix' | 'size'> & {
   /** 入力欄の左側に配置する要素（アイコン、テキスト等） */
   prefix?: ReactNode;
   /** 入力欄の右側に配置する要素（単位、ボタン等） */
   suffix?: ReactNode;
+  /** サイズバリアント */
+  size?: InputSize;
 };
 
 /**
@@ -54,7 +58,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={inputWrapper({
-          size: size as 'sm' | 'md' | 'lg' | undefined,
+          size,
           hasError,
         })}
       >
