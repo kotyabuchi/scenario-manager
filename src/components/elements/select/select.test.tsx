@@ -104,7 +104,7 @@ describe('Select', () => {
       });
     });
 
-    it('選択済みアイテムにチェックアイコンが表示される', async () => {
+    it('シングルセレクトでは選択状態がdata-stateで表現される（アイコンなし）', async () => {
       const user = userEvent.setup();
 
       render(
@@ -116,9 +116,92 @@ describe('Select', () => {
 
       await waitFor(() => {
         const selectedItem = screen.getByRole('option', { name: 'りんご' });
-        // チェックアイコン（SVG）が存在することを確認
-        const checkIcon = selectedItem.querySelector('svg');
-        expect(checkIcon).toBeInTheDocument();
+        // シングルセレクトでは背景色で選択状態を表現（アイコンなし）
+        expect(selectedItem).toHaveAttribute('data-state', 'checked');
+        const svg = selectedItem.querySelector('svg');
+        expect(svg).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('マルチセレクトのチェックアイコン', () => {
+    it('マルチセレクトモードでアイテムにチェックアイコンが左側に表示される', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <Select
+          items={mockItems}
+          value={['apple']}
+          multiple
+          onValueChange={vi.fn()}
+        />,
+      );
+
+      const trigger = screen.getByRole('combobox');
+      await user.click(trigger);
+
+      await waitFor(() => {
+        const selectedItem = screen.getByRole('option', { name: 'りんご' });
+        // チェックアイコンが data-icon="checked" を持つ
+        const checkedIcon = selectedItem.querySelector('[data-icon="checked"]');
+        expect(checkedIcon).toBeInTheDocument();
+      });
+    });
+
+    it('マルチセレクトモードで未選択アイテムに空チェックボックスが表示される', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <Select
+          items={mockItems}
+          value={['apple']}
+          multiple
+          onValueChange={vi.fn()}
+        />,
+      );
+
+      const trigger = screen.getByRole('combobox');
+      await user.click(trigger);
+
+      await waitFor(() => {
+        const uncheckedItem = screen.getByRole('option', { name: 'バナナ' });
+        // 未選択アイコンが data-icon="unchecked" を持つ
+        const uncheckedIcon = uncheckedItem.querySelector(
+          '[data-icon="unchecked"]',
+        );
+        expect(uncheckedIcon).toBeInTheDocument();
+      });
+    });
+
+    it('シングルセレクトモードではチェックボックスアイコンが表示されない', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <Select items={mockItems} value={['apple']} onValueChange={vi.fn()} />,
+      );
+
+      const trigger = screen.getByRole('combobox');
+      await user.click(trigger);
+
+      await waitFor(() => {
+        const item = screen.getByRole('option', { name: 'りんご' });
+        // data-icon属性を持つ要素が存在しない
+        const iconElement = item.querySelector('[data-icon]');
+        expect(iconElement).not.toBeInTheDocument();
+      });
+    });
+
+    it('マルチセレクトモードでContentにdata-multiple属性が付与される', async () => {
+      const user = userEvent.setup();
+
+      render(<Select items={mockItems} multiple onValueChange={vi.fn()} />);
+
+      const trigger = screen.getByRole('combobox');
+      await user.click(trigger);
+
+      await waitFor(() => {
+        const listbox = screen.getByRole('listbox');
+        expect(listbox).toHaveAttribute('data-multiple');
       });
     });
   });
