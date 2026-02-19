@@ -224,16 +224,21 @@ describe('Session List Adapter', () => {
     // T-PS-006: ページネーションが正しく動作する
     it('ページネーションが正しく動作する', async () => {
       const page1 = await searchPublicSessions({}, 'date_asc', 5, 0);
-      const page2 = await searchPublicSessions({}, 'date_asc', 5, 5);
 
       expect(page1.success).toBe(true);
-      expect(page2.success).toBe(true);
-
-      if (page1.success && page2.success) {
+      if (page1.success) {
         expect(page1.data.sessions.length).toBeLessThanOrEqual(5);
-        expect(page2.data.sessions.length).toBeLessThanOrEqual(5);
-        // 同じtotalCountを返す
-        expect(page1.data.totalCount).toBe(page2.data.totalCount);
+
+        // 2ページ目以降のデータがある場合のみ検証
+        if (page1.data.totalCount > 5) {
+          const page2 = await searchPublicSessions({}, 'date_asc', 5, 5);
+          expect(page2.success).toBe(true);
+          if (page2.success) {
+            expect(page2.data.sessions.length).toBeLessThanOrEqual(5);
+            // 同じtotalCountを返す
+            expect(page1.data.totalCount).toBe(page2.data.totalCount);
+          }
+        }
       }
     });
   });

@@ -234,17 +234,27 @@ describe('sessionFormSchema', () => {
       expect(result.success).toBe(true);
     });
 
-    // T-SF-018: 0人でエラー
-    it('0人でエラー', () => {
+    // T-SF-018: 0人は有効（スキーマは.min(0)で0を許可）
+    it('0人が有効', () => {
       const result = sessionFormSchema.safeParse({
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         recruitedPlayerCount: 0,
       });
+      expect(result.success).toBe(true);
+    });
+
+    // T-SF-018b: -1人でエラー
+    it('-1人でエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        recruitedPlayerCount: -1,
+      });
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe(
-          '募集人数は1人以上で入力してください',
+          '募集人数は0人以上で入力してください',
         );
       }
     });

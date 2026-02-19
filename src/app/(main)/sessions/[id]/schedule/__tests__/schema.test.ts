@@ -79,8 +79,8 @@ describe('scheduleResponseSchema', () => {
   it('全候補にOK回答でバリデーション成功する', () => {
     const result = scheduleResponseSchema.safeParse({
       responses: [
-        { candidateId: '01ABC', availability: 'OK' },
-        { candidateId: '01DEF', availability: 'MAYBE' },
+        { candidateId: '01HTESTCANDIDATE00000001AA', availability: 'OK' },
+        { candidateId: '01HTESTCANDIDATE00000002BB', availability: 'MAYBE' },
       ],
     });
     expect(result.success).toBe(true);
@@ -88,7 +88,9 @@ describe('scheduleResponseSchema', () => {
 
   it('コメント付きでバリデーション成功する', () => {
     const result = scheduleResponseSchema.safeParse({
-      responses: [{ candidateId: '01ABC', availability: 'NG' }],
+      responses: [
+        { candidateId: '01HTESTCANDIDATE00000001AA', availability: 'NG' },
+      ],
       comment: '都合が悪いです',
     });
     expect(result.success).toBe(true);
@@ -108,14 +110,18 @@ describe('scheduleResponseSchema', () => {
 
   it('無効なavailability値はバリデーション失敗する', () => {
     const result = scheduleResponseSchema.safeParse({
-      responses: [{ candidateId: '01ABC', availability: 'INVALID' }],
+      responses: [
+        { candidateId: '01HTESTCANDIDATE00000001AA', availability: 'INVALID' },
+      ],
     });
     expect(result.success).toBe(false);
   });
 
   it('201文字以上のコメントはバリデーション失敗する', () => {
     const result = scheduleResponseSchema.safeParse({
-      responses: [{ candidateId: '01ABC', availability: 'OK' }],
+      responses: [
+        { candidateId: '01HTESTCANDIDATE00000001AA', availability: 'OK' },
+      ],
       comment: 'あ'.repeat(201),
     });
     expect(result.success).toBe(false);

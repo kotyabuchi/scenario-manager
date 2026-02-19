@@ -111,7 +111,7 @@ export const getSessionDetail = async (
       .select(`
         *,
         keeper:users!game_sessions_keeper_id_users_user_id_fk(user_id, user_name),
-        creator:users!game_sessions_created_by_id_users_user_id_fk(user_id, user_name),
+        creator:users!game_sessions_created_by_id_fkey(user_id, user_name),
         scenarios(*, scenario_systems(*)),
         game_schedules(*),
         session_participants(*, users(*)),
