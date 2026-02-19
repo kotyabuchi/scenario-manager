@@ -1,8 +1,10 @@
+import { createRef } from 'react';
 import { composeStories } from '@storybook/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { Input } from './input';
 import * as stories from './input.stories';
 
 const { Default, Sizes, Types, Disabled, WithValue } = composeStories(stories);
@@ -167,6 +169,90 @@ describe('Input', () => {
       render(<Default value="" />);
 
       expect(screen.getByRole('textbox')).toBeInTheDocument();
+    });
+  });
+
+  describe('prefix/suffix', () => {
+    // INP-15: prefix がレンダリングされる
+    it('prefix がレンダリングされる', () => {
+      render(<Input prefix={<span>$</span>} placeholder="金額を入力" />);
+
+      expect(screen.getByText('$')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('金額を入力')).toBeInTheDocument();
+    });
+
+    // INP-16: suffix がレンダリングされる
+    it('suffix がレンダリングされる', () => {
+      render(<Input suffix={<span>円</span>} placeholder="金額を入力" />);
+
+      expect(screen.getByText('円')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('金額を入力')).toBeInTheDocument();
+    });
+
+    // INP-17: prefix と suffix の両方がレンダリングされる
+    it('prefix と suffix の両方がレンダリングされる', () => {
+      render(
+        <Input
+          prefix={<span>$</span>}
+          suffix={<span>.00</span>}
+          placeholder="金額"
+        />,
+      );
+
+      expect(screen.getByText('$')).toBeInTheDocument();
+      expect(screen.getByText('.00')).toBeInTheDocument();
+    });
+
+    // INP-18: prefix 付きでも入力できる
+    it('prefix 付きでも入力できる', async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+
+      render(
+        <Input
+          prefix={<span>$</span>}
+          placeholder="金額"
+          onChange={handleChange}
+        />,
+      );
+
+      const input = screen.getByPlaceholderText('金額');
+      await user.type(input, '100');
+
+      expect(handleChange).toHaveBeenCalled();
+      expect(input).toHaveValue('100');
+    });
+
+    // INP-19: ref が input 要素を指す（React Hook Form 互換）
+    it('prefix 付きでも ref が input 要素を指す', () => {
+      const ref = createRef<HTMLInputElement>();
+
+      render(<Input ref={ref} prefix={<span>$</span>} placeholder="金額" />);
+
+      expect(ref.current).toBeInstanceOf(HTMLInputElement);
+      expect(ref.current?.tagName).toBe('INPUT');
+    });
+
+    // INP-20: disabled 時は prefix 付きでも入力できない
+    it('prefix 付きでも disabled 時は入力できない', async () => {
+      const user = userEvent.setup();
+
+      render(<Input prefix={<span>$</span>} placeholder="金額" disabled />);
+
+      const input = screen.getByPlaceholderText('金額');
+      expect(input).toBeDisabled();
+
+      await user.type(input, '100');
+      expect(input).toHaveValue('');
+    });
+
+    // INP-21: prefix/suffix なしでは従来通りレンダリングされる
+    it('prefix/suffix なしでは従来通りレンダリングされる', () => {
+      render(<Input placeholder="通常入力" />);
+
+      const input = screen.getByPlaceholderText('通常入力');
+      expect(input).toBeInTheDocument();
+      expect(input.tagName).toBe('INPUT');
     });
   });
 });

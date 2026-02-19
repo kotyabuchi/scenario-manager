@@ -1,3 +1,9 @@
+import {
+  CurrencyJpy,
+  Link as LinkIcon,
+  MagnifyingGlass,
+} from '@phosphor-icons/react/ssr';
+
 import { Input } from './input';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -98,5 +104,85 @@ export const NumberWithRange: Story = {
     min: 1,
     max: 20,
     placeholder: '1〜20の数値',
+  },
+};
+
+/**
+ * prefix付き（検索アイコン）
+ */
+export const WithPrefix: Story = {
+  args: {
+    prefix: <MagnifyingGlass size={16} />,
+    placeholder: 'シナリオを検索...',
+  },
+};
+
+/**
+ * suffix付き（単位表示）
+ */
+export const WithSuffix: Story = {
+  args: {
+    suffix: <span>円</span>,
+    type: 'number',
+    placeholder: '金額を入力',
+  },
+};
+
+/**
+ * prefix + suffix 両方
+ */
+export const WithPrefixAndSuffix: Story = {
+  args: {
+    prefix: <CurrencyJpy size={16} />,
+    suffix: <span>.00</span>,
+    type: 'number',
+    placeholder: '金額',
+  },
+};
+
+/**
+ * prefix/suffix + サイズバリエーション
+ */
+export const PrefixSuffixSizes: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <Input
+        size="sm"
+        prefix={<MagnifyingGlass size={14} />}
+        placeholder="Small"
+      />
+      <Input
+        size="md"
+        prefix={<MagnifyingGlass size={16} />}
+        placeholder="Medium（デフォルト）"
+      />
+      <Input
+        size="lg"
+        prefix={<MagnifyingGlass size={18} />}
+        placeholder="Large"
+      />
+    </div>
+  ),
+};
+
+/**
+ * prefix付きURL入力
+ */
+export const UrlWithPrefix: Story = {
+  args: {
+    prefix: <LinkIcon size={16} />,
+    type: 'url',
+    placeholder: 'https://example.com',
+  },
+};
+
+/**
+ * prefix付き無効状態
+ */
+export const PrefixDisabled: Story = {
+  args: {
+    prefix: <MagnifyingGlass size={16} />,
+    placeholder: '検索できません',
+    disabled: true,
   },
 };
