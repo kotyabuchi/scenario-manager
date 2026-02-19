@@ -1,15 +1,25 @@
 import { css } from '@/styled-system/css';
 
-export const form = css({
-  bg: 'bg.card',
-  shadow: 'card.default',
-  rounded: '2xl',
-  maxW: '[720px]',
-  mx: 'auto',
+// フォームカード（maxW: 800px, overflow hidden でフッターの hr がカード端まで伸びる）
+export const form_card = css({
+  bg: 'white',
+  borderRadius: '0',
+  shadow: '[none]',
+  w: 'full',
+  maxW: '[800px]',
+  overflow: 'hidden',
+  lg: {
+    borderRadius: '2xl',
+    shadow: 'card.default',
+  },
+});
+
+// カード内部のコンテンツエリア
+export const form_body = css({
   p: '8',
   display: 'flex',
   flexDirection: 'column',
-  gap: '6',
+  gap: '10',
 });
 
 export const form_section = css({
@@ -34,9 +44,8 @@ export const form_sectionIcon = css({
 
 export const form_divider = css({
   border: 'none',
-  borderTop: '[1px solid]',
-  borderColor: 'border.subtle',
-  my: '6',
+  h: '[1px]',
+  bg: 'gray.200',
 });
 
 export const form_charCount = css({

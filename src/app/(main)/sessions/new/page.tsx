@@ -33,7 +33,9 @@ export default async function NewSessionPage() {
     <div className={styles.pageContainer}>
       <PageHeader backHref="/sessions" title="セッションを作成" />
 
-      <SessionFormContainer systems={systems} />
+      <div className={styles.mainContent}>
+        <SessionFormContainer systems={systems} />
+      </div>
     </div>
   );
 }
