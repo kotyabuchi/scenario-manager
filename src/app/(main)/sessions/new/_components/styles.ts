@@ -75,3 +75,25 @@ export const form_submitArea = css({
   justifyContent: 'flex-end',
   pt: '4',
 });
+
+export const scenario_emptyState = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '3',
+  py: '8',
+  color: 'text.secondary',
+  fontSize: 'sm',
+});
+
+export const scenario_emptyIcon = css({
+  color: 'primary.default',
+  opacity: '[0.5]',
+});
+
+export const scenario_comingSoon = css({
+  textAlign: 'center',
+  color: 'text.secondary',
+  py: '6',
+  fontSize: 'sm',
+});

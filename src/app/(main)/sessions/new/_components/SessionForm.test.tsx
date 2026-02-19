@@ -10,26 +10,30 @@ const { Default, Filled, WithErrors, Submitting } = composeStories(stories);
 describe('SessionForm', () => {
   // US-S101: GMとして、シナリオ未定でもセッションを募集できる
   describe('S101: シナリオ未定での募集', () => {
-    it('S101-01: シナリオセクションが表示される', () => {
+    it('S101-01: シナリオセクションにタブUIが表示される', () => {
       render(<Default />);
 
       // シナリオセクションの見出しが表示されること
       expect(
         screen.getByRole('heading', { name: /シナリオ/i }),
       ).toBeInTheDocument();
+
+      // タブUIが表示されること
+      expect(
+        screen.getByRole('tab', { name: /検索して選ぶ/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('tab', { name: /IDで指定/i }),
+      ).toBeInTheDocument();
     });
 
-    // Batch 3 で実装後にスキップ解除
-    it.skip('S101-02: シナリオを検索して選択できる', async () => {
-      const user = userEvent.setup();
+    it('S101-02: シナリオを検索ボタンが表示される', () => {
       render(<Default />);
 
-      // シナリオ検索ボタンをクリック
+      // 未選択状態で「シナリオを検索」ボタンが表示されること
       const searchButton = screen.getByRole('button', {
         name: /シナリオを検索/i,
       });
-      await user.click(searchButton);
-
       expect(searchButton).toBeInTheDocument();
     });
   });

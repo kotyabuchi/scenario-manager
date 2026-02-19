@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import { getAllSystems } from '../../scenarios/adapter';
 import { SessionFormContainer } from './_components/SessionFormContainer';
 import * as styles from './styles';
 
@@ -22,11 +23,17 @@ export default async function NewSessionPage() {
     redirect('/');
   }
 
+  // システム一覧を取得
+  const systemsResult = await getAllSystems();
+  const systems = systemsResult.success
+    ? systemsResult.data.map((s) => ({ systemId: s.systemId, name: s.name }))
+    : [];
+
   return (
     <div className={styles.pageContainer}>
       <PageHeader backHref="/sessions" title="セッションを作成" />
 
-      <SessionFormContainer />
+      <SessionFormContainer systems={systems} />
     </div>
   );
 }

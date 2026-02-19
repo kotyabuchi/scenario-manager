@@ -23,6 +23,8 @@ import {
 } from '../schema';
 import { MemberListItem, type ParticipantType } from './MemberListItem';
 import { MemberSearchInput } from './MemberSearchInput';
+import { ScenarioSearchModal } from './ScenarioSearchModal';
+import { ScenarioSelectedCard } from './ScenarioSelectedCard';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -34,9 +36,11 @@ import {
   type RadioGroupItem,
 } from '@/components/elements/radio-group';
 import { Switch } from '@/components/elements/switch';
+import { Tabs } from '@/components/elements/tabs';
 import { Textarea } from '@/components/elements/textarea';
 
-import type { UserSummary } from '../actions';
+import type { SystemSummary, UserSummary } from '../actions';
+import type { ScenarioSummary } from '../interface';
 
 const visibilityItems: RadioGroupItem[] = [
   { label: '全体公開', value: 'PUBLIC' },
@@ -53,6 +57,7 @@ type SessionFormProps = {
   defaultValues?: Partial<SessionFormInput>;
   isSubmitting?: boolean;
   errors?: FieldErrors<SessionFormInput>;
+  systems?: SystemSummary[];
 };
 
 export const SessionForm = ({
@@ -60,6 +65,7 @@ export const SessionForm = ({
   defaultValues,
   isSubmitting = false,
   errors: externalErrors,
+  systems = [],
 }: SessionFormProps) => {
   const {
     register,
@@ -89,9 +95,13 @@ export const SessionForm = ({
   const [memberUsers, setMemberUsers] = useState<Map<string, UserSummary>>(
     new Map(),
   );
+  const [selectedScenario, setSelectedScenario] =
+    useState<ScenarioSummary | null>(null);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const descriptionValue = useWatch({ name: 'sessionDescription', control });
   const scheduleType = useWatch({ name: 'scheduleType', control });
+  const scenarioIdValue = useWatch({ name: 'scenarioId', control });
 
   const handleMemberSelect = (user: UserSummary) => {
     if (fields.some((f) => f.userId === user.user_id)) return;
@@ -109,6 +119,16 @@ export const SessionForm = ({
         return next;
       });
     }
+  };
+
+  const handleScenarioSelect = (scenario: ScenarioSummary) => {
+    setValue('scenarioId', scenario.scenarioId);
+    setSelectedScenario(scenario);
+  };
+
+  const handleScenarioClear = () => {
+    setValue('scenarioId', null);
+    setSelectedScenario(null);
   };
 
   const handleRoleChange = (index: number, role: ParticipantType) => {
@@ -219,14 +239,70 @@ export const SessionForm = ({
 
       <hr className={styles.form_divider} />
 
-      {/* セクション3: シナリオ（Batch 3で実装） */}
+      {/* セクション3: シナリオ */}
       <section className={styles.form_section}>
         <h2 className={styles.form_sectionHeader}>
           <FilmSlate className={styles.form_sectionIcon} />
           シナリオ
         </h2>
         <input type="hidden" {...register('scenarioId')} />
-        {/* Batch 3で実装 */}
+        <Tabs
+          defaultValue="search"
+          variant="underline"
+          items={[
+            {
+              value: 'search',
+              label: '検索して選ぶ',
+              content: selectedScenario ? (
+                <ScenarioSelectedCard
+                  scenario={selectedScenario}
+                  onClear={handleScenarioClear}
+                  onChange={() => setIsSearchModalOpen(true)}
+                />
+              ) : (
+                <div className={styles.scenario_emptyState}>
+                  <FilmSlate size={32} className={styles.scenario_emptyIcon} />
+                  <p>シナリオが未選択です</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsSearchModalOpen(true)}
+                  >
+                    シナリオを検索
+                  </Button>
+                </div>
+              ),
+            },
+            {
+              value: 'id',
+              label: 'IDで指定',
+              content: (
+                <FormField id="scenarioId-input" label="シナリオID">
+                  <Input
+                    id="scenarioId-input"
+                    value={scenarioIdValue ?? ''}
+                    onChange={(e) =>
+                      setValue('scenarioId', e.target.value || null)
+                    }
+                    placeholder="シナリオIDを入力"
+                  />
+                </FormField>
+              ),
+            },
+            {
+              value: 'url',
+              label: 'URLで指定',
+              disabled: true,
+              content: <p className={styles.scenario_comingSoon}>準備中</p>,
+            },
+          ]}
+        />
+        <ScenarioSearchModal
+          open={isSearchModalOpen}
+          onOpenChange={(d) => setIsSearchModalOpen(d.open)}
+          onSelect={handleScenarioSelect}
+          systems={systems}
+        />
       </section>
 
       <hr className={styles.form_divider} />
