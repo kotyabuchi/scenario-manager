@@ -14,11 +14,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const mockSystems = [
+  { systemId: '01HSYSTEM00000000001AA', name: 'クトゥルフ神話TRPG' },
+  { systemId: '01HSYSTEM00000000002BB', name: 'ソード・ワールド2.5' },
+  { systemId: '01HSYSTEM00000000003CC', name: 'インセイン' },
+];
+
 /**
  * デフォルト表示状態（空のフォーム）
  */
 export const Default: Story = {
-  args: {},
+  args: {
+    systems: mockSystems,
+  },
 };
 
 /**

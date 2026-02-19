@@ -445,6 +445,104 @@ describe('sessionFormSchema', () => {
     });
   });
 
+  describe('invitedMembers', () => {
+    // T-SF-038: 空配列で有効（招待なし）
+    it('空配列で有効（招待なし）', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toEqual([]);
+      }
+    });
+
+    // T-SF-039: undefinedでデフォルト空配列
+    it('undefinedでデフォルト空配列', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toEqual([]);
+      }
+    });
+
+    // T-SF-040: PLAYERの招待メンバーが有効
+    it('PLAYERの招待メンバーが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSER00000001AAA', participantType: 'PLAYER' },
+        ],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toHaveLength(1);
+        expect(result.data.invitedMembers[0]?.participantType).toBe('PLAYER');
+      }
+    });
+
+    // T-SF-041: SPECTATORの招待メンバーが有効
+    it('SPECTATORの招待メンバーが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSER00000001AAA', participantType: 'SPECTATOR' },
+        ],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers[0]?.participantType).toBe(
+          'SPECTATOR',
+        );
+      }
+    });
+
+    // T-SF-042: 複数メンバーが有効
+    it('複数メンバーが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSER00000001AAA', participantType: 'PLAYER' },
+          { userId: '01HTESTUSER00000002BBB', participantType: 'SPECTATOR' },
+        ],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toHaveLength(2);
+      }
+    });
+
+    // T-SF-043: 不正なparticipantTypeでエラー
+    it('不正なparticipantTypeでエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSER00000001AAA', participantType: 'INVALID' },
+        ],
+      });
+      expect(result.success).toBe(false);
+    });
+
+    // T-SF-044: userIdなしでエラー
+    it('userIdなしでエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [{ participantType: 'PLAYER' }],
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe('複合バリデーション', () => {
     // T-SF-035: 全項目を指定して有効
     it('全項目を指定して有効', () => {
