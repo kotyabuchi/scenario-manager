@@ -107,6 +107,27 @@ export const Disabled: Story = {
 };
 
 /**
+ * 複数選択（選択済み・グルーピング確認用）
+ *
+ * 連続して選択されたアイテムがグルーピング表示されることを確認するストーリー。
+ * 初期値で連続する3アイテムを選択状態にしている。
+ */
+export const MultipleWithSelection: Story = {
+  render: () => {
+    const [value, setValue] = useState(['coc7', 'dnd5e', 'sw25']);
+    return (
+      <Select
+        items={systems}
+        value={value}
+        onValueChange={(details) => setValue(details.value)}
+        placeholder="システムを選択（複数可）"
+        multiple
+      />
+    );
+  },
+};
+
+/**
  * 長いリスト
  */
 export const LongList: Story = {

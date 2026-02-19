@@ -7,7 +7,7 @@ import {
   type SelectRootProps,
   type SelectValueChangeDetails,
 } from '@ark-ui/react/select';
-import { CaretDown, Check } from '@phosphor-icons/react/ssr';
+import { CaretDown, Check, Square } from '@phosphor-icons/react/ssr';
 
 import { createStyleContext } from '@/lib/create-style-context';
 import { type SelectVariantProps, select } from '@/styled-system/recipes';
@@ -51,11 +51,6 @@ const ItemText = withContext<
   HTMLSpanElement,
   ComponentPropsWithoutRef<typeof ArkSelect.ItemText>
 >(ArkSelect.ItemText, 'itemText');
-
-const ItemIndicator = withContext<
-  HTMLSpanElement,
-  ComponentPropsWithoutRef<typeof ArkSelect.ItemIndicator>
->(ArkSelect.ItemIndicator, 'itemIndicator');
 
 type SelectItem = {
   label: string;
@@ -143,13 +138,16 @@ export const Select = ({
       </ArkSelect.Control>
       <Portal>
         <Positioner>
-          <Content>
+          <Content data-multiple={multiple || undefined}>
             {collection.items.map((item) => (
               <Item key={item.value} item={item}>
+                {multiple && (
+                  <span aria-hidden="true">
+                    <Square size={16} data-icon="unchecked" />
+                    <Check size={16} data-icon="checked" />
+                  </span>
+                )}
                 <ItemText>{item.label}</ItemText>
-                <ItemIndicator>
-                  <Check size={16} />
-                </ItemIndicator>
               </Item>
             ))}
           </Content>

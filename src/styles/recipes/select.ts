@@ -57,7 +57,7 @@ export const select = defineSlotRecipe({
       borderRadius: '8px',
       boxShadow: 'menu.default',
       p: '1',
-      gap: '1',
+      gap: '0',
       outline: 'none',
       maxH: '300px',
       overflowY: 'auto',
@@ -68,10 +68,9 @@ export const select = defineSlotRecipe({
     item: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
       px: '12px',
       py: '8px',
-      gap: '2',
+      gap: '8px',
       fontSize: '14px',
       color: 'menu.itemText',
       cursor: 'pointer',
@@ -94,6 +93,30 @@ export const select = defineSlotRecipe({
         _hover: {
           bg: 'transparent',
         },
+      },
+      // マルチセレクト: チェックアイコン表示切替
+      '& [data-icon=unchecked]': {
+        display: 'inline-flex',
+        color: 'menu.itemText',
+      },
+      '& [data-icon=checked]': {
+        display: 'none',
+      },
+      '&[data-state=checked] [data-icon=unchecked]': {
+        display: 'none',
+      },
+      '&[data-state=checked] [data-icon=checked]': {
+        display: 'inline-flex',
+        color: 'oklch(0.43 0.09 163)',
+      },
+      // マルチセレクト: 連続選択グルーピング（角丸除去）
+      '[data-multiple] &[data-state=checked]:has(+ [data-state=checked])': {
+        borderBottomLeftRadius: '0',
+        borderBottomRightRadius: '0',
+      },
+      '[data-multiple] [data-state=checked] + &[data-state=checked]': {
+        borderTopLeftRadius: '0',
+        borderTopRightRadius: '0',
       },
     },
     itemIndicator: {
