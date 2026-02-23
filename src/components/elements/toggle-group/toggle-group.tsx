@@ -11,9 +11,9 @@ export type ToggleItem = {
   value: string;
 
   /**
-   * アイコン
+   * 表示アイテム
    */
-  icon: React.ReactNode;
+  item: React.ReactNode;
 
   /**
    * ラベル（アクセシビリティ用）
@@ -22,41 +22,22 @@ export type ToggleItem = {
 };
 
 export type ToggleGroupProps = {
-  /**
-   * 選択中の値（制御モード）
-   */
-  value?: string[];
-
-  /**
-   * 初期選択値（非制御モード）
-   */
-  defaultValue?: string[];
-
-  /**
-   * 値変更時のコールバック
-   */
-  onValueChange?: (details: { value: string[] }) => void;
-
-  /**
-   * 複数選択可能か
-   * @default false
-   */
-  multiple?: boolean;
-
-  /**
-   * 無効状態
-   * @default false
-   */
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (details: { value: string }) => void;
+  multiple?: false;
   disabled?: boolean;
-
-  /**
-   * トグルアイテムの配列
-   */
   items: ToggleItem[];
+  className?: string;
+};
 
-  /**
-   * 追加のクラス名
-   */
+export type MultipleToggleGroupProps = {
+  value?: string[];
+  defaultValue?: string[];
+  onValueChange?: (details: { value: string[] }) => void;
+  multiple: true;
+  disabled?: boolean;
+  items: ToggleItem[];
   className?: string;
 };
 
@@ -78,18 +59,29 @@ export const ToggleGroup = ({
   value,
   defaultValue,
   onValueChange,
-  multiple = false,
+  multiple,
   disabled = false,
   items,
   className,
-}: ToggleGroupProps) => {
+}: ToggleGroupProps | MultipleToggleGroupProps) => {
   return (
     <ArkToggleGroup.Root
-      value={value}
-      defaultValue={defaultValue}
-      onValueChange={onValueChange}
+      value={value ? (multiple ? value : [value]) : undefined}
+      defaultValue={
+        defaultValue ? (multiple ? defaultValue : [defaultValue]) : undefined
+      }
+      onValueChange={(details) => {
+        if (onValueChange) {
+          if (multiple) {
+            onValueChange({ value: details.value });
+          } else {
+            onValueChange({ value: details.value[0] as string });
+          }
+        }
+      }}
       multiple={multiple}
       disabled={disabled}
+      style={{ minWidth: items.length * 40 + 8 }}
       className={`${styles.toggleGroupRoot} ${className ?? ''}`}
     >
       {items.map((item) => (
@@ -99,7 +91,7 @@ export const ToggleGroup = ({
           aria-label={item.label ?? item.value}
           className={styles.toggleGroupItem}
         >
-          {item.icon}
+          {item.item}
         </ArkToggleGroup.Item>
       ))}
     </ArkToggleGroup.Root>

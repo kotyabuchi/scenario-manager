@@ -27,10 +27,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const defaultItems: ToggleItem[] = [
-  { value: 'menu', icon: <List size={20} />, label: 'メニュー表示' },
-  { value: 'list', icon: <ListBullets size={20} />, label: 'リスト表示' },
-  { value: 'grid', icon: <SquaresFour size={20} />, label: 'グリッド表示' },
-  { value: 'table', icon: <Table size={20} />, label: 'テーブル表示' },
+  { value: 'menu', item: <List size={20} />, label: 'メニュー表示' },
+  { value: 'list', item: <ListBullets size={20} />, label: 'リスト表示' },
+  { value: 'grid', item: <SquaresFour size={20} />, label: 'グリッド表示' },
+  { value: 'table', item: <Table size={20} />, label: 'テーブル表示' },
+];
+
+const textItems: ToggleItem[] = [
+  { value: 'menu', item: 'Menu', label: 'メニュー表示' },
+  { value: 'list', item: 'List', label: 'リスト表示' },
+  { value: 'grid', item: 'Grid', label: 'グリッド表示' },
+  { value: 'table', item: 'Table', label: 'テーブル表示' },
 ];
 
 /**
@@ -39,7 +46,17 @@ const defaultItems: ToggleItem[] = [
 export const Default: Story = {
   args: {
     items: defaultItems,
-    defaultValue: ['menu'],
+    defaultValue: 'menu',
+  },
+};
+
+/**
+ * デフォルト（単一選択,文字列）
+ */
+export const Text: Story = {
+  args: {
+    items: textItems,
+    defaultValue: 'menu',
   },
 };
 
@@ -60,7 +77,7 @@ export const Multiple: Story = {
 export const Disabled: Story = {
   args: {
     items: defaultItems,
-    defaultValue: ['menu'],
+    defaultValue: 'menu',
     disabled: true,
   },
 };
@@ -71,7 +88,7 @@ export const Disabled: Story = {
 export const NoSelection: Story = {
   args: {
     items: defaultItems,
-    defaultValue: [],
+    defaultValue: '',
   },
 };
 
@@ -83,7 +100,7 @@ export const Interactive: Story = {
     items: defaultItems,
   },
   render: () => {
-    const [value, setValue] = useState(['menu']);
+    const [value, setValue] = useState('menu');
     return (
       <div>
         <ToggleGroup
@@ -92,7 +109,7 @@ export const Interactive: Story = {
           items={defaultItems}
         />
         <p className={css({ mt: '4', fontSize: '[14px]', color: 'gray.500' })}>
-          選択中: {value.join(', ') || 'なし'}
+          選択中: {value}
         </p>
       </div>
     );
@@ -122,5 +139,16 @@ export const MultipleInteractive: Story = {
         </p>
       </div>
     );
+  },
+};
+
+/**
+ *
+ */
+export const Wide: Story = {
+  args: {
+    items: textItems,
+    defaultValue: 'menu',
+    className: css({ width: '96' }),
   },
 };

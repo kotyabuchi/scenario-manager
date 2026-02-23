@@ -29,8 +29,8 @@ type UpcomingTabProps = {
 };
 
 const viewToggleItems: ToggleItem[] = [
-  { value: 'list', icon: <ListBullets size={18} />, label: 'リスト表示' },
-  { value: 'calendar', icon: <Calendar size={18} />, label: 'カレンダー表示' },
+  { value: 'list', item: <ListBullets size={18} />, label: 'リスト表示' },
+  { value: 'calendar', item: <Calendar size={18} />, label: 'カレンダー表示' },
 ];
 
 export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
@@ -103,12 +103,9 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
       {/* Pencil準拠: 左にビュー切替、右に並び替え */}
       <div className={styles.resultHeader}>
         <ToggleGroup
-          value={[currentView]}
+          value={currentView}
           onValueChange={(details) => {
-            const newView = details.value[0] as ViewType | undefined;
-            if (newView) {
-              handleViewChange(newView);
-            }
+            handleViewChange(details.value as ViewType);
           }}
           items={viewToggleItems}
         />
