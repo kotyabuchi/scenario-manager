@@ -6,10 +6,13 @@ export const header = css({
   justifyContent: 'space-between',
   h: '[56px]',
   w: 'full',
-  px: '8',
+  px: '4',
   py: '2',
   bg: 'white',
   shadow: 'subHeader.default',
+  md: {
+    px: '8',
+  },
 });
 
 export const header_left = css({
