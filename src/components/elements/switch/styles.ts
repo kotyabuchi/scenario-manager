@@ -21,7 +21,7 @@ export const switchControl = css({
   position: 'relative',
   w: '[44px]',
   h: '6',
-  borderRadius: 'lg',
+  borderRadius: 'full',
   bg: 'gray.200',
   transitionProperty: 'common',
   transitionDuration: 'fast',
