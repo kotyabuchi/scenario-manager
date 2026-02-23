@@ -41,6 +41,11 @@ export const select = defineSlotRecipe({
         color: 'input.placeholder',
       },
     },
+    valueText: {
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+    },
     indicator: {
       color: 'icon.muted',
       transition: 'transform {durations.fast} ease-out',

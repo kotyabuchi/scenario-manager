@@ -240,7 +240,7 @@ export const semanticTokens = {
       itemBg: { value: 'transparent' },
       itemBgHover: { value: '{colors.gray.50}' },
       itemBgSelected: { value: '{colors.primary.50}' },
-      itemText: { value: '{colors.gray.700}' },
+      itemText: { value: '{colors.gray.800}' },
       itemTextSelected: { value: '{colors.primary.500}' },
     },
 

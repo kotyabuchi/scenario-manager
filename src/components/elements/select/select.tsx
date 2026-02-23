@@ -27,6 +27,11 @@ const Trigger = withContext<
   ComponentPropsWithoutRef<typeof ArkSelect.Trigger>
 >(ArkSelect.Trigger, 'trigger');
 
+const ValueText = withContext<
+  HTMLSpanElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.ValueText>
+>(ArkSelect.ValueText, 'valueText');
+
 const Indicator = withContext<
   HTMLDivElement,
   ComponentPropsWithoutRef<typeof ArkSelect.Indicator>
@@ -130,7 +135,7 @@ export const Select = ({
       <ArkSelect.HiddenSelect />
       <ArkSelect.Control>
         <Trigger aria-label={ariaLabel}>
-          <ArkSelect.ValueText placeholder={placeholder} />
+          <ValueText placeholder={placeholder} />
           <Indicator>
             <CaretDown size={16} />
           </Indicator>
