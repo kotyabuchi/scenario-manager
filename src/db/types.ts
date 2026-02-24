@@ -7,10 +7,30 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '14.1';
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -197,9 +217,11 @@ export type Database = {
       };
       game_sessions: {
         Row: {
+          cancel_reason: string | null;
           completed_at: string | null;
           completion_note: string | null;
           created_at: string;
+          created_by_id: string;
           game_session_id: string;
           is_beginner_friendly: boolean;
           keeper_id: string | null;
@@ -213,13 +235,13 @@ export type Database = {
           tools: string | null;
           updated_at: string;
           visibility: Database['public']['Enums']['session_visibility'];
-          cancel_reason: string | null;
-          created_by_id: string;
         };
         Insert: {
+          cancel_reason?: string | null;
           completed_at?: string | null;
           completion_note?: string | null;
           created_at?: string;
+          created_by_id: string;
           game_session_id: string;
           is_beginner_friendly?: boolean;
           keeper_id?: string | null;
@@ -233,13 +255,13 @@ export type Database = {
           tools?: string | null;
           updated_at?: string;
           visibility?: Database['public']['Enums']['session_visibility'];
-          cancel_reason?: string | null;
-          created_by_id: string;
         };
         Update: {
+          cancel_reason?: string | null;
           completed_at?: string | null;
           completion_note?: string | null;
           created_at?: string;
+          created_by_id?: string;
           game_session_id?: string;
           is_beginner_friendly?: boolean;
           keeper_id?: string | null;
@@ -253,10 +275,15 @@ export type Database = {
           tools?: string | null;
           updated_at?: string;
           visibility?: Database['public']['Enums']['session_visibility'];
-          cancel_reason?: string | null;
-          created_by_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'game_sessions_created_by_id_fkey';
+            columns: ['created_by_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
+          },
           {
             foreignKeyName: 'game_sessions_keeper_id_users_user_id_fk';
             columns: ['keeper_id'];
@@ -270,13 +297,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'scenarios';
             referencedColumns: ['scenario_id'];
-          },
-          {
-            foreignKeyName: 'game_sessions_created_by_id_users_user_id_fk';
-            columns: ['created_by_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -467,77 +487,77 @@ export type Database = {
       };
       schedule_candidates: {
         Row: {
-          candidate_id: string;
-          session_id: string;
           candidate_date: string;
-          end_time: string | null;
-          status: Database['public']['Enums']['schedule_candidate_status'];
-          created_by: string | null;
+          candidate_id: string;
           created_at: string;
+          created_by: string | null;
+          end_time: string | null;
+          session_id: string;
+          status: Database['public']['Enums']['schedule_candidate_status'];
           updated_at: string;
         };
         Insert: {
-          candidate_id: string;
-          session_id: string;
           candidate_date: string;
-          end_time?: string | null;
-          status?: Database['public']['Enums']['schedule_candidate_status'];
-          created_by?: string | null;
+          candidate_id: string;
           created_at?: string;
+          created_by?: string | null;
+          end_time?: string | null;
+          session_id: string;
+          status?: Database['public']['Enums']['schedule_candidate_status'];
           updated_at?: string;
         };
         Update: {
-          candidate_id?: string;
-          session_id?: string;
           candidate_date?: string;
-          end_time?: string | null;
-          status?: Database['public']['Enums']['schedule_candidate_status'];
-          created_by?: string | null;
+          candidate_id?: string;
           created_at?: string;
+          created_by?: string | null;
+          end_time?: string | null;
+          session_id?: string;
+          status?: Database['public']['Enums']['schedule_candidate_status'];
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'schedule_candidates_session_id_game_sessions_game_session_id_fk';
-            columns: ['session_id'];
-            isOneToOne: false;
-            referencedRelation: 'game_sessions';
-            referencedColumns: ['game_session_id'];
-          },
-          {
-            foreignKeyName: 'schedule_candidates_created_by_users_user_id_fk';
+            foreignKeyName: 'schedule_candidates_created_by_fkey';
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'users';
             referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'schedule_candidates_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_sessions';
+            referencedColumns: ['game_session_id'];
           },
         ];
       };
       schedule_responses: {
         Row: {
           availability: Database['public']['Enums']['schedule_availability'];
+          candidate_id: string;
           comment: string | null;
           created_at: string;
           response_id: string;
-          candidate_id: string;
           updated_at: string;
           user_id: string;
         };
         Insert: {
           availability?: Database['public']['Enums']['schedule_availability'];
+          candidate_id: string;
           comment?: string | null;
           created_at?: string;
           response_id: string;
-          candidate_id: string;
           updated_at?: string;
           user_id: string;
         };
         Update: {
           availability?: Database['public']['Enums']['schedule_availability'];
+          candidate_id?: string;
           comment?: string | null;
           created_at?: string;
           response_id?: string;
-          candidate_id?: string;
           updated_at?: string;
           user_id?: string;
         };
@@ -899,11 +919,36 @@ export type Database = {
     };
     Functions: {
       confirm_schedule: {
-        Args: {
-          p_candidate_id: string;
-          p_session_id: string;
-        };
+        Args: { p_candidate_id: string; p_session_id: string };
         Returns: undefined;
+      };
+      create_session_with_candidates: {
+        Args: {
+          p_creator_participant_type: Database['public']['Enums']['participant_type'];
+          p_game_session_id: string;
+          p_invited_members: Json;
+          p_is_beginner_friendly: boolean;
+          p_recruited_player_count: number | null;
+          p_scenario_id: string | null;
+          p_schedule_candidates: Json;
+          p_scheduled_at: string | null;
+          p_session_description: string;
+          p_session_name: string;
+          p_tools: string | null;
+          p_user_id: string;
+          p_visibility: Database['public']['Enums']['session_visibility'];
+        };
+        Returns: {
+          game_session_id: string;
+          is_beginner_friendly: boolean;
+          recruited_player_count: number | null;
+          scenario_id: string | null;
+          scheduled_at: string | null;
+          session_name: string;
+          session_phase: Database['public']['Enums']['session_phase'];
+          tools: string | null;
+          visibility: Database['public']['Enums']['session_visibility'];
+        }[];
       };
     };
     Enums: {
@@ -1065,6 +1110,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       feedback_category: ['BUG', 'FEATURE', 'UI_UX', 'OTHER'],
