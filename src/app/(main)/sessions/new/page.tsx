@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { getAllSystems } from '../../scenarios/adapter';
+import { getAllSystems, getUserByDiscordId } from '../../scenarios/adapter';
 import { SessionFormContainer } from './_components/SessionFormContainer';
 import * as styles from './styles';
 
@@ -23,6 +23,10 @@ export default async function NewSessionPage() {
     redirect('/');
   }
 
+  const userResult = await getUserByDiscordId(authUser.id);
+  const currentUserId =
+    userResult.success && userResult.data ? userResult.data.userId : null;
+
   // システム一覧を取得
   const systemsResult = await getAllSystems();
   const systems = systemsResult.success
@@ -34,7 +38,7 @@ export default async function NewSessionPage() {
       <PageHeader backHref="/sessions" title="セッションを作成" />
 
       <div className={styles.mainContent}>
-        <SessionFormContainer systems={systems} />
+        <SessionFormContainer systems={systems} currentUserId={currentUserId} />
       </div>
     </div>
   );

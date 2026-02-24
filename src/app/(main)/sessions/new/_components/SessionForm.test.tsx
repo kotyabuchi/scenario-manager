@@ -10,7 +10,7 @@ const { Default, Filled, WithErrors, Submitting } = composeStories(stories);
 describe('SessionForm', () => {
   // US-S101: GMとして、シナリオ未定でもセッションを募集できる
   describe('S101: シナリオ未定での募集', () => {
-    it('S101-01: シナリオセクションにタブUIが表示される', () => {
+    it('S101-01: シナリオセクションの空状態が表示される', () => {
       render(<Default />);
 
       // シナリオセクションの見出しが表示されること
@@ -18,12 +18,10 @@ describe('SessionForm', () => {
         screen.getByRole('heading', { name: /シナリオ/i }),
       ).toBeInTheDocument();
 
-      // タブUIが表示されること
+      // 未定の案内が表示されること
+      expect(screen.getByText(/未定/i)).toBeInTheDocument();
       expect(
-        screen.getByRole('tab', { name: /検索して選ぶ/i }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('tab', { name: /IDで指定/i }),
+        screen.getByText(/シナリオが決まっている場合は検索してください/i),
       ).toBeInTheDocument();
     });
 
@@ -66,12 +64,14 @@ describe('SessionForm', () => {
       const user = userEvent.setup();
       render(<Default />);
 
-      // 「日時を指定」ラジオをクリック
-      const specifyRadio = screen.getByRole('radio', { name: /日時を指定/i });
-      await user.click(specifyRadio);
+      // 「開催日時を指定」スイッチをオン
+      const scheduleSwitch = screen.getByRole('checkbox', {
+        name: /開催日時を指定/i,
+      });
+      await user.click(scheduleSwitch);
 
       // datetime-local が表示される
-      const dateInput = await screen.findByLabelText(/開催日時/i);
+      const dateInput = await screen.findByLabelText(/開催開始日時 1/i);
       expect(dateInput).toBeInTheDocument();
 
       // 日付を入力
@@ -149,7 +149,9 @@ describe('SessionForm', () => {
       const user = userEvent.setup();
       render(<Default />);
 
-      const checkbox = screen.getByRole('checkbox');
+      const checkbox = screen.getByRole('checkbox', {
+        name: /初心者歓迎/i,
+      });
       expect(checkbox).not.toBeChecked();
 
       await user.click(checkbox);
@@ -160,17 +162,13 @@ describe('SessionForm', () => {
       const user = userEvent.setup();
       render(<Default />);
 
-      // 全体公開がデフォルトで選択されている
-      const publicRadio = screen.getByRole('radio', { name: /全体公開/i });
-      expect(publicRadio).toBeChecked();
-
-      // フォロワーのみに変更
-      const followersRadio = screen.getByRole('radio', {
-        name: /フォロワーのみ/i,
+      const followersSwitch = screen.getByRole('checkbox', {
+        name: /フォロワー限定公開/i,
       });
-      await user.click(followersRadio);
-      expect(followersRadio).toBeChecked();
-      expect(publicRadio).not.toBeChecked();
+      expect(followersSwitch).not.toBeChecked();
+
+      await user.click(followersSwitch);
+      expect(followersSwitch).toBeChecked();
     });
 
     it('FORM-06: 送信ボタンクリックでフォーム送信', async () => {
@@ -247,7 +245,7 @@ describe('SessionForm', () => {
       await user.clear(spinbutton);
       await user.type(spinbutton, '4');
       await user.type(screen.getByLabelText(/使用ツール/i), 'Discord');
-      await user.click(screen.getByRole('checkbox'));
+      await user.click(screen.getByRole('checkbox', { name: /初心者歓迎/i }));
 
       // 送信
       await user.click(

@@ -105,7 +105,8 @@ export const UpcomingTab = ({ initialResult }: UpcomingTabProps) => {
         <ToggleGroup
           value={currentView}
           onValueChange={(details) => {
-            handleViewChange(details.value as ViewType);
+            const newView = details.value[0] as ViewType | undefined;
+            if (newView) handleViewChange(newView);
           }}
           items={viewToggleItems}
         />

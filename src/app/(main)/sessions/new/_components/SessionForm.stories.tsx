@@ -35,6 +35,7 @@ export const Default: Story = {
  */
 export const WithScenario: Story = {
   args: {
+    systems: mockSystems,
     defaultValues: {
       scenarioId: '01HXY2345678901234567890A',
       sessionName: '狂気山脈セッション',
@@ -48,15 +49,20 @@ export const WithScenario: Story = {
  */
 export const Filled: Story = {
   args: {
+    systems: mockSystems,
     defaultValues: {
       sessionName: '週末CoC7版セッション',
       sessionDescription: '週末にCoC7版を遊びませんか？初心者歓迎です！',
       scheduleType: 'specify',
-      scheduledAt: '2026-02-01T20:00',
+      scheduleCandidates: [
+        { from: '2026-02-01T20:00', to: '2026-02-01T23:00' },
+        { from: '2026-02-08T20:00' },
+      ],
       recruitedPlayerCount: 4,
       tools: 'Discord + ココフォリア',
       isBeginnerFriendly: true,
       visibility: 'PUBLIC',
+      creatorParticipantType: 'KEEPER',
     },
   },
 };
@@ -66,6 +72,7 @@ export const Filled: Story = {
  */
 export const MinimalRequired: Story = {
   args: {
+    systems: mockSystems,
     defaultValues: {
       sessionName: 'シンプルなセッション',
       sessionDescription: '気軽に遊びましょう',
@@ -78,6 +85,7 @@ export const MinimalRequired: Story = {
  */
 export const FollowersOnly: Story = {
   args: {
+    systems: mockSystems,
     defaultValues: {
       sessionName: '身内向けセッション',
       sessionDescription: 'フォロワー限定で募集します',
@@ -91,6 +99,7 @@ export const FollowersOnly: Story = {
  */
 export const WithErrors: Story = {
   args: {
+    systems: mockSystems,
     errors: {
       sessionName: { message: 'セッション名は必須です', type: 'required' },
       sessionDescription: { message: '募集文は必須です', type: 'required' },
@@ -103,6 +112,7 @@ export const WithErrors: Story = {
  */
 export const Submitting: Story = {
   args: {
+    systems: mockSystems,
     isSubmitting: true,
     defaultValues: {
       sessionName: 'テストセッション',

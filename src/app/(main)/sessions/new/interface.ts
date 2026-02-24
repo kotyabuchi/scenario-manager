@@ -25,4 +25,7 @@ type SelectedScenario = ScenarioSummary & {
   author: ScenarioRow['author'];
 };
 
-export type { ScenarioSummary, SelectedScenario };
+/** システム一覧の軽量型（ScenarioSystemRow から導出） */
+type SystemSummary = Pick<ScenarioSystemRow, 'systemId' | 'name'>;
+
+export type { ScenarioSummary, SelectedScenario, SystemSummary };

@@ -12,6 +12,12 @@ import { z } from 'zod';
 // ULID形式（26文字の大文字英数字）
 const ulidPattern = /^[0-9A-Z]{26}$/;
 
+const datetimeLocalPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+const iso8601Pattern =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})?$/;
+const isValidDateTime = (val: string) =>
+  datetimeLocalPattern.test(val) || iso8601Pattern.test(val);
+
 export const sessionFormSchema = z.object({
   // セッション名（必須）
   sessionName: z
@@ -38,15 +44,33 @@ export const sessionFormSchema = z.object({
     .refine(
       (val) => {
         if (!val) return true;
-        // datetime-local形式またはISO8601形式
-        const datetimeLocalPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
-        const iso8601Pattern =
-          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})?$/;
-        return datetimeLocalPattern.test(val) || iso8601Pattern.test(val);
+        return isValidDateTime(val);
       },
       { message: '日時の形式が正しくありません' },
     )
     .nullish(),
+
+  // 日程候補（確定）- 作成時に確定日時として複数登録可能（終了時刻は行ごとに任意）
+  scheduleCandidates: z
+    .array(
+      z
+        .object({
+          from: z.string(),
+          to: z.string().optional(),
+        })
+        .refine(
+          (val) => {
+            const from = val.from.trim();
+            const to = val.to?.trim() ?? '';
+            if (from === '' && to === '') return true;
+            if (!isValidDateTime(from)) return false;
+            if (to === '') return true;
+            return isValidDateTime(to);
+          },
+          { message: '日時の形式が正しくありません' },
+        ),
+    )
+    .default([]),
 
   // 募集人数（任意）- 未定の場合はnull/undefined。0人 = 募集未開始
   recruitedPlayerCount: z
@@ -72,12 +96,17 @@ export const sessionFormSchema = z.object({
     })
     .default('PUBLIC'),
 
+  // 作成者の参加種別（作成時に必ず参加者として追加）
+  creatorParticipantType: z
+    .enum(['PLAYER', 'SPECTATOR', 'KEEPER'])
+    .default('KEEPER'),
+
   // 招待メンバー（任意）- フォーム上で追加されたメンバー一覧
   invitedMembers: z
     .array(
       z.object({
         userId: z.string(),
-        participantType: z.enum(['PLAYER', 'SPECTATOR']),
+        participantType: z.enum(['PLAYER', 'SPECTATOR', 'KEEPER']),
       }),
     )
     .default([]),

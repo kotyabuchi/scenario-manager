@@ -82,6 +82,8 @@ const getPhaseInfo = (
 
 export const BasicInfoSection = ({ session }: BasicInfoSectionProps) => {
   const phaseInfo = getPhaseInfo(session.sessionPhase);
+  const gmUser = session.keeper ?? session.creator;
+  const gmLabel = session.keeper ? 'ゲームマスター' : '作成者';
 
   return (
     <section className={styles.card}>
@@ -148,8 +150,8 @@ export const BasicInfoSection = ({ session }: BasicInfoSectionProps) => {
           )}
       </div>
 
-      {/* GM情報 */}
-      {session.keeper && (
+      {/* GM/作成者情報 */}
+      {gmUser && (
         <div className={styles.info_gm}>
           <div
             className={`${styles.info_gmAvatar} ${styles.info_gmAvatarInner}`}
@@ -157,8 +159,8 @@ export const BasicInfoSection = ({ session }: BasicInfoSectionProps) => {
             <User size={24} />
           </div>
           <div>
-            <p className={styles.info_gmLabel}>ゲームマスター</p>
-            <p className={styles.info_gmName}>{session.keeper.userName}</p>
+            <p className={styles.info_gmLabel}>{gmLabel}</p>
+            <p className={styles.info_gmName}>{gmUser.userName}</p>
           </div>
         </div>
       )}

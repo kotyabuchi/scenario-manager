@@ -1,11 +1,6 @@
 import { isNil } from 'ramda';
 import { ulid } from 'ulid';
 
-import {
-  ParticipantStatuses,
-  ParticipantTypes,
-  SessionPhases,
-} from '@/db/enum';
 import { createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
@@ -86,85 +81,51 @@ export const createSession = async (
 
     const gameSessionId = ulid();
 
-    // セッションを作成
-    const { data: createdSession, error: insertError } = await supabase
-      .from('game_sessions')
-      .insert({
-        game_session_id: gameSessionId,
-        session_name: input.sessionName,
-        session_description: input.sessionDescription,
-        scenario_id: input.scenarioId ?? null,
-        keeper_id: userId,
-        created_by_id: userId,
-        session_phase: SessionPhases.RECRUITING.value,
-        scheduled_at: input.scheduledAt
-          ? new Date(input.scheduledAt).toISOString()
+    const confirmedCandidates = (input.scheduleCandidates ?? []).filter(
+      (candidate) => candidate.from.trim() !== '',
+    );
+    const representativeScheduledAt =
+      confirmedCandidates.length > 0
+        ? confirmedCandidates
+            .map((candidate) => candidate.from)
+            .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0]
+        : (input.scheduledAt ?? null);
+
+    const candidatePayload = confirmedCandidates.map((candidate) => ({
+      candidateId: ulid(),
+      from: new Date(candidate.from).toISOString(),
+      to: candidate.to ? new Date(candidate.to).toISOString() : '',
+    }));
+
+    const { data: createdSessions, error: createError } = await supabase.rpc(
+      'create_session_with_candidates',
+      {
+        p_game_session_id: gameSessionId,
+        p_user_id: userId,
+        p_session_name: input.sessionName,
+        p_session_description: input.sessionDescription,
+        p_scenario_id: input.scenarioId ?? null,
+        p_scheduled_at: representativeScheduledAt
+          ? new Date(representativeScheduledAt).toISOString()
           : null,
-        recruited_player_count: input.recruitedPlayerCount ?? null,
-        tools: input.tools ?? null,
-        is_beginner_friendly: input.isBeginnerFriendly,
-        visibility: input.visibility,
-      })
-      .select()
-      .single();
+        p_recruited_player_count: input.recruitedPlayerCount ?? null,
+        p_tools: input.tools ?? null,
+        p_is_beginner_friendly: input.isBeginnerFriendly,
+        p_visibility: input.visibility,
+        p_creator_participant_type: input.creatorParticipantType,
+        p_schedule_candidates: candidatePayload,
+        p_invited_members: input.invitedMembers,
+      },
+    );
 
-    if (insertError || isNil(createdSession)) {
-      return err(new Error(ERROR_MESSAGES.CREATE_FAILED));
-    }
-
-    // 作成者をKEEPERとして参加者に追加（確定済み状態）
-    const { error: participantError } = await supabase
-      .from('session_participants')
-      .insert({
-        session_id: gameSessionId,
-        user_id: userId,
-        participant_type: ParticipantTypes.KEEPER.value,
-        participant_status: ParticipantStatuses.CONFIRMED.value,
-        applied_at: new Date().toISOString(),
-        approved_at: new Date().toISOString(),
-      });
-
-    if (participantError) {
-      // クリーンアップ: 作成済みセッションを削除
-      await supabase
-        .from('game_sessions')
-        .delete()
-        .eq('game_session_id', gameSessionId);
-      return err(new Error(participantError.message));
-    }
-
-    // 招待メンバーを参加者として一括追加
-    if (input.invitedMembers.length > 0) {
-      const now = new Date().toISOString();
-      const memberInserts = input.invitedMembers.map((m) => ({
-        session_id: gameSessionId,
-        user_id: m.userId,
-        participant_type: m.participantType,
-        participant_status: ParticipantStatuses.CONFIRMED.value,
-        applied_at: now,
-        approved_at: now,
-      }));
-
-      const { error: membersError } = await supabase
-        .from('session_participants')
-        .insert(memberInserts);
-
-      if (membersError) {
-        // クリーンアップ: セッションと既存参加者を削除
-        await supabase
-          .from('session_participants')
-          .delete()
-          .eq('session_id', gameSessionId);
-        await supabase
-          .from('game_sessions')
-          .delete()
-          .eq('game_session_id', gameSessionId);
-        return err(new Error('招待メンバーの追加に失敗しました'));
-      }
+    if (createError || !createdSessions || createdSessions.length === 0) {
+      return err(
+        new Error(createError?.message ?? ERROR_MESSAGES.CREATE_FAILED),
+      );
     }
 
     const session = camelCaseKeys(
-      createdSession as Record<string, unknown>,
+      createdSessions[0] as Record<string, unknown>,
     ) as Record<string, unknown>;
 
     return ok({

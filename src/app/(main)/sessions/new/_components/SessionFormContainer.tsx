@@ -8,15 +8,17 @@ import { SessionForm } from './SessionForm';
 
 import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 
-import type { SystemSummary } from '../actions';
+import type { SystemSummary } from '../interface';
 import type { SessionFormValues } from '../schema';
 
 type SessionFormContainerProps = {
   systems: SystemSummary[];
+  currentUserId: string | null;
 };
 
 export const SessionFormContainer = ({
   systems,
+  currentUserId,
 }: SessionFormContainerProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -40,6 +42,7 @@ export const SessionFormContainer = ({
       onSubmit={handleSubmit}
       isSubmitting={isPending}
       systems={systems}
+      {...(currentUserId != null && { currentUserId })}
     />
   );
 };
