@@ -14,18 +14,21 @@
 |------|------|------|
 | 参加者セクション | フル実装（バックエンド含む） | ユーザー要望。ユーザー検索アダプター新規作成が必要 |
 | シナリオ検索モーダル | フル実装 | 既存 `searchScenarios` アダプター再利用で実現可能 |
-| スマートフィルタ（PLが未プレイ等） | スコープ外 | プレイ履歴参照が必要で実装コスト高 |
+| スマートフィルタ | Phase 1 実装済み（`user_scenario_preferences` テーブル参照） | PLが未プレイ/GMが回せる/メンバーが保有の3フィルタ。`applySmartFilters()` で一括フィルタリング |
 | フォームカード | `bg.card` + `shadow: 'card.default'` + `rounded: '2xl'` + `maxW: '[720px]'` | モック準拠 + 既存セッション画面と一貫 |
 | 入力フィールド | 既存 `Input` / `Textarea` コンポーネント使用 | `register()` 互換の `forwardRef` 実装済み |
 | 数値入力 | 既存 `NumberInput`（Ark UI）+ `Controller` | `onValueChange` コールバック式のため |
 | 初心者歓迎 | 既存 `Switch`（Ark UI）+ `Controller` | モックのトグルスイッチに合致 |
 | 公開範囲 | 既存 `RadioGroup`（Ark UI）+ `Controller` | モックのラジオボタンに合致 |
-| シナリオタブ | 既存 `Tabs`（Ark UI） | `variant: 'default'` がモックに近い |
-| 検索モーダル | 既存 `Modal`（Ark UI Dialog） | `title` + `children` + `footer` 構成 |
+| シナリオ選択 | 統合検索モーダル（Tabs廃止） | ID/URL入力＋名前検索＋システムフィルタ＋スマートフィルタを1つのモーダルに統合。タブ切り替えの操作ステップを削減 |
+| 検索モーダル | 既存 `Modal`（Ark UI Dialog） | `title` + `children` + `footer` 構成。ID/URL入力優先（入力時は名前検索を無効化） |
+| スマートフィルタ | `user_scenario_preferences` テーブル参照 | PLが未プレイ/GMが回せる/メンバーが保有の3種。デフォルトON。チップ形式でモーダル内に常時表示 |
 | 招待メンバーの参加状態 | `CONFIRMED`（即確定） | 作成者が明示的に追加→承認フロー不要。既存 createSession パターンと一致 |
-| 招待メンバーの役割 | `PLAYER` / `SPECTATOR` のみ | DB enum に合致。`KEEPER` は作成者専用。モックの "Sub GM" は将来対応 |
+| 招待メンバーの役割 | `PLAYER` / `SPECTATOR` / `KEEPER` | 作成者がGM以外のメンバーをKEEPERに指名するケースに対応。`KEEPER`は`session_participants`にレコード作成（`game_sessions.keeper_id`とは独立） |
 | 開催日時 | ラジオ切替（後で調整 / 日時を指定）+ 条件付き `datetime-local` | モック準拠 |
 | 文字数カウンタ | `useWatch` で `sessionDescription` 監視 | `register` と干渉しない方法 |
+| フォームアーキテクチャ | `FormProvider` + セクションコンポーネント分割（`sections/` ディレクトリ） | SessionForm を4セクション（BasicInfoSection, ParticipantsSection, ScenarioSelectSection, ScheduleSection）に分離。`useFormContext()` で各セクションがフォーム状態にアクセス |
+| systems prop | 必須（`systems: SystemSummary[]`） | Server Component（page.tsx）でシステム一覧を取得し、フォームに渡す設計。Optional だとクライアント側でのフォールバック処理が不要 |
 | テスト方針 | 既存27テスト維持 + セレクタ更新 + 新機能テスト追加 | UIの変更に合わせて `getByRole` ベースのクエリに統一 |
 | 下書き保存 | スコープ外（Phase 2 で対応） | モックに存在するがセッション作成の基本フローを優先 |
 
@@ -148,7 +151,7 @@
   ```typescript
   invitedMembers: z.array(z.object({
     userId: z.string(),
-    participantType: z.enum(['PLAYER', 'SPECTATOR']),
+    participantType: z.enum(['PLAYER', 'SPECTATOR', 'KEEPER']),
   })).default([])
   ```
 - `SessionFormValues` 型に自動反映（`z.infer`）
@@ -181,7 +184,7 @@
 
 ### Step 2-4. 参加者管理コンポーネント
 
-- **新規**: `src/app/(main)/sessions/new/_components/MemberSearchInput.tsx`
+- **新規**: `src/app/(main)/sessions/new/_components/sections/participants/MemberSearchInput.tsx`
   - Ark UI `Combobox` コンポーネントをベースにしたユーザー検索入力（WCAG 2.1 AA準拠の `role="combobox"` + `role="listbox"` パターンを自動提供）
   - `@` プレフィックスアイコン（`At` from Phosphor Icons）
   - `setTimeout` + `clearTimeout` パターンで 300ms デバウンス検索、`useTransition` は非同期処理のUI遷移にのみ使用
@@ -189,24 +192,25 @@
   - 選択時に `onSelect(user: UserSummary)` コールバック
   - Props: `onSelect`, `excludeUserIds` (既に追加済みのユーザー + 自分自身の `userId` を除外。作成者は KEEPER として自動追加されるため)
 
-- **新規**: `src/app/(main)/sessions/new/_components/MemberListItem.tsx`
-  - `Avatar` + ニックネーム + ユーザー名 + 役割 `Select`/`RadioGroup` + 削除 `IconButton`
-  - 役割選択: `PLAYER` / `SPECTATOR`
+- **新規**: `src/app/(main)/sessions/new/_components/sections/participants/MemberListItem.tsx`
+  - `Avatar` + ニックネーム + ユーザー名 + 役割 `RadioGroup`（PL/見学/GM・KP） + 削除 `IconButton`
+  - 役割選択: `PLAYER` / `SPECTATOR` / `KEEPER`
   - Props: `user: UserSummary`, `role: ParticipantType`, `onRoleChange`, `onRemove`
 
-### Step 2-5. SessionForm に参加者セクション統合
+### Step 2-5. ParticipantsSection コンポーネント作成 & SessionForm 統合
 
-- **変更**: `src/app/(main)/sessions/new/_components/SessionForm.tsx`
-- セクション2「参加者」のプレースホルダーを実装に置換:
+- **新規**: `src/app/(main)/sessions/new/_components/sections/participants/ParticipantsSection.tsx`
+  - `useFormContext()` でフォーム状態にアクセス（FormProviderパターン）
   - `useFieldArray({ control, name: 'invitedMembers' })` で動的配列管理
   - `MemberSearchInput` で検索 → `append({ userId, participantType: 'PLAYER' })`
   - `MemberListItem` のリストを `fields.map()` でレンダリング
   - `onRoleChange` → `update(index, { ...field, participantType })`
   - `onRemove` → `remove(index)`
-- `onFormSubmit` に `invitedMembers` の正規化追加
-
-- **変更**: `src/app/(main)/sessions/new/_components/styles.ts`
-  - 参加者関連スタイル追加: `members_list`, `members_searchArea`, `members_item`
+- **変更**: `src/app/(main)/sessions/new/_components/SessionForm.tsx`
+  - `FormProvider` でフォーム状態を子コンポーネントに提供
+  - セクション2「参加者」に `<ParticipantsSection />` を配置
+- **新規**: `src/app/(main)/sessions/new/_components/sections/participants/memberStyles.ts`
+  - 参加者関連スタイル: `memberItem`, `memberItem_info`, `memberItem_actions` 等
 
 ### Step 2-6. テスト追加
 
@@ -234,53 +238,69 @@
 - `ScenarioSummary`: 検索結果の軽量型（`scenarioId`, `name`, `systemName`, `minPlayers`, `maxPlayers`, `estimatedPlaytimeMin`, `estimatedPlaytimeMax`）
 - `SelectedScenario`: 選択済みシナリオの表示情報
 
-### Step 3-2. シナリオ検索 Server Action
+### Step 3-2. シナリオ検索 Server Action（スマートフィルタ付き）
 
 - **変更**: `src/app/(main)/sessions/new/actions.ts`
-- `searchScenariosForSessionAction(params: { scenarioName?: string; systemId?: string })` 追加
-  - 既存 `searchScenarios()` (`src/app/(main)/scenarios/adapter.ts`) を内部で呼び出し
-  - 結果を `ScenarioSummary[]` に変換して返却
+- `searchScenariosForSessionAction(params)` 追加:
+  - パラメータ: `scenarioName?`, `systemId?`, `scenarioId?`（ID直接検索）, `smartFilters?`, `invitedMembers?`
+  - `scenarioId` 指定時: `getScenarioById()` で単一シナリオ取得（ID/URL検索対応）
+  - それ以外: 既存 `searchScenarios()` で名前・システム検索
+  - 結果に対して `applySmartFilters()` を適用
+- `applySmartFilters()` 内部関数:
+  - `user_scenario_preferences` テーブルから `is_played`, `can_keeper`, `had_scenario` を一括取得
+  - PLが未プレイ: 招待PLメンバー全員が `is_played=false` のシナリオのみ
+  - GMが回せる: 招待KEEPERメンバーのいずれかが `can_keeper=true` のシナリオのみ
+  - メンバーが保有: 招待メンバーのいずれかが `had_scenario=true` のシナリオのみ
+  - 各フィルタは該当メンバーがいない場合は全除外
 - `getSystemsAction()` 追加: システム一覧取得
 
 ### Step 3-3. シナリオ選択済みカード
 
-- **新規**: `src/app/(main)/sessions/new/_components/ScenarioSelectedCard.tsx`
+- **新規**: `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSelectedCard.tsx`
 - 左ボーダー（`borderLeft: '4px solid'`, `borderLeftColor: 'primary.default'`）で強調
 - `SystemBadge` + タイトル + メタ情報（人数 + 時間）
 - 「変更」テキストリンク + 「削除」`IconButton`（`X`）
 - Props: `scenario: ScenarioSummary`, `onClear`, `onChange`
 
-### Step 3-4. シナリオ検索モーダル
+### Step 3-4. シナリオ統合検索モーダル
 
-- **新規**: `src/app/(main)/sessions/new/_components/ScenarioSearchModal.tsx`
-- 既存 `Modal` コンポーネントをベースに構築
-- **フィルターエリア**: `Input`（検索テキスト, 虫眼鏡アイコン）+ `Select`（システムフィルタ）
-- **シナリオリスト**: 各行に名前 + `SystemBadge` + メタ + ラジオ選択
-  - 選択行ハイライト: `bg: 'primary.subtleHover'`
-- **フッター**: キャンセル `Button` + 「選択」`Button` (primary)
+- **新規**: `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSearchModal.tsx`
+- 既存 `Modal` コンポーネントをベースに構築（`size: 'lg'`）
+- **ID/URL入力エリア**: `Input`（LinkIcon prefix）。ULID形式のIDまたはシナリオ詳細URLを受け付け、正規表現で自動抽出
+  - ID/URL入力時は名前検索・システムフィルタを無効化（`isIdMode` フラグ）
+  - クリアボタン付き
+- **名前検索エリア**: `Input`（MagnifyingGlassIcon prefix）+ `Select`（システムフィルタ）
+- **スマートフィルタ**: チップ形式で3種（PLが未プレイ/GMが回せる/メンバーが保有）。デフォルトON。`aria-pressed` 属性でトグル状態を通知
+  - `invitedMembers` を Props で受け取り、`searchScenariosForSessionAction` に渡す
+- **シナリオリスト**: 各行に名前 + システム名 + メタ（人数・時間）+ ラジオ選択（CheckCircle/Circle）
+- **フッター**: キャンセル `Button` + 「選択」`Button` (primary, disabled until selected)
 - **キーボード操作**: 矢印キー（↑↓）でリスト内のシナリオ移動、Enter で選択確定、Escape でモーダルを閉じる
-- データ取得: `setTimeout` + `clearTimeout` パターンで 300ms デバウンス検索、`useTransition` は非同期処理のUI遷移にのみ使用
-- Props: `open`, `onOpenChange`, `onSelect(scenario: ScenarioSummary)`, `systems`
+- データ取得: `setTimeout` + `clearTimeout` パターンで 500ms デバウンス検索、`useTransition` は非同期処理のUI遷移にのみ使用
+- Props: `open`, `onOpenChange`, `onSelect(scenario: ScenarioSummary)`, `systems`, `invitedMembers`
+- **スタイル**: `sections/scenario/scenarioSearchStyles.ts` に分離
 
-### Step 3-5. SessionForm にシナリオ選択を統合
+### Step 3-5. ScenarioSelectSection コンポーネント作成 & SessionForm 統合
 
+- **新規**: `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSelectSection.tsx`
+  - `useFormContext()` で `register('scenarioId')` にアクセス
+  - 未選択時: 空状態（「未定（後から設定することもできます）」+ 「シナリオを検索」ボタン）
+  - 選択時: `ScenarioSelectedCard`（変更・クリア可能）
+  - `ScenarioSearchModal` を統合。`onSelect` で `setValue('scenarioId', id)` + ローカル状態更新
+  - Props: `systems: SystemSummary[]`, `selectedScenario`, `onSelect`, `invitedMembers`（スマートフィルタ用）
 - **変更**: `src/app/(main)/sessions/new/_components/SessionForm.tsx`
-- Props に `systems?: ScenarioSystem[]` 追加
-- セクション3「シナリオ」のプレースホルダーを実装に置換:
-  - `Tabs`（`defaultValue: 'search'`）:
-    - タブ1「検索して選ぶ」: 未選択時 → 空状態（アイコン + 「シナリオを検索」ボタン）、選択時 → `ScenarioSelectedCard`
-    - タブ2「IDで指定」: `Input` で ULID 直接入力（`register('scenarioId')`）
-    - タブ3「URLで指定」: disabled（「準備中」表示）
-  - `ScenarioSearchModal` の `onSelect` で `setValue('scenarioId', id)` + ローカル状態更新
-  - `ScenarioSelectedCard` の `onClear` で `setValue('scenarioId', null)` + 状態クリア
+  - Props: `systems: SystemSummary[]`（必須に変更）
+  - セクション3に `<ScenarioSelectSection />` を配置
+  - `invitedMembers` を `useWatch` で監視して `ScenarioSelectSection` に渡す
 
 - **変更**: `src/app/(main)/sessions/new/page.tsx`
   - `getAllSystems()` 呼び出し追加、`SessionFormContainer` に `systems` 渡す
 - **変更**: `src/app/(main)/sessions/new/_components/SessionFormContainer.tsx`
   - `systems` props 中継
 
-- **変更**: `src/app/(main)/sessions/new/_components/styles.ts`
-  - シナリオ関連スタイル追加: `scenario_emptyState`, `scenario_selectedCard`, `scenario_modalItem`, `scenario_modalFilters`
+- **新規**: `src/app/(main)/sessions/new/_components/sections/scenario/scenarioCardStyles.ts`
+  - 選択済みカードのスタイル
+- **新規**: `src/app/(main)/sessions/new/_components/sections/scenario/scenarioSearchStyles.ts`
+  - 検索モーダルのスタイル
 
 ### Step 3-6. テスト更新
 
@@ -360,15 +380,23 @@
 
 | ファイル | Batch | 用途 |
 |---------|-------|------|
-| `src/app/(main)/sessions/new/_components/MemberSearchInput.tsx` | 2 | ユーザー検索コンボボックス（Ark UI Combobox） |
-| `src/app/(main)/sessions/new/_components/MemberListItem.tsx` | 2 | メンバーカード（役割選択付き） |
-| `src/app/(main)/sessions/new/_components/ScenarioSelectedCard.tsx` | 3 | シナリオ選択済みカード |
-| `src/app/(main)/sessions/new/_components/ScenarioSearchModal.tsx` | 3 | シナリオ検索モーダル |
-| `src/app/(main)/sessions/new/_components/ScenarioSearchModal.test.tsx` | 4 | シナリオ検索テスト |
-| `src/app/(main)/sessions/new/_components/ScenarioSearchModal.stories.tsx` | 4 | シナリオ検索Storybook |
-| `src/app/(main)/sessions/new/_components/MemberSearchInput.test.tsx` | 4 | メンバー検索テスト |
-| `src/app/(main)/sessions/new/_components/MemberSearchInput.stories.tsx` | 4 | メンバー検索Storybook |
-| `src/app/(main)/sessions/new/_components/MemberListItem.stories.tsx` | 4 | メンバーリストStorybook |
+| `src/app/(main)/sessions/new/_components/sections/basic-info/BasicInfoSection.tsx` | 1 | 基本情報セクション（セッション名・募集文） |
+| `src/app/(main)/sessions/new/_components/sections/participants/ParticipantsSection.tsx` | 2 | 参加者セクション（メンバー検索・リスト） |
+| `src/app/(main)/sessions/new/_components/sections/participants/MemberSearchInput.tsx` | 2 | ユーザー検索コンボボックス（Ark UI Combobox） |
+| `src/app/(main)/sessions/new/_components/sections/participants/MemberListItem.tsx` | 2 | メンバーカード（PL/見学/GM・KP 役割選択付き） |
+| `src/app/(main)/sessions/new/_components/sections/participants/memberStyles.ts` | 2 | 参加者セクションスタイル |
+| `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSelectSection.tsx` | 3 | シナリオ選択セクション |
+| `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSelectedCard.tsx` | 3 | シナリオ選択済みカード |
+| `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSearchModal.tsx` | 3 | シナリオ統合検索モーダル（ID/URL+名前+スマートフィルタ） |
+| `src/app/(main)/sessions/new/_components/sections/scenario/scenarioCardStyles.ts` | 3 | 選択済みカードスタイル |
+| `src/app/(main)/sessions/new/_components/sections/scenario/scenarioSearchStyles.ts` | 3 | 検索モーダルスタイル |
+| `src/app/(main)/sessions/new/_components/sections/schedule/ScheduleSection.tsx` | 1 | 日程・その他セクション |
+| `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSearchModal.test.tsx` | 4 | シナリオ検索テスト |
+| `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSearchModal.stories.tsx` | 4 | シナリオ検索Storybook |
+| `src/app/(main)/sessions/new/_components/sections/scenario/ScenarioSelectedCard.stories.tsx` | 4 | 選択済みカードStorybook |
+| `src/app/(main)/sessions/new/_components/sections/participants/MemberSearchInput.test.tsx` | 4 | メンバー検索テスト |
+| `src/app/(main)/sessions/new/_components/sections/participants/MemberSearchInput.stories.tsx` | 4 | メンバー検索Storybook |
+| `src/app/(main)/sessions/new/_components/sections/participants/MemberListItem.stories.tsx` | 4 | メンバーリストStorybook |
 
 ### 変更ファイル
 
@@ -376,15 +404,15 @@
 |---------|-------|---------|
 | `src/app/(main)/sessions/new/_components/styles.ts` | 1,2,3 | フォームスタイル全面書き換え + セクション追加 |
 | `src/app/(main)/sessions/new/styles.ts` | 1 | ページ背景 `bg.page` 追加 |
-| `src/app/(main)/sessions/new/_components/SessionForm.tsx` | 1,2,3 | セクション構造化 + コンポーネント置換 + 機能統合 |
+| `src/app/(main)/sessions/new/_components/SessionForm.tsx` | 1,2,3 | `FormProvider` + セクション分割アーキテクチャ。`systems` prop 必須化。`invitedMembers` を `useWatch` で監視 |
 | `src/app/(main)/sessions/new/_components/SessionForm.test.tsx` | 1,2,3 | セレクタ更新 + 新機能テスト追加 |
 | `src/app/(main)/sessions/new/_components/SessionForm.stories.tsx` | 1,4 | ストーリー更新・追加 |
 | `src/app/(main)/sessions/new/page.tsx` | 1,3 | ヘッダー変更 + systems データ取得 |
 | `src/app/(main)/sessions/new/_components/SessionFormContainer.tsx` | 3 | systems props 中継 |
 | `src/app/(main)/sessions/new/interface.ts` | 3 | シナリオ選択関連型定義（`ScenarioSummary`, `SelectedScenario`） |
-| `src/app/(main)/sessions/new/schema.ts` | 1,2 | `scheduleType` 追加 + `recruitedPlayerCount` min(0) + `invitedMembers` 追加 |
+| `src/app/(main)/sessions/new/schema.ts` | 1,2 | `scheduleType` 追加 + `recruitedPlayerCount` min(0) + `invitedMembers` 追加（`KEEPER` 含む） |
 | `src/app/(main)/sessions/new/adapter.ts` | 2 | 参加者一括作成追加 |
-| `src/app/(main)/sessions/new/actions.ts` | 2,3 | ユーザー検索 + シナリオ検索アクション追加 |
+| `src/app/(main)/sessions/new/actions.ts` | 2,3 | ユーザー検索 + シナリオ検索アクション追加（ID検索・スマートフィルタ含む） |
 | `src/app/(main)/sessions/new/__tests__/schema.test.ts` | 4 | `invitedMembers` バリデーションテスト |
 
 ### 再利用する既存コンポーネント・関数

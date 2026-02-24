@@ -143,6 +143,9 @@
 - `src/app/(main)/sessions/new/adapter.ts` - セッション作成・取得
 - `src/app/(main)/sessions/participantAdapter.ts` - 参加申請管理
 
+**TODO**:
+- [ ] セッション募集フォームの日時入力で、`From` 入力完了時に `To` へ即フォーカス移動（`datetime-local` の自動補完で誤判定）。独自 `DateTimeInput` 作成後に再対応。
+
 ---
 
 ### 認証画面（requirements-auth.md）

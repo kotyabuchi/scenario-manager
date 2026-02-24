@@ -102,6 +102,7 @@ src/
 | `/find-duplicates` | 保守 | 重複コード検出・リファクタリング提案 |
 | `/serena` | 汎用 | 調査・設計・実装 |
 | `/vibe` | Worktree | git worktree管理 |
+| `/supabase-migrate` | DB | マイグレーション適用 & 型再生成 |
 
 ## Memory Files Reference
 

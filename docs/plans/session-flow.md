@@ -26,7 +26,7 @@
 | キャンセル理由保存 | `game_sessions.cancel_reason` カラム追加 | 既存 `cancelSession()` の `_reason` パラメータを活用 |
 | 辞退理由保存 | `session_participants.withdrawal_reason` カラム追加 + 辞退時にDELETEではなくステータス更新 | 既存 `withdrawFromSession()` はレコードDELETEだが、理由を保存するにはレコードが必要。`WITHDRAWN` ステータスに変更する方式に移行 |
 | 辞退方式 | DELETE → `participant_status = 'WITHDRAWN'` に変更 | レコードを残すことで辞退理由・履歴を保持。一覧表示では WITHDRAWN を除外 |
-| 参加申請タイプ | PLAYER / SPECTATOR のみ（KEEPERは除外） | KEEPER は `game_sessions.keeper_id` で管理。既存アダプターと整合 |
+| 参加申請タイプ | 参加申請: PLAYER / SPECTATOR のみ。事前指定メンバー: PLAYER / SPECTATOR / KEEPER | 参加申請経由のKEEPER指名は承認フロー複雑化を避けるため除外。ただし、セッション作成時の事前指定では作成者が明示的にKEEPERを指名できる（`keeper_id`とは独立して`session_participants`にKEEPERレコードを作成） |
 | セッション操作権限 | `keeper_id === userId \|\| created_by_id === userId` で判定 | GM未定（`keeper_id = NULL`）でセッション作成可能な要件（Section 3.1「すべて未定」パターン）に対応。作成者は常に操作権限を持つ。GM指名後もセッション管理を継続できる |
 | `created_by_id` | `game_sessions` に `created_by_id NOT NULL` カラム追加 | セッション作成者の追跡。`keeper_id` は NULL 許容（GM未定・GM募集状態）。認可は `isSessionManager()` ヘルパーで一元管理 |
 | スコープ | Phase 1（MVP）のみ | リスケ・動画登録・通知は後続Phase |
@@ -754,13 +754,15 @@ pnpm supabase gen types typescript --project-id <PROJECT_ID> > src/db/types.ts
 
 - 対象ファイル: `src/app/(main)/sessions/new/_components/SessionForm.tsx`（変更）
 - 対象ファイル: `src/app/(main)/sessions/new/adapter.ts`（変更）
-- Phase 1 スコープ:
+- 対象ファイル: `src/app/(main)/sessions/new/actions.ts`（変更）
+- 対象ファイル: `src/app/(main)/sessions/new/schema.ts`（変更）
+- Phase 1 スコープ（`session-recruit-form-redesign.md` で詳細化・実装済み）:
   - `adapter.ts`: セッション作成時に `created_by_id: userId` を設定（既存の `keeper_id: userId` と並行）
-  - セッション詳細ページへの遷移リンク追加
-  - 既存フォームの軽微なUI調整（モック準拠のレイアウト微修正）
-- **Phase 2 に延期**（スコープ過大のため）:
-  - メンバー追加UI（@ユーザーID検索）
-  - シナリオ検索モーダル（既存シナリオ選択 + ID/URL指定）
+  - セクション分割アーキテクチャ: `FormProvider` + `sections/` ディレクトリで4セクション（基本情報/参加者/シナリオ/日程・その他）に分離
+  - メンバー追加UI（ユーザー検索 Combobox + KEEPER/PLAYER/SPECTATOR 役割設定）
+  - シナリオ統合検索モーダル（ID/URL入力 + 名前検索 + スマートフィルタ）
+  - スマートフィルタ（PLが未プレイ/GMが回せる/メンバーが保有）: `user_scenario_preferences` テーブルを参照
+  - `schema.ts`: `invitedMembers.participantType` に `KEEPER` を追加
 
 ### Step 6-3. ビルド & Lint チェック
 
@@ -852,8 +854,11 @@ pnpm build
 | `src/app/(main)/sessions/__tests__/participantAdapter.test.ts` | 辞退テストをステータス更新方式に修正 |
 | `src/app/(main)/sessions/adapter.ts` | `getUpcomingSessions()`・`getHistorySessions()`・`searchPublicSessions()`・`getCalendarSessions()` にWITHDRAWN除外フィルタ追加（Step 1-5） |
 | `src/db/helpers.ts` | `ScheduleCandidateRow` / `ScheduleCandidateInsert` 型追加 |
-| `src/app/(main)/sessions/new/adapter.ts` | セッション作成時に `created_by_id: userId` を設定 |
-| `src/app/(main)/sessions/new/_components/SessionForm.tsx` | 軽微なUI調整（メンバー追加・シナリオ検索はPhase 2） |
+| `src/app/(main)/sessions/new/adapter.ts` | セッション作成時に `created_by_id: userId` を設定 + 招待メンバー一括INSERT |
+| `src/app/(main)/sessions/new/actions.ts` | ユーザー検索 + シナリオ検索アクション（スマートフィルタ含む）追加 |
+| `src/app/(main)/sessions/new/schema.ts` | `invitedMembers.participantType` に `KEEPER` 追加 |
+| `src/app/(main)/sessions/new/_components/SessionForm.tsx` | FormProvider + セクション分割アーキテクチャに全面リデザイン |
+| `src/app/(main)/sessions/new/_components/sections/` | 新規ディレクトリ: basic-info/, participants/, scenario/, schedule/ の4セクション |
 | `package.json` | `react-day-picker`, `date-fns` 依存追加 |
 
 ## チーム戦略
