@@ -4,13 +4,14 @@ import { useState } from 'react';
 import {
   Calendar,
   CheckCircle,
+  DotsThree,
   Prohibit,
   SignOut,
   UserPlus,
   Users,
   XCircle,
 } from '@phosphor-icons/react/ssr';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import * as styles from '../styles';
 import { CancelApplicationDialog } from './CancelApplicationDialog';
@@ -19,11 +20,13 @@ import { CompleteSessionDialog } from './CompleteSessionDialog';
 import { ParticipationRequestDialog } from './ParticipationRequestDialog';
 import { WithdrawDialog } from './WithdrawDialog';
 
-import { Button } from '@/components/elements/button/button';
+import { Menu } from '@/components/elements/menu/menu';
 import { SchedulePhases, SessionPhases } from '@/db/enum';
 
 import type { Route } from 'next';
 import type { SessionDetail, UserRole } from '../../interface';
+
+const ACTION_MENU_ICON_SIZE = 18;
 
 type SessionActionsProps = {
   session: SessionDetail;
@@ -68,7 +71,7 @@ const getManagerActions = (
       id: 'manage-applications',
       type: 'link',
       label: '申請管理',
-      icon: <Users size={16} />,
+      icon: <Users size={ACTION_MENU_ICON_SIZE} />,
       variant: 'secondary',
       href: `/sessions/${sessionId}/applications`,
     });
@@ -76,7 +79,7 @@ const getManagerActions = (
       id: 'schedule',
       type: 'link',
       label: '日程調整',
-      icon: <Calendar size={16} />,
+      icon: <Calendar size={ACTION_MENU_ICON_SIZE} />,
       variant: 'primary',
       href: `/sessions/${sessionId}/schedule`,
     });
@@ -87,7 +90,7 @@ const getManagerActions = (
       id: 'schedule-summary',
       type: 'link',
       label: '日程集計',
-      icon: <Calendar size={16} />,
+      icon: <Calendar size={ACTION_MENU_ICON_SIZE} />,
       variant: 'primary',
       href: `/sessions/${sessionId}/schedule/summary`,
     });
@@ -101,7 +104,7 @@ const getManagerActions = (
       id: 'complete',
       type: 'button',
       label: '完了にする',
-      icon: <CheckCircle size={16} weight="fill" />,
+      icon: <CheckCircle size={ACTION_MENU_ICON_SIZE} weight="fill" />,
       variant: 'primary',
       dialog: 'complete',
     });
@@ -112,7 +115,7 @@ const getManagerActions = (
     id: 'cancel-session',
     type: 'button',
     label: 'キャンセル',
-    icon: <Prohibit size={16} />,
+    icon: <Prohibit size={ACTION_MENU_ICON_SIZE} />,
     variant: 'danger',
     dialog: 'cancelSession',
   });
@@ -136,7 +139,7 @@ const getParticipantActions = (
       id: 'cancel-application',
       type: 'button',
       label: '申請取り消し',
-      icon: <XCircle size={16} />,
+      icon: <XCircle size={ACTION_MENU_ICON_SIZE} />,
       variant: 'secondary',
       dialog: 'cancelApplication',
     });
@@ -151,7 +154,7 @@ const getParticipantActions = (
         id: 'schedule-respond',
         type: 'link',
         label: '日程回答',
-        icon: <Calendar size={16} />,
+        icon: <Calendar size={ACTION_MENU_ICON_SIZE} />,
         variant: 'primary',
         href: `/sessions/${sessionId}/schedule/respond`,
       });
@@ -166,7 +169,7 @@ const getParticipantActions = (
         id: 'withdraw',
         type: 'button',
         label: '辞退する',
-        icon: <SignOut size={16} />,
+        icon: <SignOut size={ACTION_MENU_ICON_SIZE} />,
         variant: 'danger',
         dialog: 'withdraw',
       });
@@ -186,7 +189,7 @@ const getGuestActions = (phase: string): ActionItem[] => {
         id: 'participate',
         type: 'button',
         label: '参加申請',
-        icon: <UserPlus size={16} />,
+        icon: <UserPlus size={ACTION_MENU_ICON_SIZE} />,
         variant: 'primary',
         dialog: 'participate',
       },
@@ -237,6 +240,7 @@ export const SessionActions = ({
   participantStatus,
 }: SessionActionsProps) => {
   const [openDialog, setOpenDialog] = useState<string | null>(null);
+  const router = useRouter();
 
   const actions = getAvailableActions(
     session.sessionPhase,
@@ -248,36 +252,49 @@ export const SessionActions = ({
 
   if (actions.length === 0) return null;
 
+  const handleActionSelect = (action: ActionItem) => {
+    if (action.type === 'link' && action.href) {
+      router.push(action.href as Route);
+      return;
+    }
+
+    if (action.dialog) {
+      setOpenDialog(action.dialog);
+    }
+  };
+
   return (
     <>
-      <div className={styles.sessionActions}>
-        {actions.map((action) => {
-          if (action.type === 'link' && action.href) {
-            return (
-              <Link key={action.id} href={action.href as Route}>
-                <Button
-                  variant={action.variant === 'primary' ? 'solid' : 'outline'}
-                  status={action.variant === 'danger' ? 'danger' : 'primary'}
-                >
-                  {action.icon}
-                  {action.label}
-                </Button>
-              </Link>
-            );
-          }
-          return (
-            <Button
-              key={action.id}
-              variant={action.variant === 'primary' ? 'solid' : 'outline'}
-              status={action.variant === 'danger' ? 'danger' : 'primary'}
-              onClick={() => action.dialog && setOpenDialog(action.dialog)}
-            >
-              {action.icon}
-              {action.label}
-            </Button>
-          );
-        })}
-      </div>
+      <Menu.Root positioning={{ placement: 'bottom-end' }} size="sm">
+        <Menu.Trigger asChild>
+          <button
+            type="button"
+            className={styles.moreButton}
+            aria-label="セッション操作メニュー"
+          >
+            <DotsThree size={22} weight="bold" />
+          </button>
+        </Menu.Trigger>
+        <Menu.Positioner>
+          <Menu.Content className={styles.sessionActions_menuContent}>
+            {actions.map((action) => (
+              <Menu.Item
+                key={action.id}
+                value={action.id}
+                onClick={() => handleActionSelect(action)}
+                className={styles.cx(
+                  styles.sessionActions_menuItem,
+                  action.variant === 'danger' &&
+                    styles.sessionActions_menuItemDanger,
+                )}
+              >
+                {action.icon}
+                <Menu.ItemText>{action.label}</Menu.ItemText>
+              </Menu.Item>
+            ))}
+          </Menu.Content>
+        </Menu.Positioner>
+      </Menu.Root>
 
       {/* ダイアログ群（開いている時のみマウント） */}
       {openDialog === 'participate' && (

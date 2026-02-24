@@ -71,6 +71,7 @@ export const PARTICIPANT_ERROR_MESSAGES = {
   CANNOT_WITHDRAW: 'このセッションからは辞退できません',
   NOT_PARTICIPANT: 'このセッションに参加していません',
   USE_WITHDRAW: '承認済みの申請は取り消せません。辞退してください',
+  NO_PLAYER_SLOTS_LEFT: '残りのプレイヤー募集枠がありません',
   COMPLETED_CANNOT_CANCEL: '完了済みのセッションはキャンセルできません',
   ALREADY_CANCELLED: 'このセッションは既にキャンセル済みです',
   PARTICIPANT_NOT_FOUND: '参加申請が見つかりません',
@@ -216,6 +217,27 @@ export const approveApplication = async (
       participant.participant_status === ParticipantStatuses.CONFIRMED.value
     ) {
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.ALREADY_PROCESSED));
+    }
+
+    // PLAYER 承認時は残りPL募集枠を確認（見学は対象外）
+    if (participant.participant_type === 'PLAYER') {
+      const { data: sessionCapacity, error: capacityError } = await supabase
+        .from('game_sessions')
+        .select('remaining_player_slot_count')
+        .eq('game_session_id', sessionId)
+        .maybeSingle();
+
+      if (capacityError) {
+        logger.error`残りPL募集枠取得エラー: ${capacityError.message}`;
+        return err(new Error(capacityError.message));
+      }
+
+      if (
+        isNil(sessionCapacity) ||
+        sessionCapacity.remaining_player_slot_count <= 0
+      ) {
+        return err(new Error(PARTICIPANT_ERROR_MESSAGES.NO_PLAYER_SLOTS_LEFT));
+      }
     }
 
     // 承認処理

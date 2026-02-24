@@ -14,7 +14,6 @@ type TimelineSectionProps = {
 const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
   return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
@@ -38,7 +37,7 @@ const getEventDisplay = (
     case 'applied':
       return {
         iconClassName: styles.timeline_iconBlue,
-        icon: <UserPlus size={16} />,
+        icon: <UserPlus size={16} weight="fill" />,
       };
     case 'approved':
       return {
@@ -48,7 +47,7 @@ const getEventDisplay = (
     default:
       return {
         iconClassName: styles.timeline_iconDefault,
-        icon: <Clock size={16} />,
+        icon: <Clock size={16} weight="fill" />,
       };
   }
 };
@@ -62,7 +61,6 @@ export const TimelineSection = ({ events }: TimelineSectionProps) => {
       {/* ヘッダー */}
       <div className={styles.cardHeader}>
         <div className={styles.cardTitle}>
-          <span className={styles.accentBar} />
           <h2>タイムライン</h2>
         </div>
       </div>
@@ -72,19 +70,13 @@ export const TimelineSection = ({ events }: TimelineSectionProps) => {
         <ol className={styles.timeline_list}>
           {sortedEvents.map((event, index) => {
             const display = getEventDisplay(event.type);
-            const isLast = index === sortedEvents.length - 1;
 
             return (
               <li
-                key={`${event.type}-${event.date}`}
+                key={`${event.type}-${event.date}-${index}`}
                 className={styles.timeline_item}
               >
-                {/* アイコン + コネクタライン */}
-                <div className={styles.timeline_connector}>
-                  <div className={display.iconClassName}>{display.icon}</div>
-                  {/* 最後のアイテム以外にコネクタラインを表示 */}
-                  {!isLast && <div className={styles.timeline_line} />}
-                </div>
+                <div className={display.iconClassName}>{display.icon}</div>
 
                 {/* イベント内容 */}
                 <div className={styles.timeline_content}>

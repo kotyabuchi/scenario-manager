@@ -1,33 +1,15 @@
-import { CheckCircle, Clock, User } from '@phosphor-icons/react/ssr';
+import { CheckCircleIcon, ClockIcon, User } from '@phosphor-icons/react/ssr';
+import Image from 'next/image';
 
 import * as styles from '../styles';
 
+import type { ReactNode } from 'react';
 import type { ParticipantWithUser } from '../../interface';
 
 type ParticipantCardProps = {
   participant: ParticipantWithUser;
   isCurrentUser: boolean;
-};
-
-/**
- * 参加タイプに応じたロールバッジ情報を返す
- */
-const getRoleBadgeInfo = (
-  participantType: string,
-): { className: string; label: string } => {
-  switch (participantType) {
-    case 'KEEPER':
-      return { className: styles.participants_roleKeeper, label: 'GM' };
-    case 'PLAYER':
-      return { className: styles.participants_rolePlayer, label: 'PL' };
-    case 'SPECTATOR':
-      return { className: styles.participants_roleSpectator, label: '観' };
-    default:
-      return {
-        className: styles.participants_roleSpectator,
-        label: participantType,
-      };
-  }
+  isSessionCreator: boolean;
 };
 
 /**
@@ -51,80 +33,144 @@ const getRoleLabel = (participantType: string): string => {
  */
 const CharacterSheetStatus = ({
   characterSheetUrl,
-  participantStatus,
   participantType,
+  isSessionCreator,
 }: {
   characterSheetUrl: string | null;
-  participantStatus: string;
   participantType: string;
+  isSessionCreator: boolean;
 }) => {
-  if (characterSheetUrl) {
-    if (participantStatus === 'CONFIRMED') {
-      return (
-        <span className={styles.participants_csSubmittedBadge}>
-          <CheckCircle size={12} weight="fill" />
-          提出済
-        </span>
-      );
-    }
-    if (participantStatus === 'PENDING') {
-      return (
-        <span className={styles.participants_csReviewingBadge}>
-          <CheckCircle size={12} />
-          確認中
-        </span>
-      );
-    }
-  }
+  const labels: ReactNode[] = [];
 
-  // 観戦者以外はキャラシなし表示
-  if (participantType !== 'SPECTATOR') {
-    return (
-      <span className={styles.participants_csNoneLabel}>
-        <Clock size={12} />
-        未提出
-      </span>
+  if (isSessionCreator) {
+    labels.push(
+      <span key="creator" className={styles.participants_statusText}>
+        主催者
+      </span>,
     );
   }
 
-  return null;
+  if (participantType === 'KEEPER') {
+    return labels.length > 0 ? (
+      <div className={styles.participants_statusGroup}>{labels}</div>
+    ) : null;
+  }
+
+  if (characterSheetUrl) {
+    labels.push(
+      <span
+        key="cs-submitted"
+        className={`${styles.participants_characterSheet} ${styles.participants_csSubmitted}`}
+      >
+        <CheckCircleIcon size={14} weight="fill" />
+        CS提出済
+      </span>,
+    );
+    return <div className={styles.participants_statusGroup}>{labels}</div>;
+  }
+
+  if (participantType === 'SPECTATOR') {
+    labels.push(
+      <span key="no-status" className={styles.participants_statusText}>
+        ステータスなし
+      </span>,
+    );
+    return <div className={styles.participants_statusGroup}>{labels}</div>;
+  }
+
+  labels.push(
+    <span
+      key="cs-missing"
+      className={`${styles.participants_characterSheet} ${styles.participants_csNone}`}
+    >
+      <ClockIcon weight="fill" size={14} />
+      CS未提出
+    </span>,
+  );
+
+  return <div className={styles.participants_statusGroup}>{labels}</div>;
 };
 
 export const ParticipantCard = ({
   participant,
   isCurrentUser,
+  isSessionCreator,
 }: ParticipantCardProps) => {
-  const roleBadgeInfo = getRoleBadgeInfo(participant.participantType);
+  const displayName = participant.user.nickname ?? participant.user.userName;
+  const handleName = participant.user.userName;
+  const roleBadgeInfo = (() => {
+    switch (participant.participantType) {
+      case 'KEEPER':
+        return { className: styles.participants_roleKeeper, label: 'GM' };
+      case 'PLAYER':
+        return { className: styles.participants_rolePlayer, label: 'PL' };
+      case 'SPECTATOR':
+        return { className: styles.participants_roleSpectator, label: '観' };
+      default:
+        return {
+          className: styles.participants_roleSpectator,
+          label: participant.participantType,
+        };
+    }
+  })();
   const roleLabel = getRoleLabel(participant.participantType);
+  const isMuted =
+    participant.participantType === 'SPECTATOR' &&
+    !participant.characterSheetUrl &&
+    participant.participantStatus !== 'CONFIRMED';
 
   return (
-    <div className={styles.participants_item}>
+    <div
+      className={styles.cx(
+        styles.participants_item,
+        isMuted && styles.participants_itemMuted,
+      )}
+    >
       {/* 左側: アバター + 名前 + 役割 */}
       <div className={styles.participants_left}>
         {/* アバター */}
-        <div
-          className={`${styles.participants_avatar} ${styles.participants_avatarInner}`}
-        >
-          <User size={20} />
+        <div className={styles.participants_avatarWrap}>
+          <div className={styles.participants_avatar}>
+            {participant.user.image ? (
+              <Image
+                src={participant.user.image}
+                alt={`${displayName}のアバター`}
+                width={40}
+                height={40}
+                sizes="40px"
+                className={styles.participants_avatarImage}
+              />
+            ) : (
+              <div className={styles.participants_avatarInner}>
+                <User size={20} />
+              </div>
+            )}
+          </div>
+          <span
+            className={styles.cx(
+              roleBadgeInfo.className,
+              styles.participants_roleBadgeOverlay,
+            )}
+          >
+            {roleBadgeInfo.label}
+          </span>
         </div>
 
         {/* 名前 + 役割ラベル */}
         <div>
           <div className={styles.participants_nameRow}>
             <p className={styles.participants_name}>
-              {participant.user.userName}
+              {displayName}
               {isCurrentUser && (
                 <span className={styles.participants_currentUserLabel}>
                   （あなた）
                 </span>
               )}
             </p>
-            {/* 役割バッジ */}
-            <span className={roleBadgeInfo.className}>
-              {roleBadgeInfo.label}
-            </span>
           </div>
-          <p className={styles.participants_roleLabel}>{roleLabel}</p>
+          <p className={styles.participants_roleLabel}>
+            @{handleName} ・ {roleLabel}
+          </p>
         </div>
       </div>
 
@@ -132,8 +178,8 @@ export const ParticipantCard = ({
       <div>
         <CharacterSheetStatus
           characterSheetUrl={participant.characterSheetUrl}
-          participantStatus={participant.participantStatus}
           participantType={participant.participantType}
+          isSessionCreator={isSessionCreator}
         />
       </div>
     </div>

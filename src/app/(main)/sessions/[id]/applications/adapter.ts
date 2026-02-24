@@ -116,7 +116,7 @@ export const getSessionBasicInfo = async (
 
     const { data, error } = await supabase
       .from('game_sessions')
-      .select('session_name, scenarios(max_player)')
+      .select('session_name, max_participant_count')
       .eq('game_session_id', sessionId)
       .maybeSingle();
 
@@ -129,14 +129,9 @@ export const getSessionBasicInfo = async (
       return err(new Error('セッションが見つかりません'));
     }
 
-    const rawScenario = toRecord(data.scenarios);
-    const maxPlayer = isNil(data.scenarios)
-      ? null
-      : ((rawScenario.max_player as number | null) ?? null);
-
     return ok({
       sessionName: data.session_name,
-      maxPlayer,
+      maxPlayer: data.max_participant_count,
     });
   } catch (e) {
     logger.error`getSessionBasicInfo 予期しないエラー: ${e}`;

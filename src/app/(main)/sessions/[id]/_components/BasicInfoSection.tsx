@@ -1,14 +1,5 @@
-import {
-  Calendar,
-  CheckCircle,
-  Clock,
-  Link as LinkIcon,
-  Megaphone,
-  Prohibit,
-  Spinner,
-  User,
-  Wrench,
-} from '@phosphor-icons/react/ssr';
+import { CalendarDotsIcon, Clock, User } from '@phosphor-icons/react/ssr';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import * as styles from '../styles';
@@ -25,7 +16,6 @@ type BasicInfoSectionProps = {
 const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
   return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     weekday: 'short',
@@ -34,136 +24,107 @@ const formatDate = (dateStr: string): string => {
   }).format(date);
 };
 
-/**
- * フェーズに応じたバッジクラス名とラベルを返す
- */
-const getPhaseInfo = (
-  phase: string,
-): { className: string; label: string; icon: React.ReactNode } => {
-  switch (phase) {
-    case 'RECRUITING':
-      return {
-        className: styles.info_phaseRecruiting,
-        label: '募集中',
-        icon: <Megaphone size={14} weight="fill" />,
-      };
-    case 'PREPARATION':
-      return {
-        className: styles.info_phasePreparation,
-        label: '準備中',
-        icon: <Wrench size={14} weight="fill" />,
-      };
-    case 'IN_PROGRESS':
-      return {
-        className: styles.info_phaseInProgress,
-        label: '進行中',
-        icon: <Spinner size={14} weight="bold" />,
-      };
-    case 'COMPLETED':
-      return {
-        className: styles.info_phaseCompleted,
-        label: '完了',
-        icon: <CheckCircle size={14} weight="fill" />,
-      };
-    case 'CANCELLED':
-      return {
-        className: styles.info_phaseCancelled,
-        label: 'キャンセル',
-        icon: <Prohibit size={14} weight="fill" />,
-      };
-    default:
-      return {
-        className: styles.info_phaseCompleted,
-        label: phase,
-        icon: null,
-      };
-  }
-};
-
 export const BasicInfoSection = ({ session }: BasicInfoSectionProps) => {
-  const phaseInfo = getPhaseInfo(session.sessionPhase);
   const gmUser = session.keeper ?? session.creator;
-  const gmLabel = session.keeper ? 'ゲームマスター' : '作成者';
+  const gmParticipant = session.participants.find(
+    (p) => p.userId === gmUser?.userId,
+  );
+  const gmDisplayName = gmParticipant?.user.nickname ?? gmUser?.userName;
+  const gmHandleName = gmParticipant?.user.userName ?? gmUser?.userName;
 
   return (
     <section className={styles.card}>
-      {/* システムチップ + フェーズバッジ */}
-      <div className={styles.info_tags}>
-        {session.scenario?.system && (
-          <span className={styles.info_systemChip}>
-            {session.scenario.system.name}
-          </span>
-        )}
-        <span className={phaseInfo.className}>
-          {phaseInfo.icon} {phaseInfo.label}
-        </span>
-      </div>
-
-      {/* シナリオ名 */}
-      {session.scenario && (
+      <div className={styles.info_cardDecor} />
+      <div className={styles.info_cardInner}>
+        {/* シナリオ名 */}
         <div>
           <p className={styles.info_scenarioLabel}>シナリオ</p>
-          <Link
-            href={`/scenarios/${session.scenario.scenarioId}`}
-            className={styles.info_scenarioName}
-          >
-            {session.scenario.name}
-          </Link>
-        </div>
-      )}
-
-      {/* 詳細情報 */}
-      <div className={styles.info_details}>
-        {/* 日時 */}
-        {session.schedule?.scheduleDate && (
-          <div className={styles.info_detailItem}>
-            <Calendar size={16} />
-            <span>{formatDate(session.schedule.scheduleDate)}</span>
-          </div>
-        )}
-
-        {/* ツール */}
-        {session.links.length > 0 && (
-          <div className={styles.info_detailItem}>
-            <LinkIcon size={16} />
-            <span className={styles.info_detailLabel}>ツール</span>
-            <span>{session.links.length}件</span>
-          </div>
-        )}
-
-        {/* セッション時間の目安（シナリオから取得） */}
-        {session.scenario &&
-          (session.scenario.minPlaytime ?? session.scenario.maxPlaytime) !==
-            null && (
-            <div className={styles.info_detailItem}>
-              <Clock size={16} />
-              <span className={styles.info_detailLabel}>プレイ時間</span>
-              <span>
-                {session.scenario.minPlaytime !== null &&
-                session.scenario.maxPlaytime !== null
-                  ? `${session.scenario.minPlaytime}〜${session.scenario.maxPlaytime}分`
-                  : session.scenario.minPlaytime !== null
-                    ? `${session.scenario.minPlaytime}分〜`
-                    : `〜${session.scenario.maxPlaytime}分`}
-              </span>
-            </div>
+          {session.scenario ? (
+            <Link
+              href={`/scenarios/${session.scenario.scenarioId}`}
+              className={styles.info_scenarioName}
+            >
+              {session.scenario.name}
+            </Link>
+          ) : (
+            <p className={styles.info_valueText}>シナリオ未設定</p>
           )}
-      </div>
-
-      {/* GM/作成者情報 */}
-      {gmUser && (
-        <div className={styles.info_gm}>
-          <div
-            className={`${styles.info_gmAvatar} ${styles.info_gmAvatarInner}`}
-          >
-            <User size={24} />
-          </div>
-          <div>
-            <p className={styles.info_gmLabel}>{gmLabel}</p>
-            <p className={styles.info_gmName}>{gmUser.userName}</p>
-          </div>
+          {session.scenario?.system && (
+            <p className={styles.info_scenarioSystemText}>
+              {session.scenario.system.name}
+            </p>
+          )}
         </div>
-      )}
+
+        {/* 詳細情報 */}
+        <hr className={styles.subtleHr} />
+        <div className={styles.info_details}>
+          <div className={styles.info_detailItem}>
+            <span className={styles.info_detailLabel}>
+              <CalendarDotsIcon size={16} />
+              日時
+            </span>
+            <div className={styles.info_valueText}>
+              {session.schedule?.scheduleDate
+                ? `${formatDate(session.schedule.scheduleDate)}〜`
+                : '日程未確定'}
+            </div>
+          </div>
+
+          {session.scenario &&
+            (session.scenario.minPlaytime ?? session.scenario.maxPlaytime) !==
+              null && (
+              <div className={styles.info_detailItem}>
+                <span className={styles.info_detailLabel}>
+                  <Clock size={16} />
+                  プレイ時間目安
+                </span>
+                <span className={styles.info_valueText}>
+                  {session.scenario.minPlaytime !== null &&
+                  session.scenario.maxPlaytime !== null
+                    ? `${session.scenario.minPlaytime}〜${session.scenario.maxPlaytime}分`
+                    : session.scenario.minPlaytime !== null
+                      ? `${session.scenario.minPlaytime}分〜`
+                      : `〜${session.scenario.maxPlaytime}分`}
+                </span>
+              </div>
+            )}
+        </div>
+
+        {/* GM/作成者情報 */}
+        {gmUser && (
+          <>
+            <hr className={styles.subtleHr} />
+            <div className={styles.info_gmBlock}>
+              <p className={styles.info_gmLabel}>ゲームマスター（GM）</p>
+              <div className={styles.info_gm}>
+                <div className={styles.info_gmAvatar}>
+                  {gmParticipant?.user.image ? (
+                    <Image
+                      src={gmParticipant.user.image}
+                      alt={`${gmDisplayName ?? 'GM'}のアバター`}
+                      width={40}
+                      height={40}
+                      sizes="40px"
+                      className={styles.participants_avatarImage}
+                    />
+                  ) : (
+                    <div className={styles.info_gmAvatarInner}>
+                      <User size={24} />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className={styles.info_gmName}>{gmDisplayName}</p>
+                  {gmHandleName && (
+                    <p className={styles.info_gmSubtext}>@{gmHandleName}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </section>
   );
 };

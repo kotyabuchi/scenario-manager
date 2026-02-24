@@ -14,6 +14,8 @@ const baseSession = {
   completionNote: null,
   cancelReason: null,
   isBeginnerFriendly: true,
+  maxParticipantCount: 5,
+  remainingPlayerSlotCount: 4,
   recruitedPlayerCount: 4,
   scheduledAt: null,
   tools: 'ココフォリア',

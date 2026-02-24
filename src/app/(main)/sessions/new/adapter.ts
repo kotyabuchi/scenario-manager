@@ -5,6 +5,7 @@ import { createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
+import type { Database } from '@/db/types';
 import type { CreateSessionInput } from './schema';
 
 /**
@@ -97,25 +98,29 @@ export const createSession = async (
       to: candidate.to ? new Date(candidate.to).toISOString() : '',
     }));
 
+    // Supabase gen types は RPC 引数の NULL 許容を落とすことがあるため、
+    // DB関数シグネチャに合わせて明示キャストする。
+    const rpcArgs = {
+      p_game_session_id: gameSessionId,
+      p_user_id: userId,
+      p_session_name: input.sessionName,
+      p_session_description: input.sessionDescription,
+      p_scenario_id: input.scenarioId ?? null,
+      p_scheduled_at: representativeScheduledAt
+        ? new Date(representativeScheduledAt).toISOString()
+        : null,
+      p_recruited_player_count: input.recruitedPlayerCount ?? null,
+      p_tools: input.tools ?? null,
+      p_is_beginner_friendly: input.isBeginnerFriendly,
+      p_visibility: input.visibility,
+      p_creator_participant_type: input.creatorParticipantType,
+      p_schedule_candidates: candidatePayload,
+      p_invited_members: input.invitedMembers,
+    } as unknown as Database['public']['Functions']['create_session_with_candidates']['Args'];
+
     const { data: createdSessions, error: createError } = await supabase.rpc(
       'create_session_with_candidates',
-      {
-        p_game_session_id: gameSessionId,
-        p_user_id: userId,
-        p_session_name: input.sessionName,
-        p_session_description: input.sessionDescription,
-        p_scenario_id: input.scenarioId ?? null,
-        p_scheduled_at: representativeScheduledAt
-          ? new Date(representativeScheduledAt).toISOString()
-          : null,
-        p_recruited_player_count: input.recruitedPlayerCount ?? null,
-        p_tools: input.tools ?? null,
-        p_is_beginner_friendly: input.isBeginnerFriendly,
-        p_visibility: input.visibility,
-        p_creator_participant_type: input.creatorParticipantType,
-        p_schedule_candidates: candidatePayload,
-        p_invited_members: input.invitedMembers,
-      },
+      rpcArgs,
     );
 
     if (createError || !createdSessions || createdSessions.length === 0) {

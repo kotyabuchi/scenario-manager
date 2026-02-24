@@ -143,6 +143,8 @@ const mockSession: SessionDetail = {
   scenarioId: '01HSCENARIO000000000000001',
   keeperId: '01HKEEPER00000000000000001',
   createdById: '01HCREATOR0000000000000001',
+  maxParticipantCount: 5,
+  remainingPlayerSlotCount: 3,
   recruitedPlayerCount: 4,
   scheduledAt: null,
   tools: null,
