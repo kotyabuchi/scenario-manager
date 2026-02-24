@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { ark } from '@ark-ui/react/factory';
 import { styled } from 'styled-system/jsx';
 
@@ -8,16 +8,20 @@ import { button } from '@/styled-system/recipes';
 
 import type { ComponentProps } from 'styled-system/types';
 
-type ButtonProps = {
+export const StyledButton = styled(ark.button, button);
+
+type StyledButtonProps = ComponentProps<typeof StyledButton>;
+
+type ButtonProps = Omit<StyledButtonProps, 'prefix' | 'suffix'> & {
   loading?: boolean;
   loadingText?: string;
-} & ComponentProps<typeof StyledButton>;
-
-export const StyledButton = styled(ark.button, button);
+  prefix?: ReactNode;
+  suffix?: ReactNode;
+};
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
-    const { loading, loadingText, children, ...rest } = props;
+    const { loading, loadingText, prefix, suffix, children, ...rest } = props;
 
     return (
       <StyledButton {...rest} ref={ref} disabled={loading || rest.disabled}>
@@ -27,8 +31,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             {loadingText ? <span>{loadingText}</span> : children}
           </>
         ) : (
-          children
+          <>
+            {prefix}
+            {children}
+          </>
         )}
+        {suffix}
       </StyledButton>
     );
   },

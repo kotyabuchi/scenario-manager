@@ -39,6 +39,16 @@ export type SwitchProps = {
    * 追加のクラス名
    */
   className?: string;
+
+  /**
+   * アクセシビリティ用ラベル
+   */
+  ariaLabel?: string;
+
+  /**
+   * アクセシビリティ用ラベル参照
+   */
+  ariaLabelledBy?: string;
 };
 
 /**
@@ -64,6 +74,8 @@ export const Switch = ({
   children,
   name,
   className,
+  ariaLabel,
+  ariaLabelledBy,
 }: SwitchProps) => {
   return (
     <ArkSwitch.Root
@@ -82,7 +94,10 @@ export const Switch = ({
           {children}
         </ArkSwitch.Label>
       )}
-      <ArkSwitch.HiddenInput />
+      <ArkSwitch.HiddenInput
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+      />
     </ArkSwitch.Root>
   );
 };

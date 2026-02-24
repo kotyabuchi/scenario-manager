@@ -14,6 +14,7 @@ type ModalProps = {
   title: string;
   children: ReactNode;
   footer?: ReactNode;
+  size?: 'sm' | 'md' | 'lg';
 };
 
 export const Modal = ({
@@ -22,6 +23,7 @@ export const Modal = ({
   title,
   children,
   footer,
+  size = 'md',
 }: ModalProps) => {
   // Ark UI Dialog doesn't properly respond to controlled `open` prop changes
   // Workaround: conditionally render the Dialog based on the `open` prop
@@ -32,7 +34,7 @@ export const Modal = ({
       <Portal>
         <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Positioner className={styles.positioner}>
-          <Dialog.Content className={styles.content}>
+          <Dialog.Content className={styles.content({ size })}>
             <header className={styles.header}>
               <Dialog.Title className={styles.title}>{title}</Dialog.Title>
               <Dialog.CloseTrigger

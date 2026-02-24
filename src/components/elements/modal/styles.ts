@@ -1,4 +1,4 @@
-import { css } from '@/styled-system/css';
+import { css, cva } from '@/styled-system/css';
 
 /**
  * Modal スタイル定義 - 画面設計準拠
@@ -28,19 +28,30 @@ export const positioner = css({
   p: '4',
 });
 
-export const content = css({
-  bg: 'dialog.bg',
-  borderRadius: 'xl',
-  boxShadow: 'dialog.default',
-  maxW: '[500px]',
-  w: 'full',
-  maxH: '[90vh]',
-  overflow: 'auto',
-  _open: {
-    animation: '[slideInUp var(--durations-normal) ease-out]',
+export const content = cva({
+  base: {
+    bg: 'dialog.bg',
+    borderRadius: 'xl',
+    boxShadow: 'dialog.default',
+    w: 'full',
+    maxH: '[90vh]',
+    overflow: 'auto',
+    _open: {
+      animation: '[slideInUp var(--durations-normal) ease-out]',
+    },
+    _closed: {
+      animation: '[slideOutDown var(--durations-normal) ease-in]',
+    },
   },
-  _closed: {
-    animation: '[slideOutDown var(--durations-normal) ease-in]',
+  variants: {
+    size: {
+      sm: { maxW: '[420px]' },
+      md: { maxW: '[500px]' },
+      lg: { maxW: '[640px]' },
+    },
+  },
+  defaultVariants: {
+    size: 'md',
   },
 });
 
@@ -72,6 +83,9 @@ export const closeButton = css({
   _hover: {
     bg: 'gray.100',
     color: 'text.title',
+  },
+  _focusVisible: {
+    outline: 'focusRing',
   },
 });
 
