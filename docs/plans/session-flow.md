@@ -45,12 +45,19 @@
 | 申請拒否方式 | Phase 1 ではレコードDELETE（現状維持） | `rejectApplication()` の拒否履歴保持は Phase 2 で検討。`REJECTED` ステータス追加も Phase 2 スコープ |
 | 辞退者の日程回答 | 辞退時に該当ユーザーの `schedule_responses` を削除 | 辞退者の回答が集計結果に残ると、実質不参加者の意見が日程選定に影響する。集計ロジックの複雑化を避けるため、辞退時にデータを削除する方式を採用 |
 | 通知機能 | Phase 1 では通知機能全般を追加しない。Phase 2 で対応予定 | セッション前日リマインダー（要件P0）を含め、通知基盤の構築は Phase 2 スコープ。Phase 1 ではUI上のトースト通知のみで完結する |
+| セッション定員管理 | `game_sessions.max_participant_count`（固定）+ `game_sessions.remaining_player_slot_count`（可変）で管理 | シナリオの `max_player` と卓ごとの実募集状況を分離するため。`remaining_player_slot_count` は参加承認/辞退に応じてDBトリガーで再計算 |
+| 参加者一覧の表示対象 | セッション詳細の参加者一覧は `CONFIRMED` のみ表示（`PENDING` は非表示） | 「参加者一覧」は確定メンバーの一覧として扱う。未確定ユーザーは申請管理画面で扱う |
+| 参加人数バッジの分子/分母 | 分子=`CONFIRMED`のうち見学(`SPECTATOR`)を除く人数、分母=`game_sessions.max_participant_count` | 卓の実定員（固定）に対する現在の確定参加人数を示すため。シナリオ `max_player` は参照しない |
+| CSステータス表示 | `session_participants.character_sheet_url` の有無のみで表示（URLあり=`CS提出済`、なし=`未提出`） | `participant_status` は参加申請状態であり、CS確認状態ではない。現行DBにCSレビュー専用カラムは存在しない |
+| 主催者表示と役割表示 | `created_by_id`（主催者）と `participant_type`（GM/KP/PL/見学）を分離して表示 | 主催者とKPは同値ではないため。UIでは役割表示とは別に「主催者」ラベルを補助表示する |
+| 会場・ツール（詳細ページ） | 機能未実装の間は「この機能は現在準備中です」を固定表示 | 実リンク/カレンダー追加が未完成の状態で操作可能に見せないため |
 
 ## 前提条件
 
 - DB: Supabase に `schedule_candidates` テーブルを作成済みであること（Step 1-1 のSQLを実行）
 - FK変更: `schedule_responses.schedule_id` → `schedule_responses.candidate_id` へのFK変更完了
 - DBカラム追加: `game_sessions.cancel_reason`, `session_participants.withdrawal_reason` 追加済み
+- DBカラム追加: `game_sessions.max_participant_count`, `game_sessions.remaining_player_slot_count` 追加済み（定員/残りPL募集枠管理用）
 - DB ENUM追加: `participant_status` に `WITHDRAWN` を追加済み
 - DBカラム追加: `game_sessions.created_by_id` 追加済み（セッション作成者の追跡用）
 - 既存アダプター修正: `isSessionGM()` → `isSessionManager()` への拡張完了（`keeper_id || created_by_id` チェック、Step 1-4）
@@ -456,18 +463,20 @@ pnpm supabase gen types typescript --project-id <PROJECT_ID> > src/db/types.ts
 
 - 対象ファイル: `src/app/(main)/sessions/[id]/_components/SessionDetailContent.tsx`（新規）
 - 左カラム:
-  - `BasicInfoSection` - システムバッジ、シナリオリンク、日時、ツール、GM情報
-  - `ParticipantsSection` - 参加者リスト（役割別、CSステータス表示）
+  - `SessionPhaseStepper` - セッション全体フェーズのステップ表示（募集中→準備中→進行中→完了、`CANCELLED` は警告表示）
+  - `BasicInfoSection` - システム名テキスト、シナリオリンク、日時、プレイ時間、GM情報
+  - `ParticipantsSection` - 参加者リスト（`CONFIRMED`のみ、役割別、CSステータス表示）
   - `GMNotesSection` - GMメモ（GM のみ表示、インライン編集）
 - 右カラム（サイドバー）:
-  - `ToolsSection` - Discord/ココフォリア等のリンク集
+  - `ToolsSection` - 会場・ツール（未実装期間は準備中メッセージを表示）
   - `TimelineSection` - セッションイベント時系列
 
 ### Step 2-7. 各サブコンポーネント
 
 - `BasicInfoSection.tsx` - 基本情報カード
-- `ParticipantsSection.tsx` - 参加者一覧（役割アイコン、キャラシステータスバッジ）。空状態: 「まだ参加者がいません」メッセージ表示
-- `ParticipantCard.tsx` - 参加者1人分のカード
+- `SessionPhaseStepper.tsx` - セッション全体フェーズのステップ表示（詳細ページ上部）
+- `ParticipantsSection.tsx` - 参加者一覧（役割アイコン、キャラシステータスバッジ、`CONFIRMED`のみ表示、人数バッジは見学除外）
+- `ParticipantCard.tsx` - 参加者1人分のカード（主催者ラベルと役割/CSステータスを分離表示）
 - `GMNotesSection.tsx` - GMメモ（テキストエリア + 保存ボタン）
 - `ToolsSection.tsx` - 外部ツールリンク（コピーボタン付き）
 - `TimelineSection.tsx` - タイムラインリスト
@@ -477,6 +486,8 @@ pnpm supabase gen types typescript --project-id <PROJECT_ID> > src/db/types.ts
 
 - `src/app/(main)/sessions/[id]/__tests__/adapter.test.ts` - アダプターテスト
 - `src/app/(main)/sessions/[id]/_components/SessionDetailContent.stories.tsx` - Storybook
+- `src/app/(main)/sessions/[id]/_components/ParticipantCard.stories.tsx` - Storybook（主催者/KP/PL/見学の表示整理ケース）
+- `src/app/(main)/sessions/[id]/_components/SessionPhaseStepper.stories.tsx` - Storybook（各フェーズ表示）
 
 ---
 
