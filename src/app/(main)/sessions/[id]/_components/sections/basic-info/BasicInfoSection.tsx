@@ -1,13 +1,21 @@
-import { CalendarDotsIcon, Clock, User } from '@phosphor-icons/react/ssr';
+import {
+  CalendarDotsIcon,
+  Clock,
+  PencilSimple,
+  User,
+} from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import * as styles from '../../../styles';
 
+import { Button } from '@/components/elements/button/button';
+
 import type { SessionDetail } from '../../../../interface';
 
 type BasicInfoSectionProps = {
   session: SessionDetail;
+  showEditButton?: boolean;
 };
 
 /**
@@ -24,7 +32,10 @@ const formatDate = (dateStr: string): string => {
   }).format(date);
 };
 
-export const BasicInfoSection = ({ session }: BasicInfoSectionProps) => {
+export const BasicInfoSection = ({
+  session,
+  showEditButton = false,
+}: BasicInfoSectionProps) => {
   const gmUser = session.keeper ?? session.creator;
   const gmParticipant = session.participants.find(
     (p) => p.userId === gmUser?.userId,
@@ -36,6 +47,26 @@ export const BasicInfoSection = ({ session }: BasicInfoSectionProps) => {
     <section className={styles.card}>
       <div className={styles.info_cardDecor} />
       <div className={styles.info_cardInner}>
+        <div className={styles.cardHeader}>
+          <div className={styles.cardTitle}>
+            <h2>基本情報</h2>
+          </div>
+          {showEditButton && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              status="primary"
+              className={styles.editButton}
+              disabled
+              prefix={<PencilSimple size={16} />}
+              aria-label="基本情報を編集（準備中）"
+            >
+              編集
+            </Button>
+          )}
+        </div>
+
         {/* シナリオ名 */}
         <div>
           <p className={styles.info_scenarioLabel}>シナリオ</p>

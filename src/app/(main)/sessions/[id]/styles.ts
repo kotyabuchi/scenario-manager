@@ -242,6 +242,8 @@ export const headerActions = css({
   alignItems: 'center',
   gap: '2',
   alignSelf: { base: 'stretch', md: 'auto' },
+  minW: '0',
+  justifyContent: 'flex-end',
 });
 
 export const pageGrid = css({
@@ -984,18 +986,17 @@ export const editButton = css({
     outline: 'focusRing',
     outlineOffset: '[2px]',
   },
+  _disabled: {
+    cursor: 'not-allowed',
+    opacity: '[0.56]',
+    _hover: {
+      bg: 'bg.card',
+    },
+  },
 });
 
 export const moreButton = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '10',
-  h: '10',
-  borderRadius: 'lg',
-  bg: 'bg.card',
   shadow: 'xs',
-  cursor: 'pointer',
   borderWidth: '[1px]',
   borderStyle: 'solid',
   borderColor: 'gray.100',
@@ -1008,6 +1009,13 @@ export const moreButton = css({
   _focusVisible: {
     outline: 'focusRing',
     outlineOffset: '[2px]',
+  },
+  _disabled: {
+    cursor: 'not-allowed',
+    opacity: '[0.56]',
+    _hover: {
+      bg: 'bg.card',
+    },
   },
 });
 
@@ -1108,6 +1116,37 @@ export const sessionActions_menuItemDanger = css({
   '& svg': {
     color: 'error.default',
   },
+});
+
+export const sessionActions_inline = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-end',
+  minW: '0',
+});
+
+export const sessionActions_secondaryGroup = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  flexWrap: 'wrap',
+});
+
+export const sessionActions_headerSecondaryGroup = css({
+  display: { base: 'none', md: 'flex' },
+  alignItems: 'center',
+  gap: '2',
+  flexWrap: 'wrap',
+});
+
+export const sessionActions_desktopMenuWrap = css({
+  display: { base: 'none', md: 'block' },
+});
+
+export const sessionActions_mobileMenuWrap = css({
+  display: { base: 'block', md: 'none' },
 });
 
 // ========================================

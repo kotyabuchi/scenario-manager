@@ -1,4 +1,4 @@
-import { Info, PencilSimple } from '@phosphor-icons/react/ssr';
+import { Info } from '@phosphor-icons/react/ssr';
 
 import * as styles from '../styles';
 import { SessionActions } from './SessionActions';
@@ -39,12 +39,6 @@ export const SessionDetailContent = ({
         title={session.sessionName}
         actions={
           <div className={styles.headerActions}>
-            {userRole === 'manager' && (
-              <button type="button" className={styles.editButton} disabled>
-                <PencilSimple size={16} />
-                編集
-              </button>
-            )}
             <SessionActions
               session={session}
               userRole={userRole}
@@ -62,16 +56,21 @@ export const SessionDetailContent = ({
         <div className={styles.pageGrid}>
           {/* メインカラム */}
           <main className={styles.mainColumn}>
-            <BasicInfoSection session={session} />
+            <BasicInfoSection
+              session={session}
+              showEditButton={userRole === 'manager'}
+            />
             <ParticipantsSection
               participants={session.participants}
               userRole={userRole}
               currentUserId={currentUserId}
               maxPlayer={session.maxParticipantCount ?? null}
               creatorUserId={session.creator.userId}
+              sessionId={session.gameSessionId}
+              sessionPhase={session.sessionPhase}
             />
             {userRole === 'manager' && (
-              <GMNotesSection memo={session.sessionMemo} />
+              <GMNotesSection memo={session.sessionMemo} showEditButton />
             )}
           </main>
 
@@ -91,7 +90,7 @@ export const SessionDetailContent = ({
                 <div className={styles.helpInfo_content}>
                   <p className={styles.helpInfo_title}>お困りですか？</p>
                   <p className={styles.helpInfo_message}>
-                    参加者の変更やスケジュールの再調整は「編集」または関連アクションから行えます。
+                    参加者管理や日程調整は画面上部のアクション、内容の編集は各セクションの操作ボタンから行えます。
                   </p>
                 </div>
               </div>

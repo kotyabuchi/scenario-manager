@@ -1,7 +1,10 @@
 import { UsersThreeIcon } from '@phosphor-icons/react/ssr';
+import Link from 'next/link';
 
 import * as styles from '../../../styles';
 import { ParticipantCard } from './ParticipantCard';
+
+import { SessionPhases } from '@/db/enum';
 
 import type { ParticipantWithUser, UserRole } from '../../../../interface';
 
@@ -11,14 +14,18 @@ type ParticipantsSectionProps = {
   currentUserId: string | null;
   maxPlayer: number | null;
   creatorUserId: string;
+  sessionId?: string;
+  sessionPhase: string;
 };
 
 export const ParticipantsSection = ({
   participants,
-  userRole: _userRole,
+  userRole,
   currentUserId,
   maxPlayer,
   creatorUserId,
+  sessionId,
+  sessionPhase,
 }: ParticipantsSectionProps) => {
   const confirmedParticipants = participants.filter(
     (participant) => participant.participantStatus === 'CONFIRMED',
@@ -55,7 +62,20 @@ export const ParticipantsSection = ({
           />
           <h2>参加者</h2>
         </div>
-        <span className={styles.participants_count}>{countLabel}</span>
+        <div className={styles.sessionActions_secondaryGroup}>
+          {userRole === 'manager' &&
+            sessionId &&
+            (sessionPhase === SessionPhases.RECRUITING.value ||
+              sessionPhase === SessionPhases.PREPARATION.value) && (
+              <Link
+                href={`/sessions/${sessionId}/applications`}
+                className={styles.editButton}
+              >
+                申請管理
+              </Link>
+            )}
+          <span className={styles.participants_count}>{countLabel}</span>
+        </div>
       </div>
 
       {/* 参加者リスト */}
