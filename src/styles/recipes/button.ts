@@ -49,10 +49,6 @@ export const button = defineRecipe({
     _hidden: {
       display: 'none',
     },
-    '& :where(svg)': {
-      width: '1em',
-      height: '1em',
-    },
   },
   variants: {
     /** スタイルバリアント */
@@ -64,7 +60,11 @@ export const button = defineRecipe({
       // Ghost: 背景なし
       ghost: {},
       // Outline: 枠線のみ
-      outline: {},
+      outline: {
+        borderWidth: '[1px]',
+        borderStyle: 'solid',
+        borderColor: 'gray.100',
+      },
     },
     /** カラーステータス */
     status: {
@@ -74,22 +74,34 @@ export const button = defineRecipe({
     /** サイズ */
     size: {
       sm: {
-        h: '32px',
-        minW: '32px',
-        fontSize: '13px',
+        h: '36px',
+        minW: '36px',
+        fontSize: '14px',
         px: '16px',
+        '& :where(svg)': {
+          width: '16px',
+          height: '16px',
+        },
       },
       md: {
         h: '44px',
         minW: '44px',
         fontSize: '14px',
         px: '20px',
+        '& :where(svg)': {
+          width: '16px',
+          height: '16px',
+        },
       },
       lg: {
         h: '48px',
         minW: '48px',
         fontSize: '14px',
         px: '24px',
+        '& :where(svg)': {
+          width: '16px',
+          height: '16px',
+        },
       },
     },
   },
@@ -102,7 +114,7 @@ export const button = defineRecipe({
         bg: 'button.primaryBg',
         color: 'button.primaryText',
         fontWeight: '600',
-        boxShadow: 'button.primary',
+        boxShadow: 'sm',
         _hover: {
           '&:not([disabled])': {
             bg: 'button.primaryBgHover',
@@ -118,7 +130,7 @@ export const button = defineRecipe({
         bg: 'button.destructiveBg',
         color: 'button.destructiveText',
         fontWeight: '600',
-        boxShadow: 'button.destructive',
+        boxShadow: 'sm',
         _hover: {
           '&:not([disabled])': {
             bg: 'button.destructiveBgHover',
@@ -189,7 +201,7 @@ export const button = defineRecipe({
       css: {
         bg: 'button.secondaryBg',
         color: 'button.secondaryText',
-        boxShadow: 'button.secondary',
+        boxShadow: 'sm',
         _hover: {
           '&:not([disabled])': {
             bg: 'button.secondaryBgHover',
@@ -204,7 +216,7 @@ export const button = defineRecipe({
       css: {
         bg: 'white',
         color: 'error.text',
-        boxShadow: 'inset 0 0 0 1px token(colors.error.default)',
+        boxShadow: 'sm',
         _hover: {
           '&:not([disabled])': {
             bg: 'error.subtleHover',
