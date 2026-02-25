@@ -21,7 +21,10 @@
     "vitest": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e:headed": "playwright test --headed",
+    "codex:skills:export": "powershell -ExecutionPolicy Bypass -File scripts/export-codex-skills.ps1 -Clean",
+    "codex:skills:link": "powershell -ExecutionPolicy Bypass -File scripts/link-codex-skills.ps1",
+    "codex:skills:unlink": "powershell -ExecutionPolicy Bypass -File scripts/link-codex-skills.ps1 -Unlink"
   },
   "dependencies": {
     "@ark-ui/react": "^5.9.0",
