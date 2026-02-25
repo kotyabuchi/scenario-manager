@@ -117,67 +117,65 @@ export const OtherSection = () => {
             />
           </div>
           {scheduleType === 'specify' && (
-            <>
-              <FormField
-                label="日時の入力"
-                hint="複数行で入力できます。終了時刻は必要な行だけ入力してください"
-              >
-                <div className={styles.form_scheduleList}>
-                  {fields.map((field, index) => {
-                    const value = scheduleCandidates?.[index] ?? {
-                      from: '',
-                      to: '',
-                    };
-                    const hasValue = value.from.trim() !== '';
-                    return (
-                      <div
-                        key={field.id}
-                        className={styles.form_scheduleRow}
-                        data-has-value={hasValue}
-                      >
-                        <div className={styles.form_scheduleRange}>
-                          <Input
-                            type="datetime-local"
-                            id={`scheduledFrom-${index + 1}`}
-                            aria-label={`開催開始日時 ${index + 1}`}
-                            {...register(
-                              `scheduleCandidates.${index}.from` as const,
-                            )}
-                            className={styles.form_scheduleInput}
-                          />
-                          <span className={styles.form_scheduleRangeSeparator}>
-                            〜
-                          </span>
-                          <Input
-                            type="datetime-local"
-                            id={`scheduledTo-${index + 1}`}
-                            aria-label={`開催終了日時 ${index + 1}`}
-                            {...register(
-                              `scheduleCandidates.${index}.to` as const,
-                            )}
-                            className={styles.form_scheduleInput}
-                          />
-                        </div>
-                        <span className={styles.form_scheduleRemoveWrap}>
-                          <IconButton
-                            type="button"
-                            variant="ghost"
-                            status="danger"
-                            size="sm"
-                            className={styles.form_scheduleRemoveButton}
-                            aria-label="日時を削除"
-                            onClick={() => remove(index)}
-                            disabled={!hasValue}
-                          >
-                            <XIcon />
-                          </IconButton>
+            <FormField
+              label="日時の入力"
+              hint="複数行で入力できます。終了時刻は必要な行だけ入力してください"
+            >
+              <div className={styles.form_scheduleList}>
+                {fields.map((field, index) => {
+                  const value = scheduleCandidates?.[index] ?? {
+                    from: '',
+                    to: '',
+                  };
+                  const hasValue = value.from.trim() !== '';
+                  return (
+                    <div
+                      key={field.id}
+                      className={styles.form_scheduleRow}
+                      data-has-value={hasValue}
+                    >
+                      <div className={styles.form_scheduleRange}>
+                        <Input
+                          type="datetime-local"
+                          id={`scheduledFrom-${index + 1}`}
+                          aria-label={`開催開始日時 ${index + 1}`}
+                          {...register(
+                            `scheduleCandidates.${index}.from` as const,
+                          )}
+                          className={styles.form_scheduleInput}
+                        />
+                        <span className={styles.form_scheduleRangeSeparator}>
+                          〜
                         </span>
+                        <Input
+                          type="datetime-local"
+                          id={`scheduledTo-${index + 1}`}
+                          aria-label={`開催終了日時 ${index + 1}`}
+                          {...register(
+                            `scheduleCandidates.${index}.to` as const,
+                          )}
+                          className={styles.form_scheduleInput}
+                        />
                       </div>
-                    );
-                  })}
-                </div>
-              </FormField>
-            </>
+                      <span className={styles.form_scheduleRemoveWrap}>
+                        <IconButton
+                          type="button"
+                          variant="ghost"
+                          status="danger"
+                          size="sm"
+                          className={styles.form_scheduleRemoveButton}
+                          aria-label="日時を削除"
+                          onClick={() => remove(index)}
+                          disabled={!hasValue}
+                        >
+                          <XIcon />
+                        </IconButton>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </FormField>
           )}
         </div>
 
