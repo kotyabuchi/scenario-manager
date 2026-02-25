@@ -1,6 +1,6 @@
-import * as styles from '../styles';
+import * as styles from '../../../styles';
 
-import type { SessionLink, UserRole } from '../../interface';
+import type { SessionLink, UserRole } from '../../../../interface';
 
 type ToolsSectionProps = {
   links: SessionLink[];

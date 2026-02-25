@@ -1,10 +1,10 @@
 import { CheckCircleIcon, ClockIcon, User } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 
-import * as styles from '../styles';
+import * as styles from '../../../styles';
 
 import type { ReactNode } from 'react';
-import type { ParticipantWithUser } from '../../interface';
+import type { ParticipantWithUser } from '../../../../interface';
 
 type ParticipantCardProps = {
   participant: ParticipantWithUser;

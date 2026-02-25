@@ -1,7 +1,7 @@
 import { ParticipantCard } from './ParticipantCard';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ParticipantWithUser } from '../../interface';
+import type { ParticipantWithUser } from '../../../../interface';
 import type { ParticipantCardProps } from './ParticipantCard';
 
 const baseParticipant: ParticipantWithUser = {
@@ -202,31 +202,31 @@ export const StatusMatrix: Story = {
     const cases = [
       {
         label: '主催者（GM/KP）',
-        args: CreatorAsKeeper.args!,
+        args: CreatorAsKeeper.args,
       },
       {
         label: 'KP（主催者ではない）',
-        args: KeeperNotCreator.args!,
+        args: KeeperNotCreator.args,
       },
       {
         label: '主催者（PL）+ CS提出済',
-        args: CreatorAsPlayerWithSubmittedCS.args!,
+        args: CreatorAsPlayerWithSubmittedCS.args,
       },
       {
         label: '主催者（PL）+ 未提出',
-        args: CreatorAsPlayerWithoutCS.args!,
+        args: CreatorAsPlayerWithoutCS.args,
       },
       {
         label: 'PL（CS提出済）',
-        args: PlayerSubmittedCS.args!,
+        args: PlayerSubmittedCS.args,
       },
       {
         label: 'PL（未提出）',
-        args: PlayerMissingCS.args!,
+        args: PlayerMissingCS.args,
       },
       {
         label: '観戦者',
-        args: Spectator.args!,
+        args: Spectator.args,
       },
     ];
 

@@ -2,9 +2,9 @@ import { CalendarDotsIcon, Clock, User } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import * as styles from '../styles';
+import * as styles from '../../../styles';
 
-import type { SessionDetail } from '../../interface';
+import type { SessionDetail } from '../../../../interface';
 
 type BasicInfoSectionProps = {
   session: SessionDetail;

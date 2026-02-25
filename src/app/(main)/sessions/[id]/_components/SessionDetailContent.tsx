@@ -1,13 +1,13 @@
 import { Info, PencilSimple } from '@phosphor-icons/react/ssr';
 
 import * as styles from '../styles';
-import { BasicInfoSection } from './BasicInfoSection';
-import { GMNotesSection } from './GMNotesSection';
-import { ParticipantsSection } from './ParticipantsSection';
 import { SessionActions } from './SessionActions';
 import { SessionPhaseStepper } from './SessionPhaseStepper';
-import { TimelineSection } from './TimelineSection';
-import { ToolsSection } from './ToolsSection';
+import { BasicInfoSection } from './sections/basic-info/BasicInfoSection';
+import { GMNotesSection } from './sections/gm-notes/GMNotesSection';
+import { ParticipantsSection } from './sections/participants/ParticipantsSection';
+import { TimelineSection } from './sections/timeline/TimelineSection';
+import { ToolsSection } from './sections/tools/ToolsSection';
 
 import { PageHeader } from '@/components/blocks/PageHeader';
 

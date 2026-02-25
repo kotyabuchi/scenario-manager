@@ -1,6 +1,6 @@
 import { Notepad } from '@phosphor-icons/react/ssr';
 
-import * as styles from '../styles';
+import * as styles from '../../../styles';
 
 type GMNotesSectionProps = {
   memo: string | null;
