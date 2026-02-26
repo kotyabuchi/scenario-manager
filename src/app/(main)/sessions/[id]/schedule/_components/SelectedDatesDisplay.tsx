@@ -32,7 +32,7 @@ export const SelectedDatesDisplay = ({
         .toSorted((a, b) => a.getTime() - b.getTime())
         .map((date) => (
           <span key={date.toISOString()} className={styles.selectedDates_tag}>
-            {format(date, 'M/d（E）', { locale: ja })}
+            {format(date, 'M/d (E)', { locale: ja })}
             <button
               type="button"
               className={styles.selectedDates_removeButton}

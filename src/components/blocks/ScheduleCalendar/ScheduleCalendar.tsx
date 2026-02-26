@@ -3,9 +3,14 @@
 import { useCallback } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react/ssr';
+import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
 import * as styles from './styles';
+
+type ScheduleCalendarMarker = {
+  dots: string[];
+};
 
 export type ScheduleCalendarProps = {
   /** 選択中の日付 */
@@ -18,9 +23,9 @@ export type ScheduleCalendarProps = {
   disabled?: Date[] | ((date: Date) => boolean);
   /**
    * 参加者の回答マーカー（回答画面用）
-   * TODO: カレンダー上に○△×の回答数バッジを表示する機能で使用予定
+   * 日付キー（yyyy-MM-dd）ごとのドットカラー一覧
    */
-  markers?: Record<string, { ok: number; maybe: number; ng: number }>;
+  markers?: Record<string, ScheduleCalendarMarker>;
   /** className上書き */
   className?: string;
 };
@@ -47,19 +52,23 @@ const sharedClassNames = {
   chevron: styles.calendar_chevron,
 } as const;
 
+const mergeClassNames = (baseClassName: string, className?: string): string =>
+  className ? `${baseClassName} ${className}` : baseClassName;
+
 /** ナビゲーションボタン（DayPicker の components prop に渡す内部ヘルパー） */
 const PreviousMonthButton = ({
   onClick,
   disabled,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button
     type="button"
     onClick={onClick}
     disabled={disabled}
-    className={styles.calendar_navButton}
-    aria-label="前の月"
     {...props}
+    className={mergeClassNames(styles.calendar_navButton, className)}
+    aria-label="前の月"
   >
     <CaretLeft size={16} weight="bold" />
   </button>
@@ -68,15 +77,16 @@ const PreviousMonthButton = ({
 const NextMonthButton = ({
   onClick,
   disabled,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button
     type="button"
     onClick={onClick}
     disabled={disabled}
-    className={styles.calendar_navButton}
-    aria-label="次の月"
     {...props}
+    className={mergeClassNames(styles.calendar_navButton, className)}
+    aria-label="次の月"
   >
     <CaretRight size={16} weight="bold" />
   </button>
@@ -87,12 +97,62 @@ const sharedComponents = {
   NextMonthButton,
 } as const;
 
+const formatDateKey = (date: Date): string => format(date, 'yyyy-MM-dd');
+
+type DayButtonWithMarkerProps =
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    day?: { date: Date };
+  };
+
+const createDayButtonWithMarkers = (
+  markers?: Record<string, ScheduleCalendarMarker>,
+) => {
+  const DayButtonWithMarkers = ({
+    day,
+    children,
+    ...props
+  }: DayButtonWithMarkerProps) => {
+    const date = day?.date;
+    const marker = date ? markers?.[formatDateKey(date)] : undefined;
+    const visibleDots = marker?.dots.slice(0, 2) ?? [];
+    const overflowCount = marker ? Math.max(marker.dots.length - 2, 0) : 0;
+
+    return (
+      <button type="button" {...props}>
+        <span className={styles.calendar_dayNumber} data-day-number>
+          {children}
+        </span>
+        {marker && marker.dots.length > 0 ? (
+          <span className={styles.calendar_markerRow} aria-hidden="true">
+            {visibleDots.map((color) => (
+              <span
+                key={color}
+                className={styles.calendar_markerDot}
+                style={{ backgroundColor: color }}
+              />
+            ))}
+            {overflowCount > 0 ? (
+              <span className={styles.calendar_markerOverflow}>
+                +{overflowCount}
+              </span>
+            ) : null}
+          </span>
+        ) : (
+          <span className={styles.calendar_markerSpacer} aria-hidden="true" />
+        )}
+      </button>
+    );
+  };
+
+  return DayButtonWithMarkers;
+};
+
 export const ScheduleCalendar = ({
   selectedDates,
   onSelect,
   multiple = true,
   disabled,
-  markers: _markers,
+  markers,
   className,
 }: ScheduleCalendarProps) => {
   // 過去日は常に無効
@@ -103,6 +163,10 @@ export const ScheduleCalendar = ({
   }, []);
 
   const resolvedDisabled = disabled ?? defaultDisabled;
+  const components = {
+    ...sharedComponents,
+    DayButton: createDayButtonWithMarkers(markers),
+  };
 
   return (
     <section aria-label="日程候補カレンダー" className={className}>
@@ -112,9 +176,10 @@ export const ScheduleCalendar = ({
           selected={selectedDates}
           onSelect={(dates) => onSelect(dates ?? [])}
           locale={ja}
+          navLayout="around"
           disabled={resolvedDisabled}
-          showOutsideDays={false}
-          components={sharedComponents}
+          showOutsideDays
+          components={components}
           classNames={{
             root: styles.calendar_root,
             ...sharedClassNames,
@@ -126,9 +191,10 @@ export const ScheduleCalendar = ({
           selected={selectedDates[0]}
           onSelect={(date) => onSelect(date ? [date] : [])}
           locale={ja}
+          navLayout="around"
           disabled={resolvedDisabled}
-          showOutsideDays={false}
-          components={sharedComponents}
+          showOutsideDays
+          components={components}
           classNames={{
             root: styles.calendar_root,
             ...sharedClassNames,
