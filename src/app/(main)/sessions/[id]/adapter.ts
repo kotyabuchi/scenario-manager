@@ -1,11 +1,7 @@
 import { isNil } from 'ramda';
 import { ulid } from 'ulid';
 
-import {
-  ScheduleAvailabilities,
-  SchedulePhases,
-  SessionPhases,
-} from '@/db/enum';
+import { SchedulePhases, SessionPhases } from '@/db/enum';
 import { getAppLogger } from '@/lib/logger';
 import { createDbClient } from '@/lib/supabase/server';
 import {
@@ -17,7 +13,6 @@ import { err, ok, type Result } from '@/types/result';
 
 import type { Database } from '@/db/types';
 import type {
-  ScheduleCandidateWithResponses,
   SessionDetail,
   SessionLink,
   TimelineEvent,
@@ -49,35 +44,6 @@ const transformParticipants = (
     ...camelCaseKeys(p),
     user: camelCaseKeys(toRecord(p.users)),
   }));
-
-/** 日程候補を回答集計付きで変換する */
-const transformCandidates = (
-  rawCandidates: Array<Record<string, unknown>>,
-): ScheduleCandidateWithResponses[] =>
-  rawCandidates.map((candidate) => {
-    const responses = toRecordArray(candidate.schedule_responses);
-
-    const countByAvailability = (value: string) =>
-      responses.filter((r) => r.availability === value).length;
-
-    const convertedResponses = responses.map((r) => {
-      return {
-        ...camelCaseKeys(r),
-        user: transformUserRef(r.users) ?? {
-          userId: 'unknown',
-          userName: '退会済みユーザー',
-        },
-      };
-    });
-
-    return {
-      ...camelCaseKeys(candidate),
-      responses: convertedResponses,
-      okCount: countByAvailability(ScheduleAvailabilities.OK.value),
-      maybeCount: countByAvailability(ScheduleAvailabilities.MAYBE.value),
-      ngCount: countByAvailability(ScheduleAvailabilities.NG.value),
-    } as ScheduleCandidateWithResponses;
-  });
 
 /** シナリオ（+system）を変換する */
 const transformScenario = (raw: unknown) => {
@@ -115,8 +81,7 @@ export const getSessionDetail = async (
         scenarios(*, scenario_systems(*)),
         game_schedules(*),
         session_participants(*, users(*)),
-        session_links(*),
-        schedule_candidates(*, schedule_responses(*, users(user_id, user_name)))
+        session_links(*)
       `)
       .eq('game_session_id', sessionId)
       .maybeSingle();
@@ -152,7 +117,6 @@ export const getSessionDetail = async (
         : camelCaseKeys(toRecord(data.game_schedules)),
       participants: transformParticipants(rawParticipants),
       links: transformLinks(data.session_links),
-      candidates: transformCandidates(toRecordArray(data.schedule_candidates)),
       keeper: transformUserRef(data.keeper),
       creator,
     } as SessionDetail;

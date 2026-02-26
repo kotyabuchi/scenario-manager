@@ -194,7 +194,6 @@ const mockSession: SessionDetail = {
   schedule: null,
   participants: mockParticipants,
   links: mockLinks,
-  candidates: [],
   keeper: mockKeeper,
   creator: mockCreator,
 } as SessionDetail;
@@ -204,7 +203,6 @@ const emptySession: SessionDetail = {
   sessionMemo: null,
   participants: [],
   links: [],
-  candidates: [],
 } as SessionDetail;
 
 // --- Meta ---

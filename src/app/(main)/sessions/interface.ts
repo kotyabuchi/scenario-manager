@@ -3,8 +3,6 @@ import type {
   GameSessionRow,
   ScenarioRow,
   ScenarioSystemRow,
-  ScheduleCandidateRow,
-  ScheduleResponseRow,
   SessionLinkRow,
   SessionParticipantRow,
   UserRow,
@@ -18,21 +16,11 @@ type Scenario = ScenarioRow;
 type ScenarioSystem = ScenarioSystemRow;
 type SessionParticipant = SessionParticipantRow;
 type User = UserRow;
-type ScheduleCandidate = ScheduleCandidateRow;
-type ScheduleResponse = ScheduleResponseRow;
 type SessionLink = SessionLinkRow;
 
 // 参加者（ユーザー情報付き）
 type ParticipantWithUser = SessionParticipant & {
   user: User;
-};
-
-// 日程候補 + 回答集計
-type ScheduleCandidateWithResponses = ScheduleCandidate & {
-  responses: (ScheduleResponse & { user: Pick<User, 'userId' | 'userName'> })[];
-  okCount: number;
-  maybeCount: number;
-  ngCount: number;
 };
 
 // タイムラインイベント
@@ -53,7 +41,6 @@ type SessionDetail = GameSession & {
   schedule: GameSchedule | null;
   participants: ParticipantWithUser[];
   links: SessionLink[];
-  candidates: ScheduleCandidateWithResponses[];
   keeper: Pick<User, 'userId' | 'userName'> | null;
   creator: Pick<User, 'userId' | 'userName'>;
 };
@@ -159,11 +146,8 @@ export type {
   ScenarioSystem,
   SessionParticipant,
   User,
-  ScheduleCandidate,
-  ScheduleResponse,
   SessionLink,
   ParticipantWithUser,
-  ScheduleCandidateWithResponses,
   TimelineEvent,
   SessionDetail,
   SessionWithRelations,

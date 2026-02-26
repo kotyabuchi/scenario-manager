@@ -136,11 +136,9 @@ describe('Session Detail Adapter', () => {
         expect(result.data).toHaveProperty('gameSessionId');
         expect(result.data).toHaveProperty('participants');
         expect(result.data).toHaveProperty('links');
-        expect(result.data).toHaveProperty('candidates');
         expect(result.data).toHaveProperty('creator');
         expect(Array.isArray(result.data.participants)).toBe(true);
         expect(Array.isArray(result.data.links)).toBe(true);
-        expect(Array.isArray(result.data.candidates)).toBe(true);
       }
     });
 

@@ -39,13 +39,7 @@ export type FeedbackCommentRow = CamelCaseKeys<
   Tables['feedback_comments']['Row']
 >;
 export type NotificationRow = CamelCaseKeys<Tables['notifications']['Row']>;
-export type ScheduleResponseRow = CamelCaseKeys<
-  Tables['schedule_responses']['Row']
->;
 export type SessionLinkRow = CamelCaseKeys<Tables['session_links']['Row']>;
-export type ScheduleCandidateRow = CamelCaseKeys<
-  Tables['schedule_candidates']['Row']
->;
 
 // Insert型（キャメルケース変換済み）
 export type UserInsert = CamelCaseKeys<Tables['users']['Insert']>;
@@ -63,9 +57,6 @@ export type ScenarioTagInsert = CamelCaseKeys<
 export type UserReviewInsert = CamelCaseKeys<Tables['user_reviews']['Insert']>;
 export type UserScenarioPreferenceInsert = CamelCaseKeys<
   Tables['user_scenario_preferences']['Insert']
->;
-export type ScheduleCandidateInsert = CamelCaseKeys<
-  Tables['schedule_candidates']['Insert']
 >;
 export type GameScheduleSlotInsert = CamelCaseKeys<
   Tables['game_schedule_slots']['Insert']
