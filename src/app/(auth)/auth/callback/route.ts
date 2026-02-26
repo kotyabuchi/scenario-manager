@@ -76,7 +76,7 @@ type AuthMessage =
 const createPopupResponse = (message: AuthMessage) => {
   const html = `<!DOCTYPE html>
 <html>
-<head><title>認証中...</title></head>
+<head><meta charset="utf-8"><title>認証中...</title></head>
 <body>
 <p>認証処理中です。このウィンドウは自動的に閉じます。</p>
 <script>
@@ -93,6 +93,6 @@ const createPopupResponse = (message: AuthMessage) => {
 </html>`;
 
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' },
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
   });
 };
