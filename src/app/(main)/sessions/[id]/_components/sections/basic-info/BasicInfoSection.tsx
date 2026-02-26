@@ -32,6 +32,32 @@ const formatDate = (dateStr: string): string => {
   }).format(date);
 };
 
+const formatTime = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  return new Intl.DateTimeFormat('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+};
+
+const isSameDay = (a: string, b: string): boolean => {
+  const aDate = new Date(a);
+  const bDate = new Date(b);
+  return (
+    aDate.getFullYear() === bDate.getFullYear() &&
+    aDate.getMonth() === bDate.getMonth() &&
+    aDate.getDate() === bDate.getDate()
+  );
+};
+
+const formatDateRange = (startAt: string, endAt: string): string => {
+  if (isSameDay(startAt, endAt)) {
+    return `${formatDate(startAt)}〜${formatTime(endAt)}`;
+  }
+
+  return `${formatDate(startAt)}〜${formatDate(endAt)}`;
+};
+
 export const BasicInfoSection = ({
   session,
   showEditButton = false,
@@ -42,6 +68,7 @@ export const BasicInfoSection = ({
   );
   const gmDisplayName = gmParticipant?.user.nickname ?? gmUser?.userName;
   const gmHandleName = gmParticipant?.user.userName ?? gmUser?.userName;
+  const hasConfirmedScheduleSlots = session.scheduleSlots.length > 0;
 
   return (
     <section className={styles.card}>
@@ -96,9 +123,22 @@ export const BasicInfoSection = ({
               日時
             </span>
             <div className={styles.info_valueText}>
-              {session.schedule?.scheduleDate
-                ? `${formatDate(session.schedule.scheduleDate)}〜`
-                : '日程未確定'}
+              {hasConfirmedScheduleSlots ? (
+                <ul className={styles.info_scheduleSlotList}>
+                  {session.scheduleSlots.map((slot) => (
+                    <li
+                      key={slot.gameScheduleSlotId}
+                      className={styles.info_scheduleSlotItem}
+                    >
+                      {formatDateRange(slot.startAt, slot.endAt)}
+                    </li>
+                  ))}
+                </ul>
+              ) : session.schedule?.scheduleDate ? (
+                `${formatDate(session.schedule.scheduleDate)}〜`
+              ) : (
+                '日程未確定'
+              )}
             </div>
           </div>
 

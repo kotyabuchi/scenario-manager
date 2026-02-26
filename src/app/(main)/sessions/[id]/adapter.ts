@@ -72,23 +72,37 @@ export const getSessionDetail = async (
   try {
     const supabase = await createDbClient();
 
-    const { data, error } = await supabase
-      .from('game_sessions')
-      .select(`
-        *,
-        keeper:users!game_sessions_keeper_id_users_user_id_fk(user_id, user_name),
-        creator:users!game_sessions_created_by_id_fkey(user_id, user_name),
-        scenarios(*, scenario_systems(*)),
-        game_schedules(*),
-        session_participants(*, users(*)),
-        session_links(*)
-      `)
-      .eq('game_session_id', sessionId)
-      .maybeSingle();
+    const [
+      { data, error },
+      { data: scheduleSlots, error: scheduleSlotsError },
+    ] = await Promise.all([
+      supabase
+        .from('game_sessions')
+        .select(`
+          *,
+          keeper:users!game_sessions_keeper_id_users_user_id_fk(user_id, user_name),
+          creator:users!game_sessions_created_by_id_fkey(user_id, user_name),
+          scenarios(*, scenario_systems(*)),
+          game_schedules(*),
+          session_participants(*, users(*)),
+          session_links(*)
+        `)
+        .eq('game_session_id', sessionId)
+        .maybeSingle(),
+      supabase
+        .from('game_schedule_slots')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('slot_order', { ascending: true }),
+    ]);
 
     if (error) {
       logger.error`セッション詳細取得エラー: ${error.message}`;
       return err(new Error(error.message));
+    }
+    if (scheduleSlotsError) {
+      logger.error`セッション詳細取得(確定枠)エラー: ${scheduleSlotsError.message}`;
+      return err(new Error(scheduleSlotsError.message));
     }
 
     if (isNil(data)) {
@@ -115,6 +129,9 @@ export const getSessionDetail = async (
       schedule: isNil(data.game_schedules)
         ? null
         : camelCaseKeys(toRecord(data.game_schedules)),
+      scheduleSlots: toRecordArray(scheduleSlots).map(
+        (slot) => camelCaseKeys(slot) as SessionDetail['scheduleSlots'][number],
+      ),
       participants: transformParticipants(rawParticipants),
       links: transformLinks(data.session_links),
       keeper: transformUserRef(data.keeper),

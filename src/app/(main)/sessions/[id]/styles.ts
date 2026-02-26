@@ -479,6 +479,19 @@ export const info_valueText = css({
   lineHeight: 'relaxed',
 });
 
+export const info_scheduleSlotList = css({
+  listStyle: 'none',
+  m: '0',
+  p: '0',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+});
+
+export const info_scheduleSlotItem = css({
+  lineHeight: 'relaxed',
+});
+
 export const sectionHeaderIconPrimary = css({
   color: 'primary.default',
 });

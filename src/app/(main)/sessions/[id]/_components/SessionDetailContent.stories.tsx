@@ -192,6 +192,7 @@ const mockSession: SessionDetail = {
     },
   } as SessionDetail['scenario'],
   schedule: null,
+  scheduleSlots: [],
   participants: mockParticipants,
   links: mockLinks,
   keeper: mockKeeper,
