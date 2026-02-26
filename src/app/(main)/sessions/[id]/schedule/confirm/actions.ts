@@ -6,6 +6,10 @@ import { isNil } from 'ramda';
 import { getCurrentUserId } from '../../../adapter';
 import { isSessionManager } from '../../../participantAdapter';
 import {
+  canConfirmScheduleInCurrentPhase,
+  getSchedulingPhases,
+} from '../../scheduleFlowGuards';
+import {
   getScheduleRecommendations,
   replaceConfirmedScheduleSlots,
 } from './adapter';
@@ -32,6 +36,14 @@ export const confirmScheduleSlotsAction = async (
     const hasPermission = await isSessionManager(sessionId, userId);
     if (!hasPermission) {
       return err(new Error('この操作を行う権限がありません'));
+    }
+
+    const phasesResult = await getSchedulingPhases(sessionId);
+    if (!phasesResult.success) {
+      return err(phasesResult.error);
+    }
+    if (!canConfirmScheduleInCurrentPhase(phasesResult.data.sessionPhase)) {
+      return err(new Error('準備中フェーズでのみ日程を確定できます'));
     }
 
     const parsed = confirmScheduleSlotsSchema.safeParse(data);
@@ -71,6 +83,14 @@ export const getScheduleRecommendationsAction = async (
     const hasPermission = await isSessionManager(sessionId, userId);
     if (!hasPermission) {
       return err(new Error('この操作を行う権限がありません'));
+    }
+
+    const phasesResult = await getSchedulingPhases(sessionId);
+    if (!phasesResult.success) {
+      return err(phasesResult.error);
+    }
+    if (!canConfirmScheduleInCurrentPhase(phasesResult.data.sessionPhase)) {
+      return err(new Error('準備中フェーズでのみ日程を確定できます'));
     }
 
     return getScheduleRecommendations(sessionId);

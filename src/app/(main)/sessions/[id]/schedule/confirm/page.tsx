@@ -5,6 +5,10 @@ import { getCurrentUserId } from '../../../adapter';
 import { isSessionManager } from '../../../participantAdapter';
 import { ConfirmAvailabilityWorkspace } from '../../availability/_components/ConfirmAvailabilityWorkspace';
 import { getAvailabilityWorkspaceData } from '../../availability/adapter';
+import {
+  canConfirmScheduleInCurrentPhase,
+  getSchedulingPhases,
+} from '../../scheduleFlowGuards';
 import { confirmScheduleSlotsAction } from './actions';
 import { getScheduleRecommendations } from './adapter';
 import * as styles from './styles';
@@ -35,6 +39,14 @@ export default async function ScheduleConfirmPage({ params }: PageProps) {
 
   const isManager = await isSessionManager(id, currentUserId);
   if (!isManager) {
+    redirect(`/sessions/${id}`);
+  }
+
+  const phasesResult = await getSchedulingPhases(id);
+  if (!phasesResult.success) {
+    notFound();
+  }
+  if (!canConfirmScheduleInCurrentPhase(phasesResult.data.sessionPhase)) {
     redirect(`/sessions/${id}`);
   }
 

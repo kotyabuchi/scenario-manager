@@ -3,6 +3,10 @@ import { isNil } from 'ramda';
 
 import { getCurrentUserId } from '../../adapter';
 import { isSessionManager } from '../../participantAdapter';
+import {
+  canSubmitAvailabilityInCurrentPhase,
+  getSchedulingPhases,
+} from '../scheduleFlowGuards';
 import { SubmitAvailabilityWorkspace } from './_components/SubmitAvailabilityWorkspace';
 import { saveAvailabilitySlotsAction } from './actions';
 import { getAvailabilityWorkspaceData } from './adapter';
@@ -56,6 +60,19 @@ export default async function AvailabilityPage({ params }: PageProps) {
 
   const hasPermission = await canViewAvailabilityPage(id, currentUserId);
   if (!hasPermission) {
+    redirect(`/sessions/${id}`);
+  }
+
+  const phasesResult = await getSchedulingPhases(id);
+  if (!phasesResult.success) {
+    notFound();
+  }
+  if (
+    !canSubmitAvailabilityInCurrentPhase(
+      phasesResult.data.sessionPhase,
+      phasesResult.data.schedulePhase,
+    )
+  ) {
     redirect(`/sessions/${id}`);
   }
 

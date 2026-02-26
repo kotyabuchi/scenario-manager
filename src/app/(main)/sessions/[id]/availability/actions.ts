@@ -5,6 +5,10 @@ import { isNil } from 'ramda';
 
 import { getCurrentUserId } from '../../adapter';
 import { isSessionManager } from '../../participantAdapter';
+import {
+  canSubmitAvailabilityInCurrentPhase,
+  getSchedulingPhases,
+} from '../scheduleFlowGuards';
 import { replaceAvailabilitySlots } from './adapter';
 import { saveAvailabilitySlotsSchema } from './schema';
 
@@ -54,6 +58,19 @@ export const saveAvailabilitySlotsAction = async (
     const hasPermission = await canSubmitAvailability(sessionId, userId);
     if (!hasPermission) {
       return err(new Error('承認済み参加者または主催者のみ提出可能です'));
+    }
+
+    const phasesResult = await getSchedulingPhases(sessionId);
+    if (!phasesResult.success) {
+      return err(phasesResult.error);
+    }
+    if (
+      !canSubmitAvailabilityInCurrentPhase(
+        phasesResult.data.sessionPhase,
+        phasesResult.data.schedulePhase,
+      )
+    ) {
+      return err(new Error('現在のフェーズでは参加可能時間を提出できません'));
     }
 
     const parsed = saveAvailabilitySlotsSchema.safeParse(data);
