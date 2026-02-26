@@ -105,7 +105,9 @@ export const sessionFormSchema = z.object({
   invitedMembers: z
     .array(
       z.object({
-        userId: z.string(),
+        userId: z
+          .string()
+          .regex(ulidPattern, 'ユーザーIDの形式が正しくありません'),
         participantType: z.enum(['PLAYER', 'SPECTATOR', 'KEEPER']),
       }),
     )

@@ -5,8 +5,40 @@ import { createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
-import type { Database } from '@/db/types';
+import type { Database, Json } from '@/db/types';
 import type { CreateSessionInput } from './schema';
+
+/**
+ * 組み込み Omit は K extends keyof any のため存在しないキーでもエラーにならない。
+ * StrictOmit は K extends keyof T に制約し、型再生成でキー名が変わった場合に
+ * コンパイルエラーとして検知できるようにする。
+ */
+type StrictOmit<T, K extends keyof T> = Omit<T, K>;
+
+/** Supabase gen types の RPC Args 型（NULL 非許容で生成される） */
+type GeneratedArgs =
+  Database['public']['Functions']['create_session_transaction']['Args'];
+
+/** NULL を受け付けるパラメータのキー */
+type NullableParamKeys =
+  | 'p_scenario_id'
+  | 'p_scheduled_at'
+  | 'p_recruited_player_count'
+  | 'p_tools';
+
+/**
+ * Supabase gen types は RPC パラメータの NULL 許容を生成しないため、
+ * DB関数で実際に NULL を受け付けるパラメータを明示的にオーバーライドする。
+ *
+ * StrictOmit により、型再生成でパラメータ名が変更された場合は
+ * NullableParamKeys の該当キーでコンパイルエラーが発生する。
+ */
+type CreateSessionRpcArgs = StrictOmit<GeneratedArgs, NullableParamKeys> & {
+  p_scenario_id: string | null;
+  p_scheduled_at: string | null;
+  p_recruited_player_count: number | null;
+  p_tools: string | null;
+};
 
 /**
  * セッション作成結果の型
@@ -69,7 +101,10 @@ export const createSession = async (
   try {
     const supabase = await createDbClient();
 
-    // ユーザーの存在確認
+    // ユーザー存在確認（ユーザーフレンドリーなエラーメッセージ提供）
+    // DB関数側では auth.uid() との所有権照合を行うが、
+    // service_role クライアントではスキップされるため、
+    // アプリ層での存在確認も併用する
     const { data: user } = await supabase
       .from('users')
       .select('user_id')
@@ -108,9 +143,7 @@ export const createSession = async (
       },
     );
 
-    // Supabase gen types は RPC 引数の NULL 許容を落とすことがあるため、
-    // DB関数シグネチャに合わせて明示キャストする。
-    const rpcArgs = {
+    const rpcArgs: CreateSessionRpcArgs = {
       p_game_session_id: gameSessionId,
       p_user_id: userId,
       p_session_name: input.sessionName,
@@ -124,13 +157,16 @@ export const createSession = async (
       p_is_beginner_friendly: input.isBeginnerFriendly,
       p_visibility: input.visibility,
       p_creator_participant_type: input.creatorParticipantType,
-      p_initial_availability_slots: initialAvailabilitySlotPayload,
-      p_invited_members: input.invitedMembers,
-    } as unknown as Database['public']['Functions']['create_session_transaction']['Args'];
+      // JSONB パラメータは Supabase 生成型の Json と構造的に互換だが
+      // TypeScript の index signature 推論が通らないため型アサーション
+      p_initial_availability_slots:
+        initialAvailabilitySlotPayload as unknown as Json,
+      p_invited_members: (input.invitedMembers ?? []) as unknown as Json,
+    };
 
     const { data: createdSessions, error: createError } = await supabase.rpc(
       'create_session_transaction',
-      rpcArgs,
+      rpcArgs as Database['public']['Functions']['create_session_transaction']['Args'],
     );
 
     if (createError || !createdSessions || createdSessions.length === 0) {
@@ -139,20 +175,25 @@ export const createSession = async (
       );
     }
 
-    const session = camelCaseKeys(
-      createdSessions[0] as Record<string, unknown>,
-    ) as Record<string, unknown>;
+    const firstSession = createdSessions[0];
+    if (isNil(firstSession)) {
+      return err(new Error(ERROR_MESSAGES.CREATE_FAILED));
+    }
+
+    const session = camelCaseKeys(firstSession);
 
     return ok({
-      gameSessionId: session.gameSessionId as string,
-      sessionName: session.sessionName as string,
-      sessionPhase: session.sessionPhase as string,
+      gameSessionId: session.gameSessionId,
+      sessionName: session.sessionName,
+      sessionPhase: session.sessionPhase,
+      // DB関数の RETURNS TABLE は non-null で宣言されるが、
+      // 実データはカラムの nullable に従うためワイドニング
       scenarioId: session.scenarioId as string | null,
       scheduledAt: session.scheduledAt as string | null,
       recruitedPlayerCount: session.recruitedPlayerCount as number | null,
       tools: session.tools as string | null,
-      isBeginnerFriendly: session.isBeginnerFriendly as boolean,
-      visibility: session.visibility as string,
+      isBeginnerFriendly: session.isBeginnerFriendly,
+      visibility: session.visibility,
     });
   } catch (e) {
     return err(

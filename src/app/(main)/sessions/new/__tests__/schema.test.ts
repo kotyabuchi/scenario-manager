@@ -528,7 +528,7 @@ describe('sessionFormSchema', () => {
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         invitedMembers: [
-          { userId: '01HTESTUSER00000001AAA', participantType: 'PLAYER' },
+          { userId: '01HTESTUSR00000000001AAAAA', participantType: 'PLAYER' },
         ],
       });
       expect(result.success).toBe(true);
@@ -544,7 +544,10 @@ describe('sessionFormSchema', () => {
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         invitedMembers: [
-          { userId: '01HTESTUSER00000001AAA', participantType: 'SPECTATOR' },
+          {
+            userId: '01HTESTUSR00000000001AAAAA',
+            participantType: 'SPECTATOR',
+          },
         ],
       });
       expect(result.success).toBe(true);
@@ -561,8 +564,11 @@ describe('sessionFormSchema', () => {
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         invitedMembers: [
-          { userId: '01HTESTUSER00000001AAA', participantType: 'PLAYER' },
-          { userId: '01HTESTUSER00000002BBB', participantType: 'SPECTATOR' },
+          { userId: '01HTESTUSR00000000001AAAAA', participantType: 'PLAYER' },
+          {
+            userId: '01HTESTUSR00000000002BBBBB',
+            participantType: 'SPECTATOR',
+          },
         ],
       });
       expect(result.success).toBe(true);
@@ -577,7 +583,7 @@ describe('sessionFormSchema', () => {
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         invitedMembers: [
-          { userId: '01HTESTUSER00000001AAA', participantType: 'INVALID' },
+          { userId: '01HTESTUSR00000000001AAAAA', participantType: 'INVALID' },
         ],
       });
       expect(result.success).toBe(false);

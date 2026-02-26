@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1';
   };
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       feedback_comments: {
@@ -918,12 +943,12 @@ export type Database = {
           p_initial_availability_slots: Json;
           p_invited_members: Json;
           p_is_beginner_friendly: boolean;
-          p_recruited_player_count: number | null;
-          p_scenario_id: string | null;
-          p_scheduled_at: string | null;
+          p_recruited_player_count: number;
+          p_scenario_id: string;
+          p_scheduled_at: string;
           p_session_description: string;
           p_session_name: string;
-          p_tools: string | null;
+          p_tools: string;
           p_user_id: string;
           p_visibility: Database['public']['Enums']['session_visibility'];
         };
@@ -1098,6 +1123,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       feedback_category: ['BUG', 'FEATURE', 'UI_UX', 'OTHER'],
