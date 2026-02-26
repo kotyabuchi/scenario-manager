@@ -6,7 +6,7 @@ import { isNil } from 'ramda';
 
 import {
   getScenarioById,
-  getUserByDiscordId,
+  getUserByAuthUserId,
   searchScenarios,
 } from '../../scenarios/adapter';
 import { createSession } from './adapter';
@@ -61,7 +61,7 @@ export const createSessionAction = async (
   }
 
   // ユーザーIDを取得
-  const userResult = await getUserByDiscordId(authUser.id);
+  const userResult = await getUserByAuthUserId(authUser.id);
   if (!userResult.success) {
     return err(userResult.error);
   }

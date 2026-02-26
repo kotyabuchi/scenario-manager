@@ -281,17 +281,17 @@ export const getUserScenarioPreference = async (
 };
 
 /**
- * Discord IDでユーザーを取得する
+ * Supabase Auth UIDでユーザーを取得する
  */
-export const getUserByDiscordId = async (
-  discordId: string,
+export const getUserByAuthUserId = async (
+  authUserId: string,
 ): Promise<Result<{ userId: string } | null>> => {
   try {
     const supabase = await createDbClient();
     const { data, error } = await supabase
       .from('users')
       .select('user_id')
-      .eq('discord_id', discordId)
+      .eq('auth_user_id', authUserId)
       .maybeSingle();
 
     if (error) {

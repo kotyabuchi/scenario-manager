@@ -61,7 +61,7 @@ export const createFeedbackAction = async (
   const { data: user } = await supabase
     .from('users')
     .select('user_id, role')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   if (isNil(user)) {
@@ -133,7 +133,7 @@ export const updateFeedbackAction = async (
   const { data: user } = await supabase
     .from('users')
     .select('user_id')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   if (isNil(user)) {
@@ -174,7 +174,7 @@ export const checkRateLimitAction = async (): Promise<
   const { data: user } = await supabase
     .from('users')
     .select('user_id, role')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   if (isNil(user)) {

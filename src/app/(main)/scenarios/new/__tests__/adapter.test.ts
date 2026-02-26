@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { createScenario, getUserByDiscordId } from '../../adapter';
+import { createScenario, getUserByAuthUserId } from '../../adapter';
 
+import { randomUUID } from 'node:crypto';
 import {
   cleanupScenarios,
   cleanupSystems,
@@ -23,7 +24,7 @@ import {
  */
 describe('createScenario adapter', () => {
   let userId: string;
-  let userDiscordId: string;
+  let userAuthUserId: string;
   let systemId: string;
   let tag1Id: string;
   let tag2Id: string;
@@ -32,7 +33,7 @@ describe('createScenario adapter', () => {
   beforeAll(async () => {
     const user = await createTestUser();
     userId = user.user_id;
-    userDiscordId = user.discord_id;
+    userAuthUserId = user.auth_user_id;
 
     const system = await createTestSystem();
     systemId = system.system_id;
@@ -51,12 +52,12 @@ describe('createScenario adapter', () => {
     await cleanupTags([tag1Id, tag2Id]);
   });
 
-  describe('getUserByDiscordId', () => {
-    // T-CS-001: 存在しないDiscordIDでnullを返す
-    it('存在しないDiscordIDでnullを返す', async () => {
-      const nonExistentDiscordId = 'non-existent-discord-id-12345';
+  describe('getUserByAuthUserId', () => {
+    // T-CS-001: 存在しない認証UIDでnullを返す
+    it('存在しない認証UIDでnullを返す', async () => {
+      const nonExistentAuthUserId = randomUUID();
 
-      const result = await getUserByDiscordId(nonExistentDiscordId);
+      const result = await getUserByAuthUserId(nonExistentAuthUserId);
 
       if (result.success) {
         expect(result.data).toBeNull();
@@ -67,9 +68,9 @@ describe('createScenario adapter', () => {
       }
     });
 
-    // T-CS-002: 存在するDiscordIDでユーザーを取得できる
-    it('存在するDiscordIDでユーザーを取得できる', async () => {
-      const result = await getUserByDiscordId(userDiscordId);
+    // T-CS-002: 存在する認証UIDでユーザーを取得できる
+    it('存在する認証UIDでユーザーを取得できる', async () => {
+      const result = await getUserByAuthUserId(userAuthUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {

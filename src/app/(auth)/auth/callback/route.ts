@@ -17,7 +17,7 @@ export const GET = async (request: Request) => {
         const { data: existingUser } = await supabase
           .from('users')
           .select('nickname')
-          .eq('discord_id', authUser.id)
+          .eq('auth_user_id', authUser.id)
           .maybeSingle();
 
         const discordMeta = {

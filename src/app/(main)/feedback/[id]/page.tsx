@@ -40,14 +40,14 @@ export default async function FeedbackDetailPage({ params }: PageProps) {
     redirect('/');
   }
 
-  // Discord ID → アプリ userId 変換
+  // auth_user_id → アプリ userId 変換
   let currentUserId: string | undefined;
   let userRole: string | undefined;
 
   const { data: user } = await supabase
     .from('users')
     .select('user_id, role')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   if (!isNil(user)) {

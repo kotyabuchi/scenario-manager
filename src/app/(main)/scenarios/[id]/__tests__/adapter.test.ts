@@ -7,13 +7,14 @@ import {
   getScenarioReviews,
   getScenarioSessions,
   getScenarioVideoLinks,
-  getUserByDiscordId,
+  getUserByAuthUserId,
   getUserScenarioPreference,
   toggleFavorite,
   togglePlayed,
   updateReview,
 } from '../adapter';
 
+import { randomUUID } from 'node:crypto';
 import {
   cleanupPreferences,
   cleanupReviews,
@@ -46,7 +47,7 @@ import {
 
 describe('Scenario Detail Adapter', () => {
   let mainUserId: string;
-  let mainUserDiscordId: string;
+  let mainUserAuthUserId: string;
   let otherUserId: string;
   let systemId: string;
   let scenarioId: string;
@@ -61,7 +62,7 @@ describe('Scenario Detail Adapter', () => {
   beforeAll(async () => {
     const mainUser = await createTestUser();
     mainUserId = mainUser.user_id;
-    mainUserDiscordId = mainUser.discord_id;
+    mainUserAuthUserId = mainUser.auth_user_id;
 
     const otherUser = await createTestUser();
     otherUserId = otherUser.user_id;
@@ -303,12 +304,12 @@ describe('Scenario Detail Adapter', () => {
     });
   });
 
-  describe('getUserByDiscordId', () => {
-    // T-GD-001: 存在しないDiscordIDでnullを返す
-    it('存在しないDiscordIDでnullを返す', async () => {
-      const nonExistentDiscordId = 'non-existent-discord-id-12345';
+  describe('getUserByAuthUserId', () => {
+    // T-GD-001: 存在しない認証UIDでnullを返す
+    it('存在しない認証UIDでnullを返す', async () => {
+      const nonExistentAuthUserId = randomUUID();
 
-      const result = await getUserByDiscordId(nonExistentDiscordId);
+      const result = await getUserByAuthUserId(nonExistentAuthUserId);
 
       if (result.success) {
         expect(result.data).toBeNull();
@@ -319,9 +320,9 @@ describe('Scenario Detail Adapter', () => {
       }
     });
 
-    // T-GD-002: 存在するDiscordIDでユーザーIDを取得できる
-    it('存在するDiscordIDでユーザーIDを取得できる', async () => {
-      const result = await getUserByDiscordId(mainUserDiscordId);
+    // T-GD-002: 存在する認証UIDでユーザーIDを取得できる
+    it('存在する認証UIDでユーザーIDを取得できる', async () => {
+      const result = await getUserByAuthUserId(mainUserAuthUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {

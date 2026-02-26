@@ -7,7 +7,7 @@ import {
   checkDistributeUrlDuplicate,
   checkScenarioNameDuplicate,
   createScenario,
-  getUserByDiscordId,
+  getUserByAuthUserId,
 } from '../adapter';
 import { importFormSchema } from './_components/schema';
 
@@ -36,7 +36,7 @@ export const parseScenarioUrlAction = async (
   }
 
   // ユーザーIDとロールを取得
-  const userResult = await getUserByDiscordId(authUser.id);
+  const userResult = await getUserByAuthUserId(authUser.id);
   if (!userResult.success) {
     return err(userResult.error);
   }
@@ -109,7 +109,7 @@ export const createImportedScenarioAction = async (
   }
 
   // ユーザーIDとロールを取得
-  const userResult = await getUserByDiscordId(authUser.id);
+  const userResult = await getUserByAuthUserId(authUser.id);
   if (!userResult.success) {
     return err(userResult.error);
   }

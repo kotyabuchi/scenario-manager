@@ -7,30 +7,10 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: '14.1';
   };
   public: {
     Tables: {
@@ -921,7 +901,6 @@ export type Database = {
           bio: string | null;
           created_at: string;
           discord_account_id: string | null;
-          discord_id: string;
           favorite_scenarios: string | null;
           image: string | null;
           lastlogin_at: string | null;
@@ -936,7 +915,6 @@ export type Database = {
           bio?: string | null;
           created_at?: string;
           discord_account_id?: string | null;
-          discord_id: string;
           favorite_scenarios?: string | null;
           image?: string | null;
           lastlogin_at?: string | null;
@@ -951,7 +929,6 @@ export type Database = {
           bio?: string | null;
           created_at?: string;
           discord_account_id?: string | null;
-          discord_id?: string;
           favorite_scenarios?: string | null;
           image?: string | null;
           lastlogin_at?: string | null;
@@ -1037,25 +1014,25 @@ export type Database = {
           p_game_session_id: string;
           p_invited_members: Json;
           p_is_beginner_friendly: boolean;
-          p_recruited_player_count: number | null;
-          p_scenario_id: string | null;
+          p_recruited_player_count: number;
+          p_scenario_id: string;
           p_schedule_candidates: Json;
-          p_scheduled_at: string | null;
+          p_scheduled_at: string;
           p_session_description: string;
           p_session_name: string;
-          p_tools: string | null;
+          p_tools: string;
           p_user_id: string;
           p_visibility: Database['public']['Enums']['session_visibility'];
         };
         Returns: {
           game_session_id: string;
           is_beginner_friendly: boolean;
-          recruited_player_count: number | null;
-          scenario_id: string | null;
-          scheduled_at: string | null;
+          recruited_player_count: number;
+          scenario_id: string;
+          scheduled_at: string;
           session_name: string;
           session_phase: Database['public']['Enums']['session_phase'];
-          tools: string | null;
+          tools: string;
           visibility: Database['public']['Enums']['session_visibility'];
         }[];
       };
@@ -1220,9 +1197,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       feedback_category: ['BUG', 'FEATURE', 'UI_UX', 'OTHER'],

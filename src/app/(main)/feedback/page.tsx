@@ -38,7 +38,7 @@ export default async function FeedbackPage({ searchParams }: PageProps) {
   const { data: dbUser } = await supabase
     .from('users')
     .select('user_id')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   const parsed = await searchParamsCache.parse(searchParams);

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { getAllSystems, getUserByDiscordId } from '../../scenarios/adapter';
+import { getAllSystems, getUserByAuthUserId } from '../../scenarios/adapter';
 import { SessionFormContainer } from './_components/SessionFormContainer';
 import * as styles from './styles';
 
@@ -23,7 +23,7 @@ export default async function NewSessionPage() {
     redirect('/');
   }
 
-  const userResult = await getUserByDiscordId(authUser.id);
+  const userResult = await getUserByAuthUserId(authUser.id);
   const currentUserId =
     userResult.success && userResult.data ? userResult.data.userId : null;
 

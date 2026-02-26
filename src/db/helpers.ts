@@ -69,7 +69,7 @@ type DbClientLike = Pick<SupabaseClient<Database>, 'from'>;
 
 /**
  * Supabase Auth UID からアプリ内部 user_id（ULID）を解決する。
- * 段階移行中の互換のため、auth_user_id を優先し、見つからない場合は legacy の discord_id も参照する。
+ * auth_user_id のみを参照する（後方互換 fallback は持たない）。
  */
 export const resolveCurrentAppUserIdByAuthUid = async (
   supabase: DbClientLike,
@@ -91,21 +91,6 @@ export const resolveCurrentAppUserIdByAuthUid = async (
 
   if (byAuthUserId.data?.user_id) {
     return ok(byAuthUserId.data.user_id);
-  }
-
-  // 互換経路: 旧 discord_id（実態が auth uid）を参照
-  const byLegacyDiscordId = await supabase
-    .from('users')
-    .select('user_id')
-    .eq('discord_id', authUserId)
-    .maybeSingle();
-
-  if (byLegacyDiscordId.error) {
-    return err(new Error(byLegacyDiscordId.error.message));
-  }
-
-  if (byLegacyDiscordId.data?.user_id) {
-    return ok(byLegacyDiscordId.data.user_id);
   }
 
   return err(new Error('User not found'));

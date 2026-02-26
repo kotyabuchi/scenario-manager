@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { getUserByDiscordId, updateUserProfile } from '../adapter';
+import { getUserByAuthUserId, updateUserProfile } from '../adapter';
 
+import { randomUUID } from 'node:crypto';
 import { cleanupUsers, createTestUser } from '@/__tests__/helpers/fixtures';
 
 /**
@@ -12,7 +13,7 @@ import { cleanupUsers, createTestUser } from '@/__tests__/helpers/fixtures';
  */
 describe('profile adapter', () => {
   let mainUserId: string;
-  let mainUserDiscordId: string;
+  let mainUserAuthUserId: string;
   let mainUserName: string;
   let otherUserId: string;
   let otherUserName: string;
@@ -20,7 +21,7 @@ describe('profile adapter', () => {
   beforeAll(async () => {
     const mainUser = await createTestUser();
     mainUserId = mainUser.user_id;
-    mainUserDiscordId = mainUser.discord_id;
+    mainUserAuthUserId = mainUser.auth_user_id;
     mainUserName = mainUser.user_name;
 
     const otherUser = await createTestUser();
@@ -32,12 +33,12 @@ describe('profile adapter', () => {
     await cleanupUsers([mainUserId, otherUserId]);
   });
 
-  describe('getUserByDiscordId', () => {
-    // T-GU-002: 存在しないユーザーIDでnullを返す
-    it('存在しないDiscordIDでnullを返す', async () => {
-      const nonExistentDiscordId = 'non-existent-discord-id-12345';
+  describe('getUserByAuthUserId', () => {
+    // T-GU-002: 存在しない認証UIDでnullを返す
+    it('存在しない認証UIDでnullを返す', async () => {
+      const nonExistentAuthUserId = randomUUID();
 
-      const result = await getUserByDiscordId(nonExistentDiscordId);
+      const result = await getUserByAuthUserId(nonExistentAuthUserId);
 
       // DBエラーでない限り、success=trueでdata=nullが返される
       if (result.success) {
@@ -49,13 +50,13 @@ describe('profile adapter', () => {
       }
     });
 
-    // T-GU-001: 存在するユーザーIDで情報を取得できる
-    it('存在するDiscordIDでユーザー情報を取得できる', async () => {
-      const result = await getUserByDiscordId(mainUserDiscordId);
+    // T-GU-001: 存在する認証UIDで情報を取得できる
+    it('存在する認証UIDでユーザー情報を取得できる', async () => {
+      const result = await getUserByAuthUserId(mainUserAuthUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
-        expect(result.data.discordId).toBe(mainUserDiscordId);
+        expect(result.data.authUserId).toBe(mainUserAuthUserId);
         expect(result.data).toHaveProperty('userId');
         expect(result.data).toHaveProperty('userName');
         expect(result.data).toHaveProperty('nickname');

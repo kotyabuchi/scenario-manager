@@ -22,12 +22,12 @@ export const createTestUser = async (override?: UserOverride) => {
   const record: Database['public']['Tables']['users']['Insert'] = {
     auth_user_id: authUserId,
     user_id: id,
-    discord_id: `${TEST_PREFIX}_discord_${id}`,
+    discord_account_id: `${TEST_PREFIX}_discord_${id}`,
     user_name: `${TEST_PREFIX}_user_${id}`,
     nickname: `${TEST_PREFIX} User ${id.slice(-4)}`,
-    discord_account_id: null,
     ...override,
   };
+
   const { data, error } = await client
     .from('users')
     .insert(record)

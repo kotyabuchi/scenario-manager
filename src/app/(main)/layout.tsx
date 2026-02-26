@@ -5,6 +5,7 @@ import { GlobalHeader } from '@/components/blocks/GlobalHeader';
 import { SimpleFooter } from '@/components/blocks/SimpleFooter';
 import { SpeedDialFAB } from '@/components/blocks/SpeedDialFAB';
 import { AuthProvider } from '@/context';
+import { getDiscordAccountIdFromAuthUser } from '@/lib/supabase/discordAuth';
 import { createClient } from '@/lib/supabase/server';
 import { Flex, styled } from '@/styled-system/jsx';
 
@@ -23,21 +24,21 @@ export default async function MainLayout({ children }: PropsWithChildren) {
   if (authUser) {
     const { data: dbUser } = await supabase
       .from('users')
-      .select('user_id, discord_id, nickname, image, role')
-      .eq('discord_id', authUser.id)
+      .select('user_id, discord_account_id, nickname, image, role')
+      .eq('auth_user_id', authUser.id)
       .maybeSingle();
 
     if (dbUser) {
       initialUser = {
         userId: dbUser.user_id,
-        discordId: dbUser.discord_id,
+        discordId: dbUser.discord_account_id,
         nickname: dbUser.nickname,
         avatar: dbUser.image,
         role: dbUser.role,
       };
     } else {
       initialDiscordMeta = {
-        discordId: authUser.id,
+        discordId: getDiscordAccountIdFromAuthUser(authUser) ?? authUser.id,
         avatarUrl: authUser.user_metadata?.avatar_url ?? null,
         userName: authUser.user_metadata?.full_name ?? null,
         displayName:

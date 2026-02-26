@@ -26,7 +26,7 @@ export const getDashboardUser = cache(
       const { data, error } = await supabase
         .from('users')
         .select('user_id, nickname, image')
-        .eq('discord_id', authId)
+        .eq('auth_user_id', authId)
         .single();
 
       if (error) {

@@ -7,7 +7,7 @@ import {
   checkDistributeUrlDuplicate,
   checkScenarioNameDuplicate,
   createScenario,
-  getUserByDiscordId,
+  getUserByAuthUserId,
 } from '../adapter';
 import { scenarioFormSchema } from './_components/schema';
 
@@ -46,7 +46,7 @@ export const createScenarioAction = async (
   }
 
   // ユーザーIDとロールを取得
-  const userResult = await getUserByDiscordId(authUser.id);
+  const userResult = await getUserByAuthUserId(authUser.id);
   if (!userResult.success) {
     return err(userResult.error);
   }
