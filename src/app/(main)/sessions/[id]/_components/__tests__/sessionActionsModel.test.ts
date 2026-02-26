@@ -53,7 +53,7 @@ describe('sessionActionsModel', () => {
       expect(actions[2]?.href).toBe('/sessions/session-1/availability');
     });
 
-    it('manager + PREPARATION + CONFIRMED で確定日程編集を主CTAとして返し、可用枠提出を補助CTAで返す', () => {
+    it('manager + PREPARATION + CONFIRMED で確定日程編集を主CTAとして返し、可用枠提出導線は表示しない', () => {
       const actions = getAvailableSessionActions(
         SessionPhases.PREPARATION.value,
         SchedulePhases.CONFIRMED.value,
@@ -65,7 +65,6 @@ describe('sessionActionsModel', () => {
       expect(actions.map((action) => action.id)).toEqual([
         'schedule',
         'manage-applications',
-        'schedule',
         'cancel-session',
       ]);
       expect(actions[0]).toMatchObject({
@@ -78,10 +77,7 @@ describe('sessionActionsModel', () => {
           (action) =>
             action.id === 'schedule' && action.placement === 'secondary',
         ),
-      ).toMatchObject({
-        label: '参加可能時間を提出',
-        href: '/sessions/session-1/availability',
-      });
+      ).toBeUndefined();
     });
 
     it('participant(CONFIRMED) + ADJUSTING で可用枠提出と辞退を返す', () => {

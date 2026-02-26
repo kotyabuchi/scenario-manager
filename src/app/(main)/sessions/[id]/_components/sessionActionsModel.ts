@@ -121,16 +121,6 @@ const getManagerActions = (
         variant: 'secondary',
         href: `/sessions/${sessionId}/availability`,
       });
-    } else {
-      actions.push({
-        id: 'schedule',
-        placement: 'secondary',
-        type: 'link',
-        label: availabilityActionLabel,
-        icon: 'calendar',
-        variant: 'secondary',
-        href: `/sessions/${sessionId}/availability`,
-      });
     }
   }
 

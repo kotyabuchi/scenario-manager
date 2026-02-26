@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1';
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       feedback_comments: {
@@ -940,15 +915,15 @@ export type Database = {
         Args: {
           p_creator_participant_type: Database['public']['Enums']['participant_type'];
           p_game_session_id: string;
-          p_initial_availability_slots: Json;
-          p_invited_members: Json;
+          p_initial_availability_slots: Json | null;
+          p_invited_members: Json | null;
           p_is_beginner_friendly: boolean;
-          p_recruited_player_count: number;
-          p_scenario_id: string;
-          p_scheduled_at: string;
+          p_recruited_player_count: number | null;
+          p_scenario_id: string | null;
+          p_scheduled_at: string | null;
           p_session_description: string;
           p_session_name: string;
-          p_tools: string;
+          p_tools: string | null;
           p_user_id: string;
           p_visibility: Database['public']['Enums']['session_visibility'];
         };
@@ -965,6 +940,48 @@ export type Database = {
         }[];
       };
       current_app_user_id: { Args: never; Returns: string };
+      replace_availability_slots: {
+        Args: { p_session_id: string; p_slots: Json; p_user_id: string };
+        Returns: {
+          availability_slot_id: string;
+          created_at: string;
+          end_at: string;
+          session_id: string;
+          start_at: string;
+          updated_at: string;
+          user_id: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'session_availability_slots';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      replace_confirmed_schedule_slots: {
+        Args: {
+          p_actor_user_id: string;
+          p_schedule_date: string;
+          p_session_id: string;
+          p_slots: Json;
+        };
+        Returns: {
+          created_at: string;
+          created_by: string;
+          end_at: string;
+          game_schedule_slot_id: string;
+          session_id: string;
+          slot_order: number;
+          start_at: string;
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'game_schedule_slots';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
     };
     Enums: {
       feedback_category: 'BUG' | 'FEATURE' | 'UI_UX' | 'OTHER';
@@ -1123,9 +1140,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       feedback_category: ['BUG', 'FEATURE', 'UI_UX', 'OTHER'],

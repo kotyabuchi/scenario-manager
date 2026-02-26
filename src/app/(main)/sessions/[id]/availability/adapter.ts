@@ -105,9 +105,9 @@ export const getAvailabilityWorkspaceData = async (
     }
 
     const [
-      { data: currentParticipant },
-      { data: allParticipants },
-      { data: allSlots },
+      { data: currentParticipant, error: currentParticipantError },
+      { data: allParticipants, error: allParticipantsError },
+      { data: allSlots, error: allSlotsError },
       { data: confirmedSlots, error: confirmedSlotsError },
     ] = await Promise.all([
       supabase
@@ -133,6 +133,18 @@ export const getAvailabilityWorkspaceData = async (
         .order('slot_order', { ascending: true }),
     ]);
 
+    if (currentParticipantError) {
+      logger.error`ワークスペース初期データ取得(現在参加者)エラー: ${currentParticipantError.message}`;
+      return err(new Error(currentParticipantError.message));
+    }
+    if (allParticipantsError) {
+      logger.error`ワークスペース初期データ取得(全参加者)エラー: ${allParticipantsError.message}`;
+      return err(new Error(allParticipantsError.message));
+    }
+    if (allSlotsError) {
+      logger.error`ワークスペース初期データ取得(提出枠)エラー: ${allSlotsError.message}`;
+      return err(new Error(allSlotsError.message));
+    }
     if (confirmedSlotsError) {
       logger.error`ワークスペース初期データ取得(確定枠)エラー: ${confirmedSlotsError.message}`;
       return err(new Error(confirmedSlotsError.message));
@@ -253,7 +265,7 @@ export const hasUserAvailabilitySubmission = async (
 };
 
 /**
- * 自分の可用枠を全置換で保存する
+ * 自分の可用枠を全置換で保存する（RPC でアトミック実行）
  */
 export const replaceAvailabilitySlots = async (
   sessionId: string,
@@ -268,39 +280,21 @@ export const replaceAvailabilitySlots = async (
 
     const supabase = await createDbClient();
 
-    const { error: deleteError } = await supabase
-      .from('session_availability_slots')
-      .delete()
-      .eq('session_id', sessionId)
-      .eq('user_id', userId);
+    const slotsPayload = slots.map((slot) => ({
+      availabilitySlotId: ulid(),
+      startAt: slot.startAt,
+      endAt: slot.endAt,
+    }));
 
-    if (deleteError) {
-      logger.error`可用枠削除エラー: ${deleteError.message}`;
-      return err(new Error(deleteError.message));
-    }
+    const { data, error } = await supabase.rpc('replace_availability_slots', {
+      p_session_id: sessionId,
+      p_user_id: userId,
+      p_slots: slotsPayload,
+    });
 
-    if (slots.length === 0) {
-      return ok([]);
-    }
-
-    const rows: Database['public']['Tables']['session_availability_slots']['Insert'][] =
-      slots.map((slot) => ({
-        availability_slot_id: ulid(),
-        session_id: sessionId,
-        user_id: userId,
-        start_at: slot.startAt,
-        end_at: slot.endAt,
-      }));
-
-    const { data, error: insertError } = await supabase
-      .from('session_availability_slots')
-      .insert(rows)
-      .select('*')
-      .order('start_at', { ascending: true });
-
-    if (insertError) {
-      logger.error`可用枠保存エラー: ${insertError.message}`;
-      return err(new Error(insertError.message));
+    if (error) {
+      logger.error`可用枠置換RPCエラー: ${error.message}`;
+      return err(new Error(error.message));
     }
 
     return ok(

@@ -1,17 +1,12 @@
 import { ulid } from 'ulid';
 
-import {
-  ParticipantStatuses,
-  ParticipantTypes,
-  SchedulePhases,
-} from '@/db/enum';
+import { ParticipantStatuses, ParticipantTypes } from '@/db/enum';
 import { buildScheduleRecommendations } from '@/lib/availability/recommendation';
 import { getAppLogger } from '@/lib/logger';
 import { createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys, toRecordArray } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
-import type { Database } from '@/db/types';
 import type {
   AvailabilitySlotInput,
   ConfirmedScheduleSlotRow,
@@ -62,53 +57,8 @@ const validateConfirmedSlots = (
   return ok(undefined);
 };
 
-const ensureGameScheduleParent = async (
-  sessionId: string,
-  firstSlotStartAt: string,
-): Promise<Result<void>> => {
-  const supabase = await createDbClient();
-  const { data: existing, error: selectError } = await supabase
-    .from('game_schedules')
-    .select('session_id')
-    .eq('session_id', sessionId)
-    .maybeSingle();
-
-  if (selectError) {
-    return err(new Error(selectError.message));
-  }
-
-  if (!existing) {
-    const payload: Database['public']['Tables']['game_schedules']['Insert'] = {
-      session_id: sessionId,
-      schedule_date: firstSlotStartAt,
-      schedule_phase: SchedulePhases.CONFIRMED.value,
-    };
-    const { error: insertError } = await supabase
-      .from('game_schedules')
-      .insert(payload);
-    if (insertError) {
-      return err(new Error(insertError.message));
-    }
-    return ok(undefined);
-  }
-
-  const { error: updateError } = await supabase
-    .from('game_schedules')
-    .update({
-      schedule_date: firstSlotStartAt,
-      schedule_phase: SchedulePhases.CONFIRMED.value,
-    })
-    .eq('session_id', sessionId);
-
-  if (updateError) {
-    return err(new Error(updateError.message));
-  }
-
-  return ok(undefined);
-};
-
 /**
- * 確定枠を全置換する（再編集可）
+ * 確定枠を全置換する（RPC でアトミック実行、再編集可）
  */
 export const replaceConfirmedScheduleSlots = async (
   sessionId: string,
@@ -125,51 +75,35 @@ export const replaceConfirmedScheduleSlots = async (
       return err(new Error('最低1つの日程枠を選択してください'));
     }
 
-    const [firstSlot] = slots;
-    if (!firstSlot) {
+    const earliestSlot = [...slots].sort(
+      (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+    )[0];
+    if (!earliestSlot) {
       return err(new Error('最低1つの日程枠を選択してください'));
-    }
-
-    const ensureParent = await ensureGameScheduleParent(
-      sessionId,
-      firstSlot.startAt,
-    );
-    if (!ensureParent.success) {
-      logger.error`game_schedules 親レコード更新エラー: ${ensureParent.error}`;
-      return err(ensureParent.error);
     }
 
     const supabase = await createDbClient();
 
-    const { error: deleteError } = await supabase
-      .from('game_schedule_slots')
-      .delete()
-      .eq('session_id', sessionId);
+    const slotsPayload = slots.map((slot, index) => ({
+      gameScheduleSlotId: ulid(),
+      startAt: slot.startAt,
+      endAt: slot.endAt,
+      slotOrder: index + 1,
+    }));
 
-    if (deleteError) {
-      logger.error`確定枠削除エラー: ${deleteError.message}`;
-      return err(new Error(deleteError.message));
-    }
+    const { data, error } = await supabase.rpc(
+      'replace_confirmed_schedule_slots',
+      {
+        p_session_id: sessionId,
+        p_actor_user_id: actorUserId,
+        p_slots: slotsPayload,
+        p_schedule_date: earliestSlot.startAt,
+      },
+    );
 
-    const rows: Database['public']['Tables']['game_schedule_slots']['Insert'][] =
-      slots.map((slot, index) => ({
-        game_schedule_slot_id: ulid(),
-        session_id: sessionId,
-        start_at: slot.startAt,
-        end_at: slot.endAt,
-        slot_order: index + 1,
-        created_by: actorUserId,
-      }));
-
-    const { data, error: insertError } = await supabase
-      .from('game_schedule_slots')
-      .insert(rows)
-      .select('*')
-      .order('slot_order', { ascending: true });
-
-    if (insertError) {
-      logger.error`確定枠保存エラー: ${insertError.message}`;
-      return err(new Error(insertError.message));
+    if (error) {
+      logger.error`確定枠置換RPCエラー: ${error.message}`;
+      return err(new Error(error.message));
     }
 
     return ok(
