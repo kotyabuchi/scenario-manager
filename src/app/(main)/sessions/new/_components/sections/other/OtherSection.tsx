@@ -1,9 +1,16 @@
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { DotsThreeOutline, Wrench } from '@phosphor-icons/react/ssr';
+import { useEffect, useRef } from 'react';
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
+import { DotsThreeOutline, Wrench, XIcon } from '@phosphor-icons/react/ssr';
 
 import * as styles from '../../styles';
 
 import { FormField } from '@/components/elements/form-field';
+import { IconButton } from '@/components/elements/icon-button/icon-button';
 import { Input } from '@/components/elements/input';
 import { NumberInput } from '@/components/elements/number-input';
 import { Switch } from '@/components/elements/switch';
@@ -18,6 +25,53 @@ export const OtherSection = () => {
     formState: { errors },
   } = useFormContext<SessionFormInput>();
   const scheduleType = useWatch({ name: 'scheduleType', control });
+  const scheduleCandidates = useWatch({
+    name: 'scheduleCandidates',
+    control,
+  });
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'scheduleCandidates',
+  });
+  const lastAppendKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (scheduleType !== 'specify') {
+      if (fields.length > 0) {
+        replace([]);
+      }
+      lastAppendKeyRef.current = null;
+      return;
+    }
+    if (fields.length === 0) {
+      append({ from: '', to: '' }, { shouldFocus: false });
+    }
+  }, [append, fields.length, replace, scheduleType]);
+
+  useEffect(() => {
+    if (scheduleType !== 'specify' || fields.length === 0) return;
+
+    const current = scheduleCandidates ?? [];
+    const last = current[current.length - 1] ?? { from: '', to: '' };
+    const secondLast = current[current.length - 2] ?? { from: '', to: '' };
+    const lastComplete = last.from.trim() !== '';
+    const lastEmpty = last.from.trim() === '' && (last.to?.trim() ?? '') === '';
+    const secondLastEmpty =
+      secondLast.from.trim() === '' && (secondLast.to?.trim() ?? '') === '';
+
+    const appendKey = `${current.length}:${last.from}:${last.to ?? ''}`;
+    if (lastComplete && lastAppendKeyRef.current !== appendKey) {
+      lastAppendKeyRef.current = appendKey;
+      append({ from: '', to: '' }, { shouldFocus: false });
+      return;
+    }
+    if (!lastComplete) {
+      lastAppendKeyRef.current = null;
+    }
+    if (current.length > 1 && lastEmpty && secondLastEmpty) {
+      remove(current.length - 1);
+    }
+  }, [append, fields.length, remove, scheduleCandidates, scheduleType]);
 
   return (
     <section className={styles.form_section}>
@@ -49,6 +103,12 @@ export const OtherSection = () => {
                     field.onChange(nextType);
                     if (!d.checked) {
                       setValue('scheduledAt', null);
+                      replace([]);
+                      return;
+                    }
+                    const current = scheduleCandidates ?? [];
+                    if (current.length === 0) {
+                      replace([{ from: '', to: '' }]);
                     }
                   }}
                   ariaLabel="開催日時を指定"
@@ -59,14 +119,62 @@ export const OtherSection = () => {
           {scheduleType === 'specify' && (
             <FormField
               label="日時の入力"
-              hint="日時を1つ指定できます。後で日程調整する場合はオフのままにしてください"
+              hint="複数行で入力できます。終了時刻は必要な行だけ入力してください"
             >
-              <Input
-                type="datetime-local"
-                id="scheduledAt"
-                aria-label="開催日時"
-                {...register('scheduledAt')}
-              />
+              <div className={styles.form_scheduleList}>
+                {fields.map((field, index) => {
+                  const value = scheduleCandidates?.[index] ?? {
+                    from: '',
+                    to: '',
+                  };
+                  const hasValue = value.from.trim() !== '';
+                  return (
+                    <div
+                      key={field.id}
+                      className={styles.form_scheduleRow}
+                      data-has-value={hasValue}
+                    >
+                      <div className={styles.form_scheduleRange}>
+                        <Input
+                          type="datetime-local"
+                          id={`scheduledFrom-${index + 1}`}
+                          aria-label={`開催開始日時 ${index + 1}`}
+                          {...register(
+                            `scheduleCandidates.${index}.from` as const,
+                          )}
+                          className={styles.form_scheduleInput}
+                        />
+                        <span className={styles.form_scheduleRangeSeparator}>
+                          〜
+                        </span>
+                        <Input
+                          type="datetime-local"
+                          id={`scheduledTo-${index + 1}`}
+                          aria-label={`開催終了日時 ${index + 1}`}
+                          {...register(
+                            `scheduleCandidates.${index}.to` as const,
+                          )}
+                          className={styles.form_scheduleInput}
+                        />
+                      </div>
+                      <span className={styles.form_scheduleRemoveWrap}>
+                        <IconButton
+                          type="button"
+                          variant="ghost"
+                          status="danger"
+                          size="sm"
+                          className={styles.form_scheduleRemoveButton}
+                          aria-label="日時を削除"
+                          onClick={() => remove(index)}
+                          disabled={!hasValue}
+                        >
+                          <XIcon />
+                        </IconButton>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </FormField>
           )}
         </div>

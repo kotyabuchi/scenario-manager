@@ -82,7 +82,21 @@ export const createSession = async (
 
     const gameSessionId = ulid();
 
-    const representativeScheduledAt = input.scheduledAt || null;
+    const confirmedCandidates = (input.scheduleCandidates ?? []).filter(
+      (candidate) => candidate.from.trim() !== '',
+    );
+    const representativeScheduledAt =
+      confirmedCandidates.length > 0
+        ? confirmedCandidates
+            .map((candidate) => candidate.from)
+            .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0]
+        : (input.scheduledAt ?? null);
+
+    const candidatePayload = confirmedCandidates.map((candidate) => ({
+      candidateId: ulid(),
+      from: new Date(candidate.from).toISOString(),
+      to: candidate.to ? new Date(candidate.to).toISOString() : '',
+    }));
 
     // Supabase gen types は RPC 引数の NULL 許容を落とすことがあるため、
     // DB関数シグネチャに合わせて明示キャストする。
@@ -100,7 +114,7 @@ export const createSession = async (
       p_is_beginner_friendly: input.isBeginnerFriendly,
       p_visibility: input.visibility,
       p_creator_participant_type: input.creatorParticipantType,
-      p_schedule_candidates: [],
+      p_schedule_candidates: candidatePayload,
       p_invited_members: input.invitedMembers,
     } as unknown as Database['public']['Functions']['create_session_with_candidates']['Args'];
 

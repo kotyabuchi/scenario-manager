@@ -50,6 +50,28 @@ export const sessionFormSchema = z.object({
     )
     .nullish(),
 
+  // 日程候補（確定）- 作成時に確定日時として複数登録可能（終了時刻は行ごとに任意）
+  scheduleCandidates: z
+    .array(
+      z
+        .object({
+          from: z.string(),
+          to: z.string().optional(),
+        })
+        .refine(
+          (val) => {
+            const from = val.from.trim();
+            const to = val.to?.trim() ?? '';
+            if (from === '' && to === '') return true;
+            if (!isValidDateTime(from)) return false;
+            if (to === '') return true;
+            return isValidDateTime(to);
+          },
+          { message: '日時の形式が正しくありません' },
+        ),
+    )
+    .default([]),
+
   // 募集人数（任意）- 未定の場合はnull/undefined。0人 = 募集未開始
   recruitedPlayerCount: z
     .number()
