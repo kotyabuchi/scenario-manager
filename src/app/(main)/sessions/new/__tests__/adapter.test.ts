@@ -69,29 +69,26 @@ describe('Session Management Adapter', () => {
   describeIfServiceRole('createSession', () => {
     // T-CS-RPC-001: RPC関数のシグネチャ/戻り値型の不整合を回帰検知する
     itIfServiceRole(
-      'RPC create_session_with_candidates が曖昧解決・戻り値型不一致を起こさない',
+      'RPC create_session_transaction が曖昧解決・戻り値型不一致を起こさない',
       async () => {
         const client = getTestClient();
         const gameSessionId = ulid();
 
-        const { data, error } = await client.rpc(
-          'create_session_with_candidates',
-          {
-            p_game_session_id: gameSessionId,
-            p_user_id: testUserId,
-            p_session_name: 'RPC回帰テスト用セッション',
-            p_session_description: 'DB関数契約の回帰テスト',
-            p_scenario_id: scenarioId,
-            p_scheduled_at: new Date('2026-01-18T20:00:00+09:00').toISOString(),
-            p_recruited_player_count: 4,
-            p_tools: 'Discord',
-            p_is_beginner_friendly: true,
-            p_visibility: 'PUBLIC',
-            p_creator_participant_type: 'KEEPER',
-            p_schedule_candidates: [],
-            p_invited_members: [],
-          },
-        );
+        const { data, error } = await client.rpc('create_session_transaction', {
+          p_game_session_id: gameSessionId,
+          p_user_id: testUserId,
+          p_session_name: 'RPC回帰テスト用セッション',
+          p_session_description: 'DB関数契約の回帰テスト',
+          p_scenario_id: scenarioId,
+          p_scheduled_at: new Date('2026-01-18T20:00:00+09:00').toISOString(),
+          p_recruited_player_count: 4,
+          p_tools: 'Discord',
+          p_is_beginner_friendly: true,
+          p_visibility: 'PUBLIC',
+          p_creator_participant_type: 'KEEPER',
+          p_initial_availability_slots: [],
+          p_invited_members: [],
+        });
 
         if (error) {
           expect(error.message).not.toContain(
@@ -112,6 +109,15 @@ describe('Session Management Adapter', () => {
         expect(created?.scenario_id).toBe(scenarioId);
         expect(created?.session_phase).toBe('RECRUITING');
         expect(created?.visibility).toBe('PUBLIC');
+
+        const { data: availabilitySlots, error: availabilityError } =
+          await client
+            .from('session_availability_slots')
+            .select('start_at, end_at, user_id')
+            .eq('session_id', gameSessionId);
+
+        expect(availabilityError).toBeNull();
+        expect(availabilitySlots).toEqual([]);
       },
     );
 
@@ -152,6 +158,20 @@ describe('Session Management Adapter', () => {
         expect(normalizedScheduledAt).toBe(
           new Date('2026-01-18T20:00:00+09:00').toISOString(),
         );
+
+        const client = getTestClient();
+        const { data: availabilitySlots, error: availabilityError } =
+          await client
+            .from('session_availability_slots')
+            .select('start_at, end_at, user_id')
+            .eq('session_id', result.data.gameSessionId)
+            .order('start_at', { ascending: true });
+
+        expect(availabilityError).toBeNull();
+        expect(availabilitySlots).toHaveLength(2);
+        expect(
+          availabilitySlots?.every((slot) => slot.user_id === testUserId),
+        ).toBe(true);
       }
     });
 

@@ -519,99 +519,6 @@ export type Database = {
           },
         ];
       };
-      schedule_candidates: {
-        Row: {
-          candidate_date: string;
-          candidate_id: string;
-          created_at: string;
-          created_by: string | null;
-          end_time: string | null;
-          session_id: string;
-          status: Database['public']['Enums']['schedule_candidate_status'];
-          updated_at: string;
-        };
-        Insert: {
-          candidate_date: string;
-          candidate_id: string;
-          created_at?: string;
-          created_by?: string | null;
-          end_time?: string | null;
-          session_id: string;
-          status?: Database['public']['Enums']['schedule_candidate_status'];
-          updated_at?: string;
-        };
-        Update: {
-          candidate_date?: string;
-          candidate_id?: string;
-          created_at?: string;
-          created_by?: string | null;
-          end_time?: string | null;
-          session_id?: string;
-          status?: Database['public']['Enums']['schedule_candidate_status'];
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'schedule_candidates_created_by_fkey';
-            columns: ['created_by'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['user_id'];
-          },
-          {
-            foreignKeyName: 'schedule_candidates_session_id_fkey';
-            columns: ['session_id'];
-            isOneToOne: false;
-            referencedRelation: 'game_sessions';
-            referencedColumns: ['game_session_id'];
-          },
-        ];
-      };
-      schedule_responses: {
-        Row: {
-          availability: Database['public']['Enums']['schedule_availability'];
-          candidate_id: string;
-          comment: string | null;
-          created_at: string;
-          response_id: string;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          availability?: Database['public']['Enums']['schedule_availability'];
-          candidate_id: string;
-          comment?: string | null;
-          created_at?: string;
-          response_id: string;
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          availability?: Database['public']['Enums']['schedule_availability'];
-          candidate_id?: string;
-          comment?: string | null;
-          created_at?: string;
-          response_id?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'schedule_responses_candidate_id_fkey';
-            columns: ['candidate_id'];
-            isOneToOne: false;
-            referencedRelation: 'schedule_candidates';
-            referencedColumns: ['candidate_id'];
-          },
-          {
-            foreignKeyName: 'schedule_responses_user_id_users_user_id_fk';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['user_id'];
-          },
-        ];
-      };
       session_availability_slots: {
         Row: {
           availability_slot_id: string;
@@ -1004,23 +911,19 @@ export type Database = {
         Args: { p_delta: number; p_session_id: string };
         Returns: undefined;
       };
-      confirm_schedule: {
-        Args: { p_candidate_id: string; p_session_id: string };
-        Returns: undefined;
-      };
-      create_session_with_candidates: {
+      create_session_transaction: {
         Args: {
           p_creator_participant_type: Database['public']['Enums']['participant_type'];
           p_game_session_id: string;
+          p_initial_availability_slots: Json;
           p_invited_members: Json;
           p_is_beginner_friendly: boolean;
-          p_recruited_player_count: number;
-          p_scenario_id: string;
-          p_schedule_candidates: Json;
-          p_scheduled_at: string;
+          p_recruited_player_count: number | null;
+          p_scenario_id: string | null;
+          p_scheduled_at: string | null;
           p_session_description: string;
           p_session_name: string;
-          p_tools: string;
+          p_tools: string | null;
           p_user_id: string;
           p_visibility: Database['public']['Enums']['session_visibility'];
         };
@@ -1058,8 +961,6 @@ export type Database = {
       participant_type: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
       role: 'MODERATOR' | 'MEMBER';
       scenario_source_type: 'manual' | 'booth' | 'talto';
-      schedule_availability: 'OK' | 'MAYBE' | 'NG';
-      schedule_candidate_status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
       schedule_phase: 'ADJUSTING' | 'CONFIRMED';
       session_link_type: 'DISCORD' | 'CCFOLIA' | 'OTHER';
       session_phase:
@@ -1220,8 +1121,6 @@ export const Constants = {
       participant_type: ['KEEPER', 'PLAYER', 'SPECTATOR'],
       role: ['MODERATOR', 'MEMBER'],
       scenario_source_type: ['manual', 'booth', 'talto'],
-      schedule_availability: ['OK', 'MAYBE', 'NG'],
-      schedule_candidate_status: ['PENDING', 'CONFIRMED', 'CANCELLED'],
       schedule_phase: ['ADJUSTING', 'CONFIRMED'],
       session_link_type: ['DISCORD', 'CCFOLIA', 'OTHER'],
       session_phase: [

@@ -206,59 +206,6 @@ export const createTestLink = async (opts: LinkOpts) => {
   return data;
 };
 
-type CandidateOpts = {
-  sessionId: string;
-  createdBy?: string | null;
-} & Partial<Database['public']['Tables']['schedule_candidates']['Insert']>;
-
-/** テスト用日程候補を作成 */
-export const createTestCandidate = async (opts: CandidateOpts) => {
-  const client = getTestClient();
-  const id = ulid();
-  const { sessionId, createdBy, ...rest } = opts;
-  const record: Database['public']['Tables']['schedule_candidates']['Insert'] =
-    {
-      candidate_id: id,
-      session_id: sessionId,
-      candidate_date: new Date().toISOString(),
-      created_by: createdBy ?? null,
-      ...rest,
-    };
-  const { data, error } = await client
-    .from('schedule_candidates')
-    .insert(record)
-    .select()
-    .single();
-  if (error) throw new Error(`createTestCandidate failed: ${error.message}`);
-  return data;
-};
-
-type ResponseOpts = {
-  candidateId: string;
-  userId: string;
-} & Partial<Database['public']['Tables']['schedule_responses']['Insert']>;
-
-/** テスト用日程回答を作成 */
-export const createTestResponse = async (opts: ResponseOpts) => {
-  const client = getTestClient();
-  const id = ulid();
-  const { candidateId, userId, ...rest } = opts;
-  const record: Database['public']['Tables']['schedule_responses']['Insert'] = {
-    response_id: id,
-    candidate_id: candidateId,
-    user_id: userId,
-    availability: 'OK',
-    ...rest,
-  };
-  const { data, error } = await client
-    .from('schedule_responses')
-    .insert(record)
-    .select()
-    .single();
-  if (error) throw new Error(`createTestResponse failed: ${error.message}`);
-  return data;
-};
-
 type ReviewOpts = {
   userId: string;
   scenarioId: string;
@@ -343,26 +290,18 @@ export const createTestScenarioTag = async (opts: ScenarioTagOpts) => {
 // ============================================================
 
 /**
- * セッションを削除（CASCADE: participants, links, candidates, responses）
+ * セッションを削除（CASCADE: participants, links, availability slots など）
  */
 export const cleanupSessions = async (ids: string[]) => {
   if (ids.length === 0) return;
   const client = getTestClient();
 
-  // schedule_responses は candidates 経由で CASCADE されない場合があるため明示削除
-  const { data: candidates } = await client
-    .from('schedule_candidates')
-    .select('candidate_id')
+  await client
+    .from('session_availability_slots')
+    .delete()
     .in('session_id', ids);
-  if (candidates && candidates.length > 0) {
-    const candidateIds = candidates.map((c) => c.candidate_id);
-    await client
-      .from('schedule_responses')
-      .delete()
-      .in('candidate_id', candidateIds);
-  }
-  await client.from('schedule_candidates').delete().in('session_id', ids);
   await client.from('session_links').delete().in('session_id', ids);
+  await client.from('game_schedule_slots').delete().in('session_id', ids);
   await client.from('game_schedules').delete().in('session_id', ids);
   await client.from('session_participants').delete().in('session_id', ids);
   await client.from('game_sessions').delete().in('game_session_id', ids);
