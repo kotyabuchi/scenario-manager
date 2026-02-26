@@ -54,10 +54,7 @@ export const Filled: Story = {
       sessionName: '週末CoC7版セッション',
       sessionDescription: '週末にCoC7版を遊びませんか？初心者歓迎です！',
       scheduleType: 'specify',
-      scheduleCandidates: [
-        { from: '2026-02-01T20:00', to: '2026-02-01T23:00' },
-        { from: '2026-02-08T20:00' },
-      ],
+      scheduledAt: '2026-02-01T20:00',
       recruitedPlayerCount: 4,
       tools: 'Discord + ココフォリア',
       isBeginnerFriendly: true,

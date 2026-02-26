@@ -33,7 +33,6 @@ type SessionFormProps = {
   systems: SystemSummary[];
   currentUserId?: string;
 };
-
 export const SessionForm = ({
   onSubmit,
   defaultValues,
@@ -49,7 +48,6 @@ export const SessionForm = ({
       sessionDescription: defaultValues?.sessionDescription ?? '',
       scenarioId: defaultValues?.scenarioId ?? null,
       scheduledAt: defaultValues?.scheduledAt ?? null,
-      scheduleCandidates: defaultValues?.scheduleCandidates ?? [],
       recruitedPlayerCount: defaultValues?.recruitedPlayerCount ?? 0,
       tools: defaultValues?.tools ?? null,
       isBeginnerFriendly: defaultValues?.isBeginnerFriendly ?? false,
@@ -88,28 +86,13 @@ export const SessionForm = ({
   };
 
   const onFormSubmit = (data: SessionFormInput) => {
-    const scheduleCandidates =
-      data.scheduleType === 'specify'
-        ? (data.scheduleCandidates ?? []).filter(
-            (candidate) => candidate.from.trim() !== '',
-          )
-        : [];
     const scheduledAt =
-      data.scheduleType === 'later'
-        ? null
-        : scheduleCandidates.length > 0
-          ? scheduleCandidates.reduce<string | null>((min, candidate) => {
-              const current = candidate.from;
-              if (!min) return current;
-              return new Date(current) < new Date(min) ? current : min;
-            }, null)
-          : data.scheduledAt || null;
+      data.scheduleType === 'later' ? null : data.scheduledAt || null;
     const normalizedData: SessionFormValues = {
       sessionName: data.sessionName,
       sessionDescription: data.sessionDescription,
       scenarioId: data.scenarioId || null,
       scheduledAt,
-      scheduleCandidates,
       recruitedPlayerCount: data.recruitedPlayerCount ?? null,
       tools: data.tools || null,
       isBeginnerFriendly: data.isBeginnerFriendly ?? false,

@@ -11,7 +11,6 @@ import { sessionFormSchema } from '../schema';
  * - sessionDescription: 1〜500文字（必須）- 唯一の「必須」項目
  * - scenarioId: ULID形式（任意）
  * - scheduledAt: ISO8601日時文字列（任意）
- * - scheduleCandidates: ISO8601日時文字列の配列（任意 / 終了時刻は行ごとに任意）
  * - recruitedPlayerCount: 0〜10の整数（任意）
  * - tools: 最大200文字（任意）
  * - isBeginnerFriendly: boolean（デフォルト: false）
@@ -210,46 +209,6 @@ describe('sessionFormSchema', () => {
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         scheduledAt: 'invalid-date',
-      });
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('scheduleCandidates', () => {
-    it('開始のみが有効', () => {
-      const result = sessionFormSchema.safeParse({
-        sessionName: 'テスト卓',
-        sessionDescription: 'テスト募集文です',
-        scheduleCandidates: [{ from: '2026-01-25T20:00' }],
-      });
-      expect(result.success).toBe(true);
-    });
-
-    it('開始〜終了が有効', () => {
-      const result = sessionFormSchema.safeParse({
-        sessionName: 'テスト卓',
-        sessionDescription: 'テスト募集文です',
-        scheduleCandidates: [
-          { from: '2026-01-25T20:00', to: '2026-01-25T23:00' },
-        ],
-      });
-      expect(result.success).toBe(true);
-    });
-
-    it('空行を含んでも有効', () => {
-      const result = sessionFormSchema.safeParse({
-        sessionName: 'テスト卓',
-        sessionDescription: 'テスト募集文です',
-        scheduleCandidates: [{ from: '', to: '' }],
-      });
-      expect(result.success).toBe(true);
-    });
-
-    it('不正な日時形式でエラー', () => {
-      const result = sessionFormSchema.safeParse({
-        sessionName: 'テスト卓',
-        sessionDescription: 'テスト募集文です',
-        scheduleCandidates: [{ from: 'invalid-date', to: '2026-01-25T20:00' }],
       });
       expect(result.success).toBe(false);
     });
