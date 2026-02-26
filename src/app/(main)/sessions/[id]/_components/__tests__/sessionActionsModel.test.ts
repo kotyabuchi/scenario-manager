@@ -49,9 +49,11 @@ describe('sessionActionsModel', () => {
         'cancel-session',
       ]);
       expect(actions[0]?.label).toBe('日程を確定する');
+      expect(actions[0]?.href).toBe('/sessions/session-1/schedule/confirm');
+      expect(actions[2]?.href).toBe('/sessions/session-1/availability');
     });
 
-    it('manager + PREPARATION + CONFIRMED で日程調整を主CTAとして返し、補助CTA重複を出さない', () => {
+    it('manager + PREPARATION + CONFIRMED で確定日程編集を主CTAとして返し、可用枠提出を補助CTAで返す', () => {
       const actions = getAvailableSessionActions(
         SessionPhases.PREPARATION.value,
         SchedulePhases.CONFIRMED.value,
@@ -63,17 +65,26 @@ describe('sessionActionsModel', () => {
       expect(actions.map((action) => action.id)).toEqual([
         'schedule',
         'manage-applications',
+        'schedule',
         'cancel-session',
       ]);
+      expect(actions[0]).toMatchObject({
+        placement: 'primary',
+        label: '確定日程を編集',
+        href: '/sessions/session-1/schedule/confirm',
+      });
       expect(
-        actions.filter(
+        actions.find(
           (action) =>
             action.id === 'schedule' && action.placement === 'secondary',
         ),
-      ).toHaveLength(0);
+      ).toMatchObject({
+        label: '参加可能時間を提出',
+        href: '/sessions/session-1/availability',
+      });
     });
 
-    it('participant(CONFIRMED) + ADJUSTING で日程回答と辞退を返す', () => {
+    it('participant(CONFIRMED) + ADJUSTING で可用枠提出と辞退を返す', () => {
       const actions = getAvailableSessionActions(
         SessionPhases.RECRUITING.value,
         SchedulePhases.ADJUSTING.value,
@@ -88,6 +99,8 @@ describe('sessionActionsModel', () => {
       ]);
       expect(actions[0]?.placement).toBe('primary');
       expect(actions[1]?.placement).toBe('menu');
+      expect(actions[0]?.label).toBe('参加可能時間を提出');
+      expect(actions[0]?.href).toBe('/sessions/session-1/availability');
     });
 
     it('COMPLETED/CANCELLED では操作を返さない', () => {
@@ -127,6 +140,10 @@ describe('sessionActionsModel', () => {
       expect(layout.desktopSecondaryActions.map((action) => action.id)).toEqual(
         ['manage-applications', 'schedule'],
       );
+      expect(layout.desktopSecondaryActions[1]).toMatchObject({
+        label: '参加可能時間を提出',
+        href: '/sessions/session-1/availability',
+      });
       expect(layout.desktopMenuActions.map((action) => action.id)).toEqual([
         'cancel-session',
       ]);

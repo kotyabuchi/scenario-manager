@@ -67,10 +67,10 @@ const getManagerActions = (
       id: 'schedule',
       placement: 'secondary',
       type: 'link',
-      label: '日程を調整する',
+      label: '参加可能時間を提出',
       icon: 'calendar',
       variant: 'secondary',
-      href: `/sessions/${sessionId}/schedule`,
+      href: `/sessions/${sessionId}/availability`,
     });
   }
 
@@ -83,17 +83,17 @@ const getManagerActions = (
         label: '日程を確定する',
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/schedule/summary`,
+        href: `/sessions/${sessionId}/schedule/confirm`,
       });
     } else {
       actions.push({
         id: 'schedule',
         placement: 'primary',
         type: 'link',
-        label: '日程を調整する',
+        label: '確定日程を編集',
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/schedule`,
+        href: `/sessions/${sessionId}/schedule/confirm`,
       });
     }
 
@@ -112,10 +112,20 @@ const getManagerActions = (
         id: 'schedule',
         placement: 'secondary',
         type: 'link',
-        label: '日程を調整する',
+        label: '参加可能時間を提出',
         icon: 'calendar',
         variant: 'secondary',
-        href: `/sessions/${sessionId}/schedule`,
+        href: `/sessions/${sessionId}/availability`,
+      });
+    } else {
+      actions.push({
+        id: 'schedule',
+        placement: 'secondary',
+        type: 'link',
+        label: '参加可能時間を提出',
+        icon: 'calendar',
+        variant: 'secondary',
+        href: `/sessions/${sessionId}/availability`,
       });
     }
   }
@@ -174,10 +184,10 @@ const getParticipantActions = (
         id: 'schedule-respond',
         placement: 'primary',
         type: 'link',
-        label: '日程を調整する',
+        label: '参加可能時間を提出',
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/schedule/respond`,
+        href: `/sessions/${sessionId}/availability`,
       });
     }
 
