@@ -41,8 +41,12 @@ const getManagerActions = (
   phase: string,
   schedulePhase: string | null,
   sessionId: string,
+  hasAvailabilitySubmission: boolean,
 ): SessionActionDescriptor[] => {
   const actions: SessionActionDescriptor[] = [];
+  const availabilityActionLabel = hasAvailabilitySubmission
+    ? '参加可能時間を更新'
+    : '参加可能時間を提出';
 
   if (phase === SessionPhases.RECRUITING.value) {
     actions.push({
@@ -67,7 +71,7 @@ const getManagerActions = (
       id: 'schedule',
       placement: 'secondary',
       type: 'link',
-      label: '参加可能時間を提出',
+      label: availabilityActionLabel,
       icon: 'calendar',
       variant: 'secondary',
       href: `/sessions/${sessionId}/availability`,
@@ -112,7 +116,7 @@ const getManagerActions = (
         id: 'schedule',
         placement: 'secondary',
         type: 'link',
-        label: '参加可能時間を提出',
+        label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'secondary',
         href: `/sessions/${sessionId}/availability`,
@@ -122,7 +126,7 @@ const getManagerActions = (
         id: 'schedule',
         placement: 'secondary',
         type: 'link',
-        label: '参加可能時間を提出',
+        label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'secondary',
         href: `/sessions/${sessionId}/availability`,
@@ -160,8 +164,12 @@ const getParticipantActions = (
   schedulePhase: string | null,
   participantStatus: string | undefined,
   sessionId: string,
+  hasAvailabilitySubmission: boolean,
 ): SessionActionDescriptor[] => {
   const actions: SessionActionDescriptor[] = [];
+  const availabilityActionLabel = hasAvailabilitySubmission
+    ? '参加可能時間を更新'
+    : '参加可能時間を提出';
 
   if (participantStatus === 'PENDING') {
     actions.push({
@@ -184,7 +192,7 @@ const getParticipantActions = (
         id: 'schedule-respond',
         placement: 'primary',
         type: 'link',
-        label: '参加可能時間を提出',
+        label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'primary',
         href: `/sessions/${sessionId}/availability`,
@@ -235,6 +243,7 @@ const getAvailableSessionActions = (
   role: UserRole,
   participantStatus?: string,
   sessionId?: string,
+  hasAvailabilitySubmission = false,
 ): SessionActionDescriptor[] => {
   if (
     phase === SessionPhases.COMPLETED.value ||
@@ -245,13 +254,19 @@ const getAvailableSessionActions = (
 
   switch (role) {
     case 'manager':
-      return getManagerActions(phase, schedulePhase, sessionId ?? '');
+      return getManagerActions(
+        phase,
+        schedulePhase,
+        sessionId ?? '',
+        hasAvailabilitySubmission,
+      );
     case 'participant':
       return getParticipantActions(
         phase,
         schedulePhase,
         participantStatus,
         sessionId ?? '',
+        hasAvailabilitySubmission,
       );
     case 'guest':
       return getGuestActions(phase);

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getCurrentUserId } from '../adapter';
 import { SessionDetailContent } from './_components/SessionDetailContent';
 import { buildSessionTimeline, getSessionDetail } from './adapter';
+import { hasUserAvailabilitySubmission } from './availability/adapter';
 
 import type { Database } from '@/db/types';
 import type { UserRole } from '../interface';
@@ -39,6 +40,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
   let participantStatus:
     | Database['public']['Enums']['participant_status']
     | undefined;
+  let hasAvailabilitySubmission = false;
   if (currentUserId) {
     const isManager =
       session.keeper?.userId === currentUserId ||
@@ -56,6 +58,14 @@ export default async function SessionDetailPage({ params }: PageProps) {
         participantStatus = participant.participantStatus;
       }
     }
+
+    const availabilitySubmissionResult = await hasUserAvailabilitySubmission(
+      id,
+      currentUserId,
+    );
+    if (availabilitySubmissionResult.success) {
+      hasAvailabilitySubmission = availabilitySubmissionResult.data;
+    }
   }
 
   return (
@@ -65,6 +75,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
       userRole={userRole}
       currentUserId={currentUserId}
       participantStatus={participantStatus}
+      hasAvailabilitySubmission={hasAvailabilitySubmission}
     />
   );
 }

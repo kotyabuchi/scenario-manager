@@ -103,6 +103,33 @@ describe('sessionActionsModel', () => {
       expect(actions[0]?.href).toBe('/sessions/session-1/availability');
     });
 
+    it('可用枠提出済みなら提出導線ラベルを更新にする', () => {
+      const managerActions = getAvailableSessionActions(
+        SessionPhases.PREPARATION.value,
+        SchedulePhases.ADJUSTING.value,
+        'manager',
+        undefined,
+        'session-1',
+        true,
+      );
+      const participantActions = getAvailableSessionActions(
+        SessionPhases.RECRUITING.value,
+        SchedulePhases.ADJUSTING.value,
+        'participant',
+        'CONFIRMED',
+        'session-1',
+        true,
+      );
+
+      const managerAvailabilityAction = managerActions.find(
+        (action) =>
+          action.id === 'schedule' && action.placement === 'secondary',
+      );
+
+      expect(managerAvailabilityAction?.label).toBe('参加可能時間を更新');
+      expect(participantActions[0]?.label).toBe('参加可能時間を更新');
+    });
+
     it('COMPLETED/CANCELLED では操作を返さない', () => {
       const completed = getAvailableSessionActions(
         SessionPhases.COMPLETED.value,

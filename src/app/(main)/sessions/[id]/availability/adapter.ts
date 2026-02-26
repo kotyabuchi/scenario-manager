@@ -226,6 +226,33 @@ export const getAvailabilityWorkspaceData = async (
 };
 
 /**
+ * 現在ユーザーが可用枠を1件以上提出済みかどうか
+ */
+export const hasUserAvailabilitySubmission = async (
+  sessionId: string,
+  userId: string,
+): Promise<Result<boolean>> => {
+  try {
+    const supabase = await createDbClient();
+    const { count, error } = await supabase
+      .from('session_availability_slots')
+      .select('availability_slot_id', { count: 'exact', head: true })
+      .eq('session_id', sessionId)
+      .eq('user_id', userId);
+
+    if (error) {
+      logger.error`可用枠提出有無取得エラー: ${error.message}`;
+      return err(new Error(error.message));
+    }
+
+    return ok((count ?? 0) > 0);
+  } catch (e) {
+    logger.error`hasUserAvailabilitySubmission 予期しないエラー: ${e}`;
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
  * 自分の可用枠を全置換で保存する
  */
 export const replaceAvailabilitySlots = async (

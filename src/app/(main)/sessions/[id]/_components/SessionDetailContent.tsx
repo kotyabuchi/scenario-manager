@@ -23,6 +23,7 @@ type SessionDetailContentProps = {
   participantStatus?:
     | Database['public']['Enums']['participant_status']
     | undefined;
+  hasAvailabilitySubmission?: boolean;
 };
 
 export const SessionDetailContent = ({
@@ -31,6 +32,7 @@ export const SessionDetailContent = ({
   userRole,
   currentUserId,
   participantStatus,
+  hasAvailabilitySubmission = false,
 }: SessionDetailContentProps) => {
   return (
     <div className={styles.pageContainer}>
@@ -44,6 +46,7 @@ export const SessionDetailContent = ({
               userRole={userRole}
               currentUserId={currentUserId}
               participantStatus={participantStatus}
+              hasAvailabilitySubmission={hasAvailabilitySubmission}
             />
           </div>
         }

@@ -42,6 +42,7 @@ type SessionActionsProps = {
   currentUserId: string | null;
   /** 参加者の申請ステータス（guest以外で取得可能な場合） */
   participantStatus?: string | undefined;
+  hasAvailabilitySubmission?: boolean;
 };
 
 const renderActionIcon = (action: SessionActionDescriptor) => {
@@ -70,6 +71,7 @@ export const SessionActions = ({
   userRole,
   currentUserId: _currentUserId,
   participantStatus,
+  hasAvailabilitySubmission = false,
 }: SessionActionsProps) => {
   const [openDialog, setOpenDialog] = useState<string | null>(null);
   const [isPhaseUpdatePending, startPhaseUpdateTransition] = useTransition();
@@ -82,6 +84,7 @@ export const SessionActions = ({
     userRole,
     participantStatus,
     session.gameSessionId,
+    hasAvailabilitySubmission,
   );
 
   if (actions.length === 0) return null;
