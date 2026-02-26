@@ -385,23 +385,15 @@ export const withdrawFromSession = async (
       return err(new Error(withdrawError.message));
     }
 
-    // 日程候補への回答を削除（best-effort: 辞退処理自体は上記で完了済み）
-    const { data: candidates } = await supabase
-      .from('schedule_candidates')
-      .select('candidate_id')
-      .eq('session_id', sessionId);
+    // 提出済み可用枠を削除（best-effort: 辞退処理自体は上記で完了済み）
+    const { error: deleteAvailabilityError } = await supabase
+      .from('session_availability_slots')
+      .delete()
+      .eq('session_id', sessionId)
+      .eq('user_id', userId);
 
-    if (candidates && candidates.length > 0) {
-      const candidateIds = candidates.map((c) => c.candidate_id);
-      const { error: deleteResponseError } = await supabase
-        .from('schedule_responses')
-        .delete()
-        .in('candidate_id', candidateIds)
-        .eq('user_id', userId);
-
-      if (deleteResponseError) {
-        logger.warn`辞退後の日程回答削除でエラー（best-effort）: ${deleteResponseError.message}`;
-      }
+    if (deleteAvailabilityError) {
+      logger.warn`辞退後の可用枠削除でエラー（best-effort）: ${deleteAvailabilityError.message}`;
     }
 
     logger.info`ユーザー ${userId} がセッション ${sessionId} から辞退`;
