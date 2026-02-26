@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 import { format } from 'date-fns';
 
 import { AvailabilityWorkspaceLayout } from './AvailabilityWorkspaceLayout';
@@ -163,17 +163,18 @@ export const ConfirmAvailabilityWorkspace = ({
   recommendationGroups,
   onConfirmSlots,
 }: ConfirmAvailabilityWorkspaceProps) => {
-  const initialSlots = workspaceData.confirmedScheduleSlots.map((slot) => ({
-    startAt: slot.startAt,
-    endAt: slot.endAt,
-  }));
-
-  const [selectedSlots, setSelectedSlots] = useState<AvailabilitySlotInput[]>(
-    normalizeSlots(initialSlots),
+  const serverSlots = normalizeSlots(
+    workspaceData.confirmedScheduleSlots.map((slot) => ({
+      startAt: slot.startAt,
+      endAt: slot.endAt,
+    })),
   );
+  const [, setOptimisticSlots] = useOptimistic(serverSlots);
+  const [selectedSlots, setSelectedSlots] =
+    useState<AvailabilitySlotInput[]>(serverSlots);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    initialSlots[0]
-      ? new Date(initialSlots[0].startAt)
+    serverSlots[0]
+      ? new Date(serverSlots[0].startAt)
       : recommendationGroups[0]?.items[0]?.slots[0]
         ? new Date(recommendationGroups[0].items[0].slots[0].startAt)
         : new Date(),
@@ -233,21 +234,13 @@ export const ConfirmAvailabilityWorkspace = ({
       return;
     }
 
+    setOptimisticSlots(selectedSlots);
     startTransition(async () => {
       const result = await onConfirmSlots(selectedSlots);
       if (!result.success) {
         setMessage({ tone: 'error', text: result.error.message });
         return;
       }
-
-      setSelectedSlots(
-        normalizeSlots(
-          result.data.map((slot) => ({
-            startAt: slot.startAt,
-            endAt: slot.endAt,
-          })),
-        ),
-      );
       setMessage({ tone: 'success', text: '確定日程を保存しました。' });
     });
   };
@@ -295,19 +288,24 @@ export const ConfirmAvailabilityWorkspace = ({
       }
       selectedSlotsSection={
         <div className={styles.sectionStack}>
-          <SelectedSlotsPanel
-            title="確定候補"
-            slots={selectedSlots}
-            minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
-            emptyMessage="おすすめ一覧から候補を選択してください。"
-            onRemoveSlot={(index) =>
-              setSelectedSlots((prev) =>
-                prev.filter((_, currentIndex) => currentIndex !== index),
-              )
-            }
-            onMoveUp={(index) => moveSlot(index, -1)}
-            onMoveDown={(index) => moveSlot(index, 1)}
-          />
+          <div
+            className={styles.pendingSection({ pending: isPending })}
+            aria-busy={isPending}
+          >
+            <SelectedSlotsPanel
+              title="確定候補"
+              slots={selectedSlots}
+              minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
+              emptyMessage="おすすめ一覧から候補を選択してください。"
+              onRemoveSlot={(index) =>
+                setSelectedSlots((prev) =>
+                  prev.filter((_, currentIndex) => currentIndex !== index),
+                )
+              }
+              onMoveUp={(index) => moveSlot(index, -1)}
+              onMoveDown={(index) => moveSlot(index, 1)}
+            />
+          </div>
           {message ? (
             <p className={styles.messageBox({ tone: message.tone })}>
               {message.text}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 import { format } from 'date-fns';
 
 import { AvailabilitySlotEditor } from './AvailabilitySlotEditor';
@@ -117,15 +117,17 @@ export const SubmitAvailabilityWorkspace = ({
   workspaceData,
   onSaveSlots,
 }: SubmitAvailabilityWorkspaceProps) => {
-  const initialSlots = workspaceData.myAvailabilitySlots.map((slot) => ({
-    startAt: slot.startAt,
-    endAt: slot.endAt,
-  }));
-  const [draftSlots, setDraftSlots] = useState<AvailabilitySlotInput[]>(
-    sortSlotsByStart(initialSlots),
+  const serverSlots = sortSlotsByStart(
+    workspaceData.myAvailabilitySlots.map((slot) => ({
+      startAt: slot.startAt,
+      endAt: slot.endAt,
+    })),
   );
+  const [, setOptimisticSlots] = useOptimistic(serverSlots);
+  const [draftSlots, setDraftSlots] =
+    useState<AvailabilitySlotInput[]>(serverSlots);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    initialSlots[0] ? new Date(initialSlots[0].startAt) : new Date(),
+    serverSlots[0] ? new Date(serverSlots[0].startAt) : new Date(),
   );
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [message, setMessage] = useState<{
@@ -179,6 +181,7 @@ export const SubmitAvailabilityWorkspace = ({
       return;
     }
 
+    setOptimisticSlots(draftSlots);
     startTransition(async () => {
       const result = await onSaveSlots(draftSlots);
       if (!result.success) {
@@ -186,14 +189,6 @@ export const SubmitAvailabilityWorkspace = ({
         return;
       }
       setMessage({ tone: 'success', text: '参加可能時間を保存しました。' });
-      setDraftSlots(
-        sortSlotsByStart(
-          result.data.map((slot) => ({
-            startAt: slot.startAt,
-            endAt: slot.endAt,
-          })),
-        ),
-      );
     });
   };
 
@@ -230,19 +225,24 @@ export const SubmitAvailabilityWorkspace = ({
       }
       selectedSlotsSection={
         <div className={styles.sectionStack}>
-          <SelectedSlotsPanel
-            title="自分の提出枠"
-            slots={draftSlots}
-            minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
-            emptyMessage="まだ提出枠がありません。右側からコピーするか、下のフォームで追加してください。"
-            onRemoveSlot={(index) =>
-              setDraftSlots((prev) =>
-                prev.filter((_, currentIndex) => currentIndex !== index),
-              )
-            }
-            onMoveUp={(index) => moveSlot(index, -1)}
-            onMoveDown={(index) => moveSlot(index, 1)}
-          />
+          <div
+            className={styles.pendingSection({ pending: isPending })}
+            aria-busy={isPending}
+          >
+            <SelectedSlotsPanel
+              title="自分の提出枠"
+              slots={draftSlots}
+              minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
+              emptyMessage="まだ提出枠がありません。右側からコピーするか、下のフォームで追加してください。"
+              onRemoveSlot={(index) =>
+                setDraftSlots((prev) =>
+                  prev.filter((_, currentIndex) => currentIndex !== index),
+                )
+              }
+              onMoveUp={(index) => moveSlot(index, -1)}
+              onMoveDown={(index) => moveSlot(index, 1)}
+            />
+          </div>
           <AvailabilitySlotEditor
             selectedDate={selectedDate}
             onAddSlot={applySlotToggleOrInsert}

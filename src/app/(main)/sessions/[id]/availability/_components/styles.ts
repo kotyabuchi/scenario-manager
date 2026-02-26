@@ -405,6 +405,24 @@ export const sectionStack = css({
   gap: '4',
 });
 
+export const pendingSection = cva({
+  base: {
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+  },
+  variants: {
+    pending: {
+      true: {
+        opacity: '[0.5]',
+        pointerEvents: 'none',
+      },
+    },
+  },
+  defaultVariants: {
+    pending: false,
+  },
+});
+
 export const sectionHeader = css({
   display: 'flex',
   alignItems: 'center',
