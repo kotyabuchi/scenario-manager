@@ -18,6 +18,20 @@
 
 本計画では、既存の候補日+回答モデルを段階的に置き換え、**可用枠提出 + 複数枠確定モデル**へ移行する。
 
+## 実装進捗（2026-02-26 時点）
+
+- [x] 可用枠提出 + 複数枠確定フローのDB/API/UI実装
+- [x] セッション詳細 PageHeader 導線の新フロー切替（提出/更新・確定/再編集）
+- [x] 旧 `/sessions/[id]/schedule` 候補日ベースUI（respond/summary含む）削除
+- [x] `users.auth_user_id` への完全移行 + `users.discord_id` 廃止（`discord_account_id` 分離）
+- [x] `sessions/new` の初期候補保存を `session_availability_slots` へ移行
+- [x] 旧候補日系DB/RPC（`confirm_schedule`, `schedule_candidates`, `schedule_responses` 等）削除
+- [ ] 最終レビュー結果の反映（必要なら `review-impl` / `review-diff`）
+
+補足:
+- 本文には「段階移行」「旧フロー残置」前提の記述が一部残るが、実装は後方互換なし方針で完了済み。
+- 現在の正規導線は `sessions/[id]/availability` と `sessions/[id]/schedule/confirm`。
+
 ## 要件（確定）
 
 ### 提出
@@ -80,7 +94,7 @@
 | 見学者優先度 | グループ分離表示 | 重み付けより説明可能性が高い |
 | 確定操作 | 複数枠全置換（再編集可） | 実装が単純で整合性を保ちやすい |
 | 提出保存 | 自分の枠を全置換 | 差分更新より実装/検証が容易 |
-| 旧フロー | 段階的移行（即削除しない） | 回帰リスクを下げる |
+| 旧フロー | 後方互換なしで削除 | 開発途中のため、将来の負債を残さない |
 | 参加者ロール分類 | DB enum `participant_type`（`KEEPER/PLAYER/SPECTATOR`）をそのまま使用。HOST判定は `created_by_id === user_id` で導出 | 新enum追加は不要。GM/KPの表示区別はゲームシステム依存でDB上はどちらも`KEEPER` |
 | 型導出原則 | Supabase生成型（`Database['public']['Tables'][T]['Row']`）から導出。UIビューモデル型のみ独自定義を許容 | `typescript-rules.md` の Single Source of Truth 原則に準拠 |
 | タイムゾーン | UIは JST 固定表示。DB は `timestamptz` で保存し、日跨ぎ判定は JST 基準 | 国内TRPG向けサービスのため、Phase 1 では JST 固定で十分 |
@@ -98,7 +112,7 @@
 
 - `game_sessions`, `game_schedules`, `session_participants`, `users` は既存利用
 - セッション詳細のアクション制御は `src/app/(main)/sessions/[id]/_components/sessionActionsModel.ts` を拡張して実装可能
-- 既存 `schedule_candidates / schedule_responses` は当面残置し、導線を切り替えて段階移行する
+- 既存 `schedule_candidates / schedule_responses` は実装完了後に削除済み（`0017`）
 
 ---
 
@@ -120,7 +134,7 @@ Phase 1 の到達形（推奨）:
 1. `users.auth_user_id uuid` を追加し、既存 `users.discord_id` の値を backfill（`::uuid` cast）
 2. `users.discord_account_id text` を追加（Phase 1 では未取得ユーザーは `NULL` 許容）
 3. 認証照合/RLS/アプリコードを `auth_user_id` 基準へ移行
-4. 既存 `users.discord_id` は互換のため当面残置（Phase 2 で rename/drop を別計画）
+4. 実装完了後に `users.discord_id` を削除（`0014`）
 
 ### 追加テーブル1: 可用枠提出
 
@@ -183,9 +197,9 @@ Phase 1 の到達形（推奨）:
 
 ### 既存 `schedule_candidates / schedule_responses` の扱い
 
-- 当面は削除しない
-- 新導線リリース後に利用箇所を停止
-- 影響範囲の回帰確認後に削除計画を別途作成
+- 当初は段階移行を想定していたが、実装では後方互換なし方針を採用
+- `sessions/new` の初期候補保存を `session_availability_slots` へ移行後、旧候補日テーブルを削除
+- 削除済み（`0017_drop_legacy_schedule_candidate_tables.sql`）
 
 ---
 
@@ -767,21 +781,23 @@ type SelectedSlotsStickyBarProps = {
 
 ### Phase 1（新フロー追加）
 
-- `users` の認証ID整理（`auth_user_id` / `discord_account_id` 追加、`auth_user_id` backfill）
-- 新DBテーブル追加
-- 新提出UI / 新確定UI追加
-- セッション詳細導線を新フローへ切替
-- 旧 `schedule/respond`, `schedule/summary` は残置（未導線化または注記）
+- [x] `users` の認証ID整理（`auth_user_id` / `discord_account_id` 追加、`auth_user_id` backfill）
+- [x] 新DBテーブル追加（`session_availability_slots`, `game_schedule_slots`）
+- [x] 新提出UI / 新確定UI追加
+- [x] セッション詳細導線を新フローへ切替
+- [x] フェーズ制約をサーバー側で強化
+- [x] セッション詳細で複数確定枠表示を追加
+- [x] 旧 `schedule/respond`, `schedule/summary` を含む旧UI導線削除（後方互換なし）
 
 ### Phase 2（旧フロー整理）
 
-- `users.discord_id`（旧・実態はAuth UID格納列）の rename/drop 計画を実施
-- 認証照合コードを `auth_user_id` に完全移行し、互換参照を撤去
-- 提出枠の過去日時バリデーション（必要なら）を導入
-- Server Action レート制限（可用枠保存/確定保存）の導入を検討
-- 旧候補日+回答フローの参照を削除
-- `schedule_candidates / schedule_responses` の使用箇所撤去
-- 必要ならデータ移行/削除計画を別途策定
+- [x] `users.discord_id`（旧・実態はAuth UID格納列）を削除（`0014`）
+- [x] 認証照合コードを `auth_user_id` に完全移行し、互換参照を撤去
+- [x] `sessions/new` 作成RPCを新命名に変更（`create_session_transaction`）
+- [x] `sessions/new` の初期候補保存先を `session_availability_slots` に移行（`0016`）
+- [x] 旧候補日+回答フローのDB/RPCを削除（`0017`）
+- [ ] 提出枠の過去日時バリデーション（必要なら）を導入
+- [ ] Server Action レート制限（可用枠保存/確定保存）の導入を検討
 
 ---
 
@@ -832,6 +848,19 @@ type SelectedSlotsStickyBarProps = {
 ---
 
 ## 実装バッチ計画
+
+### 実装ステータス（更新）
+
+- [x] Batch 1: DB基盤と型定義
+- [x] Batch 2: Adapter / Server Actions
+- [x] Batch 3: 集計・おすすめロジック
+- [x] Batch 4: 共通 UI 基盤
+- [x] Batch 5: 提出 UI（全員）
+- [x] Batch 6: 確定 UI（主催者/GM/KP）
+- [x] Batch 7: セッション詳細導線統合 + 旧導線整理
+- [x] 追加実装: `auth_user_id` 完全移行 + `users.discord_id` 廃止（`0014`）
+- [x] 追加実装: `sessions/new` 初期候補保存の可用枠移行 + 旧候補日DB/RPC削除（`0015`-`0017`）
+- [ ] 最終レビュー/ドキュメント整理
 
 ## Batch 1: DB基盤と型定義
 
@@ -1124,6 +1153,10 @@ type SelectedSlotsStickyBarProps = {
 | `supabase/migrations/0011_add_users_auth_identity_columns.sql` | `users.auth_user_id` / `users.discord_account_id` 追加 + backfill（番号は例） |
 | `supabase/migrations/0012_add_session_availability_slots.sql` | 可用枠テーブル + RLSポリシー（番号は例） |
 | `supabase/migrations/0013_add_game_schedule_slots.sql` | 確定枠テーブル + RLSポリシー（番号は例） |
+| `supabase/migrations/0014_drop_users_discord_id_and_use_auth_user_id.sql` | `auth_user_id` 完全移行、`users.discord_id` 廃止、関連関数更新 |
+| `supabase/migrations/0015_rename_create_session_rpc.sql` | セッション作成RPCを `create_session_transaction` に改名 |
+| `supabase/migrations/0016_store_session_initial_candidates_as_availability_slots.sql` | `sessions/new` 初期候補保存を `session_availability_slots` へ移行 |
+| `supabase/migrations/0017_drop_legacy_schedule_candidate_tables.sql` | 旧候補日系テーブル/関数/enum を削除 |
 | `src/app/(main)/sessions/[id]/availability/interface.ts` | 可用枠関連の型定義 |
 | `src/app/(main)/sessions/[id]/availability/adapter.ts` | 可用枠 DB 操作 |
 | `src/app/(main)/sessions/[id]/availability/actions.ts` | 可用枠 Server Actions |
@@ -1170,12 +1203,16 @@ type SelectedSlotsStickyBarProps = {
 
 | ファイル | 変更内容 |
 |---------|---------|
-| `src/db/types.ts` | Supabase型再生成（新テーブル + `users` カラム追加分） |
-| `src/db/helpers.ts` | `resolveCurrentAppUserIdByAuthUid()` 追加/拡張 |
+| `src/db/types.ts` | Supabase型再生成（新テーブル + `users/auth_user_id` 移行 + RPC改名 + 旧候補日型削除） |
+| `src/db/helpers.ts` | `resolveCurrentAppUserIdByAuthUid()` 追加/拡張（`auth_user_id` のみ参照） |
+| `src/lib/supabase/discordAuth.ts` | Discord identity から `discord_account_id` を抽出する補助関数 |
 | `src/app/(main)/sessions/[id]/_components/sessionActionsModel.ts` | 新アクション追加（可用枠提出/確定導線） |
 | `src/app/(main)/sessions/[id]/_components/SessionActions.tsx` | 新アクション対応のリンク/ボタン追加 |
 | `src/app/(main)/sessions/[id]/_components/SessionDetailContent.tsx` | 新導線への接続 |
 | `src/app/(main)/sessions/interface.ts` | 必要に応じて型追加 |
+| `src/app/(main)/sessions/new/adapter.ts` | セッション作成RPC切替 + 初期候補を可用枠へ保存 |
+| `src/app/(main)/sessions/new/__tests__/adapter.test.ts` | 新RPC/初期可用枠保存の回帰テスト |
+| `src/__tests__/helpers/fixtures.ts` | 旧候補日fixture/cleanup削除（新スキーマ前提に整理） |
 
 ## 検証方法
 

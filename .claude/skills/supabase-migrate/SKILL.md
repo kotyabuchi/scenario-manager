@@ -16,38 +16,42 @@ RPC関数のnullableパラメータも自動修正する。
 
 ## Prerequisites
 
-- `supabase` CLI にパスが通っていること（`which supabase` で確認）
-- Docker Desktop が起動していること（型生成に必要）
-- `.env` に `DATABASE_URL` が設定されていること
+- `supabase link` が完了していること（`supabase/.temp/project-ref` が存在）
+- `supabase login` でCLI認証済みであること
 
 ## Instructions
 
 ### Step 1: 環境チェック
 
-1. `which supabase` で CLI の存在を確認
-2. `.env` から `DATABASE_URL` を読み取る（Bash の `grep` で取得）
+1. `supabase/.temp/project-ref` の存在を確認
 
 ```bash
-DB_URL=$(grep '^DATABASE_URL=' .env | cut -d'=' -f2-)
+cat supabase/.temp/project-ref
 ```
 
-CLI が見つからない場合はユーザーに通知して終了。
+ファイルが存在しない場合はユーザーに `npx supabase link --project-ref <ref>` の実行を促して終了。
+
+2. プロジェクトrefを変数に取得
+
+```bash
+PROJECT_REF=$(cat supabase/.temp/project-ref)
+```
 
 ### Step 2: 未適用マイグレーションの確認
 
-`--dry-run` で未適用のマイグレーションを確認する:
+`migration list` で Local / Remote の差分を確認する:
 
 ```bash
-supabase db push --db-url "$DB_URL" --dry-run
+npx supabase migration list
 ```
 
-- 未適用のマイグレーションがない場合 → Step 3 へスキップ（型生成のみ実行）
-- 未適用のマイグレーションがある場合 → 一覧をユーザーに表示し、適用確認
+- Local と Remote が一致 → Step 4 へスキップ（型生成のみ実行）
+- Local にのみ存在するマイグレーションがある → 一覧をユーザーに表示し、適用確認
 
 ### Step 3: マイグレーション適用
 
 ```bash
-supabase db push --db-url "$DB_URL"
+npx supabase db push
 ```
 
 エラーが発生した場合:
@@ -59,20 +63,13 @@ supabase db push --db-url "$DB_URL"
 **重要**: stderr を分離してファイルに出力する。stdout のみを `types.ts` に書き込む。
 
 ```bash
-supabase gen types --db-url "$DB_URL" --lang=typescript 2>"src/db/types.stderr" > "src/db/types.ts"
+npx supabase gen types typescript --project-id "$PROJECT_REF" 2>"src/db/types.stderr" > "src/db/types.ts"
 ```
 
 生成後の確認:
 1. `src/db/types.ts` の1行目が `export type Json =` で始まることを確認
 2. もし stderr の接続メッセージが混入していたら除去する
 3. `src/db/types.stderr` を削除
-
-Docker が起動していない場合のエラー:
-```
-failed to inspect docker image: ...
-Docker Desktop is a prerequisite for local development.
-```
-→ ユーザーに Docker Desktop の起動を促して終了
 
 ### Step 5: RPC関数のnullable修正
 
@@ -85,7 +82,6 @@ PostgreSQL側で `NULL` を受け付けるパラメータを手動で `| null` �
 2. 対応する adapter ファイル（`adapter.ts`）を検索し、`null` を渡しているパラメータを特定:
 
 ```bash
-# adapter内でRPC呼び出しを検索
 grep -r "supabase.rpc" src/ --include="*.ts" -A 30
 ```
 
