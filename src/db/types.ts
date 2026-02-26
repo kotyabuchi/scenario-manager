@@ -7,6 +7,31 @@ export type Json =
   | Json[];
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       feedback_comments: {
@@ -155,6 +180,54 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'users';
             referencedColumns: ['user_id'];
+          },
+        ];
+      };
+      game_schedule_slots: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          end_at: string;
+          game_schedule_slot_id: string;
+          session_id: string;
+          slot_order: number;
+          start_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          end_at: string;
+          game_schedule_slot_id: string;
+          session_id: string;
+          slot_order: number;
+          start_at: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          end_at?: string;
+          game_schedule_slot_id?: string;
+          session_id?: string;
+          slot_order?: number;
+          start_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'game_schedule_slots_created_by_users_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'game_schedule_slots_session_id_game_schedules_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_schedules';
+            referencedColumns: ['session_id'];
           },
         ];
       };
@@ -559,6 +632,51 @@ export type Database = {
           },
         ];
       };
+      session_availability_slots: {
+        Row: {
+          availability_slot_id: string;
+          created_at: string;
+          end_at: string;
+          session_id: string;
+          start_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          availability_slot_id: string;
+          created_at?: string;
+          end_at: string;
+          session_id: string;
+          start_at: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          availability_slot_id?: string;
+          created_at?: string;
+          end_at?: string;
+          session_id?: string;
+          start_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'session_availability_slots_session_id_game_sessions_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_sessions';
+            referencedColumns: ['game_session_id'];
+          },
+          {
+            foreignKeyName: 'session_availability_slots_user_id_users_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
+          },
+        ];
+      };
       session_links: {
         Row: {
           created_at: string;
@@ -799,8 +917,10 @@ export type Database = {
       };
       users: {
         Row: {
+          auth_user_id: string;
           bio: string | null;
           created_at: string;
+          discord_account_id: string | null;
           discord_id: string;
           favorite_scenarios: string | null;
           image: string | null;
@@ -812,8 +932,10 @@ export type Database = {
           user_name: string;
         };
         Insert: {
+          auth_user_id: string;
           bio?: string | null;
           created_at?: string;
+          discord_account_id?: string | null;
           discord_id: string;
           favorite_scenarios?: string | null;
           image?: string | null;
@@ -825,8 +947,10 @@ export type Database = {
           user_name: string;
         };
         Update: {
+          auth_user_id?: string;
           bio?: string | null;
           created_at?: string;
+          discord_account_id?: string | null;
           discord_id?: string;
           favorite_scenarios?: string | null;
           image?: string | null;
@@ -913,28 +1037,29 @@ export type Database = {
           p_game_session_id: string;
           p_invited_members: Json;
           p_is_beginner_friendly: boolean;
-          p_recruited_player_count: number;
-          p_scenario_id: string;
+          p_recruited_player_count: number | null;
+          p_scenario_id: string | null;
           p_schedule_candidates: Json;
-          p_scheduled_at: string;
+          p_scheduled_at: string | null;
           p_session_description: string;
           p_session_name: string;
-          p_tools: string;
+          p_tools: string | null;
           p_user_id: string;
           p_visibility: Database['public']['Enums']['session_visibility'];
         };
         Returns: {
           game_session_id: string;
           is_beginner_friendly: boolean;
-          recruited_player_count: number;
-          scenario_id: string;
-          scheduled_at: string;
+          recruited_player_count: number | null;
+          scenario_id: string | null;
+          scheduled_at: string | null;
           session_name: string;
           session_phase: Database['public']['Enums']['session_phase'];
-          tools: string;
+          tools: string | null;
           visibility: Database['public']['Enums']['session_visibility'];
         }[];
       };
+      current_app_user_id: { Args: never; Returns: string };
     };
     Enums: {
       feedback_category: 'BUG' | 'FEATURE' | 'UI_UX' | 'OTHER';
@@ -1095,6 +1220,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       feedback_category: ['BUG', 'FEATURE', 'UI_UX', 'OTHER'],

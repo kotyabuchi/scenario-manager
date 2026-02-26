@@ -20,6 +20,8 @@ const baseParticipant: ParticipantWithUser = {
     userId: '01HUSER0000000000000000001',
     userName: 'sample_user',
     nickname: 'サンプル',
+    authUserId: '00000000-0000-4000-8000-000000000011',
+    discordAccountId: null,
     discordId: '123456789',
     image: null,
     bio: null,

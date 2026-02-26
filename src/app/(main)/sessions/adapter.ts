@@ -5,6 +5,7 @@ import {
   ParticipantTypes,
   SessionPhases,
 } from '@/db/enum';
+import { resolveCurrentAppUserIdByAuthUid } from '@/db/helpers';
 import { createClient, createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
@@ -37,13 +38,8 @@ export const getCurrentUserId = async (): Promise<string | null> => {
       return null;
     }
 
-    const { data: dbUser } = await supabase
-      .from('users')
-      .select('user_id')
-      .eq('discord_id', user.id)
-      .maybeSingle();
-
-    return dbUser?.user_id ?? null;
+    const result = await resolveCurrentAppUserIdByAuthUid(supabase, user.id);
+    return result.success ? result.data : null;
   } catch {
     return null;
   }

@@ -26,6 +26,8 @@ const baseSession = {
 } satisfies Partial<UpcomingSession>;
 
 const baseUser = {
+  authUserId: '00000000-0000-4000-8000-000000000001',
+  discordAccountId: null,
   discordId: 'discord-001',
   bio: null,
   role: 'MEMBER' as const,

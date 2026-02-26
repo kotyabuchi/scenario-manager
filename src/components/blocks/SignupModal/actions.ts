@@ -33,6 +33,7 @@ export const registerUser = async (
     const { error } = await supabase.from('users').insert({
       user_id: userId,
       discord_id: authUser.id,
+      auth_user_id: authUser.id,
       user_name: input.userName,
       nickname: input.nickname,
       bio: input.bio || null,
