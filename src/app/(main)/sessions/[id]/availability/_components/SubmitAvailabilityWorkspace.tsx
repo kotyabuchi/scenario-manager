@@ -12,16 +12,16 @@ import { SubmitSidebarContent } from './SubmitSidebarContent';
 import * as styles from './styles';
 
 import {
-  isOverlappingSlot,
-  isSameSlot,
-  sortSlotsByStart,
-  toggleExactSlot,
-} from '@/lib/availability/slotUtils';
+  isOverlappingTimeBlock,
+  isSameTimeBlock,
+  sortTimeBlocksByStart,
+  toggleExactTimeBlock,
+} from '@/lib/availability/timeBlockUtils';
 import { err, type Result } from '@/types/result';
 
 import type {
-  AvailabilitySlotInput,
-  AvailabilitySlotRow,
+  AvailabilityTimeBlockInput,
+  AvailabilityTimeBlockRow,
   AvailabilityWorkspaceData,
   CalendarDayBadge,
 } from '../interface';
@@ -29,8 +29,10 @@ import type {
 type SubmitAvailabilityWorkspaceProps = {
   workspaceData: AvailabilityWorkspaceData;
   onSaveSlots?: (
-    slots: AvailabilitySlotInput[],
-  ) => Promise<Result<AvailabilitySlotRow[]>> | Result<AvailabilitySlotRow[]>;
+    slots: AvailabilityTimeBlockInput[],
+  ) =>
+    | Promise<Result<AvailabilityTimeBlockRow[]>>
+    | Result<AvailabilityTimeBlockRow[]>;
 };
 
 const formatDateKey = (date: Date): string => format(date, 'yyyy-MM-dd');
@@ -39,8 +41,8 @@ const getLocalDateKeyFromIso = (iso: string): string =>
   format(new Date(iso), 'yyyy-MM-dd');
 
 const buildDayBadges = (
-  mySlots: AvailabilitySlotInput[],
-  otherSlots: AvailabilityWorkspaceData['otherUserAvailabilitySlots'],
+  mySlots: AvailabilityTimeBlockInput[],
+  otherSlots: AvailabilityWorkspaceData['otherUserAvailabilityTimeBlocks'],
 ): CalendarDayBadge[] => {
   const bucket = new Map<
     string,
@@ -89,19 +91,21 @@ const buildDayBadges = (
 };
 
 const validateNonOverlappingInsert = (
-  currentSlots: AvailabilitySlotInput[],
-  nextSlot: AvailabilitySlotInput,
-): Result<AvailabilitySlotInput[]> => {
-  const exactExists = currentSlots.some((slot) => isSameSlot(slot, nextSlot));
+  currentSlots: AvailabilityTimeBlockInput[],
+  nextSlot: AvailabilityTimeBlockInput,
+): Result<AvailabilityTimeBlockInput[]> => {
+  const exactExists = currentSlots.some((slot) =>
+    isSameTimeBlock(slot, nextSlot),
+  );
   if (exactExists) {
     return {
       success: true,
-      data: sortSlotsByStart(toggleExactSlot(currentSlots, nextSlot)),
+      data: sortTimeBlocksByStart(toggleExactTimeBlock(currentSlots, nextSlot)),
     };
   }
 
   const hasOverlap = currentSlots.some((slot) =>
-    isOverlappingSlot(slot, nextSlot),
+    isOverlappingTimeBlock(slot, nextSlot),
   );
   if (hasOverlap) {
     return err(new Error('既存の提出枠と時間が重複しています'));
@@ -109,7 +113,7 @@ const validateNonOverlappingInsert = (
 
   return {
     success: true,
-    data: sortSlotsByStart([...currentSlots, nextSlot]),
+    data: sortTimeBlocksByStart([...currentSlots, nextSlot]),
   };
 };
 
@@ -117,15 +121,15 @@ export const SubmitAvailabilityWorkspace = ({
   workspaceData,
   onSaveSlots,
 }: SubmitAvailabilityWorkspaceProps) => {
-  const serverSlots = sortSlotsByStart(
-    workspaceData.myAvailabilitySlots.map((slot) => ({
+  const serverSlots = sortTimeBlocksByStart(
+    workspaceData.myAvailabilityTimeBlocks.map((slot) => ({
       startAt: slot.startAt,
       endAt: slot.endAt,
     })),
   );
   const [, setOptimisticSlots] = useOptimistic(serverSlots);
   const [draftSlots, setDraftSlots] =
-    useState<AvailabilitySlotInput[]>(serverSlots);
+    useState<AvailabilityTimeBlockInput[]>(serverSlots);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     serverSlots[0] ? new Date(serverSlots[0].startAt) : new Date(),
   );
@@ -138,10 +142,10 @@ export const SubmitAvailabilityWorkspace = ({
 
   const dayBadges = buildDayBadges(
     draftSlots,
-    workspaceData.otherUserAvailabilitySlots,
+    workspaceData.otherUserAvailabilityTimeBlocks,
   );
 
-  const applySlotToggleOrInsert = (slot: AvailabilitySlotInput) => {
+  const applySlotToggleOrInsert = (slot: AvailabilityTimeBlockInput) => {
     const result = validateNonOverlappingInsert(draftSlots, slot);
     if (!result.success) {
       setMessage({ tone: 'error', text: result.error.message });
@@ -203,7 +207,7 @@ export const SubmitAvailabilityWorkspace = ({
     <SubmitSidebarContent
       selectedDate={selectedDate}
       mySlots={draftSlots}
-      otherUserSlots={workspaceData.otherUserAvailabilitySlots}
+      otherUserSlots={workspaceData.otherUserAvailabilityTimeBlocks}
       onClickSlot={applySlotToggleOrInsert}
       errorMessage={message?.tone === 'error' ? message.text : null}
     />

@@ -7,7 +7,10 @@ import { SelectedSlotsStickyBar } from './SelectedSlotsStickyBar';
 import * as styles from './styles';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { AvailabilitySlotInput, CalendarDayBadge } from '../interface';
+import type {
+  AvailabilityTimeBlockInput,
+  CalendarDayBadge,
+} from '../interface';
 
 const makeDate = (offsetDays: number): Date => {
   const date = new Date();
@@ -97,7 +100,7 @@ export const ConfirmLikeLayout: Story = {
   render: () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(makeDate(3));
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-    const [slots, setSlots] = useState<AvailabilitySlotInput[]>(() => {
+    const [slots, setSlots] = useState<AvailabilityTimeBlockInput[]>(() => {
       const base = makeDate(3);
       return [
         {

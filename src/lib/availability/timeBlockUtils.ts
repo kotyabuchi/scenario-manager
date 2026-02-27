@@ -1,6 +1,6 @@
 const THIRTY_MINUTES_MS = 30 * 60 * 1000;
 
-type SlotLike = {
+type TimeBlockLike = {
   startAt: string;
   endAt: string;
 };
@@ -36,10 +36,13 @@ export const normalizeToThirtyMinutes = (
   return new Date(rounded * THIRTY_MINUTES_MS).toISOString();
 };
 
-export const isSameSlot = (a: SlotLike, b: SlotLike): boolean =>
+export const isSameTimeBlock = (a: TimeBlockLike, b: TimeBlockLike): boolean =>
   a.startAt === b.startAt && a.endAt === b.endAt;
 
-export const isOverlappingSlot = (a: SlotLike, b: SlotLike): boolean => {
+export const isOverlappingTimeBlock = (
+  a: TimeBlockLike,
+  b: TimeBlockLike,
+): boolean => {
   const aStart = parseTime(a.startAt);
   const aEnd = parseTime(a.endAt);
   const bStart = parseTime(b.startAt);
@@ -48,21 +51,29 @@ export const isOverlappingSlot = (a: SlotLike, b: SlotLike): boolean => {
   return aStart < bEnd && bStart < aEnd;
 };
 
-export const calcSlotMinutes = (slot: SlotLike): number =>
-  Math.max(0, (parseTime(slot.endAt) - parseTime(slot.startAt)) / (60 * 1000));
+export const calcTimeBlockMinutes = (timeBlock: TimeBlockLike): number =>
+  Math.max(
+    0,
+    (parseTime(timeBlock.endAt) - parseTime(timeBlock.startAt)) / (60 * 1000),
+  );
 
-export const calcTotalMinutes = (slots: SlotLike[]): number =>
-  slots.reduce((total, slot) => total + calcSlotMinutes(slot), 0);
+export const calcTotalTimeBlockMinutes = (
+  timeBlocks: TimeBlockLike[],
+): number =>
+  timeBlocks.reduce(
+    (total, timeBlock) => total + calcTimeBlockMinutes(timeBlock),
+    0,
+  );
 
-export const toggleExactSlot = <T extends SlotLike>(
+export const toggleExactTimeBlock = <T extends TimeBlockLike>(
   list: T[],
-  slot: T,
+  timeBlock: T,
 ): T[] => {
-  const found = list.some((item) => isSameSlot(item, slot));
+  const found = list.some((item) => isSameTimeBlock(item, timeBlock));
   if (found) {
-    return list.filter((item) => !isSameSlot(item, slot));
+    return list.filter((item) => !isSameTimeBlock(item, timeBlock));
   }
-  return [...list, slot];
+  return [...list, timeBlock];
 };
 
 export const getUtcDateKey = (value: string): string => {
@@ -73,14 +84,16 @@ export const getUtcDateKey = (value: string): string => {
   return new Date(time).toISOString().slice(0, 10);
 };
 
-export const calcGapMinutes = (a: SlotLike, b: SlotLike): number => {
+export const calcGapMinutes = (a: TimeBlockLike, b: TimeBlockLike): number => {
   const aEnd = parseTime(a.endAt);
   const bStart = parseTime(b.startAt);
   return Math.max(0, (bStart - aEnd) / (60 * 1000));
 };
 
-export const sortSlotsByStart = <T extends SlotLike>(slots: T[]): T[] =>
-  [...slots].sort(
+export const sortTimeBlocksByStart = <T extends TimeBlockLike>(
+  timeBlocks: T[],
+): T[] =>
+  [...timeBlocks].sort(
     (a, b) =>
       parseTime(a.startAt) - parseTime(b.startAt) ||
       parseTime(a.endAt) - parseTime(b.endAt),

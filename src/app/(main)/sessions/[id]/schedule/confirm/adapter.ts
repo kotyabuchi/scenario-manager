@@ -8,27 +8,27 @@ import { camelCaseKeys, toRecordArray } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
 import type {
-  AvailabilitySlotInput,
-  ConfirmedScheduleSlotRow,
+  AvailabilityTimeBlockInput,
+  ConfirmedScheduleTimeBlockRow,
   RecommendationGroup,
   RecommendationParticipant,
-  RecommendationSourceSlot,
+  RecommendationSourceTimeBlock,
 } from '../../availability/interface';
 
 const logger = getAppLogger(['app', 'sessions', 'schedule', 'confirm']);
 
 const THIRTY_MINUTES_MS = 30 * 60 * 1000;
 
-const validateConfirmedSlots = (
-  slots: AvailabilitySlotInput[],
+const validateConfirmedTimeBlocks = (
+  timeBlocks: AvailabilityTimeBlockInput[],
 ): Result<void> => {
-  const sorted = [...slots].sort(
+  const sorted = [...timeBlocks].sort(
     (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
   );
 
-  for (const slot of sorted) {
-    const startMs = new Date(slot.startAt).getTime();
-    const endMs = new Date(slot.endAt).getTime();
+  for (const timeBlock of sorted) {
+    const startMs = new Date(timeBlock.startAt).getTime();
+    const endMs = new Date(timeBlock.endAt).getTime();
     if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) {
       return err(new Error('日時形式が不正です'));
     }
@@ -50,7 +50,7 @@ const validateConfirmedSlots = (
       new Date(prev.startAt).getTime() < new Date(current.endAt).getTime() &&
       new Date(current.startAt).getTime() < new Date(prev.endAt).getTime()
     ) {
-      return err(new Error('確定枠同士が重複しています'));
+      return err(new Error('確定日程同士が重複しています'));
     }
   }
 
@@ -58,68 +58,68 @@ const validateConfirmedSlots = (
 };
 
 /**
- * 確定枠を全置換する（RPC でアトミック実行、再編集可）
+ * 確定日程を全置換する（RPC でアトミック実行、再編集可）
  */
-export const replaceConfirmedScheduleSlots = async (
+export const replaceConfirmedScheduleTimeBlocks = async (
   sessionId: string,
   actorUserId: string,
-  slots: AvailabilitySlotInput[],
-): Promise<Result<ConfirmedScheduleSlotRow[]>> => {
+  timeBlocks: AvailabilityTimeBlockInput[],
+): Promise<Result<ConfirmedScheduleTimeBlockRow[]>> => {
   try {
-    const validation = validateConfirmedSlots(slots);
+    const validation = validateConfirmedTimeBlocks(timeBlocks);
     if (!validation.success) {
       return err(validation.error);
     }
 
-    if (slots.length === 0) {
-      return err(new Error('最低1つの日程枠を選択してください'));
+    if (timeBlocks.length === 0) {
+      return err(new Error('最低1つの候補日時を選択してください'));
     }
 
-    const earliestSlot = [...slots].sort(
+    const earliestTimeBlock = [...timeBlocks].sort(
       (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
     )[0];
-    if (!earliestSlot) {
-      return err(new Error('最低1つの日程枠を選択してください'));
+    if (!earliestTimeBlock) {
+      return err(new Error('最低1つの候補日時を選択してください'));
     }
 
     const supabase = await createDbClient();
 
-    const slotsPayload = slots.map((slot, index) => ({
-      gameScheduleSlotId: ulid(),
-      startAt: slot.startAt,
-      endAt: slot.endAt,
-      slotOrder: index + 1,
+    const scheduleTimeBlocks = timeBlocks.map((timeBlock, index) => ({
+      gameScheduleTimeBlockId: ulid(),
+      startAt: timeBlock.startAt,
+      endAt: timeBlock.endAt,
+      blockOrder: index + 1,
     }));
 
     const { data, error } = await supabase.rpc(
-      'replace_confirmed_schedule_slots',
+      'replace_confirmed_schedule_time_blocks',
       {
         p_session_id: sessionId,
         p_actor_user_id: actorUserId,
-        p_slots: slotsPayload,
-        p_schedule_date: earliestSlot.startAt,
+        p_time_blocks: scheduleTimeBlocks,
+        p_schedule_date: earliestTimeBlock.startAt,
       },
     );
 
     if (error) {
-      logger.error`確定枠置換RPCエラー: ${error.message}`;
+      logger.error`確定日程置換RPCエラー: ${error.message}`;
       return err(new Error(error.message));
     }
 
     return ok(
       toRecordArray(data).map(
-        (row) => camelCaseKeys(row) as ConfirmedScheduleSlotRow,
+        (row) => camelCaseKeys(row) as ConfirmedScheduleTimeBlockRow,
       ),
     );
   } catch (e) {
-    logger.error`replaceConfirmedScheduleSlots 予期しないエラー: ${e}`;
+    logger.error`replaceConfirmedScheduleTimeBlocks 予期しないエラー: ${e}`;
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
 };
 
 /**
  * 確定UI用のおすすめ候補を取得する
- * 提出枠が0件の場合は空配列を返す（UI側で不足表示）
+ * 提出日時が0件の場合は空配列を返す（UI側で不足表示）
  */
 export const getScheduleRecommendations = async (
   sessionId: string,
@@ -130,7 +130,7 @@ export const getScheduleRecommendations = async (
     const [
       { data: session, error: sessionError },
       { data: participants, error: participantsError },
-      { data: availabilitySlots, error: availabilitySlotsError },
+      { data: availabilityTimeBlocks, error: availabilityTimeBlocksError },
     ] = await Promise.all([
       supabase
         .from('game_sessions')
@@ -145,7 +145,7 @@ export const getScheduleRecommendations = async (
         .eq('session_id', sessionId)
         .eq('participant_status', ParticipantStatuses.CONFIRMED.value),
       supabase
-        .from('session_availability_slots')
+        .from('session_availability_time_blocks')
         .select('user_id, start_at, end_at')
         .eq('session_id', sessionId)
         .order('start_at', { ascending: true }),
@@ -162,9 +162,9 @@ export const getScheduleRecommendations = async (
       logger.error`おすすめ取得(参加者)エラー: ${participantsError.message}`;
       return err(new Error(participantsError.message));
     }
-    if (availabilitySlotsError) {
-      logger.error`おすすめ取得(提出枠)エラー: ${availabilitySlotsError.message}`;
-      return err(new Error(availabilitySlotsError.message));
+    if (availabilityTimeBlocksError) {
+      logger.error`おすすめ取得(提出日時)エラー: ${availabilityTimeBlocksError.message}`;
+      return err(new Error(availabilityTimeBlocksError.message));
     }
 
     const participantMap = new Map<string, RecommendationParticipant>();
@@ -190,17 +190,17 @@ export const getScheduleRecommendations = async (
       participantsForRecommendation.map((participant) => participant.userId),
     );
 
-    const slotsForRecommendation: RecommendationSourceSlot[] = (
-      availabilitySlots ?? []
+    const timeBlocksForRecommendation: RecommendationSourceTimeBlock[] = (
+      availabilityTimeBlocks ?? []
     )
-      .filter((slot) => participantUserIds.has(slot.user_id))
-      .map((slot) => ({
-        userId: slot.user_id,
-        startAt: slot.start_at,
-        endAt: slot.end_at,
+      .filter((block) => participantUserIds.has(block.user_id))
+      .map((block) => ({
+        userId: block.user_id,
+        startAt: block.start_at,
+        endAt: block.end_at,
       }));
 
-    if (slotsForRecommendation.length === 0) {
+    if (timeBlocksForRecommendation.length === 0) {
       return ok([]);
     }
 
@@ -210,7 +210,7 @@ export const getScheduleRecommendations = async (
 
     const recommendations = buildScheduleRecommendations({
       participants: participantsForRecommendation,
-      slots: slotsForRecommendation,
+      timeBlocks: timeBlocksForRecommendation,
       minPlaytimeMinutes,
     });
 

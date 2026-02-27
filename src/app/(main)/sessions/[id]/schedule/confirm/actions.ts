@@ -11,22 +11,22 @@ import {
 } from '../../scheduleFlowGuards';
 import {
   getScheduleRecommendations,
-  replaceConfirmedScheduleSlots,
+  replaceConfirmedScheduleTimeBlocks,
 } from './adapter';
-import { confirmScheduleSlotsSchema } from './schema';
+import { confirmScheduleTimeBlocksSchema } from './schema';
 
 import { err, ok, type Result } from '@/types/result';
 
 import type {
-  ConfirmedScheduleSlotRow,
+  ConfirmedScheduleTimeBlockRow,
   RecommendationGroup,
 } from '../../availability/interface';
-import type { ConfirmScheduleSlotsValues } from './schema';
+import type { ConfirmScheduleTimeBlocksValues } from './schema';
 
-export const confirmScheduleSlotsAction = async (
+export const confirmScheduleTimeBlocksAction = async (
   sessionId: string,
-  data: ConfirmScheduleSlotsValues,
-): Promise<Result<ConfirmedScheduleSlotRow[]>> => {
+  data: ConfirmScheduleTimeBlocksValues,
+): Promise<Result<ConfirmedScheduleTimeBlockRow[]>> => {
   try {
     const userId = await getCurrentUserId();
     if (isNil(userId)) {
@@ -46,17 +46,17 @@ export const confirmScheduleSlotsAction = async (
       return err(new Error('準備中フェーズでのみ日程を確定できます'));
     }
 
-    const parsed = confirmScheduleSlotsSchema.safeParse(data);
+    const parsed = confirmScheduleTimeBlocksSchema.safeParse(data);
     if (!parsed.success) {
       return err(
         new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
       );
     }
 
-    const result = await replaceConfirmedScheduleSlots(
+    const result = await replaceConfirmedScheduleTimeBlocks(
       sessionId,
       userId,
-      parsed.data.slots,
+      parsed.data.timeBlocks,
     );
     if (!result.success) {
       return err(result.error);

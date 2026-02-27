@@ -13,9 +13,9 @@ import { err, ok, type Result } from '@/types/result';
 
 import type { Database } from '@/db/types';
 import type {
-  AvailabilitySlotInput,
-  AvailabilitySlotRow,
-  AvailabilitySlotWithUser,
+  AvailabilityTimeBlockInput,
+  AvailabilityTimeBlockRow,
+  AvailabilityTimeBlockWithUser,
   AvailabilityWorkspaceData,
   ParticipantType,
 } from './interface';
@@ -30,8 +30,8 @@ const hasThirtyMinuteBoundary = (value: string): boolean => {
 };
 
 const isOverlapping = (
-  a: AvailabilitySlotInput,
-  b: AvailabilitySlotInput,
+  a: AvailabilityTimeBlockInput,
+  b: AvailabilityTimeBlockInput,
 ): boolean => {
   const aStart = new Date(a.startAt).getTime();
   const aEnd = new Date(a.endAt).getTime();
@@ -40,12 +40,12 @@ const isOverlapping = (
   return aStart < bEnd && bStart < aEnd;
 };
 
-const validateAvailabilitySlots = (
-  slots: AvailabilitySlotInput[],
+const validateAvailabilityTimeBlocks = (
+  timeBlocks: AvailabilityTimeBlockInput[],
 ): Result<void> => {
-  for (const slot of slots) {
-    const startMs = new Date(slot.startAt).getTime();
-    const endMs = new Date(slot.endAt).getTime();
+  for (const timeBlock of timeBlocks) {
+    const startMs = new Date(timeBlock.startAt).getTime();
+    const endMs = new Date(timeBlock.endAt).getTime();
     if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) {
       return err(new Error('日時形式が不正です'));
     }
@@ -53,14 +53,14 @@ const validateAvailabilitySlots = (
       return err(new Error('開始日時は終了日時より前である必要があります'));
     }
     if (
-      !hasThirtyMinuteBoundary(slot.startAt) ||
-      !hasThirtyMinuteBoundary(slot.endAt)
+      !hasThirtyMinuteBoundary(timeBlock.startAt) ||
+      !hasThirtyMinuteBoundary(timeBlock.endAt)
     ) {
       return err(new Error('日時は30分単位で指定してください'));
     }
   }
 
-  const sorted = [...slots].sort(
+  const sorted = [...timeBlocks].sort(
     (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
   );
   for (let index = 1; index < sorted.length; index += 1) {
@@ -70,7 +70,7 @@ const validateAvailabilitySlots = (
       continue;
     }
     if (isOverlapping(prev, current)) {
-      return err(new Error('提出枠同士が重複しています'));
+      return err(new Error('候補日時同士が重複しています'));
     }
   }
 
@@ -107,8 +107,8 @@ export const getAvailabilityWorkspaceData = async (
     const [
       { data: currentParticipant, error: currentParticipantError },
       { data: allParticipants, error: allParticipantsError },
-      { data: allSlots, error: allSlotsError },
-      { data: confirmedSlots, error: confirmedSlotsError },
+      { data: allTimeBlocks, error: allTimeBlocksError },
+      { data: confirmedTimeBlocks, error: confirmedTimeBlocksError },
     ] = await Promise.all([
       supabase
         .from('session_participants')
@@ -122,15 +122,15 @@ export const getAvailabilityWorkspaceData = async (
         .select('user_id, participant_type, participant_status')
         .eq('session_id', sessionId),
       supabase
-        .from('session_availability_slots')
+        .from('session_availability_time_blocks')
         .select('*')
         .eq('session_id', sessionId)
         .order('start_at', { ascending: true }),
       supabase
-        .from('game_schedule_slots')
+        .from('game_schedule_time_blocks')
         .select('*')
         .eq('session_id', sessionId)
-        .order('slot_order', { ascending: true }),
+        .order('block_order', { ascending: true }),
     ]);
 
     if (currentParticipantError) {
@@ -141,13 +141,13 @@ export const getAvailabilityWorkspaceData = async (
       logger.error`ワークスペース初期データ取得(全参加者)エラー: ${allParticipantsError.message}`;
       return err(new Error(allParticipantsError.message));
     }
-    if (allSlotsError) {
-      logger.error`ワークスペース初期データ取得(提出枠)エラー: ${allSlotsError.message}`;
-      return err(new Error(allSlotsError.message));
+    if (allTimeBlocksError) {
+      logger.error`ワークスペース初期データ取得(候補日時)エラー: ${allTimeBlocksError.message}`;
+      return err(new Error(allTimeBlocksError.message));
     }
-    if (confirmedSlotsError) {
-      logger.error`ワークスペース初期データ取得(確定枠)エラー: ${confirmedSlotsError.message}`;
-      return err(new Error(confirmedSlotsError.message));
+    if (confirmedTimeBlocksError) {
+      logger.error`ワークスペース初期データ取得(確定枠)エラー: ${confirmedTimeBlocksError.message}`;
+      return err(new Error(confirmedTimeBlocksError.message));
     }
 
     const participantMap = new Map<
@@ -166,14 +166,16 @@ export const getAvailabilityWorkspaceData = async (
       ]),
     );
 
-    const activeSlots = (allSlots ?? []).filter((slot) => {
-      const participant = participantMap.get(slot.user_id);
+    const activeTimeBlocks = (allTimeBlocks ?? []).filter((timeBlock) => {
+      const participant = participantMap.get(timeBlock.user_id);
       return (
         participant?.participantStatus === ParticipantStatuses.CONFIRMED.value
       );
     });
 
-    const userIds = [...new Set(activeSlots.map((slot) => slot.user_id))];
+    const userIds = [
+      ...new Set(activeTimeBlocks.map((timeBlock) => timeBlock.user_id)),
+    ];
     const { data: users, error: usersError } = userIds.length
       ? await supabase
           .from('users')
@@ -190,21 +192,25 @@ export const getAvailabilityWorkspaceData = async (
       (users ?? []).map((user) => [user.user_id, user.user_name]),
     );
 
-    const myAvailabilitySlots = activeSlots
-      .filter((slot) => slot.user_id === currentUserId)
-      .map((slot) => camelCaseKeys(toRecord(slot)) as AvailabilitySlotRow);
+    const myAvailabilityTimeBlocks = activeTimeBlocks
+      .filter((timeBlock) => timeBlock.user_id === currentUserId)
+      .map(
+        (timeBlock) =>
+          camelCaseKeys(toRecord(timeBlock)) as AvailabilityTimeBlockRow,
+      );
 
-    const otherUserAvailabilitySlots: AvailabilitySlotWithUser[] = activeSlots
-      .filter((slot) => slot.user_id !== currentUserId)
-      .map((slot) => {
-        const participant = participantMap.get(slot.user_id);
-        return {
-          ...(camelCaseKeys(toRecord(slot)) as AvailabilitySlotRow),
-          userName: userNameMap.get(slot.user_id) ?? '退会済みユーザー',
-          participantType: participant?.participantType ?? 'PLAYER',
-          isHost: slot.user_id === session.created_by_id,
-        };
-      });
+    const otherUserAvailabilityTimeBlocks: AvailabilityTimeBlockWithUser[] =
+      activeTimeBlocks
+        .filter((timeBlock) => timeBlock.user_id !== currentUserId)
+        .map((timeBlock) => {
+          const participant = participantMap.get(timeBlock.user_id);
+          return {
+            ...(camelCaseKeys(toRecord(timeBlock)) as AvailabilityTimeBlockRow),
+            userName: userNameMap.get(timeBlock.user_id) ?? '退会済みユーザー',
+            participantType: participant?.participantType ?? 'PLAYER',
+            isHost: timeBlock.user_id === session.created_by_id,
+          };
+        });
 
     const scenarioRecord = toRecord(session.scenario);
     const minPlaytimeMinutes = isNil(session.scenario)
@@ -222,13 +228,13 @@ export const getAvailabilityWorkspaceData = async (
           ? currentParticipant.participant_type
           : null,
       currentUserIsHost: session.created_by_id === currentUserId,
-      myAvailabilitySlots,
-      otherUserAvailabilitySlots,
-      confirmedScheduleSlots: toRecordArray(confirmedSlots).map(
-        (slot) =>
+      myAvailabilityTimeBlocks,
+      otherUserAvailabilityTimeBlocks,
+      confirmedScheduleTimeBlocks: toRecordArray(confirmedTimeBlocks).map(
+        (timeBlock) =>
           camelCaseKeys(
-            slot,
-          ) as AvailabilityWorkspaceData['confirmedScheduleSlots'][number],
+            timeBlock,
+          ) as AvailabilityWorkspaceData['confirmedScheduleTimeBlocks'][number],
       ),
     });
   } catch (e) {
@@ -238,7 +244,7 @@ export const getAvailabilityWorkspaceData = async (
 };
 
 /**
- * 現在ユーザーが可用枠を1件以上提出済みかどうか
+ * 現在ユーザーが候補日時を1件以上提出済みかどうか
  */
 export const hasUserAvailabilitySubmission = async (
   sessionId: string,
@@ -247,13 +253,13 @@ export const hasUserAvailabilitySubmission = async (
   try {
     const supabase = await createDbClient();
     const { count, error } = await supabase
-      .from('session_availability_slots')
-      .select('availability_slot_id', { count: 'exact', head: true })
+      .from('session_availability_time_blocks')
+      .select('availability_time_block_id', { count: 'exact', head: true })
       .eq('session_id', sessionId)
       .eq('user_id', userId);
 
     if (error) {
-      logger.error`可用枠提出有無取得エラー: ${error.message}`;
+      logger.error`候補日時提出有無取得エラー: ${error.message}`;
       return err(new Error(error.message));
     }
 
@@ -265,45 +271,48 @@ export const hasUserAvailabilitySubmission = async (
 };
 
 /**
- * 自分の可用枠を全置換で保存する（RPC でアトミック実行）
+ * 自分の候補日時を全置換で保存する（RPC でアトミック実行）
  */
-export const replaceAvailabilitySlots = async (
+export const replaceAvailabilityTimeBlocks = async (
   sessionId: string,
   userId: string,
-  slots: AvailabilitySlotInput[],
-): Promise<Result<AvailabilitySlotRow[]>> => {
+  timeBlocks: AvailabilityTimeBlockInput[],
+): Promise<Result<AvailabilityTimeBlockRow[]>> => {
   try {
-    const validation = validateAvailabilitySlots(slots);
+    const validation = validateAvailabilityTimeBlocks(timeBlocks);
     if (!validation.success) {
       return err(validation.error);
     }
 
     const supabase = await createDbClient();
 
-    const slotsPayload = slots.map((slot) => ({
-      availabilitySlotId: ulid(),
-      startAt: slot.startAt,
-      endAt: slot.endAt,
+    const timeBlocksPayload = timeBlocks.map((timeBlock) => ({
+      availabilityTimeBlockId: ulid(),
+      startAt: timeBlock.startAt,
+      endAt: timeBlock.endAt,
     }));
 
-    const { data, error } = await supabase.rpc('replace_availability_slots', {
-      p_session_id: sessionId,
-      p_user_id: userId,
-      p_slots: slotsPayload,
-    });
+    const { data, error } = await supabase.rpc(
+      'replace_availability_time_blocks',
+      {
+        p_session_id: sessionId,
+        p_user_id: userId,
+        p_time_blocks: timeBlocksPayload,
+      },
+    );
 
     if (error) {
-      logger.error`可用枠置換RPCエラー: ${error.message}`;
+      logger.error`候補日時置換RPCエラー: ${error.message}`;
       return err(new Error(error.message));
     }
 
     return ok(
       toRecordArray(data).map(
-        (slot) => camelCaseKeys(slot) as AvailabilitySlotRow,
+        (timeBlock) => camelCaseKeys(timeBlock) as AvailabilityTimeBlockRow,
       ),
     );
   } catch (e) {
-    logger.error`replaceAvailabilitySlots 予期しないエラー: ${e}`;
+    logger.error`replaceAvailabilityTimeBlocks 予期しないエラー: ${e}`;
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
 };

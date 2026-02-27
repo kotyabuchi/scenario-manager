@@ -1,10 +1,10 @@
 import {
   calcGapMinutes,
-  calcSlotMinutes,
-  calcTotalMinutes,
+  calcTimeBlockMinutes,
+  calcTotalTimeBlockMinutes,
   getUtcDateKey,
-  sortSlotsByStart,
-} from './slotUtils';
+  sortTimeBlocksByStart,
+} from './timeBlockUtils';
 
 import type {
   CoverageSummary,
@@ -12,8 +12,8 @@ import type {
   RecommendationGroupType,
   RecommendationItem,
   RecommendationParticipant,
-  RecommendationSlot,
-  RecommendationSourceSlot,
+  RecommendationSourceTimeBlock,
+  RecommendationTimeBlock,
 } from '@/app/(main)/sessions/[id]/availability/interface';
 
 const MINUTES_IN_DAY = 24 * 60;
@@ -22,7 +22,7 @@ const MAX_COMBO_ITEMS_PER_GROUP = 10;
 
 export const MAX_SINGLE_CANDIDATES_FOR_COMBO = 10;
 
-type SourceSlotWithMs = RecommendationSourceSlot & {
+type SourceTimeBlockWithMs = RecommendationSourceTimeBlock & {
   startMs: number;
   endMs: number;
 };
@@ -44,18 +44,18 @@ type GroupCoverageContext = {
 
 type BuildScheduleRecommendationsInput = {
   participants: RecommendationParticipant[];
-  slots: RecommendationSourceSlot[];
+  timeBlocks: RecommendationSourceTimeBlock[];
   minPlaytimeMinutes: number | null;
   maxSingleCandidatesForCombo?: number;
 };
 
 type GroupSegment = {
-  slot: RecommendationSlot;
+  timeBlock: RecommendationTimeBlock;
   coverage: CoverageSummary;
 };
 
 type ComboMetrics = {
-  slotCount: number;
+  timeBlockCount: number;
   sameDay: boolean;
   timeGapTotalMinutes: number;
   daySpanDays: number;
@@ -140,20 +140,20 @@ const buildCoverageContext = (
   };
 };
 
-const normalizeSourceSlots = (
-  slots: RecommendationSourceSlot[],
-): SourceSlotWithMs[] =>
-  slots
-    .map((slot) => ({
-      ...slot,
-      startMs: new Date(slot.startAt).getTime(),
-      endMs: new Date(slot.endAt).getTime(),
+const normalizeSourceTimeBlocks = (
+  timeBlocks: RecommendationSourceTimeBlock[],
+): SourceTimeBlockWithMs[] =>
+  timeBlocks
+    .map((timeBlock) => ({
+      ...timeBlock,
+      startMs: new Date(timeBlock.startAt).getTime(),
+      endMs: new Date(timeBlock.endAt).getTime(),
     }))
     .filter(
-      (slot) =>
-        Number.isFinite(slot.startMs) &&
-        Number.isFinite(slot.endMs) &&
-        slot.startMs < slot.endMs,
+      (timeBlock) =>
+        Number.isFinite(timeBlock.startMs) &&
+        Number.isFinite(timeBlock.endMs) &&
+        timeBlock.startMs < timeBlock.endMs,
     )
     .sort((a, b) => a.startMs - b.startMs || a.endMs - b.endMs);
 
@@ -170,7 +170,7 @@ const areSameActiveUsers = (a: Set<string>, b: Set<string>): boolean => {
 };
 
 const buildBaseSegments = (
-  slots: SourceSlotWithMs[],
+  slots: SourceTimeBlockWithMs[],
   coverageContext: GroupCoverageContext,
 ): BaseSegment[] => {
   if (slots.length === 0) {
@@ -259,7 +259,7 @@ const extractGroupSegments = (
     const prev = results.at(-1);
     if (!prev) {
       results.push({
-        slot: {
+        timeBlock: {
           startAt: new Date(segment.startMs).toISOString(),
           endAt: new Date(segment.endMs).toISOString(),
         },
@@ -272,9 +272,9 @@ const extractGroupSegments = (
       continue;
     }
 
-    const prevEndMs = new Date(prev.slot.endAt).getTime();
+    const prevEndMs = new Date(prev.timeBlock.endAt).getTime();
     if (prevEndMs === segment.startMs) {
-      prev.slot.endAt = new Date(segment.endMs).toISOString();
+      prev.timeBlock.endAt = new Date(segment.endMs).toISOString();
       prev.coverage = buildCoverageSummary(
         coverageContext,
         Math.min(
@@ -287,7 +287,7 @@ const extractGroupSegments = (
     }
 
     results.push({
-      slot: {
+      timeBlock: {
         startAt: new Date(segment.startMs).toISOString(),
         endAt: new Date(segment.endMs).toISOString(),
       },
@@ -313,7 +313,7 @@ const createSingleRecommendationItem = (
   segment: GroupSegment,
   minPlaytimeMinutes: number | null,
 ): RecommendationItem => {
-  const durationMinutes = calcSlotMinutes(segment.slot);
+  const durationMinutes = calcTimeBlockMinutes(segment.timeBlock);
   const meetsMinPlaytime = isMinPlaytimeMet(
     durationMinutes,
     minPlaytimeMinutes,
@@ -328,10 +328,10 @@ const createSingleRecommendationItem = (
   ];
 
   return {
-    recommendationId: `single:${group}:${segment.slot.startAt}:${segment.slot.endAt}`,
+    recommendationId: `single:${group}:${segment.timeBlock.startAt}:${segment.timeBlock.endAt}`,
     kind: 'single',
     group,
-    slots: [segment.slot],
+    timeBlocks: [segment.timeBlock],
     totalMinutes: durationMinutes,
     meetsMinPlaytime,
     coverage: segment.coverage,
@@ -356,20 +356,22 @@ const compareSingleItems = (
     return b.totalMinutes - a.totalMinutes;
   }
 
-  const aStart = a.slots[0]?.startAt ?? '';
-  const bStart = b.slots[0]?.startAt ?? '';
+  const aStart = a.timeBlocks[0]?.startAt ?? '';
+  const bStart = b.timeBlocks[0]?.startAt ?? '';
   return aStart.localeCompare(bStart);
 };
 
-const calcComboMetrics = (slots: RecommendationSlot[]): ComboMetrics => {
-  const sortedSlots = sortSlotsByStart(slots);
-  const totalMinutes = calcTotalMinutes(sortedSlots);
-  const firstSlot = sortedSlots[0];
-  const lastSlot = sortedSlots.at(-1);
+const calcComboMetrics = (
+  timeBlocks: RecommendationTimeBlock[],
+): ComboMetrics => {
+  const sortedTimeBlocks = sortTimeBlocksByStart(timeBlocks);
+  const totalMinutes = calcTotalTimeBlockMinutes(sortedTimeBlocks);
+  const firstTimeBlock = sortedTimeBlocks[0];
+  const lastTimeBlock = sortedTimeBlocks.at(-1);
 
-  if (!firstSlot || !lastSlot) {
+  if (!firstTimeBlock || !lastTimeBlock) {
     return {
-      slotCount: 0,
+      timeBlockCount: 0,
       sameDay: true,
       timeGapTotalMinutes: 0,
       daySpanDays: 0,
@@ -379,17 +381,17 @@ const calcComboMetrics = (slots: RecommendationSlot[]): ComboMetrics => {
   }
 
   let timeGapTotalMinutes = 0;
-  for (let index = 1; index < sortedSlots.length; index += 1) {
-    const prev = sortedSlots[index - 1];
-    const current = sortedSlots[index];
+  for (let index = 1; index < sortedTimeBlocks.length; index += 1) {
+    const prev = sortedTimeBlocks[index - 1];
+    const current = sortedTimeBlocks[index];
     if (!prev || !current) {
       continue;
     }
     timeGapTotalMinutes += calcGapMinutes(prev, current);
   }
 
-  const startDay = getUtcDateKey(firstSlot.startAt);
-  const endDay = getUtcDateKey(lastSlot.endAt);
+  const startDay = getUtcDateKey(firstTimeBlock.startAt);
+  const endDay = getUtcDateKey(lastTimeBlock.endAt);
   const daySpanDays = Math.floor(
     (new Date(`${endDay}T00:00:00.000Z`).getTime() -
       new Date(`${startDay}T00:00:00.000Z`).getTime()) /
@@ -397,28 +399,28 @@ const calcComboMetrics = (slots: RecommendationSlot[]): ComboMetrics => {
   );
 
   const dayKeys = new Set(
-    sortedSlots.map((slot) => getUtcDateKey(slot.startAt)),
+    sortedTimeBlocks.map((timeBlock) => getUtcDateKey(timeBlock.startAt)),
   );
 
   return {
-    slotCount: sortedSlots.length,
+    timeBlockCount: sortedTimeBlocks.length,
     sameDay: dayKeys.size === 1 && daySpanDays === 0,
     timeGapTotalMinutes,
     daySpanDays,
     totalMinutes,
-    firstStartAt: firstSlot.startAt,
+    firstStartAt: firstTimeBlock.startAt,
   };
 };
 
 const createComboRecommendationItem = (
   group: RecommendationGroupType,
-  slots: RecommendationSlot[],
+  timeBlocks: RecommendationTimeBlock[],
   coverages: CoverageSummary[],
   coverageContext: GroupCoverageContext,
   minPlaytimeMinutes: number | null,
 ): RecommendationItem => {
-  const sortedSlots = sortSlotsByStart(slots);
-  const metrics = calcComboMetrics(sortedSlots);
+  const sortedTimeBlocks = sortTimeBlocksByStart(timeBlocks);
+  const metrics = calcComboMetrics(sortedTimeBlocks);
   const meetsMinPlaytime = isMinPlaytimeMet(
     metrics.totalMinutes,
     minPlaytimeMinutes,
@@ -433,7 +435,7 @@ const createComboRecommendationItem = (
 
   const reasonLabels = [
     ...(minPlaytimeMinutes !== null && meetsMinPlaytime
-      ? [`${sortedSlots.length}枠で最低プレイ時間を満たす`]
+      ? [`${sortedTimeBlocks.length}件で最低プレイ時間を満たす`]
       : []),
     ...(metrics.sameDay ? ['同日で完結'] : []),
     groupLabel(group),
@@ -441,12 +443,12 @@ const createComboRecommendationItem = (
   ];
 
   return {
-    recommendationId: `combo:${group}:${sortedSlots
-      .map((slot) => `${slot.startAt}-${slot.endAt}`)
+    recommendationId: `combo:${group}:${sortedTimeBlocks
+      .map((timeBlock) => `${timeBlock.startAt}-${timeBlock.endAt}`)
       .join('|')}`,
     kind: 'combo',
     group,
-    slots: sortedSlots,
+    timeBlocks: sortedTimeBlocks,
     totalMinutes: metrics.totalMinutes,
     meetsMinPlaytime,
     coverage: buildCoverageSummary(
@@ -471,11 +473,11 @@ const compareComboItems = (
   a: RecommendationItem,
   b: RecommendationItem,
 ): number => {
-  const aMetrics = calcComboMetrics(a.slots);
-  const bMetrics = calcComboMetrics(b.slots);
+  const aMetrics = calcComboMetrics(a.timeBlocks);
+  const bMetrics = calcComboMetrics(b.timeBlocks);
 
-  if (aMetrics.slotCount !== bMetrics.slotCount) {
-    return aMetrics.slotCount - bMetrics.slotCount;
+  if (aMetrics.timeBlockCount !== bMetrics.timeBlockCount) {
+    return aMetrics.timeBlockCount - bMetrics.timeBlockCount;
   }
 
   if (aMetrics.sameDay !== bMetrics.sameDay) {
@@ -516,7 +518,7 @@ const generateComboRecommendations = (
     if (selected.length >= 2) {
       const item = createComboRecommendationItem(
         group,
-        selected.flatMap((recommendation) => recommendation.slots),
+        selected.flatMap((recommendation) => recommendation.timeBlocks),
         selected.map((recommendation) => recommendation.coverage),
         coverageContext,
         minPlaytimeMinutes,
@@ -581,20 +583,23 @@ const buildGroupRecommendations = (
 
 export const buildScheduleRecommendations = ({
   participants,
-  slots,
+  timeBlocks,
   minPlaytimeMinutes,
   maxSingleCandidatesForCombo = MAX_SINGLE_CANDIDATES_FOR_COMBO,
 }: BuildScheduleRecommendationsInput): RecommendationGroup[] => {
   const coverageContext = buildCoverageContext(participants);
-  const normalizedSlots = normalizeSourceSlots(slots).filter((slot) =>
-    participants.some((participant) => participant.userId === slot.userId),
+  const normalizedTimeBlocks = normalizeSourceTimeBlocks(timeBlocks).filter(
+    (timeBlock) =>
+      participants.some(
+        (participant) => participant.userId === timeBlock.userId,
+      ),
   );
 
-  if (normalizedSlots.length === 0) {
+  if (normalizedTimeBlocks.length === 0) {
     return [];
   }
 
-  const baseSegments = buildBaseSegments(normalizedSlots, coverageContext);
+  const baseSegments = buildBaseSegments(normalizedTimeBlocks, coverageContext);
   if (baseSegments.length === 0) {
     return [];
   }

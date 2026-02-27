@@ -4,14 +4,14 @@ import { buildScheduleRecommendations } from '../recommendation';
 
 import type {
   RecommendationParticipant,
-  RecommendationSourceSlot,
+  RecommendationSourceTimeBlock,
 } from '@/app/(main)/sessions/[id]/availability/interface';
 
 const slot = (
   userId: string,
   startAt: string,
   endAt: string,
-): RecommendationSourceSlot => ({
+): RecommendationSourceTimeBlock => ({
   userId,
   startAt,
   endAt,
@@ -34,7 +34,7 @@ describe('buildScheduleRecommendations', () => {
       player('spectator1', 'SPECTATOR'),
     ];
 
-    const slots: RecommendationSourceSlot[] = [
+    const slots: RecommendationSourceTimeBlock[] = [
       slot('keeper', '2026-03-01T10:00:00.000Z', '2026-03-01T14:00:00.000Z'),
       slot('player1', '2026-03-01T10:00:00.000Z', '2026-03-01T14:00:00.000Z'),
       slot(
@@ -46,7 +46,7 @@ describe('buildScheduleRecommendations', () => {
 
     const groups = buildScheduleRecommendations({
       participants,
-      slots,
+      timeBlocks: slots,
       minPlaytimeMinutes: 180,
     });
 
@@ -57,7 +57,7 @@ describe('buildScheduleRecommendations', () => {
     expect(groups[1]?.note).toBe('ここから下は見学者が参加できない候補です');
 
     const allUsersFirst = groups[0]?.items[0];
-    expect(allUsersFirst?.slots).toEqual([
+    expect(allUsersFirst?.timeBlocks).toEqual([
       {
         startAt: '2026-03-01T10:00:00.000Z',
         endAt: '2026-03-01T12:00:00.000Z',
@@ -65,7 +65,7 @@ describe('buildScheduleRecommendations', () => {
     ]);
 
     const requiredUsersOnlyFirst = groups[1]?.items[0];
-    expect(requiredUsersOnlyFirst?.slots).toEqual([
+    expect(requiredUsersOnlyFirst?.timeBlocks).toEqual([
       {
         startAt: '2026-03-01T10:00:00.000Z',
         endAt: '2026-03-01T14:00:00.000Z',
@@ -79,7 +79,7 @@ describe('buildScheduleRecommendations', () => {
       player('keeper', 'KEEPER'),
       player('player1', 'PLAYER'),
     ];
-    const slots: RecommendationSourceSlot[] = [
+    const slots: RecommendationSourceTimeBlock[] = [
       slot('keeper', '2026-03-02T10:00:00.000Z', '2026-03-02T13:00:00.000Z'),
       slot('player1', '2026-03-02T10:00:00.000Z', '2026-03-02T13:00:00.000Z'),
       slot('keeper', '2026-03-02T14:00:00.000Z', '2026-03-02T18:00:00.000Z'),
@@ -88,13 +88,13 @@ describe('buildScheduleRecommendations', () => {
 
     const groups = buildScheduleRecommendations({
       participants,
-      slots,
+      timeBlocks: slots,
       minPlaytimeMinutes: 210,
     });
 
     const singles =
       groups[0]?.items.filter((item) => item.kind === 'single') ?? [];
-    expect(singles[0]?.slots[0]).toEqual({
+    expect(singles[0]?.timeBlocks[0]).toEqual({
       startAt: '2026-03-02T14:00:00.000Z',
       endAt: '2026-03-02T18:00:00.000Z',
     });
@@ -107,7 +107,7 @@ describe('buildScheduleRecommendations', () => {
       player('keeper', 'KEEPER'),
       player('player1', 'PLAYER'),
     ];
-    const slots: RecommendationSourceSlot[] = [
+    const slots: RecommendationSourceTimeBlock[] = [
       slot('keeper', '2026-03-03T10:00:00.000Z', '2026-03-03T12:00:00.000Z'),
       slot('player1', '2026-03-03T10:00:00.000Z', '2026-03-03T12:00:00.000Z'),
       slot('keeper', '2026-03-03T12:30:00.000Z', '2026-03-03T14:30:00.000Z'),
@@ -118,13 +118,13 @@ describe('buildScheduleRecommendations', () => {
 
     const groups = buildScheduleRecommendations({
       participants,
-      slots,
+      timeBlocks: slots,
       minPlaytimeMinutes: 240,
     });
 
     const combos =
       groups[0]?.items.filter((item) => item.kind === 'combo') ?? [];
-    expect(combos[0]?.slots).toEqual([
+    expect(combos[0]?.timeBlocks).toEqual([
       {
         startAt: '2026-03-03T10:00:00.000Z',
         endAt: '2026-03-03T12:00:00.000Z',
@@ -142,18 +142,18 @@ describe('buildScheduleRecommendations', () => {
       player('keeper', 'KEEPER'),
       player('player1', 'PLAYER'),
     ];
-    const slots: RecommendationSourceSlot[] = [
+    const slots: RecommendationSourceTimeBlock[] = [
       slot('keeper', '2026-03-06T22:00:00.000Z', '2026-03-07T02:00:00.000Z'),
       slot('player1', '2026-03-06T22:00:00.000Z', '2026-03-07T02:00:00.000Z'),
     ];
 
     const groups = buildScheduleRecommendations({
       participants,
-      slots,
+      timeBlocks: slots,
       minPlaytimeMinutes: 180,
     });
 
-    expect(groups[0]?.items[0]?.slots[0]).toEqual({
+    expect(groups[0]?.items[0]?.timeBlocks[0]).toEqual({
       startAt: '2026-03-06T22:00:00.000Z',
       endAt: '2026-03-07T02:00:00.000Z',
     });
@@ -165,7 +165,7 @@ describe('buildScheduleRecommendations', () => {
       player('keeper', 'KEEPER'),
       player('player1', 'PLAYER'),
     ];
-    const slots: RecommendationSourceSlot[] = [
+    const slots: RecommendationSourceTimeBlock[] = [
       slot('keeper', '2026-03-08T10:00:00.000Z', '2026-03-08T12:00:00.000Z'),
       slot('player1', '2026-03-08T10:00:00.000Z', '2026-03-08T12:00:00.000Z'),
       slot('keeper', '2026-03-08T13:00:00.000Z', '2026-03-08T15:00:00.000Z'),
@@ -174,7 +174,7 @@ describe('buildScheduleRecommendations', () => {
 
     const groups = buildScheduleRecommendations({
       participants,
-      slots,
+      timeBlocks: slots,
       minPlaytimeMinutes: null,
     });
 
@@ -186,7 +186,7 @@ describe('buildScheduleRecommendations', () => {
   it('提出枠が0件なら空配列を返す', () => {
     const groups = buildScheduleRecommendations({
       participants: [player('keeper', 'KEEPER')],
-      slots: [],
+      timeBlocks: [],
       minPlaytimeMinutes: 120,
     });
 
@@ -200,7 +200,7 @@ describe('buildScheduleRecommendations', () => {
       ...Array.from({ length: 2 }, (_, i) => player(`s${i}`, 'SPECTATOR')),
     ];
 
-    const slots: RecommendationSourceSlot[] = participants.flatMap(
+    const slots: RecommendationSourceTimeBlock[] = participants.flatMap(
       (participant, participantIndex) =>
         Array.from({ length: 20 }, (_, slotIndex) => {
           const day = String(1 + Math.floor(slotIndex / 4)).padStart(2, '0');
@@ -216,7 +216,7 @@ describe('buildScheduleRecommendations', () => {
     const startedAt = performance.now();
     const groups = buildScheduleRecommendations({
       participants,
-      slots,
+      timeBlocks: slots,
       minPlaytimeMinutes: 180,
     });
     const elapsedMs = performance.now() - startedAt;

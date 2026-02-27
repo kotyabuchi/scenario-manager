@@ -8,7 +8,7 @@ import {
   getSchedulingPhases,
 } from '../scheduleFlowGuards';
 import { SubmitAvailabilityWorkspace } from './_components/SubmitAvailabilityWorkspace';
-import { saveAvailabilitySlotsAction } from './actions';
+import { saveAvailabilityTimeBlocksAction } from './actions';
 import { getAvailabilityWorkspaceData } from './adapter';
 import * as styles from './styles';
 
@@ -17,7 +17,7 @@ import { ParticipantStatuses } from '@/db/enum';
 import { createDbClient } from '@/lib/supabase/server';
 
 import type { Route } from 'next';
-import type { AvailabilitySlotInput } from './interface';
+import type { AvailabilityTimeBlockInput } from './interface';
 
 export const metadata = {
   title: '参加可能時間の提出',
@@ -81,9 +81,11 @@ export default async function AvailabilityPage({ params }: PageProps) {
     notFound();
   }
 
-  async function saveSlotsServerAction(slots: AvailabilitySlotInput[]) {
+  async function saveTimeBlocksServerAction(
+    timeBlocks: AvailabilityTimeBlockInput[],
+  ) {
     'use server';
-    return saveAvailabilitySlotsAction(id, { slots });
+    return saveAvailabilityTimeBlocksAction(id, { timeBlocks });
   }
 
   return (
@@ -95,7 +97,7 @@ export default async function AvailabilityPage({ params }: PageProps) {
 
       <SubmitAvailabilityWorkspace
         workspaceData={workspaceResult.data}
-        onSaveSlots={saveSlotsServerAction}
+        onSaveSlots={saveTimeBlocksServerAction}
       />
     </div>
   );

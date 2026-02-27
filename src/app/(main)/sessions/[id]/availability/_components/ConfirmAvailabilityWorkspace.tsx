@@ -11,17 +11,17 @@ import { SelectedSlotsStickyBar } from './SelectedSlotsStickyBar';
 import * as styles from './styles';
 
 import {
-  isOverlappingSlot,
-  isSameSlot,
-  sortSlotsByStart,
-} from '@/lib/availability/slotUtils';
+  isOverlappingTimeBlock,
+  isSameTimeBlock,
+  sortTimeBlocksByStart,
+} from '@/lib/availability/timeBlockUtils';
 import { err, type Result } from '@/types/result';
 
 import type {
-  AvailabilitySlotInput,
+  AvailabilityTimeBlockInput,
   AvailabilityWorkspaceData,
   CalendarDayBadge,
-  ConfirmedScheduleSlotRow,
+  ConfirmedScheduleTimeBlockRow,
   RecommendationGroup,
   RecommendationItem,
 } from '../interface';
@@ -30,10 +30,10 @@ type ConfirmAvailabilityWorkspaceProps = {
   workspaceData: AvailabilityWorkspaceData;
   recommendationGroups: RecommendationGroup[];
   onConfirmSlots?: (
-    slots: AvailabilitySlotInput[],
+    slots: AvailabilityTimeBlockInput[],
   ) =>
-    | Promise<Result<ConfirmedScheduleSlotRow[]>>
-    | Result<ConfirmedScheduleSlotRow[]>;
+    | Promise<Result<ConfirmedScheduleTimeBlockRow[]>>
+    | Result<ConfirmedScheduleTimeBlockRow[]>;
 };
 
 const formatDateKey = (date: Date): string => format(date, 'yyyy-MM-dd');
@@ -42,7 +42,7 @@ const getLocalDateKeyFromIso = (iso: string): string =>
 
 const buildConfirmDayBadges = (
   workspaceData: AvailabilityWorkspaceData,
-  selectedSlots: AvailabilitySlotInput[],
+  selectedSlots: AvailabilityTimeBlockInput[],
   recommendationGroups: RecommendationGroup[],
 ): CalendarDayBadge[] => {
   const bucket = new Map<
@@ -65,12 +65,12 @@ const buildConfirmDayBadges = (
   };
 
   const allAvailability = [
-    ...workspaceData.myAvailabilitySlots.map((slot) => ({
+    ...workspaceData.myAvailabilityTimeBlocks.map((slot) => ({
       startAt: slot.startAt,
       endAt: slot.endAt,
       participantType: workspaceData.currentUserParticipantType,
     })),
-    ...workspaceData.otherUserAvailabilitySlots.map((slot) => ({
+    ...workspaceData.otherUserAvailabilityTimeBlocks.map((slot) => ({
       startAt: slot.startAt,
       endAt: slot.endAt,
       participantType: slot.participantType,
@@ -88,7 +88,7 @@ const buildConfirmDayBadges = (
 
   for (const group of recommendationGroups) {
     for (const recommendation of group.items) {
-      for (const slot of recommendation.slots) {
+      for (const slot of recommendation.timeBlocks) {
         const item = touch(getLocalDateKeyFromIso(slot.startAt));
         item.markers.add(group.group === 'all_users' ? '#10b981' : '#a855f7');
       }
@@ -113,37 +113,39 @@ const buildConfirmDayBadges = (
 };
 
 const normalizeSlots = (
-  slots: AvailabilitySlotInput[],
-): AvailabilitySlotInput[] =>
-  sortSlotsByStart(
+  slots: AvailabilityTimeBlockInput[],
+): AvailabilityTimeBlockInput[] =>
+  sortTimeBlocksByStart(
     slots.map((slot) => ({ startAt: slot.startAt, endAt: slot.endAt })),
   );
 
 const toggleRecommendationSlots = (
-  currentSlots: AvailabilitySlotInput[],
+  currentSlots: AvailabilityTimeBlockInput[],
   item: RecommendationItem,
-): Result<AvailabilitySlotInput[]> => {
-  const allSelected = item.slots.every((slot) =>
-    currentSlots.some((current) => isSameSlot(current, slot)),
+): Result<AvailabilityTimeBlockInput[]> => {
+  const allSelected = item.timeBlocks.every((slot) =>
+    currentSlots.some((current) => isSameTimeBlock(current, slot)),
   );
 
   if (allSelected) {
     return {
       success: true,
       data: currentSlots.filter(
-        (current) => !item.slots.some((slot) => isSameSlot(current, slot)),
+        (current) =>
+          !item.timeBlocks.some((slot) => isSameTimeBlock(current, slot)),
       ),
     };
   }
 
-  const slotsToAdd = item.slots.filter(
-    (slot) => !currentSlots.some((current) => isSameSlot(current, slot)),
+  const slotsToAdd = item.timeBlocks.filter(
+    (slot) => !currentSlots.some((current) => isSameTimeBlock(current, slot)),
   );
 
   for (const nextSlot of slotsToAdd) {
     const overlaps = currentSlots.some(
       (current) =>
-        !isSameSlot(current, nextSlot) && isOverlappingSlot(current, nextSlot),
+        !isSameTimeBlock(current, nextSlot) &&
+        isOverlappingTimeBlock(current, nextSlot),
     );
     if (overlaps) {
       return err(
@@ -164,19 +166,19 @@ export const ConfirmAvailabilityWorkspace = ({
   onConfirmSlots,
 }: ConfirmAvailabilityWorkspaceProps) => {
   const serverSlots = normalizeSlots(
-    workspaceData.confirmedScheduleSlots.map((slot) => ({
+    workspaceData.confirmedScheduleTimeBlocks.map((slot) => ({
       startAt: slot.startAt,
       endAt: slot.endAt,
     })),
   );
   const [, setOptimisticSlots] = useOptimistic(serverSlots);
   const [selectedSlots, setSelectedSlots] =
-    useState<AvailabilitySlotInput[]>(serverSlots);
+    useState<AvailabilityTimeBlockInput[]>(serverSlots);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     serverSlots[0]
       ? new Date(serverSlots[0].startAt)
-      : recommendationGroups[0]?.items[0]?.slots[0]
-        ? new Date(recommendationGroups[0].items[0].slots[0].startAt)
+      : recommendationGroups[0]?.items[0]?.timeBlocks[0]
+        ? new Date(recommendationGroups[0].items[0].timeBlocks[0].startAt)
         : new Date(),
   );
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -200,7 +202,7 @@ export const ConfirmAvailabilityWorkspace = ({
     }
 
     setSelectedSlots(result.data);
-    const firstSlot = item.slots[0];
+    const firstSlot = item.timeBlocks[0];
     if (firstSlot) {
       setSelectedDate(new Date(firstSlot.startAt));
     }
@@ -250,7 +252,7 @@ export const ConfirmAvailabilityWorkspace = ({
         (count, group) =>
           count +
           group.items.filter((item) =>
-            item.slots.some(
+            item.timeBlocks.some(
               (slot) =>
                 getLocalDateKeyFromIso(slot.startAt) ===
                 formatDateKey(selectedDate),

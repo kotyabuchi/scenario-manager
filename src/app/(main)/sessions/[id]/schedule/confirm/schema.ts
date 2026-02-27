@@ -7,27 +7,30 @@ const isThirtyMinuteBoundary = (iso: string): boolean => {
   return Number.isFinite(time) && time % THIRTY_MINUTES_MS === 0;
 };
 
-const confirmSlotSchema = z
+const confirmTimeBlockSchema = z
   .object({
     startAt: z.string().datetime({ message: '開始日時が不正です' }),
     endAt: z.string().datetime({ message: '終了日時が不正です' }),
   })
   .refine(
-    (slot) => new Date(slot.startAt).getTime() < new Date(slot.endAt).getTime(),
+    (block) =>
+      new Date(block.startAt).getTime() < new Date(block.endAt).getTime(),
     {
       message: '開始日時は終了日時より前である必要があります',
       path: ['endAt'],
     },
   )
   .refine(
-    (slot) =>
-      isThirtyMinuteBoundary(slot.startAt) &&
-      isThirtyMinuteBoundary(slot.endAt),
+    (block) =>
+      isThirtyMinuteBoundary(block.startAt) &&
+      isThirtyMinuteBoundary(block.endAt),
     { message: '日時は30分単位で指定してください' },
   );
 
-const hasNoOverlap = (slots: { startAt: string; endAt: string }[]): boolean => {
-  const sorted = [...slots].sort(
+const hasNoOverlap = (
+  timeBlocks: { startAt: string; endAt: string }[],
+): boolean => {
+  const sorted = [...timeBlocks].sort(
     (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
   );
   for (let i = 1; i < sorted.length; i += 1) {
@@ -41,14 +44,14 @@ const hasNoOverlap = (slots: { startAt: string; endAt: string }[]): boolean => {
   return true;
 };
 
-export const confirmScheduleSlotsSchema = z.object({
-  slots: z
-    .array(confirmSlotSchema)
-    .min(1, '最低1つの日程枠を選択してください')
-    .max(20, '確定枠は20件以内にしてください')
-    .refine(hasNoOverlap, { message: '確定枠同士が重複しています' }),
+export const confirmScheduleTimeBlocksSchema = z.object({
+  timeBlocks: z
+    .array(confirmTimeBlockSchema)
+    .min(1, '最低1つの候補日時を選択してください')
+    .max(20, '確定日程は20件以内にしてください')
+    .refine(hasNoOverlap, { message: '確定日程同士が重複しています' }),
 });
 
-export type ConfirmScheduleSlotsValues = z.infer<
-  typeof confirmScheduleSlotsSchema
+export type ConfirmScheduleTimeBlocksValues = z.infer<
+  typeof confirmScheduleTimeBlocksSchema
 >;

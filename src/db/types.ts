@@ -163,47 +163,47 @@ export type Database = {
           },
         ];
       };
-      game_schedule_slots: {
+      game_schedule_time_blocks: {
         Row: {
+          block_order: number;
           created_at: string;
           created_by: string;
           end_at: string;
-          game_schedule_slot_id: string;
+          game_schedule_time_block_id: string;
           session_id: string;
-          slot_order: number;
           start_at: string;
           updated_at: string;
         };
         Insert: {
+          block_order: number;
           created_at?: string;
           created_by: string;
           end_at: string;
-          game_schedule_slot_id: string;
+          game_schedule_time_block_id: string;
           session_id: string;
-          slot_order: number;
           start_at: string;
           updated_at?: string;
         };
         Update: {
+          block_order?: number;
           created_at?: string;
           created_by?: string;
           end_at?: string;
-          game_schedule_slot_id?: string;
+          game_schedule_time_block_id?: string;
           session_id?: string;
-          slot_order?: number;
           start_at?: string;
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'game_schedule_slots_created_by_users_fkey';
+            foreignKeyName: 'game_schedule_time_blocks_created_by_users_fkey';
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'users';
             referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: 'game_schedule_slots_session_id_game_schedules_fkey';
+            foreignKeyName: 'game_schedule_time_blocks_session_id_game_schedules_fkey';
             columns: ['session_id'];
             isOneToOne: false;
             referencedRelation: 'game_schedules';
@@ -255,7 +255,7 @@ export type Database = {
           keeper_id: string | null;
           max_participant_count: number;
           recruited_player_count: number | null;
-          remaining_player_slot_count: number;
+          remaining_seat_count: number;
           scenario_id: string | null;
           scheduled_at: string | null;
           session_description: string;
@@ -277,7 +277,7 @@ export type Database = {
           keeper_id?: string | null;
           max_participant_count?: number;
           recruited_player_count?: number | null;
-          remaining_player_slot_count?: number;
+          remaining_seat_count?: number;
           scenario_id?: string | null;
           scheduled_at?: string | null;
           session_description?: string;
@@ -299,7 +299,7 @@ export type Database = {
           keeper_id?: string | null;
           max_participant_count?: number;
           recruited_player_count?: number | null;
-          remaining_player_slot_count?: number;
+          remaining_seat_count?: number;
           scenario_id?: string | null;
           scheduled_at?: string | null;
           session_description?: string;
@@ -519,9 +519,9 @@ export type Database = {
           },
         ];
       };
-      session_availability_slots: {
+      session_availability_time_blocks: {
         Row: {
-          availability_slot_id: string;
+          availability_time_block_id: string;
           created_at: string;
           end_at: string;
           session_id: string;
@@ -530,7 +530,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
-          availability_slot_id: string;
+          availability_time_block_id: string;
           created_at?: string;
           end_at: string;
           session_id: string;
@@ -539,7 +539,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
-          availability_slot_id?: string;
+          availability_time_block_id?: string;
           created_at?: string;
           end_at?: string;
           session_id?: string;
@@ -549,14 +549,14 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'session_availability_slots_session_id_game_sessions_fkey';
+            foreignKeyName: 'session_availability_time_blocks_session_id_game_sessions_fkey';
             columns: ['session_id'];
             isOneToOne: false;
             referencedRelation: 'game_sessions';
             referencedColumns: ['game_session_id'];
           },
           {
-            foreignKeyName: 'session_availability_slots_user_id_users_fkey';
+            foreignKeyName: 'session_availability_time_blocks_user_id_users_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -907,7 +907,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      adjust_session_remaining_player_slots: {
+      adjust_session_remaining_seats: {
         Args: { p_delta: number; p_session_id: string };
         Returns: undefined;
       };
@@ -915,8 +915,8 @@ export type Database = {
         Args: {
           p_creator_participant_type: Database['public']['Enums']['participant_type'];
           p_game_session_id: string;
-          p_initial_availability_slots: Json | null;
-          p_invited_members: Json | null;
+          p_initial_availability_time_blocks: Json;
+          p_invited_members: Json;
           p_is_beginner_friendly: boolean;
           p_recruited_player_count: number | null;
           p_scenario_id: string | null;
@@ -940,10 +940,10 @@ export type Database = {
         }[];
       };
       current_app_user_id: { Args: never; Returns: string };
-      replace_availability_slots: {
-        Args: { p_session_id: string; p_slots: Json; p_user_id: string };
+      replace_availability_time_blocks: {
+        Args: { p_session_id: string; p_time_blocks: Json; p_user_id: string };
         Returns: {
-          availability_slot_id: string;
+          availability_time_block_id: string;
           created_at: string;
           end_at: string;
           session_id: string;
@@ -953,31 +953,31 @@ export type Database = {
         }[];
         SetofOptions: {
           from: '*';
-          to: 'session_availability_slots';
+          to: 'session_availability_time_blocks';
           isOneToOne: false;
           isSetofReturn: true;
         };
       };
-      replace_confirmed_schedule_slots: {
+      replace_confirmed_schedule_time_blocks: {
         Args: {
           p_actor_user_id: string;
           p_schedule_date: string;
           p_session_id: string;
-          p_slots: Json;
+          p_time_blocks: Json;
         };
         Returns: {
+          block_order: number;
           created_at: string;
           created_by: string;
           end_at: string;
-          game_schedule_slot_id: string;
+          game_schedule_time_block_id: string;
           session_id: string;
-          slot_order: number;
           start_at: string;
           updated_at: string;
         }[];
         SetofOptions: {
           from: '*';
-          to: 'game_schedule_slots';
+          to: 'game_schedule_time_blocks';
           isOneToOne: false;
           isSetofReturn: true;
         };

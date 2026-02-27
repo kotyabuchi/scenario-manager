@@ -1,8 +1,8 @@
 import { format } from 'date-fns';
 
-import { calcTotalMinutes } from '@/lib/availability/slotUtils';
+import { calcTotalTimeBlockMinutes } from '@/lib/availability/timeBlockUtils';
 
-import type { AvailabilitySlotInput } from '../interface';
+import type { AvailabilityTimeBlockInput } from '../interface';
 
 const toDate = (value: string): Date => new Date(value);
 
@@ -20,9 +20,9 @@ export const formatMinutesLabel = (minutes: number): string => {
   return `${rest}分`;
 };
 
-export const calcSelectedSlotsTotalMinutes = (
-  slots: AvailabilitySlotInput[],
-): number => calcTotalMinutes(slots);
+export const calcSelectedTimeBlocksTotalMinutes = (
+  timeBlocks: AvailabilityTimeBlockInput[],
+): number => calcTotalTimeBlockMinutes(timeBlocks);
 
 export const getProgressStatus = (
   totalMinutes: number,
@@ -34,14 +34,14 @@ export const getProgressStatus = (
   return totalMinutes >= minPlaytimeMinutes ? 'success' : 'warning';
 };
 
-export const formatSlotDateTimeRange = (
-  slot: AvailabilitySlotInput,
+export const formatTimeBlockDateTimeRange = (
+  timeBlock: AvailabilityTimeBlockInput,
 ): {
   primary: string;
   secondary: string;
 } => {
-  const start = toDate(slot.startAt);
-  const end = toDate(slot.endAt);
+  const start = toDate(timeBlock.startAt);
+  const end = toDate(timeBlock.endAt);
   const sameDay = format(start, 'yyyy/MM/dd') === format(end, 'yyyy/MM/dd');
 
   const primary = sameDay
@@ -49,8 +49,8 @@ export const formatSlotDateTimeRange = (
     : `${format(start, 'M/d (E) HH:mm')} - ${format(end, 'M/d (E) HH:mm')}`;
 
   const secondary = sameDay
-    ? formatMinutesLabel(calcTotalMinutes([slot]))
-    : `日跨ぎ / ${formatMinutesLabel(calcTotalMinutes([slot]))}`;
+    ? formatMinutesLabel(calcTotalTimeBlockMinutes([timeBlock]))
+    : `日跨ぎ / ${formatMinutesLabel(calcTotalTimeBlockMinutes([timeBlock]))}`;
 
   return { primary, secondary };
 };

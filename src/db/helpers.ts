@@ -19,14 +19,14 @@ export type TagRow = CamelCaseKeys<Tables['tags']['Row']>;
 export type ScenarioTagRow = CamelCaseKeys<Tables['scenario_tags']['Row']>;
 export type GameSessionRow = CamelCaseKeys<Tables['game_sessions']['Row']>;
 export type GameScheduleRow = CamelCaseKeys<Tables['game_schedules']['Row']>;
-export type GameScheduleSlotRow = CamelCaseKeys<
-  Tables['game_schedule_slots']['Row']
+export type GameScheduleTimeBlockRow = CamelCaseKeys<
+  Tables['game_schedule_time_blocks']['Row']
 >;
 export type SessionParticipantRow = CamelCaseKeys<
   Tables['session_participants']['Row']
 >;
-export type SessionAvailabilitySlotRow = CamelCaseKeys<
-  Tables['session_availability_slots']['Row']
+export type SessionAvailabilityTimeBlockRow = CamelCaseKeys<
+  Tables['session_availability_time_blocks']['Row']
 >;
 export type UserReviewRow = CamelCaseKeys<Tables['user_reviews']['Row']>;
 export type UserScenarioPreferenceRow = CamelCaseKeys<
@@ -58,11 +58,11 @@ export type UserReviewInsert = CamelCaseKeys<Tables['user_reviews']['Insert']>;
 export type UserScenarioPreferenceInsert = CamelCaseKeys<
   Tables['user_scenario_preferences']['Insert']
 >;
-export type GameScheduleSlotInsert = CamelCaseKeys<
-  Tables['game_schedule_slots']['Insert']
+export type GameScheduleTimeBlockInsert = CamelCaseKeys<
+  Tables['game_schedule_time_blocks']['Insert']
 >;
-export type SessionAvailabilitySlotInsert = CamelCaseKeys<
-  Tables['session_availability_slots']['Insert']
+export type SessionAvailabilityTimeBlockInsert = CamelCaseKeys<
+  Tables['session_availability_time_blocks']['Insert']
 >;
 
 type DbClientLike = Pick<SupabaseClient<Database>, 'from'>;

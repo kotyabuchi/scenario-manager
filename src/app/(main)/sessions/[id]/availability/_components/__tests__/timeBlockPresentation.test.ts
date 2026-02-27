@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  calcSelectedSlotsTotalMinutes,
+  calcSelectedTimeBlocksTotalMinutes,
   formatMinutesLabel,
-  formatSlotDateTimeRange,
+  formatTimeBlockDateTimeRange,
   getProgressStatus,
-} from '../slotPresentation';
+} from '../timeBlockPresentation';
 
 describe('formatMinutesLabel', () => {
   it('分のみの場合は「N分」と表示する', () => {
@@ -48,9 +48,9 @@ describe('getProgressStatus', () => {
   });
 });
 
-describe('calcSelectedSlotsTotalMinutes', () => {
+describe('calcSelectedTimeBlocksTotalMinutes', () => {
   it('空配列の場合は0を返す', () => {
-    expect(calcSelectedSlotsTotalMinutes([])).toBe(0);
+    expect(calcSelectedTimeBlocksTotalMinutes([])).toBe(0);
   });
 
   it('複数スロットの合計分数を返す', () => {
@@ -64,14 +64,14 @@ describe('calcSelectedSlotsTotalMinutes', () => {
         endAt: '2025-03-16T15:30:00+09:00',
       },
     ];
-    expect(calcSelectedSlotsTotalMinutes(slots)).toBe(210);
+    expect(calcSelectedTimeBlocksTotalMinutes(slots)).toBe(210);
   });
 });
 
-describe('formatSlotDateTimeRange', () => {
+describe('formatTimeBlockDateTimeRange', () => {
   it('同一日のスロットは「M/d (E) HH:mm - HH:mm」形式で表示する', () => {
     // 2時間差のスロット（どのタイムゾーンでも同一日になる）
-    const result = formatSlotDateTimeRange({
+    const result = formatTimeBlockDateTimeRange({
       startAt: '2025-03-15T10:00:00+09:00',
       endAt: '2025-03-15T12:00:00+09:00',
     });
@@ -84,7 +84,7 @@ describe('formatSlotDateTimeRange', () => {
 
   it('日跨ぎスロットは開始・終了それぞれに日付を表示する', () => {
     // 24時間差のスロット（どのタイムゾーンでも日跨ぎになる）
-    const result = formatSlotDateTimeRange({
+    const result = formatTimeBlockDateTimeRange({
       startAt: '2025-03-15T00:00:00.000Z',
       endAt: '2025-03-16T00:00:00.000Z',
     });
@@ -96,7 +96,7 @@ describe('formatSlotDateTimeRange', () => {
   });
 
   it('日跨ぎスロットのsecondaryに「日跨ぎ」ラベルが含まれる', () => {
-    const result = formatSlotDateTimeRange({
+    const result = formatTimeBlockDateTimeRange({
       startAt: '2025-03-15T00:00:00.000Z',
       endAt: '2025-03-16T00:00:00.000Z',
     });

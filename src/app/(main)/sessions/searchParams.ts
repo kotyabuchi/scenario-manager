@@ -20,7 +20,7 @@ import type {
 const tabOptions = ['upcoming', 'history', 'public'] as const;
 
 // 公開卓ソートオプション
-const publicSortOptions = ['date_asc', 'created_desc', 'slots_desc'] as const;
+const publicSortOptions = ['date_asc', 'created_desc', 'seats_desc'] as const;
 
 // 参加予定ソートオプション
 const upcomingSortOptions = ['date_asc', 'created_desc'] as const;

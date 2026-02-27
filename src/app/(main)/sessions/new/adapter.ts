@@ -127,7 +127,7 @@ export const createSession = async (
             .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0]
         : (input.scheduledAt ?? null);
 
-    const initialAvailabilitySlotPayload = confirmedCandidates.map(
+    const initialAvailabilityTimeBlockPayload = confirmedCandidates.map(
       (candidate) => {
         const startAt = new Date(candidate.from);
         const endAt =
@@ -136,7 +136,7 @@ export const createSession = async (
             : new Date(startAt.getTime() + 30 * 60 * 1000);
 
         return {
-          availabilitySlotId: ulid(),
+          availabilityTimeBlockId: ulid(),
           startAt: startAt.toISOString(),
           endAt: endAt.toISOString(),
         };
@@ -159,8 +159,8 @@ export const createSession = async (
       p_creator_participant_type: input.creatorParticipantType,
       // JSONB パラメータは Supabase 生成型の Json と構造的に互換だが
       // TypeScript の index signature 推論が通らないため型アサーション
-      p_initial_availability_slots:
-        initialAvailabilitySlotPayload as unknown as Json,
+      p_initial_availability_time_blocks:
+        initialAvailabilityTimeBlockPayload as unknown as Json,
       p_invited_members: (input.invitedMembers ?? []) as unknown as Json,
     };
 

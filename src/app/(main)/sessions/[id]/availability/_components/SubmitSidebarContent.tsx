@@ -2,27 +2,27 @@
 
 import { format } from 'date-fns';
 
-import { formatSlotDateTimeRange } from './slotPresentation';
 import * as styles from './styles';
+import { formatTimeBlockDateTimeRange } from './timeBlockPresentation';
 
-import { isSameSlot } from '@/lib/availability/slotUtils';
+import { isSameTimeBlock } from '@/lib/availability/timeBlockUtils';
 
 import type {
-  AvailabilitySlotInput,
-  AvailabilitySlotWithUser,
+  AvailabilityTimeBlockInput,
+  AvailabilityTimeBlockWithUser,
 } from '../interface';
 
 type SubmitSidebarContentProps = {
   selectedDate: Date | null;
-  mySlots: AvailabilitySlotInput[];
-  otherUserSlots: AvailabilitySlotWithUser[];
-  onClickSlot: (slot: AvailabilitySlotInput) => void;
+  mySlots: AvailabilityTimeBlockInput[];
+  otherUserSlots: AvailabilityTimeBlockWithUser[];
+  onClickSlot: (slot: AvailabilityTimeBlockInput) => void;
   errorMessage?: string | null;
 };
 
 const formatDateKey = (date: Date): string => format(date, 'yyyy-MM-dd');
 
-const getRoleLabel = (slot: AvailabilitySlotWithUser): string => {
+const getRoleLabel = (slot: AvailabilityTimeBlockWithUser): string => {
   if (slot.isHost) {
     return '主催者';
   }
@@ -75,17 +75,20 @@ export const SubmitSidebarContent = ({
         <ul className={styles.sidebarList}>
           {visibleSlots.map((slot) => {
             const state = mySlots.some((mySlot) =>
-              isSameSlot(mySlot, { startAt: slot.startAt, endAt: slot.endAt }),
+              isSameTimeBlock(mySlot, {
+                startAt: slot.startAt,
+                endAt: slot.endAt,
+              }),
             )
               ? 'selected'
               : 'default';
-            const label = formatSlotDateTimeRange({
+            const label = formatTimeBlockDateTimeRange({
               startAt: slot.startAt,
               endAt: slot.endAt,
             });
 
             return (
-              <li key={slot.availabilitySlotId}>
+              <li key={slot.availabilityTimeBlockId}>
                 <button
                   type="button"
                   className={styles.sidebarItemButton({ state })}

@@ -4,7 +4,7 @@ import { Calendar, Check, FilmSlate, Users } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
-import { getSlotWarning } from './slotWarning';
+import { getSeatWarning } from './seatWarning';
 import * as styles from './styles';
 
 import { SessionPhases } from '@/db/enum';
@@ -78,7 +78,7 @@ export const SessionCard = (props: SessionCardProps) => {
 };
 
 const PublicSessionCard = ({ session }: { session: PublicSession }) => {
-  const slotWarning = getSlotWarning({
+  const seatWarning = getSeatWarning({
     participantCount: session.participantCount,
     maxPlayer: session.maxPlayer,
   });
@@ -121,9 +121,9 @@ const PublicSessionCard = ({ session }: { session: PublicSession }) => {
           >
             {getPhaseLabel(session.sessionPhase)}
           </span>
-          {!isNil(slotWarning) ? (
-            <span className={styles.publicCard_slotWarning}>
-              {slotWarning.label}
+          {!isNil(seatWarning) ? (
+            <span className={styles.publicCard_seatWarning}>
+              {seatWarning.label}
             </span>
           ) : (
             (session.minPlaytime || session.maxPlaytime) && (

@@ -1,18 +1,18 @@
 'use client';
 
+import * as styles from './styles';
 import {
-  calcSelectedSlotsTotalMinutes,
+  calcSelectedTimeBlocksTotalMinutes,
   formatMinutesLabel,
   getProgressStatus,
-} from './slotPresentation';
-import * as styles from './styles';
+} from './timeBlockPresentation';
 
 import { Button } from '@/components/elements/button/button';
 
-import type { AvailabilitySlotInput } from '../interface';
+import type { AvailabilityTimeBlockInput } from '../interface';
 
 type SelectedSlotsStickyBarProps = {
-  slots: AvailabilitySlotInput[];
+  slots: AvailabilityTimeBlockInput[];
   minPlaytimeMinutes: number | null;
   primaryActionLabel: string;
   onPrimaryAction?: () => void;
@@ -32,7 +32,7 @@ export const SelectedSlotsStickyBar = ({
   onToggleSidebar,
   sidebarOpen = false,
 }: SelectedSlotsStickyBarProps) => {
-  const totalMinutes = calcSelectedSlotsTotalMinutes(slots);
+  const totalMinutes = calcSelectedTimeBlocksTotalMinutes(slots);
   const progressStatus = getProgressStatus(totalMinutes, minPlaytimeMinutes);
 
   return (

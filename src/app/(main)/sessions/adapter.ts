@@ -103,7 +103,7 @@ export const searchPublicSessions = async (
       case 'created_desc':
         query = query.order('created_at', { ascending: false });
         break;
-      case 'slots_desc':
+      case 'seats_desc':
         query = query.order('created_at', { ascending: false });
         break;
     }

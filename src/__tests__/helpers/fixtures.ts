@@ -297,11 +297,11 @@ export const cleanupSessions = async (ids: string[]) => {
   const client = getTestClient();
 
   await client
-    .from('session_availability_slots')
+    .from('session_availability_time_blocks')
     .delete()
     .in('session_id', ids);
   await client.from('session_links').delete().in('session_id', ids);
-  await client.from('game_schedule_slots').delete().in('session_id', ids);
+  await client.from('game_schedule_time_blocks').delete().in('session_id', ids);
   await client.from('game_schedules').delete().in('session_id', ids);
   await client.from('session_participants').delete().in('session_id', ids);
   await client.from('game_sessions').delete().in('game_session_id', ids);

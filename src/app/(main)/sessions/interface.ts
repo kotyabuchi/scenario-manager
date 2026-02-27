@@ -1,6 +1,6 @@
 import type {
   GameScheduleRow,
-  GameScheduleSlotRow,
+  GameScheduleTimeBlockRow,
   GameSessionRow,
   ScenarioRow,
   ScenarioSystemRow,
@@ -13,7 +13,7 @@ import type { Database } from '@/db/types';
 // 基本型
 type GameSession = GameSessionRow;
 type GameSchedule = GameScheduleRow;
-type GameScheduleSlot = GameScheduleSlotRow;
+type GameScheduleTimeBlock = GameScheduleTimeBlockRow;
 type Scenario = ScenarioRow;
 type ScenarioSystem = ScenarioSystemRow;
 type SessionParticipant = SessionParticipantRow;
@@ -41,7 +41,7 @@ type SessionDetail = GameSession & {
       })
     | null;
   schedule: GameSchedule | null;
-  scheduleSlots: GameScheduleSlot[];
+  scheduleTimeBlocks: GameScheduleTimeBlock[];
   participants: ParticipantWithUser[];
   links: SessionLink[];
   keeper: Pick<User, 'userId' | 'userName'> | null;
@@ -56,7 +56,7 @@ type SessionWithRelations = GameSession & {
       })
     | null;
   schedule: GameSchedule | null;
-  scheduleSlots: GameScheduleSlot[];
+  scheduleTimeBlocks: GameScheduleTimeBlock[];
   participants: ParticipantWithUser[];
 };
 
@@ -93,7 +93,7 @@ type TabType = 'upcoming' | 'history' | 'public';
 type ViewType = 'list' | 'calendar';
 
 // ソートオプション（公開卓）
-type PublicSortOption = 'date_asc' | 'created_desc' | 'slots_desc';
+type PublicSortOption = 'date_asc' | 'created_desc' | 'seats_desc';
 
 // ソートオプション（参加予定）
 type UpcomingSortOption = 'date_asc' | 'created_desc';
@@ -146,7 +146,7 @@ type CalendarData = {
 export type {
   GameSession,
   GameSchedule,
-  GameScheduleSlot,
+  GameScheduleTimeBlock,
   Scenario,
   ScenarioSystem,
   SessionParticipant,

@@ -74,7 +74,7 @@ export const getSessionDetail = async (
 
     const [
       { data, error },
-      { data: scheduleSlots, error: scheduleSlotsError },
+      { data: scheduleTimeBlocks, error: scheduleTimeBlocksError },
     ] = await Promise.all([
       supabase
         .from('game_sessions')
@@ -90,19 +90,19 @@ export const getSessionDetail = async (
         .eq('game_session_id', sessionId)
         .maybeSingle(),
       supabase
-        .from('game_schedule_slots')
+        .from('game_schedule_time_blocks')
         .select('*')
         .eq('session_id', sessionId)
-        .order('slot_order', { ascending: true }),
+        .order('block_order', { ascending: true }),
     ]);
 
     if (error) {
       logger.error`セッション詳細取得エラー: ${error.message}`;
       return err(new Error(error.message));
     }
-    if (scheduleSlotsError) {
-      logger.error`セッション詳細取得(確定枠)エラー: ${scheduleSlotsError.message}`;
-      return err(new Error(scheduleSlotsError.message));
+    if (scheduleTimeBlocksError) {
+      logger.error`セッション詳細取得(確定日程)エラー: ${scheduleTimeBlocksError.message}`;
+      return err(new Error(scheduleTimeBlocksError.message));
     }
 
     if (isNil(data)) {
@@ -129,8 +129,9 @@ export const getSessionDetail = async (
       schedule: isNil(data.game_schedules)
         ? null
         : camelCaseKeys(toRecord(data.game_schedules)),
-      scheduleSlots: toRecordArray(scheduleSlots).map(
-        (slot) => camelCaseKeys(slot) as SessionDetail['scheduleSlots'][number],
+      scheduleTimeBlocks: toRecordArray(scheduleTimeBlocks).map(
+        (block) =>
+          camelCaseKeys(block) as SessionDetail['scheduleTimeBlocks'][number],
       ),
       participants: transformParticipants(rawParticipants),
       links: transformLinks(data.session_links),

@@ -24,9 +24,9 @@ const workspaceDataBase: AvailabilityWorkspaceData = {
   currentUserId: '01JUSERCURRENT0000000000001',
   currentUserParticipantType: 'PLAYER',
   currentUserIsHost: false,
-  myAvailabilitySlots: [
+  myAvailabilityTimeBlocks: [
     {
-      availabilitySlotId: '01JAVAIL000000000000000001',
+      availabilityTimeBlockId: '01JAVAIL000000000000000001',
       sessionId: '01JSESSIONAVAILTEST0000000001',
       userId: '01JUSERCURRENT0000000000001',
       startAt: makeIso(2026, 3, 1, 12),
@@ -35,9 +35,9 @@ const workspaceDataBase: AvailabilityWorkspaceData = {
       updatedAt: makeIso(2026, 2, 1, 10),
     },
   ],
-  otherUserAvailabilitySlots: [
+  otherUserAvailabilityTimeBlocks: [
     {
-      availabilitySlotId: '01JAVAIL000000000000000002',
+      availabilityTimeBlockId: '01JAVAIL000000000000000002',
       sessionId: '01JSESSIONAVAILTEST0000000001',
       userId: '01JUSERKEEPER0000000000001',
       startAt: makeIso(2026, 3, 1, 12),
@@ -49,7 +49,7 @@ const workspaceDataBase: AvailabilityWorkspaceData = {
       isHost: true,
     },
     {
-      availabilitySlotId: '01JAVAIL000000000000000003',
+      availabilityTimeBlockId: '01JAVAIL000000000000000003',
       sessionId: '01JSESSIONAVAILTEST0000000001',
       userId: '01JUSERPLAYER0000000000001',
       startAt: makeIso(2026, 3, 1, 18),
@@ -61,7 +61,7 @@ const workspaceDataBase: AvailabilityWorkspaceData = {
       isHost: false,
     },
     {
-      availabilitySlotId: '01JAVAIL000000000000000004',
+      availabilityTimeBlockId: '01JAVAIL000000000000000004',
       sessionId: '01JSESSIONAVAILTEST0000000001',
       userId: '01JUSERSPECT0000000000001',
       startAt: makeIso(2026, 3, 1, 12),
@@ -73,7 +73,7 @@ const workspaceDataBase: AvailabilityWorkspaceData = {
       isHost: false,
     },
     {
-      availabilitySlotId: '01JAVAIL000000000000000005',
+      availabilityTimeBlockId: '01JAVAIL000000000000000005',
       sessionId: '01JSESSIONAVAILTEST0000000001',
       userId: '01JUSERPLAYER0000000000002',
       startAt: makeIso(2026, 3, 2, 21),
@@ -85,13 +85,13 @@ const workspaceDataBase: AvailabilityWorkspaceData = {
       isHost: false,
     },
   ],
-  confirmedScheduleSlots: [
+  confirmedScheduleTimeBlocks: [
     {
-      gameScheduleSlotId: '01JCONFIRMSLOT000000000001',
+      gameScheduleTimeBlockId: '01JCONFIRMSLOT000000000001',
       sessionId: '01JSESSIONAVAILTEST0000000001',
       startAt: makeIso(2026, 3, 1, 12),
       endAt: makeIso(2026, 3, 1, 15),
-      slotOrder: 1,
+      blockOrder: 1,
       createdAt: makeIso(2026, 2, 3, 10),
       updatedAt: makeIso(2026, 2, 3, 10),
       createdBy: '01JUSERKEEPER0000000000001',
@@ -108,7 +108,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
         recommendationId: 'rec-1',
         kind: 'single',
         group: 'all_users',
-        slots: [
+        timeBlocks: [
           { startAt: makeIso(2026, 3, 1, 12), endAt: makeIso(2026, 3, 1, 15) },
         ],
         totalMinutes: 180,
@@ -137,7 +137,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
         recommendationId: 'rec-2',
         kind: 'single',
         group: 'required_users_only',
-        slots: [
+        timeBlocks: [
           { startAt: makeIso(2026, 3, 1, 18), endAt: makeIso(2026, 3, 1, 22) },
         ],
         totalMinutes: 240,
@@ -159,7 +159,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
         recommendationId: 'rec-3',
         kind: 'combo',
         group: 'required_users_only',
-        slots: [
+        timeBlocks: [
           { startAt: makeIso(2026, 3, 1, 18), endAt: makeIso(2026, 3, 1, 22) },
           { startAt: makeIso(2026, 3, 2, 21), endAt: makeIso(2026, 3, 3, 1) },
         ],

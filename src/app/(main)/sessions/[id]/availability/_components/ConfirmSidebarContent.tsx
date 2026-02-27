@@ -1,22 +1,22 @@
 'use client';
 
+import * as styles from './styles';
 import {
   formatMinutesLabel,
-  formatSlotDateTimeRange,
-} from './slotPresentation';
-import * as styles from './styles';
+  formatTimeBlockDateTimeRange,
+} from './timeBlockPresentation';
 
-import { isSameSlot } from '@/lib/availability/slotUtils';
+import { isSameTimeBlock } from '@/lib/availability/timeBlockUtils';
 
 import type {
-  AvailabilitySlotInput,
+  AvailabilityTimeBlockInput,
   RecommendationGroup,
   RecommendationItem,
 } from '../interface';
 
 type ConfirmSidebarContentProps = {
   groups: RecommendationGroup[];
-  selectedSlots: AvailabilitySlotInput[];
+  selectedSlots: AvailabilityTimeBlockInput[];
   onClickRecommendation: (item: RecommendationItem) => void;
   emptyMessage?: string;
   errorMessage?: string | null;
@@ -24,16 +24,16 @@ type ConfirmSidebarContentProps = {
 
 const getItemState = (
   item: RecommendationItem,
-  selectedSlots: AvailabilitySlotInput[],
+  selectedSlots: AvailabilityTimeBlockInput[],
 ): 'default' | 'selected' | 'partial' => {
-  const selectedCount = item.slots.filter((slot) =>
-    selectedSlots.some((selected) => isSameSlot(selected, slot)),
+  const selectedCount = item.timeBlocks.filter((slot) =>
+    selectedSlots.some((selected) => isSameTimeBlock(selected, slot)),
   ).length;
 
   if (selectedCount === 0) {
     return 'default';
   }
-  if (selectedCount === item.slots.length) {
+  if (selectedCount === item.timeBlocks.length) {
     return 'selected';
   }
   return 'partial';
@@ -106,9 +106,9 @@ export const ConfirmSidebarContent = ({
           <ul className={styles.sidebarList}>
             {group.items.map((item) => {
               const state = getItemState(item, selectedSlots);
-              const primarySlot = item.slots[0];
+              const primarySlot = item.timeBlocks[0];
               const slotLabel = primarySlot
-                ? formatSlotDateTimeRange(primarySlot)
+                ? formatTimeBlockDateTimeRange(primarySlot)
                 : { primary: '-', secondary: '-' };
 
               return (
@@ -120,7 +120,7 @@ export const ConfirmSidebarContent = ({
                   >
                     <span className={styles.sidebarItemTitle}>
                       {item.kind === 'combo'
-                        ? `${item.slots.length}枠セット / 合計 ${formatMinutesLabel(item.totalMinutes)}`
+                        ? `${item.timeBlocks.length}枠セット / 合計 ${formatMinutesLabel(item.totalMinutes)}`
                         : slotLabel.primary}
                     </span>
 
@@ -128,7 +128,7 @@ export const ConfirmSidebarContent = ({
                       {item.kind === 'combo' ? (
                         <>
                           <span>{formatMinutesLabel(item.totalMinutes)}</span>
-                          {item.slots.length > 0 ? (
+                          {item.timeBlocks.length > 0 ? (
                             <span>先頭: {slotLabel.primary}</span>
                           ) : null}
                         </>

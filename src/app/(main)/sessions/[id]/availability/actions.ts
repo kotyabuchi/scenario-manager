@@ -9,21 +9,21 @@ import {
   canSubmitAvailabilityInCurrentPhase,
   getSchedulingPhases,
 } from '../scheduleFlowGuards';
-import { replaceAvailabilitySlots } from './adapter';
-import { saveAvailabilitySlotsSchema } from './schema';
+import { replaceAvailabilityTimeBlocks } from './adapter';
+import { saveAvailabilityTimeBlocksSchema } from './schema';
 
 import { ParticipantStatuses } from '@/db/enum';
 import { getAppLogger } from '@/lib/logger';
 import { createDbClient } from '@/lib/supabase/server';
 import { err, ok, type Result } from '@/types/result';
 
-import type { AvailabilitySlotRow } from './interface';
-import type { SaveAvailabilitySlotsValues } from './schema';
+import type { AvailabilityTimeBlockRow } from './interface';
+import type { SaveAvailabilityTimeBlocksValues } from './schema';
 
 const logger = getAppLogger(['app', 'sessions', 'availability']);
 
 /**
- * 承認済み参加者（見学含む）またはセッション管理者のみ可用枠を提出可能
+ * 承認済み参加者（見学含む）またはセッション管理者のみ候補日時を提出可能
  */
 const canSubmitAvailability = async (
   sessionId: string,
@@ -45,10 +45,10 @@ const canSubmitAvailability = async (
   return !isNil(participant) || isManager;
 };
 
-export const saveAvailabilitySlotsAction = async (
+export const saveAvailabilityTimeBlocksAction = async (
   sessionId: string,
-  data: SaveAvailabilitySlotsValues,
-): Promise<Result<AvailabilitySlotRow[]>> => {
+  data: SaveAvailabilityTimeBlocksValues,
+): Promise<Result<AvailabilityTimeBlockRow[]>> => {
   try {
     const userId = await getCurrentUserId();
     if (isNil(userId)) {
@@ -73,20 +73,20 @@ export const saveAvailabilitySlotsAction = async (
       return err(new Error('現在のフェーズでは参加可能時間を提出できません'));
     }
 
-    const parsed = saveAvailabilitySlotsSchema.safeParse(data);
+    const parsed = saveAvailabilityTimeBlocksSchema.safeParse(data);
     if (!parsed.success) {
       return err(
         new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
       );
     }
 
-    const result = await replaceAvailabilitySlots(
+    const result = await replaceAvailabilityTimeBlocks(
       sessionId,
       userId,
-      parsed.data.slots,
+      parsed.data.timeBlocks,
     );
     if (!result.success) {
-      logger.error`可用枠保存エラー: ${result.error}`;
+      logger.error`候補日時保存エラー: ${result.error}`;
       return err(result.error);
     }
 

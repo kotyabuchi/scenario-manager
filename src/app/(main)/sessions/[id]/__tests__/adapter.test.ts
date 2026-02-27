@@ -136,11 +136,11 @@ describe('Session Detail Adapter', () => {
         expect(result.data).toHaveProperty('gameSessionId');
         expect(result.data).toHaveProperty('participants');
         expect(result.data).toHaveProperty('links');
-        expect(result.data).toHaveProperty('scheduleSlots');
+        expect(result.data).toHaveProperty('scheduleTimeBlocks');
         expect(result.data).toHaveProperty('creator');
         expect(Array.isArray(result.data.participants)).toBe(true);
         expect(Array.isArray(result.data.links)).toBe(true);
-        expect(Array.isArray(result.data.scheduleSlots)).toBe(true);
+        expect(Array.isArray(result.data.scheduleTimeBlocks)).toBe(true);
       }
     });
 

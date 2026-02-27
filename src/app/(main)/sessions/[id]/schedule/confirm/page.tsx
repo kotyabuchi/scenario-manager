@@ -9,14 +9,14 @@ import {
   canConfirmScheduleInCurrentPhase,
   getSchedulingPhases,
 } from '../../scheduleFlowGuards';
-import { confirmScheduleSlotsAction } from './actions';
+import { confirmScheduleTimeBlocksAction } from './actions';
 import { getScheduleRecommendations } from './adapter';
 import * as styles from './styles';
 
 import { PageHeader } from '@/components/blocks/PageHeader';
 
 import type { Route } from 'next';
-import type { AvailabilitySlotInput } from '../../availability/interface';
+import type { AvailabilityTimeBlockInput } from '../../availability/interface';
 
 export const metadata = {
   title: '日程確定',
@@ -62,9 +62,11 @@ export default async function ScheduleConfirmPage({ params }: PageProps) {
     notFound();
   }
 
-  async function confirmSlotsServerAction(slots: AvailabilitySlotInput[]) {
+  async function confirmTimeBlocksServerAction(
+    timeBlocks: AvailabilityTimeBlockInput[],
+  ) {
     'use server';
-    return confirmScheduleSlotsAction(id, { slots });
+    return confirmScheduleTimeBlocksAction(id, { timeBlocks });
   }
 
   return (
@@ -77,7 +79,7 @@ export default async function ScheduleConfirmPage({ params }: PageProps) {
       <ConfirmAvailabilityWorkspace
         workspaceData={workspaceResult.data}
         recommendationGroups={recommendationsResult.data}
-        onConfirmSlots={confirmSlotsServerAction}
+        onConfirmSlots={confirmTimeBlocksServerAction}
       />
     </div>
   );

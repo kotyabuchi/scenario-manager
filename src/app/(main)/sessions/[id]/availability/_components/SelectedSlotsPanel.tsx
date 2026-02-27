@@ -2,18 +2,18 @@
 
 import { CaretDown, CaretUp, Trash } from '@phosphor-icons/react/ssr';
 
-import {
-  calcSelectedSlotsTotalMinutes,
-  formatMinutesLabel,
-  formatSlotDateTimeRange,
-  getProgressStatus,
-} from './slotPresentation';
 import * as styles from './styles';
+import {
+  calcSelectedTimeBlocksTotalMinutes,
+  formatMinutesLabel,
+  formatTimeBlockDateTimeRange,
+  getProgressStatus,
+} from './timeBlockPresentation';
 
-import type { AvailabilitySlotInput } from '../interface';
+import type { AvailabilityTimeBlockInput } from '../interface';
 
 type SelectedSlotsPanelProps = {
-  slots: AvailabilitySlotInput[];
+  slots: AvailabilityTimeBlockInput[];
   minPlaytimeMinutes: number | null;
   title?: string;
   emptyMessage?: string;
@@ -33,7 +33,7 @@ export const SelectedSlotsPanel = ({
   onMoveDown,
   readOnly = false,
 }: SelectedSlotsPanelProps) => {
-  const totalMinutes = calcSelectedSlotsTotalMinutes(slots);
+  const totalMinutes = calcSelectedTimeBlocksTotalMinutes(slots);
   const progressStatus = getProgressStatus(totalMinutes, minPlaytimeMinutes);
 
   return (
@@ -66,7 +66,7 @@ export const SelectedSlotsPanel = ({
       ) : (
         <ul className={styles.slotList}>
           {slots.map((slot, index) => {
-            const label = formatSlotDateTimeRange(slot);
+            const label = formatTimeBlockDateTimeRange(slot);
             return (
               <li
                 key={`${slot.startAt}-${slot.endAt}`}

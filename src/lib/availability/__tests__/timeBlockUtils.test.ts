@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  calcTotalMinutes,
+  calcTotalTimeBlockMinutes,
   hasThirtyMinuteBoundary,
-  isOverlappingSlot,
-  isSameSlot,
+  isOverlappingTimeBlock,
+  isSameTimeBlock,
   normalizeToThirtyMinutes,
-  toggleExactSlot,
-} from '../slotUtils';
+  toggleExactTimeBlock,
+} from '../timeBlockUtils';
 
-describe('slotUtils', () => {
+describe('timeBlockUtils', () => {
   it('30分境界を判定できる', () => {
     expect(hasThirtyMinuteBoundary('2026-03-01T12:00:00.000Z')).toBe(true);
     expect(hasThirtyMinuteBoundary('2026-03-01T12:30:00.000Z')).toBe(true);
@@ -43,9 +43,9 @@ describe('slotUtils', () => {
       endAt: '2026-03-01T15:00:00.000Z',
     };
 
-    expect(isSameSlot(a, b)).toBe(true);
-    expect(isOverlappingSlot(a, c)).toBe(true);
-    expect(isOverlappingSlot(a, d)).toBe(false);
+    expect(isSameTimeBlock(a, b)).toBe(true);
+    expect(isOverlappingTimeBlock(a, c)).toBe(true);
+    expect(isOverlappingTimeBlock(a, d)).toBe(false);
   });
 
   it('完全一致でトグルし、合計時間を計算できる', () => {
@@ -58,12 +58,12 @@ describe('slotUtils', () => {
       endAt: '2026-03-01T21:00:00.000Z',
     };
 
-    const added = toggleExactSlot([slot1], slot2);
+    const added = toggleExactTimeBlock([slot1], slot2);
     expect(added).toHaveLength(2);
-    expect(calcTotalMinutes(added)).toBe(300);
+    expect(calcTotalTimeBlockMinutes(added)).toBe(300);
 
-    const removed = toggleExactSlot(added, slot1);
+    const removed = toggleExactTimeBlock(added, slot1);
     expect(removed).toEqual([slot2]);
-    expect(calcTotalMinutes(removed)).toBe(180);
+    expect(calcTotalTimeBlockMinutes(removed)).toBe(180);
   });
 });

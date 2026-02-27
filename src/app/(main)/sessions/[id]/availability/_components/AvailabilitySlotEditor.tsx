@@ -6,14 +6,14 @@ import { format } from 'date-fns';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { hasThirtyMinuteBoundary } from '@/lib/availability/slotUtils';
+import { hasThirtyMinuteBoundary } from '@/lib/availability/timeBlockUtils';
 
-import type { AvailabilitySlotInput } from '../interface';
+import type { AvailabilityTimeBlockInput } from '../interface';
 
 type AvailabilitySlotEditorProps = {
   selectedDate: Date | null;
   onAddSlot: (
-    slot: AvailabilitySlotInput,
+    slot: AvailabilityTimeBlockInput,
   ) => { ok: true } | { ok: false; message: string };
   disabled?: boolean;
 };

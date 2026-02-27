@@ -410,7 +410,7 @@ export const publicCard_tag = css({
   color: 'gray.600',
 });
 
-export const publicCard_slotWarning = css({
+export const publicCard_seatWarning = css({
   bg: 'red.50',
   color: 'red.600',
   fontSize: '[11px]',

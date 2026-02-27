@@ -71,7 +71,7 @@ export const PARTICIPANT_ERROR_MESSAGES = {
   CANNOT_WITHDRAW: 'このセッションからは辞退できません',
   NOT_PARTICIPANT: 'このセッションに参加していません',
   USE_WITHDRAW: '承認済みの申請は取り消せません。辞退してください',
-  NO_PLAYER_SLOTS_LEFT: '残りのプレイヤー募集枠がありません',
+  NO_PLAYER_SLOTS_LEFT: '残りのプレイヤー募集席がありません',
   COMPLETED_CANNOT_CANCEL: '完了済みのセッションはキャンセルできません',
   ALREADY_CANCELLED: 'このセッションは既にキャンセル済みです',
   PARTICIPANT_NOT_FOUND: '参加申請が見つかりません',
@@ -219,23 +219,20 @@ export const approveApplication = async (
       return err(new Error(PARTICIPANT_ERROR_MESSAGES.ALREADY_PROCESSED));
     }
 
-    // PLAYER 承認時は残りPL募集枠を確認（見学は対象外）
+    // PLAYER 承認時は残りPL募集席を確認（見学は対象外）
     if (participant.participant_type === 'PLAYER') {
       const { data: sessionCapacity, error: capacityError } = await supabase
         .from('game_sessions')
-        .select('remaining_player_slot_count')
+        .select('remaining_seat_count')
         .eq('game_session_id', sessionId)
         .maybeSingle();
 
       if (capacityError) {
-        logger.error`残りPL募集枠取得エラー: ${capacityError.message}`;
+        logger.error`残りPL募集席取得エラー: ${capacityError.message}`;
         return err(new Error(capacityError.message));
       }
 
-      if (
-        isNil(sessionCapacity) ||
-        sessionCapacity.remaining_player_slot_count <= 0
-      ) {
+      if (isNil(sessionCapacity) || sessionCapacity.remaining_seat_count <= 0) {
         return err(new Error(PARTICIPANT_ERROR_MESSAGES.NO_PLAYER_SLOTS_LEFT));
       }
     }
@@ -385,15 +382,15 @@ export const withdrawFromSession = async (
       return err(new Error(withdrawError.message));
     }
 
-    // 提出済み可用枠を削除（best-effort: 辞退処理自体は上記で完了済み）
+    // 提出済み候補日時を削除（best-effort: 辞退処理自体は上記で完了済み）
     const { error: deleteAvailabilityError } = await supabase
-      .from('session_availability_slots')
+      .from('session_availability_time_blocks')
       .delete()
       .eq('session_id', sessionId)
       .eq('user_id', userId);
 
     if (deleteAvailabilityError) {
-      logger.warn`辞退後の可用枠削除でエラー（best-effort）: ${deleteAvailabilityError.message}`;
+      logger.warn`辞退後の候補日時削除でエラー（best-effort）: ${deleteAvailabilityError.message}`;
     }
 
     logger.info`ユーザー ${userId} がセッション ${sessionId} から辞退`;

@@ -1,15 +1,15 @@
 import type {
-  GameScheduleSlotRow,
-  SessionAvailabilitySlotRow,
+  GameScheduleTimeBlockRow,
+  SessionAvailabilityTimeBlockRow,
 } from '@/db/helpers';
 import type { Database } from '@/db/types';
 
 export type ParticipantType = Database['public']['Enums']['participant_type'];
 
-export type AvailabilitySlotRow = SessionAvailabilitySlotRow;
-export type ConfirmedScheduleSlotRow = GameScheduleSlotRow;
+export type AvailabilityTimeBlockRow = SessionAvailabilityTimeBlockRow;
+export type ConfirmedScheduleTimeBlockRow = GameScheduleTimeBlockRow;
 
-export type AvailabilitySlotWithUser = AvailabilitySlotRow & {
+export type AvailabilityTimeBlockWithUser = AvailabilityTimeBlockRow & {
   userName: string;
   participantType: ParticipantType;
   isHost: boolean;
@@ -22,12 +22,12 @@ export type AvailabilityWorkspaceData = {
   currentUserId: string;
   currentUserParticipantType: ParticipantType | null;
   currentUserIsHost: boolean;
-  myAvailabilitySlots: AvailabilitySlotRow[];
-  otherUserAvailabilitySlots: AvailabilitySlotWithUser[];
-  confirmedScheduleSlots: ConfirmedScheduleSlotRow[];
+  myAvailabilityTimeBlocks: AvailabilityTimeBlockRow[];
+  otherUserAvailabilityTimeBlocks: AvailabilityTimeBlockWithUser[];
+  confirmedScheduleTimeBlocks: ConfirmedScheduleTimeBlockRow[];
 };
 
-export type AvailabilitySlotInput = {
+export type AvailabilityTimeBlockInput = {
   startAt: string;
   endAt: string;
 };
@@ -42,7 +42,7 @@ export type CoverageSummary = {
   coveredSpectators: number;
 };
 
-export type RecommendationSlot = {
+export type RecommendationTimeBlock = {
   startAt: string;
   endAt: string;
 };
@@ -51,7 +51,7 @@ export type RecommendationItem = {
   recommendationId: string;
   kind: RecommendationKind;
   group: RecommendationGroupType;
-  slots: RecommendationSlot[];
+  timeBlocks: RecommendationTimeBlock[];
   totalMinutes: number;
   meetsMinPlaytime: boolean;
   coverage: CoverageSummary;
@@ -76,8 +76,8 @@ export type RecommendationParticipant = {
   isHost: boolean;
 };
 
-export type RecommendationSourceSlot = Pick<
-  AvailabilitySlotRow,
+export type RecommendationSourceTimeBlock = Pick<
+  AvailabilityTimeBlockRow,
   'userId' | 'startAt' | 'endAt'
 >;
 

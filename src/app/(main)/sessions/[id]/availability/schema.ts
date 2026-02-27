@@ -7,33 +7,35 @@ const isThirtyMinuteBoundary = (iso: string): boolean => {
   return Number.isFinite(time) && time % THIRTY_MINUTES_MS === 0;
 };
 
-const availabilitySlotInputSchema = z
+const availabilityTimeBlockInputSchema = z
   .object({
     startAt: z.string().datetime({ message: '開始日時が不正です' }),
     endAt: z.string().datetime({ message: '終了日時が不正です' }),
   })
   .refine(
-    (slot) => new Date(slot.startAt).getTime() < new Date(slot.endAt).getTime(),
+    (timeBlock) =>
+      new Date(timeBlock.startAt).getTime() <
+      new Date(timeBlock.endAt).getTime(),
     {
       message: '開始日時は終了日時より前である必要があります',
       path: ['endAt'],
     },
   )
   .refine(
-    (slot) =>
-      isThirtyMinuteBoundary(slot.startAt) &&
-      isThirtyMinuteBoundary(slot.endAt),
+    (timeBlock) =>
+      isThirtyMinuteBoundary(timeBlock.startAt) &&
+      isThirtyMinuteBoundary(timeBlock.endAt),
     { message: '日時は30分単位で指定してください' },
   );
 
-export const saveAvailabilitySlotsSchema = z.object({
-  slots: z
-    .array(availabilitySlotInputSchema)
-    .max(100, '提出枠は100件以内にしてください'),
+export const saveAvailabilityTimeBlocksSchema = z.object({
+  timeBlocks: z
+    .array(availabilityTimeBlockInputSchema)
+    .max(100, '候補日時は100件以内にしてください'),
 });
 
-export type SaveAvailabilitySlotsValues = z.infer<
-  typeof saveAvailabilitySlotsSchema
+export type SaveAvailabilityTimeBlocksValues = z.infer<
+  typeof saveAvailabilityTimeBlocksSchema
 >;
 
-export { availabilitySlotInputSchema };
+export { availabilityTimeBlockInputSchema };

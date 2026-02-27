@@ -86,7 +86,7 @@ describe('Session Management Adapter', () => {
           p_is_beginner_friendly: true,
           p_visibility: 'PUBLIC',
           p_creator_participant_type: 'KEEPER',
-          p_initial_availability_slots: [],
+          p_initial_availability_time_blocks: [],
           p_invited_members: [],
         });
 
@@ -112,7 +112,7 @@ describe('Session Management Adapter', () => {
 
         const { data: availabilitySlots, error: availabilityError } =
           await client
-            .from('session_availability_slots')
+            .from('session_availability_time_blocks')
             .select('start_at, end_at, user_id')
             .eq('session_id', gameSessionId);
 
@@ -162,7 +162,7 @@ describe('Session Management Adapter', () => {
         const client = getTestClient();
         const { data: availabilitySlots, error: availabilityError } =
           await client
-            .from('session_availability_slots')
+            .from('session_availability_time_blocks')
             .select('start_at, end_at, user_id')
             .eq('session_id', result.data.gameSessionId)
             .order('start_at', { ascending: true });
