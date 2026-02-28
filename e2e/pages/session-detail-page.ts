@@ -27,6 +27,12 @@ export class SessionDetailPage extends BasePage {
   readonly toolsSection: Locator;
   readonly timelineSection: Locator;
 
+  // フェーズ
+  readonly phaseSection: Locator;
+
+  // メニュー
+  readonly moreActionsButton: Locator;
+
   // ダイアログ
   readonly participationDialog: Locator;
   readonly cancelSessionDialog: Locator;
@@ -52,6 +58,16 @@ export class SessionDetailPage extends BasePage {
     this.gmNotesSection = page.getByText('GMメモ').locator('..');
     this.toolsSection = page.getByText('ツール・リンク').locator('..');
     this.timelineSection = page.getByText('タイムライン').locator('..');
+
+    // フェーズ
+    this.phaseSection = page.locator(
+      'section[aria-label="セッション進行フェーズ"]',
+    );
+
+    // メニュー
+    this.moreActionsButton = page.getByRole('button', {
+      name: 'その他の操作',
+    });
 
     // ダイアログ
     this.participationDialog = page.getByRole('dialog', { name: /参加申請/ });
@@ -88,5 +104,15 @@ export class SessionDetailPage extends BasePage {
   /** 日程調整リンクをクリック */
   async clickScheduleLink() {
     await this.page.getByRole('link', { name: '日程調整' }).click();
+  }
+
+  /** その他の操作メニューを開く */
+  async clickMoreActionsMenu() {
+    await this.moreActionsButton.click();
+  }
+
+  /** 現在のフェーズテキストを取得 */
+  async getPhaseText() {
+    return this.phaseSection.textContent();
   }
 }
