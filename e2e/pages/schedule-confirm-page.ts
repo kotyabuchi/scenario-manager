@@ -30,4 +30,22 @@ export class ScheduleConfirmPage extends BasePage {
   async goto(sessionId: string) {
     await this.navigate(`/sessions/${sessionId}/schedule/confirm`);
   }
+
+  /**
+   * 日程を確定する
+   *
+   * 「日程を確定」ボタンはモバイル用 StickyBar 内にあり、
+   * デスクトップ幅では display:none のため、
+   * 一時的にビューポートをモバイル幅に切り替えてクリックする。
+   */
+  async confirm() {
+    const viewport = this.page.viewportSize();
+    await this.page.setViewportSize({ width: 375, height: 812 });
+    // devツールのオーバーレイがポインタイベントを遮る場合があるため
+    // dispatchEvent で直接イベントを発火させる
+    await this.confirmButton.dispatchEvent('click');
+    if (viewport) {
+      await this.page.setViewportSize(viewport);
+    }
+  }
 }

@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-import { cleanupE2ESessions, generateE2ESessionName } from '../helpers/cleanup';
+import { cleanupE2ESession, generateE2ESessionName } from '../helpers/cleanup';
 import { SessionDetailPage } from '../pages/session-detail-page';
 import { SessionNewPage } from '../pages/session-new-page';
 
@@ -27,7 +27,9 @@ let createdSessionId: string | null = null;
 
 test.describe('セッションフロー', () => {
   test.afterAll(async () => {
-    await cleanupE2ESessions();
+    if (createdSessionId) {
+      await cleanupE2ESession(createdSessionId);
+    }
   });
 
   test.describe('セッション作成 → 詳細ページ', () => {

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { cleanupE2ESessions, generateE2ESessionName } from '../helpers/cleanup';
+import { cleanupE2ESession, generateE2ESessionName } from '../helpers/cleanup';
 import { SessionNewPage } from '../pages/session-new-page';
 
 /**
@@ -8,6 +8,7 @@ import { SessionNewPage } from '../pages/session-new-page';
  */
 test.describe('セッション作成', () => {
   let sessionNewPage: SessionNewPage;
+  const createdSessionIds: string[] = [];
 
   test.beforeEach(async ({ page }) => {
     sessionNewPage = new SessionNewPage(page);
@@ -15,7 +16,9 @@ test.describe('セッション作成', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupE2ESessions();
+    for (const id of createdSessionIds) {
+      await cleanupE2ESession(id);
+    }
   });
 
   test('セッション名が空で送信するとバリデーションエラー', async ({ page }) => {
@@ -37,6 +40,8 @@ test.describe('セッション作成', () => {
     await sessionNewPage.fillMinimum(name, 'E2Eテスト用の募集文です');
     await sessionNewPage.submit();
     await expect(page).toHaveURL(/\/sessions\//);
+    const id = page.url().match(/\/sessions\/([^/]+)/)?.[1];
+    if (id) createdSessionIds.push(id);
   });
 
   test('作成後にセッション詳細ページが表示される', async ({ page }) => {
@@ -44,6 +49,8 @@ test.describe('セッション作成', () => {
     await sessionNewPage.fillMinimum(name, 'E2Eテスト用の募集文（詳細確認）');
     await sessionNewPage.submit();
     await expect(page).toHaveURL(/\/sessions\//);
+    const id = page.url().match(/\/sessions\/([^/]+)/)?.[1];
+    if (id) createdSessionIds.push(id);
     await expect(
       page.getByRole('heading', { name: /セッション詳細/ }),
     ).toBeVisible();

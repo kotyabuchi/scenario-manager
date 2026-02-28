@@ -14,7 +14,7 @@ export class SessionNewPage extends BasePage {
     super(page);
     this.sessionNameInput = page.locator('#sessionName');
     this.sessionDescriptionTextarea = page.locator('#sessionDescription');
-    this.submitButton = page.getByRole('button', { name: '募集を投稿' });
+    this.submitButton = page.getByRole('button', { name: 'セッションを作成' });
   }
 
   async goto() {

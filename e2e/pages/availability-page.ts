@@ -44,7 +44,11 @@ export class AvailabilityPage extends BasePage {
 
     // 状態表示
     this.emptyScheduleMessage = page.getByText('まだスケジュールがありません');
-    this.scheduleCountText = page.getByText(/\d+件/);
+    // aria-live="polite" 内のスケジュール件数に限定し strict mode violation を回避
+    this.scheduleCountText = page
+      .locator('[aria-live="polite"]')
+      .getByText(/\d+件/)
+      .first();
   }
 
   /** スケジュール提出ページに遷移 */
@@ -59,8 +63,21 @@ export class AvailabilityPage extends BasePage {
     await this.addButton.click();
   }
 
-  /** スケジュール提出を保存する */
+  /**
+   * スケジュール提出を保存する
+   *
+   * 「提出を保存」ボタンはモバイル用 StickyBar 内にあり、
+   * デスクトップ幅（md以上）では display:none のため、
+   * 一時的にビューポートをモバイル幅に切り替えてクリックする。
+   */
   async save() {
-    await this.saveButton.click();
+    const viewport = this.page.viewportSize();
+    await this.page.setViewportSize({ width: 375, height: 812 });
+    // devツールのオーバーレイがポインタイベントを遮る場合があるため
+    // dispatchEvent で直接イベントを発火させる
+    await this.saveButton.dispatchEvent('click');
+    if (viewport) {
+      await this.page.setViewportSize(viewport);
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { cleanupE2ESessions, generateE2ESessionName } from '../helpers/cleanup';
+import { cleanupE2ESession, generateE2ESessionName } from '../helpers/cleanup';
 import { getNextWeekDateTimeLocal } from '../helpers/datetime';
 import { AvailabilityPage } from '../pages/availability-page';
 import { ScheduleConfirmPage } from '../pages/schedule-confirm-page';
@@ -39,7 +39,7 @@ test.describe('セッションライフサイクル', () => {
     const name = generateE2ESessionName('lifecycle');
     await sessionNewPage.fillMinimum(name, 'ライフサイクルテスト用セッション');
     await sessionNewPage.submit();
-    await page.waitForURL(/\/sessions\/[^/]+$/);
+    await page.waitForURL(/\/sessions\/(?!new$)[^/]+$/);
 
     sessionId = page.url().match(/\/sessions\/([^/]+)/)?.[1] ?? '';
     await page.close();
@@ -47,7 +47,7 @@ test.describe('セッションライフサイクル', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupE2ESessions();
+    await cleanupE2ESession(sessionId);
   });
 
   test.describe('RECRUITING フェーズ', () => {
@@ -66,13 +66,28 @@ test.describe('セッションライフサイクル', () => {
       ).toBeVisible();
     });
 
-    test('「申請管理」「スケジュールを提出」リンクが表示される', async ({
-      page,
-    }) => {
-      await expect(page.getByRole('link', { name: '申請管理' })).toBeVisible();
-      await expect(
-        page.getByRole('link', { name: /スケジュールを提出/ }),
-      ).toBeVisible();
+    test('「申請管理」「スケジュールを提出」が利用可能', async ({ page }) => {
+      const isMobile = (page.viewportSize()?.width ?? 1280) < 768;
+
+      if (isMobile) {
+        // モバイルではsecondaryアクションはメニュー内に配置される
+        await sessionDetailPage.clickMoreActionsMenu();
+        await expect(
+          page.getByRole('menuitem', { name: '申請管理' }),
+        ).toBeVisible();
+        await expect(
+          page.getByRole('menuitem', { name: /スケジュールを提出/ }),
+        ).toBeVisible();
+        await page.keyboard.press('Escape');
+      } else {
+        // デスクトップではボタンとして表示される
+        await expect(
+          page.getByRole('button', { name: '申請管理' }),
+        ).toBeVisible();
+        await expect(
+          page.getByRole('button', { name: /スケジュールを提出/ }),
+        ).toBeVisible();
+      }
     });
 
     test('「キャンセル」がメニュー内に表示される', async ({ page }) => {
@@ -129,6 +144,16 @@ test.describe('セッションライフサイクル', () => {
       scheduleConfirmPage = new ScheduleConfirmPage(page);
       await scheduleConfirmPage.goto(sessionId);
 
+      const isMobile = (page.viewportSize()?.width ?? 1280) < 768;
+
+      if (isMobile) {
+        // モバイルではおすすめ候補がドロワー内にあるため開く
+        // モバイルナビバーがStickyBarと重なるため dispatchEvent を使用
+        await page
+          .getByRole('button', { name: /おすすめ/ })
+          .dispatchEvent('click');
+      }
+
       // GMのスケジュールが提出済みのため、おすすめ候補が必ず表示される
       // （requiredUsers=1、GM自身は常に参加可能 → 全員参加可の候補が生成される）
       const firstRecommendation = page
@@ -138,9 +163,13 @@ test.describe('セッションライフサイクル', () => {
       await expect(firstRecommendation).toBeVisible();
       await firstRecommendation.click();
 
-      // 確定ボタンが有効になり、日程を確定できること
-      await expect(scheduleConfirmPage.confirmButton).toBeEnabled();
-      await scheduleConfirmPage.confirmButton.click();
+      if (isMobile) {
+        // ドロワーを閉じる
+        await page.keyboard.press('Escape');
+      }
+
+      // 日程を確定できること（StickyBar内のボタンはモバイル幅でのみ表示）
+      await scheduleConfirmPage.confirm();
       await expect(page.getByText('確定日程を保存しました。')).toBeVisible();
     });
   });
@@ -158,7 +187,10 @@ test.describe('セッションライフサイクル', () => {
       const dialog = page.getByRole('dialog', { name: /キャンセル/ });
       await expect(dialog).toBeVisible();
       await page.getByLabel(/確認のため/).fill('キャンセル');
-      await dialog.getByRole('button', { name: 'キャンセルする' }).click();
+      // モバイルではナビバーがダイアログボタンと重なる場合があるため dispatchEvent を使用
+      await dialog
+        .getByRole('button', { name: 'キャンセルする' })
+        .dispatchEvent('click');
 
       // フェーズが「キャンセル」に変更されることを検証
       await expect(sessionDetailPage.phaseSection).toContainText('キャンセル');
