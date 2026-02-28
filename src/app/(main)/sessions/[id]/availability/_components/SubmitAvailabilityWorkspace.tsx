@@ -270,7 +270,7 @@ export const SubmitAvailabilityWorkspace = ({
           primaryActionLabel={isPending ? '保存中...' : '提出を保存'}
           onPrimaryAction={handleSave}
           primaryDisabled={isPending}
-          sidebarToggleLabel={`他の人の枠 (${selectedDateTimeBlockCount})`}
+          sidebarToggleLabel={`他の人のスケジュール (${selectedDateTimeBlockCount})`}
           onToggleSidebar={() => setMobileSidebarOpen((open) => !open)}
           sidebarOpen={mobileSidebarOpen}
         />

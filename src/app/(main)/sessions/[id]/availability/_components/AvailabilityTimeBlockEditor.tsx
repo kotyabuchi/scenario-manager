@@ -92,7 +92,7 @@ export const AvailabilityTimeBlockEditor = ({
           id="availability-time-block-editor-title"
           className={styles.sectionTitle}
         >
-          枠を追加
+          スケジュールを追加
         </h3>
         <p className={styles.helperText}>30分単位 / 日跨ぎ可</p>
       </div>
