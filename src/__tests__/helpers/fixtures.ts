@@ -126,6 +126,7 @@ export const createTestSession = async (opts: SessionOpts) => {
       keeper_id: keeperUserId,
       created_by_id: keeperUserId,
       session_phase: phase ?? 'RECRUITING',
+      remaining_seat_count: 10,
       ...rest,
     };
   const { data: session, error: sessionError } = await client

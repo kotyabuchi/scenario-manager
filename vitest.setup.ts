@@ -7,3 +7,13 @@ vi.mock('next/headers', () => ({
     set: () => undefined,
   }),
 }));
+
+// アダプター関数が使う Supabase クライアントを SERVICE_ROLE_KEY 付きに差し替え
+// RLS をバイパスし、テストフィクスチャで作成したデータにアクセス可能にする
+vi.mock('@/lib/supabase/server', async () => {
+  const { getTestClient } = await import('@/__tests__/helpers/testClient');
+  return {
+    createClient: async () => getTestClient(),
+    createDbClient: async () => getTestClient(),
+  };
+});
