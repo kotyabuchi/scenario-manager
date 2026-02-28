@@ -70,7 +70,7 @@ const validateAvailabilityTimeBlocks = (
       continue;
     }
     if (isOverlapping(prev, current)) {
-      return err(new Error('候補日時同士が重複しています'));
+      return err(new Error('スケジュール同士が重複しています'));
     }
   }
 
@@ -142,11 +142,11 @@ export const getAvailabilityWorkspaceData = async (
       return err(new Error(allParticipantsError.message));
     }
     if (allTimeBlocksError) {
-      logger.error`ワークスペース初期データ取得(候補日時)エラー: ${allTimeBlocksError.message}`;
+      logger.error`ワークスペース初期データ取得(スケジュール)エラー: ${allTimeBlocksError.message}`;
       return err(new Error(allTimeBlocksError.message));
     }
     if (confirmedTimeBlocksError) {
-      logger.error`ワークスペース初期データ取得(確定枠)エラー: ${confirmedTimeBlocksError.message}`;
+      logger.error`ワークスペース初期データ取得(確定日程)エラー: ${confirmedTimeBlocksError.message}`;
       return err(new Error(confirmedTimeBlocksError.message));
     }
 
@@ -244,7 +244,7 @@ export const getAvailabilityWorkspaceData = async (
 };
 
 /**
- * 現在ユーザーが候補日時を1件以上提出済みかどうか
+ * 現在ユーザーがスケジュールを1件以上提出済みかどうか
  */
 export const hasUserAvailabilitySubmission = async (
   sessionId: string,
@@ -259,7 +259,7 @@ export const hasUserAvailabilitySubmission = async (
       .eq('user_id', userId);
 
     if (error) {
-      logger.error`候補日時提出有無取得エラー: ${error.message}`;
+      logger.error`スケジュール提出有無取得エラー: ${error.message}`;
       return err(new Error(error.message));
     }
 
@@ -271,7 +271,7 @@ export const hasUserAvailabilitySubmission = async (
 };
 
 /**
- * 自分の候補日時を全置換で保存する（RPC でアトミック実行）
+ * 自分のスケジュールを全置換で保存する（RPC でアトミック実行）
  */
 export const replaceAvailabilityTimeBlocks = async (
   sessionId: string,
@@ -302,7 +302,7 @@ export const replaceAvailabilityTimeBlocks = async (
     );
 
     if (error) {
-      logger.error`候補日時置換RPCエラー: ${error.message}`;
+      logger.error`スケジュール置換RPCエラー: ${error.message}`;
       return err(new Error(error.message));
     }
 

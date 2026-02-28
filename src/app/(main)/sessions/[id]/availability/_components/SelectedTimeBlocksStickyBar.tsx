@@ -11,8 +11,8 @@ import { Button } from '@/components/elements/button/button';
 
 import type { AvailabilityTimeBlockInput } from '../interface';
 
-type SelectedSlotsStickyBarProps = {
-  slots: AvailabilityTimeBlockInput[];
+type SelectedTimeBlocksStickyBarProps = {
+  timeBlocks: AvailabilityTimeBlockInput[];
   minPlaytimeMinutes: number | null;
   primaryActionLabel: string;
   onPrimaryAction?: () => void;
@@ -22,8 +22,8 @@ type SelectedSlotsStickyBarProps = {
   sidebarOpen?: boolean;
 };
 
-export const SelectedSlotsStickyBar = ({
-  slots,
+export const SelectedTimeBlocksStickyBar = ({
+  timeBlocks,
   minPlaytimeMinutes,
   primaryActionLabel,
   onPrimaryAction,
@@ -31,8 +31,8 @@ export const SelectedSlotsStickyBar = ({
   sidebarToggleLabel,
   onToggleSidebar,
   sidebarOpen = false,
-}: SelectedSlotsStickyBarProps) => {
-  const totalMinutes = calcSelectedTimeBlocksTotalMinutes(slots);
+}: SelectedTimeBlocksStickyBarProps) => {
+  const totalMinutes = calcSelectedTimeBlocksTotalMinutes(timeBlocks);
   const progressStatus = getProgressStatus(totalMinutes, minPlaytimeMinutes);
 
   return (
@@ -41,7 +41,7 @@ export const SelectedSlotsStickyBar = ({
         <div className={styles.stickySummaryRow}>
           <div className={styles.stickySummaryText} aria-live="polite">
             <span className={styles.stickySummaryStrong}>
-              {slots.length}枠 / 合計 {formatMinutesLabel(totalMinutes)}
+              {timeBlocks.length}枠 / 合計 {formatMinutesLabel(totalMinutes)}
             </span>
             <span>
               {minPlaytimeMinutes === null

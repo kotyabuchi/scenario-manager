@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 
 type AvailabilityWorkspaceLayoutProps = {
   calendarSection: ReactNode;
-  selectedSlotsSection: ReactNode;
+  selectedTimeBlocksSection: ReactNode;
   desktopSidebarSection: ReactNode;
   mobileSidebarSection: ReactNode;
   mobileSidebarTitle: string;
@@ -21,7 +21,7 @@ type AvailabilityWorkspaceLayoutProps = {
 
 export const AvailabilityWorkspaceLayout = ({
   calendarSection,
-  selectedSlotsSection,
+  selectedTimeBlocksSection,
   desktopSidebarSection,
   mobileSidebarSection,
   mobileSidebarTitle,
@@ -38,7 +38,7 @@ export const AvailabilityWorkspaceLayout = ({
           </section>
 
           <section className={styles.card}>
-            <div className={styles.cardBody}>{selectedSlotsSection}</div>
+            <div className={styles.cardBody}>{selectedTimeBlocksSection}</div>
           </section>
         </div>
 

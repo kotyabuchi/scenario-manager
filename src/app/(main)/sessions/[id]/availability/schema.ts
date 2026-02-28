@@ -31,7 +31,7 @@ const availabilityTimeBlockInputSchema = z
 export const saveAvailabilityTimeBlocksSchema = z.object({
   timeBlocks: z
     .array(availabilityTimeBlockInputSchema)
-    .max(100, '候補日時は100件以内にしてください'),
+    .max(100, 'スケジュールは100件以内にしてください'),
 });
 
 export type SaveAvailabilityTimeBlocksValues = z.infer<

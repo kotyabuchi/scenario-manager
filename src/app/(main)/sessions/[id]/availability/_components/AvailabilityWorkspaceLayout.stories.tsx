@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 
 import { AvailabilityWorkspaceLayout } from './AvailabilityWorkspaceLayout';
 import { BaseAvailabilityCalendar } from './BaseAvailabilityCalendar';
-import { SelectedSlotsPanel } from './SelectedSlotsPanel';
-import { SelectedSlotsStickyBar } from './SelectedSlotsStickyBar';
+import { SelectedTimeBlocksPanel } from './SelectedTimeBlocksPanel';
+import { SelectedTimeBlocksStickyBar } from './SelectedTimeBlocksStickyBar';
 import * as styles from './styles';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -37,23 +37,23 @@ const toIsoWithDayOffset = (
 };
 
 const sidebarContent = (title: string) => (
-  <div className={styles.selectedSlotsPanel}>
+  <div className={styles.selectedTimeBlocksPanel}>
     <p className={styles.cardTitle}>{title}</p>
-    <div className={styles.slotList}>
-      <div className={styles.slotListItem}>
-        <div className={styles.slotListItemMain}>
-          <p className={styles.slotListItemLabel}>3/1(土) 12:00 - 15:00</p>
-          <p className={styles.slotListItemSub}>PL 田中 / 3時間</p>
+    <div className={styles.timeBlockList}>
+      <div className={styles.timeBlockListItem}>
+        <div className={styles.timeBlockListItemMain}>
+          <p className={styles.timeBlockListItemLabel}>3/1(土) 12:00 - 15:00</p>
+          <p className={styles.timeBlockListItemSub}>PL 田中 / 3時間</p>
         </div>
       </div>
-      <div className={styles.slotListItem}>
-        <div className={styles.slotListItemMain}>
-          <p className={styles.slotListItemLabel}>3/1(土) 18:00 - 22:00</p>
-          <p className={styles.slotListItemSub}>PL 鈴木 / 4時間</p>
+      <div className={styles.timeBlockListItem}>
+        <div className={styles.timeBlockListItemMain}>
+          <p className={styles.timeBlockListItemLabel}>3/1(土) 18:00 - 22:00</p>
+          <p className={styles.timeBlockListItemSub}>PL 鈴木 / 4時間</p>
         </div>
       </div>
       <div className={styles.emptyState}>
-        ここに提出UIでは他ユーザー提出枠、確定UIではおすすめ枠一覧を表示します。
+        ここに提出UIでは他ユーザースケジュール、確定UIではおすすめ候補一覧を表示します。
       </div>
     </div>
   </div>
@@ -90,7 +90,7 @@ type Story = StoryObj<typeof meta>;
 export const ConfirmLikeLayout: Story = {
   args: {
     calendarSection: null,
-    selectedSlotsSection: null,
+    selectedTimeBlocksSection: null,
     desktopSidebarSection: null,
     mobileSidebarSection: null,
     mobileSidebarTitle: 'おすすめ候補',
@@ -100,23 +100,25 @@ export const ConfirmLikeLayout: Story = {
   render: () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(makeDate(3));
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-    const [slots, setSlots] = useState<AvailabilityTimeBlockInput[]>(() => {
-      const base = makeDate(3);
-      return [
-        {
-          startAt: toIso(base, 12),
-          endAt: toIso(base, 15),
-        },
-        {
-          startAt: toIso(base, 18),
-          endAt: toIso(base, 22),
-        },
-        {
-          startAt: toIsoWithDayOffset(base, 1, 21),
-          endAt: toIsoWithDayOffset(base, 2, 1),
-        },
-      ];
-    });
+    const [timeBlocks, setTimeBlocks] = useState<AvailabilityTimeBlockInput[]>(
+      () => {
+        const base = makeDate(3);
+        return [
+          {
+            startAt: toIso(base, 12),
+            endAt: toIso(base, 15),
+          },
+          {
+            startAt: toIso(base, 18),
+            endAt: toIso(base, 22),
+          },
+          {
+            startAt: toIsoWithDayOffset(base, 1, 21),
+            endAt: toIsoWithDayOffset(base, 2, 1),
+          },
+        ];
+      },
+    );
 
     const dayBadges = useMemo<CalendarDayBadge[]>(() => {
       const day1 = makeDate(3);
@@ -145,18 +147,18 @@ export const ConfirmLikeLayout: Story = {
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
             dayBadges={dayBadges}
-            title="参加可能日カレンダー"
+            title="スケジュールカレンダー"
             helperText="色ドット + 件数ラベルで日ごとの提出状況を確認できます。"
           />
         }
-        selectedSlotsSection={
-          <SelectedSlotsPanel
+        selectedTimeBlocksSection={
+          <SelectedTimeBlocksPanel
             title="選択中の日程"
-            slots={slots}
+            timeBlocks={timeBlocks}
             minPlaytimeMinutes={360}
             onMoveUp={(index) => {
               if (index <= 0) return;
-              setSlots((prev) => {
+              setTimeBlocks((prev) => {
                 const next = [...prev];
                 const current = next[index];
                 const upper = next[index - 1];
@@ -167,7 +169,7 @@ export const ConfirmLikeLayout: Story = {
               });
             }}
             onMoveDown={(index) => {
-              setSlots((prev) => {
+              setTimeBlocks((prev) => {
                 if (index >= prev.length - 1) return prev;
                 const next = [...prev];
                 const current = next[index];
@@ -178,16 +180,16 @@ export const ConfirmLikeLayout: Story = {
                 return next;
               });
             }}
-            onRemoveSlot={(index) =>
-              setSlots((prev) => prev.filter((_, i) => i !== index))
+            onRemoveTimeBlock={(index) =>
+              setTimeBlocks((prev) => prev.filter((_, i) => i !== index))
             }
           />
         }
         desktopSidebarSection={sidebarContent('おすすめ一覧')}
         mobileSidebarSection={sidebarContent('おすすめ一覧')}
         stickyBar={
-          <SelectedSlotsStickyBar
-            slots={slots}
+          <SelectedTimeBlocksStickyBar
+            timeBlocks={timeBlocks}
             minPlaytimeMinutes={360}
             primaryActionLabel="確定する"
             onPrimaryAction={() => {}}

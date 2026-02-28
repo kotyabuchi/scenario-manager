@@ -47,7 +47,7 @@ const hasNoOverlap = (
 export const confirmScheduleTimeBlocksSchema = z.object({
   timeBlocks: z
     .array(confirmTimeBlockSchema)
-    .min(1, '最低1つの候補日時を選択してください')
+    .min(1, '最低1つのスケジュールを選択してください')
     .max(20, '確定日程は20件以内にしてください')
     .refine(hasNoOverlap, { message: '確定日程同士が重複しています' }),
 });

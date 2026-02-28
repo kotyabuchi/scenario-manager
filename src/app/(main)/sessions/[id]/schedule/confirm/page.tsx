@@ -79,7 +79,7 @@ export default async function ScheduleConfirmPage({ params }: PageProps) {
       <ConfirmAvailabilityWorkspace
         workspaceData={workspaceResult.data}
         recommendationGroups={recommendationsResult.data}
-        onConfirmSlots={confirmTimeBlocksServerAction}
+        onConfirmTimeBlocks={confirmTimeBlocksServerAction}
       />
     </div>
   );

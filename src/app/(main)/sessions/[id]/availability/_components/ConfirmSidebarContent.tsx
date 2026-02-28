@@ -16,7 +16,7 @@ import type {
 
 type ConfirmSidebarContentProps = {
   groups: RecommendationGroup[];
-  selectedSlots: AvailabilityTimeBlockInput[];
+  selectedTimeBlocks: AvailabilityTimeBlockInput[];
   onClickRecommendation: (item: RecommendationItem) => void;
   emptyMessage?: string;
   errorMessage?: string | null;
@@ -24,10 +24,10 @@ type ConfirmSidebarContentProps = {
 
 const getItemState = (
   item: RecommendationItem,
-  selectedSlots: AvailabilityTimeBlockInput[],
+  selectedTimeBlocks: AvailabilityTimeBlockInput[],
 ): 'default' | 'selected' | 'partial' => {
-  const selectedCount = item.timeBlocks.filter((slot) =>
-    selectedSlots.some((selected) => isSameTimeBlock(selected, slot)),
+  const selectedCount = item.timeBlocks.filter((block) =>
+    selectedTimeBlocks.some((selected) => isSameTimeBlock(selected, block)),
   ).length;
 
   if (selectedCount === 0) {
@@ -49,9 +49,9 @@ const coverageLabel = (item: RecommendationItem): string => {
 
 export const ConfirmSidebarContent = ({
   groups,
-  selectedSlots,
+  selectedTimeBlocks,
   onClickRecommendation,
-  emptyMessage = '提出枠が不足しています。参加者の提出後におすすめ候補を表示します。',
+  emptyMessage = 'スケジュールが不足しています。参加者の提出後におすすめ候補を表示します。',
   errorMessage,
 }: ConfirmSidebarContentProps) => {
   if (groups.length === 0) {
@@ -105,10 +105,10 @@ export const ConfirmSidebarContent = ({
 
           <ul className={styles.sidebarList}>
             {group.items.map((item) => {
-              const state = getItemState(item, selectedSlots);
-              const primarySlot = item.timeBlocks[0];
-              const slotLabel = primarySlot
-                ? formatTimeBlockDateTimeRange(primarySlot)
+              const state = getItemState(item, selectedTimeBlocks);
+              const primaryTimeBlock = item.timeBlocks[0];
+              const timeBlockLabel = primaryTimeBlock
+                ? formatTimeBlockDateTimeRange(primaryTimeBlock)
                 : { primary: '-', secondary: '-' };
 
               return (
@@ -121,7 +121,7 @@ export const ConfirmSidebarContent = ({
                     <span className={styles.sidebarItemTitle}>
                       {item.kind === 'combo'
                         ? `${item.timeBlocks.length}枠セット / 合計 ${formatMinutesLabel(item.totalMinutes)}`
-                        : slotLabel.primary}
+                        : timeBlockLabel.primary}
                     </span>
 
                     <span className={styles.sidebarItemMeta}>
@@ -129,11 +129,11 @@ export const ConfirmSidebarContent = ({
                         <>
                           <span>{formatMinutesLabel(item.totalMinutes)}</span>
                           {item.timeBlocks.length > 0 ? (
-                            <span>先頭: {slotLabel.primary}</span>
+                            <span>先頭: {timeBlockLabel.primary}</span>
                           ) : null}
                         </>
                       ) : (
-                        <span>{slotLabel.secondary}</span>
+                        <span>{timeBlockLabel.secondary}</span>
                       )}
                       <span className={styles.tagBadge({ tone: 'accent' })}>
                         {coverageLabel(item)}

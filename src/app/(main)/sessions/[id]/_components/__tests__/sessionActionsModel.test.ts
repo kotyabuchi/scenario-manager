@@ -53,7 +53,7 @@ describe('sessionActionsModel', () => {
       expect(actions[2]?.href).toBe('/sessions/session-1/availability');
     });
 
-    it('manager + PREPARATION + CONFIRMED で確定日程編集を主CTAとして返し、可用枠提出導線は表示しない', () => {
+    it('manager + PREPARATION + CONFIRMED で確定日程編集を主CTAとして返し、スケジュール提出導線は表示しない', () => {
       const actions = getAvailableSessionActions(
         SessionPhases.PREPARATION.value,
         SchedulePhases.CONFIRMED.value,
@@ -80,7 +80,7 @@ describe('sessionActionsModel', () => {
       ).toBeUndefined();
     });
 
-    it('participant(CONFIRMED) + ADJUSTING で可用枠提出と辞退を返す', () => {
+    it('participant(CONFIRMED) + ADJUSTING でスケジュール提出と辞退を返す', () => {
       const actions = getAvailableSessionActions(
         SessionPhases.RECRUITING.value,
         SchedulePhases.ADJUSTING.value,
@@ -95,11 +95,11 @@ describe('sessionActionsModel', () => {
       ]);
       expect(actions[0]?.placement).toBe('primary');
       expect(actions[1]?.placement).toBe('menu');
-      expect(actions[0]?.label).toBe('参加可能時間を提出');
+      expect(actions[0]?.label).toBe('スケジュールを提出');
       expect(actions[0]?.href).toBe('/sessions/session-1/availability');
     });
 
-    it('可用枠提出済みなら提出導線ラベルを更新にする', () => {
+    it('スケジュール提出済みなら提出導線ラベルを更新にする', () => {
       const managerActions = getAvailableSessionActions(
         SessionPhases.PREPARATION.value,
         SchedulePhases.ADJUSTING.value,
@@ -122,8 +122,8 @@ describe('sessionActionsModel', () => {
           action.id === 'schedule' && action.placement === 'secondary',
       );
 
-      expect(managerAvailabilityAction?.label).toBe('参加可能時間を更新');
-      expect(participantActions[0]?.label).toBe('参加可能時間を更新');
+      expect(managerAvailabilityAction?.label).toBe('スケジュールを更新');
+      expect(participantActions[0]?.label).toBe('スケジュールを更新');
     });
 
     it('COMPLETED/CANCELLED では操作を返さない', () => {
@@ -164,7 +164,7 @@ describe('sessionActionsModel', () => {
         ['manage-applications', 'schedule'],
       );
       expect(layout.desktopSecondaryActions[1]).toMatchObject({
-        label: '参加可能時間を提出',
+        label: 'スケジュールを提出',
         href: '/sessions/session-1/availability',
       });
       expect(layout.desktopMenuActions.map((action) => action.id)).toEqual([

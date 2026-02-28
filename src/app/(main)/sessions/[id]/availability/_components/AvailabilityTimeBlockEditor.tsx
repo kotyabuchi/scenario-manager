@@ -10,10 +10,10 @@ import { hasThirtyMinuteBoundary } from '@/lib/availability/timeBlockUtils';
 
 import type { AvailabilityTimeBlockInput } from '../interface';
 
-type AvailabilitySlotEditorProps = {
+type AvailabilityTimeBlockEditorProps = {
   selectedDate: Date | null;
-  onAddSlot: (
-    slot: AvailabilityTimeBlockInput,
+  onAddTimeBlock: (
+    timeBlock: AvailabilityTimeBlockInput,
   ) => { ok: true } | { ok: false; message: string };
   disabled?: boolean;
 };
@@ -30,11 +30,11 @@ const startFromSelectedDate = (selectedDate: Date | null): Date => {
   return base;
 };
 
-export const AvailabilitySlotEditor = ({
+export const AvailabilityTimeBlockEditor = ({
   selectedDate,
-  onAddSlot,
+  onAddTimeBlock,
   disabled = false,
-}: AvailabilitySlotEditorProps) => {
+}: AvailabilityTimeBlockEditorProps) => {
   const [startValue, setStartValue] = useState<string>('');
   const [endValue, setEndValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,7 +73,7 @@ export const AvailabilitySlotEditor = ({
       return;
     }
 
-    const result = onAddSlot({ startAt, endAt });
+    const result = onAddTimeBlock({ startAt, endAt });
     if (!result.ok) {
       setErrorMessage(result.message);
       return;
@@ -85,10 +85,13 @@ export const AvailabilitySlotEditor = ({
   return (
     <section
       className={styles.sectionStack}
-      aria-labelledby="availability-slot-editor-title"
+      aria-labelledby="availability-time-block-editor-title"
     >
       <div className={styles.sectionHeader}>
-        <h3 id="availability-slot-editor-title" className={styles.sectionTitle}>
+        <h3
+          id="availability-time-block-editor-title"
+          className={styles.sectionTitle}
+        >
           枠を追加
         </h3>
         <p className={styles.helperText}>30分単位 / 日跨ぎ可</p>

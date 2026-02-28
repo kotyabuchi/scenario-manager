@@ -45,8 +45,8 @@ const getManagerActions = (
 ): SessionActionDescriptor[] => {
   const actions: SessionActionDescriptor[] = [];
   const availabilityActionLabel = hasAvailabilitySubmission
-    ? '参加可能時間を更新'
-    : '参加可能時間を提出';
+    ? 'スケジュールを更新'
+    : 'スケジュールを提出';
 
   if (phase === SessionPhases.RECRUITING.value) {
     actions.push({
@@ -158,8 +158,8 @@ const getParticipantActions = (
 ): SessionActionDescriptor[] => {
   const actions: SessionActionDescriptor[] = [];
   const availabilityActionLabel = hasAvailabilitySubmission
-    ? '参加可能時間を更新'
-    : '参加可能時間を提出';
+    ? 'スケジュールを更新'
+    : 'スケジュールを提出';
 
   if (participantStatus === 'PENDING') {
     actions.push({

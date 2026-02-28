@@ -71,7 +71,7 @@ export const PARTICIPANT_ERROR_MESSAGES = {
   CANNOT_WITHDRAW: 'このセッションからは辞退できません',
   NOT_PARTICIPANT: 'このセッションに参加していません',
   USE_WITHDRAW: '承認済みの申請は取り消せません。辞退してください',
-  NO_PLAYER_SLOTS_LEFT: '残りのプレイヤー募集席がありません',
+  NO_SEATS_LEFT: '残りのプレイヤー募集席がありません',
   COMPLETED_CANNOT_CANCEL: '完了済みのセッションはキャンセルできません',
   ALREADY_CANCELLED: 'このセッションは既にキャンセル済みです',
   PARTICIPANT_NOT_FOUND: '参加申請が見つかりません',
@@ -233,7 +233,7 @@ export const approveApplication = async (
       }
 
       if (isNil(sessionCapacity) || sessionCapacity.remaining_seat_count <= 0) {
-        return err(new Error(PARTICIPANT_ERROR_MESSAGES.NO_PLAYER_SLOTS_LEFT));
+        return err(new Error(PARTICIPANT_ERROR_MESSAGES.NO_SEATS_LEFT));
       }
     }
 
@@ -382,7 +382,7 @@ export const withdrawFromSession = async (
       return err(new Error(withdrawError.message));
     }
 
-    // 提出済み候補日時を削除（best-effort: 辞退処理自体は上記で完了済み）
+    // 提出済みスケジュールを削除（best-effort: 辞退処理自体は上記で完了済み）
     const { error: deleteAvailabilityError } = await supabase
       .from('session_availability_time_blocks')
       .delete()
@@ -390,7 +390,7 @@ export const withdrawFromSession = async (
       .eq('user_id', userId);
 
     if (deleteAvailabilityError) {
-      logger.warn`辞退後の候補日時削除でエラー（best-effort）: ${deleteAvailabilityError.message}`;
+      logger.warn`辞退後のスケジュール削除でエラー（best-effort）: ${deleteAvailabilityError.message}`;
     }
 
     logger.info`ユーザー ${userId} がセッション ${sessionId} から辞退`;

@@ -68,7 +68,7 @@ export const BasicInfoSection = ({
   );
   const gmDisplayName = gmParticipant?.user.nickname ?? gmUser?.userName;
   const gmHandleName = gmParticipant?.user.userName ?? gmUser?.userName;
-  const hasConfirmedScheduleSlots = session.scheduleTimeBlocks.length > 0;
+  const hasConfirmedScheduleTimeBlocks = session.scheduleTimeBlocks.length > 0;
 
   return (
     <section className={styles.card}>
@@ -123,14 +123,14 @@ export const BasicInfoSection = ({
               日時
             </span>
             <div className={styles.info_valueText}>
-              {hasConfirmedScheduleSlots ? (
-                <ul className={styles.info_scheduleSlotList}>
-                  {session.scheduleTimeBlocks.map((slot) => (
+              {hasConfirmedScheduleTimeBlocks ? (
+                <ul className={styles.info_scheduleTimeBlockList}>
+                  {session.scheduleTimeBlocks.map((block) => (
                     <li
-                      key={slot.gameScheduleTimeBlockId}
-                      className={styles.info_scheduleSlotItem}
+                      key={block.gameScheduleTimeBlockId}
+                      className={styles.info_scheduleTimeBlockItem}
                     >
-                      {formatDateRange(slot.startAt, slot.endAt)}
+                      {formatDateRange(block.startAt, block.endAt)}
                     </li>
                   ))}
                 </ul>

@@ -23,7 +23,7 @@ import type { SaveAvailabilityTimeBlocksValues } from './schema';
 const logger = getAppLogger(['app', 'sessions', 'availability']);
 
 /**
- * 承認済み参加者（見学含む）またはセッション管理者のみ候補日時を提出可能
+ * 承認済み参加者（見学含む）またはセッション管理者のみスケジュールを提出可能
  */
 const canSubmitAvailability = async (
   sessionId: string,
@@ -70,7 +70,7 @@ export const saveAvailabilityTimeBlocksAction = async (
         phasesResult.data.schedulePhase,
       )
     ) {
-      return err(new Error('現在のフェーズでは参加可能時間を提出できません'));
+      return err(new Error('現在のフェーズではスケジュールを提出できません'));
     }
 
     const parsed = saveAvailabilityTimeBlocksSchema.safeParse(data);
@@ -86,7 +86,7 @@ export const saveAvailabilityTimeBlocksAction = async (
       parsed.data.timeBlocks,
     );
     if (!result.success) {
-      logger.error`候補日時保存エラー: ${result.error}`;
+      logger.error`スケジュール保存エラー: ${result.error}`;
       return err(result.error);
     }
 

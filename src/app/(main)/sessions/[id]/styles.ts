@@ -479,7 +479,7 @@ export const info_valueText = css({
   lineHeight: 'relaxed',
 });
 
-export const info_scheduleSlotList = css({
+export const info_scheduleTimeBlockList = css({
   listStyle: 'none',
   m: '0',
   p: '0',
@@ -488,7 +488,7 @@ export const info_scheduleSlotList = css({
   gap: '1',
 });
 
-export const info_scheduleSlotItem = css({
+export const info_scheduleTimeBlockItem = css({
   lineHeight: 'relaxed',
 });
 

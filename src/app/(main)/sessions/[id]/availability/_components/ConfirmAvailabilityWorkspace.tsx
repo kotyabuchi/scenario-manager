@@ -6,8 +6,8 @@ import { format } from 'date-fns';
 import { AvailabilityWorkspaceLayout } from './AvailabilityWorkspaceLayout';
 import { BaseAvailabilityCalendar } from './BaseAvailabilityCalendar';
 import { ConfirmSidebarContent } from './ConfirmSidebarContent';
-import { SelectedSlotsPanel } from './SelectedSlotsPanel';
-import { SelectedSlotsStickyBar } from './SelectedSlotsStickyBar';
+import { SelectedTimeBlocksPanel } from './SelectedTimeBlocksPanel';
+import { SelectedTimeBlocksStickyBar } from './SelectedTimeBlocksStickyBar';
 import * as styles from './styles';
 
 import {
@@ -29,8 +29,8 @@ import type {
 type ConfirmAvailabilityWorkspaceProps = {
   workspaceData: AvailabilityWorkspaceData;
   recommendationGroups: RecommendationGroup[];
-  onConfirmSlots?: (
-    slots: AvailabilityTimeBlockInput[],
+  onConfirmTimeBlocks?: (
+    timeBlocks: AvailabilityTimeBlockInput[],
   ) =>
     | Promise<Result<ConfirmedScheduleTimeBlockRow[]>>
     | Result<ConfirmedScheduleTimeBlockRow[]>;
@@ -42,7 +42,7 @@ const getLocalDateKeyFromIso = (iso: string): string =>
 
 const buildConfirmDayBadges = (
   workspaceData: AvailabilityWorkspaceData,
-  selectedSlots: AvailabilityTimeBlockInput[],
+  selectedTimeBlocks: AvailabilityTimeBlockInput[],
   recommendationGroups: RecommendationGroup[],
 ): CalendarDayBadge[] => {
   const bucket = new Map<
@@ -65,38 +65,38 @@ const buildConfirmDayBadges = (
   };
 
   const allAvailability = [
-    ...workspaceData.myAvailabilityTimeBlocks.map((slot) => ({
-      startAt: slot.startAt,
-      endAt: slot.endAt,
+    ...workspaceData.myAvailabilityTimeBlocks.map((block) => ({
+      startAt: block.startAt,
+      endAt: block.endAt,
       participantType: workspaceData.currentUserParticipantType,
     })),
-    ...workspaceData.otherUserAvailabilityTimeBlocks.map((slot) => ({
-      startAt: slot.startAt,
-      endAt: slot.endAt,
-      participantType: slot.participantType,
+    ...workspaceData.otherUserAvailabilityTimeBlocks.map((block) => ({
+      startAt: block.startAt,
+      endAt: block.endAt,
+      participantType: block.participantType,
     })),
   ];
 
-  for (const slot of allAvailability) {
-    const item = touch(getLocalDateKeyFromIso(slot.startAt));
+  for (const block of allAvailability) {
+    const item = touch(getLocalDateKeyFromIso(block.startAt));
     item.submissions += 1;
     item.overlapStrong += 1;
     item.markers.add(
-      slot.participantType === 'SPECTATOR' ? '#f59e0b' : '#60a5fa',
+      block.participantType === 'SPECTATOR' ? '#f59e0b' : '#60a5fa',
     );
   }
 
   for (const group of recommendationGroups) {
     for (const recommendation of group.items) {
-      for (const slot of recommendation.timeBlocks) {
-        const item = touch(getLocalDateKeyFromIso(slot.startAt));
+      for (const block of recommendation.timeBlocks) {
+        const item = touch(getLocalDateKeyFromIso(block.startAt));
         item.markers.add(group.group === 'all_users' ? '#10b981' : '#a855f7');
       }
     }
   }
 
-  for (const slot of selectedSlots) {
-    const item = touch(getLocalDateKeyFromIso(slot.startAt));
+  for (const block of selectedTimeBlocks) {
+    const item = touch(getLocalDateKeyFromIso(block.startAt));
     item.markers.add('#0ea5e9');
   }
 
@@ -112,40 +112,44 @@ const buildConfirmDayBadges = (
     }));
 };
 
-const normalizeSlots = (
-  slots: AvailabilityTimeBlockInput[],
+const normalizeTimeBlocks = (
+  timeBlocks: AvailabilityTimeBlockInput[],
 ): AvailabilityTimeBlockInput[] =>
   sortTimeBlocksByStart(
-    slots.map((slot) => ({ startAt: slot.startAt, endAt: slot.endAt })),
+    timeBlocks.map((block) => ({
+      startAt: block.startAt,
+      endAt: block.endAt,
+    })),
   );
 
-const toggleRecommendationSlots = (
-  currentSlots: AvailabilityTimeBlockInput[],
+const toggleRecommendationTimeBlocks = (
+  currentTimeBlocks: AvailabilityTimeBlockInput[],
   item: RecommendationItem,
 ): Result<AvailabilityTimeBlockInput[]> => {
-  const allSelected = item.timeBlocks.every((slot) =>
-    currentSlots.some((current) => isSameTimeBlock(current, slot)),
+  const allSelected = item.timeBlocks.every((block) =>
+    currentTimeBlocks.some((current) => isSameTimeBlock(current, block)),
   );
 
   if (allSelected) {
     return {
       success: true,
-      data: currentSlots.filter(
+      data: currentTimeBlocks.filter(
         (current) =>
-          !item.timeBlocks.some((slot) => isSameTimeBlock(current, slot)),
+          !item.timeBlocks.some((block) => isSameTimeBlock(current, block)),
       ),
     };
   }
 
-  const slotsToAdd = item.timeBlocks.filter(
-    (slot) => !currentSlots.some((current) => isSameTimeBlock(current, slot)),
+  const timeBlocksToAdd = item.timeBlocks.filter(
+    (block) =>
+      !currentTimeBlocks.some((current) => isSameTimeBlock(current, block)),
   );
 
-  for (const nextSlot of slotsToAdd) {
-    const overlaps = currentSlots.some(
+  for (const nextBlock of timeBlocksToAdd) {
+    const overlaps = currentTimeBlocks.some(
       (current) =>
-        !isSameTimeBlock(current, nextSlot) &&
-        isOverlappingTimeBlock(current, nextSlot),
+        !isSameTimeBlock(current, nextBlock) &&
+        isOverlappingTimeBlock(current, nextBlock),
     );
     if (overlaps) {
       return err(
@@ -156,27 +160,27 @@ const toggleRecommendationSlots = (
 
   return {
     success: true,
-    data: normalizeSlots([...currentSlots, ...slotsToAdd]),
+    data: normalizeTimeBlocks([...currentTimeBlocks, ...timeBlocksToAdd]),
   };
 };
 
 export const ConfirmAvailabilityWorkspace = ({
   workspaceData,
   recommendationGroups,
-  onConfirmSlots,
+  onConfirmTimeBlocks,
 }: ConfirmAvailabilityWorkspaceProps) => {
-  const serverSlots = normalizeSlots(
-    workspaceData.confirmedScheduleTimeBlocks.map((slot) => ({
-      startAt: slot.startAt,
-      endAt: slot.endAt,
+  const serverTimeBlocks = normalizeTimeBlocks(
+    workspaceData.confirmedScheduleTimeBlocks.map((block) => ({
+      startAt: block.startAt,
+      endAt: block.endAt,
     })),
   );
-  const [, setOptimisticSlots] = useOptimistic(serverSlots);
-  const [selectedSlots, setSelectedSlots] =
-    useState<AvailabilityTimeBlockInput[]>(serverSlots);
+  const [, setOptimisticTimeBlocks] = useOptimistic(serverTimeBlocks);
+  const [selectedTimeBlocks, setSelectedTimeBlocks] =
+    useState<AvailabilityTimeBlockInput[]>(serverTimeBlocks);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    serverSlots[0]
-      ? new Date(serverSlots[0].startAt)
+    serverTimeBlocks[0]
+      ? new Date(serverTimeBlocks[0].startAt)
       : recommendationGroups[0]?.items[0]?.timeBlocks[0]
         ? new Date(recommendationGroups[0].items[0].timeBlocks[0].startAt)
         : new Date(),
@@ -190,27 +194,27 @@ export const ConfirmAvailabilityWorkspace = ({
 
   const dayBadges = buildConfirmDayBadges(
     workspaceData,
-    selectedSlots,
+    selectedTimeBlocks,
     recommendationGroups,
   );
 
   const handleToggleRecommendation = (item: RecommendationItem) => {
-    const result = toggleRecommendationSlots(selectedSlots, item);
+    const result = toggleRecommendationTimeBlocks(selectedTimeBlocks, item);
     if (!result.success) {
       setMessage({ tone: 'error', text: result.error.message });
       return;
     }
 
-    setSelectedSlots(result.data);
-    const firstSlot = item.timeBlocks[0];
-    if (firstSlot) {
-      setSelectedDate(new Date(firstSlot.startAt));
+    setSelectedTimeBlocks(result.data);
+    const firstTimeBlock = item.timeBlocks[0];
+    if (firstTimeBlock) {
+      setSelectedDate(new Date(firstTimeBlock.startAt));
     }
     setMessage(null);
   };
 
-  const moveSlot = (index: number, direction: -1 | 1) => {
-    setSelectedSlots((prev) => {
+  const moveTimeBlock = (index: number, direction: -1 | 1) => {
+    setSelectedTimeBlocks((prev) => {
       const nextIndex = index + direction;
       if (nextIndex < 0 || nextIndex >= prev.length) {
         return prev;
@@ -228,7 +232,7 @@ export const ConfirmAvailabilityWorkspace = ({
   };
 
   const handleConfirm = () => {
-    if (!onConfirmSlots) {
+    if (!onConfirmTimeBlocks) {
       setMessage({
         tone: 'success',
         text: 'Storybookモードのため確定保存は実行していません。',
@@ -236,9 +240,9 @@ export const ConfirmAvailabilityWorkspace = ({
       return;
     }
 
-    setOptimisticSlots(selectedSlots);
+    setOptimisticTimeBlocks(selectedTimeBlocks);
     startTransition(async () => {
-      const result = await onConfirmSlots(selectedSlots);
+      const result = await onConfirmTimeBlocks(selectedTimeBlocks);
       if (!result.success) {
         setMessage({ tone: 'error', text: result.error.message });
         return;
@@ -253,8 +257,8 @@ export const ConfirmAvailabilityWorkspace = ({
           count +
           group.items.filter((item) =>
             item.timeBlocks.some(
-              (slot) =>
-                getLocalDateKeyFromIso(slot.startAt) ===
+              (block) =>
+                getLocalDateKeyFromIso(block.startAt) ===
                 formatDateKey(selectedDate),
             ),
           ).length,
@@ -268,7 +272,7 @@ export const ConfirmAvailabilityWorkspace = ({
   const sidebarContent = (
     <ConfirmSidebarContent
       groups={recommendationGroups}
-      selectedSlots={selectedSlots}
+      selectedTimeBlocks={selectedTimeBlocks}
       onClickRecommendation={handleToggleRecommendation}
       errorMessage={message?.tone === 'error' ? message.text : null}
     />
@@ -285,27 +289,27 @@ export const ConfirmAvailabilityWorkspace = ({
           onSelectDate={setSelectedDate}
           dayBadges={dayBadges}
           title="日程確定カレンダー"
-          helperText="日単位で提出密度を見つつ、右側のおすすめ候補をクリックして確定枠を選びます。"
+          helperText="日単位で提出密度を見つつ、右側のおすすめ候補をクリックして確定日程を選びます。"
         />
       }
-      selectedSlotsSection={
+      selectedTimeBlocksSection={
         <div className={styles.sectionStack}>
           <div
             className={styles.pendingSection({ pending: isPending })}
             aria-busy={isPending}
           >
-            <SelectedSlotsPanel
+            <SelectedTimeBlocksPanel
               title="確定候補"
-              slots={selectedSlots}
+              timeBlocks={selectedTimeBlocks}
               minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
               emptyMessage="おすすめ一覧から候補を選択してください。"
-              onRemoveSlot={(index) =>
-                setSelectedSlots((prev) =>
+              onRemoveTimeBlock={(index) =>
+                setSelectedTimeBlocks((prev) =>
                   prev.filter((_, currentIndex) => currentIndex !== index),
                 )
               }
-              onMoveUp={(index) => moveSlot(index, -1)}
-              onMoveDown={(index) => moveSlot(index, 1)}
+              onMoveUp={(index) => moveTimeBlock(index, -1)}
+              onMoveDown={(index) => moveTimeBlock(index, 1)}
             />
           </div>
           {message ? (
@@ -318,12 +322,12 @@ export const ConfirmAvailabilityWorkspace = ({
       desktopSidebarSection={sidebarContent}
       mobileSidebarSection={sidebarContent}
       stickyBar={
-        <SelectedSlotsStickyBar
-          slots={selectedSlots}
+        <SelectedTimeBlocksStickyBar
+          timeBlocks={selectedTimeBlocks}
           minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
           primaryActionLabel={isPending ? '保存中...' : '日程を確定'}
           onPrimaryAction={handleConfirm}
-          primaryDisabled={isPending || selectedSlots.length === 0}
+          primaryDisabled={isPending || selectedTimeBlocks.length === 0}
           sidebarToggleLabel={`おすすめ (${selectedDateRecommendationCount})`}
           onToggleSidebar={() => setMobileSidebarOpen((open) => !open)}
           sidebarOpen={mobileSidebarOpen}

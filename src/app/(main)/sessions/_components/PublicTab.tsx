@@ -209,7 +209,7 @@ export const PublicTab = ({
               items={[
                 { value: 'date_asc', label: '開催日順' },
                 { value: 'created_desc', label: '新着順' },
-                { value: 'seats_desc', label: '残り枠順' },
+                { value: 'seats_desc', label: '残り席順' },
               ]}
               value={[queryParams.publicSort]}
               onValueChange={(

@@ -183,7 +183,7 @@ describe('buildScheduleRecommendations', () => {
     expect(groups[0]?.items.some((item) => item.kind === 'combo')).toBe(true);
   });
 
-  it('提出枠が0件なら空配列を返す', () => {
+  it('スケジュールが0件なら空配列を返す', () => {
     const groups = buildScheduleRecommendations({
       participants: [player('keeper', 'KEEPER')],
       timeBlocks: [],

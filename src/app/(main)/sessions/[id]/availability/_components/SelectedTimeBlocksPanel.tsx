@@ -12,34 +12,34 @@ import {
 
 import type { AvailabilityTimeBlockInput } from '../interface';
 
-type SelectedSlotsPanelProps = {
-  slots: AvailabilityTimeBlockInput[];
+type SelectedTimeBlocksPanelProps = {
+  timeBlocks: AvailabilityTimeBlockInput[];
   minPlaytimeMinutes: number | null;
   title?: string;
   emptyMessage?: string;
-  onRemoveSlot?: (index: number) => void;
+  onRemoveTimeBlock?: (index: number) => void;
   onMoveUp?: (index: number) => void;
   onMoveDown?: (index: number) => void;
   readOnly?: boolean;
 };
 
-export const SelectedSlotsPanel = ({
-  slots,
+export const SelectedTimeBlocksPanel = ({
+  timeBlocks,
   minPlaytimeMinutes,
   title = '選択中の日程',
-  emptyMessage = '日程枠がまだ選択されていません。',
-  onRemoveSlot,
+  emptyMessage = 'スケジュールがまだ選択されていません。',
+  onRemoveTimeBlock,
   onMoveUp,
   onMoveDown,
   readOnly = false,
-}: SelectedSlotsPanelProps) => {
-  const totalMinutes = calcSelectedTimeBlocksTotalMinutes(slots);
+}: SelectedTimeBlocksPanelProps) => {
+  const totalMinutes = calcSelectedTimeBlocksTotalMinutes(timeBlocks);
   const progressStatus = getProgressStatus(totalMinutes, minPlaytimeMinutes);
 
   return (
-    <div className={styles.selectedSlotsPanel}>
-      <div className={styles.selectedSlotsSummary}>
-        <div className={styles.selectedSlotsSummaryRow}>
+    <div className={styles.selectedTimeBlocksPanel}>
+      <div className={styles.selectedTimeBlocksSummary}>
+        <div className={styles.selectedTimeBlocksSummaryRow}>
           <span className={styles.cardTitle}>{title}</span>
           <span className={styles.progressBadge({ status: progressStatus })}>
             {minPlaytimeMinutes === null
@@ -50,35 +50,41 @@ export const SelectedSlotsPanel = ({
           </span>
         </div>
 
-        <div className={styles.selectedSlotsSummaryRow} aria-live="polite">
+        <div className={styles.selectedTimeBlocksSummaryRow} aria-live="polite">
           <span>
             合計 {formatMinutesLabel(totalMinutes)}
             {minPlaytimeMinutes === null
               ? ''
               : ` / 最低 ${formatMinutesLabel(minPlaytimeMinutes)}`}
           </span>
-          <span className={styles.summaryValueStrong}>{slots.length}枠</span>
+          <span className={styles.summaryValueStrong}>
+            {timeBlocks.length}枠
+          </span>
         </div>
       </div>
 
-      {slots.length === 0 ? (
+      {timeBlocks.length === 0 ? (
         <div className={styles.emptyState}>{emptyMessage}</div>
       ) : (
-        <ul className={styles.slotList}>
-          {slots.map((slot, index) => {
-            const label = formatTimeBlockDateTimeRange(slot);
+        <ul className={styles.timeBlockList}>
+          {timeBlocks.map((block, index) => {
+            const label = formatTimeBlockDateTimeRange(block);
             return (
               <li
-                key={`${slot.startAt}-${slot.endAt}`}
-                className={styles.slotListItem}
+                key={`${block.startAt}-${block.endAt}`}
+                className={styles.timeBlockListItem}
               >
-                <div className={styles.slotListItemMain}>
-                  <p className={styles.slotListItemLabel}>{label.primary}</p>
-                  <p className={styles.slotListItemSub}>{label.secondary}</p>
+                <div className={styles.timeBlockListItemMain}>
+                  <p className={styles.timeBlockListItemLabel}>
+                    {label.primary}
+                  </p>
+                  <p className={styles.timeBlockListItemSub}>
+                    {label.secondary}
+                  </p>
                 </div>
 
                 {!readOnly ? (
-                  <div className={styles.slotListItemActions}>
+                  <div className={styles.timeBlockListItemActions}>
                     <button
                       type="button"
                       className={styles.miniButton}
@@ -93,7 +99,7 @@ export const SelectedSlotsPanel = ({
                       className={styles.miniButton}
                       aria-label="下に移動"
                       onClick={() => onMoveDown?.(index)}
-                      disabled={index === slots.length - 1}
+                      disabled={index === timeBlocks.length - 1}
                     >
                       <CaretDown size={14} />
                     </button>
@@ -101,7 +107,7 @@ export const SelectedSlotsPanel = ({
                       type="button"
                       className={styles.miniButton}
                       aria-label="削除"
-                      onClick={() => onRemoveSlot?.(index)}
+                      onClick={() => onRemoveTimeBlock?.(index)}
                     >
                       <Trash size={14} />
                     </button>

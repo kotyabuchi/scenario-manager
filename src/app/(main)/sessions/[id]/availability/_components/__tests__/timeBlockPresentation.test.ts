@@ -53,8 +53,8 @@ describe('calcSelectedTimeBlocksTotalMinutes', () => {
     expect(calcSelectedTimeBlocksTotalMinutes([])).toBe(0);
   });
 
-  it('複数スロットの合計分数を返す', () => {
-    const slots = [
+  it('複数タイムブロックの合計分数を返す', () => {
+    const timeBlocks = [
       {
         startAt: '2025-03-15T10:00:00+09:00',
         endAt: '2025-03-15T12:00:00+09:00',
@@ -64,13 +64,13 @@ describe('calcSelectedTimeBlocksTotalMinutes', () => {
         endAt: '2025-03-16T15:30:00+09:00',
       },
     ];
-    expect(calcSelectedTimeBlocksTotalMinutes(slots)).toBe(210);
+    expect(calcSelectedTimeBlocksTotalMinutes(timeBlocks)).toBe(210);
   });
 });
 
 describe('formatTimeBlockDateTimeRange', () => {
-  it('同一日のスロットは「M/d (E) HH:mm - HH:mm」形式で表示する', () => {
-    // 2時間差のスロット（どのタイムゾーンでも同一日になる）
+  it('同一日のタイムブロックは「M/d (E) HH:mm - HH:mm」形式で表示する', () => {
+    // 2時間差のタイムブロック（どのタイムゾーンでも同一日になる）
     const result = formatTimeBlockDateTimeRange({
       startAt: '2025-03-15T10:00:00+09:00',
       endAt: '2025-03-15T12:00:00+09:00',
@@ -82,8 +82,8 @@ describe('formatTimeBlockDateTimeRange', () => {
     expect(result.secondary).toBe('2時間');
   });
 
-  it('日跨ぎスロットは開始・終了それぞれに日付を表示する', () => {
-    // 24時間差のスロット（どのタイムゾーンでも日跨ぎになる）
+  it('日跨ぎタイムブロックは開始・終了それぞれに日付を表示する', () => {
+    // 24時間差のタイムブロック（どのタイムゾーンでも日跨ぎになる）
     const result = formatTimeBlockDateTimeRange({
       startAt: '2025-03-15T00:00:00.000Z',
       endAt: '2025-03-16T00:00:00.000Z',
@@ -95,7 +95,7 @@ describe('formatTimeBlockDateTimeRange', () => {
     );
   });
 
-  it('日跨ぎスロットのsecondaryに「日跨ぎ」ラベルが含まれる', () => {
+  it('日跨ぎタイムブロックのsecondaryに「日跨ぎ」ラベルが含まれる', () => {
     const result = formatTimeBlockDateTimeRange({
       startAt: '2025-03-15T00:00:00.000Z',
       endAt: '2025-03-16T00:00:00.000Z',

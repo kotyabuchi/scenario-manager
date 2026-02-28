@@ -20,7 +20,7 @@ import type { Route } from 'next';
 import type { AvailabilityTimeBlockInput } from './interface';
 
 export const metadata = {
-  title: '参加可能時間の提出',
+  title: 'スケジュールの提出',
 };
 
 type PageProps = {
@@ -92,12 +92,12 @@ export default async function AvailabilityPage({ params }: PageProps) {
     <div className={styles.pageContainer}>
       <PageHeader
         backHref={`/sessions/${id}` as Route}
-        title="参加可能時間を提出"
+        title="スケジュールを提出"
       />
 
       <SubmitAvailabilityWorkspace
         workspaceData={workspaceResult.data}
-        onSaveSlots={saveTimeBlocksServerAction}
+        onSaveTimeBlocks={saveTimeBlocksServerAction}
       />
     </div>
   );

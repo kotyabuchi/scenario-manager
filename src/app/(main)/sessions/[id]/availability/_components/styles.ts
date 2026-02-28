@@ -216,17 +216,17 @@ export const emptyState = css({
   color: 'gray.600',
 });
 
-export const selectedSlotsPanel = css({
+export const selectedTimeBlocksPanel = css({
   display: 'grid',
   gap: '3',
 });
 
-export const selectedSlotsSummary = css({
+export const selectedTimeBlocksSummary = css({
   display: 'grid',
   gap: '1',
 });
 
-export const selectedSlotsSummaryRow = css({
+export const selectedTimeBlocksSummaryRow = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -276,12 +276,12 @@ export const progressBadge = cva({
   },
 });
 
-export const slotList = css({
+export const timeBlockList = css({
   display: 'grid',
   gap: '2',
 });
 
-export const slotListItem = css({
+export const timeBlockListItem = css({
   display: 'grid',
   gridTemplateColumns: 'minmax(0,1fr) auto',
   gap: '2',
@@ -294,25 +294,25 @@ export const slotListItem = css({
   bg: 'white',
 });
 
-export const slotListItemMain = css({
+export const timeBlockListItemMain = css({
   minW: '0',
   display: 'grid',
   gap: '0.5',
 });
 
-export const slotListItemLabel = css({
+export const timeBlockListItemLabel = css({
   fontSize: 'sm',
   fontWeight: 'semibold',
   color: 'gray.900',
   lineHeight: '[1.3]',
 });
 
-export const slotListItemSub = css({
+export const timeBlockListItemSub = css({
   fontSize: 'xs',
   color: 'gray.600',
 });
 
-export const slotListItemActions = css({
+export const timeBlockListItemActions = css({
   display: 'flex',
   alignItems: 'center',
   gap: '1',

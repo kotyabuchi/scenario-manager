@@ -72,14 +72,14 @@ export const replaceConfirmedScheduleTimeBlocks = async (
     }
 
     if (timeBlocks.length === 0) {
-      return err(new Error('最低1つの候補日時を選択してください'));
+      return err(new Error('最低1つのスケジュールを選択してください'));
     }
 
     const earliestTimeBlock = [...timeBlocks].sort(
       (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
     )[0];
     if (!earliestTimeBlock) {
-      return err(new Error('最低1つの候補日時を選択してください'));
+      return err(new Error('最低1つのスケジュールを選択してください'));
     }
 
     const supabase = await createDbClient();

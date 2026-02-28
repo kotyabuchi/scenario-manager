@@ -50,7 +50,7 @@ export const BaseAvailabilityCalendar = ({
       <div>
         <p className={styles.cardTitle}>{title}</p>
         {helperText ? (
-          <p className={styles.slotListItemSub}>{helperText}</p>
+          <p className={styles.timeBlockListItemSub}>{helperText}</p>
         ) : null}
       </div>
 

@@ -17,7 +17,7 @@ import type {
 } from '@/app/(main)/sessions/[id]/availability/interface';
 
 const MINUTES_IN_DAY = 24 * 60;
-const MAX_COMBO_SLOT_COUNT = 4;
+const MAX_COMBO_TIME_BLOCK_COUNT = 4;
 const MAX_COMBO_ITEMS_PER_GROUP = 10;
 
 export const MAX_SINGLE_CANDIDATES_FOR_COMBO = 10;
@@ -170,15 +170,15 @@ const areSameActiveUsers = (a: Set<string>, b: Set<string>): boolean => {
 };
 
 const buildBaseSegments = (
-  slots: SourceTimeBlockWithMs[],
+  timeBlocks: SourceTimeBlockWithMs[],
   coverageContext: GroupCoverageContext,
 ): BaseSegment[] => {
-  if (slots.length === 0) {
+  if (timeBlocks.length === 0) {
     return [];
   }
 
   const boundaries = [
-    ...new Set(slots.flatMap((slot) => [slot.startMs, slot.endMs])),
+    ...new Set(timeBlocks.flatMap((block) => [block.startMs, block.endMs])),
   ].sort((a, b) => a - b);
 
   const segments: BaseSegment[] = [];
@@ -190,9 +190,9 @@ const buildBaseSegments = (
     }
 
     const activeUserIds = new Set(
-      slots
-        .filter((slot) => slot.startMs <= startMs && endMs <= slot.endMs)
-        .map((slot) => slot.userId),
+      timeBlocks
+        .filter((block) => block.startMs <= startMs && endMs <= block.endMs)
+        .map((block) => block.userId),
     );
 
     if (activeUserIds.size === 0) {
@@ -534,7 +534,7 @@ const generateComboRecommendations = (
       }
     }
 
-    if (selected.length >= MAX_COMBO_SLOT_COUNT) {
+    if (selected.length >= MAX_COMBO_TIME_BLOCK_COUNT) {
       return;
     }
 

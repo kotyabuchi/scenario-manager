@@ -10,19 +10,21 @@ describe('SubmitAvailabilityWorkspace', () => {
   it('カレンダーとパネルが表示される', () => {
     render(<Submit />);
 
-    expect(screen.getByText('参加可能日カレンダー')).toBeInTheDocument();
-    expect(screen.getByText('自分の提出枠')).toBeInTheDocument();
+    expect(screen.getByText('スケジュールカレンダー')).toBeInTheDocument();
+    expect(screen.getByText('自分のスケジュール')).toBeInTheDocument();
   });
 
-  it('サイドバーに他ユーザーの提出枠が表示される', () => {
+  it('サイドバーに他ユーザーのスケジュールが表示される', () => {
     render(<Submit />);
 
     // デスクトップ + モバイル両方に描画されるため複数存在する
-    expect(screen.getAllByText('他の人の提出枠').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('他の人のスケジュール').length).toBeGreaterThan(
+      0,
+    );
     expect(screen.getAllByText('GM 佐藤').length).toBeGreaterThan(0);
   });
 
-  it('提出枠のサマリーが表示される', () => {
+  it('スケジュールのサマリーが表示される', () => {
     render(<Submit />);
 
     expect(screen.getByText('1枠')).toBeInTheDocument();
@@ -54,7 +56,7 @@ describe('ConfirmAvailabilityWorkspace', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('確定枠のサマリーが表示される', () => {
+  it('確定日程のサマリーが表示される', () => {
     render(<Confirm />);
 
     expect(screen.getByText('1枠')).toBeInTheDocument();
