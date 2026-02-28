@@ -27,7 +27,7 @@ describe('SubmitAvailabilityWorkspace', () => {
   it('スケジュールのサマリーが表示される', () => {
     render(<Submit />);
 
-    expect(screen.getByText('1枠')).toBeInTheDocument();
+    expect(screen.getByText('1件')).toBeInTheDocument();
   });
 
   it('保存ボタンが表示される', () => {
@@ -59,7 +59,7 @@ describe('ConfirmAvailabilityWorkspace', () => {
   it('確定日程のサマリーが表示される', () => {
     render(<Confirm />);
 
-    expect(screen.getByText('1枠')).toBeInTheDocument();
+    expect(screen.getByText('1件')).toBeInTheDocument();
   });
 
   it('確定ボタンが表示される', () => {

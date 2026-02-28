@@ -41,7 +41,7 @@ export const SelectedTimeBlocksStickyBar = ({
         <div className={styles.stickySummaryRow}>
           <div className={styles.stickySummaryText} aria-live="polite">
             <span className={styles.stickySummaryStrong}>
-              {timeBlocks.length}枠 / 合計 {formatMinutesLabel(totalMinutes)}
+              {timeBlocks.length}件 / 合計 {formatMinutesLabel(totalMinutes)}
             </span>
             <span>
               {minPlaytimeMinutes === null

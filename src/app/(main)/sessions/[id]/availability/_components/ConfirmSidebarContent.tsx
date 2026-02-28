@@ -120,7 +120,7 @@ export const ConfirmSidebarContent = ({
                   >
                     <span className={styles.sidebarItemTitle}>
                       {item.kind === 'combo'
-                        ? `${item.timeBlocks.length}枠セット / 合計 ${formatMinutesLabel(item.totalMinutes)}`
+                        ? `${item.timeBlocks.length}件セット / 合計 ${formatMinutesLabel(item.totalMinutes)}`
                         : timeBlockLabel.primary}
                     </span>
 

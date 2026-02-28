@@ -171,7 +171,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
           coveredRequiredUsers: 3,
           coveredSpectators: 0,
         },
-        reasonLabels: ['2枠で最低プレイ時間を満たす', '合計 8時間'],
+        reasonLabels: ['2件で最低プレイ時間を満たす', '合計 8時間'],
         rankingScore: {
           priorityBucket: 2,
           durationMinutes: 480,

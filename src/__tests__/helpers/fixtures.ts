@@ -291,7 +291,7 @@ export const createTestScenarioTag = async (opts: ScenarioTagOpts) => {
 // ============================================================
 
 /**
- * セッションを削除（CASCADE: participants, links, availability slots など）
+ * セッションを削除（CASCADE: participants, links, availability time_blocks など）
  */
 export const cleanupSessions = async (ids: string[]) => {
   if (ids.length === 0) return;

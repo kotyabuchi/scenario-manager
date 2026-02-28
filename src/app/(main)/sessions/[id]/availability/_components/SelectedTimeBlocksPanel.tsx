@@ -58,7 +58,7 @@ export const SelectedTimeBlocksPanel = ({
               : ` / 最低 ${formatMinutesLabel(minPlaytimeMinutes)}`}
           </span>
           <span className={styles.summaryValueStrong}>
-            {timeBlocks.length}枠
+            {timeBlocks.length}件
           </span>
         </div>
       </div>
