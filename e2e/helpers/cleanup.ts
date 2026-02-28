@@ -53,6 +53,16 @@ export async function cleanupE2ESessions(): Promise<void> {
 
     await supabase.from('session_links').delete().in('session_id', sessionIds);
 
+    // 可用枠・確定日程の関連テーブルを削除
+    await supabase
+      .from('session_availability_time_blocks')
+      .delete()
+      .in('session_id', sessionIds);
+    await supabase
+      .from('game_schedule_time_blocks')
+      .delete()
+      .in('session_id', sessionIds);
+
     await supabase.from('game_schedules').delete().in('session_id', sessionIds);
 
     await supabase
