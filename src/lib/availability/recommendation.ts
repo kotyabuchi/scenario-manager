@@ -619,6 +619,18 @@ export const buildScheduleRecommendations = ({
     maxSingleCandidatesForCombo,
   );
 
+  // all_users に含まれる候補を required_users_only から除外して重複を排除
+  // recommendationId は group を含むため、時間帯のキーで比較する
+  const toTimeBlockKey = (item: RecommendationItem): string =>
+    item.timeBlocks
+      .map((tb) => `${tb.startAt}-${tb.endAt}`)
+      .sort()
+      .join('|');
+  const allUsersTimeBlockKeys = new Set(allUsersItems.map(toTimeBlockKey));
+  const uniqueRequiredUsersOnlyItems = requiredUsersOnlyItems.filter(
+    (item) => !allUsersTimeBlockKeys.has(toTimeBlockKey(item)),
+  );
+
   const groups: RecommendationGroup[] = [];
 
   if (allUsersItems.length > 0) {
@@ -629,12 +641,12 @@ export const buildScheduleRecommendations = ({
     });
   }
 
-  if (requiredUsersOnlyItems.length > 0) {
+  if (uniqueRequiredUsersOnlyItems.length > 0) {
     groups.push({
       group: 'required_users_only',
       title: '見学者を除けば参加できる候補',
       note: 'ここから下は見学者が参加できない候補です',
-      items: requiredUsersOnlyItems,
+      items: uniqueRequiredUsersOnlyItems,
     });
   }
 

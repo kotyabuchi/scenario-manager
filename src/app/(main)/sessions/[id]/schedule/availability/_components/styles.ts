@@ -193,7 +193,7 @@ export const legendChip = css({
   bg: 'gray.50',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'gray.200',
+  borderColor: 'gray.100',
   fontSize: 'xs',
   color: 'gray.700',
 });
@@ -209,7 +209,7 @@ export const emptyState = css({
   borderRadius: 'xl',
   borderWidth: '1px',
   borderStyle: 'dashed',
-  borderColor: 'gray.200',
+  borderColor: 'gray.100',
   bg: 'gray.50',
   p: '4',
   fontSize: 'sm',
@@ -257,7 +257,7 @@ export const progressBadge = cva({
       neutral: {
         bg: 'gray.50',
         color: 'gray.700',
-        borderColor: 'gray.200',
+        borderColor: 'gray.100',
       },
       success: {
         bg: 'green.50',
@@ -364,7 +364,7 @@ export const stickyBarInner = css({
   borderRadius: '2xl',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'gray.200',
+  borderColor: 'gray.100',
   bg: 'white',
   boxShadow: 'lg',
   p: '3',
@@ -470,7 +470,7 @@ export const input = css({
   borderRadius: 'md',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'gray.200',
+  borderColor: 'gray.100',
   bg: 'white',
   color: 'gray.900',
   fontSize: 'sm',
@@ -510,10 +510,10 @@ export const sidebarItemButton = cva({
     state: {
       default: {
         bg: 'white',
-        borderColor: 'gray.200',
+        borderColor: 'gray.100',
         _hover: {
           bg: 'gray.50',
-          borderColor: 'gray.300',
+          borderColor: 'gray.200',
         },
       },
       selected: {
@@ -570,7 +570,7 @@ export const tagBadge = cva({
       neutral: {
         bg: 'gray.50',
         color: 'gray.700',
-        borderColor: 'gray.200',
+        borderColor: 'gray.100',
       },
       accent: {
         bg: 'blue.50',
@@ -625,7 +625,7 @@ export const messageBox = cva({
       neutral: {
         bg: 'gray.50',
         color: 'gray.700',
-        borderColor: 'gray.200',
+        borderColor: 'gray.100',
       },
       error: {
         bg: 'red.50',

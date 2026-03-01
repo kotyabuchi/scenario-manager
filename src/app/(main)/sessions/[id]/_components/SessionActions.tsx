@@ -80,7 +80,7 @@ export const SessionActions = ({
 
   const actions = getAvailableSessionActions(
     session.sessionPhase,
-    session.schedule?.schedulePhase ?? null,
+    session.schedule?.schedulePhase ?? 'ADJUSTING',
     userRole,
     participantStatus,
     session.gameSessionId,

@@ -76,11 +76,13 @@ export default async function ScheduleConfirmPage({ params }: PageProps) {
         title="日程を確定する"
       />
 
-      <ConfirmAvailabilityWorkspace
-        workspaceData={workspaceResult.data}
-        recommendationGroups={recommendationsResult.data}
-        onConfirmTimeBlocks={confirmTimeBlocksServerAction}
-      />
+      <div className={styles.mainContent}>
+        <ConfirmAvailabilityWorkspace
+          workspaceData={workspaceResult.data}
+          recommendationGroups={recommendationsResult.data}
+          onConfirmTimeBlocks={confirmTimeBlocksServerAction}
+        />
+      </div>
     </div>
   );
 }
