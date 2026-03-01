@@ -3,12 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { isNil } from 'ramda';
 
-import { getCurrentUserId } from '../../adapter';
-import { isSessionManager } from '../../participantAdapter';
+import { getCurrentUserId } from '../../../adapter';
+import { isSessionManager } from '../../../participantAdapter';
 import {
   canSubmitAvailabilityInCurrentPhase,
   getSchedulingPhases,
-} from '../scheduleFlowGuards';
+} from '../../scheduleFlowGuards';
 import { replaceAvailabilityTimeBlocks } from './adapter';
 import { saveAvailabilityTimeBlocksSchema } from './schema';
 
@@ -91,7 +91,7 @@ export const saveAvailabilityTimeBlocksAction = async (
     }
 
     revalidatePath(`/sessions/${sessionId}`);
-    revalidatePath(`/sessions/${sessionId}/availability`);
+    revalidatePath(`/sessions/${sessionId}/schedule/availability`);
     revalidatePath(`/sessions/${sessionId}/schedule/confirm`);
 
     return ok(result.data);

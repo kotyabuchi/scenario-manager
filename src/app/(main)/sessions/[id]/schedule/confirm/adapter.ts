@@ -13,7 +13,7 @@ import type {
   RecommendationGroup,
   RecommendationParticipant,
   RecommendationSourceTimeBlock,
-} from '../../availability/interface';
+} from '../availability/interface';
 
 const logger = getAppLogger(['app', 'sessions', 'schedule', 'confirm']);
 

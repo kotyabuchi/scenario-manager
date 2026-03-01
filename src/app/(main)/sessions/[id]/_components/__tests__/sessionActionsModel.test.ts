@@ -50,7 +50,9 @@ describe('sessionActionsModel', () => {
       ]);
       expect(actions[0]?.label).toBe('日程を確定する');
       expect(actions[0]?.href).toBe('/sessions/session-1/schedule/confirm');
-      expect(actions[2]?.href).toBe('/sessions/session-1/availability');
+      expect(actions[2]?.href).toBe(
+        '/sessions/session-1/schedule/availability',
+      );
     });
 
     it('manager + PREPARATION + CONFIRMED で確定日程編集を主CTAとして返し、スケジュール提出導線は表示しない', () => {
@@ -96,7 +98,9 @@ describe('sessionActionsModel', () => {
       expect(actions[0]?.placement).toBe('primary');
       expect(actions[1]?.placement).toBe('menu');
       expect(actions[0]?.label).toBe('スケジュールを提出');
-      expect(actions[0]?.href).toBe('/sessions/session-1/availability');
+      expect(actions[0]?.href).toBe(
+        '/sessions/session-1/schedule/availability',
+      );
     });
 
     it('スケジュール提出済みなら提出導線ラベルを更新にする', () => {
@@ -165,7 +169,7 @@ describe('sessionActionsModel', () => {
       );
       expect(layout.desktopSecondaryActions[1]).toMatchObject({
         label: 'スケジュールを提出',
-        href: '/sessions/session-1/availability',
+        href: '/sessions/session-1/schedule/availability',
       });
       expect(layout.desktopMenuActions.map((action) => action.id)).toEqual([
         'cancel-session',

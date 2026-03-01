@@ -1,12 +1,12 @@
 import { notFound, redirect } from 'next/navigation';
 import { isNil } from 'ramda';
 
-import { getCurrentUserId } from '../../adapter';
-import { isSessionManager } from '../../participantAdapter';
+import { getCurrentUserId } from '../../../adapter';
+import { isSessionManager } from '../../../participantAdapter';
 import {
   canSubmitAvailabilityInCurrentPhase,
   getSchedulingPhases,
-} from '../scheduleFlowGuards';
+} from '../../scheduleFlowGuards';
 import { SubmitAvailabilityWorkspace } from './_components/SubmitAvailabilityWorkspace';
 import { saveAvailabilityTimeBlocksAction } from './actions';
 import { getAvailabilityWorkspaceData } from './adapter';

@@ -3,12 +3,12 @@ import { isNil } from 'ramda';
 
 import { getCurrentUserId } from '../../../adapter';
 import { isSessionManager } from '../../../participantAdapter';
-import { ConfirmAvailabilityWorkspace } from '../../availability/_components/ConfirmAvailabilityWorkspace';
-import { getAvailabilityWorkspaceData } from '../../availability/adapter';
 import {
   canConfirmScheduleInCurrentPhase,
   getSchedulingPhases,
 } from '../../scheduleFlowGuards';
+import { ConfirmAvailabilityWorkspace } from '../availability/_components/ConfirmAvailabilityWorkspace';
+import { getAvailabilityWorkspaceData } from '../availability/adapter';
 import { confirmScheduleTimeBlocksAction } from './actions';
 import { getScheduleRecommendations } from './adapter';
 import * as styles from './styles';
@@ -16,7 +16,7 @@ import * as styles from './styles';
 import { PageHeader } from '@/components/blocks/PageHeader';
 
 import type { Route } from 'next';
-import type { AvailabilityTimeBlockInput } from '../../availability/interface';
+import type { AvailabilityTimeBlockInput } from '../availability/interface';
 
 export const metadata = {
   title: '日程確定',

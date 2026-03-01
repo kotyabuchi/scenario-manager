@@ -14,7 +14,7 @@ import type {
   RecommendationParticipant,
   RecommendationSourceTimeBlock,
   RecommendationTimeBlock,
-} from '@/app/(main)/sessions/[id]/availability/interface';
+} from '@/app/(main)/sessions/[id]/schedule/availability/interface';
 
 const MINUTES_IN_DAY = 24 * 60;
 const MAX_COMBO_TIME_BLOCK_COUNT = 4;

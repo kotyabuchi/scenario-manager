@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getCurrentUserId } from '../adapter';
 import { SessionDetailContent } from './_components/SessionDetailContent';
 import { buildSessionTimeline, getSessionDetail } from './adapter';
-import { hasUserAvailabilitySubmission } from './availability/adapter';
+import { hasUserAvailabilitySubmission } from './schedule/availability/adapter';
 
 import type { Database } from '@/db/types';
 import type { UserRole } from '../interface';

@@ -53,7 +53,7 @@ export class AvailabilityPage extends BasePage {
 
   /** スケジュール提出ページに遷移 */
   async goto(sessionId: string) {
-    await this.navigate(`/sessions/${sessionId}/availability`);
+    await this.navigate(`/sessions/${sessionId}/schedule/availability`);
   }
 
   /** 時間ブロックを追加する */

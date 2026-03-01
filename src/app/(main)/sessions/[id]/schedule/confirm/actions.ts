@@ -20,7 +20,7 @@ import { err, ok, type Result } from '@/types/result';
 import type {
   ConfirmedScheduleTimeBlockRow,
   RecommendationGroup,
-} from '../../availability/interface';
+} from '../availability/interface';
 import type { ConfirmScheduleTimeBlocksValues } from './schema';
 
 export const confirmScheduleTimeBlocksAction = async (

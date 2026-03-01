@@ -74,7 +74,7 @@ const getManagerActions = (
       label: availabilityActionLabel,
       icon: 'calendar',
       variant: 'secondary',
-      href: `/sessions/${sessionId}/availability`,
+      href: `/sessions/${sessionId}/schedule/availability`,
     });
   }
 
@@ -119,7 +119,7 @@ const getManagerActions = (
         label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'secondary',
-        href: `/sessions/${sessionId}/availability`,
+        href: `/sessions/${sessionId}/schedule/availability`,
       });
     }
   }
@@ -185,7 +185,7 @@ const getParticipantActions = (
         label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/availability`,
+        href: `/sessions/${sessionId}/schedule/availability`,
       });
     }
 

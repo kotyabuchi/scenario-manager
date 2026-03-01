@@ -5,7 +5,7 @@ import { buildScheduleRecommendations } from '../recommendation';
 import type {
   RecommendationParticipant,
   RecommendationSourceTimeBlock,
-} from '@/app/(main)/sessions/[id]/availability/interface';
+} from '@/app/(main)/sessions/[id]/schedule/availability/interface';
 
 const slot = (
   userId: string,
