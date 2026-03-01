@@ -11,11 +11,11 @@ import { SelectedTimeBlocksStickyBar } from './SelectedTimeBlocksStickyBar';
 import { SubmitSidebarContent } from './SubmitSidebarContent';
 import * as styles from './styles';
 
+import { Button } from '@/components/elements/button/button';
 import {
   isOverlappingTimeBlock,
   isSameTimeBlock,
   sortTimeBlocksByStart,
-  toggleExactTimeBlock,
 } from '@/lib/availability/timeBlockUtils';
 import { err, type Result } from '@/types/result';
 
@@ -94,22 +94,12 @@ const validateNonOverlappingInsert = (
   currentTimeBlocks: AvailabilityTimeBlockInput[],
   nextTimeBlock: AvailabilityTimeBlockInput,
 ): Result<AvailabilityTimeBlockInput[]> => {
-  const exactExists = currentTimeBlocks.some((block) =>
-    isSameTimeBlock(block, nextTimeBlock),
+  const hasOverlapOrDuplicate = currentTimeBlocks.some(
+    (block) =>
+      isSameTimeBlock(block, nextTimeBlock) ||
+      isOverlappingTimeBlock(block, nextTimeBlock),
   );
-  if (exactExists) {
-    return {
-      success: true,
-      data: sortTimeBlocksByStart(
-        toggleExactTimeBlock(currentTimeBlocks, nextTimeBlock),
-      ),
-    };
-  }
-
-  const hasOverlap = currentTimeBlocks.some((block) =>
-    isOverlappingTimeBlock(block, nextTimeBlock),
-  );
-  if (hasOverlap) {
+  if (hasOverlapOrDuplicate) {
     return err(new Error('既存のスケジュールと時間が重複しています'));
   }
 
@@ -142,15 +132,22 @@ export const SubmitAvailabilityWorkspace = ({
   } | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  const isDirty =
+    draftTimeBlocks.length !== serverTimeBlocks.length ||
+    draftTimeBlocks.some(
+      (block, index) =>
+        !serverTimeBlocks[index] ||
+        !isSameTimeBlock(block, serverTimeBlocks[index]),
+    );
+
   const dayBadges = buildDayBadges(
     draftTimeBlocks,
     workspaceData.otherUserAvailabilityTimeBlocks,
   );
 
-  const applyTimeBlockToggleOrInsert = (block: AvailabilityTimeBlockInput) => {
+  const addTimeBlock = (block: AvailabilityTimeBlockInput) => {
     const result = validateNonOverlappingInsert(draftTimeBlocks, block);
     if (!result.success) {
-      setMessage({ tone: 'error', text: result.error.message });
       return { ok: false as const, message: result.error.message };
     }
 
@@ -160,25 +157,24 @@ export const SubmitAvailabilityWorkspace = ({
     return { ok: true as const };
   };
 
-  const moveTimeBlock = (index: number, direction: -1 | 1) => {
-    setDraftTimeBlocks((prev) => {
-      const nextIndex = index + direction;
-      if (nextIndex < 0 || nextIndex >= prev.length) {
-        return prev;
-      }
-      const next = [...prev];
-      const current = next[index];
-      const target = next[nextIndex];
-      if (!current || !target) {
-        return prev;
-      }
-      next[index] = target;
-      next[nextIndex] = current;
-      return next;
-    });
+  /** サイドバーからのクリック: 既存なら解除、なければ追加 */
+  const toggleTimeBlock = (block: AvailabilityTimeBlockInput) => {
+    const exactExists = draftTimeBlocks.some((b) => isSameTimeBlock(b, block));
+    if (exactExists) {
+      setDraftTimeBlocks((prev) =>
+        sortTimeBlocksByStart(prev.filter((b) => !isSameTimeBlock(b, block))),
+      );
+      setMessage(null);
+      return;
+    }
+    addTimeBlock(block);
   };
 
   const handleSave = () => {
+    if (!isDirty) {
+      return;
+    }
+
     if (!onSaveTimeBlocks) {
       setMessage({
         tone: 'success',
@@ -187,8 +183,8 @@ export const SubmitAvailabilityWorkspace = ({
       return;
     }
 
-    setOptimisticTimeBlocks(draftTimeBlocks);
     startTransition(async () => {
+      setOptimisticTimeBlocks(draftTimeBlocks);
       const result = await onSaveTimeBlocks(draftTimeBlocks);
       if (!result.success) {
         setMessage({ tone: 'error', text: result.error.message });
@@ -207,10 +203,9 @@ export const SubmitAvailabilityWorkspace = ({
 
   const sidebarContent = (
     <SubmitSidebarContent
-      selectedDate={selectedDate}
       myTimeBlocks={draftTimeBlocks}
       otherUserTimeBlocks={workspaceData.otherUserAvailabilityTimeBlocks}
-      onClickTimeBlock={applyTimeBlockToggleOrInsert}
+      onClickTimeBlock={toggleTimeBlock}
       errorMessage={message?.tone === 'error' ? message.text : null}
     />
   );
@@ -231,6 +226,16 @@ export const SubmitAvailabilityWorkspace = ({
       }
       selectedTimeBlocksSection={
         <div className={styles.sectionStack}>
+          <AvailabilityTimeBlockEditor
+            selectedDate={selectedDate}
+            onAddTimeBlock={addTimeBlock}
+            disabled={isPending}
+          />
+          {message ? (
+            <p className={styles.messageBox({ tone: message.tone })}>
+              {message.text}
+            </p>
+          ) : null}
           <div
             className={styles.pendingSection({ pending: isPending })}
             aria-busy={isPending}
@@ -239,26 +244,25 @@ export const SubmitAvailabilityWorkspace = ({
               title="自分のスケジュール"
               timeBlocks={draftTimeBlocks}
               minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
-              emptyMessage="まだスケジュールがありません。右側からコピーするか、下のフォームで追加してください。"
+              emptyMessage="まだスケジュールがありません。右側からコピーするか、上のフォームで追加してください。"
               onRemoveTimeBlock={(index) =>
                 setDraftTimeBlocks((prev) =>
                   prev.filter((_, currentIndex) => currentIndex !== index),
                 )
               }
-              onMoveUp={(index) => moveTimeBlock(index, -1)}
-              onMoveDown={(index) => moveTimeBlock(index, 1)}
             />
           </div>
-          <AvailabilityTimeBlockEditor
-            selectedDate={selectedDate}
-            onAddTimeBlock={applyTimeBlockToggleOrInsert}
-            disabled={isPending}
-          />
-          {message ? (
-            <p className={styles.messageBox({ tone: message.tone })}>
-              {message.text}
-            </p>
-          ) : null}
+          <div className={styles.desktopOnly}>
+            <Button
+              type="button"
+              status="primary"
+              onClick={handleSave}
+              disabled={isPending || !isDirty}
+              width="full"
+            >
+              {isPending ? '保存中...' : '提出を保存'}
+            </Button>
+          </div>
         </div>
       }
       desktopSidebarSection={sidebarContent}
@@ -269,7 +273,7 @@ export const SubmitAvailabilityWorkspace = ({
           minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
           primaryActionLabel={isPending ? '保存中...' : '提出を保存'}
           onPrimaryAction={handleSave}
-          primaryDisabled={isPending}
+          primaryDisabled={isPending || !isDirty}
           sidebarToggleLabel={`他の人のスケジュール (${selectedDateTimeBlockCount})`}
           onToggleSidebar={() => setMobileSidebarOpen((open) => !open)}
           sidebarOpen={mobileSidebarOpen}

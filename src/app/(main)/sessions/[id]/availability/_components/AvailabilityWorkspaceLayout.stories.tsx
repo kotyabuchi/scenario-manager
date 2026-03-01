@@ -156,30 +156,6 @@ export const ConfirmLikeLayout: Story = {
             title="選択中の日程"
             timeBlocks={timeBlocks}
             minPlaytimeMinutes={360}
-            onMoveUp={(index) => {
-              if (index <= 0) return;
-              setTimeBlocks((prev) => {
-                const next = [...prev];
-                const current = next[index];
-                const upper = next[index - 1];
-                if (!current || !upper) return prev;
-                next[index - 1] = current;
-                next[index] = upper;
-                return next;
-              });
-            }}
-            onMoveDown={(index) => {
-              setTimeBlocks((prev) => {
-                if (index >= prev.length - 1) return prev;
-                const next = [...prev];
-                const current = next[index];
-                const lower = next[index + 1];
-                if (!current || !lower) return prev;
-                next[index] = lower;
-                next[index + 1] = current;
-                return next;
-              });
-            }}
             onRemoveTimeBlock={(index) =>
               setTimeBlocks((prev) => prev.filter((_, i) => i !== index))
             }

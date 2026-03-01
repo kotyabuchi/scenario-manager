@@ -30,6 +30,21 @@ const startFromSelectedDate = (selectedDate: Date | null): Date => {
   return base;
 };
 
+/** 分を最寄りの30分境界に四捨五入する */
+const roundToNearest30 = (value: string): string => {
+  if (!value) {
+    return value;
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+  const minutes = date.getMinutes();
+  const rounded = minutes < 15 ? 0 : minutes < 45 ? 30 : 60;
+  date.setMinutes(rounded, 0, 0);
+  return toLocalDateTimeValue(date);
+};
+
 export const AvailabilityTimeBlockEditor = ({
   selectedDate,
   onAddTimeBlock,
@@ -106,6 +121,7 @@ export const AvailabilityTimeBlockEditor = ({
               className={styles.input}
               value={startValue}
               onChange={(e) => setStartValue(e.target.value)}
+              onBlur={() => setStartValue(roundToNearest30(startValue))}
               step={1800}
               disabled={disabled}
             />
@@ -117,6 +133,7 @@ export const AvailabilityTimeBlockEditor = ({
               className={styles.input}
               value={endValue}
               onChange={(e) => setEndValue(e.target.value)}
+              onBlur={() => setEndValue(roundToNearest30(endValue))}
               step={1800}
               disabled={disabled}
             />

@@ -1,7 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
-
 import * as styles from './styles';
 import { formatTimeBlockDateTimeRange } from './timeBlockPresentation';
 
@@ -10,42 +8,77 @@ import { isSameTimeBlock } from '@/lib/availability/timeBlockUtils';
 import type {
   AvailabilityTimeBlockInput,
   AvailabilityTimeBlockWithUser,
+  ParticipantType,
 } from '../interface';
 
 type SubmitSidebarContentProps = {
-  selectedDate: Date | null;
   myTimeBlocks: AvailabilityTimeBlockInput[];
   otherUserTimeBlocks: AvailabilityTimeBlockWithUser[];
   onClickTimeBlock: (timeBlock: AvailabilityTimeBlockInput) => void;
   errorMessage?: string | null;
 };
 
-const formatDateKey = (date: Date): string => format(date, 'yyyy-MM-dd');
+type GroupedTimeBlock = {
+  startAt: string;
+  endAt: string;
+  users: {
+    userName: string;
+    participantType: ParticipantType;
+    isHost: boolean;
+  }[];
+};
 
-const getRoleLabel = (block: AvailabilityTimeBlockWithUser): string => {
-  if (block.isHost) {
+const getRoleLabel = (
+  participantType: ParticipantType,
+  isHost: boolean,
+): string => {
+  if (isHost) {
     return '主催者';
   }
-  if (block.participantType === 'KEEPER') {
+  if (participantType === 'KEEPER') {
     return 'GM/KP';
   }
-  if (block.participantType === 'SPECTATOR') {
+  if (participantType === 'SPECTATOR') {
     return '見学';
   }
   return 'PL';
 };
 
+const groupTimeBlocks = (
+  blocks: AvailabilityTimeBlockWithUser[],
+): GroupedTimeBlock[] => {
+  const map = new Map<string, GroupedTimeBlock>();
+
+  for (const block of blocks) {
+    const key = `${block.startAt}|${block.endAt}`;
+    const existing = map.get(key);
+    const user = {
+      userName: block.userName,
+      participantType: block.participantType,
+      isHost: block.isHost,
+    };
+
+    if (existing) {
+      existing.users.push(user);
+    } else {
+      map.set(key, {
+        startAt: block.startAt,
+        endAt: block.endAt,
+        users: [user],
+      });
+    }
+  }
+
+  return [...map.values()].sort((a, b) => a.startAt.localeCompare(b.startAt));
+};
+
 export const SubmitSidebarContent = ({
-  selectedDate,
   myTimeBlocks,
   otherUserTimeBlocks,
   onClickTimeBlock,
   errorMessage,
 }: SubmitSidebarContentProps) => {
-  const selectedDateKey = selectedDate ? formatDateKey(selectedDate) : null;
-  const visibleTimeBlocks = otherUserTimeBlocks.filter((block) =>
-    selectedDateKey ? block.startAt.slice(0, 10) === selectedDateKey : true,
-  );
+  const grouped = groupTimeBlocks(otherUserTimeBlocks);
 
   return (
     <div className={styles.sectionStack}>
@@ -57,7 +90,7 @@ export const SubmitSidebarContent = ({
           </p>
         </div>
         <span className={styles.tagBadge({ tone: 'neutral' })}>
-          {visibleTimeBlocks.length}件
+          {grouped.length}件
         </span>
       </div>
 
@@ -65,37 +98,35 @@ export const SubmitSidebarContent = ({
         <p className={styles.messageBox({ tone: 'error' })}>{errorMessage}</p>
       ) : null}
 
-      {visibleTimeBlocks.length === 0 ? (
+      {grouped.length === 0 ? (
         <div className={styles.emptyState}>
-          {selectedDate
-            ? '選択中の日付には他ユーザーのスケジュールがありません。'
-            : 'スケジュールがありません。'}
+          他ユーザーのスケジュールがありません。
         </div>
       ) : (
         <ul className={styles.sidebarList}>
-          {visibleTimeBlocks.map((block) => {
+          {grouped.map((group) => {
             const state = myTimeBlocks.some((myBlock) =>
               isSameTimeBlock(myBlock, {
-                startAt: block.startAt,
-                endAt: block.endAt,
+                startAt: group.startAt,
+                endAt: group.endAt,
               }),
             )
               ? 'selected'
               : 'default';
             const label = formatTimeBlockDateTimeRange({
-              startAt: block.startAt,
-              endAt: block.endAt,
+              startAt: group.startAt,
+              endAt: group.endAt,
             });
 
             return (
-              <li key={block.availabilityTimeBlockId}>
+              <li key={`${group.startAt}-${group.endAt}`}>
                 <button
                   type="button"
                   className={styles.sidebarItemButton({ state })}
                   onClick={() =>
                     onClickTimeBlock({
-                      startAt: block.startAt,
-                      endAt: block.endAt,
+                      startAt: group.startAt,
+                      endAt: group.endAt,
                     })
                   }
                 >
@@ -104,10 +135,17 @@ export const SubmitSidebarContent = ({
                   </span>
                   <span className={styles.sidebarItemMeta}>
                     <span>{label.secondary}</span>
-                    <span className={styles.tagBadge({ tone: 'accent' })}>
-                      {getRoleLabel(block)}
+                    <span className={styles.tagBadge({ tone: 'neutral' })}>
+                      {group.users.length}名
                     </span>
-                    <span>{block.userName}</span>
+                    {group.users.map((user) => (
+                      <span key={user.userName}>
+                        <span className={styles.tagBadge({ tone: 'accent' })}>
+                          {getRoleLabel(user.participantType, user.isHost)}
+                        </span>{' '}
+                        {user.userName}
+                      </span>
+                    ))}
                     {state === 'selected' ? (
                       <span className={styles.tagBadge({ tone: 'success' })}>
                         選択中

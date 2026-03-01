@@ -1,6 +1,6 @@
 'use client';
 
-import { CaretDown, CaretUp, Trash } from '@phosphor-icons/react/ssr';
+import { Trash } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 import {
@@ -18,8 +18,6 @@ type SelectedTimeBlocksPanelProps = {
   title?: string;
   emptyMessage?: string;
   onRemoveTimeBlock?: (index: number) => void;
-  onMoveUp?: (index: number) => void;
-  onMoveDown?: (index: number) => void;
   readOnly?: boolean;
 };
 
@@ -29,8 +27,6 @@ export const SelectedTimeBlocksPanel = ({
   title = '選択中の日程',
   emptyMessage = 'スケジュールがまだ選択されていません。',
   onRemoveTimeBlock,
-  onMoveUp,
-  onMoveDown,
   readOnly = false,
 }: SelectedTimeBlocksPanelProps) => {
   const totalMinutes = calcSelectedTimeBlocksTotalMinutes(timeBlocks);
@@ -85,24 +81,6 @@ export const SelectedTimeBlocksPanel = ({
 
                 {!readOnly ? (
                   <div className={styles.timeBlockListItemActions}>
-                    <button
-                      type="button"
-                      className={styles.miniButton}
-                      aria-label="上に移動"
-                      onClick={() => onMoveUp?.(index)}
-                      disabled={index === 0}
-                    >
-                      <CaretUp size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.miniButton}
-                      aria-label="下に移動"
-                      onClick={() => onMoveDown?.(index)}
-                      disabled={index === timeBlocks.length - 1}
-                    >
-                      <CaretDown size={14} />
-                    </button>
                     <button
                       type="button"
                       className={styles.miniButton}

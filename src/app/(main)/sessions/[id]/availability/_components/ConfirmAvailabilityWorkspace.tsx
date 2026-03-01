@@ -213,24 +213,6 @@ export const ConfirmAvailabilityWorkspace = ({
     setMessage(null);
   };
 
-  const moveTimeBlock = (index: number, direction: -1 | 1) => {
-    setSelectedTimeBlocks((prev) => {
-      const nextIndex = index + direction;
-      if (nextIndex < 0 || nextIndex >= prev.length) {
-        return prev;
-      }
-      const next = [...prev];
-      const current = next[index];
-      const target = next[nextIndex];
-      if (!current || !target) {
-        return prev;
-      }
-      next[index] = target;
-      next[nextIndex] = current;
-      return next;
-    });
-  };
-
   const handleConfirm = () => {
     if (!onConfirmTimeBlocks) {
       setMessage({
@@ -308,8 +290,6 @@ export const ConfirmAvailabilityWorkspace = ({
                   prev.filter((_, currentIndex) => currentIndex !== index),
                 )
               }
-              onMoveUp={(index) => moveTimeBlock(index, -1)}
-              onMoveDown={(index) => moveTimeBlock(index, 1)}
             />
           </div>
           {message ? (

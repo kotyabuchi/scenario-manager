@@ -95,10 +95,12 @@ export default async function AvailabilityPage({ params }: PageProps) {
         title="スケジュールを提出"
       />
 
-      <SubmitAvailabilityWorkspace
-        workspaceData={workspaceResult.data}
-        onSaveTimeBlocks={saveTimeBlocksServerAction}
-      />
+      <div className={styles.mainContent}>
+        <SubmitAvailabilityWorkspace
+          workspaceData={workspaceResult.data}
+          onSaveTimeBlocks={saveTimeBlocksServerAction}
+        />
+      </div>
     </div>
   );
 }

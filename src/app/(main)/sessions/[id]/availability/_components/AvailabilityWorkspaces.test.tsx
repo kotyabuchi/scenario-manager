@@ -34,8 +34,8 @@ describe('SubmitAvailabilityWorkspace', () => {
     render(<Submit />);
 
     expect(
-      screen.getByRole('button', { name: /提出を保存/ }),
-    ).toBeInTheDocument();
+      screen.getAllByRole('button', { name: /提出を保存/ }).length,
+    ).toBeGreaterThan(0);
   });
 });
 
