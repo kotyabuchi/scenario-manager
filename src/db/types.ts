@@ -203,41 +203,9 @@ export type Database = {
             referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: 'game_schedule_time_blocks_session_id_game_schedules_fkey';
+            foreignKeyName: 'game_schedule_time_blocks_session_id_game_sessions_fkey';
             columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: 'game_schedules';
-            referencedColumns: ['session_id'];
-          },
-        ];
-      };
-      game_schedules: {
-        Row: {
-          created_at: string;
-          schedule_date: string;
-          schedule_phase: Database['public']['Enums']['schedule_phase'];
-          session_id: string;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          schedule_date: string;
-          schedule_phase?: Database['public']['Enums']['schedule_phase'];
-          session_id: string;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          schedule_date?: string;
-          schedule_phase?: Database['public']['Enums']['schedule_phase'];
-          session_id?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'game_schedules_session_id_game_sessions_game_session_id_fk';
-            columns: ['session_id'];
-            isOneToOne: true;
             referencedRelation: 'game_sessions';
             referencedColumns: ['game_session_id'];
           },
@@ -257,6 +225,8 @@ export type Database = {
           recruited_player_count: number | null;
           remaining_seat_count: number;
           scenario_id: string | null;
+          schedule_date: string | null;
+          schedule_phase: Database['public']['Enums']['schedule_phase'];
           scheduled_at: string | null;
           session_description: string;
           session_memo: string | null;
@@ -279,6 +249,8 @@ export type Database = {
           recruited_player_count?: number | null;
           remaining_seat_count?: number;
           scenario_id?: string | null;
+          schedule_date?: string | null;
+          schedule_phase?: Database['public']['Enums']['schedule_phase'];
           scheduled_at?: string | null;
           session_description?: string;
           session_memo?: string | null;
@@ -301,6 +273,8 @@ export type Database = {
           recruited_player_count?: number | null;
           remaining_seat_count?: number;
           scenario_id?: string | null;
+          schedule_date?: string | null;
+          schedule_phase?: Database['public']['Enums']['schedule_phase'];
           scheduled_at?: string | null;
           session_description?: string;
           session_memo?: string | null;
@@ -918,12 +892,12 @@ export type Database = {
           p_initial_availability_time_blocks: Json;
           p_invited_members: Json;
           p_is_beginner_friendly: boolean;
-          p_recruited_player_count: number | null;
-          p_scenario_id: string | null;
-          p_scheduled_at: string | null;
+          p_recruited_player_count: number;
+          p_scenario_id: string;
+          p_scheduled_at: string;
           p_session_description: string;
           p_session_name: string;
-          p_tools: string | null;
+          p_tools: string;
           p_user_id: string;
           p_visibility: Database['public']['Enums']['session_visibility'];
         };

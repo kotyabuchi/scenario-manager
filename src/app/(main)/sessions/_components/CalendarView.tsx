@@ -46,7 +46,7 @@ export const CalendarView = ({ sessions }: CalendarViewProps) => {
     const unscheduled: MySessionWithRole[] = [];
 
     for (const session of sessions) {
-      const scheduleDate = session.schedule?.scheduleDate;
+      const scheduleDate = session.scheduleDate;
       if (scheduleDate) {
         const date = new Date(scheduleDate);
         const dateKey = formatDate(

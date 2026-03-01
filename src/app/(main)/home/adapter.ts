@@ -81,8 +81,7 @@ export const getUpcomingSessions = async (
         participants:session_participants(
           *,
           user:users(*)
-        ),
-        schedule:game_schedules(*)
+        )
       `,
       )
       .in('game_session_id', sessionIds)
@@ -332,9 +331,10 @@ export const getSessionDatesForRange = async (
     }
 
     const { data, error } = await supabase
-      .from('game_schedules')
-      .select('schedule_date, session_id, session:game_sessions(session_name)')
-      .in('session_id', [...sessionIds])
+      .from('game_sessions')
+      .select('schedule_date, game_session_id, session_name')
+      .in('game_session_id', [...sessionIds])
+      .not('schedule_date', 'is', null)
       .gte('schedule_date', startDate)
       .lte('schedule_date', endDate);
 
@@ -343,14 +343,11 @@ export const getSessionDatesForRange = async (
     }
 
     return ok(
-      (data ?? []).map((d) => {
-        const session = d.session as { session_name: string } | null;
-        return {
-          scheduleDate: d.schedule_date,
-          sessionId: d.session_id,
-          sessionName: session?.session_name ?? '',
-        };
-      }),
+      (data ?? []).map((d) => ({
+        scheduleDate: d.schedule_date as string,
+        sessionId: d.game_session_id,
+        sessionName: d.session_name,
+      })),
     );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));

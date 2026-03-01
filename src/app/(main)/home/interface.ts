@@ -1,5 +1,4 @@
 import type {
-  GameScheduleRow,
   GameSessionRow,
   ScenarioRow,
   ScenarioSystemRow,
@@ -20,7 +19,6 @@ export type UpcomingSession = GameSessionRow & {
       user: UserRow;
     }
   >;
-  schedule: GameScheduleRow | null;
 };
 
 // 新着シナリオ（リレーション込み）

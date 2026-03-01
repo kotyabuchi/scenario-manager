@@ -27,7 +27,7 @@ const phaseStyles: Record<string, { label: string; style: string }> = {
 };
 
 const formatSessionDate = (session: UpcomingSession): string | null => {
-  const date = session.schedule?.scheduleDate;
+  const date = session.scheduleDate;
   if (isNil(date)) return null;
   const d = new Date(date);
   return `${d.getMonth() + 1}/${String(d.getDate()).padStart(2, '0')}`;

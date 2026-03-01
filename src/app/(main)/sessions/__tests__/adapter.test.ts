@@ -102,13 +102,15 @@ describe('Session List Adapter', () => {
       status: 'CONFIRMED',
     });
 
-    // game_schedules を追加（scheduledセッション用）
+    // schedule_date を設定（scheduledセッション用）
     const client = getTestClient();
-    await client.from('game_schedules').insert({
-      session_id: recruitingSessionId,
-      schedule_date: '2026-03-15T10:00:00+09:00',
-      schedule_phase: 'CONFIRMED',
-    });
+    await client
+      .from('game_sessions')
+      .update({
+        schedule_date: '2026-03-15T10:00:00+09:00',
+        schedule_phase: 'CONFIRMED',
+      })
+      .eq('game_session_id', recruitingSessionId);
   });
 
   afterAll(async () => {

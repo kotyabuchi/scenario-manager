@@ -20,25 +20,14 @@ export const getSchedulingPhases = async (
   try {
     const dbClient = await createDbClient();
 
-    const [{ data: session, error: sessionError }, { data: schedule, error }] =
-      await Promise.all([
-        dbClient
-          .from('game_sessions')
-          .select('session_phase')
-          .eq('game_session_id', sessionId)
-          .maybeSingle(),
-        dbClient
-          .from('game_schedules')
-          .select('schedule_phase')
-          .eq('session_id', sessionId)
-          .maybeSingle(),
-      ]);
+    const { data: session, error: sessionError } = await dbClient
+      .from('game_sessions')
+      .select('session_phase, schedule_phase')
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
 
     if (sessionError) {
       return err(new Error(sessionError.message));
-    }
-    if (error) {
-      return err(new Error(error.message));
     }
     if (isNil(session)) {
       return err(new Error('セッションが見つかりません'));
@@ -46,8 +35,7 @@ export const getSchedulingPhases = async (
 
     return ok({
       sessionPhase: session.session_phase,
-      // 親レコード未作成の移行/初期状態は ADJUSTING 扱い
-      schedulePhase: schedule?.schedule_phase ?? SchedulePhases.ADJUSTING.value,
+      schedulePhase: session.schedule_phase,
     });
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));

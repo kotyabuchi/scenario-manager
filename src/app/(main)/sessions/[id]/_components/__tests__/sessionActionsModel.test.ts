@@ -140,7 +140,7 @@ describe('sessionActionsModel', () => {
       );
       const cancelled = getAvailableSessionActions(
         SessionPhases.CANCELLED.value,
-        null,
+        SchedulePhases.ADJUSTING.value,
         'guest',
         undefined,
         'session-1',

@@ -26,8 +26,7 @@ const formatScheduleDateTime = (
 };
 
 export const HeroSection = ({ userName, nextSession }: HeroSectionProps) => {
-  const schedule = nextSession?.schedule;
-  const scheduleDate = schedule?.scheduleDate;
+  const scheduleDate = nextSession?.scheduleDate;
   const scheduledAt = nextSession?.scheduledAt ?? null;
   const daysUntil = !isNil(scheduleDate) ? calcDaysUntil(scheduleDate) : null;
 

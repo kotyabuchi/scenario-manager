@@ -18,6 +18,8 @@ const baseSession = {
   remainingSeatCount: 4,
   recruitedPlayerCount: 4,
   scheduledAt: null,
+  scheduleDate: null,
+  schedulePhase: 'ADJUSTING' as const,
   tools: 'ココフォリア',
   visibility: 'PUBLIC' as const,
   createdById: 'user-1',
@@ -132,13 +134,8 @@ export const mockUpcomingSessions: UpcomingSession[] = [
         },
       },
     ],
-    schedule: {
-      sessionId: 'session-1',
-      scheduleDate: '2026-03-15',
-      schedulePhase: 'CONFIRMED',
-      createdAt: '2025-12-01T00:00:00Z',
-      updatedAt: '2025-12-01T00:00:00Z',
-    },
+    scheduleDate: '2026-03-15',
+    schedulePhase: 'CONFIRMED' as const,
   },
   {
     ...baseSession,
@@ -176,13 +173,7 @@ export const mockUpcomingSessions: UpcomingSession[] = [
         },
       },
     ],
-    schedule: {
-      sessionId: 'session-2',
-      scheduleDate: '2026-03-22',
-      schedulePhase: 'ADJUSTING',
-      createdAt: '2025-12-01T00:00:00Z',
-      updatedAt: '2025-12-01T00:00:00Z',
-    },
+    scheduleDate: '2026-03-22',
   },
   {
     ...baseSession,
@@ -262,13 +253,8 @@ export const mockUpcomingSessions: UpcomingSession[] = [
         },
       },
     ],
-    schedule: {
-      sessionId: 'session-3',
-      scheduleDate: '2026-02-10',
-      schedulePhase: 'CONFIRMED',
-      createdAt: '2025-12-01T00:00:00Z',
-      updatedAt: '2025-12-01T00:00:00Z',
-    },
+    scheduleDate: '2026-02-10',
+    schedulePhase: 'CONFIRMED' as const,
   },
 ];
 
@@ -309,13 +295,8 @@ export const mockCompletedSession: UpcomingSession = {
       },
     },
   ],
-  schedule: {
-    sessionId: 'session-4',
-    scheduleDate: '2026-01-20',
-    schedulePhase: 'CONFIRMED',
-    createdAt: '2025-12-01T00:00:00Z',
-    updatedAt: '2025-12-01T00:00:00Z',
-  },
+  scheduleDate: '2026-01-20',
+  schedulePhase: 'CONFIRMED' as const,
 };
 
 // ── ActivityItem モック ────────────────────────

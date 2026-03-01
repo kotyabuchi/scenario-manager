@@ -1,5 +1,4 @@
 import type {
-  GameScheduleRow,
   GameScheduleTimeBlockRow,
   GameSessionRow,
   ScenarioRow,
@@ -12,7 +11,6 @@ import type { Database } from '@/db/types';
 
 // 基本型
 type GameSession = GameSessionRow;
-type GameSchedule = GameScheduleRow;
 type GameScheduleTimeBlock = GameScheduleTimeBlockRow;
 type Scenario = ScenarioRow;
 type ScenarioSystem = ScenarioSystemRow;
@@ -40,7 +38,6 @@ type SessionDetail = GameSession & {
         system: ScenarioSystem;
       })
     | null;
-  schedule: GameSchedule | null;
   scheduleTimeBlocks: GameScheduleTimeBlock[];
   participants: ParticipantWithUser[];
   links: SessionLink[];
@@ -55,7 +52,6 @@ type SessionWithRelations = GameSession & {
         system: ScenarioSystem;
       })
     | null;
-  schedule: GameSchedule | null;
   scheduleTimeBlocks: GameScheduleTimeBlock[];
   participants: ParticipantWithUser[];
 };
@@ -145,7 +141,6 @@ type CalendarData = {
 
 export type {
   GameSession,
-  GameSchedule,
   GameScheduleTimeBlock,
   Scenario,
   ScenarioSystem,

@@ -18,7 +18,6 @@ export type ScenarioSystemRow = CamelCaseKeys<
 export type TagRow = CamelCaseKeys<Tables['tags']['Row']>;
 export type ScenarioTagRow = CamelCaseKeys<Tables['scenario_tags']['Row']>;
 export type GameSessionRow = CamelCaseKeys<Tables['game_sessions']['Row']>;
-export type GameScheduleRow = CamelCaseKeys<Tables['game_schedules']['Row']>;
 export type GameScheduleTimeBlockRow = CamelCaseKeys<
   Tables['game_schedule_time_blocks']['Row']
 >;

@@ -134,8 +134,8 @@ export const BasicInfoSection = ({
                     </li>
                   ))}
                 </ul>
-              ) : session.schedule?.scheduleDate ? (
-                `${formatDate(session.schedule.scheduleDate)}〜`
+              ) : session.scheduleDate ? (
+                `${formatDate(session.scheduleDate)}〜`
               ) : (
                 '日程未確定'
               )}

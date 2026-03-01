@@ -39,7 +39,7 @@ type ResponsiveSessionActionsLayout = {
 
 const getManagerActions = (
   phase: string,
-  schedulePhase: string | null,
+  schedulePhase: string,
   sessionId: string,
   hasAvailabilitySubmission: boolean,
 ): SessionActionDescriptor[] => {
@@ -151,7 +151,7 @@ const getManagerActions = (
 
 const getParticipantActions = (
   phase: string,
-  schedulePhase: string | null,
+  schedulePhase: string,
   participantStatus: string | undefined,
   sessionId: string,
   hasAvailabilitySubmission: boolean,
@@ -229,7 +229,7 @@ const getGuestActions = (phase: string): SessionActionDescriptor[] => {
 
 const getAvailableSessionActions = (
   phase: string,
-  schedulePhase: string | null,
+  schedulePhase: string,
   role: UserRole,
   participantStatus?: string,
   sessionId?: string,
