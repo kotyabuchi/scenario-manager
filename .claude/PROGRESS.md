@@ -454,10 +454,22 @@
 4. `checkUserNameAvailability` のSupabase実装
 5. SignupModal「好きなシステム」チップUI + `user_favorite_systems` テーブル
 
-### 優先度C: セキュリティ・運用
-1. RLSポリシー設定
-2. シナリオ自動インポート Step 6: 利用規約・通報機能
-3. BOOTH/TALTOへの事前連絡
+### 優先度C: セッション詳細 編集UI（バックエンド実装済み → UI層のみ）
+
+| # | 対象 | 概要 | 状態 |
+|---|------|------|------|
+| 1 | ToolsSection | セッションリンクの一覧表示・追加・編集・削除UI | ✅ |
+| 2 | キャラクターシート編集 | ParticipantCardにCS URL編集UIを追加 | ⬜ |
+| 3 | GMメモ インライン編集 | GMNotesSectionにインライン編集UIを追加 | ⬜ |
+| 4 | 基本情報編集 | BasicInfoSectionの編集フォーム（adapter/action/schemaも必要） | ⬜ |
+
+### 優先度D: 未完了タスク
+1. シナリオ編集画面
+2. RLSポリシー設定
+3. シナリオ自動インポート Step 6: 利用規約・通報機能
+4. BOOTH/TALTOへの事前連絡
+5. UI/UXリファクタリング残タスク
+6. FilterBottomSheet にスワイプダウンで閉じるジェスチャーを追加（ハンドルバーは見た目のみで未実装）
 
 ### 優先度D: 品質改善
 1. `_components/` フォルダ構成の刷新（`docs/plans/components-folder-restructure.md`、Batch 1-10）— [Issue #3](https://github.com/kotyabuchi/scenario-manager/issues/3)
