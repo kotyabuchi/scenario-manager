@@ -459,9 +459,9 @@
 | # | 対象 | 概要 | 状態 |
 |---|------|------|------|
 | 1 | ToolsSection | セッションリンクの一覧表示・追加・編集・削除UI | ✅ |
-| 2 | キャラクターシート編集 | ParticipantCardにCS URL編集UIを追加 | ⬜ |
-| 3 | GMメモ インライン編集 | GMNotesSectionにインライン編集UIを追加 | ⬜ |
-| 4 | 基本情報編集 | BasicInfoSectionの編集フォーム（adapter/action/schemaも必要） | ⬜ |
+| 2 | キャラクターシート編集 | ParticipantCardにCS URL編集UIを追加 | ✅ |
+| 3 | GMメモ インライン編集 | GMNotesSectionにインライン編集UIを追加 | ✅ |
+| 4 | 基本情報編集 | BasicInfoSectionの編集フォーム（adapter/action/schemaも必要） | ✅ |
 
 ### 優先度D: 未完了タスク
 1. シナリオ編集画面
