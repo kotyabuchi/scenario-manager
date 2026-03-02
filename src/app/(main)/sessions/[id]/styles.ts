@@ -853,6 +853,61 @@ export const memo_editActions = css({
   justifyContent: 'flex-end',
 });
 
+// 基本情報 表示追加
+export const basicInfo_description = css({
+  fontSize: 'sm',
+  color: 'text.body',
+  lineHeight: 'relaxed',
+  whiteSpace: 'pre-wrap',
+  wordBreak: 'break-word',
+});
+
+export const basicInfo_beginnerBadge = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '1',
+  px: '2',
+  py: '0.5',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  color: 'green.700',
+  bg: 'green.50',
+  borderRadius: 'full',
+});
+
+// 基本情報 編集フォーム
+export const basicInfoEdit_form = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4',
+});
+
+export const basicInfoEdit_charCount = css({
+  fontSize: 'xs',
+  color: 'text.secondary',
+  fontWeight: 'medium',
+  textAlign: 'right',
+});
+
+export const basicInfoEdit_error = css({
+  fontSize: 'xs',
+  color: 'error.text',
+});
+
+export const basicInfoEdit_actions = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  justifyContent: 'flex-end',
+});
+
+export const basicInfoEdit_switchRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '3',
+});
+
 // ========================================
 // 会場・ツール（サイドバー）
 // ========================================
