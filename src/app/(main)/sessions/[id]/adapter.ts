@@ -340,7 +340,7 @@ export const updateSessionMemo = async (
 
     const { error } = await supabase
       .from('game_sessions')
-      .update({ session_memo: memo })
+      .update({ session_memo: memo || null })
       .eq('game_session_id', sessionId);
 
     if (error) {

@@ -819,6 +819,40 @@ export const memo_empty = css({
   borderColor: 'gray.100',
 });
 
+// GMメモ編集
+export const memo_editForm = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '3',
+});
+
+export const memo_editFooter = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '2',
+});
+
+export const memo_editCharCount = css({
+  fontSize: 'xs',
+  color: 'text.secondary',
+  fontWeight: 'medium',
+  textAlign: 'right',
+  flexShrink: '0',
+});
+
+export const memo_editError = css({
+  fontSize: 'xs',
+  color: 'error.text',
+});
+
+export const memo_editActions = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  justifyContent: 'flex-end',
+});
+
 // ========================================
 // 会場・ツール（サイドバー）
 // ========================================

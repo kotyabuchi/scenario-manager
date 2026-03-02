@@ -73,7 +73,11 @@ export const SessionDetailContent = ({
               sessionPhase={session.sessionPhase}
             />
             {userRole === 'manager' && (
-              <GMNotesSection memo={session.sessionMemo} showEditButton />
+              <GMNotesSection
+                memo={session.sessionMemo}
+                sessionId={session.gameSessionId}
+                showEditButton
+              />
             )}
           </main>
 
