@@ -16,6 +16,7 @@ import {
   deleteSessionLink,
   getSessionPhase,
   updateCharacterSheetUrl,
+  updateSessionBasicInfo,
   updateSessionMemo,
   updateSessionPhase,
   upsertSessionLink,
@@ -26,6 +27,7 @@ import {
   characterSheetSchema,
   completeSessionSchema,
   participationRequestSchema,
+  sessionBasicInfoSchema,
   sessionLinkSchema,
   sessionMemoSchema,
   withdrawSchema,
@@ -43,6 +45,7 @@ import type {
   CancelSessionValues,
   CompleteSessionValues,
   ParticipationRequestValues,
+  SessionBasicInfoValues,
   SessionLinkValues,
   WithdrawValues,
 } from './schema';
@@ -71,6 +74,49 @@ const validatePhaseTransition = (current: string, next: string): boolean => {
   const allowed = VALID_TRANSITIONS[current as SessionPhaseValue | 'ADJUSTING'];
   if (!allowed) return false;
   return allowed.includes(next as SessionPhaseValue | 'ADJUSTING');
+};
+
+/**
+ * セッション基本情報を更新する（楽観的ロック付き）
+ */
+export const updateBasicInfoAction = async (
+  sessionId: string,
+  expectedUpdatedAt: string,
+  data: SessionBasicInfoValues,
+): Promise<Result<void>> => {
+  try {
+    const userId = await getCurrentUserId();
+    if (isNil(userId)) {
+      return err(new Error('ログインが必要です'));
+    }
+
+    const hasPermission = await isSessionManager(sessionId, userId);
+    if (!hasPermission) {
+      return err(new Error('この操作を行う権限がありません'));
+    }
+
+    const parsed = sessionBasicInfoSchema.safeParse(data);
+    if (!parsed.success) {
+      return err(
+        new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
+      );
+    }
+
+    const result = await updateSessionBasicInfo(
+      sessionId,
+      parsed.data,
+      expectedUpdatedAt,
+    );
+    if (!result.success) {
+      logger.error`基本情報更新エラー: ${result.error}`;
+      return err(result.error);
+    }
+
+    revalidatePath(`/sessions/${sessionId}`);
+    return ok(undefined);
+  } catch (e) {
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
 };
 
 /**

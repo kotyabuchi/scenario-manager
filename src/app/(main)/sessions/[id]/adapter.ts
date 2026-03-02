@@ -356,6 +356,75 @@ export const updateSessionMemo = async (
 };
 
 /**
+ * セッション基本情報を更新する（楽観的ロック + remaining_seat_count 同期）
+ * 認可チェックは呼び出し元の Action 側（isSessionManager）で実施済み
+ */
+export const updateSessionBasicInfo = async (
+  sessionId: string,
+  data: {
+    sessionName: string;
+    sessionDescription: string;
+    maxParticipantCount: number;
+    isBeginnerFriendly: boolean;
+  },
+  expectedUpdatedAt: string,
+): Promise<Result<void>> => {
+  try {
+    const supabase = await createDbClient();
+
+    // 現在のmax/remainingを取得してdelta計算
+    const { data: current, error: fetchError } = await supabase
+      .from('game_sessions')
+      .select('max_participant_count, remaining_seat_count')
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
+
+    if (fetchError) {
+      logger.error`基本情報取得エラー: ${fetchError.message}`;
+      return err(new Error(fetchError.message));
+    }
+
+    if (isNil(current)) {
+      return err(new Error('セッションが見つかりません'));
+    }
+
+    const delta = data.maxParticipantCount - current.max_participant_count;
+    const newRemaining = current.remaining_seat_count + delta;
+
+    if (newRemaining < 0) {
+      return err(new Error('参加上限を現在の参加者数以下に設定できません'));
+    }
+
+    const { data: updatedSessions, error } = await supabase
+      .from('game_sessions')
+      .update({
+        session_name: data.sessionName,
+        session_description: data.sessionDescription,
+        max_participant_count: data.maxParticipantCount,
+        remaining_seat_count: newRemaining,
+        is_beginner_friendly: data.isBeginnerFriendly,
+      })
+      .eq('game_session_id', sessionId)
+      .eq('updated_at', expectedUpdatedAt)
+      .select('game_session_id');
+
+    if (error) {
+      logger.error`基本情報更新エラー: ${error.message}`;
+      return err(new Error(error.message));
+    }
+
+    if (!updatedSessions || updatedSessions.length === 0) {
+      return err(new Error('Conflict: session was modified'));
+    }
+
+    return ok(undefined);
+  } catch (e) {
+    logger.error`updateSessionBasicInfo 予期しないエラー: ${e}`;
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
+
+/**
  * セッションリンク一覧を取得する
  */
 export const getSessionLinks = async (

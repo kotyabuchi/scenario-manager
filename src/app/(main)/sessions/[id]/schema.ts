@@ -95,6 +95,27 @@ export const cancelApplicationSchema = z.object({});
 /** 申請取り消しフォームの値型 */
 export type CancelApplicationValues = z.infer<typeof cancelApplicationSchema>;
 
+/** セッション基本情報のバリデーションスキーマ */
+export const sessionBasicInfoSchema = z.object({
+  sessionName: z
+    .string()
+    .min(1, 'セッション名を入力してください')
+    .max(100, 'セッション名は100文字以内で入力してください'),
+  sessionDescription: z
+    .string()
+    .min(1, '募集文を入力してください')
+    .max(500, '募集文は500文字以内で入力してください'),
+  maxParticipantCount: z
+    .number()
+    .int('参加上限数は整数で入力してください')
+    .min(0, '参加上限数は0以上で入力してください')
+    .max(20, '参加上限数は20以下で入力してください'),
+  isBeginnerFriendly: z.boolean(),
+});
+
+/** セッション基本情報フォームの値型 */
+export type SessionBasicInfoValues = z.infer<typeof sessionBasicInfoSchema>;
+
 /** セッション完了のバリデーションスキーマ */
 export const completeSessionSchema = z.object({
   note: z
