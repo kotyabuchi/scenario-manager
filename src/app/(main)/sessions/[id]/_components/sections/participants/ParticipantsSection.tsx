@@ -14,7 +14,7 @@ type ParticipantsSectionProps = {
   currentUserId: string | null;
   maxPlayer: number | null;
   creatorUserId: string;
-  sessionId?: string;
+  sessionId: string;
   sessionPhase: string;
 };
 
@@ -64,7 +64,6 @@ export const ParticipantsSection = ({
         </div>
         <div className={styles.sessionActions_secondaryGroup}>
           {userRole === 'manager' &&
-            sessionId &&
             (sessionPhase === SessionPhases.RECRUITING.value ||
               sessionPhase === SessionPhases.PREPARATION.value) && (
               <Link
@@ -84,6 +83,7 @@ export const ParticipantsSection = ({
           {sortedParticipants.map((participant) => (
             <li key={participant.userId}>
               <ParticipantCard
+                sessionId={sessionId}
                 participant={participant}
                 isCurrentUser={participant.userId === currentUserId}
                 isSessionCreator={participant.userId === creatorUserId}

@@ -73,6 +73,7 @@ const meta = {
     ),
   ],
   args: {
+    sessionId: '01HSESSION0000000000000001',
     isCurrentUser: false,
     isSessionCreator: false,
     participant: baseParticipant,

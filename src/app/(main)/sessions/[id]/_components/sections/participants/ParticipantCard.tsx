@@ -2,11 +2,13 @@ import { CheckCircleIcon, ClockIcon, User } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 
 import * as styles from '../../../styles';
+import { CharacterSheetEdit } from './CharacterSheetEdit';
 
 import type { ReactNode } from 'react';
 import type { ParticipantWithUser } from '../../../../interface';
 
 type ParticipantCardProps = {
+  sessionId: string;
   participant: ParticipantWithUser;
   isCurrentUser: boolean;
   isSessionCreator: boolean;
@@ -92,6 +94,7 @@ const CharacterSheetStatus = ({
 };
 
 export const ParticipantCard = ({
+  sessionId,
   participant,
   isCurrentUser,
   isSessionCreator,
@@ -176,11 +179,20 @@ export const ParticipantCard = ({
 
       {/* 右側: キャラシステータス */}
       <div>
-        <CharacterSheetStatus
-          characterSheetUrl={participant.characterSheetUrl}
-          participantType={participant.participantType}
-          isSessionCreator={isSessionCreator}
-        />
+        {isCurrentUser && participant.participantType !== 'KEEPER' ? (
+          <CharacterSheetEdit
+            sessionId={sessionId}
+            characterSheetUrl={participant.characterSheetUrl}
+            participantType={participant.participantType}
+            isSessionCreator={isSessionCreator}
+          />
+        ) : (
+          <CharacterSheetStatus
+            characterSheetUrl={participant.characterSheetUrl}
+            participantType={participant.participantType}
+            isSessionCreator={isSessionCreator}
+          />
+        )}
       </div>
     </div>
   );

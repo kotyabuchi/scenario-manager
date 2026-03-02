@@ -689,6 +689,79 @@ export const participants_empty = css({
   borderColor: 'gray.100',
 });
 
+// キャラクターシート編集
+export const participants_csEditWrap = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+});
+
+export const participants_csEditButton = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '1',
+  px: '2',
+  py: '1',
+  fontSize: 'xs',
+  fontWeight: 'medium',
+  color: 'text.secondary',
+  bg: 'transparent',
+  border: 'none',
+  borderRadius: 'md',
+  cursor: 'pointer',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  _hover: {
+    color: 'primary.default',
+    bg: 'bg.input',
+  },
+  _focusVisible: {
+    outline: 'focusRing',
+    outlineOffset: '[2px]',
+  },
+});
+
+export const participants_csLink = css({
+  fontSize: 'xs',
+  color: 'primary.default',
+  textDecoration: 'none',
+  maxW: '[120px]',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  _hover: {
+    textDecoration: 'underline',
+  },
+  _focusVisible: {
+    outline: 'focusRing',
+    outlineOffset: '[2px]',
+  },
+});
+
+export const participants_csEditForm = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
+});
+
+export const participants_csEditInputRow = css({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '2',
+});
+
+export const participants_csEditActions = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  justifyContent: 'flex-end',
+});
+
+export const participants_csEditError = css({
+  fontSize: 'xs',
+  color: 'error.text',
+});
+
 // ========================================
 // GMメモ
 // ========================================

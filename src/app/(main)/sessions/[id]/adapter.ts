@@ -489,7 +489,7 @@ export const updateCharacterSheetUrl = async (
 
     const { error } = await supabase
       .from('session_participants')
-      .update({ character_sheet_url: url })
+      .update({ character_sheet_url: url || null })
       .eq('session_id', sessionId)
       .eq('user_id', userId);
 
