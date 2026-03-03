@@ -388,11 +388,40 @@ export const updateSessionBasicInfo = async (
       return err(new Error('セッションが見つかりません'));
     }
 
-    const delta = data.maxParticipantCount - current.max_participant_count;
-    const newRemaining = current.remaining_seat_count + delta;
+    // remaining_seat_count の計算（maxParticipantCount=0 は「制限なし」）
+    let newRemaining: number;
 
-    if (newRemaining < 0) {
-      return err(new Error('参加上限を現在の参加者数以下に設定できません'));
+    if (data.maxParticipantCount === 0) {
+      // 有限→無制限 または 無制限→無制限: remaining=0（無制限マーカー）
+      newRemaining = 0;
+    } else if (current.max_participant_count === 0) {
+      // 無制限→有限: 現在の参加者数を実カウントして残席を算出
+      const { count, error: countError } = await supabase
+        .from('session_participants')
+        .select('*', { count: 'exact', head: true })
+        .eq('session_id', sessionId)
+        .in('participant_type', ['PLAYER', 'KEEPER'])
+        .eq('participant_status', 'CONFIRMED');
+
+      if (countError) {
+        logger.error`参加者数取得エラー: ${countError.message}`;
+        return err(new Error(countError.message));
+      }
+
+      const occupiedSeats = count ?? 0;
+      newRemaining = data.maxParticipantCount - occupiedSeats;
+
+      if (newRemaining < 0) {
+        return err(new Error('参加上限を現在の参加者数以下に設定できません'));
+      }
+    } else {
+      // 有限→有限: デルタ計算
+      const delta = data.maxParticipantCount - current.max_participant_count;
+      newRemaining = current.remaining_seat_count + delta;
+
+      if (newRemaining < 0) {
+        return err(new Error('参加上限を現在の参加者数以下に設定できません'));
+      }
     }
 
     const { data: updatedSessions, error } = await supabase
