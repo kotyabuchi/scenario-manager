@@ -143,15 +143,6 @@ export const ConfirmSidebarContent = ({
                           最低時間達成
                         </span>
                       ) : null}
-                      {state === 'partial' ? (
-                        <span className={styles.tagBadge({ tone: 'caution' })}>
-                          一部選択
-                        </span>
-                      ) : state === 'selected' ? (
-                        <span className={styles.tagBadge({ tone: 'success' })}>
-                          選択中
-                        </span>
-                      ) : null}
                     </span>
 
                     {item.reasonLabels.length > 0 ? (

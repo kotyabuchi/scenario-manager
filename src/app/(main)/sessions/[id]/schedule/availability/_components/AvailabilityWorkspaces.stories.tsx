@@ -119,7 +119,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
           coveredRequiredUsers: 3,
           coveredSpectators: 1,
         },
-        reasonLabels: ['全ユーザー参加可', '重なり 3時間'],
+        reasonLabels: ['全ユーザー参加可', '共通 3時間'],
         rankingScore: {
           priorityBucket: 1,
           durationMinutes: 180,
@@ -148,7 +148,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
           coveredRequiredUsers: 3,
           coveredSpectators: 0,
         },
-        reasonLabels: ['見学者を除けば全員参加可', '重なり 4時間'],
+        reasonLabels: ['見学者を除けば全員参加可', '共通 4時間'],
         rankingScore: {
           priorityBucket: 1,
           durationMinutes: 240,

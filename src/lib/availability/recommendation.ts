@@ -305,8 +305,7 @@ const extractGroupSegments = (
 const isMinPlaytimeMet = (
   totalMinutes: number,
   minPlaytimeMinutes: number | null,
-): boolean =>
-  minPlaytimeMinutes === null ? true : totalMinutes >= minPlaytimeMinutes;
+): boolean => minPlaytimeMinutes !== null && totalMinutes >= minPlaytimeMinutes;
 
 const createSingleRecommendationItem = (
   group: RecommendationGroupType,
@@ -324,7 +323,7 @@ const createSingleRecommendationItem = (
       ? ['1回で最低プレイ時間を満たす']
       : []),
     groupLabel(group),
-    `重なり ${minutesToLabel(durationMinutes)}`,
+    `共通 ${minutesToLabel(durationMinutes)}`,
   ];
 
   return {

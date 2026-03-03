@@ -21,7 +21,7 @@ const markerKeyToLabel = (badge: CalendarDayBadge): string => {
     parts.push(`提出 ${badge.counts.submissions}件`);
   }
   if (badge.counts?.overlapStrong !== undefined) {
-    parts.push(`強い重なり ${badge.counts.overlapStrong}件`);
+    parts.push(`${badge.counts.overlapStrong}人が参加可能`);
   }
 
   return parts.length > 0

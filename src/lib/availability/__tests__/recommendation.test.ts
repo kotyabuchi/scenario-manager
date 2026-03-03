@@ -179,7 +179,7 @@ describe('buildScheduleRecommendations', () => {
     });
 
     expect(groups[0]?.items[0]?.kind).toBe('single');
-    expect(groups[0]?.items[0]?.meetsMinPlaytime).toBe(true);
+    expect(groups[0]?.items[0]?.meetsMinPlaytime).toBe(false);
     expect(groups[0]?.items.some((item) => item.kind === 'combo')).toBe(true);
   });
 

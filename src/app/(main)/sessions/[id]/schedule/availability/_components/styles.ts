@@ -52,9 +52,6 @@ export const desktopSidebar = css({
   display: 'none',
   md: {
     display: 'block',
-    position: 'sticky',
-    top: '6',
-    alignSelf: 'start',
   },
 });
 
