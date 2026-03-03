@@ -43,7 +43,7 @@ export type CharacterSheetValues = z.infer<typeof characterSheetSchema>;
 
 /** 参加申請のバリデーションスキーマ */
 export const participationRequestSchema = z.object({
-  participantType: z.enum(['PLAYER', 'SPECTATOR']),
+  participantType: z.enum(['KEEPER', 'PLAYER', 'SPECTATOR']),
   applicationMessage: z
     .string()
     .max(200, '一言メッセージは200文字以内で入力してください')

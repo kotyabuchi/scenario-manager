@@ -188,9 +188,16 @@ describe('participationRequestSchema', () => {
     }
   });
 
-  it('無効な参加タイプはバリデーション失敗する', () => {
+  it('KEEPERタイプの申請はバリデーション成功する', () => {
     const result = participationRequestSchema.safeParse({
       participantType: 'KEEPER',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('無効な参加タイプはバリデーション失敗する', () => {
+    const result = participationRequestSchema.safeParse({
+      participantType: 'INVALID',
     });
     expect(result.success).toBe(false);
   });

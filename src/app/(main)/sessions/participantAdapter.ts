@@ -35,7 +35,7 @@ export const isSessionManager = async (
  * 参加申請入力型
  */
 export type ApplyToSessionInput = {
-  participantType: 'PLAYER' | 'SPECTATOR';
+  participantType: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
   applicationMessage?: string | null | undefined;
 };
 
