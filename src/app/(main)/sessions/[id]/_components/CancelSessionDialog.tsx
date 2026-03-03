@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { WarningCircle } from '@phosphor-icons/react/ssr';
+import { Info, LockSimple, WarningCircle } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import { cancelSessionAction } from '../actions';
@@ -12,7 +12,6 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';
-import { Input } from '@/components/elements/input';
 import { Modal } from '@/components/elements/modal';
 import { Textarea } from '@/components/elements/textarea';
 
@@ -39,7 +38,6 @@ export const CancelSessionDialog = ({
     resolver: zodResolver(cancelSessionSchema),
     defaultValues: {
       reason: '',
-      confirmText: '',
     },
   });
 
@@ -83,7 +81,7 @@ export const CancelSessionDialog = ({
         loadingText="キャンセル中..."
         form="cancel-session-form"
       >
-        <WarningCircle size={16} weight="fill" />
+        <LockSimple size={16} weight="fill" />
         キャンセルする
       </Button>
     </>
@@ -93,7 +91,9 @@ export const CancelSessionDialog = ({
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="セッションをキャンセル"
+      title="セッションをキャンセルしますか？"
+      headerVariant="danger"
+      headerIcon={<WarningCircle size={24} weight="fill" />}
       footer={footer}
     >
       <form
@@ -101,26 +101,22 @@ export const CancelSessionDialog = ({
         onSubmit={handleSubmit(onSubmit)}
         className={styles.dialog_form}
       >
-        {/* 警告ヘッダー */}
-        <div className={styles.dialog_warningHeader}>
-          <WarningCircle
-            size={24}
+        {/* 情報ボックス */}
+        <div className={styles.dialog_infoBox}>
+          <Info
+            size={20}
             weight="fill"
-            className={styles.dialog_warningIcon}
+            className={styles.dialog_infoBox_icon}
+            aria-hidden="true"
           />
-          <span className={styles.dialog_warningTitle}>
-            この操作は取り消せません
-          </span>
-        </div>
-
-        {/* 影響説明ボックス */}
-        <div className={styles.dialog_impactBox}>
-          <p className={styles.dialog_impactTitle}>キャンセルすると：</p>
-          <ul className={styles.dialog_impactList}>
-            <li>参加者全員に通知されます</li>
-            <li>セッションのステータスがキャンセルに変更されます</li>
-            <li>この操作は元に戻せません</li>
-          </ul>
+          <div className={styles.dialog_infoBox_content}>
+            <p className={styles.dialog_infoBox_title}>
+              この操作は取り消せません。
+            </p>
+            <p className={styles.dialog_infoBox_description}>
+              セッションをキャンセルすると、参加予定のプレイヤー全員に通知が送信されます。また、このセッションのスケジュールは削除されます。
+            </p>
+          </div>
         </div>
 
         {!isNil(serverError) && (
@@ -133,33 +129,16 @@ export const CancelSessionDialog = ({
         {/* キャンセル理由 */}
         <div className={styles.dialog_field}>
           <label htmlFor="cancel-reason" className={styles.dialog_label}>
-            キャンセル理由（任意）
+            キャンセル理由
+            <span className={styles.optionalBadge}>（任意）</span>
           </label>
           <Textarea
             id="cancel-reason"
             {...register('reason')}
-            placeholder="参加者へのメッセージを入力してください"
-            rows={3}
+            placeholder="急用が入ってしまったため、やむを得ずキャンセルいたします..."
+            rows={4}
           />
           <FieldError error={errors.reason} />
-        </div>
-
-        {/* 二重確認 */}
-        <div className={styles.dialog_field}>
-          <label htmlFor="cancel-confirm" className={styles.dialog_label}>
-            確認のため「キャンセル」と入力してください
-            <span className={styles.dialog_required}>*</span>
-          </label>
-          <Input
-            type="text"
-            id="cancel-confirm"
-            {...register('confirmText')}
-            placeholder="キャンセル"
-          />
-          <FieldError error={errors.confirmText} />
-          <p className={styles.dialog_confirmHint}>
-            「キャンセル」と入力すると実行ボタンが有効になります
-          </p>
         </div>
       </form>
     </Modal>

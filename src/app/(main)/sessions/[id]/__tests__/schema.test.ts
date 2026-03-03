@@ -202,42 +202,28 @@ describe('participationRequestSchema', () => {
 });
 
 describe('cancelSessionSchema', () => {
-  it('正しい確認テキスト付きでバリデーション成功する', () => {
-    const result = cancelSessionSchema.safeParse({
-      confirmText: 'キャンセル',
-    });
+  it('理由なしでバリデーション成功する', () => {
+    const result = cancelSessionSchema.safeParse({});
     expect(result.success).toBe(true);
   });
 
   it('理由付きでバリデーション成功する', () => {
     const result = cancelSessionSchema.safeParse({
       reason: 'GM都合によりキャンセルします',
-      confirmText: 'キャンセル',
     });
     expect(result.success).toBe(true);
   });
 
-  it('確認テキストが異なるとバリデーション失敗する', () => {
+  it('500文字の理由はバリデーション成功する', () => {
     const result = cancelSessionSchema.safeParse({
-      confirmText: 'cancel',
+      reason: 'あ'.repeat(500),
     });
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        '「キャンセル」と入力してください',
-      );
-    }
-  });
-
-  it('確認テキストなしはバリデーション失敗する', () => {
-    const result = cancelSessionSchema.safeParse({});
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('501文字以上の理由はバリデーション失敗する', () => {
     const result = cancelSessionSchema.safeParse({
       reason: 'あ'.repeat(501),
-      confirmText: 'キャンセル',
     });
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -249,33 +235,53 @@ describe('cancelSessionSchema', () => {
 });
 
 describe('withdrawSchema', () => {
-  it('理由なしでバリデーション成功する', () => {
+  it('理由なしはバリデーション失敗する', () => {
     const result = withdrawSchema.safeParse({});
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+  });
+
+  it('空文字の理由はバリデーション失敗する', () => {
+    const result = withdrawSchema.safeParse({ reason: '' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        '辞退理由を入力してください',
+      );
+    }
+  });
+
+  it('空白のみの理由はバリデーション失敗する', () => {
+    const result = withdrawSchema.safeParse({ reason: '   ' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        '辞退理由を入力してください',
+      );
+    }
   });
 
   it('理由付きでバリデーション成功する', () => {
     const result = withdrawSchema.safeParse({
-      reason: '予定が合わなくなったため辞退します',
+      reason: '体調不良のため',
     });
     expect(result.success).toBe(true);
   });
 
-  it('500文字の理由はバリデーション成功する', () => {
+  it('200文字の理由はバリデーション成功する', () => {
     const result = withdrawSchema.safeParse({
-      reason: 'あ'.repeat(500),
+      reason: 'あ'.repeat(200),
     });
     expect(result.success).toBe(true);
   });
 
-  it('501文字以上の理由はバリデーション失敗する', () => {
+  it('201文字以上の理由はバリデーション失敗する', () => {
     const result = withdrawSchema.safeParse({
-      reason: 'あ'.repeat(501),
+      reason: 'あ'.repeat(201),
     });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
-        '辞退理由は500文字以内で入力してください',
+        '辞退理由は200文字以内で入力してください',
       );
     }
   });

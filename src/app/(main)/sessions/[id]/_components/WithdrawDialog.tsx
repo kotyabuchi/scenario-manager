@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserMinus, WarningCircle } from '@phosphor-icons/react/ssr';
+import { BellRinging, SignOut, WarningCircle } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import { withdrawFromSessionAction } from '../actions';
@@ -33,6 +33,7 @@ export const WithdrawDialog = ({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<WithdrawValues>({
     resolver: zodResolver(withdrawSchema),
@@ -40,6 +41,8 @@ export const WithdrawDialog = ({
       reason: '',
     },
   });
+
+  const reasonLength = watch('reason')?.length ?? 0;
 
   const handleClose = () => {
     reset();
@@ -71,7 +74,7 @@ export const WithdrawDialog = ({
         onClick={handleClose}
         disabled={isPending}
       >
-        キャンセル
+        戻る
       </Button>
       <Button
         type="submit"
@@ -81,8 +84,8 @@ export const WithdrawDialog = ({
         loadingText="辞退中..."
         form="withdraw-form"
       >
-        <UserMinus size={16} />
         辞退する
+        <SignOut size={16} />
       </Button>
     </>
   );
@@ -91,7 +94,7 @@ export const WithdrawDialog = ({
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="セッションを辞退"
+      title="セッションから辞退しますか？"
       footer={footer}
     >
       <form
@@ -99,9 +102,23 @@ export const WithdrawDialog = ({
         onSubmit={handleSubmit(onSubmit)}
         className={styles.dialog_form}
       >
-        <p className={styles.dialog_message}>
-          このセッションへの参加を辞退します。辞退後もセッションページは閲覧できますが、参加者としての権限は失われます。
-        </p>
+        {/* 警告ボックス */}
+        <div className={styles.dialog_warningBox}>
+          <BellRinging
+            size={20}
+            weight="fill"
+            className={styles.dialog_warningBox_icon}
+            aria-hidden="true"
+          />
+          <div className={styles.dialog_warningBox_content}>
+            <p className={styles.dialog_warningBox_title}>
+              GMに参加辞退の連絡を送ります。
+            </p>
+            <p className={styles.dialog_warningBox_description}>
+              円滑なセッション運営のため、無断欠席は避けましょう。辞退の理由はGMにのみ通知されます。
+            </p>
+          </div>
+        </div>
 
         {!isNil(serverError) && (
           <div className={styles.dialog_serverError} role="alert">
@@ -113,15 +130,25 @@ export const WithdrawDialog = ({
         {/* 辞退理由 */}
         <div className={styles.dialog_field}>
           <label htmlFor="withdraw-reason" className={styles.dialog_label}>
-            辞退理由（任意）
+            辞退の理由
+            <span className={styles.dialog_requiredBadge}>必須</span>
           </label>
           <Textarea
             id="withdraw-reason"
             {...register('reason')}
-            placeholder="GMへのメッセージを入力してください"
-            rows={3}
+            placeholder="体調不良のため、参加が難しくなりました..."
+            rows={4}
+            maxLength={200}
           />
           <FieldError error={errors.reason} />
+          <p
+            className={styles.cx(
+              styles.charCount,
+              reasonLength > 200 && styles.charCount_warning,
+            )}
+          >
+            {reasonLength} / 200文字
+          </p>
         </div>
       </form>
     </Modal>

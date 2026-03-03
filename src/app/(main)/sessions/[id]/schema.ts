@@ -61,18 +61,6 @@ export const cancelSessionSchema = z.object({
     .string()
     .max(500, 'キャンセル理由は500文字以内で入力してください')
     .optional(),
-  /** 二重確認用：「キャンセル」と入力する必要がある */
-  confirmText: z
-    .string()
-    .min(1, '確認テキストを入力してください')
-    .superRefine((val, ctx) => {
-      if (val !== 'キャンセル') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: '「キャンセル」と入力してください',
-        });
-      }
-    }),
 });
 
 /** セッションキャンセルフォームの値型 */
@@ -82,8 +70,9 @@ export type CancelSessionValues = z.infer<typeof cancelSessionSchema>;
 export const withdrawSchema = z.object({
   reason: z
     .string()
-    .max(500, '辞退理由は500文字以内で入力してください')
-    .optional(),
+    .trim()
+    .min(1, '辞退理由を入力してください')
+    .max(200, '辞退理由は200文字以内で入力してください'),
 });
 
 /** 辞退フォームの値型 */

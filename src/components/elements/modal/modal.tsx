@@ -15,6 +15,8 @@ type ModalProps = {
   children: ReactNode;
   footer?: ReactNode;
   size?: 'sm' | 'md' | 'lg';
+  headerVariant?: 'default' | 'danger';
+  headerIcon?: ReactNode;
 };
 
 export const Modal = ({
@@ -24,6 +26,8 @@ export const Modal = ({
   children,
   footer,
   size = 'md',
+  headerVariant = 'default',
+  headerIcon,
 }: ModalProps) => {
   // Ark UI Dialog doesn't properly respond to controlled `open` prop changes
   // Workaround: conditionally render the Dialog based on the `open` prop
@@ -35,16 +39,29 @@ export const Modal = ({
         <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Positioner className={styles.positioner}>
           <Dialog.Content className={styles.content({ size })}>
-            <header className={styles.header}>
-              <Dialog.Title className={styles.title}>{title}</Dialog.Title>
-              <Dialog.CloseTrigger
-                className={styles.closeButton}
-                aria-label="閉じる"
-              >
-                <X size={20} />
-              </Dialog.CloseTrigger>
-            </header>
-            <hr className={styles.divider} />
+            {headerVariant === 'danger' ? (
+              <header className={styles.headerDanger}>
+                {headerIcon && (
+                  <span className={styles.headerIcon_style}>{headerIcon}</span>
+                )}
+                <Dialog.Title className={styles.titleDanger}>
+                  {title}
+                </Dialog.Title>
+              </header>
+            ) : (
+              <>
+                <header className={styles.header}>
+                  <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+                  <Dialog.CloseTrigger
+                    className={styles.closeButton}
+                    aria-label="閉じる"
+                  >
+                    <X size={20} />
+                  </Dialog.CloseTrigger>
+                </header>
+                <hr className={styles.divider} />
+              </>
+            )}
             <div className={styles.body}>{children}</div>
             {footer && (
               <>

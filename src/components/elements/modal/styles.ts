@@ -107,3 +107,23 @@ export const divider = css({
   border: 'none',
   m: '0',
 });
+
+export const headerDanger = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '3',
+  p: '6',
+  bg: 'error.default',
+  borderTopRadius: 'xl',
+});
+
+export const titleDanger = css({
+  fontSize: '[18px]',
+  fontWeight: 'bold',
+  color: 'error.textOnError',
+});
+
+export const headerIcon_style = css({
+  color: 'error.textOnError',
+  flexShrink: '0',
+});

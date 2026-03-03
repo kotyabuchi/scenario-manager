@@ -218,56 +218,78 @@ export const dialog_serverError = css({
   fontSize: 'sm',
 });
 
-// 警告ヘッダー（キャンセルダイアログ用）
-export const dialog_warningHeader = css({
+// 情報ボックス（キャンセルダイアログ用、薄赤背景）
+export const dialog_infoBox = css({
   display: 'flex',
-  alignItems: 'center',
   gap: '3',
   p: '4',
   borderRadius: 'xl',
   bg: 'error.subtle',
 });
 
-export const dialog_warningIcon = css({
+export const dialog_infoBox_icon = css({
   color: 'error.default',
   flexShrink: '0',
+  mt: '0.5',
 });
 
-export const dialog_warningTitle = css({
-  fontSize: 'md',
+export const dialog_infoBox_content = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+});
+
+export const dialog_infoBox_title = css({
+  fontSize: 'sm',
   fontWeight: 'bold',
   color: 'error.textDark',
 });
 
-// 影響説明ボックス（赤背景）
-export const dialog_impactBox = css({
-  p: '4',
-  borderRadius: 'xl',
-  bg: 'error.subtle',
-  color: 'error.text',
+export const dialog_infoBox_description = css({
   fontSize: 'sm',
+  color: 'error.text',
   lineHeight: 'relaxed',
 });
 
-export const dialog_impactTitle = css({
-  fontWeight: 'bold',
-  mb: '2',
+// 警告ボックス（辞退ダイアログ用、極薄赤背景）
+export const dialog_warningBox = css({
+  display: 'flex',
+  gap: '3',
+  p: '4',
+  borderRadius: 'xl',
+  bg: 'error.subtleHover',
 });
 
-export const dialog_impactList = css({
-  listStyleType: 'disc',
-  pl: '5',
+export const dialog_warningBox_icon = css({
+  color: 'error.default',
+  flexShrink: '0',
+  mt: '0.5',
+});
+
+export const dialog_warningBox_content = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '1',
-  fontSize: 'sm',
 });
 
-// 二重確認フィールド
-export const dialog_confirmHint = css({
+export const dialog_warningBox_title = css({
+  fontSize: 'sm',
+  fontWeight: 'bold',
+  color: 'error.textDark',
+});
+
+export const dialog_warningBox_description = css({
+  fontSize: 'sm',
+  color: 'text.body',
+  lineHeight: 'relaxed',
+});
+
+// 必須バッジ
+export const dialog_requiredBadge = css({
   fontSize: 'xs',
-  color: 'text.secondary',
-  mt: '1',
+  color: 'error.default',
+  fontWeight: 'medium',
+  ml: '2',
 });
 
 // 完了ヘッダー
@@ -296,10 +318,4 @@ export const dialog_message = css({
   fontSize: 'sm',
   color: 'text.body',
   lineHeight: 'relaxed',
-});
-
-// 必須マーク
-export const dialog_required = css({
-  color: 'error.default',
-  ml: '1',
 });
