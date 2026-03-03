@@ -4,9 +4,10 @@ import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Crown,
   Eye,
-  FilmSlate,
-  Users,
+  PaperPlaneTilt,
+  User,
   WarningCircle,
 } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
@@ -27,29 +28,43 @@ type ParticipationRequestDialogProps = {
   sessionId: string;
   sessionName: string;
   scenarioName?: string | undefined;
+  hasKeeper: boolean;
+  participantCount: number;
+  maxParticipantCount: number;
+  scheduleLabel: string;
   open: boolean;
   onOpenChange: (details: { open: boolean }) => void;
 };
 
 const PARTICIPANT_TYPE_OPTIONS = [
   {
+    value: 'KEEPER' as const,
+    label: 'GMとして参加',
+    description: 'このセッションのGMを担当します',
+    icon: Crown,
+  },
+  {
     value: 'PLAYER' as const,
-    label: 'プレイヤー',
-    description: 'セッションに参加してプレイします',
-    icon: Users,
+    label: 'プレイヤーとして参加',
+    description: 'キャラクターを操作して参加します',
+    icon: User,
   },
   {
     value: 'SPECTATOR' as const,
-    label: '観戦者',
-    description: 'セッションを観戦します',
+    label: '観戦者として参加',
+    description: 'セッションを見学します',
     icon: Eye,
   },
-] as const;
+];
 
 export const ParticipationRequestDialog = ({
   sessionId,
-  sessionName,
+  sessionName: _sessionName,
   scenarioName,
+  hasKeeper,
+  participantCount,
+  maxParticipantCount: _maxParticipantCount,
+  scheduleLabel,
   open,
   onOpenChange,
 }: ParticipationRequestDialogProps) => {
@@ -72,7 +87,6 @@ export const ParticipationRequestDialog = ({
   });
 
   const selectedType = watch('participantType');
-  const applicationMessage = watch('applicationMessage') ?? '';
 
   const handleClose = () => {
     reset();
@@ -95,43 +109,26 @@ export const ParticipationRequestDialog = ({
     });
   };
 
-  const footer = (
-    <>
-      <Button
-        type="button"
-        variant="outline"
-        status="primary"
-        onClick={handleClose}
-        disabled={isPending}
-      >
-        キャンセル
-      </Button>
-      <Button
-        type="submit"
-        status="primary"
-        disabled={isPending}
-        loading={isPending}
-        loadingText="申請中..."
-        form="participation-request-form"
-      >
-        <FilmSlate size={16} weight="fill" />
-        参加申請する
-      </Button>
-    </>
+  const visibleOptions = PARTICIPANT_TYPE_OPTIONS.filter(
+    (option) => option.value !== 'KEEPER' || !hasKeeper,
   );
 
+  const memberLabel = hasKeeper
+    ? `現${participantCount}人`
+    : `現${participantCount}人 (GM募集中)`;
+
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title="セッションへの参加申請"
-      footer={footer}
-    >
+    <Modal open={open} onOpenChange={onOpenChange} title="セッションに参加申請">
       <form
         id="participation-request-form"
         onSubmit={handleSubmit(onSubmit)}
         className={styles.form}
       >
+        {/* サブタイトル */}
+        <p className={styles.dialog_subtitle}>
+          希望する参加枠を選択してください
+        </p>
+
         {/* サーバーエラー */}
         {!isNil(serverError) && (
           <div className={styles.serverError} role="alert">
@@ -142,22 +139,26 @@ export const ParticipationRequestDialog = ({
 
         {/* セッション情報サマリー */}
         <div className={styles.sessionSummary}>
-          <span className={styles.sessionSummary_label}>
-            申請するセッション
-          </span>
-          <span className={styles.sessionSummary_sessionName}>
-            {sessionName}
-          </span>
           {!isNil(scenarioName) && (
-            <div className={styles.sessionSummary_scenarioRow}>
-              <span className={styles.sessionSummary_scenarioLabel}>
-                シナリオ:
-              </span>
-              <span className={styles.sessionSummary_scenarioName}>
+            <div className={styles.sessionSummary_row}>
+              <span className={styles.sessionSummary_rowLabel}>SCENARIO</span>
+              <span className={styles.sessionSummary_rowValue}>
                 {scenarioName}
               </span>
             </div>
           )}
+          <div className={styles.sessionSummary_row}>
+            <span className={styles.sessionSummary_rowLabel}>MEMBER</span>
+            <span className={styles.sessionSummary_rowValue}>
+              {memberLabel}
+            </span>
+          </div>
+          <div className={styles.sessionSummary_row}>
+            <span className={styles.sessionSummary_rowLabel}>DATE</span>
+            <span className={styles.sessionSummary_rowValue}>
+              {scheduleLabel}
+            </span>
+          </div>
         </div>
 
         {/* 参加タイプ選択 */}
@@ -168,7 +169,7 @@ export const ParticipationRequestDialog = ({
             role="radiogroup"
             aria-label="参加タイプを選択"
           >
-            {PARTICIPANT_TYPE_OPTIONS.map((option) => {
+            {visibleOptions.map((option) => {
               const Icon = option.icon;
               const isSelected = selectedType === option.value;
 
@@ -201,12 +202,30 @@ export const ParticipationRequestDialog = ({
                   >
                     <Icon size={18} weight={isSelected ? 'fill' : 'regular'} />
                   </div>
-                  <span className={styles.participantTypeCard_title}>
-                    {option.label}
-                  </span>
-                  <span className={styles.participantTypeCard_description}>
-                    {option.description}
-                  </span>
+                  <div className={styles.participantTypeCard_content}>
+                    <span className={styles.participantTypeCard_title}>
+                      {option.label}
+                    </span>
+                    <span
+                      className={styles.cx(
+                        styles.participantTypeCard_description,
+                        isSelected
+                          ? styles.participantTypeCard_description_selected
+                          : undefined,
+                      )}
+                    >
+                      {option.description}
+                    </span>
+                  </div>
+                  <div
+                    className={styles.cx(
+                      styles.participantTypeCard_radio,
+                      isSelected
+                        ? styles.participantTypeCard_radio_selected
+                        : undefined,
+                    )}
+                    aria-hidden="true"
+                  />
                 </label>
               );
             })}
@@ -218,30 +237,38 @@ export const ParticipationRequestDialog = ({
         <div className={styles.fieldGroup}>
           <label htmlFor="participation-message" className={styles.fieldLabel}>
             一言メッセージ
-            <span className={styles.optionalBadge}>（任意）</span>
           </label>
           <Textarea
             id="participation-message"
             {...register('applicationMessage')}
-            placeholder="自己紹介や意気込みなど、GMへのメッセージをどうぞ"
+            placeholder="よろしくお願いします！"
             maxLength={200}
             rows={3}
           />
-          <div
-            className={styles.cx(
-              styles.charCount,
-              applicationMessage.length >= 190
-                ? styles.charCount_warning
-                : undefined,
-            )}
-            aria-live="polite"
-          >
-            <span className="sr-only">
-              {applicationMessage.length}文字入力済み（最大200文字）
-            </span>
-            <span aria-hidden="true">{applicationMessage.length} / 200</span>
-          </div>
           <FieldError error={errors.applicationMessage} />
+        </div>
+
+        {/* 送信セクション */}
+        <div className={styles.dialog_submitSection}>
+          <Button
+            type="submit"
+            status="primary"
+            disabled={isPending}
+            loading={isPending}
+            loadingText="申請中..."
+            className={styles.dialog_submitButton}
+            prefix={<PaperPlaneTilt size={16} weight="fill" />}
+          >
+            申請を送る
+          </Button>
+          <button
+            type="button"
+            className={styles.dialog_cancelLink}
+            onClick={handleClose}
+            disabled={isPending}
+          >
+            キャンセル
+          </button>
         </div>
       </form>
     </Modal>

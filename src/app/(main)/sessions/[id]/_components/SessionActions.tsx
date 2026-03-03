@@ -12,6 +12,7 @@ import {
   XCircle,
 } from '@phosphor-icons/react/ssr';
 import { useRouter } from 'next/navigation';
+import { isNil } from 'ramda';
 
 import { updateSessionPhaseAction } from '../actions';
 import * as styles from '../styles';
@@ -28,6 +29,7 @@ import { WithdrawDialog } from './WithdrawDialog';
 import { Button } from '@/components/elements/button/button';
 import { IconButton } from '@/components/elements/icon-button/icon-button';
 import { Menu } from '@/components/elements/menu/menu';
+import { ParticipantStatuses, SchedulePhases } from '@/db/enum';
 import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 
 import type { Route } from 'next';
@@ -35,6 +37,17 @@ import type { SessionDetail, UserRole } from '../../interface';
 import type { SessionActionDescriptor } from './sessionActionsModel';
 
 const ACTION_MENU_ICON_SIZE = 18;
+
+/** セッションの日程ラベルを導出する */
+const getScheduleLabel = (session: SessionDetail): string => {
+  if (!isNil(session.scheduleDate)) {
+    return new Date(session.scheduleDate).toLocaleDateString('ja-JP');
+  }
+  if (session.schedulePhase === SchedulePhases.ADJUSTING.value) {
+    return '日程調整中';
+  }
+  return 'メンバー決定後に調整';
+};
 
 type SessionActionsProps = {
   session: SessionDetail;
@@ -227,6 +240,15 @@ export const SessionActions = ({
           sessionId={session.gameSessionId}
           sessionName={session.sessionName}
           scenarioName={session.scenario?.name}
+          hasKeeper={!isNil(session.keeper)}
+          participantCount={
+            session.participants.filter(
+              (p) =>
+                p.participantStatus === ParticipantStatuses.CONFIRMED.value,
+            ).length
+          }
+          maxParticipantCount={session.maxParticipantCount}
+          scheduleLabel={getScheduleLabel(session)}
           open
           onOpenChange={({ open }) => !open && setOpenDialog(null)}
         />

@@ -25,35 +25,24 @@ export const sessionSummary = css({
   borderRadius: 'xl',
 });
 
-export const sessionSummary_label = css({
-  fontSize: 'xs',
-  color: 'text.secondary',
-  fontWeight: 'medium',
-});
-
-export const sessionSummary_sessionName = css({
-  fontSize: 'md',
-  fontWeight: 'bold',
-  color: 'text.title',
-  lineHeight: 'tight',
-});
-
-export const sessionSummary_scenarioRow = css({
+export const sessionSummary_row = css({
   display: 'flex',
-  alignItems: 'center',
-  gap: '1.5',
-  mt: '0.5',
+  alignItems: 'baseline',
+  gap: '3',
 });
 
-export const sessionSummary_scenarioLabel = css({
+export const sessionSummary_rowLabel = css({
   fontSize: 'xs',
-  color: 'text.secondary',
+  fontWeight: 'bold',
+  color: 'primary.default',
+  textTransform: 'uppercase',
+  minW: '20',
+  flexShrink: '0',
 });
 
-export const sessionSummary_scenarioName = css({
-  fontSize: 'xs',
-  color: 'text.secondary',
-  fontWeight: 'medium',
+export const sessionSummary_rowValue = css({
+  fontSize: 'sm',
+  color: 'text.body',
 });
 
 // ========================================
@@ -85,16 +74,16 @@ export const optionalBadge = css({
 // ========================================
 
 export const participantTypeCards = css({
-  display: 'grid',
-  gridTemplateColumns: '[1fr 1fr]',
+  display: 'flex',
+  flexDirection: 'column',
   gap: '3',
 });
 
 export const participantTypeCard = css({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: '1.5',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '3',
   p: '4',
   borderRadius: 'xl',
   bg: 'bg.card',
@@ -106,7 +95,6 @@ export const participantTypeCard = css({
   transitionDuration: 'fast',
   _hover: {
     shadow: 'card.hover',
-    transform: 'translateY(-2px)',
   },
   _focusWithin: {
     outline: 'focusRing',
@@ -116,8 +104,9 @@ export const participantTypeCard = css({
 
 export const participantTypeCard_selected = css({
   bg: 'primary.subtle',
-  shadow: 'card.hover',
-  transform: 'translateY(-1px)',
+  outlineWidth: '2px',
+  outlineStyle: 'solid',
+  outlineColor: 'primary.default',
 });
 
 export const participantTypeCard_iconWrapper = css({
@@ -151,6 +140,46 @@ export const participantTypeCard_description = css({
   fontSize: 'xs',
   color: 'text.secondary',
   lineHeight: 'relaxed',
+});
+
+export const participantTypeCard_content = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5',
+  flex: '1',
+  minW: '0',
+});
+
+export const participantTypeCard_description_selected = css({
+  color: 'primary.default',
+});
+
+export const participantTypeCard_radio = css({
+  w: '5',
+  h: '5',
+  rounded: 'full',
+  borderWidth: '2px',
+  borderStyle: 'solid',
+  borderColor: 'border.default',
+  flexShrink: '0',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+});
+
+export const participantTypeCard_radio_selected = css({
+  borderColor: 'primary.default',
+  position: 'relative',
+  _after: {
+    content: '""',
+    position: 'absolute',
+    top: '[50%]',
+    left: '[50%]',
+    transform: 'translate(-50%, -50%)',
+    w: '2.5',
+    h: '2.5',
+    rounded: 'full',
+    bg: 'primary.default',
+  },
 });
 
 export const participantTypeCard_radioInput = css({
@@ -318,4 +347,41 @@ export const dialog_message = css({
   fontSize: 'sm',
   color: 'text.body',
   lineHeight: 'relaxed',
+});
+
+// ========================================
+// 参加申請ダイアログ（送信セクション）
+// ========================================
+
+export const dialog_subtitle = css({
+  fontSize: 'sm',
+  color: 'text.secondary',
+});
+
+export const dialog_submitSection = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '3',
+  mt: '2',
+});
+
+export const dialog_submitButton = css({
+  w: 'full',
+});
+
+export const dialog_cancelLink = css({
+  fontSize: 'sm',
+  color: 'text.secondary',
+  cursor: 'pointer',
+  bg: 'transparent',
+  border: 'none',
+  p: '1',
+  _hover: {
+    textDecoration: 'underline',
+  },
+  _focusVisible: {
+    outline: 'focusRing',
+    outlineOffset: '[2px]',
+  },
 });
