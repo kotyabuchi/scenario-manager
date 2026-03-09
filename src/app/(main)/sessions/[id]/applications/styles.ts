@@ -128,75 +128,29 @@ export const approval_progressBar = css({
 });
 
 // ========================================
-// フィルタータブ
+// フィルターバー
 // ========================================
-export const approval_filterTabs = css({
+export const filterBar_container = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '2',
+  gap: '4',
   mb: '6',
-  borderBottomWidth: '[1px]',
-  borderBottomStyle: 'solid',
-  borderBottomColor: 'border.subtle',
-  pb: '0',
+  p: '4',
+  bg: 'white',
+  rounded: 'xl',
+  shadow: 'card.default',
+  flexWrap: 'wrap',
 });
 
-export const approval_filterTab = css({
-  px: '4',
-  py: '2',
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'text.secondary',
-  bg: 'transparent',
-  border: 'none',
-  cursor: 'pointer',
-  borderBottomWidth: '[2px]',
-  borderBottomStyle: 'solid',
-  borderBottomColor: 'transparent',
-  mb: '[-1px]',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    color: 'primary.default',
-  },
-  _focusVisible: {
-    outline: 'focusRing',
-    outlineOffset: '[2px]',
-  },
+export const filterBar_searchArea = css({
+  flex: '1',
+  minW: '[200px]',
 });
 
-export const approval_filterTabActive = css({
-  px: '4',
-  py: '2',
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'primary.default',
-  bg: 'transparent',
-  border: 'none',
-  cursor: 'pointer',
-  borderBottomWidth: '[2px]',
-  borderBottomStyle: 'solid',
-  borderBottomColor: 'primary.default',
-  mb: '[-1px]',
-  _focusVisible: {
-    outline: 'focusRing',
-    outlineOffset: '[2px]',
-  },
-});
-
-export const approval_filterTabCount = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minW: '5',
-  h: '5',
-  px: '1',
-  ml: '1',
-  fontSize: 'xs',
-  fontWeight: 'bold',
-  borderRadius: 'full',
-  bg: 'chip.labelBg',
-  color: 'text.body',
+export const filterBar_selectArea = css({
+  display: 'flex',
+  gap: '3',
+  flexShrink: '0',
 });
 
 // ========================================

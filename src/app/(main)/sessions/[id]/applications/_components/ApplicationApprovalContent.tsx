@@ -5,17 +5,12 @@ import { isNil } from 'ramda';
 
 import * as styles from '../styles';
 import { ApplicationCard } from './ApplicationCard';
+import { FilterBar } from './FilterBar';
 
 import { Badge } from '@/components/elements/badge';
 import { Progress } from '@/components/elements/progress';
 
 import type { ApplicationWithUser } from '../adapter';
-
-/** フィルタータブの種類 */
-type FilterTab = 'all' | 'pending' | 'confirmed';
-
-/** タブ一覧（キーボードナビゲーション用） */
-const FILTER_TABS: FilterTab[] = ['all', 'pending', 'confirmed'];
 
 type ApplicationApprovalContentProps = {
   sessionId: string;
@@ -39,7 +34,9 @@ export const ApplicationApprovalContent = ({
   maxPlayer,
   applications,
 }: ApplicationApprovalContentProps) => {
-  const [activeTab, setActiveTab] = useState<FilterTab>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortValue, setSortValue] = useState('newest');
+  const [filterValue, setFilterValue] = useState('all');
   const [, startTransition] = useTransition();
 
   /**
@@ -75,25 +72,8 @@ export const ApplicationApprovalContent = ({
   };
 
   /**
-   * フィルタリング後の申請一覧
+   * 楽観的更新後の承認済みカウント（ヘッダー統計表示用）
    */
-  const filteredApplications = applications.filter((app) => {
-    const effectiveStatus =
-      optimisticStatuses.get(app.userId) ?? app.participantStatus;
-    if (activeTab === 'pending') return effectiveStatus === 'PENDING';
-    if (activeTab === 'confirmed') return effectiveStatus === 'CONFIRMED';
-    return true;
-  });
-
-  /**
-   * 楽観的更新後の各タブのカウント
-   */
-  const optimisticPendingCount = applications.filter((app) => {
-    const effectiveStatus =
-      optimisticStatuses.get(app.userId) ?? app.participantStatus;
-    return effectiveStatus === 'PENDING';
-  }).length;
-
   const optimisticConfirmedCount = applications.filter((app) => {
     const effectiveStatus =
       optimisticStatuses.get(app.userId) ?? app.participantStatus;
@@ -101,44 +81,34 @@ export const ApplicationApprovalContent = ({
   }).length;
 
   /**
-   * 空状態メッセージ
+   * フィルタリング・ソート・検索を適用した申請一覧
    */
-  /** ARIA Authoring Practices: タブの矢印キーナビゲーション */
-  const handleTabKeyDown = (
-    e: React.KeyboardEvent<HTMLButtonElement>,
-    currentIndex: number,
-  ) => {
-    let nextIndex = -1;
-
-    if (e.key === 'ArrowRight') {
-      nextIndex = (currentIndex + 1) % FILTER_TABS.length;
-    } else if (e.key === 'ArrowLeft') {
-      nextIndex = (currentIndex - 1 + FILTER_TABS.length) % FILTER_TABS.length;
-    } else if (e.key === 'Home') {
-      nextIndex = 0;
-    } else if (e.key === 'End') {
-      nextIndex = FILTER_TABS.length - 1;
-    }
-
-    const nextTabValue = FILTER_TABS[nextIndex];
-    if (nextIndex >= 0 && nextTabValue) {
-      e.preventDefault();
-      const nextTab = document.getElementById(`tab-${nextTabValue}`);
-      nextTab?.focus();
-      setActiveTab(nextTabValue);
-    }
-  };
-
-  const getEmptyMessage = (): string => {
-    switch (activeTab) {
-      case 'pending':
-        return '承認待ちの申請はありません';
-      case 'confirmed':
-        return '承認済みの申請はありません';
-      default:
-        return '申請はまだありません';
-    }
-  };
+  const filteredApplications = applications
+    .filter((app) => {
+      if (filterValue === 'all') return true;
+      const effectiveStatus =
+        optimisticStatuses.get(app.userId) ?? app.participantStatus;
+      return filterValue === 'pending'
+        ? effectiveStatus === 'PENDING'
+        : effectiveStatus === 'CONFIRMED';
+    })
+    .filter((app) => {
+      if (searchQuery === '') return true;
+      const query = searchQuery.toLowerCase();
+      const name = app.user.userName.toLowerCase();
+      const nick = (app.user.nickname ?? '').toLowerCase();
+      return name.includes(query) || nick.includes(query);
+    })
+    .toSorted((a, b) => {
+      if (sortValue === 'name') {
+        return a.user.userName.localeCompare(b.user.userName, 'ja');
+      }
+      const aTime = a.appliedAt ?? '';
+      const bTime = b.appliedAt ?? '';
+      return sortValue === 'newest'
+        ? bTime.localeCompare(aTime)
+        : aTime.localeCompare(bTime);
+    });
 
   return (
     <main>
@@ -177,94 +147,36 @@ export const ApplicationApprovalContent = ({
         </div>
       </div>
 
-      {/* フィルタータブ */}
-      <div>
-        <div className={styles.approval_filterTabs} role="tablist">
-          <button
-            type="button"
-            role="tab"
-            id="tab-all"
-            aria-selected={activeTab === 'all'}
-            aria-controls="tabpanel-applications"
-            tabIndex={activeTab === 'all' ? 0 : -1}
-            className={
-              activeTab === 'all'
-                ? styles.approval_filterTabActive
-                : styles.approval_filterTab
-            }
-            onClick={() => setActiveTab('all')}
-            onKeyDown={(e) => handleTabKeyDown(e, 0)}
-          >
-            すべて
-            <span className={styles.approval_filterTabCount}>
-              {applications.length}
-            </span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            id="tab-pending"
-            aria-selected={activeTab === 'pending'}
-            aria-controls="tabpanel-applications"
-            tabIndex={activeTab === 'pending' ? 0 : -1}
-            className={
-              activeTab === 'pending'
-                ? styles.approval_filterTabActive
-                : styles.approval_filterTab
-            }
-            onClick={() => setActiveTab('pending')}
-            onKeyDown={(e) => handleTabKeyDown(e, 1)}
-          >
-            承認待ち
-            <span className={styles.approval_filterTabCount}>
-              {optimisticPendingCount}
-            </span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            id="tab-confirmed"
-            aria-selected={activeTab === 'confirmed'}
-            aria-controls="tabpanel-applications"
-            tabIndex={activeTab === 'confirmed' ? 0 : -1}
-            className={
-              activeTab === 'confirmed'
-                ? styles.approval_filterTabActive
-                : styles.approval_filterTab
-            }
-            onClick={() => setActiveTab('confirmed')}
-            onKeyDown={(e) => handleTabKeyDown(e, 2)}
-          >
-            承認済み
-            <span className={styles.approval_filterTabCount}>
-              {optimisticConfirmedCount}
-            </span>
-          </button>
-        </div>
-      </div>
+      {/* フィルターバー */}
+      <FilterBar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        filterValue={filterValue}
+        onFilterChange={setFilterValue}
+      />
 
       {/* 申請カードグリッド */}
-      <div
-        role="tabpanel"
-        id="tabpanel-applications"
-        aria-labelledby={`tab-${activeTab}`}
-      >
-        {filteredApplications.length === 0 ? (
-          <p className={styles.approval_empty}>{getEmptyMessage()}</p>
-        ) : (
-          <div className={styles.approval_grid}>
-            {filteredApplications.map((application) => (
-              <ApplicationCard
-                key={application.userId}
-                application={application}
-                sessionId={sessionId}
-                optimisticStatus={optimisticStatuses.get(application.userId)}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      {filteredApplications.length === 0 ? (
+        <p className={styles.approval_empty}>
+          {searchQuery
+            ? '検索条件に一致する申請はありません'
+            : '申請はまだありません'}
+        </p>
+      ) : (
+        <div className={styles.approval_grid}>
+          {filteredApplications.map((application) => (
+            <ApplicationCard
+              key={application.userId}
+              application={application}
+              sessionId={sessionId}
+              optimisticStatus={optimisticStatuses.get(application.userId)}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+        </div>
+      )}
     </main>
   );
 };
