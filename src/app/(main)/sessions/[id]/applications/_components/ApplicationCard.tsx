@@ -7,6 +7,8 @@ import { approveApplicationAction, rejectApplicationAction } from '../actions';
 import * as styles from '../styles';
 
 import { Avatar } from '@/components/elements/avatar';
+import { Tooltip } from '@/components/elements/tooltip';
+import { formatRelativeTime } from '@/lib/formatters';
 
 import type { ApplicationWithUser } from '../adapter';
 
@@ -56,9 +58,9 @@ export const ApplicationCard = ({
     };
 
   /**
-   * 申請日時をフォーマットする
+   * 申請日時の正確な日時文字列（title属性用）
    */
-  const formatDate = (dateStr: string) => {
+  const formatExactDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
@@ -133,9 +135,11 @@ export const ApplicationCard = ({
 
       {/* 申請日時 */}
       {application.appliedAt && (
-        <p className={styles.card_appliedAt}>
-          申請日時: {formatDate(application.appliedAt)}
-        </p>
+        <Tooltip content={formatExactDate(application.appliedAt)}>
+          <p className={styles.card_appliedAt}>
+            {formatRelativeTime(application.appliedAt)}
+          </p>
+        </Tooltip>
       )}
 
       {/* ユーザー統計 */}

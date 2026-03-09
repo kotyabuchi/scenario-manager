@@ -185,9 +185,6 @@ export const card_root = css({
   gap: '4',
   transitionProperty: 'common',
   transitionDuration: 'fast',
-  borderLeftWidth: '[3px]',
-  borderLeftStyle: 'solid',
-  borderLeftColor: 'primary.default',
   _hover: {
     shadow: 'card.hover',
   },
@@ -264,6 +261,7 @@ export const card_typeKeeper = css({
 export const card_appliedAt = css({
   fontSize: 'xs',
   color: 'text.secondary',
+  w: '[fit-content]',
 });
 
 export const card_divider = css({
@@ -294,9 +292,6 @@ export const card_quoteMessage = css({
   p: '3',
   pl: '8',
   borderRadius: 'lg',
-  borderLeftWidth: '[3px]',
-  borderLeftStyle: 'solid',
-  borderLeftColor: 'primary.subtle',
   whiteSpace: 'pre-wrap',
 });
 
