@@ -1,6 +1,4 @@
-import { css, cx } from '@/styled-system/css';
-
-export { cx };
+import { css, cva } from '@/styled-system/css';
 
 // ========================================
 // リンクアイテム
@@ -19,32 +17,32 @@ export const linkItem = css({
   },
 });
 
-export const linkItem_icon = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '9',
-  h: '9',
-  borderRadius: 'lg',
-  flexShrink: '0',
-});
-
-/** Discord: 紫系 */
-export const linkItem_iconDiscord = css({
-  bg: 'purple.subtle',
-  color: 'purple.default',
-});
-
-/** ココフォリア: 青系 */
-export const linkItem_iconCcfolia = css({
-  bg: 'info.subtle',
-  color: 'info.default',
-});
-
-/** その他: グレー系 */
-export const linkItem_iconOther = css({
-  bg: 'gray.100',
-  color: 'text.secondary',
+export const linkItem_icon = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    w: '9',
+    h: '9',
+    borderRadius: 'lg',
+    flexShrink: '0',
+  },
+  variants: {
+    linkType: {
+      discord: {
+        bg: 'purple.subtle',
+        color: 'purple.default',
+      },
+      ccfolia: {
+        bg: 'info.subtle',
+        color: 'info.default',
+      },
+      other: {
+        bg: 'gray.100',
+        color: 'text.secondary',
+      },
+    },
+  },
 });
 
 export const linkItem_content = css({

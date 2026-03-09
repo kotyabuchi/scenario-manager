@@ -1,6 +1,4 @@
-import { css, cx } from '@/styled-system/css';
-
-export { cx };
+import { css, cva } from '@/styled-system/css';
 
 // ========================================
 // ページレイアウト
@@ -53,26 +51,31 @@ export const phaseOverview_title = css({
   color: 'text.body',
 });
 
-export const phaseOverview_statusBadge = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '1.5',
-  px: '3',
-  py: '1',
-  borderRadius: 'full',
-  fontSize: 'xs',
-  fontWeight: 'medium',
-  color: 'primary.default',
-  bg: 'primary.50',
-  borderWidth: '[1px]',
-  borderStyle: 'solid',
-  borderColor: 'primary.100',
-});
-
-export const phaseOverview_statusBadgeCancelled = css({
-  color: 'red.700',
-  bg: 'red.50',
-  borderColor: 'red.100',
+export const phaseOverview_statusBadge = cva({
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '1.5',
+    px: '3',
+    py: '1',
+    borderRadius: 'full',
+    fontSize: 'xs',
+    fontWeight: 'medium',
+    color: 'primary.default',
+    bg: 'primary.50',
+    borderWidth: '[1px]',
+    borderStyle: 'solid',
+    borderColor: 'primary.100',
+  },
+  variants: {
+    cancelled: {
+      true: {
+        color: 'red.700',
+        bg: 'red.50',
+        borderColor: 'red.100',
+      },
+    },
+  },
 });
 
 export const phaseOverview_trackWrap = css({
@@ -94,18 +97,23 @@ export const phaseOverview_trackItem = css({
   minW: '0',
 });
 
-export const phaseOverview_stepConnector = css({
-  position: 'absolute',
-  top: '[20px]',
-  left: '[calc(50% + 20px)]',
-  width: '[calc(100% - 40px)]',
-  h: '[2px]',
-  bg: 'gray.100',
-  zIndex: '[0]',
-});
-
-export const phaseOverview_stepConnectorDone = css({
-  bg: 'primary.200',
+export const phaseOverview_stepConnector = cva({
+  base: {
+    position: 'absolute',
+    top: '[20px]',
+    left: '[calc(50% + 20px)]',
+    width: '[calc(100% - 40px)]',
+    h: '[2px]',
+    bg: 'gray.100',
+    zIndex: '[0]',
+  },
+  variants: {
+    done: {
+      true: {
+        bg: 'primary.200',
+      },
+    },
+  },
 });
 
 export const phaseOverview_stepBlock = css({
@@ -119,36 +127,39 @@ export const phaseOverview_stepBlock = css({
   px: '1',
 });
 
-export const phaseOverview_stepCircle = css({
-  w: '10',
-  h: '10',
-  borderRadius: 'full',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderWidth: '[1px]',
-  borderStyle: 'solid',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-});
-
-export const phaseOverview_stepCircleDone = css({
-  bg: 'primary.default',
-  color: 'white',
-  borderColor: 'primary.default',
-});
-
-export const phaseOverview_stepCircleCurrent = css({
-  bg: 'primary.50',
-  color: 'primary.default',
-  borderColor: 'primary.default',
-  boxShadow: '[0_0_0_3px_rgba(34,197,94,0.08)]',
-});
-
-export const phaseOverview_stepCirclePending = css({
-  bg: 'white',
-  color: 'gray.400',
-  borderColor: 'gray.200',
+export const phaseOverview_stepCircle = cva({
+  base: {
+    w: '10',
+    h: '10',
+    borderRadius: 'full',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: '[1px]',
+    borderStyle: 'solid',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+  },
+  variants: {
+    state: {
+      done: {
+        bg: 'primary.default',
+        color: 'white',
+        borderColor: 'primary.default',
+      },
+      current: {
+        bg: 'primary.50',
+        color: 'primary.default',
+        borderColor: 'primary.default',
+        boxShadow: '[0_0_0_3px_rgba(34,197,94,0.08)]',
+      },
+      pending: {
+        bg: 'white',
+        color: 'gray.400',
+        borderColor: 'gray.200',
+      },
+    },
+  },
 });
 
 export const phaseOverview_stepText = css({
@@ -160,21 +171,26 @@ export const phaseOverview_stepText = css({
   minH: '[34px]',
 });
 
-export const phaseOverview_stepLabel = css({
-  fontSize: 'xs',
-  color: 'text.secondary',
-  fontWeight: 'medium',
-  lineHeight: 'tight',
-  whiteSpace: 'nowrap',
-});
-
-export const phaseOverview_stepLabelDone = css({
-  color: 'text.body',
-});
-
-export const phaseOverview_stepLabelCurrent = css({
-  color: 'primary.default',
-  fontWeight: 'semibold',
+export const phaseOverview_stepLabel = cva({
+  base: {
+    fontSize: 'xs',
+    color: 'text.secondary',
+    fontWeight: 'medium',
+    lineHeight: 'tight',
+    whiteSpace: 'nowrap',
+  },
+  variants: {
+    state: {
+      done: {
+        color: 'text.body',
+      },
+      current: {
+        color: 'primary.default',
+        fontWeight: 'semibold',
+      },
+      pending: {},
+    },
+  },
 });
 
 export const phaseOverview_stepHint = css({
@@ -535,21 +551,30 @@ export const participants_list = css({
   gap: '2',
 });
 
-export const participants_item = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '3',
-  p: '3',
-  borderRadius: 'lg',
-  borderWidth: '[1px]',
-  borderStyle: 'solid',
-  borderColor: 'transparent',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    bg: 'bg.input',
-    borderColor: 'gray.100',
+export const participants_item = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '3',
+    p: '3',
+    borderRadius: 'lg',
+    borderWidth: '[1px]',
+    borderStyle: 'solid',
+    borderColor: 'transparent',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    _hover: {
+      bg: 'bg.input',
+      borderColor: 'gray.100',
+    },
+  },
+  variants: {
+    muted: {
+      true: {
+        opacity: '[0.72]',
+      },
+    },
   },
 });
 
@@ -612,19 +637,31 @@ const roleBadgeBase = {
   borderColor: 'bg.card',
 } as const;
 
-export const participants_roleKeeper = css({
-  ...roleBadgeBase,
-  bg: 'badge.keeperBg',
-});
-
-export const participants_rolePlayer = css({
-  ...roleBadgeBase,
-  bg: 'badge.playerBg',
-});
-
-export const participants_roleSpectator = css({
-  ...roleBadgeBase,
-  bg: 'badge.spectatorBg',
+export const participants_roleBadge = cva({
+  base: {
+    ...roleBadgeBase,
+  },
+  variants: {
+    role: {
+      KEEPER: {
+        bg: 'badge.keeperBg',
+      },
+      PLAYER: {
+        bg: 'badge.playerBg',
+      },
+      SPECTATOR: {
+        bg: 'badge.spectatorBg',
+      },
+    },
+    overlay: {
+      true: {
+        position: 'absolute',
+        right: '[-4px]',
+        bottom: '[-4px]',
+        zIndex: '[2]',
+      },
+    },
+  },
 });
 
 export const participants_characterSheet = css({
@@ -650,17 +687,6 @@ export const participants_csNone = css({
   bg: 'badge.errorBg',
   color: 'badge.errorText',
   borderColor: 'red.200',
-});
-
-export const participants_itemMuted = css({
-  opacity: '[0.72]',
-});
-
-export const participants_roleBadgeOverlay = css({
-  position: 'absolute',
-  right: '[-4px]',
-  bottom: '[-4px]',
-  zIndex: '[2]',
 });
 
 export const participants_statusText = css({
@@ -1257,39 +1283,44 @@ export const sessionActions_menuContent = css({
   minW: '[180px]',
 });
 
-export const sessionActions_menuItem = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-  px: '3',
-  py: '2.5',
-  borderRadius: 'lg',
-  fontSize: 'sm',
-  fontWeight: 'medium',
-  color: 'text.body',
-  cursor: 'pointer',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    bg: 'gray.100',
-    color: 'text.title',
+export const sessionActions_menuItem = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3',
+    px: '3',
+    py: '2.5',
+    borderRadius: 'lg',
+    fontSize: 'sm',
+    fontWeight: 'medium',
+    color: 'text.body',
+    cursor: 'pointer',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    _hover: {
+      bg: 'gray.100',
+      color: 'text.title',
+    },
+    '& svg': {
+      color: 'primary.500',
+      flexShrink: '0',
+      width: '[16px]',
+      height: '[16px]',
+    },
   },
-  '& svg': {
-    color: 'primary.500',
-    flexShrink: '0',
-    width: '[16px]',
-    height: '[16px]',
-  },
-});
-
-export const sessionActions_menuItemDanger = css({
-  color: 'error.text',
-  _hover: {
-    bg: 'error.subtle',
-    color: 'error.textDark',
-  },
-  '& svg': {
-    color: 'error.default',
+  variants: {
+    danger: {
+      true: {
+        color: 'error.text',
+        _hover: {
+          bg: 'error.subtle',
+          color: 'error.textDark',
+        },
+        '& svg': {
+          color: 'error.default',
+        },
+      },
+    },
   },
 });
 

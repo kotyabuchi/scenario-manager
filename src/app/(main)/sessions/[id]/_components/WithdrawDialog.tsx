@@ -142,10 +142,9 @@ export const WithdrawDialog = ({
           />
           <FieldError error={errors.reason} />
           <p
-            className={styles.cx(
-              styles.charCount,
-              reasonLength > 200 && styles.charCount_warning,
-            )}
+            className={styles.charCount({
+              warning: reasonLength > 200,
+            })}
           >
             {reasonLength} / 200文字
           </p>

@@ -201,11 +201,9 @@ export const SessionActions = ({
                   key={`${menuId}-${action.id}`}
                   value={`${menuId}-${action.id}`}
                   onClick={() => handleActionSelect(action)}
-                  className={styles.cx(
-                    styles.sessionActions_menuItem,
-                    action.variant === 'danger' &&
-                      styles.sessionActions_menuItemDanger,
-                  )}
+                  className={styles.sessionActions_menuItem({
+                    danger: action.variant === 'danger',
+                  })}
                 >
                   {renderActionIcon(action)}
                   <Menu.ItemText>{action.label}</Menu.ItemText>

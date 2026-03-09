@@ -38,15 +38,17 @@ const getLinkTypeIcon = (linkType: string) => {
   }
 };
 
-/** linkType に応じたアイコンのスタイルクラスを返す */
-const getLinkTypeIconStyle = (linkType: string) => {
+/** linkType を cva の linkType バリアントにマッピングする */
+const getLinkTypeVariant = (
+  linkType: string,
+): 'discord' | 'ccfolia' | 'other' => {
   switch (linkType) {
     case 'DISCORD':
-      return styles.linkItem_iconDiscord;
+      return 'discord';
     case 'CCFOLIA':
-      return styles.linkItem_iconCcfolia;
+      return 'ccfolia';
     default:
-      return styles.linkItem_iconOther;
+      return 'other';
   }
 };
 
@@ -114,10 +116,9 @@ export const LinkItem = ({
     <div className={styles.linkItem}>
       {/* アイコン */}
       <div
-        className={styles.cx(
-          styles.linkItem_icon,
-          getLinkTypeIconStyle(link.linkType),
-        )}
+        className={styles.linkItem_icon({
+          linkType: getLinkTypeVariant(link.linkType),
+        })}
       >
         {getLinkTypeIcon(link.linkType)}
       </div>

@@ -104,14 +104,14 @@ export const ParticipantCard = ({
   const roleBadgeInfo = (() => {
     switch (participant.participantType) {
       case 'KEEPER':
-        return { className: styles.participants_roleKeeper, label: 'GM' };
+        return { role: 'KEEPER' as const, label: 'GM' };
       case 'PLAYER':
-        return { className: styles.participants_rolePlayer, label: 'PL' };
+        return { role: 'PLAYER' as const, label: 'PL' };
       case 'SPECTATOR':
-        return { className: styles.participants_roleSpectator, label: '観' };
+        return { role: 'SPECTATOR' as const, label: '観' };
       default:
         return {
-          className: styles.participants_roleSpectator,
+          role: 'SPECTATOR' as const,
           label: participant.participantType,
         };
     }
@@ -123,12 +123,7 @@ export const ParticipantCard = ({
     participant.participantStatus !== 'CONFIRMED';
 
   return (
-    <div
-      className={styles.cx(
-        styles.participants_item,
-        isMuted && styles.participants_itemMuted,
-      )}
-    >
+    <div className={styles.participants_item({ muted: isMuted })}>
       {/* 左側: アバター + 名前 + 役割 */}
       <div className={styles.participants_left}>
         {/* アバター */}
@@ -150,10 +145,10 @@ export const ParticipantCard = ({
             )}
           </div>
           <span
-            className={styles.cx(
-              roleBadgeInfo.className,
-              styles.participants_roleBadgeOverlay,
-            )}
+            className={styles.participants_roleBadge({
+              role: roleBadgeInfo.role,
+              overlay: true,
+            })}
           >
             {roleBadgeInfo.label}
           </span>

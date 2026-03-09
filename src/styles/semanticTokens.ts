@@ -485,6 +485,7 @@ export const semanticTokens = {
     // ボタン
     button: {
       primary: { value: '0 2px 4px rgba(5, 149, 104, 0.25)' },
+      primaryHover: { value: '0 4px 14px rgba(5, 149, 104, 0.30)' },
       secondary: { value: '0 1px 3px rgba(0, 0, 0, 0.10)' },
       destructive: { value: '0 2px 4px rgba(213, 68, 67, 0.25)' },
     },

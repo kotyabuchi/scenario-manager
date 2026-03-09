@@ -427,7 +427,7 @@
 | 5 | 日程回答画面（日程提出） | `sessions/[id]/schedule/availability/` | ✅ 完了 |
 | 6 | 日程集計・確定画面 | `sessions/[id]/schedule/confirm/` | ✅ 完了 |
 | 7 | キャンセル・辞退ダイアログ | `sessions/[id]/_components/CancelSessionDialog.tsx`, `WithdrawDialog.tsx` | ✅ 完了 |
-| 8 | セッション参加申請モーダル | `sessions/[id]/_components/ParticipationRequestDialog.tsx` | ⬜ 要リファクタ |
+| 8 | セッション参加申請モーダル | `sessions/[id]/_components/ParticipationRequestDialog.tsx` | ✅ 完了 |
 | 9 | セッション完了ダイアログ | `sessions/[id]/_components/CompleteSessionDialog.tsx` | ⬜ 要リファクタ |
 | 10 | 参加申請承認画面 | `sessions/[id]/applications/_components/` | ⬜ 要リファクタ |
 | ~~11~~ | ~~日程候補選択画面~~ | ~~未実装~~ | 不要（日程提出方式に変更済み） |
@@ -451,12 +451,12 @@
 
 #### #8 セッション参加申請モーダル
 
-- [ ] セッション情報サマリーをモック形式に変更（SCENARIO / MEMBER / DATE の3行表示）
-- [ ] 参加タイプに「GMとして参加」オプションを追加（3択: GM / プレイヤー / 観戦者）
-- [ ] カード型ラジオUIをモックのレイアウトに合わせる（左アイコン + テキスト + 右ラジオ）
-- [ ] 選択状態を緑背景+緑ボーダーに変更
-- [ ] 送信ボタンを全幅の緑ボタン（「申請を送る」+アイコン）に変更
-- [ ] 下部の「キャンセル」をテキストリンクに変更（ボタンではなくテキスト）
+- [x] セッション情報サマリーをモック形式に変更（SCENARIO / MEMBER / DATE の3行表示）
+- [x] 参加タイプに「GMとして参加」オプションを追加（3択: GM / プレイヤー / 観戦者）
+- [x] カード型ラジオUIをモックのレイアウトに合わせる（左アイコン + テキスト + 右ラジオ）
+- [x] 選択状態をモック準拠に変更（左アクセントバー + 緑背景 + 半透明ボーダー + アイコン/テキスト色変更）
+- [x] 送信ボタンを全幅の緑ボタン（「申請を送る」+アイコン + primaryシャドウ）に変更
+- [x] 下部の「キャンセル」をテキストリンクに変更（ボタンではなくテキスト）
 
 #### #9 セッション完了ダイアログ
 

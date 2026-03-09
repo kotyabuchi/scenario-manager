@@ -102,10 +102,9 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
           <p className={styles.phaseOverview_title}>現在のフェーズ</p>
         </div>
         <span
-          className={styles.cx(
-            styles.phaseOverview_statusBadge,
-            isCancelled && styles.phaseOverview_statusBadgeCancelled,
-          )}
+          className={styles.phaseOverview_statusBadge({
+            cancelled: isCancelled,
+          })}
         >
           {isCancelled && <Prohibit size={14} weight="fill" />}
           {currentLabel}
@@ -117,8 +116,6 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
           {FLOW_STEPS.map((step, index) => {
             const isCompleted = !isCancelled && currentIndex > index;
             const isCurrent = !isCancelled && currentIndex === index;
-            const isUpcoming =
-              !isCancelled && (currentIndex < index || currentIndex === -1);
             const isConnectorDone = !isCancelled && currentIndex >= index + 1;
 
             return (
@@ -126,22 +123,21 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
                 {index < FLOW_STEPS.length - 1 && (
                   <div
                     aria-hidden="true"
-                    className={styles.cx(
-                      styles.phaseOverview_stepConnector,
-                      isConnectorDone && styles.phaseOverview_stepConnectorDone,
-                    )}
+                    className={styles.phaseOverview_stepConnector({
+                      done: isConnectorDone,
+                    })}
                   />
                 )}
 
                 <div className={styles.phaseOverview_stepBlock}>
                   <div
-                    className={styles.cx(
-                      styles.phaseOverview_stepCircle,
-                      isCompleted && styles.phaseOverview_stepCircleDone,
-                      isCurrent && styles.phaseOverview_stepCircleCurrent,
-                      (isCancelled || isUpcoming) &&
-                        styles.phaseOverview_stepCirclePending,
-                    )}
+                    className={styles.phaseOverview_stepCircle({
+                      state: isCompleted
+                        ? 'done'
+                        : isCurrent
+                          ? 'current'
+                          : 'pending',
+                    })}
                   >
                     <StepIcon
                       phase={step.value}
@@ -150,11 +146,13 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
                   </div>
                   <div className={styles.phaseOverview_stepText}>
                     <span
-                      className={styles.cx(
-                        styles.phaseOverview_stepLabel,
-                        isCompleted && styles.phaseOverview_stepLabelDone,
-                        isCurrent && styles.phaseOverview_stepLabelCurrent,
-                      )}
+                      className={styles.phaseOverview_stepLabel({
+                        state: isCompleted
+                          ? 'done'
+                          : isCurrent
+                            ? 'current'
+                            : 'pending',
+                      })}
                     >
                       {step.label}
                     </span>

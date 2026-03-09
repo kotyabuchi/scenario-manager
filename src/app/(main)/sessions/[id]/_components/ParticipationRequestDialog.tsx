@@ -176,12 +176,9 @@ export const ParticipationRequestDialog = ({
               return (
                 <label
                   key={option.value}
-                  className={styles.cx(
-                    styles.participantTypeCard,
-                    isSelected
-                      ? styles.participantTypeCard_selected
-                      : undefined,
-                  )}
+                  className={styles.participantTypeCard({
+                    selected: isSelected,
+                  })}
                 >
                   <input
                     type="radio"
@@ -192,38 +189,33 @@ export const ParticipationRequestDialog = ({
                     onChange={() => setValue('participantType', option.value)}
                   />
                   <div
-                    className={styles.cx(
-                      styles.participantTypeCard_iconWrapper,
-                      isSelected
-                        ? styles.participantTypeCard_iconWrapper_selected
-                        : undefined,
-                    )}
+                    className={styles.participantTypeCard_iconWrapper({
+                      selected: isSelected,
+                    })}
                     aria-hidden="true"
                   >
                     <Icon size={18} weight={isSelected ? 'fill' : 'regular'} />
                   </div>
                   <div className={styles.participantTypeCard_content}>
-                    <span className={styles.participantTypeCard_title}>
+                    <span
+                      className={styles.participantTypeCard_title({
+                        selected: isSelected,
+                      })}
+                    >
                       {option.label}
                     </span>
                     <span
-                      className={styles.cx(
-                        styles.participantTypeCard_description,
-                        isSelected
-                          ? styles.participantTypeCard_description_selected
-                          : undefined,
-                      )}
+                      className={styles.participantTypeCard_description({
+                        selected: isSelected,
+                      })}
                     >
                       {option.description}
                     </span>
                   </div>
                   <div
-                    className={styles.cx(
-                      styles.participantTypeCard_radio,
-                      isSelected
-                        ? styles.participantTypeCard_radio_selected
-                        : undefined,
-                    )}
+                    className={styles.participantTypeCard_radio({
+                      selected: isSelected,
+                    })}
                     aria-hidden="true"
                   />
                 </label>

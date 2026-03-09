@@ -1,6 +1,4 @@
-import { css } from '@/styled-system/css';
-
-export { cx } from '@/styled-system/css';
+import { css, cva } from '@/styled-system/css';
 
 // ========================================
 // ダイアログ本体
@@ -22,7 +20,7 @@ export const sessionSummary = css({
   gap: '1',
   p: '4',
   bg: 'bg.input',
-  borderRadius: 'xl',
+  borderRadius: 'md',
 });
 
 export const sessionSummary_row = css({
@@ -79,67 +77,94 @@ export const participantTypeCards = css({
   gap: '3',
 });
 
-export const participantTypeCard = css({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: '3',
-  p: '4',
-  borderRadius: 'xl',
-  bg: 'bg.card',
-  shadow: 'card.default',
-  cursor: 'pointer',
-  border: 'none',
-  textAlign: 'left',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    shadow: 'card.hover',
+export const participantTypeCard = cva({
+  base: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '3',
+    p: '4',
+    borderRadius: 'md',
+    bg: 'bg.card',
+    shadow: 'card.default',
+    cursor: 'pointer',
+    border: 'none',
+    textAlign: 'left',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+    _hover: {
+      shadow: 'card.hover',
+    },
+    _focusVisibleWithin: {
+      outline: 'focusRing',
+      outlineOffset: '[2px]',
+    },
   },
-  _focusWithin: {
-    outline: 'focusRing',
-    outlineOffset: '[2px]',
+  variants: {
+    selected: {
+      true: {
+        bg: 'primary.subtle',
+        outlineWidth: '1px',
+        outlineStyle: 'solid',
+        outlineColor: 'primary.default/30',
+      },
+    },
   },
 });
 
-export const participantTypeCard_selected = css({
-  bg: 'primary.subtle',
-  outlineWidth: '2px',
-  outlineStyle: 'solid',
-  outlineColor: 'primary.default',
+export const participantTypeCard_iconWrapper = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    w: '9',
+    h: '9',
+    borderRadius: 'md',
+    bg: 'chip.labelBg',
+    // shadow: 'sm',
+    color: 'text.secondary',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+  },
+  variants: {
+    selected: {
+      true: {
+        bg: 'white',
+        color: 'primary.default',
+      },
+    },
+  },
 });
 
-export const participantTypeCard_iconWrapper = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '9',
-  h: '9',
-  borderRadius: 'lg',
-  bg: 'chip.labelBg',
-  shadow: 'sm',
-  color: 'text.secondary',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
+export const participantTypeCard_title = cva({
+  base: {
+    fontSize: 'sm',
+    fontWeight: 'bold',
+    color: 'text.title',
+    lineHeight: 'tight',
+  },
+  variants: {
+    selected: {
+      true: {
+        color: 'primary.text',
+      },
+    },
+  },
 });
 
-export const participantTypeCard_iconWrapper_selected = css({
-  bg: 'primary.default',
-  boxShadow: '[none]',
-  color: 'white',
-});
-
-export const participantTypeCard_title = css({
-  fontSize: 'sm',
-  fontWeight: 'bold',
-  color: 'text.title',
-  lineHeight: 'tight',
-});
-
-export const participantTypeCard_description = css({
-  fontSize: 'xs',
-  color: 'text.secondary',
-  lineHeight: 'relaxed',
+export const participantTypeCard_description = cva({
+  base: {
+    fontSize: 'xs',
+    color: 'text.secondary',
+    lineHeight: 'relaxed',
+  },
+  variants: {
+    selected: {
+      true: {
+        color: 'primary.default',
+      },
+    },
+  },
 });
 
 export const participantTypeCard_content = css({
@@ -150,35 +175,36 @@ export const participantTypeCard_content = css({
   minW: '0',
 });
 
-export const participantTypeCard_description_selected = css({
-  color: 'primary.default',
-});
-
-export const participantTypeCard_radio = css({
-  w: '5',
-  h: '5',
-  rounded: 'full',
-  borderWidth: '2px',
-  borderStyle: 'solid',
-  borderColor: 'border.default',
-  flexShrink: '0',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-});
-
-export const participantTypeCard_radio_selected = css({
-  borderColor: 'primary.default',
-  position: 'relative',
-  _after: {
-    content: '""',
-    position: 'absolute',
-    top: '[50%]',
-    left: '[50%]',
-    transform: 'translate(-50%, -50%)',
-    w: '2.5',
-    h: '2.5',
+export const participantTypeCard_radio = cva({
+  base: {
+    w: '5',
+    h: '5',
     rounded: 'full',
-    bg: 'primary.default',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'border.default',
+    flexShrink: '0',
+    transitionProperty: 'common',
+    transitionDuration: 'fast',
+  },
+  variants: {
+    selected: {
+      true: {
+        borderColor: 'primary.default',
+        position: 'relative',
+        _after: {
+          content: '""',
+          position: 'absolute',
+          top: '[50%]',
+          left: '[50%]',
+          transform: 'translate(-50%, -50%)',
+          w: '2.5',
+          h: '2.5',
+          rounded: 'full',
+          bg: 'primary.default',
+        },
+      },
+    },
   },
 });
 
@@ -190,16 +216,21 @@ export const participantTypeCard_radioInput = css({
 // テキストエリアフィールド
 // ========================================
 
-export const charCount = css({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  fontSize: 'xs',
-  color: 'text.secondary',
-  mt: '1',
-});
-
-export const charCount_warning = css({
-  color: 'error.default',
+export const charCount = cva({
+  base: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    fontSize: 'xs',
+    color: 'text.secondary',
+    mt: '1',
+  },
+  variants: {
+    warning: {
+      true: {
+        color: 'error.default',
+      },
+    },
+  },
 });
 
 // ========================================
@@ -368,6 +399,10 @@ export const dialog_submitSection = css({
 
 export const dialog_submitButton = css({
   w: 'full',
+  shadow: 'button.primary',
+  _hover: {
+    shadow: 'button.primaryHover',
+  },
 });
 
 export const dialog_cancelLink = css({
