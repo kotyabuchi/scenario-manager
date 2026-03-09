@@ -10,17 +10,53 @@ export const approval_container = css({
   py: '8',
 });
 
-export const approval_backLink = css({
+// ========================================
+// パンくずナビゲーション
+// ========================================
+export const breadcrumb_nav = css({
+  mb: '6',
+});
+
+export const breadcrumb_list = css({
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  gap: '1',
+  listStyle: 'none',
+  p: '0',
+  m: '0',
+  fontSize: 'sm',
+  color: 'text.secondary',
+});
+
+export const breadcrumb_item = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+});
+
+export const breadcrumb_link = css({
   display: 'inline-flex',
   alignItems: 'center',
   gap: '1',
-  fontSize: 'sm',
   color: 'text.secondary',
   textDecoration: 'none',
-  mb: '4',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
   _hover: {
     color: 'primary.default',
   },
+});
+
+export const breadcrumb_current = css({
+  fontWeight: 'medium',
+  color: 'primary.default',
+});
+
+export const breadcrumb_separator = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  color: 'text.secondary',
+  opacity: '[0.5]',
 });
 
 // ========================================
@@ -28,11 +64,11 @@ export const approval_backLink = css({
 // ========================================
 export const approval_header = css({
   display: 'flex',
-  alignItems: 'flex-start',
+  alignItems: 'flex-end',
   justifyContent: 'space-between',
   flexWrap: 'wrap',
   gap: '4',
-  mb: '6',
+  mb: '8',
 });
 
 export const approval_headerLeft = css({
@@ -42,9 +78,15 @@ export const approval_headerLeft = css({
 });
 
 export const approval_title = css({
-  fontSize: '2xl',
+  fontSize: '3xl',
   fontWeight: 'bold',
   color: 'text.title',
+});
+
+export const approval_sessionInfo = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '3',
 });
 
 export const approval_sessionName = css({
@@ -52,41 +94,37 @@ export const approval_sessionName = css({
   color: 'text.secondary',
 });
 
-export const approval_statsRow = css({
+export const approval_statsArea = css({
   display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-  flexWrap: 'wrap',
-});
-
-const statsBadgeBase = {
-  display: 'inline-flex',
-  alignItems: 'center',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
   gap: '1',
-  px: '3',
-  py: '1',
+});
+
+export const approval_statsLabel = css({
   fontSize: 'sm',
-  fontWeight: 'medium',
-  borderRadius: 'full',
-} as const;
-
-export const approval_statsBadgePending = css({
-  ...statsBadgeBase,
-  bg: 'badge.warningBg',
-  color: 'badge.warningText',
+  color: 'text.secondary',
 });
 
-export const approval_statsBadgeConfirmed = css({
-  ...statsBadgeBase,
-  bg: 'badge.successBg',
-  color: 'badge.successText',
+export const approval_statsValue = css({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '1',
 });
 
-export const approval_statsBadgeTotal = css({
-  ...statsBadgeBase,
-  bg: 'chip.labelBg',
-  shadow: 'sm',
-  color: 'text.body',
+export const approval_statsNumber = css({
+  fontSize: '3xl',
+  fontWeight: 'bold',
+  color: 'primary.default',
+});
+
+export const approval_statsMax = css({
+  fontSize: 'lg',
+  color: 'text.secondary',
+});
+
+export const approval_progressBar = css({
+  w: '[128px]',
 });
 
 // ========================================

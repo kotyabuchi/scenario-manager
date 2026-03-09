@@ -1,7 +1,7 @@
 import { ApplicationApprovalContent } from './ApplicationApprovalContent';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ApplicationStats, ApplicationWithUser } from '../adapter';
+import type { ApplicationWithUser } from '../adapter';
 
 // --- モックデータ ---
 
@@ -160,11 +160,6 @@ export const Default: Story = {
       pendingApplicationB,
       confirmedApplicationC,
     ],
-    stats: {
-      total: 3,
-      pending: 2,
-      confirmed: 1,
-    } satisfies ApplicationStats,
   },
 };
 
@@ -178,11 +173,6 @@ export const Empty: Story = {
     sessionName: '深淵の呼び声 - 第1回セッション',
     maxPlayer: null,
     applications: [],
-    stats: {
-      total: 0,
-      pending: 0,
-      confirmed: 0,
-    } satisfies ApplicationStats,
   },
 };
 
@@ -197,11 +187,6 @@ export const AllConfirmed: Story = {
     sessionName: '深淵の呼び声 - 第1回セッション',
     maxPlayer: null,
     applications: [confirmedApplicationC, confirmedApplicationD],
-    stats: {
-      total: 2,
-      pending: 0,
-      confirmed: 2,
-    } satisfies ApplicationStats,
   },
 };
 
@@ -216,11 +201,6 @@ export const ManyPending: Story = {
     sessionName: '深淵の呼び声 - 第1回セッション',
     maxPlayer: null,
     applications: manyPendingApplications,
-    stats: {
-      total: 5,
-      pending: 5,
-      confirmed: 0,
-    } satisfies ApplicationStats,
   },
 };
 
@@ -238,10 +218,5 @@ export const WithMaxPlayer: Story = {
       confirmedApplicationC,
       confirmedApplicationD,
     ],
-    stats: {
-      total: 3,
-      pending: 1,
-      confirmed: 2,
-    } satisfies ApplicationStats,
   },
 };

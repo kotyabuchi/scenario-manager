@@ -1,16 +1,11 @@
-import { ArrowLeft } from '@phosphor-icons/react/ssr';
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { isNil } from 'ramda';
 
 import { getCurrentUserId } from '../../adapter';
 import { isSessionManager } from '../../participantAdapter';
 import { ApplicationApprovalContent } from './_components/ApplicationApprovalContent';
-import {
-  computeApplicationStats,
-  getApplications,
-  getSessionBasicInfo,
-} from './adapter';
+import { Breadcrumb } from './_components/Breadcrumb';
+import { getApplications, getSessionBasicInfo } from './adapter';
 import * as styles from './styles';
 
 import type { Route } from 'next';
@@ -57,23 +52,17 @@ export default async function ApplicationsPage({ params }: PageProps) {
   }
 
   const applications = applicationsResult.data;
-  const stats = computeApplicationStats(applications);
   const { sessionName, maxPlayer } = basicInfoResult.data;
 
   return (
     <div className={styles.approval_container}>
-      {/* 戻るリンク */}
-      <Link href={`/sessions/${id}`} className={styles.approval_backLink}>
-        <ArrowLeft size={16} aria-hidden="true" />
-        セッション詳細に戻る
-      </Link>
+      <Breadcrumb sessionId={id} sessionName={sessionName} />
 
       <ApplicationApprovalContent
         sessionId={id}
         sessionName={sessionName}
         maxPlayer={maxPlayer}
         applications={applications}
-        stats={stats}
       />
     </div>
   );

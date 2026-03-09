@@ -1,11 +1,15 @@
 'use client';
 
 import { useOptimistic, useState, useTransition } from 'react';
+import { isNil } from 'ramda';
 
 import * as styles from '../styles';
 import { ApplicationCard } from './ApplicationCard';
 
-import type { ApplicationStats, ApplicationWithUser } from '../adapter';
+import { Badge } from '@/components/elements/badge';
+import { Progress } from '@/components/elements/progress';
+
+import type { ApplicationWithUser } from '../adapter';
 
 /** フィルタータブの種類 */
 type FilterTab = 'all' | 'pending' | 'confirmed';
@@ -18,7 +22,6 @@ type ApplicationApprovalContentProps = {
   sessionName: string;
   maxPlayer: number | null;
   applications: ApplicationWithUser[];
-  stats: ApplicationStats;
 };
 
 /** 楽観的更新のアクション */
@@ -35,7 +38,6 @@ export const ApplicationApprovalContent = ({
   sessionName,
   maxPlayer,
   applications,
-  stats,
 }: ApplicationApprovalContentProps) => {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [, startTransition] = useTransition();
@@ -143,22 +145,35 @@ export const ApplicationApprovalContent = ({
       {/* ページヘッダー */}
       <div className={styles.approval_header}>
         <div className={styles.approval_headerLeft}>
-          <h1 className={styles.approval_title}>参加申請管理</h1>
-          <p className={styles.approval_sessionName}>{sessionName}</p>
-
-          {/* 統計バッジ */}
-          <div className={styles.approval_statsRow}>
-            <span className={styles.approval_statsBadgeTotal}>
-              合計 {stats.total} 件
-            </span>
-            <span className={styles.approval_statsBadgePending}>
-              承認待ち {optimisticPendingCount} 件
-            </span>
-            <span className={styles.approval_statsBadgeConfirmed}>
-              承認済み {optimisticConfirmedCount}
-              {maxPlayer !== null ? ` / ${maxPlayer}` : ''} 件
-            </span>
+          <h1 className={styles.approval_title}>参加申請承認</h1>
+          <div className={styles.approval_sessionInfo}>
+            <p className={styles.approval_sessionName}>
+              セッション: <strong>{sessionName}</strong>
+            </p>
+            <Badge variant="success">募集中</Badge>
           </div>
+        </div>
+
+        {/* 統計エリア */}
+        <div className={styles.approval_statsArea}>
+          <span className={styles.approval_statsLabel}>現在の参加予定者数</span>
+          <div className={styles.approval_statsValue}>
+            <span className={styles.approval_statsNumber}>
+              {optimisticConfirmedCount}
+            </span>
+            {!isNil(maxPlayer) && (
+              <span className={styles.approval_statsMax}>/ {maxPlayer}名</span>
+            )}
+          </div>
+          {!isNil(maxPlayer) && (
+            <Progress
+              value={optimisticConfirmedCount}
+              max={maxPlayer}
+              showValue={false}
+              label="参加予定者数"
+              className={styles.approval_progressBar}
+            />
+          )}
         </div>
       </div>
 
