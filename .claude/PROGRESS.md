@@ -230,6 +230,9 @@
 - `src/app/(main)/scenarios/[id]/__tests__/schema.test.ts`
 - `src/app/(main)/scenarios/[id]/__tests__/adapter.test.ts`
 
+**TODO**:
+- [ ] セッション完了後のレビュー導線を実装（CompleteSessionDialog のサクセス画面「レビューを書く」ボタンを有効化し、レビュー画面へリンク）
+
 ---
 
 ### フィードバック機能（requirements-feedback.md）
@@ -428,7 +431,7 @@
 | 6 | 日程集計・確定画面 | `sessions/[id]/schedule/confirm/` | ✅ 完了 |
 | 7 | キャンセル・辞退ダイアログ | `sessions/[id]/_components/CancelSessionDialog.tsx`, `WithdrawDialog.tsx` | ✅ 完了 |
 | 8 | セッション参加申請モーダル | `sessions/[id]/_components/ParticipationRequestDialog.tsx` | ✅ 完了 |
-| 9 | セッション完了ダイアログ | `sessions/[id]/_components/CompleteSessionDialog.tsx` | ⬜ 要リファクタ |
+| 9 | セッション完了ダイアログ | `sessions/[id]/_components/CompleteSessionDialog.tsx` | ✅ 完了 |
 | 10 | 参加申請承認画面 | `sessions/[id]/applications/_components/` | ⬜ 要リファクタ |
 | ~~11~~ | ~~日程候補選択画面~~ | ~~未実装~~ | 不要（日程提出方式に変更済み） |
 
@@ -460,10 +463,12 @@
 
 #### #9 セッション完了ダイアログ
 
-- [ ] シナリオ情報カードを追加（サムネ + シナリオ名 + 日時情報）
-- [ ] 完了時の処理チェックリストを追加（参加者ステータス更新、相互レビュー配布、ログアーカイブ）
-- [ ] GMメモフィールドの追加
-- [ ] 完了後のサクセス画面を追加（チェックマークアイコン + 「セッションが完了しました」 + 「レビューを書く」ボタン）
+- [x] シナリオ情報カードを追加（サムネ + シナリオ名 + 日時情報）
+- [x] 完了時の処理チェックリストを追加（参加者ステータス更新、経験点配布、ログアーカイブ）
+- [x] GMメモフィールドの追加（ラベル変更 + 任意・非公開バッジ）
+- [x] 完了後のサクセス画面を追加（チェックマークアイコン + 「セッションが完了しました」 + 「レビューを書く（準備中）」ボタン）
+- [x] SessionActions の early return 修正（サクセス画面消滅対策）
+- [x] Storybook 追加（Default / WithoutSchedule / SuccessView）
 
 #### #10 参加申請承認画面
 

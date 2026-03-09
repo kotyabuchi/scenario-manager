@@ -100,14 +100,10 @@ export const SessionActions = ({
     hasAvailabilitySubmission,
   );
 
-  if (actions.length === 0) return null;
+  if (actions.length === 0 && openDialog === null) return null;
 
-  const {
-    primaryAction,
-    desktopSecondaryActions,
-    desktopMenuActions,
-    mobileMenuActions,
-  } = getResponsiveSessionActionsLayout(actions);
+  const layout =
+    actions.length > 0 ? getResponsiveSessionActionsLayout(actions) : null;
 
   const handleActionSelect = (action: SessionActionDescriptor) => {
     if (action.type === 'link' && action.href) {
@@ -218,20 +214,22 @@ export const SessionActions = ({
 
   return (
     <>
-      <div className={styles.sessionActions_inline}>
-        {primaryAction && renderActionButton(primaryAction)}
+      {layout && (
+        <div className={styles.sessionActions_inline}>
+          {layout.primaryAction && renderActionButton(layout.primaryAction)}
 
-        {desktopSecondaryActions.length > 0 && (
-          <div className={styles.sessionActions_headerSecondaryGroup}>
-            {desktopSecondaryActions.map((action) =>
-              renderActionButton(action),
-            )}
-          </div>
-        )}
+          {layout.desktopSecondaryActions.length > 0 && (
+            <div className={styles.sessionActions_headerSecondaryGroup}>
+              {layout.desktopSecondaryActions.map((action) =>
+                renderActionButton(action),
+              )}
+            </div>
+          )}
 
-        {renderMenu('desktop', 'その他の操作', desktopMenuActions)}
-        {renderMenu('mobile', 'その他の操作', mobileMenuActions)}
-      </div>
+          {renderMenu('desktop', 'その他の操作', layout.desktopMenuActions)}
+          {renderMenu('mobile', 'その他の操作', layout.mobileMenuActions)}
+        </div>
+      )}
 
       {openDialog === 'participate' && (
         <ParticipationRequestDialog
@@ -276,6 +274,17 @@ export const SessionActions = ({
         <CompleteSessionDialog
           sessionId={session.gameSessionId}
           expectedUpdatedAt={session.updatedAt}
+          scenarioName={session.scenario?.name ?? '不明なシナリオ'}
+          systemName={session.scenario?.system?.name ?? ''}
+          scheduleLabel={
+            !isNil(session.scheduleDate)
+              ? new Date(session.scheduleDate).toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
+              : '日程未定'
+          }
           open
           onOpenChange={({ open }) => !open && setOpenDialog(null)}
         />

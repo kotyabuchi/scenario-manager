@@ -420,3 +420,141 @@ export const dialog_cancelLink = css({
     outlineOffset: '[2px]',
   },
 });
+
+// ========================================
+// 完了ダイアログ: シナリオ情報カード
+// ========================================
+
+export const dialog_scenarioCard = css({
+  display: 'flex',
+  gap: '4',
+  p: '5',
+  bg: 'bg.input',
+  borderRadius: 'xl',
+});
+
+export const dialog_scenarioCard_thumbnail = css({
+  w: '16',
+  h: '16',
+  borderRadius: 'lg',
+  bg: 'primary.subtle',
+  flexShrink: '0',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'primary.default',
+});
+
+export const dialog_scenarioCard_info = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+  minW: '0',
+});
+
+export const dialog_scenarioCard_system = css({
+  fontSize: 'xs',
+  color: 'primary.default',
+  textTransform: 'uppercase',
+  letterSpacing: 'wider',
+  fontWeight: 'medium',
+});
+
+export const dialog_scenarioCard_title = css({
+  fontSize: 'lg',
+  fontWeight: 'bold',
+  color: 'text.title',
+});
+
+export const dialog_scenarioCard_date = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1',
+  fontSize: 'sm',
+  color: 'text.secondary',
+});
+
+// ========================================
+// 完了ダイアログ: チェックリスト
+// ========================================
+
+export const dialog_checklist = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '3',
+});
+
+export const dialog_checklist_label = css({
+  fontSize: 'sm',
+  fontWeight: 'bold',
+  color: 'text.title',
+});
+
+export const dialog_checklist_item = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '3',
+  p: '3',
+  borderRadius: 'lg',
+});
+
+export const dialog_checklist_checkbox = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  w: '5',
+  h: '5',
+  borderRadius: 'sm',
+  bg: 'primary.default',
+  color: 'white',
+  flexShrink: '0',
+});
+
+export const dialog_checklist_itemText = css({
+  fontSize: 'sm',
+  color: 'text.body',
+});
+
+// ========================================
+// 完了ダイアログ: サクセス画面
+// ========================================
+
+export const dialog_success_container = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+  py: '6',
+  gap: '6',
+});
+
+export const dialog_success_iconCircle = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  w: '20',
+  h: '20',
+  borderRadius: 'full',
+  bg: 'primary.default',
+  color: 'white',
+  shadow: 'md',
+});
+
+export const dialog_success_title = css({
+  fontSize: '2xl',
+  fontWeight: 'bold',
+  color: 'text.title',
+});
+
+export const dialog_success_description = css({
+  fontSize: 'sm',
+  color: 'text.secondary',
+  lineHeight: 'relaxed',
+});
+
+export const dialog_success_actions = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '3',
+  w: 'full',
+});
