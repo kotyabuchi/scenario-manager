@@ -7,7 +7,6 @@ import * as styles from '../styles';
 import { ApplicationCard } from './ApplicationCard';
 import { FilterBar } from './FilterBar';
 
-import { Badge } from '@/components/elements/badge';
 import { Pagination } from '@/components/elements/pagination';
 import { Progress } from '@/components/elements/progress';
 
@@ -131,37 +130,25 @@ export const ApplicationApprovalContent = ({
 
   return (
     <main>
-      {/* ページヘッダー */}
-      <div className={styles.approval_header}>
-        <div className={styles.approval_headerLeft}>
-          <h1 className={styles.approval_title}>参加申請承認</h1>
-          <div className={styles.approval_sessionInfo}>
-            <p className={styles.approval_sessionName}>
-              セッション: <strong>{sessionName}</strong>
-            </p>
-            <Badge variant="success">募集中</Badge>
-          </div>
-        </div>
-
-        {/* 統計エリア */}
-        <div className={styles.approval_statsArea}>
-          <span className={styles.approval_statsLabel}>現在の参加予定者数</span>
-          <div className={styles.approval_statsValue}>
-            <span className={styles.approval_statsNumber}>
-              {optimisticConfirmedCount}
-            </span>
-            {!isNil(maxPlayer) && maxPlayer > 0 && (
-              <span className={styles.approval_statsMax}>/ {maxPlayer}名</span>
-            )}
-          </div>
+      {/* 統計エリア */}
+      <div className={styles.approval_statsBar}>
+        <p className={styles.approval_sessionName}>{sessionName}</p>
+        <div className={styles.approval_statsRight}>
+          <span className={styles.approval_statsLabel}>参加予定</span>
+          <span className={styles.approval_statsNumber}>
+            {optimisticConfirmedCount}
+          </span>
           {!isNil(maxPlayer) && maxPlayer > 0 && (
-            <Progress
-              value={optimisticConfirmedCount}
-              max={maxPlayer}
-              showValue={false}
-              label="参加予定者数"
-              className={styles.approval_progressBar}
-            />
+            <>
+              <span className={styles.approval_statsMax}>/ {maxPlayer}名</span>
+              <Progress
+                value={optimisticConfirmedCount}
+                max={maxPlayer}
+                showValue={false}
+                label="参加予定者数"
+                className={styles.approval_progressBar}
+              />
+            </>
           )}
         </div>
       </div>

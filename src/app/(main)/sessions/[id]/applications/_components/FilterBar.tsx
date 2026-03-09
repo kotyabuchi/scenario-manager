@@ -49,7 +49,6 @@ export const FilterBar = ({
           placeholder="名前で検索..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          size="sm"
           aria-label="申請者名で検索"
         />
       </div>

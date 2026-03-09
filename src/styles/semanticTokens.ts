@@ -460,6 +460,7 @@ export const semanticTokens = {
   borders: {
     focusRing: { value: '2px solid {colors.primary.500}' },
     focusRingDashed: { value: '2px dashed {colors.primary.500}' },
+    soft: { value: '1px solid {colors.gray.100}' },
   },
 
   shadows: {

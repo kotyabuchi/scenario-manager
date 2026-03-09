@@ -540,6 +540,7 @@
 4. BOOTH/TALTOへの事前連絡
 5. UI/UXリファクタリング残タスク
 6. FilterBottomSheet にスワイプダウンで閉じるジェスチャーを追加（ハンドルバーは見た目のみで未実装）
+7. `borders.soft` トークンを他の画面のカード・検索バーにも適用する（シナリオ一覧、セッション一覧等）。ダークモード対応時にトークン値の切り替えだけで済むようにする
 
 ### 優先度D: 品質改善
 1. `_components/` フォルダ構成の刷新（`docs/plans/components-folder-restructure.md`、Batch 1-10）— [Issue #3](https://github.com/kotyabuchi/scenario-manager/issues/3)

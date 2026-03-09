@@ -4,9 +4,10 @@ import { isNil } from 'ramda';
 import { getCurrentUserId } from '../../adapter';
 import { isSessionManager } from '../../participantAdapter';
 import { ApplicationApprovalContent } from './_components/ApplicationApprovalContent';
-import { Breadcrumb } from './_components/Breadcrumb';
 import { getApplications, getSessionBasicInfo } from './adapter';
 import * as styles from './styles';
+
+import { PageHeader } from '@/components/blocks/PageHeader';
 
 import type { Route } from 'next';
 
@@ -55,15 +56,17 @@ export default async function ApplicationsPage({ params }: PageProps) {
   const { sessionName, maxPlayer } = basicInfoResult.data;
 
   return (
-    <div className={styles.approval_container}>
-      <Breadcrumb sessionId={id} sessionName={sessionName} />
+    <div className={styles.pageContainer}>
+      <PageHeader backHref={`/sessions/${id}` as Route} title="参加申請管理" />
 
-      <ApplicationApprovalContent
-        sessionId={id}
-        sessionName={sessionName}
-        maxPlayer={maxPlayer}
-        applications={applications}
-      />
+      <div className={styles.mainContent}>
+        <ApplicationApprovalContent
+          sessionId={id}
+          sessionName={sessionName}
+          maxPlayer={maxPlayer}
+          applications={applications}
+        />
+      </div>
     </div>
   );
 }

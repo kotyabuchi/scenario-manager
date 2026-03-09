@@ -3,102 +3,43 @@ import { css } from '@/styled-system/css';
 // ========================================
 // ページレイアウト
 // ========================================
-export const approval_container = css({
-  maxW: '[1280px]',
-  mx: 'auto',
-  px: '6',
-  py: '8',
-});
-
-// ========================================
-// パンくずナビゲーション
-// ========================================
-export const breadcrumb_nav = css({
-  mb: '6',
-});
-
-export const breadcrumb_list = css({
-  display: 'flex',
-  alignItems: 'center',
-  flexWrap: 'wrap',
-  gap: '1',
-  listStyle: 'none',
-  p: '0',
-  m: '0',
-  fontSize: 'sm',
-  color: 'text.secondary',
-});
-
-export const breadcrumb_item = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-});
-
-export const breadcrumb_link = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '1',
-  color: 'text.secondary',
-  textDecoration: 'none',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    color: 'primary.default',
-  },
-});
-
-export const breadcrumb_current = css({
-  fontWeight: 'medium',
-  color: 'primary.default',
-});
-
-export const breadcrumb_separator = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  color: 'text.secondary',
-  opacity: '[0.5]',
-});
-
-// ========================================
-// ページヘッダー
-// ========================================
-export const approval_header = css({
-  display: 'flex',
-  alignItems: 'flex-end',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-  gap: '4',
-  mb: '8',
-});
-
-export const approval_headerLeft = css({
+export const pageContainer = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '2',
+  minH: 'screen',
+  bg: 'gray.50',
 });
 
-export const approval_title = css({
-  fontSize: '3xl',
-  fontWeight: 'bold',
-  color: 'text.title',
+export const mainContent = css({
+  maxW: '[1280px]',
+  w: 'full',
+  mx: 'auto',
+  px: { base: '4', md: '6' },
+  py: { base: '6', md: '8' },
 });
 
-export const approval_sessionInfo = css({
+// ========================================
+// 統計バー
+// ========================================
+export const approval_statsBar = css({
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
   gap: '3',
+  mb: '6',
 });
 
 export const approval_sessionName = css({
   fontSize: 'sm',
   color: 'text.secondary',
+  fontWeight: 'medium',
 });
 
-export const approval_statsArea = css({
+export const approval_statsRight = css({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  gap: '1',
+  alignItems: 'center',
+  gap: '2',
 });
 
 export const approval_statsLabel = css({
@@ -106,25 +47,19 @@ export const approval_statsLabel = css({
   color: 'text.secondary',
 });
 
-export const approval_statsValue = css({
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: '1',
-});
-
 export const approval_statsNumber = css({
-  fontSize: '3xl',
+  fontSize: 'lg',
   fontWeight: 'bold',
   color: 'primary.default',
 });
 
 export const approval_statsMax = css({
-  fontSize: 'lg',
+  fontSize: 'sm',
   color: 'text.secondary',
 });
 
 export const approval_progressBar = css({
-  w: '[128px]',
+  w: '[100px]',
 });
 
 // ========================================
@@ -139,6 +74,7 @@ export const filterBar_container = css({
   bg: 'bg.card',
   rounded: 'xl',
   shadow: 'card.default',
+  border: 'soft',
   flexWrap: 'wrap',
 });
 
@@ -180,6 +116,7 @@ export const card_root = css({
   borderRadius: '2xl',
   p: '5',
   shadow: 'card.default',
+  border: 'soft',
   display: 'flex',
   flexDirection: 'column',
   gap: '4',
@@ -409,16 +346,10 @@ export const loading_skeleton = css({
   animation: 'pulse',
 });
 
-export const loading_breadcrumb = css({
-  h: '4',
-  w: '[280px]',
-  mb: '4',
-});
-
-export const loading_title = css({
-  h: '8',
-  w: '[50%]',
-  mb: '2',
+export const loading_header = css({
+  h: '[56px]',
+  w: 'full',
+  borderRadius: '0',
 });
 
 export const loading_subtitle = css({
