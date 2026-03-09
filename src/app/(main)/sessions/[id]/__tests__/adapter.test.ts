@@ -2,11 +2,14 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
   buildSessionTimeline,
+  completeSession,
   deleteSessionLink,
   getSessionDetail,
   getSessionLinks,
   updateCharacterSheetUrl,
+  updateSessionBasicInfo,
   updateSessionMemo,
+  updateSessionPhase,
   upsertSessionLink,
 } from '../adapter';
 
@@ -424,6 +427,243 @@ describe('Session Detail Adapter', () => {
     // T-CS-004: 空文字列でURLをクリアできる
     it('空文字列でURLをクリアできる', async () => {
       const result = await updateCharacterSheetUrl(sessionId, userId, '');
+
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe('updateSessionPhase', () => {
+    // T-UP-001: 正しいupdated_atでフェーズを更新できる
+    it('正しいupdated_atでフェーズを更新できる', async () => {
+      // 現在のupdated_atを取得
+      const detail = await getSessionDetail(sessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionPhase(
+        sessionId,
+        'IN_PROGRESS',
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-UP-002: 古いupdated_atでConflictエラーを返す
+    it('古いupdated_atでConflictエラーを返す', async () => {
+      const staleTimestamp = '2000-01-01T00:00:00.000Z';
+
+      const result = await updateSessionPhase(
+        sessionId,
+        'RECRUITING',
+        staleTimestamp,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+
+    // T-UP-003: 存在しないsessionIdでConflictエラーを返す
+    it('存在しないsessionIdでConflictエラーを返す', async () => {
+      const result = await updateSessionPhase(
+        NON_EXISTENT_SESSION_ID,
+        'RECRUITING',
+        new Date().toISOString(),
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+
+    // T-UP-004: Result型が返される
+    it('Result型が返される', async () => {
+      const result = await updateSessionPhase(
+        NON_EXISTENT_SESSION_ID,
+        'RECRUITING',
+        new Date().toISOString(),
+      );
+
+      expect(result).toHaveProperty('success');
+      expect(typeof result.success).toBe('boolean');
+    });
+  });
+
+  describe('completeSession', () => {
+    // completeSession用の専用セッションを使用（フェーズを変更するため）
+    let completeTargetSessionId: string;
+
+    beforeAll(async () => {
+      const session = await createTestSession({ keeperUserId: userId });
+      completeTargetSessionId = session.game_session_id;
+    });
+
+    afterAll(async () => {
+      await cleanupSessions([completeTargetSessionId]);
+    });
+
+    // T-CS2-001: 正しいupdated_atでセッションを完了できる
+    it('正しいupdated_atでセッションを完了できる', async () => {
+      const detail = await getSessionDetail(completeTargetSessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await completeSession(
+        completeTargetSessionId,
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-CS2-002: noteを指定してセッションを完了できる
+    it('noteを指定してセッションを完了できる', async () => {
+      const noteSession = await createTestSession({ keeperUserId: userId });
+
+      const detail = await getSessionDetail(noteSession.game_session_id);
+      expect(detail.success).toBe(true);
+      if (!detail.success) {
+        await cleanupSessions([noteSession.game_session_id]);
+        return;
+      }
+
+      const result = await completeSession(
+        noteSession.game_session_id,
+        detail.data.updatedAt,
+        '楽しいセッションでした',
+      );
+
+      expect(result.success).toBe(true);
+      await cleanupSessions([noteSession.game_session_id]);
+    });
+
+    // T-CS2-003: 古いupdated_atでConflictエラーを返す
+    it('古いupdated_atでConflictエラーを返す', async () => {
+      const staleTimestamp = '2000-01-01T00:00:00.000Z';
+
+      const result = await completeSession(
+        completeTargetSessionId,
+        staleTimestamp,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+
+    // T-CS2-004: 存在しないsessionIdでConflictエラーを返す
+    it('存在しないsessionIdでConflictエラーを返す', async () => {
+      const result = await completeSession(
+        NON_EXISTENT_SESSION_ID,
+        new Date().toISOString(),
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+  });
+
+  describe('updateSessionBasicInfo', () => {
+    const baseData = {
+      sessionName: '更新後セッション名',
+      sessionDescription: '更新後の説明文',
+      maxParticipantCount: 5,
+      isBeginnerFriendly: true,
+    };
+
+    // T-BI-001: 正しいupdated_atで基本情報を更新できる
+    it('正しいupdated_atで基本情報を更新できる', async () => {
+      const detail = await getSessionDetail(sessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionBasicInfo(
+        sessionId,
+        baseData,
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-BI-002: 古いupdated_atでConflictエラーを返す
+    it('古いupdated_atでConflictエラーを返す', async () => {
+      const staleTimestamp = '2000-01-01T00:00:00.000Z';
+
+      const result = await updateSessionBasicInfo(
+        sessionId,
+        baseData,
+        staleTimestamp,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+
+    // T-BI-003: 存在しないsessionIdでエラーを返す
+    it('存在しないsessionIdでエラーを返す', async () => {
+      const result = await updateSessionBasicInfo(
+        NON_EXISTENT_SESSION_ID,
+        baseData,
+        new Date().toISOString(),
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('セッションが見つかりません');
+      }
+    });
+
+    // T-BI-004: maxParticipantCount=0（制限なし）で更新できる
+    it('maxParticipantCount=0（制限なし）で更新できる', async () => {
+      const detail = await getSessionDetail(sessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionBasicInfo(
+        sessionId,
+        { ...baseData, maxParticipantCount: 0 },
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-BI-005: 無制限→有限に変更できる（参加者実カウントから残席算出）
+    it('無制限→有限に変更できる', async () => {
+      // 現在maxParticipantCount=0（T-BI-004で設定済み）の状態から有限に変更
+      const detail = await getSessionDetail(sessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionBasicInfo(
+        sessionId,
+        { ...baseData, maxParticipantCount: 10 },
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-BI-006: 有限→有限でmaxを増加できる（デルタ計算）
+    it('有限→有限でmaxを増加できる', async () => {
+      const detail = await getSessionDetail(sessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionBasicInfo(
+        sessionId,
+        { ...baseData, maxParticipantCount: 15 },
+        detail.data.updatedAt,
+      );
 
       expect(result.success).toBe(true);
     });

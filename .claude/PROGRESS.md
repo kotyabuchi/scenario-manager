@@ -122,17 +122,17 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| sessionFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（37テスト通過） |
-| createSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト8件 skipIf、型検証6件通過） |
-| getSessionById | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト4件 skipIf） |
-| updateSession | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
-| 日程調整機能 | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
-| applyToSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト6件 skipIf、定数検証1件通過） |
-| approveApplication | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト3件 skipIf） |
-| rejectApplication | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト2件 skipIf） |
-| withdrawFromSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト3件 skipIf） |
-| cancelApplication | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト2件 skipIf） |
-| cancelSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト4件 skipIf） |
+| sessionFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了 |
+| createSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| getSessionById | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| updateSession | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| 日程調整機能 | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（availability + confirm） |
+| applyToSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| approveApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| rejectApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| withdrawFromSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| cancelApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| cancelSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
 
 **テストファイル**:
 - `src/app/(main)/sessions/new/__tests__/schema.test.ts`
@@ -432,7 +432,7 @@
 | 7 | キャンセル・辞退ダイアログ | `sessions/[id]/_components/CancelSessionDialog.tsx`, `WithdrawDialog.tsx` | ✅ 完了 |
 | 8 | セッション参加申請モーダル | `sessions/[id]/_components/ParticipationRequestDialog.tsx` | ✅ 完了 |
 | 9 | セッション完了ダイアログ | `sessions/[id]/_components/CompleteSessionDialog.tsx` | ✅ 完了 |
-| 10 | 参加申請承認画面 | `sessions/[id]/applications/_components/` | ⬜ 要リファクタ |
+| 10 | 参加申請承認画面 | `sessions/[id]/applications/_components/` | ✅ 完了 |
 | ~~11~~ | ~~日程候補選択画面~~ | ~~未実装~~ | 不要（日程提出方式に変更済み） |
 
 ### 各画面の差分詳細
@@ -470,15 +470,16 @@
 - [x] SessionActions の early return 修正（サクセス画面消滅対策）
 - [x] Storybook 追加（Default / WithoutSchedule / SuccessView）
 
-#### #10 参加申請承認画面
+#### #10 参加申請承認画面 ✅
 
-- [ ] パンくずナビゲーションを追加
-- [ ] 統計表示を「現在の参加予定者数 N/M名」形式に変更
-- [ ] 検索入力フィールドを追加
-- [ ] ソート・フィルターボタンを追加
-- [ ] カードデザインをモックに合わせる（ユーザーアバター画像対応、申請メッセージ吹き出し風）
-- [ ] ボタンラベルを「拒否する」「承認する」に統一（アイコンなし）
-- [ ] ページネーションを追加
+- [x] パンくずナビゲーション → PageHeaderに置換
+- [x] 統計表示を「参加予定 N / M名」形式に変更
+- [x] 検索入力フィールドを追加
+- [x] ソート・フィルターボタンを追加
+- [x] カードデザインをモックに合わせる（申請メッセージ吹き出し風）
+- [x] ボタンラベルを「拒否する」「承認する」に統一
+- [x] ページネーションを追加
+- [x] border softトークン適用（カード・フィルターバー）
 
 ---
 
