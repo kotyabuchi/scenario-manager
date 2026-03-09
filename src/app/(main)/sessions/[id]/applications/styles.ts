@@ -136,7 +136,7 @@ export const filterBar_container = css({
   gap: '4',
   mb: '6',
   p: '4',
-  bg: 'white',
+  bg: 'bg.card',
   rounded: 'xl',
   shadow: 'card.default',
   flexWrap: 'wrap',

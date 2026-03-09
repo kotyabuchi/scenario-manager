@@ -150,11 +150,11 @@ export const ApplicationApprovalContent = ({
             <span className={styles.approval_statsNumber}>
               {optimisticConfirmedCount}
             </span>
-            {!isNil(maxPlayer) && (
+            {!isNil(maxPlayer) && maxPlayer > 0 && (
               <span className={styles.approval_statsMax}>/ {maxPlayer}名</span>
             )}
           </div>
-          {!isNil(maxPlayer) && (
+          {!isNil(maxPlayer) && maxPlayer > 0 && (
             <Progress
               value={optimisticConfirmedCount}
               max={maxPlayer}
@@ -190,7 +190,9 @@ export const ApplicationApprovalContent = ({
         <p className={styles.approval_empty}>
           {searchQuery
             ? '検索条件に一致する申請はありません'
-            : '申請はまだありません'}
+            : filterValue !== 'all'
+              ? `${filterValue === 'pending' ? '承認待ち' : '承認済み'}の申請はありません`
+              : '申請はまだありません'}
         </p>
       ) : (
         <>
