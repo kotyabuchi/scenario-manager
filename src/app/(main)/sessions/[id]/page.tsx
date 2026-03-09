@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { getCurrentUserId } from '../adapter';
+import { getAllSystems, getCurrentUserId } from '../adapter';
 import { SessionDetailContent } from './_components/SessionDetailContent';
 import { buildSessionTimeline, getSessionDetail } from './adapter';
 import { hasUserAvailabilitySubmission } from './schedule/availability/adapter';
@@ -23,9 +23,10 @@ export default async function SessionDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const [detailResult, currentUserId] = await Promise.all([
+  const [detailResult, currentUserId, systemsResult] = await Promise.all([
     getSessionDetail(id),
     getCurrentUserId(),
+    getAllSystems(),
   ]);
 
   if (!detailResult.success) {
@@ -34,6 +35,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
 
   const session = detailResult.data;
   const timeline = buildSessionTimeline(session);
+  const systems = systemsResult.success ? systemsResult.data : [];
 
   // ユーザーのロールと参加ステータスを判定
   let userRole: UserRole = 'guest';
@@ -76,6 +78,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
       currentUserId={currentUserId}
       participantStatus={participantStatus}
       hasAvailabilitySubmission={hasAvailabilitySubmission}
+      systems={systems}
     />
   );
 }

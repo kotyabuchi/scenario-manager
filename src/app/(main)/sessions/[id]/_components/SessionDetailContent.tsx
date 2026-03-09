@@ -12,7 +12,12 @@ import { ToolsSection } from './sections/tools/ToolsSection';
 import { PageHeader } from '@/components/blocks/PageHeader';
 
 import type { Database } from '@/db/types';
-import type { SessionDetail, TimelineEvent, UserRole } from '../../interface';
+import type {
+  ScenarioSystem,
+  SessionDetail,
+  TimelineEvent,
+  UserRole,
+} from '../../interface';
 
 type SessionDetailContentProps = {
   session: SessionDetail;
@@ -24,6 +29,8 @@ type SessionDetailContentProps = {
     | Database['public']['Enums']['participant_status']
     | undefined;
   hasAvailabilitySubmission?: boolean;
+  /** システム一覧（シナリオ検索モーダル用） */
+  systems?: ScenarioSystem[];
 };
 
 export const SessionDetailContent = ({
@@ -33,6 +40,7 @@ export const SessionDetailContent = ({
   currentUserId,
   participantStatus,
   hasAvailabilitySubmission = false,
+  systems = [],
 }: SessionDetailContentProps) => {
   return (
     <div className={styles.pageContainer}>
@@ -62,6 +70,7 @@ export const SessionDetailContent = ({
             <BasicInfoSection
               session={session}
               showEditButton={userRole === 'manager'}
+              systems={systems}
             />
             <ParticipantsSection
               participants={session.participants}

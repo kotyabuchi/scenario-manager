@@ -421,6 +421,26 @@ export const info_scenarioSystemText = css({
   lineHeight: 'tight',
 });
 
+export const info_scenarioHeader = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '2',
+});
+
+export const info_scenarioActions = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  flexShrink: '0',
+});
+
+export const info_scenarioError = css({
+  fontSize: 'sm',
+  color: 'error.default',
+  mt: '2',
+});
+
 export const info_details = css({
   display: 'grid',
   gridTemplateColumns: { base: '[1fr]', sm: '[repeat(2, minmax(0, 1fr))]' },
