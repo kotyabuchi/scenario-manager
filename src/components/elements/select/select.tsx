@@ -134,7 +134,7 @@ export const Select = ({
     >
       <ArkSelect.HiddenSelect />
       <ArkSelect.Control>
-        <Trigger aria-label={ariaLabel}>
+        <Trigger aria-label={ariaLabel} data-multiple={multiple || undefined}>
           <ValueText placeholder={placeholder} />
           <Indicator>
             <CaretDown size={16} />
