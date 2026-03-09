@@ -10,15 +10,20 @@ import {
   updateSessionBasicInfo,
   updateSessionMemo,
   updateSessionPhase,
+  updateSessionScenario,
   upsertSessionLink,
 } from '../adapter';
 
 import {
   addParticipant,
+  cleanupScenarios,
   cleanupSessions,
+  cleanupSystems,
   cleanupUsers,
   createTestLink,
+  createTestScenario,
   createTestSession,
+  createTestSystem,
   createTestUser,
 } from '@/__tests__/helpers/fixtures';
 
@@ -666,6 +671,105 @@ describe('Session Detail Adapter', () => {
       );
 
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe('updateSessionScenario', () => {
+    let scenarioSessionId: string;
+    let systemId: string;
+    let scenarioId: string;
+
+    beforeAll(async () => {
+      // テスト用システム・シナリオ・セッションを作成
+      const system = await createTestSystem();
+      systemId = system.system_id;
+
+      const scenario = await createTestScenario({ systemId });
+      scenarioId = scenario.scenario_id;
+
+      const session = await createTestSession({ keeperUserId: userId });
+      scenarioSessionId = session.game_session_id;
+    });
+
+    afterAll(async () => {
+      await cleanupSessions([scenarioSessionId]);
+      await cleanupScenarios([scenarioId]);
+      await cleanupSystems([systemId]);
+    });
+
+    // T-SC-001: 正しいupdated_atでシナリオを設定できる
+    it('正しいupdated_atでシナリオを設定できる', async () => {
+      const detail = await getSessionDetail(scenarioSessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionScenario(
+        scenarioSessionId,
+        scenarioId,
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-SC-002: nullでシナリオを解除できる
+    it('nullでシナリオを解除できる', async () => {
+      const detail = await getSessionDetail(scenarioSessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionScenario(
+        scenarioSessionId,
+        null,
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(true);
+    });
+
+    // T-SC-003: 古いupdated_atでConflictエラーを返す
+    it('古いupdated_atでConflictエラーを返す', async () => {
+      const staleTimestamp = '2000-01-01T00:00:00.000Z';
+
+      const result = await updateSessionScenario(
+        scenarioSessionId,
+        scenarioId,
+        staleTimestamp,
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+
+    // T-SC-004: 存在しないsessionIdでConflictエラーを返す
+    it('存在しないsessionIdでConflictエラーを返す', async () => {
+      const result = await updateSessionScenario(
+        NON_EXISTENT_SESSION_ID,
+        scenarioId,
+        new Date().toISOString(),
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toBe('Conflict: session was modified');
+      }
+    });
+
+    // T-SC-005: 存在しないscenarioIdでFK違反エラーを返す
+    it('存在しないscenarioIdでFK違反エラーを返す', async () => {
+      const detail = await getSessionDetail(scenarioSessionId);
+      expect(detail.success).toBe(true);
+      if (!detail.success) return;
+
+      const result = await updateSessionScenario(
+        scenarioSessionId,
+        'non-existent-scenario-id-0000000',
+        detail.data.updatedAt,
+      );
+
+      expect(result.success).toBe(false);
     });
   });
 });

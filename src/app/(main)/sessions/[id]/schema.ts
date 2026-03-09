@@ -105,6 +105,14 @@ export const sessionBasicInfoSchema = z.object({
 /** セッション基本情報フォームの値型 */
 export type SessionBasicInfoValues = z.infer<typeof sessionBasicInfoSchema>;
 
+/** セッションシナリオ変更のバリデーションスキーマ */
+export const sessionScenarioSchema = z.object({
+  scenarioId: z.string().trim().min(1, 'シナリオIDが不正です').nullable(),
+});
+
+/** セッションシナリオ変更フォームの値型 */
+export type SessionScenarioValues = z.infer<typeof sessionScenarioSchema>;
+
 /** セッション完了のバリデーションスキーマ */
 export const completeSessionSchema = z.object({
   note: z

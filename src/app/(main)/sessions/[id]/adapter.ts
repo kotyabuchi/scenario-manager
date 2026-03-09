@@ -602,3 +602,37 @@ export const updateCharacterSheetUrl = async (
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
 };
+
+/**
+ * セッションのシナリオを更新する（楽観的ロック付き）
+ * scenarioId が null の場合はシナリオを解除する
+ */
+export const updateSessionScenario = async (
+  sessionId: string,
+  scenarioId: string | null,
+  expectedUpdatedAt: string,
+): Promise<Result<void>> => {
+  try {
+    const supabase = await createDbClient();
+    const { data: updatedSessions, error } = await supabase
+      .from('game_sessions')
+      .update({ scenario_id: scenarioId })
+      .eq('game_session_id', sessionId)
+      .eq('updated_at', expectedUpdatedAt)
+      .select('game_session_id');
+
+    if (error) {
+      logger.error`セッションシナリオ更新エラー: ${error.message}`;
+      return err(new Error(error.message));
+    }
+
+    if (!updatedSessions || updatedSessions.length === 0) {
+      return err(new Error('Conflict: session was modified'));
+    }
+
+    return ok(undefined);
+  } catch (e) {
+    logger.error`updateSessionScenario 予期しないエラー: ${e}`;
+    return err(e instanceof Error ? e : new Error('Unknown error'));
+  }
+};
