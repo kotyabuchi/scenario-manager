@@ -4,13 +4,15 @@ export default function ApplicationsLoading() {
   return (
     <div className={styles.approval_container}>
       <div
-        className={`${styles.loading_skeleton} ${styles.loading_backLink}`}
+        className={`${styles.loading_skeleton} ${styles.loading_breadcrumb}`}
       />
       <div className={`${styles.loading_skeleton} ${styles.loading_title}`} />
       <div
         className={`${styles.loading_skeleton} ${styles.loading_subtitle}`}
       />
-      <div className={`${styles.loading_skeleton} ${styles.loading_tabs}`} />
+      <div
+        className={`${styles.loading_skeleton} ${styles.loading_filterBar}`}
+      />
       <div className={styles.approval_grid}>
         {[1, 2, 3].map((i) => (
           <div key={i} className={styles.loading_cardSkeleton}>
@@ -23,6 +25,9 @@ export default function ApplicationsLoading() {
           </div>
         ))}
       </div>
+      <div
+        className={`${styles.loading_skeleton} ${styles.loading_pagination}`}
+      />
     </div>
   );
 }

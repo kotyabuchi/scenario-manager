@@ -397,6 +397,15 @@ export const card_errorMessage = css({
 });
 
 // ========================================
+// ページネーション
+// ========================================
+export const approval_pagination = css({
+  display: 'flex',
+  justifyContent: 'center',
+  mt: '8',
+});
+
+// ========================================
 // ローディングスケルトン
 // ========================================
 export const loading_skeleton = css({
@@ -405,9 +414,9 @@ export const loading_skeleton = css({
   animation: 'pulse',
 });
 
-export const loading_backLink = css({
+export const loading_breadcrumb = css({
   h: '4',
-  w: '[120px]',
+  w: '[280px]',
   mb: '4',
 });
 
@@ -423,10 +432,18 @@ export const loading_subtitle = css({
   mb: '6',
 });
 
-export const loading_tabs = css({
-  h: '10',
+export const loading_filterBar = css({
+  h: '14',
   w: 'full',
   mb: '6',
+  rounded: 'xl',
+});
+
+export const loading_pagination = css({
+  h: '10',
+  w: '[200px]',
+  mx: 'auto',
+  mt: '8',
 });
 
 export const loading_cardSkeleton = css({

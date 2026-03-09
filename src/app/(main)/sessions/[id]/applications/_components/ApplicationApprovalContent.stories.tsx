@@ -146,9 +146,9 @@ type Story = StoryObj<typeof meta>;
 // --- Stories ---
 
 /**
- * 全タブ表示のデフォルト状態。
+ * デフォルト状態。
  * PENDING 2件 + CONFIRMED 1件の合計3件。
- * フィルタータブ（すべて/承認待ち/承認済み）の切り替えを確認できる。
+ * フィルターバー（検索・ソート・フィルター）の動作を確認できる。
  */
 export const Default: Story = {
   args: {
@@ -179,7 +179,7 @@ export const Empty: Story = {
 /**
  * 全員承認済み状態。
  * PENDING 0件、CONFIRMED 2件。
- * 「承認待ち」タブに切り替えると「承認待ちの申請はありません」が表示される。
+ * フィルターで「承認待ち」を選択すると空状態が表示される。
  */
 export const AllConfirmed: Story = {
   args: {
@@ -217,6 +217,35 @@ export const WithMaxPlayer: Story = {
       pendingApplicationA,
       confirmedApplicationC,
       confirmedApplicationD,
+    ],
+  },
+};
+
+/**
+ * ページネーション表示（8件）。
+ * 1ページ6件で2ページに分割される。
+ */
+export const WithPagination: Story = {
+  args: {
+    sessionId: '01HSESSION0000000000000001',
+    sessionName: '深淵の呼び声 - 第1回セッション',
+    maxPlayer: 10,
+    applications: [
+      ...manyPendingApplications,
+      confirmedApplicationC,
+      confirmedApplicationD,
+      mockApplication({
+        userId: '01HUSER0000000000000000008',
+        applicationMessage: '新しいシステムに興味があります。',
+        appliedAt: '2026-02-14T09:00:00Z',
+        user: {
+          userId: '01HUSER0000000000000000008',
+          userName: 'watanabe_ken',
+          nickname: '渡辺ケン',
+          image: null,
+          bio: null,
+        },
+      }),
     ],
   },
 };
