@@ -185,6 +185,9 @@ export const card_root = css({
   gap: '4',
   transitionProperty: 'common',
   transitionDuration: 'fast',
+  borderLeftWidth: '[3px]',
+  borderLeftStyle: 'solid',
+  borderLeftColor: 'primary.default',
   _hover: {
     shadow: 'card.hover',
   },
@@ -203,27 +206,6 @@ export const card_userRow = css({
   gap: '3',
   flex: '1',
   minW: '0',
-});
-
-export const card_avatar = css({
-  w: '10',
-  h: '10',
-  borderRadius: 'full',
-  bg: 'avatar.bg',
-  objectFit: 'cover',
-  flexShrink: '0',
-});
-
-export const card_avatarInner = css({
-  w: '10',
-  h: '10',
-  borderRadius: 'full',
-  bg: 'avatar.bg',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: 'avatar.icon',
-  flexShrink: '0',
 });
 
 export const card_userInfo = css({
@@ -284,14 +266,45 @@ export const card_appliedAt = css({
   color: 'text.secondary',
 });
 
-export const card_message = css({
+export const card_divider = css({
+  border: 'none',
+  borderTopWidth: '[1px]',
+  borderTopStyle: 'solid',
+  borderTopColor: 'border.subtle',
+  my: '0',
+});
+
+export const card_statsRow = css({
+  display: 'flex',
+  gap: '4',
+  fontSize: 'xs',
+  color: 'text.secondary',
+});
+
+export const card_statItem = css({
+  cursor: 'help',
+});
+
+export const card_quoteMessage = css({
+  position: 'relative',
   fontSize: 'sm',
   color: 'text.body',
   lineHeight: 'relaxed',
   bg: 'bg.input',
   p: '3',
+  pl: '8',
   borderRadius: 'lg',
+  borderLeftWidth: '[3px]',
+  borderLeftStyle: 'solid',
+  borderLeftColor: 'primary.subtle',
   whiteSpace: 'pre-wrap',
+});
+
+export const card_quoteIcon = css({
+  position: 'absolute',
+  top: '3',
+  left: '2',
+  color: 'text.placeholder',
 });
 
 export const card_actions = css({

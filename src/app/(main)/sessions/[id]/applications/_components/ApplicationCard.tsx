@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Check, User, X } from '@phosphor-icons/react/ssr';
+import { Check, Quotes } from '@phosphor-icons/react/ssr';
 
 import { approveApplicationAction, rejectApplicationAction } from '../actions';
 import * as styles from '../styles';
+
+import { Avatar } from '@/components/elements/avatar';
 
 import type { ApplicationWithUser } from '../adapter';
 
@@ -101,21 +103,20 @@ export const ApplicationCard = ({
     });
   };
 
+  const displayName = application.user.nickname ?? application.user.userName;
+
   return (
     <article className={styles.card_root}>
       {/* ユーザー情報とタイプバッジ */}
       <div className={styles.card_header}>
         <div className={styles.card_userRow}>
-          {/* アバター */}
-          <div className={styles.card_avatarInner}>
-            <User size={20} aria-hidden="true" />
-          </div>
-
-          {/* ユーザー名・ニックネーム */}
+          <Avatar
+            {...(application.user.image ? { src: application.user.image } : {})}
+            alt={displayName}
+            size="md"
+          />
           <div className={styles.card_userInfo}>
-            <span className={styles.card_userName}>
-              {application.user.nickname ?? application.user.userName}
-            </span>
+            <span className={styles.card_userName}>{displayName}</span>
             {application.user.nickname && (
               <span className={styles.card_userNickname}>
                 @{application.user.userName}
@@ -137,9 +138,28 @@ export const ApplicationCard = ({
         </p>
       )}
 
-      {/* 申請メッセージ */}
+      {/* ユーザー統計 */}
+      <hr className={styles.card_divider} />
+      <div className={styles.card_statsRow}>
+        <span className={styles.card_statItem} title="今後対応予定">
+          セッション参加: <strong>-</strong>
+        </span>
+        <span className={styles.card_statItem} title="今後対応予定">
+          GM経験: <strong>-</strong>
+        </span>
+      </div>
+
+      {/* 申請メッセージ（引用ブロック風） */}
       {application.applicationMessage && (
-        <p className={styles.card_message}>{application.applicationMessage}</p>
+        <div className={styles.card_quoteMessage}>
+          <Quotes
+            size={16}
+            weight="fill"
+            aria-hidden="true"
+            className={styles.card_quoteIcon}
+          />
+          <p>{application.applicationMessage}</p>
+        </div>
       )}
 
       {/* アクション */}
@@ -147,23 +167,22 @@ export const ApplicationCard = ({
         <div className={styles.card_actions}>
           <button
             type="button"
-            className={styles.card_approveButton}
-            onClick={handleApprove}
-            disabled={isPending}
-            aria-label={`${application.user.nickname ?? application.user.userName}の申請を承認する`}
-          >
-            <Check size={16} aria-hidden="true" />
-            承認
-          </button>
-          <button
-            type="button"
             className={styles.card_rejectButton}
             onClick={handleReject}
             disabled={isPending}
-            aria-label={`${application.user.nickname ?? application.user.userName}の申請を拒否する`}
+            aria-label={`${displayName}の申請を拒否する`}
           >
-            <X size={16} aria-hidden="true" />
-            拒否
+            拒否する
+          </button>
+          <button
+            type="button"
+            className={styles.card_approveButton}
+            onClick={handleApprove}
+            disabled={isPending}
+            aria-label={`${displayName}の申請を承認する`}
+          >
+            <Check size={16} aria-hidden="true" />
+            承認する
           </button>
         </div>
       ) : currentStatus === 'CONFIRMED' ? (
