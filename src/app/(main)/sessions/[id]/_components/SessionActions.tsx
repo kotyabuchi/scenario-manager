@@ -28,11 +28,11 @@ import { WithdrawDialog } from './WithdrawDialog';
 
 import { Button } from '@/components/elements/button/button';
 import { IconButton } from '@/components/elements/icon-button/icon-button';
+import { LinkButton } from '@/components/elements/link-button';
 import { Menu } from '@/components/elements/menu/menu';
 import { ParticipantStatuses, SchedulePhases } from '@/db/enum';
 import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 
-import type { Route } from 'next';
 import type { SessionDetail, UserRole } from '../../interface';
 import type { SessionActionDescriptor } from './sessionActionsModel';
 
@@ -107,7 +107,7 @@ export const SessionActions = ({
 
   const handleActionSelect = (action: SessionActionDescriptor) => {
     if (action.type === 'link' && action.href) {
-      router.push(action.href as Route);
+      router.push(action.href);
       return;
     }
 
@@ -141,6 +141,33 @@ export const SessionActions = ({
   };
 
   const renderActionButton = (action: SessionActionDescriptor) => {
+    if (action.type === 'link' && action.href) {
+      return (
+        <LinkButton
+          key={action.id}
+          href={action.href}
+          size="sm"
+          variant={action.variant === 'primary' ? 'solid' : 'outline'}
+          status={action.variant === 'danger' ? 'danger' : 'primary'}
+          aria-disabled={isPhaseUpdatePending || undefined}
+          tabIndex={isPhaseUpdatePending ? -1 : undefined}
+          onClick={
+            isPhaseUpdatePending
+              ? (e: React.MouseEvent) => e.preventDefault()
+              : undefined
+          }
+          css={
+            isPhaseUpdatePending
+              ? { pointerEvents: 'none', opacity: 0.5, cursor: 'not-allowed' }
+              : undefined
+          }
+        >
+          {renderActionIcon(action)}
+          {action.label}
+        </LinkButton>
+      );
+    }
+
     const isPhaseAction = action.type === 'phase';
 
     return (

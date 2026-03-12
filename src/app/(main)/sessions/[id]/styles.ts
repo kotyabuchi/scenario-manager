@@ -954,6 +954,28 @@ export const basicInfoEdit_switchRow = css({
   gap: '3',
 });
 
+export const basicInfoEdit_scenarioField = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+});
+
+export const basicInfoEdit_scenarioValue = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '2',
+});
+
+export const basicInfoEdit_scenarioActions = css({
+  display: 'flex',
+  gap: '1',
+});
+
+export const basicInfoEdit_narrowNumber = css({
+  maxW: '[120px]',
+});
+
 // ========================================
 // 会場・ツール（サイドバー）
 // ========================================

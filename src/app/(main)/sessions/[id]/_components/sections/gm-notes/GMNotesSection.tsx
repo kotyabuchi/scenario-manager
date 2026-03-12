@@ -3,7 +3,7 @@
 import { useOptimistic, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Notepad, PencilSimple, X } from '@phosphor-icons/react/ssr';
+import { Notepad, PencilSimple } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import { updateMemoAction } from '../../../actions';
@@ -129,7 +129,6 @@ export const GMNotesSection = ({
               size="sm"
               disabled={isPending}
               onClick={handleCancel}
-              prefix={<X size={14} />}
             >
               キャンセル
             </Button>

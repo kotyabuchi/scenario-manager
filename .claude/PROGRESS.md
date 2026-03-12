@@ -133,11 +133,13 @@
 | withdrawFromSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
 | cancelApplication | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
 | cancelSession | ✅ | ✅ | ✅ | ✅ | ⬜ | Green（実装済） |
+| updateSessionScenario | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（adapter+action+UI） |
 
 **テストファイル**:
 - `src/app/(main)/sessions/new/__tests__/schema.test.ts`
 - `src/app/(main)/sessions/new/__tests__/adapter.test.ts`
 - `src/app/(main)/sessions/__tests__/participantAdapter.test.ts`
+- `src/app/(main)/sessions/[id]/__tests__/adapter.test.ts`
 
 **実装ファイル**:
 - `src/app/(main)/sessions/new/adapter.ts` - セッション作成・取得
@@ -508,6 +510,7 @@
 | 2026-01-27 | Server Action統合: 重複チェック・レートリミットをcreateScenarioActionに組み込み |
 | 2026-01-27 | フロントエンド改善: useSystemMessageでエラー・成功メッセージ表示 |
 | 2026-02-23 | PROGRESS全規模監査実施、テスト状態の細分化（✅/🔸/⬜）、計画書進捗セクション追加 |
+| 2026-03-10 | セッションシナリオ変更機能 完了（adapter/action/schema/UI + テスト5件） |
 
 ---
 
@@ -533,6 +536,7 @@
 | 2 | キャラクターシート編集 | ParticipantCardにCS URL編集UIを追加 | ✅ |
 | 3 | GMメモ インライン編集 | GMNotesSectionにインライン編集UIを追加 | ✅ |
 | 4 | 基本情報編集 | BasicInfoSectionの編集フォーム（adapter/action/schemaも必要） | ✅ |
+| 5 | シナリオ変更 | BasicInfoSectionのシナリオ変更/解除UI（adapter/action/schema + フェーズガード） | ✅ |
 
 ### 優先度D: 未完了タスク
 1. シナリオ編集画面

@@ -366,6 +366,7 @@ export const updateSessionBasicInfo = async (
     sessionDescription: string;
     maxParticipantCount: number;
     isBeginnerFriendly: boolean;
+    scenarioId: string | null;
   },
   expectedUpdatedAt: string,
 ): Promise<Result<void>> => {
@@ -432,12 +433,17 @@ export const updateSessionBasicInfo = async (
         max_participant_count: data.maxParticipantCount,
         remaining_seat_count: newRemaining,
         is_beginner_friendly: data.isBeginnerFriendly,
+        scenario_id: data.scenarioId,
       })
       .eq('game_session_id', sessionId)
       .eq('updated_at', expectedUpdatedAt)
       .select('game_session_id');
 
     if (error) {
+      // FK違反（存在しないシナリオID）: PostgreSQL error code 23503
+      if (error.code === '23503') {
+        return err(new Error('指定されたシナリオが見つかりません'));
+      }
       logger.error`基本情報更新エラー: ${error.message}`;
       return err(new Error(error.message));
     }
@@ -599,40 +605,6 @@ export const updateCharacterSheetUrl = async (
     return ok(undefined);
   } catch (e) {
     logger.error`updateCharacterSheetUrl 予期しないエラー: ${e}`;
-    return err(e instanceof Error ? e : new Error('Unknown error'));
-  }
-};
-
-/**
- * セッションのシナリオを更新する（楽観的ロック付き）
- * scenarioId が null の場合はシナリオを解除する
- */
-export const updateSessionScenario = async (
-  sessionId: string,
-  scenarioId: string | null,
-  expectedUpdatedAt: string,
-): Promise<Result<void>> => {
-  try {
-    const supabase = await createDbClient();
-    const { data: updatedSessions, error } = await supabase
-      .from('game_sessions')
-      .update({ scenario_id: scenarioId })
-      .eq('game_session_id', sessionId)
-      .eq('updated_at', expectedUpdatedAt)
-      .select('game_session_id');
-
-    if (error) {
-      logger.error`セッションシナリオ更新エラー: ${error.message}`;
-      return err(new Error(error.message));
-    }
-
-    if (!updatedSessions || updatedSessions.length === 0) {
-      return err(new Error('Conflict: session was modified'));
-    }
-
-    return ok(undefined);
-  } catch (e) {
-    logger.error`updateSessionScenario 予期しないエラー: ${e}`;
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
 };

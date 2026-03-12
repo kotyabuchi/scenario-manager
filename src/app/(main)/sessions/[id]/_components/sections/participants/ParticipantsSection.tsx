@@ -1,9 +1,9 @@
 import { UsersThreeIcon } from '@phosphor-icons/react/ssr';
-import Link from 'next/link';
 
 import * as styles from '../../../styles';
 import { ParticipantCard } from './ParticipantCard';
 
+import { LinkButton } from '@/components/elements/link-button';
 import { SessionPhases } from '@/db/enum';
 
 import type { ParticipantWithUser, UserRole } from '../../../../interface';
@@ -66,12 +66,14 @@ export const ParticipantsSection = ({
           {userRole === 'manager' &&
             (sessionPhase === SessionPhases.RECRUITING.value ||
               sessionPhase === SessionPhases.PREPARATION.value) && (
-              <Link
+              <LinkButton
                 href={`/sessions/${sessionId}/applications`}
-                className={styles.editButton}
+                variant="outline"
+                status="primary"
+                size="sm"
               >
                 申請管理
-              </Link>
+              </LinkButton>
             )}
           <span className={styles.participants_count}>{countLabel}</span>
         </div>

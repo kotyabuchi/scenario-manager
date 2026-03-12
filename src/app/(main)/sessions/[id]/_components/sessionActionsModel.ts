@@ -1,5 +1,6 @@
 import { SchedulePhases, SessionPhases } from '@/db/enum';
 
+import type { Route } from 'next';
 import type { UserRole } from '../../interface';
 
 type SessionActionPlacement = 'primary' | 'secondary' | 'menu';
@@ -26,7 +27,7 @@ type SessionActionDescriptor = {
     | 'cancelApplication'
     | 'cancelSession'
     | 'complete';
-  href?: string;
+  href?: Route<string>;
   nextPhase?: 'PREPARATION';
 };
 
@@ -65,7 +66,7 @@ const getManagerActions = (
       label: '申請管理',
       icon: 'users',
       variant: 'secondary',
-      href: `/sessions/${sessionId}/applications`,
+      href: `/sessions/${sessionId}/applications` as Route,
     });
     actions.push({
       id: 'schedule',
@@ -74,7 +75,7 @@ const getManagerActions = (
       label: availabilityActionLabel,
       icon: 'calendar',
       variant: 'secondary',
-      href: `/sessions/${sessionId}/schedule/availability`,
+      href: `/sessions/${sessionId}/schedule/availability` as Route,
     });
   }
 
@@ -87,7 +88,7 @@ const getManagerActions = (
         label: '日程を確定する',
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/schedule/confirm`,
+        href: `/sessions/${sessionId}/schedule/confirm` as Route,
       });
     } else {
       actions.push({
@@ -97,7 +98,7 @@ const getManagerActions = (
         label: '確定日程を編集',
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/schedule/confirm`,
+        href: `/sessions/${sessionId}/schedule/confirm` as Route,
       });
     }
 
@@ -108,7 +109,7 @@ const getManagerActions = (
       label: '申請管理',
       icon: 'users',
       variant: 'secondary',
-      href: `/sessions/${sessionId}/applications`,
+      href: `/sessions/${sessionId}/applications` as Route,
     });
 
     if (schedulePhase === SchedulePhases.ADJUSTING.value) {
@@ -119,7 +120,7 @@ const getManagerActions = (
         label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'secondary',
-        href: `/sessions/${sessionId}/schedule/availability`,
+        href: `/sessions/${sessionId}/schedule/availability` as Route,
       });
     }
   }
@@ -185,7 +186,7 @@ const getParticipantActions = (
         label: availabilityActionLabel,
         icon: 'calendar',
         variant: 'primary',
-        href: `/sessions/${sessionId}/schedule/availability`,
+        href: `/sessions/${sessionId}/schedule/availability` as Route,
       });
     }
 

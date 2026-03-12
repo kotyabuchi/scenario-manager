@@ -19,7 +19,6 @@ import {
   updateSessionBasicInfo,
   updateSessionMemo,
   updateSessionPhase,
-  updateSessionScenario,
   upsertSessionLink,
 } from './adapter';
 import {
@@ -31,7 +30,6 @@ import {
   sessionBasicInfoSchema,
   sessionLinkSchema,
   sessionMemoSchema,
-  sessionScenarioSchema,
   withdrawSchema,
 } from './schema';
 
@@ -102,6 +100,37 @@ export const updateBasicInfoAction = async (
       return err(
         new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
       );
+    }
+
+    // scenarioId が変更された場合のみフェーズガードを実行
+    const dbClient = await createDbClient();
+    const { data: currentSession, error: fetchError } = await dbClient
+      .from('game_sessions')
+      .select('scenario_id')
+      .eq('game_session_id', sessionId)
+      .maybeSingle();
+
+    if (fetchError) {
+      logger.error`セッション取得エラー: ${fetchError.message}`;
+      return err(new Error(fetchError.message));
+    }
+
+    if (isNil(currentSession)) {
+      return err(new Error('セッションが見つかりません'));
+    }
+
+    const scenarioChanged =
+      currentSession.scenario_id !== parsed.data.scenarioId;
+    if (scenarioChanged) {
+      const phaseResult = await getSessionPhase(sessionId);
+      if (!phaseResult.success) {
+        return err(new Error('セッションが見つかりません'));
+      }
+
+      const allowedPhases: readonly string[] = ['RECRUITING', 'PREPARATION'];
+      if (!allowedPhases.includes(phaseResult.data)) {
+        return err(new Error('このフェーズではシナリオを変更できません'));
+      }
     }
 
     const result = await updateSessionBasicInfo(
@@ -356,68 +385,6 @@ export const withdrawFromSessionAction = async (
     );
     if (!result.success) {
       logger.error`辞退処理エラー: ${result.error}`;
-      return err(result.error);
-    }
-
-    revalidatePath(`/sessions/${sessionId}`);
-    return ok(undefined);
-  } catch (e) {
-    return err(e instanceof Error ? e : new Error('Unknown error'));
-  }
-};
-
-/**
- * セッションのシナリオを変更する
- * scenarioId が null の場合はシナリオを解除する
- */
-export const updateScenarioAction = async (
-  sessionId: string,
-  expectedUpdatedAt: string,
-  scenarioId: string | null,
-): Promise<Result<void>> => {
-  try {
-    // 認可チェック
-    const userId = await getCurrentUserId();
-    if (isNil(userId)) {
-      return err(new Error('ログインが必要です'));
-    }
-
-    const hasPermission = await isSessionManager(sessionId, userId);
-    if (!hasPermission) {
-      return err(new Error('この操作を行う権限がありません'));
-    }
-
-    // フェーズガード
-    const phaseResult = await getSessionPhase(sessionId);
-    if (!phaseResult.success) {
-      return err(new Error('セッションが見つかりません'));
-    }
-
-    const allowedPhases: readonly string[] = ['RECRUITING', 'PREPARATION'];
-    if (!allowedPhases.includes(phaseResult.data)) {
-      return err(new Error('このフェーズではシナリオを変更できません'));
-    }
-
-    // Zodバリデーション
-    const parsed = sessionScenarioSchema.safeParse({ scenarioId });
-    if (!parsed.success) {
-      return err(
-        new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
-      );
-    }
-
-    // シナリオ更新
-    const result = await updateSessionScenario(
-      sessionId,
-      parsed.data.scenarioId,
-      expectedUpdatedAt,
-    );
-    if (!result.success) {
-      // FK違反の場合はユーザー向けメッセージに変換
-      if (result.error.message.includes('foreign key')) {
-        return err(new Error('指定されたシナリオが見つかりません'));
-      }
-      logger.error`セッションシナリオ更新エラー: ${result.error}`;
       return err(result.error);
     }
 
