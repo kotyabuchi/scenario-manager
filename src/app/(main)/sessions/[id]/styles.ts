@@ -948,10 +948,11 @@ export const basicInfoEdit_actions = css({
 });
 
 export const basicInfoEdit_switchRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '3',
+  '& > label': {
+    w: 'full',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+  },
 });
 
 export const basicInfoEdit_scenarioField = css({

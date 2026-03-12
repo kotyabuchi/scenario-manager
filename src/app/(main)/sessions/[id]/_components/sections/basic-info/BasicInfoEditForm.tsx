@@ -208,7 +208,6 @@ export const BasicInfoEditForm = ({
       </FormField>
 
       <div className={styles.basicInfoEdit_switchRow}>
-        <span>初心者歓迎</span>
         <Controller
           name="isBeginnerFriendly"
           control={control}
@@ -216,8 +215,9 @@ export const BasicInfoEditForm = ({
             <Switch
               checked={field.value}
               onCheckedChange={(d) => field.onChange(d.checked)}
-              ariaLabel="初心者歓迎"
-            />
+            >
+              初心者歓迎
+            </Switch>
           )}
         />
       </div>

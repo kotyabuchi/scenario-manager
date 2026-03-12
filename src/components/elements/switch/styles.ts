@@ -35,10 +35,10 @@ export const switchControl = css({
  */
 export const switchThumb = css({
   position: 'absolute',
-  top: '[2px]',
-  left: '[2px]',
-  w: '5',
-  h: '5',
+  top: '[3px]',
+  left: '[3px]',
+  w: '[18px]',
+  h: '[18px]',
   borderRadius: '[10px]',
   bg: 'white',
   boxShadow: '[0 1px 2px rgba(0, 0, 0, 0.12)]',
@@ -54,7 +54,9 @@ export const switchThumb = css({
  */
 export const switchLabel = css({
   fontSize: '[14px]',
-  color: 'gray.700',
+  fontWeight: 'medium',
+  color: 'input.label',
+  letterSpacing: '[0.01em]',
   _disabled: {
     color: 'gray.400',
   },
