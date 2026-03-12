@@ -9,7 +9,7 @@ import { defineRecipe } from '@pandacss/dev';
  */
 export const button = defineRecipe({
   className: 'button',
-  jsx: ['Button', 'IconButton', 'SubmitButton'],
+  jsx: ['Button', 'IconButton', 'LinkButton', 'SubmitButton'],
   base: {
     alignItems: 'center',
     appearance: 'none',
