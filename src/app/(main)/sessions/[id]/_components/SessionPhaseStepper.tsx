@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import {
   CheckCircleIcon,
   MegaphoneIcon,
@@ -90,6 +93,14 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
   const currentIndex = FLOW_STEPS.findIndex((step) => step.value === phase);
   const isCancelled = phase === SessionPhases.CANCELLED.value;
   const currentLabel = getPhaseLabel(phase);
+  const currentStepRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    currentStepRef.current?.scrollIntoView({
+      inline: 'center',
+      block: 'nearest',
+    });
+  }, []);
 
   return (
     <section
@@ -119,7 +130,11 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
             const isConnectorDone = !isCancelled && currentIndex >= index + 1;
 
             return (
-              <li key={step.value} className={styles.phaseOverview_trackItem}>
+              <li
+                key={step.value}
+                ref={isCurrent ? currentStepRef : undefined}
+                className={styles.phaseOverview_trackItem}
+              >
                 {index < FLOW_STEPS.length - 1 && (
                   <div
                     aria-hidden="true"
