@@ -25,17 +25,18 @@ export const positioner = css({
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 'modal',
-  p: '4',
+  p: { base: '2', md: '4' },
 });
 
 export const content = cva({
   base: {
     bg: 'dialog.bg',
-    borderRadius: 'xl',
+    borderRadius: { base: 'lg', md: 'xl' },
     boxShadow: 'dialog.default',
     w: 'full',
-    maxH: '[90vh]',
-    overflow: 'auto',
+    maxH: { base: '[95vh]', md: '[90vh]' },
+    overflowX: 'hidden',
+    overflowY: 'auto',
     _open: {
       animation: '[slideInUp var(--durations-normal) ease-out]',
     },
@@ -59,7 +60,7 @@ export const header = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  p: '6',
+  p: { base: '4', md: '6' },
 });
 
 export const title = css({
@@ -90,7 +91,7 @@ export const closeButton = css({
 });
 
 export const body = css({
-  p: '6',
+  p: { base: '4', md: '6' },
   color: 'dialog.content',
 });
 
@@ -98,7 +99,7 @@ export const footer = css({
   display: 'flex',
   justifyContent: 'flex-end',
   gap: '2',
-  p: '6',
+  p: { base: '4', md: '6' },
 });
 
 export const divider = css({
@@ -112,9 +113,9 @@ export const headerDanger = css({
   display: 'flex',
   alignItems: 'center',
   gap: '3',
-  p: '6',
+  p: { base: '4', md: '6' },
   bg: 'error.default',
-  borderTopRadius: 'xl',
+  borderTopRadius: { base: 'lg', md: 'xl' },
 });
 
 export const titleDanger = css({
