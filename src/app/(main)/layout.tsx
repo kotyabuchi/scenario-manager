@@ -5,6 +5,7 @@ import { GlobalHeader } from '@/components/blocks/GlobalHeader';
 import { SimpleFooter } from '@/components/blocks/SimpleFooter';
 import { SpeedDialFAB } from '@/components/blocks/SpeedDialFAB';
 import { AuthProvider } from '@/context';
+import { BottomNavSlotProvider } from '@/hooks/useBottomNavSlot';
 import { getDiscordAccountIdFromAuthUser } from '@/lib/supabase/discordAuth';
 import { createClient } from '@/lib/supabase/server';
 import { Flex, styled } from '@/styled-system/jsx';
@@ -55,19 +56,21 @@ export default async function MainLayout({ children }: PropsWithChildren) {
         initialUser={initialUser}
         initialDiscordMeta={initialDiscordMeta}
       >
-        <GlobalHeader />
-        <styled.main
-          flex="1"
-          display="flex"
-          flexDirection="column"
-          pb={{ base: '20', md: '0' }}
-        >
-          {children}
-        </styled.main>
-        <SimpleFooter />
-        <BottomNav isAuthenticated={!!initialUser} />
-        <SpeedDialFAB isAuthenticated={!!initialUser} />
-        <SignupModalWrapper />
+        <BottomNavSlotProvider>
+          <GlobalHeader />
+          <styled.main
+            flex="1"
+            display="flex"
+            flexDirection="column"
+            pb={{ base: '20', md: '0' }}
+          >
+            {children}
+          </styled.main>
+          <SimpleFooter />
+          <BottomNav isAuthenticated={!!initialUser} />
+          <SpeedDialFAB isAuthenticated={!!initialUser} />
+          <SignupModalWrapper />
+        </BottomNavSlotProvider>
       </AuthProvider>
     </Flex>
   );

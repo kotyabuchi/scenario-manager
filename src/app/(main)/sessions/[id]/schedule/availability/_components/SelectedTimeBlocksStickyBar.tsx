@@ -8,6 +8,7 @@ import {
 } from './timeBlockPresentation';
 
 import { Button } from '@/components/elements/button/button';
+import { BottomNavSlotPortal } from '@/hooks/useBottomNavSlot';
 
 import type { AvailabilityTimeBlockInput } from '../interface';
 
@@ -36,59 +37,61 @@ export const SelectedTimeBlocksStickyBar = ({
   const progressStatus = getProgressStatus(totalMinutes, minPlaytimeMinutes);
 
   return (
-    <div className={styles.stickyBar}>
-      <div className={styles.stickyBarInner}>
-        <div className={styles.stickySummaryRow}>
-          <div className={styles.stickySummaryText} aria-live="polite">
-            <span className={styles.stickySummaryStrong}>
-              {timeBlocks.length}件 / 合計 {formatMinutesLabel(totalMinutes)}
-            </span>
-            <span>
+    <BottomNavSlotPortal>
+      <div className={styles.stickyBar}>
+        <div className={styles.stickyBarInner}>
+          <div className={styles.stickySummaryRow}>
+            <div className={styles.stickySummaryText} aria-live="polite">
+              <span className={styles.stickySummaryStrong}>
+                {timeBlocks.length}件 / 合計 {formatMinutesLabel(totalMinutes)}
+              </span>
+              <span>
+                {minPlaytimeMinutes === null
+                  ? '最低プレイ時間は未設定です'
+                  : `最低 ${formatMinutesLabel(minPlaytimeMinutes)} ${
+                      totalMinutes >= minPlaytimeMinutes ? '達成' : '未達成'
+                    }`}
+              </span>
+            </div>
+            <span className={styles.progressBadge({ status: progressStatus })}>
               {minPlaytimeMinutes === null
-                ? '最低プレイ時間は未設定です'
-                : `最低 ${formatMinutesLabel(minPlaytimeMinutes)} ${
-                    totalMinutes >= minPlaytimeMinutes ? '達成' : '未達成'
-                  }`}
+                ? '未設定'
+                : totalMinutes >= minPlaytimeMinutes
+                  ? 'OK'
+                  : '不足'}
             </span>
           </div>
-          <span className={styles.progressBadge({ status: progressStatus })}>
-            {minPlaytimeMinutes === null
-              ? '未設定'
-              : totalMinutes >= minPlaytimeMinutes
-                ? 'OK'
-                : '不足'}
-          </span>
-        </div>
 
-        <div className={styles.stickyActions}>
-          {sidebarToggleLabel ? (
+          <div className={styles.stickyActions}>
+            {sidebarToggleLabel ? (
+              <Button
+                type="button"
+                variant="outline"
+                status="primary"
+                onClick={onToggleSidebar}
+                aria-expanded={sidebarOpen}
+                size="sm"
+              >
+                {sidebarOpen
+                  ? `${sidebarToggleLabel}を閉じる`
+                  : sidebarToggleLabel}
+              </Button>
+            ) : (
+              <div />
+            )}
+
             <Button
               type="button"
-              variant="outline"
               status="primary"
-              onClick={onToggleSidebar}
-              aria-expanded={sidebarOpen}
+              onClick={onPrimaryAction}
+              disabled={primaryDisabled}
               size="sm"
             >
-              {sidebarOpen
-                ? `${sidebarToggleLabel}を閉じる`
-                : sidebarToggleLabel}
+              {primaryActionLabel}
             </Button>
-          ) : (
-            <div />
-          )}
-
-          <Button
-            type="button"
-            status="primary"
-            onClick={onPrimaryAction}
-            disabled={primaryDisabled}
-            size="sm"
-          >
-            {primaryActionLabel}
-          </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </BottomNavSlotPortal>
   );
 };

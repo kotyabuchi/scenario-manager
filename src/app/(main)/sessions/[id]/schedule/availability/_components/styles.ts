@@ -342,17 +342,9 @@ export const miniButton = css({
 });
 
 export const stickyBar = css({
-  position: 'fixed',
-  left: '0',
-  right: '0',
-  bottom: '0',
-  zIndex: 'sticky',
   p: '3',
   bg: '[linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.92) 18%, rgba(255,255,255,1) 42%)]',
   backdropFilter: '[blur(8px)]',
-  md: {
-    display: 'none',
-  },
 });
 
 export const stickyBarInner = css({

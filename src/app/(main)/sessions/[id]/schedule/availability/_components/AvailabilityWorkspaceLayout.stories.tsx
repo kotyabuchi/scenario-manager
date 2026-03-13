@@ -6,6 +6,8 @@ import { SelectedTimeBlocksPanel } from './SelectedTimeBlocksPanel';
 import { SelectedTimeBlocksStickyBar } from './SelectedTimeBlocksStickyBar';
 import * as styles from './styles';
 
+import { BottomNavSlotProvider } from '@/hooks/useBottomNavSlot';
+
 import type { Meta, StoryObj } from '@storybook/react';
 import type {
   AvailabilityTimeBlockInput,
@@ -68,17 +70,19 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div
-        style={{
-          minHeight: '100vh',
-          padding: 24,
-          background: '#f4f7f9',
-        }}
-      >
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <Story />
+      <BottomNavSlotProvider>
+        <div
+          style={{
+            minHeight: '100vh',
+            padding: 24,
+            background: '#f4f7f9',
+          }}
+        >
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <Story />
+          </div>
         </div>
-      </div>
+      </BottomNavSlotProvider>
     ),
   ],
 } satisfies Meta<typeof AvailabilityWorkspaceLayout>;
