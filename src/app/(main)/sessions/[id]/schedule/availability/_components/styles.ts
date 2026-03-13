@@ -591,6 +591,18 @@ export const tagBadge = cva({
   },
 });
 
+export const sourceBreakdown = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '3',
+  px: '1',
+});
+
+export const sourceBreakdownItem = css({
+  fontSize: 'xs',
+  color: 'gray.600',
+});
+
 export const recommendationGroup = css({
   display: 'grid',
   gap: '2',

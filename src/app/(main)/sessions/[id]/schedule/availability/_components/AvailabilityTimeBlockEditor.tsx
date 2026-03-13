@@ -142,6 +142,7 @@ export const AvailabilityTimeBlockEditor = ({
             type="button"
             status="primary"
             size="sm"
+            css={{ h: '[41px]', px: '[24px]', py: '[8px]' }}
             onClick={handleAdd}
             disabled={disabled}
           >
