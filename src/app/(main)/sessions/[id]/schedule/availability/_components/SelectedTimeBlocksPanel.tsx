@@ -25,7 +25,7 @@ export const SelectedTimeBlocksPanel = ({
   timeBlocks,
   minPlaytimeMinutes,
   title = '選択中の日程',
-  emptyMessage = 'スケジュールがまだ選択されていません。',
+  emptyMessage = '日程がまだ選択されていません。',
   onRemoveTimeBlock,
   readOnly = false,
 }: SelectedTimeBlocksPanelProps) => {

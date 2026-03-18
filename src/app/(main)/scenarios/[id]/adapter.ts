@@ -133,7 +133,7 @@ export const getScenarioSessions = async (
   try {
     const supabase = await createDbClient();
 
-    // 完了済みセッションを取得（スケジュール情報付き）
+    // 完了済みセッションを取得（日程情報付き）
     const { data: sessionsData, error } = await supabase
       .from('game_sessions')
       .select(`

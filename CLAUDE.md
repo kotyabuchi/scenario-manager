@@ -88,6 +88,7 @@ src/
 | `agent-strategy.md` | サブエージェント活用、プロセス管理 |
 | `tdd-workflow.md` | TDD開発フロー、スキル一覧 |
 | `bash-rules.md` | Bashコマンド実行ルール |
+| `terminology.md` | UI用語の使い分け（スケジュール/日程） |
 
 すべてのルールファイルは `.claude/rules/` に配置。
 

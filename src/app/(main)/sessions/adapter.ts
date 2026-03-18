@@ -500,7 +500,7 @@ export const getCalendarSessions = async (
     const startDate = new Date(year, month - 1, 1).toISOString();
     const endDate = new Date(year, month, 0, 23, 59, 59, 999).toISOString();
 
-    // スケジュール確定済みセッション
+    // 日程確定済みセッション
     const { data: scheduledSessions } = await supabase
       .from('game_sessions')
       .select(`

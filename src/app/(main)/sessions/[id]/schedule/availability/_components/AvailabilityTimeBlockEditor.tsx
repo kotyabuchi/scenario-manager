@@ -16,6 +16,7 @@ type AvailabilityTimeBlockEditorProps = {
     timeBlock: AvailabilityTimeBlockInput,
   ) => { ok: true } | { ok: false; message: string };
   disabled?: boolean;
+  title?: string;
 };
 
 const toLocalDateTimeValue = (date: Date): string =>
@@ -49,6 +50,7 @@ export const AvailabilityTimeBlockEditor = ({
   selectedDate,
   onAddTimeBlock,
   disabled = false,
+  title = 'スケジュールを追加',
 }: AvailabilityTimeBlockEditorProps) => {
   const [startValue, setStartValue] = useState<string>('');
   const [endValue, setEndValue] = useState<string>('');
@@ -107,7 +109,7 @@ export const AvailabilityTimeBlockEditor = ({
           id="availability-time-block-editor-title"
           className={styles.sectionTitle}
         >
-          スケジュールを追加
+          {title}
         </h3>
         <p className={styles.helperText}>30分単位 / 日跨ぎ可</p>
       </div>

@@ -322,6 +322,7 @@ export const ConfirmAvailabilityWorkspace = ({
               selectedDate={selectedDate}
               onAddTimeBlock={addTimeBlock}
               disabled={isPending}
+              title="日程を追加"
             />
             {message ? (
               <p className={styles.messageBox({ tone: message.tone })}>
