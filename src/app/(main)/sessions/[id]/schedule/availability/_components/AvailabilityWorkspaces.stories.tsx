@@ -3,11 +3,22 @@ import { useMemo } from 'react';
 import { ConfirmAvailabilityWorkspace } from './ConfirmAvailabilityWorkspace';
 import { SubmitAvailabilityWorkspace } from './SubmitAvailabilityWorkspace';
 
+import {
+  BottomNavSlotProvider,
+  useBottomNavSlotTarget,
+} from '@/hooks/useBottomNavSlot';
+
 import type { Meta, StoryObj } from '@storybook/react';
 import type {
   AvailabilityWorkspaceData,
   RecommendationGroup,
 } from '../interface';
+
+/** Storybook/テスト用: BottomNavSlotPortal の描画先を提供する */
+const BottomNavSlotTargetStub = () => {
+  const ref = useBottomNavSlotTarget();
+  return <div ref={ref} />;
+};
 
 const makeIso = (
   year: number,
@@ -190,17 +201,20 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div
-        style={{
-          minHeight: '100vh',
-          padding: 24,
-          background: '#eef2f5',
-        }}
-      >
-        <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-          <Story />
+      <BottomNavSlotProvider>
+        <div
+          style={{
+            minHeight: '100vh',
+            padding: 24,
+            background: '#eef2f5',
+          }}
+        >
+          <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+            <Story />
+          </div>
         </div>
-      </div>
+        <BottomNavSlotTargetStub />
+      </BottomNavSlotProvider>
     ),
   ],
 } satisfies Meta;
