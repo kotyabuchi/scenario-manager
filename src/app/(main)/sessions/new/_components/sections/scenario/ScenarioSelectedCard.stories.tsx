@@ -5,7 +5,7 @@ import { ScenarioSelectedCard } from './ScenarioSelectedCard';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/ScenarioSelectedCard',
+  title: 'Sessions/作成フォーム/ScenarioSelectedCard',
   component: ScenarioSelectedCard,
   tags: ['autodocs'],
   parameters: {

@@ -51,7 +51,7 @@ const createParticipant = (
 };
 
 const meta = {
-  title: 'Pages/Sessions/ParticipantCard',
+  title: 'Sessions/詳細/ParticipantCard',
   component: ParticipantCard,
   tags: ['autodocs'],
   parameters: {

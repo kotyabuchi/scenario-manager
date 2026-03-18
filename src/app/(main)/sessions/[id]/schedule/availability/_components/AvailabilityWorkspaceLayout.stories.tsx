@@ -62,7 +62,7 @@ const sidebarContent = (title: string) => (
 );
 
 const meta = {
-  title: 'Sessions/AvailabilityWorkspaceLayout',
+  title: 'Sessions/日程調整/AvailabilityWorkspaceLayout',
   component: AvailabilityWorkspaceLayout,
   tags: ['autodocs'],
   parameters: {

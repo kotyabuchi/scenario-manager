@@ -5,7 +5,7 @@ import { SessionPhases } from '@/db/enum';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/SessionPhaseStepper',
+  title: 'Sessions/詳細/SessionPhaseStepper',
   component: SessionPhaseStepper,
   tags: ['autodocs'],
   parameters: {

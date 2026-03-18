@@ -5,7 +5,7 @@ import { ScenarioSearchModal } from './ScenarioSearchModal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/ScenarioSearchModal',
+  title: 'Sessions/作成フォーム/ScenarioSearchModal',
   component: ScenarioSearchModal,
   tags: ['autodocs'],
   parameters: {

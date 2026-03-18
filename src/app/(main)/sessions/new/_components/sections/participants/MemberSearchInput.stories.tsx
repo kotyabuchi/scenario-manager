@@ -5,7 +5,7 @@ import { MemberSearchInput } from './MemberSearchInput';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/MemberSearchInput',
+  title: 'Sessions/作成フォーム/MemberSearchInput',
   component: MemberSearchInput,
   tags: ['autodocs'],
   parameters: {

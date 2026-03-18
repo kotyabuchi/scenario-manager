@@ -3,7 +3,7 @@ import { SessionForm } from './SessionForm';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Sessions/SessionForm',
+  title: 'Sessions/作成フォーム/SessionForm',
   component: SessionForm,
   parameters: {
     layout: 'centered',

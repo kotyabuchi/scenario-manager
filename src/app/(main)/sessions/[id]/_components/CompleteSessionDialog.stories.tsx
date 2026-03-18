@@ -5,7 +5,7 @@ import { CompleteSessionDialog } from './CompleteSessionDialog';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/CompleteSessionDialog',
+  title: 'Sessions/詳細/ダイアログ/CompleteSessionDialog',
   component: CompleteSessionDialog,
   tags: ['autodocs'],
   parameters: {

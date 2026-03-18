@@ -5,7 +5,7 @@ import { MemberListItem } from './MemberListItem';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/MemberListItem',
+  title: 'Sessions/作成フォーム/MemberListItem',
   component: MemberListItem,
   tags: ['autodocs'],
   parameters: {

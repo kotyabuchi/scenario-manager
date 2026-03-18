@@ -3,7 +3,7 @@ import { FilterBar } from './FilterBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/FilterBar',
+  title: 'Sessions/参加申請管理/FilterBar',
   component: FilterBar,
   parameters: {
     layout: 'padded',

@@ -5,7 +5,7 @@ import { CancelApplicationDialog } from './CancelApplicationDialog';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/CancelApplicationDialog',
+  title: 'Sessions/詳細/ダイアログ/CancelApplicationDialog',
   component: CancelApplicationDialog,
   tags: ['autodocs'],
   parameters: {

@@ -5,7 +5,7 @@ import { WithdrawDialog } from './WithdrawDialog';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Pages/Sessions/WithdrawDialog',
+  title: 'Sessions/詳細/ダイアログ/WithdrawDialog',
   component: WithdrawDialog,
   tags: ['autodocs'],
   parameters: {

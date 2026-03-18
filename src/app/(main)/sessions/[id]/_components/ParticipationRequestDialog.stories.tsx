@@ -7,7 +7,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 // --- Meta ---
 
 const meta = {
-  title: 'Pages/Sessions/ParticipationRequestDialog',
+  title: 'Sessions/詳細/ダイアログ/ParticipationRequestDialog',
   component: ParticipationRequestDialog,
   tags: ['autodocs'],
   parameters: {

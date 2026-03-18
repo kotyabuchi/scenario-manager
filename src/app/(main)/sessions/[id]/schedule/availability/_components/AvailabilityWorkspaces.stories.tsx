@@ -194,7 +194,7 @@ const recommendationGroupsBase: RecommendationGroup[] = [
 ];
 
 const meta = {
-  title: 'Sessions/AvailabilityWorkspaces',
+  title: 'Sessions/日程調整/AvailabilityWorkspaces',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

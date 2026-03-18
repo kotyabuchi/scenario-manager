@@ -131,7 +131,7 @@ const manyPendingApplications: ApplicationWithUser[] = [
 // --- Meta ---
 
 const meta = {
-  title: 'Pages/Sessions/ApplicationApprovalContent',
+  title: 'Sessions/参加申請管理/ApplicationApprovalContent',
   component: ApplicationApprovalContent,
   tags: ['autodocs'],
   parameters: {
