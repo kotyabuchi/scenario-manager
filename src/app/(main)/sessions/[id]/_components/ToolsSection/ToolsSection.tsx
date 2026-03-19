@@ -3,15 +3,15 @@
 import { useOptimistic, useState, useTransition } from 'react';
 import { Plus } from '@phosphor-icons/react/ssr';
 
-import { deleteLinkAction, upsertLinkAction } from '../../../actions';
-import * as pageStyles from '../../../styles';
+import { deleteLinkAction, upsertLinkAction } from '../../actions';
+import * as pageStyles from '../../styles';
 import { LinkFormDialog } from './LinkFormDialog';
 import { LinkItem } from './LinkItem';
 
 import { Button } from '@/components/elements/button/button';
 
-import type { SessionLink, UserRole } from '../../../../interface';
-import type { SessionLinkValues } from '../../../schema';
+import type { SessionLink, UserRole } from '../../../interface';
+import type { SessionLinkValues } from '../../schema';
 
 type ToolsSectionProps = {
   links: SessionLink[];

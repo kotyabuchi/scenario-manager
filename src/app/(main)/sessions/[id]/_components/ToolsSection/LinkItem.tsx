@@ -16,7 +16,7 @@ import { Button } from '@/components/elements/button/button';
 import { IconButton } from '@/components/elements/icon-button/icon-button';
 import { SessionLinkTypes } from '@/db/enum';
 
-import type { SessionLink } from '../../../../interface';
+import type { SessionLink } from '../../../interface';
 
 type LinkItemProps = {
   link: SessionLink;

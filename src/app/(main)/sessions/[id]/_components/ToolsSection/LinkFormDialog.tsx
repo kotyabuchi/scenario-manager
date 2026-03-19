@@ -6,8 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { WarningCircle } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
-import { type SessionLinkValues, sessionLinkSchema } from '../../../schema';
-import * as dialogStyles from '../../styles';
+import { type SessionLinkValues, sessionLinkSchema } from '../../schema';
+import * as dialogStyles from '../styles';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -17,7 +17,7 @@ import { Modal } from '@/components/elements/modal';
 import { Select } from '@/components/elements/select/select';
 import { SessionLinkTypes } from '@/db/enum';
 
-import type { SessionLink } from '../../../../interface';
+import type { SessionLink } from '../../../interface';
 
 /** Select の選択肢 */
 const linkTypeItems = Object.values(SessionLinkTypes).map((item) => ({

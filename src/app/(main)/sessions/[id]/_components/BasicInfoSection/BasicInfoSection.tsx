@@ -11,13 +11,13 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 
-import * as styles from '../../../styles';
+import * as styles from '../../styles';
 import { BasicInfoEditForm } from './BasicInfoEditForm';
 
 import { Button } from '@/components/elements/button/button';
 
-import type { ScenarioSystem, SessionDetail } from '../../../../interface';
-import type { SessionBasicInfoValues } from '../../../schema';
+import type { ScenarioSystem, SessionDetail } from '../../../interface';
+import type { SessionBasicInfoValues } from '../../schema';
 
 type BasicInfoSectionProps = {
   session: SessionDetail;

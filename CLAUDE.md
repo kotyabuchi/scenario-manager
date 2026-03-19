@@ -21,7 +21,7 @@ TRPG（テーブルトークRPG）のシナリオとセッションを管理す�
 | `pnpm dev` | 開発サーバー起動（Turbopack） |
 | `pnpm build` | ビルド |
 | `pnpm check` | lint + format 一括実行 |
-| `pnpm vitest` | テスト実行 |
+| `pnpm vitest` | テスト実行（`vitest run` のエイリアス。`run` を重ねて付けない） |
 | `pnpm storybook` | Storybook（port 6006） |
 | `pnpm prepare` | PandaCSS コード生成 |
 

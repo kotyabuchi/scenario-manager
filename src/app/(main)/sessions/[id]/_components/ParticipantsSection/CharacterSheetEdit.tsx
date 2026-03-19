@@ -6,12 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckCircle, Clock, PencilSimple, X } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
-import { updateCharacterSheetAction } from '../../../actions';
-import {
-  type CharacterSheetValues,
-  characterSheetSchema,
-} from '../../../schema';
-import * as styles from '../../../styles';
+import { updateCharacterSheetAction } from '../../actions';
+import { type CharacterSheetValues, characterSheetSchema } from '../../schema';
+import * as styles from '../../styles';
 
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';

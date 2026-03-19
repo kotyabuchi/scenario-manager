@@ -6,12 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { MagnifyingGlass, Trash } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
-import { updateBasicInfoAction } from '../../../actions';
+import { updateBasicInfoAction } from '../../actions';
 import {
   type SessionBasicInfoValues,
   sessionBasicInfoSchema,
-} from '../../../schema';
-import * as styles from '../../../styles';
+} from '../../schema';
+import * as styles from '../../styles';
 
 import { ScenarioSearchModal } from '@/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal';
 import { Button } from '@/components/elements/button/button';
@@ -22,7 +22,7 @@ import { Switch } from '@/components/elements/switch';
 import { Textarea } from '@/components/elements/textarea/textarea';
 
 import type { ScenarioSummary } from '@/app/(main)/sessions/new/interface';
-import type { ScenarioSystem, SessionDetail } from '../../../../interface';
+import type { ScenarioSystem, SessionDetail } from '../../../interface';
 
 type BasicInfoEditFormProps = {
   sessionId: string;

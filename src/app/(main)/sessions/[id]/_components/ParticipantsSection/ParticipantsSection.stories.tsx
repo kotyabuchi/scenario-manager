@@ -1,7 +1,4 @@
-import {
-  createParticipant,
-  createUser,
-} from '../../../../__mocks__/sessionMocks';
+import { createParticipant, createUser } from '../../../__mocks__/sessionMocks';
 import { ParticipantsSection } from './ParticipantsSection';
 
 import type { Meta, StoryObj } from '@storybook/react';

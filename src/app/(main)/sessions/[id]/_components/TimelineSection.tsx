@@ -1,8 +1,8 @@
 import { Check, CheckCircle, Clock, UserPlus } from '@phosphor-icons/react/ssr';
 
-import * as styles from '../../../styles';
+import * as styles from '../styles';
 
-import type { TimelineEvent } from '../../../../interface';
+import type { TimelineEvent } from '../../interface';
 
 type TimelineSectionProps = {
   events: TimelineEvent[];

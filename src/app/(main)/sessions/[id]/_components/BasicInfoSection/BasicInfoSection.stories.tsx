@@ -1,8 +1,8 @@
-import { createScenarioSystem } from '../../../../__mocks__/sessionMocks';
+import { createScenarioSystem } from '../../../__mocks__/sessionMocks';
 import { BasicInfoSection } from './BasicInfoSection';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ParticipantWithUser, SessionDetail } from '../../../../interface';
+import type { ParticipantWithUser, SessionDetail } from '../../../interface';
 
 const meta = {
   title: 'Sessions/詳細/BasicInfoSection',

@@ -1,7 +1,7 @@
 import { ParticipantCard } from './ParticipantCard';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ParticipantWithUser } from '../../../../interface';
+import type { ParticipantWithUser } from '../../../interface';
 import type { ParticipantCardProps } from './ParticipantCard';
 
 const baseParticipant: ParticipantWithUser = {

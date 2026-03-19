@@ -3,7 +3,7 @@ import { fn } from '@storybook/test';
 import { LinkFormDialog } from './LinkFormDialog';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { SessionLink } from '../../../../interface';
+import type { SessionLink } from '../../../interface';
 
 const existingLink: SessionLink = {
   linkId: '01HLINK000000000000000001',

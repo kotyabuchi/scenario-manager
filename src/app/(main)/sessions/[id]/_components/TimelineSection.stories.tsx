@@ -1,7 +1,7 @@
 import { TimelineSection } from './TimelineSection';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { TimelineEvent } from '../../../../interface';
+import type { TimelineEvent } from '../../interface';
 
 const meta = {
   title: 'Sessions/詳細/TimelineSection',

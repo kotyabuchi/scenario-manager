@@ -1,12 +1,12 @@
 import { UsersThreeIcon } from '@phosphor-icons/react/ssr';
 
-import * as styles from '../../../styles';
+import * as styles from '../../styles';
 import { ParticipantCard } from './ParticipantCard';
 
 import { LinkButton } from '@/components/elements/link-button';
 import { SessionPhases } from '@/db/enum';
 
-import type { ParticipantWithUser, UserRole } from '../../../../interface';
+import type { ParticipantWithUser, UserRole } from '../../../interface';
 
 type ParticipantsSectionProps = {
   participants: ParticipantWithUser[];
