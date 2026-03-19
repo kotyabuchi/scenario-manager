@@ -13,7 +13,7 @@ import {
 } from '../../../schema';
 import * as styles from '../../../styles';
 
-import { ScenarioSearchModal } from '@/app/(main)/sessions/new/_components/sections/scenario/ScenarioSearchModal';
+import { ScenarioSearchModal } from '@/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal';
 import { Button } from '@/components/elements/button/button';
 import { FormField } from '@/components/elements/form-field/form-field';
 import { Input } from '@/components/elements/input';

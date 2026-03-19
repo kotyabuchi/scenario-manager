@@ -3,13 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ScenarioSearchModal } from './ScenarioSearchModal';
 
-import type { ScenarioSummary } from '../../../interface';
+import type { ScenarioSummary } from '../../interface';
 
-vi.mock('../../../actions', () => ({
+vi.mock('../../actions', () => ({
   searchScenariosForSessionAction: vi.fn(),
 }));
 
-import { searchScenariosForSessionAction } from '../../../actions';
+import { searchScenariosForSessionAction } from '../../actions';
 
 const mockSearchAction = vi.mocked(searchScenariosForSessionAction);
 

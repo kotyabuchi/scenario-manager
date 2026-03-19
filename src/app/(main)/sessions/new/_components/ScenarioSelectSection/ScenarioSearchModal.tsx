@@ -12,17 +12,17 @@ import {
   XIcon,
 } from '@phosphor-icons/react/ssr';
 
-import { searchScenariosForSessionAction } from '../../../actions';
+import { searchScenariosForSessionAction } from '../../actions';
 import { formatPlayerCount, formatPlaytime } from './formatters';
-import * as styles from './scenarioSearchStyles';
+import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { Input } from '@/components/elements/input';
 import { Modal } from '@/components/elements/modal';
 import { Select } from '@/components/elements/select';
 
-import type { ScenarioSummary, SystemSummary } from '../../../interface';
-import type { ParticipantType } from '../participants/MemberListItem';
+import type { ScenarioSummary, SystemSummary } from '../../interface';
+import type { ParticipantType } from '../ParticipantsSection/MemberListItem';
 
 type ScenarioSearchModalProps = {
   open: boolean;

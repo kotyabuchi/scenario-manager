@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { AtIcon, SpinnerGapIcon } from '@phosphor-icons/react/ssr';
 
-import { searchUsersAction } from '../../../actions';
-import * as styles from './memberStyles';
+import { searchUsersAction } from '../../actions';
+import * as styles from './styles';
 
 import { Avatar } from '@/components/elements/avatar';
 import { Input } from '@/components/elements/input';
 
-import type { UserSummary } from '../../../actions';
+import type { UserSummary } from '../../actions';
 
 type MemberSearchInputProps = {
   /** ユーザー選択時のコールバック */

@@ -3,13 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MemberSearchInput } from './MemberSearchInput';
 
-import type { UserSummary } from '../../../actions';
+import type { UserSummary } from '../../actions';
 
-vi.mock('../../../actions', () => ({
+vi.mock('../../actions', () => ({
   searchUsersAction: vi.fn(),
 }));
 
-import { searchUsersAction } from '../../../actions';
+import { searchUsersAction } from '../../actions';
 
 const mockSearchUsersAction = vi.mocked(searchUsersAction);
 

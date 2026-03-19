@@ -7,7 +7,7 @@ import {
 } from 'react-hook-form';
 import { DotsThreeOutline, Wrench, XIcon } from '@phosphor-icons/react/ssr';
 
-import * as styles from '../../styles';
+import * as styles from './styles';
 
 import { FormField } from '@/components/elements/form-field';
 import { IconButton } from '@/components/elements/icon-button/icon-button';
@@ -15,7 +15,7 @@ import { Input } from '@/components/elements/input';
 import { NumberInput } from '@/components/elements/number-input';
 import { Switch } from '@/components/elements/switch';
 
-import type { SessionFormInput } from '../../../schema';
+import type { SessionFormInput } from '../schema';
 
 export const OtherSection = () => {
   const {

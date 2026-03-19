@@ -5,15 +5,15 @@ import {
 } from '@phosphor-icons/react/ssr';
 import dynamic from 'next/dynamic';
 
-import * as styles from '../../styles';
+import * as styles from '../styles';
 import { ScenarioSelectedCard } from './ScenarioSelectedCard';
 
 import { Button } from '@/components/elements/button/button';
 import { useToggleState } from '@/hooks/use-toggle-state';
 
-import type { ScenarioSummary, SystemSummary } from '../../../interface';
-import type { SessionFormInput } from '../../../schema';
-import type { ParticipantType } from '../participants/MemberListItem';
+import type { ScenarioSummary, SystemSummary } from '../../interface';
+import type { SessionFormInput } from '../../schema';
+import type { ParticipantType } from '../ParticipantsSection/MemberListItem';
 
 const ScenarioSearchModal = dynamic(
   () => import('./ScenarioSearchModal').then((mod) => mod.ScenarioSearchModal),

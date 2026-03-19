@@ -15,10 +15,10 @@ import {
   type SessionFormValues,
   sessionFormSchema,
 } from '../schema';
-import { BasicInfoSection } from './sections/basic-info/BasicInfoSection';
-import { OtherSection } from './sections/other/OtherSection';
-import { ParticipantsSection } from './sections/participants/ParticipantsSection';
-import { ScenarioSelectSection } from './sections/scenario/ScenarioSelectSection';
+import { BasicInfoSection } from './BasicInfoSection';
+import { OtherSection } from './OtherSection';
+import { ParticipantsSection } from './ParticipantsSection';
+import { ScenarioSelectSection } from './ScenarioSelectSection';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';

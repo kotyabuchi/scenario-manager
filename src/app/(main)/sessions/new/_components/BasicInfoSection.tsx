@@ -1,13 +1,13 @@
 import { type FieldErrors, useFormContext, useWatch } from 'react-hook-form';
 import { NoteIcon } from '@phosphor-icons/react/ssr';
 
-import * as styles from '../../styles';
+import * as styles from './styles';
 
 import { FormField } from '@/components/elements/form-field';
 import { Input } from '@/components/elements/input';
 import { Textarea } from '@/components/elements/textarea';
 
-import type { SessionFormInput } from '../../../schema';
+import type { SessionFormInput } from '../schema';
 
 type BasicInfoSectionProps = {
   errors?: FieldErrors<SessionFormInput>;

@@ -2,7 +2,7 @@
 
 import { Trash } from '@phosphor-icons/react/ssr';
 
-import * as styles from './memberStyles';
+import * as styles from './styles';
 
 import { Avatar } from '@/components/elements/avatar';
 import { IconButton } from '@/components/elements/icon-button/icon-button';
@@ -12,7 +12,7 @@ import {
 } from '@/components/elements/radio-group';
 
 import type { Database } from '@/db/types';
-import type { UserSummary } from '../../../actions';
+import type { UserSummary } from '../../actions';
 
 type ParticipantType = Database['public']['Enums']['participant_type'];
 

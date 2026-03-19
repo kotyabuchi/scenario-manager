@@ -3,11 +3,11 @@
 import { Clock, Users, X } from '@phosphor-icons/react/ssr';
 
 import { formatPlayerCount, formatPlaytime } from './formatters';
-import * as styles from './scenarioCardStyles';
+import * as styles from './styles';
 
 import { IconButton } from '@/components/elements/icon-button/icon-button';
 
-import type { ScenarioSummary } from '../../../interface';
+import type { ScenarioSummary } from '../../interface';
 
 type ScenarioSelectedCardProps = {
   scenario: ScenarioSummary;

@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { Users } from '@phosphor-icons/react/ssr';
 
-import * as styles from '../../styles';
+import * as styles from '../styles';
 import { MemberListItem, type ParticipantType } from './MemberListItem';
 import { MemberSearchInput } from './MemberSearchInput';
 
 import { Select, type SelectItem } from '@/components/elements/select';
 
-import type { UserSummary } from '../../../actions';
-import type { SessionFormInput } from '../../../schema';
+import type { UserSummary } from '../../actions';
+import type { SessionFormInput } from '../../schema';
 
 type MemberUserMap = Map<string, UserSummary>;
 
