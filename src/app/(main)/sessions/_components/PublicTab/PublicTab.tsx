@@ -5,10 +5,10 @@ import { CaretDown } from '@phosphor-icons/react/ssr';
 import { useQueryStates } from 'nuqs';
 import { isNil } from 'ramda';
 
-import { searchParamsParsers } from '../searchParams';
-import { EmptyState } from './EmptyState';
-import { SearchPanel } from './SearchPanel';
-import { SessionList } from './SessionList';
+import { searchParamsParsers } from '../../searchParams';
+import { EmptyState } from '../EmptyState';
+import { SearchPanel } from '../SearchPanel';
+import { SessionList } from '../SessionList';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -20,8 +20,8 @@ import type {
   PublicSearchResult,
   PublicSortOption,
   ScenarioSystem,
-} from '../interface';
-import type { SearchFormValues } from './schema';
+} from '../../interface';
+import type { SearchFormValues } from '../SearchPanel/schema';
 
 type PublicTabProps = {
   systems: ScenarioSystem[];

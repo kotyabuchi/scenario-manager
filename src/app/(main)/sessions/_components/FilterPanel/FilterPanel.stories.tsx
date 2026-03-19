@@ -1,6 +1,6 @@
 import { fn } from '@storybook/test';
 
-import { createScenarioSystem } from '../__mocks__/sessionMocks';
+import { createScenarioSystem } from '../../__mocks__/sessionMocks';
 import { FilterPanel } from './FilterPanel';
 
 import type { Meta, StoryObj } from '@storybook/react';

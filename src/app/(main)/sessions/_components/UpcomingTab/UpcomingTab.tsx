@@ -4,10 +4,10 @@ import { useCallback, useState, useTransition } from 'react';
 import { Calendar, CaretDown, ListBullets } from '@phosphor-icons/react/ssr';
 import { useQueryStates } from 'nuqs';
 
-import { searchParamsParsers } from '../searchParams';
-import { CalendarView } from './CalendarView';
-import { EmptyState } from './EmptyState';
-import { SessionList } from './SessionList';
+import { searchParamsParsers } from '../../searchParams';
+import { CalendarView } from '../CalendarView';
+import { EmptyState } from '../EmptyState';
+import { SessionList } from '../SessionList';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -22,7 +22,7 @@ import type {
   SearchResult,
   UpcomingSortOption,
   ViewType,
-} from '../interface';
+} from '../../interface';
 
 type UpcomingTabProps = {
   initialResult: SearchResult<MySessionWithRole>;

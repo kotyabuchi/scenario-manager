@@ -19,7 +19,7 @@ import { Select } from '@/components/elements/select/select';
 import { SessionPhases } from '@/db/enum';
 
 import type { DatePickerValueChangeDetails } from '@/components/elements/date-picker/date-picker';
-import type { ScenarioSystem } from '../interface';
+import type { ScenarioSystem } from '../../interface';
 
 type SearchPanelProps = {
   systems: ScenarioSystem[];

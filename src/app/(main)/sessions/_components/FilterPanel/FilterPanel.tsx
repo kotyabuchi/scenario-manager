@@ -9,7 +9,7 @@ import type {
   RoleFilterValue,
   ScenarioSystem,
   StatusFilterValue,
-} from '../interface';
+} from '../../interface';
 
 type FilterPanelProps = {
   systems: ScenarioSystem[];

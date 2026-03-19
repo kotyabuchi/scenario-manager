@@ -1,4 +1,4 @@
-import { createMySession } from '../__mocks__/sessionMocks';
+import { createMySession } from '../../__mocks__/sessionMocks';
 import { CalendarView } from './CalendarView';
 
 import type { Meta, StoryObj } from '@storybook/react';

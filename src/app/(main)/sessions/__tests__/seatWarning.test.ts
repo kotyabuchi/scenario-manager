@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getSeatWarning } from '../_components/seatWarning';
+import { getSeatWarning } from '../_components/SessionCard/seatWarning';
 
 /**
  * 残り席警告の表示判定テスト

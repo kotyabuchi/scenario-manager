@@ -9,7 +9,7 @@ import * as styles from './styles';
 
 import { SessionPhases } from '@/db/enum';
 
-import type { MySessionWithRole, PublicSession } from '../interface';
+import type { MySessionWithRole, PublicSession } from '../../interface';
 
 type PublicSessionCardProps = {
   session: PublicSession;

@@ -1,7 +1,7 @@
 import {
   createMySession,
   createPublicSession,
-} from '../__mocks__/sessionMocks';
+} from '../../__mocks__/sessionMocks';
 import { SessionList } from './SessionList';
 
 import type { Meta, StoryObj } from '@storybook/react';

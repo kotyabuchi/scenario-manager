@@ -4,10 +4,10 @@ import { useCallback, useState, useTransition } from 'react';
 import { CaretDown } from '@phosphor-icons/react/ssr';
 import { useQueryStates } from 'nuqs';
 
-import { searchParamsParsers } from '../searchParams';
-import { EmptyState } from './EmptyState';
-import { FilterPanel } from './FilterPanel';
-import { SessionList } from './SessionList';
+import { searchParamsParsers } from '../../searchParams';
+import { EmptyState } from '../EmptyState';
+import { FilterPanel } from '../FilterPanel';
+import { SessionList } from '../SessionList';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
@@ -22,7 +22,7 @@ import type {
   ScenarioSystem,
   SearchResult,
   StatusFilterValue,
-} from '../interface';
+} from '../../interface';
 
 type HistoryTabProps = {
   systems: ScenarioSystem[];

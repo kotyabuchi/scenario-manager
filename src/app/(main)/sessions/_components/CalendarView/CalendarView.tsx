@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import * as styles from './styles';
 
-import type { MySessionWithRole } from '../interface';
+import type { MySessionWithRole } from '../../interface';
 
 type CalendarViewProps = {
   sessions: MySessionWithRole[];

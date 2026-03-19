@@ -1,6 +1,6 @@
 import { fn } from '@storybook/test';
 
-import { createScenarioSystem } from '../__mocks__/sessionMocks';
+import { createScenarioSystem } from '../../__mocks__/sessionMocks';
 import { SearchPanel } from './SearchPanel';
 
 import type { Meta, StoryObj } from '@storybook/react';

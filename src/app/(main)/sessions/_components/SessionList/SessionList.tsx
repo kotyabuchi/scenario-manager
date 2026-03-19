@@ -1,9 +1,9 @@
 'use client';
 
-import { SessionCard } from './SessionCard';
+import { SessionCard } from '../SessionCard';
 import * as styles from './styles';
 
-import type { MySessionWithRole, PublicSession } from '../interface';
+import type { MySessionWithRole, PublicSession } from '../../interface';
 
 type PublicSessionListProps = {
   sessions: PublicSession[];
