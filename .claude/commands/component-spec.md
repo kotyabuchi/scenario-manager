@@ -13,8 +13,8 @@ Pencilで作成したデザインを元に、対話的にコンポーネント�
 Props設計、インタラクション、状態遷移、アクセシビリティなどを明確化し、テスト可能な要件定義書を作成する。
 
 ```
-Pencil → [/component-spec] → /gen-test → /implement-tests → /refactor
-            ↓
+Pencil → [/component-spec] → /gen-test → tdd-implementer → tdd-refactorer
+            ↓                               （Green）         （Refactor）
       デザイン確認
             ↓
       対話的ヒアリング
@@ -208,30 +208,9 @@ Q: 異常系や境界値の挙動を確認します
 
 ### Step 8: テスト観点の整理
 
-ヒアリング結果から、テストすべき観点を整理:
-
-```markdown
-## テスト観点
-
-### レンダリング
-- [ ] 必須Propsのみで正しくレンダリングされる
-- [ ] 各variantが正しく表示される
-- [ ] 各sizeが正しく表示される
-
-### インタラクション
-- [ ] クリック時にonClickが呼ばれる
-- [ ] disabled時はクリックできない
-- [ ] hover時にスタイルが変わる
-
-### アクセシビリティ
-- [ ] キーボード操作で操作できる
-- [ ] スクリーンリーダーで読み上げられる
-- [ ] フォーカスリングが表示される
-
-### エラーケース
-- [ ] 空データ時の表示
-- [ ] 長いテキスト時の挙動
-```
+ヒアリング結果から、テストすべき観点をチェックリスト形式で整理する。
+カテゴリは **レンダリング / インタラクション / アクセシビリティ / エラーケース** の4つ
+（具体的な記載例は後述「出力フォーマット」のセクション7を参照）。
 
 ### Step 9: ドキュメント出力
 
@@ -372,17 +351,7 @@ type ButtonProps = {
 
 ### 4.3 アニメーション
 
-**durationはトークンで指定すること。** プロジェクトの`durations`トークンを参照:
-
-| トークン | 値 |
-|----------|-----|
-| `{durations.fastest}` | 50ms |
-| `{durations.faster}` | 100ms |
-| `{durations.fast}` | 150ms |
-| `{durations.normal}` | 200ms |
-| `{durations.slow}` | 300ms |
-| `{durations.slower}` | 400ms |
-| `{durations.slowest}` | 500ms |
+**durationはトークンで指定すること。** 利用可能なトークン値は PandaCSS MCP `get_tokens` で確認する（`{durations.fastest}` 〜 `{durations.slowest}`）。
 
 | 対象 | duration | easing |
 |------|----------|--------|
@@ -471,7 +440,7 @@ type ButtonProps = {
 ### 8.1 依存
 
 - PandaCSS: スタイリング
-- lucide-react: アイコン（loading時のスピナー）
+- @phosphor-icons/react/ssr: アイコン（loading時は `SpinnerGap` 等。`icons.md` 参照）
 
 ### 8.2 ファイル構成
 

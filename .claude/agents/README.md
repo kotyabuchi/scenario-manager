@@ -104,7 +104,7 @@ pnpm storybook  # Storybook (localhost:6006)
 
 ## 関連ドキュメント
 
-- 要件定義: `.claude/rules/requirements-v1.md`
+- 要件定義: `.claude/requirements/requirements-v1.md`
 - プロジェクト概要: `CLAUDE.md`
 - デザイントークン: `src/styles/tokens/`
 - レシピ: `src/styles/recipes/`

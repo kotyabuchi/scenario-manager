@@ -36,11 +36,17 @@ description: 要件定義書からテスト項目を洗い出し、失敗する�
 /gen-test feedback                     # requirements-feedback.md から生成
 /gen-test US-F01 US-F02                # 特定のユーザーストーリーのみ
 /gen-test シナリオ一覧機能             # 自然言語で機能を指定（該当要件を自動検索）
-/gen-test セッション募集               # 自然言語で機能を指定
-/gen-test --extract-only               # テスト項目の洗い出しのみ（テスト生成なし）
-/gen-test --vitest-only                # Vitestのみ生成
-/gen-test --playwright-only            # Playwrightのみ生成
 ```
+
+### オプション
+
+| オプション | 説明 |
+|------------|------|
+| `--extract-only` | テスト項目の洗い出しのみ（テスト生成なし） |
+| `--vitest-only` | Vitestのテストのみ生成 |
+| `--playwright-only` | Playwrightのテストのみ生成 |
+| `--dry-run` | 生成計画のみ表示（ファイル書き出しなし） |
+| `--force` | 既存ファイルを確認なしで上書き |
 
 ## 実行手順
 
@@ -50,63 +56,17 @@ description: 要件定義書からテスト項目を洗い出し、失敗する�
 
 $ARGUMENTS を解析:
 
-1. **要件定義書名が指定された場合**: `.claude/rules/requirements-{名前}.md` を読み込む
+1. **要件定義書名が指定された場合**: `.claude/requirements/requirements-{名前}.md` を読み込む
    - 例: `feedback` → `requirements-feedback.md`
 
 2. **US-XXX が指定された場合**: 全要件定義書から該当ユーザーストーリーを検索
 
-3. **自然言語で機能名が指定された場合**: 全要件定義書を検索して該当箇所を特定
+3. **自然言語で機能名が指定された場合**: キーワードを抽出し、全要件定義書を Grep して該当箇所を特定
    - 例: `シナリオ一覧機能` → 「シナリオ」「検索」「一覧」で検索
+   - 見つかった要件定義書から関連セクション（US-XXX、データモデル、画面仕様、バリデーションルール）を抽出
+   - 複数候補がある場合は AskUserQuestion でどの範囲を対象とするか確認
 
-4. **指定なしの場合**: AskUserQuestion で選択
-
-```bash
-# 要件定義書の一覧を取得
-ls .claude/rules/requirements-*.md
-```
-
-##### 自然言語からの要件検索ロジック
-
-自然言語で機能名が指定された場合、以下の手順で該当要件を特定:
-
-**Step A: キーワード抽出**
-
-入力からキーワードを抽出:
-```
-入力: "シナリオ一覧機能のテスト作って"
-キーワード: ["シナリオ", "一覧", "検索"]
-```
-
-**Step B: 全要件定義書を検索**
-
-```bash
-# 各要件定義書でキーワードを検索
-grep -l "シナリオ" .claude/rules/requirements-*.md
-```
-
-**Step C: 該当セクションの特定**
-
-見つかった要件定義書から、関連するセクションを抽出:
-- ユーザーストーリー（US-XXX）
-- データモデル
-- 画面仕様
-- バリデーションルール
-
-**Step D: ユーザーに確認**
-
-```
-「シナリオ一覧機能」に関連する要件を検索しました:
-
-📄 requirements-v1.md
-  - セクション5: シナリオ検索（最重要機能）
-  - US-201〜US-207: シナリオ検索のユーザーストーリー
-
-📄 requirements-session-flow.md
-  - セクション3.3: 募集一覧表示
-
-どの範囲でテストを生成しますか？
-[requirements-v1.md のシナリオ検索] [両方] [手動で選択] [中止]
-```
+4. **指定なしの場合**: `.claude/requirements/` の一覧から AskUserQuestion で選択
 
 ##### キーワードマッピング（よく使う機能名）
 
@@ -133,20 +93,11 @@ grep -l "シナリオ" .claude/rules/requirements-*.md
 | 画面フロー | UI構成、操作フロー | `/requirements` を呼び出し |
 | 権限制御 | 誰が何をできるか | `/requirements` を呼び出し |
 
-**不足がある場合**:
+**不足がある場合**: 不足項目を提示し、AskUserQuestion で確認:
+`[はい（/requirementsで補完）] [スキップして続行] [中止]`
 
-```
-⚠ 要件定義に不足があります:
-- バリデーションルール: title の文字数制限が未定義
-- 権限制御: 誰が削除できるか未定義
-
-/requirements スキルを呼び出して要件を補完しますか？
-[はい] [スキップして続行] [中止]
-```
-
-「はい」の場合:
+「はい」の場合は Skill ツールで呼び出す:
 ```typescript
-// Skill ツールで /requirements を呼び出し
 Skill({ skill: "requirements", args: "refine feedback" })
 ```
 
@@ -165,522 +116,205 @@ Skill({ skill: "requirements", args: "refine feedback" })
 
 ### Phase 2: テスト項目の洗い出し
 
-#### Step 2.1: ユーザーストーリーからテスト項目を抽出
+要件定義書から以下の3カテゴリでテスト項目を抽出し、表形式で整理する。
 
-要件定義書の各ユーザーストーリーをテスト項目に変換:
-
-```markdown
-## テスト項目一覧
-
-### US-F01: ユーザーとして、どのページからでもフィードバックを送れる
+**項目表の形式**（全カテゴリ共通）:
 
 | ID | テスト項目 | テスト種別 | 優先度 |
 |----|-----------|-----------|--------|
 | F01-01 | フィードバックボタンが全ページに表示される | E2E | 高 |
-| F01-02 | ボタンクリックでモーダルが開く | Component | 高 |
-| F01-03 | 必須項目を入力して送信できる | E2E | 高 |
-| F01-04 | 送信後に成功メッセージが表示される | E2E | 中 |
-| F01-05 | 現在のページURLが自動で記録される | Unit | 中 |
-
-### US-F02: ユーザーとして、バグ報告時にスクリーンショットを添付できる
-
-| ID | テスト項目 | テスト種別 | 優先度 |
-|----|-----------|-----------|--------|
-| F02-01 | スクリーンショット添付ボタンが表示される | Component | 高 |
-| F02-02 | 画像ファイルを選択できる | E2E | 高 |
-| F02-03 | 選択した画像のプレビューが表示される | Component | 中 |
-| F02-04 | 5MB以上の画像はエラーになる | Unit | 中 |
-```
-
-#### Step 2.2: データモデルからテスト項目を抽出
-
-バリデーションルール、制約条件をテスト項目に変換:
-
-```markdown
-### feedbackFormSchema バリデーション
-
-| ID | テスト項目 | テスト種別 | 優先度 |
-|----|-----------|-----------|--------|
-| SCH-01 | 有効なデータでパース成功 | Unit | 高 |
-| SCH-02 | category が必須 | Unit | 高 |
-| SCH-03 | category は BUG/FEATURE/UI_UX/OTHER のいずれか | Unit | 高 |
-| SCH-04 | title が必須 | Unit | 高 |
 | SCH-05 | title は100文字以内 | Unit | 高 |
-| SCH-06 | title が101文字でエラー | Unit | 中 |
-| SCH-07 | description が必須 | Unit | 高 |
-| SCH-08 | description は2000文字以内 | Unit | 高 |
-| SCH-09 | screenshotUrl は任意 | Unit | 低 |
-```
+| AUTH-03 | 投稿者本人のみ編集できる | E2E | 高 |
 
-#### Step 2.3: 権限制御からテスト項目を抽出
+#### Step 2.1: ユーザーストーリーから抽出
 
-```markdown
-### 権限制御テスト
+各 US-XXX を操作・表示・結果の観点でテスト項目に分解する。
+ID は `{USの連番}-{連番}`（例: US-F01 → F01-01, F01-02...）。
 
-| ID | テスト項目 | テスト種別 | 優先度 |
-|----|-----------|-----------|--------|
-| AUTH-01 | 未ログインユーザーはフィードバック一覧を閲覧できない | E2E | 高 |
-| AUTH-02 | MEMBERはフィードバックを投稿できる | E2E | 高 |
-| AUTH-03 | 投稿者本人のみ編集できる（ステータスがNEWの間） | E2E | 高 |
-| AUTH-04 | MODERATORはステータスを変更できる | E2E | 中 |
-| AUTH-05 | MEMBERはステータスを変更できない | E2E | 中 |
-```
+#### Step 2.2: データモデルから抽出
 
-#### Step 2.4: テスト項目の確認と編集
+バリデーションルール・制約条件をテスト項目に変換する（ID: `SCH-NN`）。
+必須チェック、Enum値、文字数上限（ちょうど/超過の境界値）を必ず含める。
 
-**ユーザーに確認（AskUserQuestion）**:
+#### Step 2.3: 権限制御から抽出
 
-```
-以下のテスト項目を抽出しました（計 32 項目）:
+未ログイン・MEMBER・MODERATOR 等のロール別にできる/できない操作をテスト項目化する（ID: `AUTH-NN`）。
 
-【ユーザーストーリー】
-- US-F01: 5項目
-- US-F02: 4項目
-- US-F03: 6項目
-...
+#### Step 2.4: テスト項目の確認
 
-【バリデーション】
-- feedbackFormSchema: 9項目
-
-【権限制御】
-- 5項目
-
-どうしますか？
-[全てのテストを生成] [項目を選択して生成] [項目を追加] [要件を補完] [中止]
-```
-
----
+抽出した項目の総数とカテゴリ別の内訳を提示し、AskUserQuestion で確認:
+`[全てのテストを生成] [項目を選択して生成] [項目を追加] [要件を補完] [中止]`
 
 #### Step 2.5: テスト項目の追加（「項目を追加」選択時）
 
-ユーザーが追加したいテスト項目を自由記述で入力:
-
-```
-追加したいテスト項目を入力してください:
-（例: 「title の境界値テスト（99文字、100文字、101文字）」）
-
-> title の境界値テスト（99文字、100文字、101文字）を追加
-> 送信ボタンの連打防止テストを追加
-> done
-```
-
-入力されたテスト項目を解析し、適切なカテゴリ・テスト種別に分類:
-
-```
-以下のテスト項目を追加しました:
-
-| ID | テスト項目 | テスト種別 | 優先度 |
-|----|-----------|-----------|--------|
-| SCH-10 | title が99文字で成功 | Unit | 中 |
-| SCH-11 | title が100文字で成功 | Unit | 中 |
-| SCH-12 | title が101文字でエラー | Unit | 中 |
-| F01-06 | 送信ボタンの連打で重複送信されない | E2E | 高 |
-
-続けて追加しますか？
-[さらに追加] [テスト生成に進む] [中止]
-```
+ユーザーが自由記述で入力したテスト項目を解析し、適切なカテゴリ・テスト種別に分類して項目表に追加する。
+追加後は `[さらに追加] [テスト生成に進む] [中止]` で確認。
 
 **追加時の自動分類ルール**:
+
 | キーワード | テスト種別 |
 |-----------|-----------|
 | 文字数、境界値、バリデーション | Unit |
 | ボタン、表示、クリック | Component |
 | フロー、ページ遷移、ログイン | E2E |
 
----
-
 #### Step 2.6: 要件の補完（「要件を補完」選択時）
 
-`/requirements` スキルを呼び出して要件を補完:
-
-```
-要件定義の不足を検出しました。/requirements スキルで補完します。
-
-どの部分を補完しますか？
-[バリデーションルール] [権限制御] [エラーケース] [画面フロー] [その他]
-```
-
-選択後、`/requirements` スキルを呼び出し:
+補完したい領域（バリデーションルール / 権限制御 / エラーケース / 画面フロー / その他）を確認し、`/requirements` を呼び出す:
 
 ```typescript
-// Skill ツールで /requirements を呼び出し
 Skill({ skill: "requirements", args: "refine feedback --focus バリデーションルール" })
 ```
 
-補完完了後、Step 2.1 に戻ってテスト項目を再抽出:
-
-```
-要件定義が更新されました。テスト項目を再抽出します...
-
-【追加されたテスト項目】
-- SCH-10: pageUrl の形式バリデーション（URL形式のみ許可）
-- SCH-11: browserInfo の最大サイズ制限（10KB以内）
-
-続行しますか？
-[テスト生成に進む] [さらに項目を追加] [中止]
-```
+補完完了後、Step 2.1 に戻ってテスト項目を再抽出し、追加された項目を提示する。
 
 ---
 
 ### Phase 3: テストコードの生成（Red フェーズ）
 
-#### Step 3.1: Vitest ユニットテストの生成
+以下のパターンに従ってテストファイルを生成する。
+コメントで対応するテスト項目ID（`// SCH-05: ...`）を必ず記載する。
 
-**schema.test.ts（Zodバリデーション）**:
+#### Step 3.1: Vitest ユニットテスト
+
+**schema.test.ts（Zodバリデーション）** — `safeParse` で検証。Enum は `it.each`、文字数は境界値（ちょうど/超過）をテスト:
 
 ```typescript
 import { describe, expect, it } from 'vitest'
-
-// TDDモード: スキーマが存在しない場合はテスト失敗を期待
-// TODO: src/app/(main)/feedback/_components/schema.ts を実装
 import { feedbackFormSchema } from '../schema'
 
 describe('feedbackFormSchema', () => {
   // SCH-01: 有効なデータでパース成功
-  describe('有効なデータ', () => {
-    it('必須項目が揃っていれば成功', () => {
-      const validData = {
-        category: 'BUG',
-        title: 'テストタイトル',
-        description: 'テストの説明文です',
-      }
-
-      const result = feedbackFormSchema.safeParse(validData)
-      expect(result.success).toBe(true)
+  it('必須項目が揃っていれば成功', () => {
+    const result = feedbackFormSchema.safeParse({
+      category: 'BUG',
+      title: 'テストタイトル',
+      description: 'テストの説明文です',
     })
+    expect(result.success).toBe(true)
   })
 
-  describe('category', () => {
-    // SCH-02: category が必須
-    it('category が未指定の場合はエラー', () => {
-      const data = { title: 'テスト', description: 'テスト' }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(false)
-    })
-
-    // SCH-03: category は BUG/FEATURE/UI_UX/OTHER のいずれか
-    it.each(['BUG', 'FEATURE', 'UI_UX', 'OTHER'])('category=%s は有効', (category) => {
-      const data = { category, title: 'テスト', description: 'テスト' }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(true)
-    })
-
-    it('無効なカテゴリはエラー', () => {
-      const data = { category: 'INVALID', title: 'テスト', description: 'テスト' }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(false)
-    })
+  // SCH-03: category は BUG/FEATURE/UI_UX/OTHER のいずれか
+  it.each(['BUG', 'FEATURE', 'UI_UX', 'OTHER'])('category=%s は有効', (category) => {
+    const result = feedbackFormSchema.safeParse({ category, title: 'テスト', description: 'テスト' })
+    expect(result.success).toBe(true)
   })
 
-  describe('title', () => {
-    // SCH-04: title が必須
-    it('title が空の場合はエラー', () => {
-      const data = { category: 'BUG', title: '', description: 'テスト' }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(false)
+  // SCH-05/06: title は100文字以内（境界値）
+  it('title が100文字ちょうどは成功', () => {
+    const result = feedbackFormSchema.safeParse({
+      category: 'BUG', title: 'a'.repeat(100), description: 'テスト',
     })
-
-    // SCH-05: title は100文字以内
-    it('title が100文字ちょうどは成功', () => {
-      const data = {
-        category: 'BUG',
-        title: 'a'.repeat(100),
-        description: 'テスト',
-      }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(true)
-    })
-
-    // SCH-06: title が101文字でエラー
-    it('title が101文字を超える場合はエラー', () => {
-      const data = {
-        category: 'BUG',
-        title: 'a'.repeat(101),
-        description: 'テスト',
-      }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(false)
-    })
+    expect(result.success).toBe(true)
   })
-
-  describe('description', () => {
-    // SCH-07: description が必須
-    it('description が空の場合はエラー', () => {
-      const data = { category: 'BUG', title: 'テスト', description: '' }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(false)
+  it('title が101文字はエラー', () => {
+    const result = feedbackFormSchema.safeParse({
+      category: 'BUG', title: 'a'.repeat(101), description: 'テスト',
     })
-
-    // SCH-08: description は2000文字以内
-    it('description が2000文字を超える場合はエラー', () => {
-      const data = {
-        category: 'BUG',
-        title: 'テスト',
-        description: 'a'.repeat(2001),
-      }
-      const result = feedbackFormSchema.safeParse(data)
-
-      expect(result.success).toBe(false)
-    })
+    expect(result.success).toBe(false)
   })
 })
 ```
 
-**adapter.test.ts（TDDモード）**:
+**adapter.test.ts（TDDモード）** — Result型（`isOk`/`isErr`）で検証。実装がまだ無い場合はスタブを使い、実装後に実関数へ差し替える:
 
 ```typescript
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-
 import { isErr, isOk } from '@/types/result'
 
-// TDDモード: adapter.ts が存在しない場合はスタブを使用
-// TODO: 実装後に以下のコメントを外す
-// import { createFeedback, getFeedbacks, toggleVote } from '../adapter'
-
-// スタブ関数（実装前のプレースホルダー）
+// TDDモード: adapter.ts 実装後に以下のコメントを外してスタブを削除
+// import { createFeedback } from '../adapter'
 const createFeedback = vi.fn()
-const getFeedbacks = vi.fn()
-const toggleVote = vi.fn()
 
-describe('Feedback Adapter', () => {
+describe('createFeedback', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  describe('createFeedback', () => {
-    // US-F01: ユーザーとして、どのページからでもフィードバックを送れる
-    // F01-05: 現在のページURLが自動で記録される
-    it('フィードバックを作成できる', async () => {
-      const input = {
-        userId: 'user-123',
-        category: 'BUG' as const,
-        title: 'テストタイトル',
-        description: 'テスト説明',
-        pageUrl: '/scenarios',
-      }
+  // US-F01 / F01-05: 現在のページURLが自動で記録される
+  it('フィードバックを作成できる', async () => {
+    const input = { userId: 'user-123', category: 'BUG' as const, title: 'タイトル', description: '説明', pageUrl: '/scenarios' }
+    createFeedback.mockResolvedValue({ success: true, data: { feedbackId: 'fb-123', ...input } })
 
-      createFeedback.mockResolvedValue({
-        success: true,
-        data: { feedbackId: 'fb-123', ...input },
-      })
+    const result = await createFeedback(input)
 
-      const result = await createFeedback(input)
-
-      expect(isOk(result)).toBe(true)
-      if (isOk(result)) {
-        expect(result.data.feedbackId).toBeDefined()
-        expect(result.data.pageUrl).toBe('/scenarios')
-      }
-    })
-
-    it('バリデーションエラー時はエラーを返す', async () => {
-      const input = {
-        userId: 'user-123',
-        category: 'BUG' as const,
-        title: '', // 空は無効
-        description: 'テスト',
-      }
-
-      createFeedback.mockResolvedValue({
-        success: false,
-        error: new Error('Title is required'),
-      })
-
-      const result = await createFeedback(input)
-
-      expect(isErr(result)).toBe(true)
-    })
+    expect(isOk(result)).toBe(true)
+    if (isOk(result)) {
+      expect(result.data.pageUrl).toBe('/scenarios')
+    }
   })
 
-  describe('getFeedbacks', () => {
-    // US-F03: ユーザーとして、他の人のフィードバックを検索できる
-    it('フィードバック一覧を取得できる', async () => {
-      getFeedbacks.mockResolvedValue({
-        success: true,
-        data: [
-          { feedbackId: 'fb-1', title: 'テスト1' },
-          { feedbackId: 'fb-2', title: 'テスト2' },
-        ],
-      })
+  it('バリデーションエラー時はエラーを返す', async () => {
+    createFeedback.mockResolvedValue({ success: false, error: new Error('Title is required') })
 
-      const result = await getFeedbacks({ limit: 20 })
+    const result = await createFeedback({ userId: 'user-123', category: 'BUG' as const, title: '', description: 'テスト' })
 
-      expect(isOk(result)).toBe(true)
-      if (isOk(result)) {
-        expect(result.data).toHaveLength(2)
-      }
-    })
-
-    it('カテゴリでフィルタできる', async () => {
-      getFeedbacks.mockResolvedValue({
-        success: true,
-        data: [{ feedbackId: 'fb-1', category: 'BUG' }],
-      })
-
-      const result = await getFeedbacks({ category: 'BUG' })
-
-      expect(isOk(result)).toBe(true)
-    })
-  })
-
-  describe('toggleVote', () => {
-    // US-F04: ユーザーとして、フィードバックに投票できる
-    it('投票を追加できる', async () => {
-      toggleVote.mockResolvedValue({
-        success: true,
-        data: { hasVoted: true, voteCount: 5 },
-      })
-
-      const result = await toggleVote({
-        feedbackId: 'fb-123',
-        userId: 'user-123',
-      })
-
-      expect(isOk(result)).toBe(true)
-      if (isOk(result)) {
-        expect(result.data.hasVoted).toBe(true)
-      }
-    })
-
-    it('投票を取り消しできる', async () => {
-      toggleVote.mockResolvedValue({
-        success: true,
-        data: { hasVoted: false, voteCount: 4 },
-      })
-
-      const result = await toggleVote({
-        feedbackId: 'fb-123',
-        userId: 'user-123',
-      })
-
-      expect(isOk(result)).toBe(true)
-      if (isOk(result)) {
-        expect(result.data.hasVoted).toBe(false)
-      }
-    })
+    expect(isErr(result)).toBe(true)
   })
 })
 ```
 
-#### Step 3.2: Vitest コンポーネントテストの生成
+#### Step 3.2: Vitest コンポーネントテスト
+
+`composeStories` で Story を再利用し、Testing Library で検証する:
 
 ```typescript
 import { composeStories } from '@storybook/react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-
 import * as stories from './FeedbackButton.stories'
 
 const { Default } = composeStories(stories)
 
 describe('FeedbackButton', () => {
-  // F01-01: フィードバックボタンが全ページに表示される（E2Eで検証）
   // F01-02: ボタンクリックでモーダルが開く
-  it('デフォルト状態でレンダリングできる', () => {
-    render(<Default />)
-
-    expect(
-      screen.getByRole('button', { name: 'フィードバックを送る' })
-    ).toBeInTheDocument()
-  })
-
   it('ボタンクリックでonClickが呼ばれる', async () => {
     const user = userEvent.setup()
     const handleClick = vi.fn()
-
     render(<Default onClick={handleClick} />)
 
     await user.click(screen.getByRole('button'))
 
     expect(handleClick).toHaveBeenCalledTimes(1)
   })
-
-  it('アクセシビリティ属性が正しく設定されている', () => {
-    render(<Default />)
-
-    const button = screen.getByRole('button')
-    expect(button).toHaveAttribute('aria-label')
-  })
 })
 ```
 
-#### Step 3.3: Storybook の生成（UIカタログ用）
+検証観点: デフォルトレンダリング / インタラクション（クリック・キーボード）/ アクセシビリティ属性（`getByRole`, `aria-label`）。
+
+#### Step 3.3: Storybook（UIカタログ用）
+
+`satisfies Meta<typeof Component>` 形式。状態のバリエーション（Default / 入力済み / エラー等）を Story として定義する:
 
 ```typescript
 import type { Meta, StoryObj } from '@storybook/react'
-
 import { FeedbackModal } from './FeedbackModal'
 
 const meta = {
   title: 'Blocks/FeedbackModal',
   component: FeedbackModal,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: { layout: 'centered' },
 } satisfies Meta<typeof FeedbackModal>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-/**
- * デフォルト表示状態
- */
+/** デフォルト表示状態 */
 export const Default: Story = {
-  args: {
-    isOpen: true,
-  },
+  args: { isOpen: true },
 }
 
-/**
- * カテゴリ選択済み（バグ報告）
- */
-export const BugReport: Story = {
-  args: {
-    isOpen: true,
-    defaultValues: {
-      category: 'BUG',
-    },
-  },
-}
-
-/**
- * 入力済み状態
- */
-export const Filled: Story = {
-  args: {
-    isOpen: true,
-    defaultValues: {
-      category: 'FEATURE',
-      title: '検索条件の保存機能',
-      description: 'よく使う検索条件を保存できると便利です',
-    },
-  },
-}
-
-/**
- * バリデーションエラー状態
- */
+/** バリデーションエラー状態 */
 export const WithErrors: Story = {
-  args: {
-    isOpen: true,
-    errors: {
-      title: 'タイトルは必須です',
-      description: '詳細は必須です',
-    },
-  },
+  args: { isOpen: true, errors: { title: 'タイトルは必須です' } },
 }
 ```
 
-#### Step 3.4: Playwright E2Eテストの生成
+#### Step 3.4: Playwright E2Eテスト
+
+`getByRole` / `getByLabel` ベースのロケータを使用。認証状態は `storageState` で制御する:
 
 ```typescript
 import { expect, test } from '@playwright/test'
@@ -689,121 +323,29 @@ import { expect, test } from '@playwright/test'
 test.use({ storageState: 'e2e/.auth/user.json' })
 
 test.describe('フィードバック投稿', () => {
-  // US-F01: ユーザーとして、どのページからでもフィードバックを送れる
-  test.describe('F01: フィードバック投稿フロー', () => {
-    // F01-01: フィードバックボタンが全ページに表示される
-    test('フィードバックボタンが全ページに表示される', async ({ page }) => {
-      // シナリオ一覧
-      await page.goto('/scenarios')
-      await expect(page.getByRole('button', { name: /フィードバック/i })).toBeVisible()
+  // F01-03: 必須項目を入力して送信できる
+  test('必須項目を入力して送信できる', async ({ page }) => {
+    await page.goto('/scenarios')
+    await page.getByRole('button', { name: /フィードバック/i }).click()
 
-      // セッション一覧
-      await page.goto('/sessions')
-      await expect(page.getByRole('button', { name: /フィードバック/i })).toBeVisible()
+    await page.getByRole('radio', { name: /バグ報告/i }).click()
+    await page.getByLabel(/タイトル/i).fill('テストフィードバック')
+    await page.getByLabel(/詳細/i).fill('テストの説明文です')
+    await page.getByRole('button', { name: /送信/i }).click()
 
-      // ホーム
-      await page.goto('/home')
-      await expect(page.getByRole('button', { name: /フィードバック/i })).toBeVisible()
-    })
-
-    // F01-02: ボタンクリックでモーダルが開く
-    test('ボタンクリックでモーダルが開く', async ({ page }) => {
-      await page.goto('/scenarios')
-
-      await page.getByRole('button', { name: /フィードバック/i }).click()
-
-      await expect(page.getByRole('dialog')).toBeVisible()
-      await expect(page.getByText('フィードバックを送る')).toBeVisible()
-    })
-
-    // F01-03: 必須項目を入力して送信できる
-    test('必須項目を入力して送信できる', async ({ page }) => {
-      await page.goto('/scenarios')
-      await page.getByRole('button', { name: /フィードバック/i }).click()
-
-      // カテゴリ選択
-      await page.getByRole('radio', { name: /バグ報告/i }).click()
-
-      // 入力
-      await page.getByLabel(/タイトル/i).fill('テストフィードバック')
-      await page.getByLabel(/詳細/i).fill('テストの説明文です')
-
-      // 送信
-      await page.getByRole('button', { name: /送信/i }).click()
-
-      // F01-04: 送信後に成功メッセージが表示される
-      await expect(page.getByText(/送信しました/i)).toBeVisible()
-    })
-  })
-
-  // US-F02: ユーザーとして、バグ報告時にスクリーンショットを添付できる
-  test.describe('F02: スクリーンショット添付', () => {
-    // F02-01: スクリーンショット添付ボタンが表示される
-    test('スクリーンショット添付ボタンが表示される', async ({ page }) => {
-      await page.goto('/scenarios')
-      await page.getByRole('button', { name: /フィードバック/i }).click()
-
-      await expect(page.getByRole('button', { name: /スクリーンショット/i })).toBeVisible()
-    })
-
-    // F02-02, F02-03: 画像ファイルを選択してプレビュー表示
-    test('画像を添付するとプレビューが表示される', async ({ page }) => {
-      await page.goto('/scenarios')
-      await page.getByRole('button', { name: /フィードバック/i }).click()
-
-      // ファイル選択
-      const fileInput = page.locator('input[type="file"]')
-      await fileInput.setInputFiles('e2e/fixtures/test-screenshot.png')
-
-      // プレビュー表示を確認
-      await expect(page.getByRole('img', { name: /プレビュー/i })).toBeVisible()
-    })
+    // F01-04: 送信後に成功メッセージが表示される
+    await expect(page.getByText(/送信しました/i)).toBeVisible()
   })
 })
 
-test.describe('フィードバック一覧', () => {
-  // US-F03: ユーザーとして、他の人のフィードバックを検索できる
-  test('フィードバック一覧を検索できる', async ({ page }) => {
+// AUTH-01: 未ログインユーザーのテストは storageState を空にする
+test.describe('権限制御（未ログイン）', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test('未ログインでアクセスするとログインページへリダイレクト', async ({ page }) => {
     await page.goto('/feedback')
 
-    // 検索
-    await page.getByPlaceholder(/検索/i).fill('検索テスト')
-    await page.getByRole('button', { name: /検索/i }).click()
-
-    // 結果が表示される（または0件メッセージ）
-    await expect(
-      page.getByText(/件/).or(page.getByText(/見つかりませんでした/i))
-    ).toBeVisible()
-  })
-
-  // US-F04: ユーザーとして、フィードバックに投票できる
-  test('フィードバックに投票できる', async ({ page }) => {
-    await page.goto('/feedback')
-
-    // 最初のフィードバックカードの投票ボタン
-    const voteButton = page.getByRole('button', { name: /投票/i }).first()
-    const initialCount = await voteButton.textContent()
-
-    await voteButton.click()
-
-    // 投票数が変わる（楽観的更新）
-    await expect(voteButton).not.toHaveText(initialCount!)
-  })
-})
-
-// 権限制御テスト
-test.describe('権限制御', () => {
-  // AUTH-01: 未ログインユーザーはフィードバック一覧を閲覧できない
-  test.describe('未ログインユーザー', () => {
-    test.use({ storageState: { cookies: [], origins: [] } })
-
-    test('フィードバック一覧にアクセスするとログインページへリダイレクト', async ({
-      page,
-    }) => {
-      await page.goto('/feedback')
-
-      await expect(page).toHaveURL(/login/)
-    })
+    await expect(page).toHaveURL(/login/)
   })
 })
 ```
@@ -817,83 +359,40 @@ test.describe('権限制御', () => {
 ```markdown
 ## テスト生成サマリー
 
-### 生成したテスト項目: 32件
+### 生成したテスト項目: {N}件
 
 | カテゴリ | 件数 | ファイル |
 |----------|------|----------|
 | スキーマバリデーション | 9 | `schema.test.ts` |
 | Adapter関数 | 8 | `adapter.test.ts` |
 | コンポーネント | 5 | `FeedbackButton.test.tsx` |
-| E2E | 10 | `submit-feedback.spec.ts`, `vote-feedback.spec.ts` |
+| E2E | 10 | `submit-feedback.spec.ts` |
 
 ### 生成したファイル
 
 - `src/app/(main)/feedback/_components/schema.test.ts` ← NEW
-- `src/app/(main)/feedback/__tests__/adapter.test.ts` ← NEW
-- `src/components/blocks/FeedbackButton/FeedbackButton.test.tsx` ← NEW
-- `src/components/blocks/FeedbackModal/FeedbackModal.stories.tsx` ← NEW
-- `e2e/feedback/submit-feedback.spec.ts` ← NEW
-- `e2e/feedback/vote-feedback.spec.ts` ← NEW
+- ...
 
 ### TDDモード
 
 以下のファイルはまだ実装されていないため、スタブを使用:
 - `src/app/(main)/feedback/_components/schema.ts`
-- `src/app/(main)/feedback/adapter.ts`
-- `src/components/blocks/FeedbackModal/FeedbackModal.tsx`
+- ...
 ```
 
 #### Step 4.2: 次のステップを案内
 
 ```
-✅ テスト生成完了（Red フェーズ）
+テスト生成完了（Red フェーズ）
 
 【次のステップ】
+1. テストが失敗することを確認: pnpm vitest run
+2. 実装を開始（Green フェーズ）: tdd-implementer エージェントで最小実装
+3. E2Eテストは機能完成後に実行: pnpm test:e2e
+4. リファクタリング（Refactor フェーズ）: tdd-refactorer エージェント
 
-1. テストが失敗することを確認:
-   pnpm vitest run
-
-2. 実装を開始（Green フェーズ）:
-   - schema.ts を実装 → schema.test.ts が通る
-   - adapter.ts を実装 → adapter.test.ts が通る
-   - コンポーネントを実装 → *.test.tsx が通る
-
-3. E2Eテストは機能完成後に実行:
-   pnpm playwright test
-
-4. リファクタリング（Refactor フェーズ）
-
-💡 ヒント: 1つずつテストを通していくのがTDDの基本です
+ヒント: 1つずつテストを通していくのがTDDの基本です
 ```
-
----
-
-## オプション
-
-| オプション | 説明 |
-|------------|------|
-| `--extract-only` | テスト項目の洗い出しのみ（テスト生成なし） |
-| `--vitest-only` | Vitestのテストのみ生成 |
-| `--playwright-only` | Playwrightのテストのみ生成 |
-| `--dry-run` | 生成計画のみ表示（ファイル書き出しなし） |
-| `--force` | 既存ファイルを確認なしで上書き |
-
----
-
-## 要件不足時の /requirements 呼び出し
-
-テスト項目の洗い出し中に要件の不足を検出した場合:
-
-```typescript
-// Skill ツールで /requirements を呼び出し
-Skill({ skill: "requirements", args: "refine feedback" })
-```
-
-呼び出すケース:
-- ユーザーストーリーが抽象的すぎてテスト項目に落とせない
-- バリデーションルール（文字数、必須、Enum値）が未定義
-- 権限制御（誰が何をできるか）が未定義
-- エラーケースの挙動が未定義
 
 ---
 
@@ -910,23 +409,15 @@ Skill({ skill: "requirements", args: "refine feedback" })
 
 ## Vitestのプロジェクト構成
 
-```typescript
-// vitest.config.ts
-projects: [
-  {
-    name: 'unit',           // ユニットテスト
-    environment: 'node',
-    include: ['src/**/__tests__/**/*.test.ts', 'src/**/__tests__/**/*.test.tsx'],
-  },
-  {
-    name: 'component',      // コンポーネントテスト
-    environment: 'jsdom',
-    include: ['src/**/*.test.tsx'],
-    exclude: ['src/**/__tests__/**'],
-    setupFiles: ['.storybook/vitest.setup.ts'],
-  },
-]
-```
+実際の構成は `vitest.config.ts` を参照（ドキュメント側に複製しない）。配置ルールの要点:
+
+| プロジェクト | environment | 対象 |
+|-------------|-------------|------|
+| `unit` | node | `src/**/__tests__/**/*.test.ts(x)` |
+| `component` | jsdom + `.storybook/vitest.setup.ts` | `src/**/*.test.tsx`（`__tests__/` 除く） |
+
+- **ユニットテスト**（ロジック・スキーマ・adapter）→ `__tests__/` ディレクトリ配下に置く
+- **コンポーネントテスト**（composeStories使用）→ コンポーネントと同階層に置く
 
 ---
 
@@ -934,8 +425,8 @@ projects: [
 
 | ファイル | 用途 |
 |----------|------|
-| `.claude/rules/requirements-*.md` | 要件定義書 |
+| `.claude/requirements/requirements-*.md` | 要件定義書 |
 | `.claude/commands/requirements.md` | 要件定義スキル |
 | `src/types/result.ts` | Result型 |
-| `vitest.config.ts` | Vitest設定 |
+| `vitest.config.ts` | Vitest設定（プロジェクト構成の正） |
 | `.storybook/vitest.setup.ts` | コンポーネントテスト用セットアップ |

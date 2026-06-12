@@ -45,19 +45,19 @@ allowed-tools:
 
 ### Step 3: ロールバックポイントの作成
 
-修正を開始する前に、現在の変更を保存する:
+修正を開始する前に、現在の変更を保存する。**`pop` ではなく `apply` を使う**（`pop` は stash を削除してしまい、ロールバックポイントが残らない）:
 
 ```bash
+# 1. 現在の変更を stash に退避
 git stash push -m "apply-review: before applying fixes"
+
+# 2. stash を残したまま作業ツリーに復元して続行
+git stash apply
 ```
 
-stash 後、直ちに stash を復元して作業を続行する:
-
-```bash
-git stash pop
-```
-
-これにより、万が一修正が失敗した場合に `git checkout -- .` で stash 時点の状態に戻し、`git stash pop` で元の変更を復元できる。
+これにより stash がロールバックポイントとして残る:
+- **修正が失敗した場合**: `git checkout -- .` で作業ツリーを破棄し、`git stash apply` で stash 時点の状態に戻す
+- **すべて完了した場合**: Step 8 の報告後に `git stash drop` で stash を削除する
 
 ### Step 4: 必須指摘の反映（ハイブリッド方式）
 
