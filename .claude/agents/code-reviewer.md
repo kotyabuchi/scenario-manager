@@ -54,7 +54,7 @@ When reviewing code, you will:
    - Server Components vs Client Components ('use client' directive)
    - Proper use of Next.js App Router features
 
-5. **Check Business Logic**: Validate against requirements from the detailed specification (`.claude/rules/requirements-v1.md`):
+5. **Check Business Logic**: Validate against requirements from the detailed specification (`.claude/requirements/requirements-v1.md`):
    - Search functionality implementation (multi-select systems, range filtering, tag AND logic)
    - Database schema adherence
    - User permissions and roles

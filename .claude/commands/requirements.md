@@ -13,8 +13,8 @@ description: 要件定義を対話的に作成・改善する。新機能の仕�
 要件定義が完了したら、PROGRESS.mdを更新し、次フェーズ（`/gen-test`）へ引き継ぐ。
 
 ```
-[/requirements] → /gen-test → /implement-tests → /refactor
-    ↓
+[/requirements] → /gen-test → tdd-implementer → tdd-refactorer
+    ↓                            （Green）        （Refactor）
  要件定義書作成
     ↓
  PROGRESS.md更新（要件定義: ✅）
@@ -102,14 +102,14 @@ ls .claude/requirements/
 
 ### Step 5: ドキュメント化
 
-要件が固まったら `.claude/requirements/<機能名>.md` に出力。
+要件が固まったら `.claude/requirements/requirements-<機能名>.md` に出力（既存ファイルと同じ `requirements-` プレフィックス規約に従う）。
 
 ```bash
 # 例: シナリオ検索機能
-.claude/requirements/scenario-search.md
+.claude/requirements/requirements-scenario-search.md
 
 # 例: フィードバック機能
-.claude/requirements/feedback.md
+.claude/requirements/requirements-feedback.md
 ```
 
 ### Step 6: PROGRESS.md更新（必須）
@@ -275,7 +275,7 @@ ls .claude/requirements/
 ```
 要件定義が完了しました。
 
-📄 要件定義書: .claude/requirements/<機能名>.md
+📄 要件定義書: .claude/requirements/requirements-<機能名>.md
 📊 PROGRESS.md: 更新済み
 
 次のフェーズ:

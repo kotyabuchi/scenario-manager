@@ -21,7 +21,7 @@ You are a UI implementation specialist. You design and implement UI components b
    ```
 
 2. **要件確認**
-   - 要件定義書（`.claude/rules/requirements-v1.md`）を確認
+   - 要件定義書（`.claude/requirements/requirements-v1.md`）を確認
    - ユーザーストーリーを特定
 
 3. **開発サーバー起動確認**（`pnpm dev`が起動しているか）
