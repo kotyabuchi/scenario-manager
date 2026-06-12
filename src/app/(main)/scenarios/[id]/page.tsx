@@ -123,7 +123,6 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
         />
       </div>
 
-      {/* ScenarioFAB は SpeedDialFAB に統合済み */}
       {/* プレイ済み登録・シナリオ編集のページ内UI移設は別タスクで対応 */}
     </div>
   );

@@ -178,7 +178,7 @@ export const editForm_input = css({
   transitionProperty: 'colors',
   transitionDuration: 'fast',
   _focusVisible: {
-    borderColor: 'primary.500',
+    borderColor: 'input.focusBorder',
     outline: 'none',
   },
   _placeholder: {
@@ -213,7 +213,7 @@ export const editForm_textarea = css({
   transitionProperty: 'colors',
   transitionDuration: 'fast',
   _focusVisible: {
-    borderColor: 'primary.500',
+    borderColor: 'input.focusBorder',
     outline: 'none',
   },
   _placeholder: {

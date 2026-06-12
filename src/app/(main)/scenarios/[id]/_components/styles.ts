@@ -179,7 +179,7 @@ export const scenarioInfo_distributeBtn = css({
   px: '4',
   py: '2',
   borderRadius: 'md',
-  bg: 'primary.500',
+  bg: 'button.primaryBg',
   color: 'white',
   fontSize: 'xs',
   fontWeight: 'medium',
@@ -188,7 +188,7 @@ export const scenarioInfo_distributeBtn = css({
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _hover: {
-    bg: 'primary.600',
+    bg: 'button.primaryBgHover',
     transform: 'translateY(-1px)',
   },
 });
@@ -269,7 +269,7 @@ export const section_ctaButton = css({
   gap: 'xs',
   px: '6',
   py: '2',
-  bg: 'primary.500',
+  bg: 'button.primaryBg',
   color: 'white',
   fontSize: 'sm',
   fontWeight: 'medium',
@@ -278,7 +278,7 @@ export const section_ctaButton = css({
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _hover: {
-    bg: 'primary.600',
+    bg: 'button.primaryBgHover',
     transform: 'translateY(-1px)',
   },
 });
@@ -289,7 +289,7 @@ export const section_actionButton = css({
   gap: 'xs',
   px: '4',
   py: 'xs',
-  bg: 'primary.500',
+  bg: 'button.primaryBg',
   color: 'white',
   fontSize: 'sm',
   fontWeight: 'medium',
@@ -299,7 +299,7 @@ export const section_actionButton = css({
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _hover: {
-    bg: 'primary.600',
+    bg: 'button.primaryBgHover',
   },
 });
 
@@ -763,7 +763,7 @@ export const reviewCard_spoilerToggle = css({
   display: 'flex',
   alignItems: 'center',
   gap: '2',
-  color: 'primary.500',
+  color: 'primary.600',
   fontSize: 'sm',
   fontWeight: 'medium',
   cursor: 'pointer',

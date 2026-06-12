@@ -26,7 +26,7 @@ export const switchControl = css({
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _checked: {
-    bg: 'primary.500',
+    bg: 'toggle.switchTrackOn',
   },
 });
 

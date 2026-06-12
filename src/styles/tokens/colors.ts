@@ -22,18 +22,19 @@ export const colors = defineTokens.colors({
     900: { value: '#292F3A' },
   },
 
-  // Primary: Brand Green (#059568 base)
+  // Primary: Pastel Green (#5FAA7F base)
+  // 500は淡色のため白文字禁止。白文字を載せる面は600以深を使用（requirements-ui-redesign.md 3.4）
   primary: {
-    50: { value: '#E9FCF2' },
-    100: { value: '#D1F5E3' },
-    200: { value: '#AAE8C9' },
-    300: { value: '#6FCEA3' },
-    400: { value: '#34B181' },
-    500: { value: '#059568' },
-    600: { value: '#0B7552' },
-    700: { value: '#085F41' },
-    800: { value: '#074A33' },
-    900: { value: '#083826' },
+    50: { value: '#F2F9F4' },
+    100: { value: '#E3F3E8' },
+    200: { value: '#C8E6D2' },
+    300: { value: '#A5D4B6' },
+    400: { value: '#7FBF98' },
+    500: { value: '#5FAA7F' },
+    600: { value: '#347A55' },
+    700: { value: '#2A6346' },
+    800: { value: '#1F4A35' },
+    900: { value: '#163627' },
   },
 
   // Purple (H=303)
@@ -142,7 +143,7 @@ export const colors = defineTokens.colors({
 
   // Primary shadow colors
   primaryShadow: {
-    25: { value: 'rgba(5, 149, 104, 0.25)' },
+    25: { value: 'rgba(52, 122, 85, 0.25)' },
   },
 
   // Red shadow colors

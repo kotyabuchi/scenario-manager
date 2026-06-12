@@ -152,7 +152,7 @@ export const tagsInputSuggestionItem = css({
   color: 'gray.700',
   cursor: 'pointer',
   textAlign: 'left',
-  _hover: { bg: 'green.50', color: 'primary.500' },
+  _hover: { bg: 'green.50', color: 'primary.600' },
 });
 
 /**

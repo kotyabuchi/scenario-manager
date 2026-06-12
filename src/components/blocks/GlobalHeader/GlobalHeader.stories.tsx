@@ -12,10 +12,11 @@ const meta = {
     layout: 'fullscreen',
     nextjs: {
       appDirectory: true,
-      navigation: {
-        pathname: '/scenarios',
-      },
     },
+  },
+  // md以上では非表示（AppSidebarに置き換わる）のため、モバイルビューポートで確認する
+  globals: {
+    viewport: { value: 'mobile1', isRotated: false },
   },
   decorators: [
     (Story) => (
@@ -31,62 +32,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * デフォルト（未ログイン、scenarios画面）
+ * デフォルト（未ログイン）
  */
 export const Default: Story = {};
 
 /**
- * ホーム画面
+ * ログイン済み（アバター表示）
  */
-export const HomePage: Story = {
-  parameters: {
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/home',
-      },
-    },
-  },
-};
-
-/**
- * シナリオ画面
- */
-export const ScenariosPage: Story = {
-  parameters: {
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/scenarios',
-      },
-    },
-  },
-};
-
-/**
- * セッション画面
- */
-export const SessionsPage: Story = {
-  parameters: {
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/sessions',
-      },
-    },
-  },
-};
-
-/**
- * ユーザー画面
- */
-export const UsersPage: Story = {
-  parameters: {
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/users',
-      },
-    },
-  },
+export const LoggedIn: Story = {
+  decorators: [
+    (Story) => (
+      <AuthProvider
+        initialUser={{
+          userId: 'storybook-user',
+          discordId: 'discord-123',
+          nickname: 'テストユーザー',
+          avatar: null,
+          role: 'MEMBER',
+        }}
+        initialDiscordMeta={null}
+      >
+        <Story />
+      </AuthProvider>
+    ),
+  ],
 };

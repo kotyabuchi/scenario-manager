@@ -77,7 +77,7 @@ export const dropdownItem = cva({
     selected: {
       true: {
         bg: 'green.50',
-        color: 'primary.500',
+        color: 'menu.itemTextSelected',
         _hover: {
           bg: 'green.50',
         },

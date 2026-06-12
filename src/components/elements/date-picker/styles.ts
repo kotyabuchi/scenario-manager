@@ -199,7 +199,7 @@ export const datePicker_day = css({
     bg: 'gray.100',
   },
   _selected: {
-    bg: 'primary.default',
+    bg: 'primary.600',
     color: 'primary.textOnPrimary',
     fontWeight: 'semibold',
   },
@@ -267,7 +267,7 @@ export const datePicker_monthYearCell = css({
     bg: 'gray.100',
   },
   _selected: {
-    bg: 'primary.default',
+    bg: 'primary.600',
     color: 'primary.textOnPrimary',
     fontWeight: 'semibold',
   },

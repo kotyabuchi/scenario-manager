@@ -58,8 +58,8 @@ export const avatarFallback = cva({
     justifyContent: 'center',
     width: 'full',
     height: 'full',
-    bg: 'primary.100', // primary.100相当
-    color: 'primary.500', // primary.default相当
+    bg: 'avatar.bg',
+    color: 'avatar.icon',
   },
 });
 

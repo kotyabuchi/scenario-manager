@@ -75,7 +75,7 @@ export const toastCloseButton = css({
 export const statusConfig = {
   success: {
     iconBg: 'primary.100',
-    iconColor: 'primary.500',
+    iconColor: 'toast.successIcon',
   },
   error: {
     iconBg: 'red.100',
@@ -103,7 +103,7 @@ export const toastIconContainerSuccess = css({
   borderRadius: 'lg',
   flexShrink: '0',
   backgroundColor: 'primary.100',
-  color: 'primary.500',
+  color: 'toast.successIcon',
 });
 
 /**

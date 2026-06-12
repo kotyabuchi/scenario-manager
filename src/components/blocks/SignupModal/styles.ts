@@ -58,7 +58,7 @@ export const stepIndicator_stepText = css({
 export const stepIndicator_descText = css({
   fontSize: '[12px]',
   fontWeight: 'medium',
-  color: '[primary.500]',
+  color: 'primary.600',
 });
 
 export const stepIndicator_barBg = css({
@@ -73,7 +73,7 @@ export const stepIndicator_barFillStep1 = css({
   h: 'full',
   w: '[50%]',
   borderRadius: 'xs',
-  bg: '[primary.500]',
+  bg: 'primary.500',
   transitionProperty: '[width, background]',
   transitionDuration: 'fast',
   transitionTimingFunction: 'ease-in-out',
@@ -83,7 +83,7 @@ export const stepIndicator_barFillStep2 = css({
   h: 'full',
   w: 'full',
   borderRadius: 'xs',
-  bg: '[primary.500]',
+  bg: 'primary.500',
   transitionProperty: '[width, background]',
   transitionDuration: 'fast',
   transitionTimingFunction: 'ease-in-out',
@@ -183,7 +183,7 @@ export const primaryButton = css({
   flex: '1',
   h: '[44px]',
   borderRadius: '[2]',
-  bg: '[primary.500]',
+  bg: 'button.primaryBg',
   color: 'white',
   fontSize: '[14px]',
   fontWeight: 'semibold',
@@ -194,7 +194,7 @@ export const primaryButton = css({
   gap: '2',
   boxShadow: '[0 2px 4px rgba(5, 149, 104, 0.25)]',
   _hover: {
-    bg: '[primary.600]',
+    bg: 'button.primaryBgHover',
   },
   _disabled: {
     opacity: '[0.6]',
@@ -207,7 +207,7 @@ export const primaryButtonFullWidth = css({
   mt: '1',
   h: '[44px]',
   borderRadius: '[2]',
-  bg: '[primary.500]',
+  bg: 'button.primaryBg',
   color: 'white',
   fontSize: '[14px]',
   fontWeight: 'semibold',
@@ -218,7 +218,7 @@ export const primaryButtonFullWidth = css({
   gap: '2',
   boxShadow: '[0 2px 4px rgba(5, 149, 104, 0.25)]',
   _hover: {
-    bg: '[primary.600]',
+    bg: 'button.primaryBgHover',
   },
   _disabled: {
     opacity: '[0.6]',
@@ -278,7 +278,7 @@ export const checkCircle = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '[primary.500]',
+  color: 'icon.primary',
 });
 
 export const visuallyHidden = css({

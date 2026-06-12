@@ -61,7 +61,7 @@ export const hintText = css({
 export const hintLink = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
-  color: 'primary.default',
+  color: 'primary.600',
   cursor: 'pointer',
   _hover: {
     textDecoration: 'underline',

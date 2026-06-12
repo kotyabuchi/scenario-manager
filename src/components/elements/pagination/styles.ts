@@ -49,12 +49,12 @@ export const paginationButton = cva({
         },
       },
       active: {
-        bg: 'primary.500',
+        bg: 'pagination.activeBg',
         color: 'white',
         boxShadow: '[none]',
         fontWeight: 'medium',
         _hover: {
-          bg: 'primary.500',
+          bg: 'pagination.activeBg',
         },
       },
     },

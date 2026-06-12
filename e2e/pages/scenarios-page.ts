@@ -50,11 +50,14 @@ export class ScenariosPage extends BasePage {
     );
     this.loadMoreButton = page.getByRole('button', { name: 'もっと見る' });
 
-    // PC: サイドバー
-    this.sidebar = page.locator('aside');
-    this.sidebarSearchButton = page
-      .locator('aside')
-      .getByRole('button', { name: '検索' });
+    // PC: 検索サイドバー（グローバルナビゲーションのAppSidebarと区別する）
+    const searchSidebar = page.locator(
+      'aside:not([aria-label="グローバルナビゲーション"])',
+    );
+    this.sidebar = searchSidebar;
+    this.sidebarSearchButton = searchSidebar.getByRole('button', {
+      name: '検索',
+    });
 
     // SP: フィルター
     // aria-label 付きのサイドバートグル（"フィルターを展開" 等）と区別するため正規表現で限定

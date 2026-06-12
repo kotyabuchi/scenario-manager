@@ -71,7 +71,7 @@ export const tabsTrigger = cva({
         height: 'auto',
         borderRadius: '[0]',
         _selected: {
-          color: 'primary.500',
+          color: 'primary.600',
           bg: 'transparent',
         },
       },

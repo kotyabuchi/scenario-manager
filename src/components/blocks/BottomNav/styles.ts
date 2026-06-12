@@ -42,7 +42,7 @@ export const navItem = cva({
   variants: {
     active: {
       true: {
-        color: 'primary.default',
+        color: 'primary.600',
       },
       false: {
         color: 'gray.400',
@@ -71,7 +71,7 @@ export const fab = css({
   width: '14',
   height: '14',
   borderRadius: 'full',
-  bg: 'primary.default',
+  bg: 'button.primaryBg',
   color: 'white',
   display: 'flex',
   alignItems: 'center',

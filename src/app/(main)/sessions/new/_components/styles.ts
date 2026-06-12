@@ -49,7 +49,7 @@ export const input = css({
     bg: '[bg.emphasized]',
   },
   _focus: {
-    borderColor: '[primary.500]',
+    borderColor: 'input.focusBorder',
     bg: '[bg.emphasized]',
   },
   _focusVisible: {
@@ -82,7 +82,7 @@ export const textarea = css({
     bg: '[bg.emphasized]',
   },
   _focus: {
-    borderColor: '[primary.500]',
+    borderColor: 'input.focusBorder',
     bg: '[bg.emphasized]',
   },
   _focusVisible: {
@@ -111,7 +111,7 @@ export const select = css({
     bg: '[bg.emphasized]',
   },
   _focus: {
-    borderColor: '[primary.500]',
+    borderColor: 'input.focusBorder',
     bg: '[bg.emphasized]',
   },
   _focusVisible: {
@@ -137,7 +137,7 @@ export const checkbox = css({
   w: '5',
   h: '5',
   cursor: 'pointer',
-  accentColor: '[primary.500]',
+  accentColor: 'primary.600',
 });
 
 export const radioGroup = css({
@@ -170,7 +170,7 @@ export const radio = css({
   w: '4',
   h: '4',
   cursor: 'pointer',
-  accentColor: '[primary.500]',
+  accentColor: 'primary.600',
 });
 
 export const submitArea = css({

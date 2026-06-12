@@ -173,7 +173,7 @@ export const voteSection_button = css({
   },
   _focusVisible: {
     outline: '[2px solid]',
-    outlineColor: 'primary.500',
+    outlineColor: 'border.focus',
   },
 });
 
@@ -285,7 +285,7 @@ export const commentSection_sortTab = cva({
     },
     _focusVisible: {
       outline: '[2px solid]',
-      outlineColor: 'primary.500',
+      outlineColor: 'border.focus',
     },
   },
   variants: {
@@ -359,7 +359,7 @@ export const commentCard_official = css({
   shadow: 'card.default',
   p: '5',
   borderLeft: '[4px solid]',
-  borderColor: 'primary.500',
+  borderColor: 'primary.600',
 });
 
 export const commentCard_inner = css({
@@ -393,7 +393,7 @@ export const commentCard_officialBadge = css({
   gap: '0.5',
   px: '2',
   py: '0.5',
-  bg: 'primary.500',
+  bg: 'primary.600',
   color: 'white',
   borderRadius: 'full',
   fontSize: '[10px]',
@@ -447,7 +447,7 @@ export const adminSection_divider = css({
 });
 
 export const adminSection_headerIcon = css({
-  color: 'primary.500',
+  color: 'icon.primary',
 });
 
 export const adminSection_title = css({
@@ -512,7 +512,7 @@ export const adminSection_priorityPill = cva({
     color: 'gray.500',
     _focusVisible: {
       outline: '[2px solid]',
-      outlineColor: 'primary.500',
+      outlineColor: 'border.focus',
     },
   },
   variants: {

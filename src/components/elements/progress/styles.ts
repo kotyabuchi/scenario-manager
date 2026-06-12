@@ -31,7 +31,7 @@ export const progressLabelText = css({
 export const progressValueText = css({
   fontSize: '[13px]',
   fontWeight: 'medium',
-  color: 'primary.500',
+  color: 'progress.text',
 });
 
 /**
@@ -90,7 +90,7 @@ export const progressCircleInner = css({
  */
 export const progressCircleValue = css({
   position: 'relative',
-  color: 'primary.500',
+  color: 'progress.text',
   fontWeight: 'semibold',
 });
 

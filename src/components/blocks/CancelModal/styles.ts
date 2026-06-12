@@ -61,6 +61,6 @@ export const textarea = css({
   },
   _focusVisible: {
     ring: '[2]',
-    ringColor: '[primary.500]',
+    ringColor: 'border.focus',
   },
 });

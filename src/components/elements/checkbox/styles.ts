@@ -38,7 +38,7 @@ export const checkboxControl = cva({
   variants: {
     checked: {
       true: {
-        backgroundColor: 'primary.500',
+        backgroundColor: 'toggle.checkedBg',
         color: 'white',
       },
       false: {

@@ -31,7 +31,7 @@ export const Default: Story = {
         className={css({
           py: '2',
           px: '4',
-          bg: 'primary.500',
+          bg: 'primary.600',
           color: 'white',
           borderRadius: 'lg',
           border: 'none',
@@ -228,7 +228,7 @@ export const AllPlacements: Story = {
           className={css({
             py: '2',
             px: '4',
-            bg: 'primary.500',
+            bg: 'primary.600',
             color: 'white',
             borderRadius: 'lg',
             border: 'none',

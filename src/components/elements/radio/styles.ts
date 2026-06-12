@@ -39,7 +39,7 @@ export const radioControl = css({
   transitionDuration: 'fast',
   flexShrink: '0',
   _checked: {
-    bg: 'primary.500',
+    bg: 'toggle.checkedBg',
     boxShadow: '[none]',
   },
   _disabled: {

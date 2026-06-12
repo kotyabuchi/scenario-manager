@@ -118,7 +118,7 @@ export const sidebarCollapsedBadge = css({
   h: '[20px]',
   px: '1.5',
   borderRadius: 'full',
-  bg: 'primary.500',
+  bg: 'primary.600',
   color: 'white',
   fontSize: 'xs',
   fontWeight: 'semibold',

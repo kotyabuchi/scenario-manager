@@ -40,7 +40,7 @@ export const categoryChip = cva({
     transitionDuration: 'fast',
     _focusVisible: {
       outline: '[2px solid]',
-      outlineColor: 'primary.500',
+      outlineColor: 'border.focus',
     },
   },
   variants: {
@@ -343,7 +343,7 @@ export const voteButton = cva({
     bg: 'transparent',
     _focusVisible: {
       outline: '[2px solid]',
-      outlineColor: 'primary.500',
+      outlineColor: 'border.focus',
     },
   },
   variants: {

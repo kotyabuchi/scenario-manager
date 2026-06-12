@@ -4,12 +4,14 @@ export const semanticTokens = {
     // 背景色
     // ========================================
     bg: {
-      // ページ背景（淡い青みがかった白）
-      page: { value: '#f6f8f7' },
+      // ページ背景（淡い緑みがかった白）
+      page: { value: '#F4F7F2' },
       // カード・パネル背景
       card: { value: '{colors.white}' },
-      // 入力フィールド背景
-      input: { value: '{colors.gray.100}' },
+      // アプリサイドバー背景
+      sidebar: { value: '#FBFCFA' },
+      // 入力フィールド背景（緑みのあるグレー）
+      input: { value: '#EDF0EC' },
       // 無効状態の背景
       disabled: { value: '{colors.gray.200}' },
       // エラー入力背景
@@ -124,7 +126,7 @@ export const semanticTokens = {
     border: {
       default: { value: '{colors.gray.300}' },
       subtle: { value: '{colors.gray.200}' },
-      focus: { value: '{colors.primary.500}' },
+      focus: { value: '{colors.primary.600}' },
       error: { value: '{colors.red.500}' },
     },
 
@@ -145,7 +147,7 @@ export const semanticTokens = {
       default: { value: '{colors.gray.500}' },
       muted: { value: '{colors.gray.400}' },
       white: { value: '{colors.white}' },
-      primary: { value: '{colors.primary.500}' },
+      primary: { value: '{colors.primary.600}' },
       error: { value: '{colors.red.500}' },
     },
 
@@ -153,9 +155,9 @@ export const semanticTokens = {
     // ボタン
     // ========================================
     button: {
-      // Primary Button
-      primaryBg: { value: '{colors.primary.500}' },
-      primaryBgHover: { value: '{colors.primary.600}' },
+      // Primary Button（白文字AA確保のため600以深を使用）
+      primaryBg: { value: '{colors.primary.600}' },
+      primaryBgHover: { value: '{colors.primary.700}' },
       primaryText: { value: '{colors.white}' },
       // Secondary Button
       secondaryBg: { value: '{colors.white}' },
@@ -200,14 +202,14 @@ export const semanticTokens = {
     // 入力フィールド
     // ========================================
     input: {
-      bg: { value: '{colors.gray.100}' },
+      bg: { value: '#EDF0EC' },
       bgDisabled: { value: '{colors.gray.200}' },
       bgError: { value: '{colors.red.50}' },
       bgReadonly: { value: '{colors.gray.50}' },
       text: { value: '{colors.gray.800}' },
       placeholder: { value: '{colors.gray.400}' },
       label: { value: '{colors.gray.700}' },
-      focusBorder: { value: '{colors.primary.500}' },
+      focusBorder: { value: '{colors.primary.600}' },
       errorBorder: { value: '{colors.red.500}' },
     },
 
@@ -218,7 +220,7 @@ export const semanticTokens = {
       track: { value: '{colors.gray.200}' },
       fill: { value: '{colors.primary.500}' },
       thumb: { value: '{colors.white}' },
-      valueText: { value: '{colors.primary.500}' },
+      valueText: { value: '{colors.primary.600}' },
     },
 
     // ========================================
@@ -226,10 +228,10 @@ export const semanticTokens = {
     // ========================================
     toggle: {
       uncheckedBg: { value: '{colors.white}' },
-      checkedBg: { value: '{colors.primary.500}' },
+      checkedBg: { value: '{colors.primary.600}' },
       disabledBg: { value: '{colors.gray.200}' },
       switchTrack: { value: '{colors.gray.200}' },
-      switchTrackOn: { value: '{colors.primary.500}' },
+      switchTrackOn: { value: '{colors.primary.600}' },
     },
 
     // ========================================
@@ -241,7 +243,7 @@ export const semanticTokens = {
       itemBgHover: { value: '{colors.gray.50}' },
       itemBgSelected: { value: '{colors.primary.50}' },
       itemText: { value: '{colors.gray.700}' },
-      itemTextSelected: { value: '{colors.primary.500}' },
+      itemTextSelected: { value: '{colors.primary.600}' },
     },
 
     // ========================================
@@ -269,7 +271,7 @@ export const semanticTokens = {
     // ========================================
     toast: {
       bg: { value: '{colors.white}' },
-      successIcon: { value: '{colors.primary.500}' },
+      successIcon: { value: '{colors.primary.600}' },
       successIconBg: { value: '{colors.primary.100}' },
       errorIcon: { value: '{colors.red.500}' },
       errorIconBg: { value: '{colors.red.100}' },
@@ -283,7 +285,7 @@ export const semanticTokens = {
     // ========================================
     pagination: {
       bg: { value: '{colors.white}' },
-      activeBg: { value: '{colors.primary.500}' },
+      activeBg: { value: '{colors.primary.600}' },
       activeText: { value: '{colors.white}' },
       inactiveText: { value: '{colors.gray.700}' },
       icon: { value: '{colors.gray.500}' },
@@ -313,7 +315,7 @@ export const semanticTokens = {
     progress: {
       track: { value: '{colors.gray.200}' },
       fill: { value: '{colors.primary.500}' },
-      text: { value: '{colors.primary.500}' },
+      text: { value: '{colors.primary.600}' },
       circleBg: { value: '{colors.gray.200}' },
       circleFg: { value: '{colors.white}' },
     },
@@ -323,7 +325,7 @@ export const semanticTokens = {
     // ========================================
     avatar: {
       bg: { value: '{colors.primary.100}' },
-      icon: { value: '{colors.primary.500}' },
+      icon: { value: '{colors.primary.600}' },
       placeholder: { value: '{colors.gray.200}' },
     },
 
@@ -351,8 +353,8 @@ export const semanticTokens = {
     header: {
       bg: { value: '{colors.white}' },
       text: { value: '{colors.gray.500}' },
-      textActive: { value: '{colors.primary.500}' },
-      logo: { value: '{colors.primary.500}' },
+      textActive: { value: '{colors.primary.600}' },
+      logo: { value: '{colors.primary.600}' },
       logoBg: { value: '{colors.primary.100}' },
     },
 
@@ -366,7 +368,7 @@ export const semanticTokens = {
     },
 
     // ========================================
-    // サイドバー
+    // サイドバー（シナリオ検索パネル用）
     // ========================================
     sidebar: {
       bg: { value: '{colors.white}' },
@@ -376,10 +378,21 @@ export const semanticTokens = {
     },
 
     // ========================================
+    // アプリサイドバー（グローバルナビゲーション用）
+    // ========================================
+    appSidebar: {
+      bg: { value: '#FBFCFA' },
+      navText: { value: '{colors.gray.600}' },
+      navTextActive: { value: '{colors.primary.800}' },
+      navActiveBg: { value: '{colors.primary.100}' },
+      navHoverBg: { value: '{colors.gray.100}' },
+    },
+
+    // ========================================
     // システムバッジ（TRPGシステム識別用）
     // ========================================
     systemBadge: {
-      green: { value: '{colors.primary.500}' },
+      green: { value: '{colors.primary.600}' },
       purple: { value: '{colors.purple.500}' },
       orange: { value: '{colors.orange.500}' },
     },
@@ -428,7 +441,7 @@ export const semanticTokens = {
       featureIndigo: { value: '{colors.indigo.500}' },
       featureIndigoBg: { value: '{colors.indigo.50}' },
       // CTA セクション
-      ctaBg: { value: '{colors.primary.500}' },
+      ctaBg: { value: '{colors.primary.600}' },
       ctaSubtext: { value: '{colors.primary.100}' },
       // Footer
       footerBg: { value: '{colors.gray.800}' },
@@ -454,8 +467,8 @@ export const semanticTokens = {
   },
 
   borders: {
-    focusRing: { value: '2px solid {colors.primary.500}' },
-    focusRingDashed: { value: '2px dashed {colors.primary.500}' },
+    focusRing: { value: '2px solid {colors.primary.600}' },
+    focusRingDashed: { value: '2px dashed {colors.primary.600}' },
   },
 
   shadows: {
@@ -480,7 +493,7 @@ export const semanticTokens = {
     // ========================================
     // ボタン
     button: {
-      primary: { value: '0 2px 4px rgba(5, 149, 104, 0.25)' },
+      primary: { value: '0 2px 4px rgba(52, 122, 85, 0.25)' },
       secondary: { value: '0 1px 3px rgba(0, 0, 0, 0.10)' },
       destructive: { value: '0 2px 4px rgba(213, 68, 67, 0.25)' },
     },
@@ -527,7 +540,7 @@ export const semanticTokens = {
     },
     // FAB
     fab: {
-      default: { value: '0 4px 12px rgba(5, 149, 104, 0.25)' },
+      default: { value: '0 4px 12px rgba(52, 122, 85, 0.25)' },
     },
     // スクロールボタン
     scrollButton: {
@@ -538,7 +551,7 @@ export const semanticTokens = {
       // ブラウズボタン
       browseBtn: { value: '0 2px 8px rgba(0, 0, 0, 0.06)' },
       // CTAボタン（Hero）
-      heroCta: { value: '0 4px 12px rgba(5, 149, 104, 0.19)' },
+      heroCta: { value: '0 4px 12px rgba(52, 122, 85, 0.19)' },
       // Feature カード
       featureCard: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
       // CTAボタン（白背景）

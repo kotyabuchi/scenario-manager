@@ -315,7 +315,7 @@ export const keywordSearchInput = css({
   },
   _focusVisible: {
     outline: '[2px solid]',
-    outlineColor: 'primary.500',
+    outlineColor: 'border.focus',
   },
   _placeholder: {
     color: 'gray.400',
@@ -380,7 +380,7 @@ export const mobileFilterBadge = css({
   h: '[20px]',
   px: '1.5',
   borderRadius: 'full',
-  bg: 'primary.500',
+  bg: 'primary.600',
   color: 'white',
   fontSize: 'xs',
   fontWeight: 'semibold',

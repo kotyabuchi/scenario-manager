@@ -1,9 +1,9 @@
 import { SignupModalWrapper } from './_components/SignupModalWrapper';
 
+import { AppSidebar } from '@/components/blocks/AppSidebar';
 import { BottomNav } from '@/components/blocks/BottomNav';
 import { GlobalHeader } from '@/components/blocks/GlobalHeader';
 import { SimpleFooter } from '@/components/blocks/SimpleFooter';
-import { SpeedDialFAB } from '@/components/blocks/SpeedDialFAB';
 import { AuthProvider } from '@/context';
 import { createClient } from '@/lib/supabase/server';
 import { Flex, styled } from '@/styled-system/jsx';
@@ -49,23 +49,25 @@ export default async function MainLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <Flex direction="column" minHeight="[100dvh]" bg="bg.page">
+    <Flex minHeight="[100dvh]" bg="bg.page">
       <AuthProvider
         initialUser={initialUser}
         initialDiscordMeta={initialDiscordMeta}
       >
-        <GlobalHeader />
-        <styled.main
-          flex="1"
-          display="flex"
-          flexDirection="column"
-          pb={{ base: '20', md: '0' }}
-        >
-          {children}
-        </styled.main>
-        <SimpleFooter />
+        <AppSidebar />
+        <Flex direction="column" flex="1" minWidth="0">
+          <GlobalHeader />
+          <styled.main
+            flex="1"
+            display="flex"
+            flexDirection="column"
+            pb={{ base: '20', md: '0' }}
+          >
+            {children}
+          </styled.main>
+          <SimpleFooter />
+        </Flex>
         <BottomNav isAuthenticated={!!initialUser} />
-        <SpeedDialFAB isAuthenticated={!!initialUser} />
         <SignupModalWrapper />
       </AuthProvider>
     </Flex>

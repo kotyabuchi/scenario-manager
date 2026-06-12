@@ -87,13 +87,13 @@ export const sectionAccentBar = css({
 
 export const sectionLink = css({
   fontSize: 'sm',
-  color: 'primary.default',
+  color: 'primary.600',
   textDecoration: 'none',
   display: 'flex',
   alignItems: 'center',
   gap: 'xs',
   _hover: {
-    color: 'primary.hover',
+    color: 'primary.700',
     textDecoration: 'underline',
   },
 });
@@ -597,7 +597,7 @@ export const calendar_dayCellOutside = css({
 
 export const calendar_dayCellToday = css({
   fontWeight: 'bold',
-  color: 'primary.default',
+  color: 'primary.600',
 });
 
 export const calendar_sessionDot = css({

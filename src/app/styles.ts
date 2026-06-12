@@ -68,7 +68,7 @@ export const heroLogoIcon = css({
 export const heroLogoText = css({
   fontSize: '[24px]',
   fontWeight: 'bold',
-  color: 'primary.default',
+  color: 'primary.600',
   md: {
     fontSize: '[32px]',
   },
@@ -142,14 +142,14 @@ export const heroCTABtn = css({
     padding: '[0 32px]',
   },
   borderRadius: 'xl',
-  bg: 'primary.default',
+  bg: 'button.primaryBg',
   shadow: 'landing.heroCta',
   cursor: 'pointer',
   transitionProperty: 'common',
   transitionDuration: 'fast',
   transitionTimingFunction: 'ease-out',
   _hover: {
-    bg: 'primary.hover',
+    bg: 'button.primaryBgHover',
   },
 });
 
@@ -268,7 +268,7 @@ export const featureIcon_shield = css({
 
 // Icon colors
 export const iconColor_primary = css({
-  color: 'primary.default',
+  color: 'primary.600',
 });
 
 export const iconColor_indigo = css({
@@ -351,7 +351,7 @@ export const stepNum = css({
   width: '12',
   height: '12',
   borderRadius: 'full',
-  bg: 'primary.default',
+  bg: 'primary.600',
 });
 
 export const stepNumText = css({
@@ -495,7 +495,7 @@ export const ctaSection = css({
   gap: '6',
   px: '6',
   py: '12',
-  bg: 'primary.default',
+  bg: 'landing.ctaBg',
   md: {
     px: '[120px]',
     py: '20',
@@ -540,13 +540,13 @@ export const ctaBtn = css({
 });
 
 export const ctaBtnIcon = css({
-  color: 'primary.default',
+  color: 'primary.600',
 });
 
 export const ctaBtnText = css({
   fontSize: '[16px]',
   fontWeight: 'semibold',
-  color: 'primary.default',
+  color: 'primary.600',
 });
 
 // ========================================

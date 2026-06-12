@@ -313,7 +313,7 @@ export const publicCard_systemBadge = css({
   position: 'absolute',
   bottom: '0',
   right: '0',
-  bg: 'primary.500',
+  bg: 'systemBadge.green',
   color: 'white',
   fontSize: '[11px]',
   fontWeight: 'semibold',
@@ -518,7 +518,7 @@ export const sessionCard_metaRow = css({
 });
 
 export const sessionCard_systemBadgeInline = css({
-  bg: 'primary.500',
+  bg: 'systemBadge.green',
   color: 'white',
   fontSize: '[11px]',
   fontWeight: 'semibold',
