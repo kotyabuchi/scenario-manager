@@ -397,6 +397,35 @@
 
 ---
 
+## DBスキーマ移行（discord_id → auth_user_id / game_schedules廃止）の残対応
+
+**経緯（2026-06-13）**: 初回ログインのプロフィール登録で `Could not find the 'discord_id' column` エラーが発生。原因は Supabase DB のスキーマが `feature/session-flow` ブランチのマイグレーションで変更済みだったが、`develop` の `src/db/types.ts` とコードが旧スキーマのままだったこと。develop に緊急対応を適用済み（commit `796d365`）。
+
+### develop に適用済み（応急処置）
+- [x] `src/db/types.ts` を `supabase gen types` で再生成
+- [x] `discord_id` → `auth_user_id` への置換（INSERT/SELECT/`.eq()` 全箇所）
+- [x] `game_schedules` テーブル廃止対応（`game_sessions.schedule_date` / `schedule_phase` を直接参照）
+- [x] `game_schedule_time_blocks` / `session_availability_time_blocks` への型置換（helpers.ts）
+
+### develop に残る潜在問題（feature/session-flow 側で本対応済み・マージで解消予定）
+
+> **方針**: develop 単独では修正しない（`feature/session-flow` が 113コミット未マージで、そちらに正しい実装が既にある。develop を先にリネームすると将来マージで大量コンフリクトになるため）。下記は session-flow マージ時に正版へ収束させる。
+
+| 項目 | develop の現状（劣化した応急処置） | feature/session-flow（正） |
+|------|-----------------------------------|---------------------------|
+| `AuthUser.discordId` / `DiscordMeta.discordId` | 中身が `auth_user_id`（Auth UUID）を保持＝**名前が実体と不一致** | 本物のDiscord ID（`discord_account_id`）を保持 |
+| `discord_account_id` カラム | **未保存**（`registerUser` が書き込まない） | `getDiscordAccountIdFromAuthUser()` で保存済み |
+| データアクセス関数名 | `getUserByDiscordId`（旧名のまま） | `getUserByAuthUserId` にリネーム済み |
+
+- [ ] `feature/session-flow` マージ時に上記3点を正版で取り込む（または develop 単独で運用継続する場合は別途リネーム＋`discord_account_id` 保存を実装）
+
+### feature/session-flow の未マージ状況（参考）
+- 最終コミット 2026-03-19（`47e430d`）。`[→]` 作業中マーカーなし＝中断中の途中作業はない。
+- develop 比 **113コミット先行**。セッション管理・日程調整・セッション詳細編集UI・モックデザイン適合・`discord_account_id` 対応などが含まれる。
+- 機能としての未実装項目（QuickSearchModal, checkUserNameAvailability 実装, user_favorite_systems テーブル等）は本タスク対象外（現状維持）。
+
+---
+
 ## 監査指摘事項（2026-02-23）
 
 - [ ] DB統合テストの実行環境を確立する（Supabase Local または モック化）
@@ -434,6 +463,7 @@
 | 2026-01-27 | Server Action統合: 重複チェック・レートリミットをcreateScenarioActionに組み込み |
 | 2026-01-27 | フロントエンド改善: useSystemMessageでエラー・成功メッセージ表示 |
 | 2026-02-23 | PROGRESS全規模監査実施、テスト状態の細分化（✅/🔸/⬜）、計画書進捗セクション追加 |
+| 2026-06-13 | DBスキーマ移行の緊急対応（discord_id→auth_user_id、game_schedules廃止）を develop に適用（commit `796d365`）。残対応は feature/session-flow マージで収束予定として記録 |
 
 ---
 
@@ -452,6 +482,7 @@
 5. SignupModal「好きなシステム」チップUI + `user_favorite_systems` テーブル
 
 ### 優先度C: セキュリティ・運用
+0. DBスキーマ移行の残対応（`AuthUser.discordId` の実体不一致 / `discord_account_id` 未保存 / `getUserByDiscordId` 旧名）— feature/session-flow マージで収束。詳細は「DBスキーマ移行の残対応」セクション参照
 1. RLSポリシー設定
 2. シナリオ自動インポート Step 6: 利用規約・通報機能
 3. BOOTH/TALTOへの事前連絡
