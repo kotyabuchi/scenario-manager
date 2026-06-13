@@ -56,7 +56,7 @@
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
 | scenarioFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了（30テスト通過） |
 | createScenario | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト4件 it.skip） |
-| getUserByDiscordId | [x] | [x] | [-] | [x] | [ ] | 実装済（正常系テスト it.skip） |
+| getUserByAuthUserId | [x] | [x] | [-] | [x] | [ ] | 実装済（正常系テスト it.skip） |
 | checkScenarioNameDuplicate | [x] | [x] | [-] | [x] | [ ] | 実装済（describe.skip で全件スキップ） |
 | checkDistributeUrlDuplicate | [x] | [x] | [-] | [x] | [ ] | 実装済（describe.skip で全件スキップ） |
 | checkRateLimit | [x] | [x] | [x] | [x] | [ ] | 完了（7テスト通過、DB不要） |
@@ -85,7 +85,7 @@
 | getScenarioSessions | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
 | getScenarioVideoLinks | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
 | getUserScenarioPreference | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
-| getUserByDiscordId | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| getUserByAuthUserId | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
 | toggleFavorite | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
 | togglePlayed | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
 
@@ -199,7 +199,7 @@
 | profileFormSchema | [ ] | [x] | [x] | [x] | [ ] | 完了（17テスト通過、要件未定義） |
 | updateUserProfile | [ ] | [x] | [-] | [x] | [ ] | 実装済（テスト8件中6件 it.skip） |
 | getUserById | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（要件・テスト未） |
-| getUserByDiscordId (profile) | [ ] | [ ] | [-] | [x] | [ ] | 実装済（テスト2件中1件 skip） |
+| getUserByAuthUserId (profile) | [ ] | [ ] | [-] | [x] | [ ] | 実装済（テスト2件中1件 skip） |
 | updateProfile (Server Action) | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未） |
 | ProfileEditFormWrapper | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未） |
 
@@ -209,7 +209,7 @@
 
 **実装ファイル**:
 - `src/app/(main)/profile/page.tsx` — プロフィール編集ページ
-- `src/app/(main)/profile/adapter.ts` — DB操作（getUserByDiscordId, updateUserProfile）
+- `src/app/(main)/profile/adapter.ts` — DB操作（getUserByAuthUserId, updateUserProfile）
 - `src/app/(main)/profile/actions.ts` — Server Action（updateProfile）
 - `src/app/(main)/profile/_components/ProfileEditFormWrapper.tsx` — フォームラッパー
 - `src/app/(main)/users/[id]/page.tsx` — ユーザー公開プロフィール
@@ -515,38 +515,40 @@
 
 ## 次のアクション
 
+> **ベースライン**: `feature/session-flow`（113コミット）をマージ済み（2026-06-13, `da2cd09`）。develop が唯一の最新ソース。
+
 ### 優先度A: テスト品質改善（横断的課題）
 1. DB統合テストのskip問題を解決（Supabase Local or モック化）
-2. 偽陽性テスト（`expect(true).toBe(true)`）を修正
+2. 偽陽性テスト（`expect(true).toBe(true)` / 表中 `[-]` マーク）を `it.skip` に統一
 3. `createScenarioAction` のテスト作成
+4. adapter/actions テストのモック→実装呼び出し化（`AuthRedirect` のテスト含む）
 
 ### 優先度B: 未完了機能
-1. ダッシュボード残り: StatsSection, QuickActions
+1. ダッシュボード残り: StatsSection, QuickActions（`dashboard-redesign.md`）
 2. セッション作成ボタンの配置改善（P1-016）
-3. updateSession / 日程調整機能
-4. `checkUserNameAvailability` のSupabase実装
-5. SignupModal「好きなシステム」チップUI + `user_favorite_systems` テーブル
+3. `updateSession` のテスト追加（※機能実装済み・日程調整機能は完了済み）
+4. `checkUserNameAvailability` のSupabase実装（現状スタブ）
+5. SignupModal「好きなシステム」チップUI + `user_favorite_systems` テーブル作成（マイグレーション）
+6. シナリオ編集画面
+7. セッション完了後のレビュー導線（CompleteSessionDialog → レビュー画面）
 
-### 優先度C: セッション詳細 編集UI（バックエンド実装済み → UI層のみ）
+### 優先度C: セキュリティ・運用
+1. RLSポリシー設定（users / scenarios / sessions）
+2. シナリオ自動インポート Step 6: 利用規約・通報機能
+3. BOOTH/TALTO への事前連絡・許諾確認
 
-| # | 対象 | 概要 | 状態 |
-|---|------|------|------|
-| 1 | ToolsSection | セッションリンクの一覧表示・追加・編集・削除UI | [x] |
-| 2 | キャラクターシート編集 | ParticipantCardにCS URL編集UIを追加 | [x] |
-| 3 | GMメモ インライン編集 | GMNotesSectionにインライン編集UIを追加 | [x] |
-| 4 | 基本情報編集 | BasicInfoSectionの編集フォーム（adapter/action/schemaも必要） | [x] |
-| 5 | シナリオ変更 | BasicInfoSectionのシナリオ変更/解除UI（adapter/action/schema + フェーズガード） | [x] |
-
-### 優先度D: 未完了タスク
-1. シナリオ編集画面
-2. RLSポリシー設定
-3. シナリオ自動インポート Step 6: 利用規約・通報機能
-4. BOOTH/TALTOへの事前連絡
-5. UI/UXリファクタリング残タスク
-6. FilterBottomSheet にスワイプダウンで閉じるジェスチャーを追加（ハンドルバーは見た目のみで未実装）
-7. `borders.soft` トークンを他の画面のカード・検索バーにも適用する（シナリオ一覧、セッション一覧等）。ダークモード対応時にトークン値の切り替えだけで済むようにする
-
-### 優先度D: 品質改善
+### 優先度D: 品質改善・技術的負債
 1. `_components/` フォルダ構成の刷新（`docs/plans/components-folder-restructure.md`、Batch 1-10）— [Issue #3](https://github.com/kotyabuchi/scenario-manager/issues/3)
 2. TDD Refactor（全機能でリファクタ未実施）
 3. deploy.yml の dead env var 削除（`CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE`）
+4. インフラ記述（Drizzle/Hyperdrive 歴史的記述）の整理 + Chipディレクトリ名の kebab-case 化
+5. UI/UX P2残タスク 8件、FilterBottomSheet のスワイプダウン閉じジェスチャー
+6. `borders.soft` トークンを他画面（シナリオ一覧 / セッション一覧）へ展開
+
+---
+
+## 完了済み（参考）
+
+- **DBスキーマ移行**: `discord_id` → `auth_user_id` + `discord_account_id`、`game_schedules` 廃止 → `game_sessions.schedule_date/phase`（2026-06-13 マージで収束）
+- **セッション詳細 編集UI**（バックエンド + UI 全完了）: ToolsSection / キャラクターシート編集 / GMメモ インライン編集 / 基本情報編集 / シナリオ変更
+- **セッション画面 モックデザイン適合**（#1〜#10 全完了、上記「セッション画面 モックデザイン適合リファクタリング」参照）
