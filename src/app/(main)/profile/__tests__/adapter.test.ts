@@ -40,7 +40,7 @@ describe('profile adapter', () => {
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
-        expect(result.data.discordId).toBe(discordId);
+        expect(result.data.authUserId).toBe(discordId);
         expect(result.data).toHaveProperty('userId');
         expect(result.data).toHaveProperty('userName');
         expect(result.data).toHaveProperty('nickname');

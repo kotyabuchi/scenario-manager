@@ -1,5 +1,4 @@
 import type {
-  GameScheduleRow,
   GameSessionRow,
   ScenarioRow,
   ScenarioSystemRow,
@@ -9,7 +8,6 @@ import type {
 
 // 基本型
 type GameSession = GameSessionRow;
-type GameSchedule = GameScheduleRow;
 type Scenario = ScenarioRow;
 type ScenarioSystem = ScenarioSystemRow;
 type SessionParticipant = SessionParticipantRow;
@@ -27,7 +25,6 @@ type SessionWithRelations = GameSession & {
         system: ScenarioSystem;
       })
     | null;
-  schedule: GameSchedule | null;
   participants: ParticipantWithUser[];
 };
 
@@ -121,7 +118,6 @@ type CalendarData = {
 
 export type {
   GameSession,
-  GameSchedule,
   Scenario,
   ScenarioSystem,
   SessionParticipant,

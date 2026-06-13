@@ -15,7 +15,9 @@ export type ScenarioSystemRow = CamelCaseKeys<
 export type TagRow = CamelCaseKeys<Tables['tags']['Row']>;
 export type ScenarioTagRow = CamelCaseKeys<Tables['scenario_tags']['Row']>;
 export type GameSessionRow = CamelCaseKeys<Tables['game_sessions']['Row']>;
-export type GameScheduleRow = CamelCaseKeys<Tables['game_schedules']['Row']>;
+export type GameScheduleTimeBlockRow = CamelCaseKeys<
+  Tables['game_schedule_time_blocks']['Row']
+>;
 export type SessionParticipantRow = CamelCaseKeys<
   Tables['session_participants']['Row']
 >;
@@ -30,8 +32,8 @@ export type FeedbackCommentRow = CamelCaseKeys<
   Tables['feedback_comments']['Row']
 >;
 export type NotificationRow = CamelCaseKeys<Tables['notifications']['Row']>;
-export type ScheduleResponseRow = CamelCaseKeys<
-  Tables['schedule_responses']['Row']
+export type SessionAvailabilityTimeBlockRow = CamelCaseKeys<
+  Tables['session_availability_time_blocks']['Row']
 >;
 export type SessionLinkRow = CamelCaseKeys<Tables['session_links']['Row']>;
 

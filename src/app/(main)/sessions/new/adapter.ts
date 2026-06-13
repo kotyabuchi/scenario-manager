@@ -91,6 +91,7 @@ export const createSession = async (
       .from('game_sessions')
       .insert({
         game_session_id: gameSessionId,
+        created_by_id: userId,
         session_name: input.sessionName,
         session_description: input.sessionDescription,
         scenario_id: input.scenarioId ?? null,

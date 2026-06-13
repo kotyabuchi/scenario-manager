@@ -79,15 +79,15 @@ export const AuthProvider = ({
     // usersテーブルからユーザー情報を取得
     const { data: dbUser } = await supabase
       .from('users')
-      .select('user_id, discord_id, nickname, image, role')
-      .eq('discord_id', authUser.id)
+      .select('user_id, auth_user_id, nickname, image, role')
+      .eq('auth_user_id', authUser.id)
       .single();
 
     if (dbUser) {
       // 既存ユーザー
       setUserState({
         userId: dbUser.user_id,
-        discordId: dbUser.discord_id,
+        discordId: dbUser.auth_user_id,
         nickname: dbUser.nickname,
         avatar: dbUser.image,
         role: dbUser.role,

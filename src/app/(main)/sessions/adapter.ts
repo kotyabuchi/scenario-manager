@@ -36,7 +36,7 @@ export const getCurrentUserId = async (): Promise<string | null> => {
     const { data: dbUser } = await supabase
       .from('users')
       .select('user_id')
-      .eq('discord_id', user.id)
+      .eq('auth_user_id', user.id)
       .maybeSingle();
 
     return dbUser?.user_id ?? null;
@@ -68,12 +68,12 @@ export const searchPublicSessions = async (
       .select(
         `
         game_session_id, session_name, session_phase, scenario_id, created_at,
+        schedule_date, schedule_phase,
         scenario:scenarios!inner(
           scenario_id, name, max_player, min_playtime, max_playtime,
           scenario_system_id,
           system:scenario_systems!inner(name)
-        ),
-        schedule:game_schedules(schedule_date, schedule_phase)
+        )
       `,
         { count: 'exact' },
       )
@@ -154,7 +154,6 @@ export const searchPublicSessions = async (
     const sessions: PublicSession[] = (result ?? []).map((session) => {
       const scenario = session.scenario as Record<string, unknown>;
       const system = (scenario?.system ?? {}) as Record<string, unknown>;
-      const schedule = session.schedule as Record<string, unknown> | null;
       const keeper = keeperMap.get(session.game_session_id);
 
       return {
@@ -164,8 +163,8 @@ export const searchPublicSessions = async (
         scenarioId: session.scenario_id ?? '',
         scenarioName: (scenario?.name as string) ?? '',
         systemName: (system?.name as string) ?? '',
-        scheduleDate: (schedule?.schedule_date as string) ?? null,
-        schedulePhase: (schedule?.schedule_phase as string) ?? null,
+        scheduleDate: session.schedule_date ?? null,
+        schedulePhase: session.schedule_phase ?? null,
         keeperName: keeper?.keeperName ?? null,
         keeperUserId: keeper?.keeperUserId ?? null,
         participantCount: countMap.get(session.game_session_id) ?? 0,
@@ -233,7 +232,6 @@ export const getUpcomingSessions = async (
           *,
           system:scenario_systems(*)
         ),
-        schedule:game_schedules(*),
         participants:session_participants(
           *,
           user:users(*)
@@ -368,7 +366,6 @@ export const getHistorySessions = async (
           *,
           system:scenario_systems(*)
         ),
-        schedule:game_schedules(*),
         participants:session_participants(
           *,
           user:users(*)
@@ -482,28 +479,27 @@ export const getCalendarSessions = async (
     const { data: scheduledSessions } = await supabase
       .from('game_sessions')
       .select(`
-        game_session_id, session_name, session_phase,
-        scenario:scenarios!inner(name),
-        schedule:game_schedules!inner(schedule_date)
+        game_session_id, session_name, session_phase, schedule_date,
+        scenario:scenarios!inner(name)
       `)
       .in('game_session_id', sessionIds)
       .in('session_phase', targetPhases)
-      .gte('game_schedules.schedule_date', startDate)
-      .lte('game_schedules.schedule_date', endDate);
+      .gte('schedule_date', startDate)
+      .lte('schedule_date', endDate)
+      .not('schedule_date', 'is', null);
 
     // 日程未確定セッション
     const { data: allSessionsForPhase } = await supabase
       .from('game_sessions')
       .select(`
-        game_session_id, session_name, session_phase,
-        scenario:scenarios!inner(name),
-        schedule:game_schedules(schedule_date)
+        game_session_id, session_name, session_phase, schedule_date,
+        scenario:scenarios!inner(name)
       `)
       .in('game_session_id', sessionIds)
       .in('session_phase', targetPhases);
 
     const unscheduledResult = (allSessionsForPhase ?? []).filter((s) =>
-      isNil(s.schedule),
+      isNil(s.schedule_date),
     );
 
     return ok({
@@ -512,8 +508,7 @@ export const getCalendarSessions = async (
         sessionName: s.session_name,
         sessionPhase: s.session_phase,
         scenarioName: (s.scenario as Record<string, unknown>)?.name as string,
-        scheduleDate: (s.schedule as Record<string, unknown>)
-          ?.schedule_date as string,
+        scheduleDate: s.schedule_date as string,
         myRole: roleMap.get(s.game_session_id) as
           | 'KEEPER'
           | 'PLAYER'

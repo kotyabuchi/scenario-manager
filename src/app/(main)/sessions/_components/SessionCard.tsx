@@ -145,7 +145,7 @@ const MySessionCard = ({
   session: MySessionWithRole;
   showMeta?: boolean;
 }) => {
-  const scheduleDate = session.schedule?.scheduleDate ?? null;
+  const scheduleDate = session.scheduleDate ?? null;
   const isHistory = showMeta;
   const cardType = isHistory ? 'history' : 'upcoming';
 

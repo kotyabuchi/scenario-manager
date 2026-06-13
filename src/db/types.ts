@@ -163,33 +163,49 @@ export type Database = {
           },
         ];
       };
-      game_schedules: {
+      game_schedule_time_blocks: {
         Row: {
+          block_order: number;
           created_at: string;
-          schedule_date: string;
-          schedule_phase: Database['public']['Enums']['schedule_phase'];
+          created_by: string;
+          end_at: string;
+          game_schedule_time_block_id: string;
           session_id: string;
+          start_at: string;
           updated_at: string;
         };
         Insert: {
+          block_order: number;
           created_at?: string;
-          schedule_date: string;
-          schedule_phase?: Database['public']['Enums']['schedule_phase'];
+          created_by: string;
+          end_at: string;
+          game_schedule_time_block_id: string;
           session_id: string;
+          start_at: string;
           updated_at?: string;
         };
         Update: {
+          block_order?: number;
           created_at?: string;
-          schedule_date?: string;
-          schedule_phase?: Database['public']['Enums']['schedule_phase'];
+          created_by?: string;
+          end_at?: string;
+          game_schedule_time_block_id?: string;
           session_id?: string;
+          start_at?: string;
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'game_schedules_session_id_game_sessions_game_session_id_fk';
+            foreignKeyName: 'game_schedule_time_blocks_created_by_users_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'game_schedule_time_blocks_session_id_game_sessions_fkey';
             columns: ['session_id'];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: 'game_sessions';
             referencedColumns: ['game_session_id'];
           },
@@ -197,13 +213,20 @@ export type Database = {
       };
       game_sessions: {
         Row: {
+          cancel_reason: string | null;
+          completed_at: string | null;
           completion_note: string | null;
           created_at: string;
+          created_by_id: string;
           game_session_id: string;
           is_beginner_friendly: boolean;
           keeper_id: string | null;
+          max_participant_count: number;
           recruited_player_count: number | null;
+          remaining_seat_count: number;
           scenario_id: string | null;
+          schedule_date: string | null;
+          schedule_phase: Database['public']['Enums']['schedule_phase'];
           scheduled_at: string | null;
           session_description: string;
           session_memo: string | null;
@@ -214,13 +237,20 @@ export type Database = {
           visibility: Database['public']['Enums']['session_visibility'];
         };
         Insert: {
+          cancel_reason?: string | null;
+          completed_at?: string | null;
           completion_note?: string | null;
           created_at?: string;
+          created_by_id: string;
           game_session_id: string;
           is_beginner_friendly?: boolean;
           keeper_id?: string | null;
+          max_participant_count?: number;
           recruited_player_count?: number | null;
+          remaining_seat_count?: number;
           scenario_id?: string | null;
+          schedule_date?: string | null;
+          schedule_phase?: Database['public']['Enums']['schedule_phase'];
           scheduled_at?: string | null;
           session_description?: string;
           session_memo?: string | null;
@@ -231,13 +261,20 @@ export type Database = {
           visibility?: Database['public']['Enums']['session_visibility'];
         };
         Update: {
+          cancel_reason?: string | null;
+          completed_at?: string | null;
           completion_note?: string | null;
           created_at?: string;
+          created_by_id?: string;
           game_session_id?: string;
           is_beginner_friendly?: boolean;
           keeper_id?: string | null;
+          max_participant_count?: number;
           recruited_player_count?: number | null;
+          remaining_seat_count?: number;
           scenario_id?: string | null;
+          schedule_date?: string | null;
+          schedule_phase?: Database['public']['Enums']['schedule_phase'];
           scheduled_at?: string | null;
           session_description?: string;
           session_memo?: string | null;
@@ -248,6 +285,13 @@ export type Database = {
           visibility?: Database['public']['Enums']['session_visibility'];
         };
         Relationships: [
+          {
+            foreignKeyName: 'game_sessions_created_by_id_fkey';
+            columns: ['created_by_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['user_id'];
+          },
           {
             foreignKeyName: 'game_sessions_keeper_id_users_user_id_fk';
             columns: ['keeper_id'];
@@ -449,44 +493,44 @@ export type Database = {
           },
         ];
       };
-      schedule_responses: {
+      session_availability_time_blocks: {
         Row: {
-          availability: Database['public']['Enums']['schedule_availability'];
-          comment: string | null;
+          availability_time_block_id: string;
           created_at: string;
-          response_id: string;
-          schedule_id: string;
+          end_at: string;
+          session_id: string;
+          start_at: string;
           updated_at: string;
           user_id: string;
         };
         Insert: {
-          availability?: Database['public']['Enums']['schedule_availability'];
-          comment?: string | null;
+          availability_time_block_id: string;
           created_at?: string;
-          response_id: string;
-          schedule_id: string;
+          end_at: string;
+          session_id: string;
+          start_at: string;
           updated_at?: string;
           user_id: string;
         };
         Update: {
-          availability?: Database['public']['Enums']['schedule_availability'];
-          comment?: string | null;
+          availability_time_block_id?: string;
           created_at?: string;
-          response_id?: string;
-          schedule_id?: string;
+          end_at?: string;
+          session_id?: string;
+          start_at?: string;
           updated_at?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'schedule_responses_schedule_id_game_schedules_session_id_fk';
-            columns: ['schedule_id'];
+            foreignKeyName: 'session_availability_time_blocks_session_id_game_sessions_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: 'game_schedules';
-            referencedColumns: ['session_id'];
+            referencedRelation: 'game_sessions';
+            referencedColumns: ['game_session_id'];
           },
           {
-            foreignKeyName: 'schedule_responses_user_id_users_user_id_fk';
+            foreignKeyName: 'session_availability_time_blocks_user_id_users_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -544,6 +588,7 @@ export type Database = {
           session_id: string;
           updated_at: string;
           user_id: string;
+          withdrawal_reason: string | null;
         };
         Insert: {
           application_message?: string | null;
@@ -556,6 +601,7 @@ export type Database = {
           session_id: string;
           updated_at?: string;
           user_id: string;
+          withdrawal_reason?: string | null;
         };
         Update: {
           application_message?: string | null;
@@ -568,6 +614,7 @@ export type Database = {
           session_id?: string;
           updated_at?: string;
           user_id?: string;
+          withdrawal_reason?: string | null;
         };
         Relationships: [
           {
@@ -731,9 +778,10 @@ export type Database = {
       };
       users: {
         Row: {
+          auth_user_id: string;
           bio: string | null;
           created_at: string;
-          discord_id: string;
+          discord_account_id: string | null;
           favorite_scenarios: string | null;
           image: string | null;
           lastlogin_at: string | null;
@@ -744,9 +792,10 @@ export type Database = {
           user_name: string;
         };
         Insert: {
+          auth_user_id: string;
           bio?: string | null;
           created_at?: string;
-          discord_id: string;
+          discord_account_id?: string | null;
           favorite_scenarios?: string | null;
           image?: string | null;
           lastlogin_at?: string | null;
@@ -757,9 +806,10 @@ export type Database = {
           user_name: string;
         };
         Update: {
+          auth_user_id?: string;
           bio?: string | null;
           created_at?: string;
-          discord_id?: string;
+          discord_account_id?: string | null;
           favorite_scenarios?: string | null;
           image?: string | null;
           lastlogin_at?: string | null;
@@ -831,7 +881,81 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      adjust_session_remaining_seats: {
+        Args: { p_delta: number; p_session_id: string };
+        Returns: undefined;
+      };
+      create_session_transaction: {
+        Args: {
+          p_creator_participant_type: Database['public']['Enums']['participant_type'];
+          p_game_session_id: string;
+          p_initial_availability_time_blocks: Json;
+          p_invited_members: Json;
+          p_is_beginner_friendly: boolean;
+          p_recruited_player_count: number;
+          p_scenario_id: string;
+          p_scheduled_at: string;
+          p_session_description: string;
+          p_session_name: string;
+          p_tools: string;
+          p_user_id: string;
+          p_visibility: Database['public']['Enums']['session_visibility'];
+        };
+        Returns: {
+          game_session_id: string;
+          is_beginner_friendly: boolean;
+          recruited_player_count: number;
+          scenario_id: string;
+          scheduled_at: string;
+          session_name: string;
+          session_phase: Database['public']['Enums']['session_phase'];
+          tools: string;
+          visibility: Database['public']['Enums']['session_visibility'];
+        }[];
+      };
+      current_app_user_id: { Args: never; Returns: string };
+      replace_availability_time_blocks: {
+        Args: { p_session_id: string; p_time_blocks: Json; p_user_id: string };
+        Returns: {
+          availability_time_block_id: string;
+          created_at: string;
+          end_at: string;
+          session_id: string;
+          start_at: string;
+          updated_at: string;
+          user_id: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'session_availability_time_blocks';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      replace_confirmed_schedule_time_blocks: {
+        Args: {
+          p_actor_user_id: string;
+          p_schedule_date: string;
+          p_session_id: string;
+          p_time_blocks: Json;
+        };
+        Returns: {
+          block_order: number;
+          created_at: string;
+          created_by: string;
+          end_at: string;
+          game_schedule_time_block_id: string;
+          session_id: string;
+          start_at: string;
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'game_schedule_time_blocks';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
     };
     Enums: {
       feedback_category: 'BUG' | 'FEATURE' | 'UI_UX' | 'OTHER';
@@ -849,11 +973,10 @@ export type Database = {
         | 'FEEDBACK_STATUS_CHANGED'
         | 'FEEDBACK_COMMENT'
         | 'FEEDBACK_MERGED';
-      participant_status: 'PENDING' | 'CONFIRMED';
+      participant_status: 'PENDING' | 'CONFIRMED' | 'WITHDRAWN';
       participant_type: 'KEEPER' | 'PLAYER' | 'SPECTATOR';
       role: 'MODERATOR' | 'MEMBER';
       scenario_source_type: 'manual' | 'booth' | 'talto';
-      schedule_availability: 'OK' | 'MAYBE' | 'NG';
       schedule_phase: 'ADJUSTING' | 'CONFIRMED';
       session_link_type: 'DISCORD' | 'CCFOLIA' | 'OTHER';
       session_phase:
@@ -1010,11 +1133,10 @@ export const Constants = {
         'FEEDBACK_COMMENT',
         'FEEDBACK_MERGED',
       ],
-      participant_status: ['PENDING', 'CONFIRMED'],
+      participant_status: ['PENDING', 'CONFIRMED', 'WITHDRAWN'],
       participant_type: ['KEEPER', 'PLAYER', 'SPECTATOR'],
       role: ['MODERATOR', 'MEMBER'],
       scenario_source_type: ['manual', 'booth', 'talto'],
-      schedule_availability: ['OK', 'MAYBE', 'NG'],
       schedule_phase: ['ADJUSTING', 'CONFIRMED'],
       session_link_type: ['DISCORD', 'CCFOLIA', 'OTHER'],
       session_phase: [

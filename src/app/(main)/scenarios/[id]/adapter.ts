@@ -138,8 +138,7 @@ export const getScenarioSessions = async (
       .from('game_sessions')
       .select(`
         game_session_id, session_name, scenario_id, session_phase,
-        created_at, updated_at,
-        schedule:game_schedules(schedule_date)
+        created_at, updated_at, schedule_date
       `)
       .eq('scenario_id', scenarioId)
       .eq('session_phase', 'COMPLETED')
@@ -197,10 +196,7 @@ export const getScenarioSessions = async (
       updatedAt: s.updated_at,
       keeper: keeperMap.get(s.game_session_id) ?? null,
       participantCount: countMap.get(s.game_session_id) ?? 0,
-      scheduleDate:
-        ((s.schedule as Record<string, unknown> | null)?.schedule_date as
-          | string
-          | null) ?? null,
+      scheduleDate: s.schedule_date ?? null,
     }));
 
     return ok(sessions);
@@ -291,7 +287,7 @@ export const getUserByDiscordId = async (
     const { data, error } = await supabase
       .from('users')
       .select('user_id')
-      .eq('discord_id', discordId)
+      .eq('auth_user_id', discordId)
       .maybeSingle();
 
     if (error) {

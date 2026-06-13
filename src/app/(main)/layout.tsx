@@ -23,14 +23,14 @@ export default async function MainLayout({ children }: PropsWithChildren) {
   if (authUser) {
     const { data: dbUser } = await supabase
       .from('users')
-      .select('user_id, discord_id, nickname, image, role')
-      .eq('discord_id', authUser.id)
+      .select('user_id, auth_user_id, nickname, image, role')
+      .eq('auth_user_id', authUser.id)
       .maybeSingle();
 
     if (dbUser) {
       initialUser = {
         userId: dbUser.user_id,
-        discordId: dbUser.discord_id,
+        discordId: dbUser.auth_user_id,
         nickname: dbUser.nickname,
         avatar: dbUser.image,
         role: dbUser.role,

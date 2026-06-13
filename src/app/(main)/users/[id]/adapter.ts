@@ -41,7 +41,7 @@ export const getUserByDiscordId = async (
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('discord_id', discordId)
+      .eq('auth_user_id', discordId)
       .maybeSingle();
 
     if (error) {
