@@ -1,23 +1,37 @@
 'use client';
 
-import { type FieldErrors, useForm } from 'react-hook-form';
+import { useMemo, useState } from 'react';
+import {
+  type FieldErrors,
+  FormProvider,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { MegaphoneIcon } from '@phosphor-icons/react/ssr';
 
 import {
   type SessionFormInput,
   type SessionFormValues,
   sessionFormSchema,
 } from '../schema';
+import { BasicInfoSection } from './BasicInfoSection';
+import { OtherSection } from './OtherSection';
+import { ParticipantsSection } from './ParticipantsSection';
+import { ScenarioSelectSection } from './ScenarioSelectSection';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { FieldError } from '@/components/elements/field-error/field-error';
+
+import type { ScenarioSummary, SystemSummary } from '../interface';
 
 type SessionFormProps = {
   onSubmit?: (data: SessionFormValues) => void;
   defaultValues?: Partial<SessionFormInput>;
   isSubmitting?: boolean;
   errors?: FieldErrors<SessionFormInput>;
+  systems: SystemSummary[];
+  currentUserId?: string;
 };
 
 export const SessionForm = ({
@@ -25,189 +39,132 @@ export const SessionForm = ({
   defaultValues,
   isSubmitting = false,
   errors: externalErrors,
+  systems,
+  currentUserId,
 }: SessionFormProps) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SessionFormInput>({
+  const formMethod = useForm<SessionFormInput>({
     resolver: zodResolver(sessionFormSchema),
     defaultValues: {
       sessionName: defaultValues?.sessionName ?? '',
       sessionDescription: defaultValues?.sessionDescription ?? '',
       scenarioId: defaultValues?.scenarioId ?? null,
       scheduledAt: defaultValues?.scheduledAt ?? null,
-      recruitedPlayerCount: defaultValues?.recruitedPlayerCount ?? null,
+      scheduleCandidates: defaultValues?.scheduleCandidates ?? [],
+      recruitedPlayerCount: defaultValues?.recruitedPlayerCount ?? 0,
       tools: defaultValues?.tools ?? null,
       isBeginnerFriendly: defaultValues?.isBeginnerFriendly ?? false,
       visibility: defaultValues?.visibility ?? 'PUBLIC',
+      scheduleType: defaultValues?.scheduleType ?? 'later',
+      creatorParticipantType: defaultValues?.creatorParticipantType ?? 'KEEPER',
     },
   });
+  const { handleSubmit, control, setValue } = formMethod;
+
+  const [selectedScenario, setSelectedScenario] =
+    useState<ScenarioSummary | null>(null);
+
+  const invitedMembers = useWatch({ name: 'invitedMembers', control }) ?? [];
+  const creatorParticipantType =
+    useWatch({ name: 'creatorParticipantType', control }) ?? 'KEEPER';
+  const invitedMembersWithCreator = useMemo(() => {
+    const merged = [...invitedMembers];
+    if (currentUserId) {
+      merged.unshift({
+        userId: currentUserId,
+        participantType: creatorParticipantType,
+      });
+    }
+    const seen = new Set<string>();
+    return merged.filter((member) => {
+      if (seen.has(member.userId)) return false;
+      seen.add(member.userId);
+      return true;
+    });
+  }, [creatorParticipantType, currentUserId, invitedMembers]);
+
+  const handleScenarioSelect = (scenario: ScenarioSummary | null) => {
+    setValue('scenarioId', scenario?.scenarioId ?? null);
+    setSelectedScenario(scenario);
+  };
 
   const onFormSubmit = (data: SessionFormInput) => {
-    // zodResolverがバリデーション済みなのでデフォルト値が適用されている
-    // 空文字列をnullに変換して SessionFormValues として渡す
+    const scheduleCandidates =
+      data.scheduleType === 'specify'
+        ? (data.scheduleCandidates ?? []).filter(
+            (candidate) => candidate.from.trim() !== '',
+          )
+        : [];
+    const scheduledAt =
+      data.scheduleType === 'later'
+        ? null
+        : scheduleCandidates.length > 0
+          ? scheduleCandidates.reduce<string | null>((min, candidate) => {
+              const current = candidate.from;
+              if (!min) return current;
+              return new Date(current) < new Date(min) ? current : min;
+            }, null)
+          : data.scheduledAt || null;
     const normalizedData: SessionFormValues = {
       sessionName: data.sessionName,
       sessionDescription: data.sessionDescription,
       scenarioId: data.scenarioId || null,
-      scheduledAt: data.scheduledAt || null,
+      scheduledAt,
+      scheduleCandidates,
       recruitedPlayerCount: data.recruitedPlayerCount ?? null,
       tools: data.tools || null,
       isBeginnerFriendly: data.isBeginnerFriendly ?? false,
       visibility: data.visibility ?? 'PUBLIC',
+      invitedMembers: data.invitedMembers ?? [],
+      scheduleType: data.scheduleType ?? 'later',
+      creatorParticipantType: data.creatorParticipantType ?? 'KEEPER',
     };
     onSubmit?.(normalizedData);
   };
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className={styles.form}>
-      {/* セッション名（必須） */}
-      <div className={styles.field}>
-        <label htmlFor="sessionName" className={styles.label}>
-          セッション名
-          <span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          id="sessionName"
-          {...register('sessionName')}
-          className={styles.input}
-          placeholder="例: 週末CoC7版セッション"
-          maxLength={100}
-        />
-        <FieldError error={errors.sessionName ?? externalErrors?.sessionName} />
-      </div>
-
-      {/* 募集文（必須） */}
-      <div className={styles.field}>
-        <label htmlFor="sessionDescription" className={styles.label}>
-          募集文
-          <span className={styles.required}>*</span>
-        </label>
-        <textarea
-          id="sessionDescription"
-          {...register('sessionDescription')}
-          className={styles.textarea}
-          placeholder="セッションの概要や参加者への呼びかけを書いてください"
-          maxLength={500}
-        />
-        <FieldError
-          error={
-            errors.sessionDescription ?? externalErrors?.sessionDescription
-          }
-        />
-      </div>
-
-      {/* シナリオ選択（任意） */}
-      <div className={styles.field}>
-        <label htmlFor="scenarioId" className={styles.label}>
-          シナリオ
-        </label>
-        <select
-          id="scenarioId"
-          {...register('scenarioId')}
-          className={styles.select}
-        >
-          <option value="">未定</option>
-          {/* TODO: シナリオ一覧を動的に取得 */}
-        </select>
-      </div>
-
-      {/* 日時（任意） */}
-      <div className={styles.field}>
-        <label htmlFor="scheduledAt" className={styles.label}>
-          日時
-        </label>
-        <input
-          type="datetime-local"
-          id="scheduledAt"
-          {...register('scheduledAt')}
-          className={styles.input}
-        />
-      </div>
-
-      {/* 募集人数（任意） */}
-      <div className={styles.field}>
-        <label htmlFor="recruitedPlayerCount" className={styles.label}>
-          募集人数
-        </label>
-        <input
-          type="number"
-          id="recruitedPlayerCount"
-          {...register('recruitedPlayerCount', { valueAsNumber: true })}
-          className={styles.input}
-          min={1}
-          max={10}
-          placeholder="未定"
-        />
-        <FieldError error={errors.recruitedPlayerCount} />
-      </div>
-
-      {/* 使用ツール（任意） */}
-      <div className={styles.field}>
-        <label htmlFor="tools" className={styles.label}>
-          使用ツール
-        </label>
-        <input
-          type="text"
-          id="tools"
-          {...register('tools')}
-          className={styles.input}
-          placeholder="例: Discord + ココフォリア"
-          maxLength={200}
-        />
-      </div>
-
-      {/* 初心者歓迎 */}
-      <div className={styles.checkboxField}>
-        <label className={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            {...register('isBeginnerFriendly')}
-            className={styles.checkbox}
-          />
-          初心者歓迎
-        </label>
-      </div>
-
-      {/* 公開範囲 */}
-      <div className={styles.field}>
-        <span className={styles.label}>公開範囲</span>
-        <div className={styles.radioGroup}>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              {...register('visibility')}
-              value="PUBLIC"
-              className={styles.radio}
+    <div className={styles.form_card}>
+      <FormProvider {...formMethod}>
+        <form onSubmit={handleSubmit(onFormSubmit)}>
+          <div className={styles.form_body}>
+            <BasicInfoSection
+              {...(externalErrors ? { errors: externalErrors } : {})}
             />
-            全体公開
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              {...register('visibility')}
-              value="FOLLOWERS_ONLY"
-              className={styles.radio}
-            />
-            フォロワーのみ
-          </label>
-        </div>
-      </div>
 
-      {/* 送信ボタン */}
-      <div className={styles.submitArea}>
-        <Button
-          type="submit"
-          status="primary"
-          disabled={isSubmitting}
-          loading={isSubmitting}
-          loadingText="投稿中..."
-        >
-          募集を投稿
-        </Button>
-      </div>
-    </form>
+            <hr className={styles.form_divider} />
+
+            <ParticipantsSection />
+
+            <hr className={styles.form_divider} />
+
+            <ScenarioSelectSection
+              systems={systems}
+              selectedScenario={selectedScenario}
+              onSelect={handleScenarioSelect}
+              invitedMembers={invitedMembersWithCreator}
+            />
+
+            <hr className={styles.form_divider} />
+
+            <OtherSection />
+
+            <hr className={styles.form_divider} />
+
+            {/* 送信ボタン */}
+            <div className={styles.form_submitArea}>
+              <Button
+                type="submit"
+                status="primary"
+                disabled={isSubmitting}
+                loading={isSubmitting}
+                loadingText="作成中..."
+                prefix={<MegaphoneIcon weight="fill" size={16} />}
+              >
+                セッションを作成
+              </Button>
+            </div>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   );
 };

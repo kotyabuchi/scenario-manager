@@ -1,7 +1,7 @@
 # プロジェクト進捗管理
 
 > **このファイルは複数のClaude Codeインスタンスで共有されます**
-> タスク着手時は `⬜` → `🔄` に、完了時は `✅` に変更してください
+> タスク着手時は `[ ]` → `[→]` に、完了時は `[x]` に変更してください
 
 ---
 
@@ -28,9 +28,7 @@
 
 ## TDD進捗
 
-> **凡例**:
-> - ⬜ 未着手 / 🔄 作業中 / ✅ 完了
-> - テスト状態: ✅ = テスト実行パス / 🔸 = テストコード存在するが skip/skipIf で未実行、またはモック・偽陽性のみ / ⬜ = テスト不在
+> **凡例**: `[ ]` 未着手 / `[→]` 作業中 / `[-]` テストskip・偽陽性 / `[x]` 完了
 >
 > **要件定義書**: `.claude/requirements/` 配下
 
@@ -38,11 +36,11 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| searchFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（28テスト通過） |
-| searchScenarios | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（テスト全件 describe.skip） |
-| toSearchParams | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（15テスト通過） |
-| getAllSystems | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（DB未接続時に偽陽性パターン） |
-| getAllTags | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（DB未接続時に偽陽性パターン） |
+| searchFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了（28テスト通過） |
+| searchScenarios | [x] | [x] | [-] | [x] | [ ] | 実装済（テスト全件 describe.skip） |
+| toSearchParams | [x] | [x] | [x] | [x] | [ ] | 完了（15テスト通過） |
+| getAllSystems | [x] | [x] | [-] | [x] | [ ] | 実装済（DB未接続時に偽陽性パターン） |
+| getAllTags | [x] | [x] | [-] | [x] | [ ] | 実装済（DB未接続時に偽陽性パターン） |
 
 **テストファイル**:
 - `src/app/(main)/scenarios/__tests__/searchFormSchema.test.ts`
@@ -56,13 +54,13 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| scenarioFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（30テスト通過） |
-| createScenario | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト4件 it.skip） |
-| getUserByDiscordId | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（正常系テスト it.skip） |
-| checkScenarioNameDuplicate | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（describe.skip で全件スキップ） |
-| checkDistributeUrlDuplicate | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（describe.skip で全件スキップ） |
-| checkRateLimit | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（7テスト通過、DB不要） |
-| createScenarioAction | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テストファイル不在） |
+| scenarioFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了（30テスト通過） |
+| createScenario | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト4件 it.skip） |
+| getUserByDiscordId | [x] | [x] | [-] | [x] | [ ] | 実装済（正常系テスト it.skip） |
+| checkScenarioNameDuplicate | [x] | [x] | [-] | [x] | [ ] | 実装済（describe.skip で全件スキップ） |
+| checkDistributeUrlDuplicate | [x] | [x] | [-] | [x] | [ ] | 実装済（describe.skip で全件スキップ） |
+| checkRateLimit | [x] | [x] | [x] | [x] | [ ] | 完了（7テスト通過、DB不要） |
+| createScenarioAction | [x] | [ ] | [ ] | [x] | [ ] | 実装済（テストファイル不在） |
 
 **要件定義書**: `.claude/requirements/requirements-scenario-new.md`
 
@@ -82,14 +80,14 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| getScenarioDetail | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| getScenarioReviews | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| getScenarioSessions | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| getScenarioVideoLinks | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| getUserScenarioPreference | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| getUserByDiscordId | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| toggleFavorite | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
-| togglePlayed | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト it.skip） |
+| getScenarioDetail | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| getScenarioReviews | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| getScenarioSessions | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| getScenarioVideoLinks | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| getUserScenarioPreference | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| getUserByDiscordId | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| toggleFavorite | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
+| togglePlayed | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト it.skip） |
 
 **テストファイル**:
 - `src/app/(main)/scenarios/[id]/__tests__/adapter.test.ts`
@@ -100,13 +98,13 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| searchFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（7テスト通過） |
-| searchParamsParsers | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（toPublicSearchParams テスト6件通過、パーサー自体のテストなし） |
-| searchPublicSessions | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（6件中5件 skipIf） |
-| getUpcomingSessions | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（3件中2件 skipIf） |
-| getHistorySessions | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（6件中5件 skipIf） |
-| getCalendarSessions | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（4件中3件 skipIf） |
-| getAllSystems | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（DB接続失敗時フォールバック） |
+| searchFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了（7テスト通過） |
+| searchParamsParsers | [x] | [x] | [-] | [x] | [ ] | 実装済（toPublicSearchParams テスト6件通過、パーサー自体のテストなし） |
+| searchPublicSessions | [x] | [x] | [-] | [x] | [ ] | 実装済（6件中5件 skipIf） |
+| getUpcomingSessions | [x] | [x] | [-] | [x] | [ ] | 実装済（3件中2件 skipIf） |
+| getHistorySessions | [x] | [x] | [-] | [x] | [ ] | 実装済（6件中5件 skipIf） |
+| getCalendarSessions | [x] | [x] | [-] | [x] | [ ] | 実装済（4件中3件 skipIf） |
+| getAllSystems | [x] | [x] | [-] | [x] | [ ] | 実装済（DB接続失敗時フォールバック） |
 
 **要件定義書**: `.claude/requirements/requirements-session-list.md`
 
@@ -122,26 +120,31 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| sessionFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（37テスト通過） |
-| createSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト8件 skipIf、型検証6件通過） |
-| getSessionById | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト4件 skipIf） |
-| updateSession | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
-| 日程調整機能 | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済 |
-| applyToSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト6件 skipIf、定数検証1件通過） |
-| approveApplication | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト3件 skipIf） |
-| rejectApplication | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト2件 skipIf） |
-| withdrawFromSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト3件 skipIf） |
-| cancelApplication | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト2件 skipIf） |
-| cancelSession | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（統合テスト4件 skipIf） |
+| sessionFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了 |
+| createSession | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| getSessionById | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| updateSession | [x] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未） |
+| 日程調整機能 | [x] | [x] | [x] | [x] | [ ] | 完了（availability + confirm） |
+| applyToSession | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| approveApplication | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| rejectApplication | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| withdrawFromSession | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| cancelApplication | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| cancelSession | [x] | [x] | [x] | [x] | [ ] | Green（実装済） |
+| updateSessionScenario | [x] | [x] | [x] | [x] | [ ] | 完了（adapter+action+UI） |
 
 **テストファイル**:
 - `src/app/(main)/sessions/new/__tests__/schema.test.ts`
 - `src/app/(main)/sessions/new/__tests__/adapter.test.ts`
 - `src/app/(main)/sessions/__tests__/participantAdapter.test.ts`
+- `src/app/(main)/sessions/[id]/__tests__/adapter.test.ts`
 
 **実装ファイル**:
 - `src/app/(main)/sessions/new/adapter.ts` - セッション作成・取得
 - `src/app/(main)/sessions/participantAdapter.ts` - 参加申請管理
+
+**TODO**:
+- [ ] セッション募集フォームの日時入力で、`From` 入力完了時に `To` へ即フォーカス移動（`datetime-local` の自動補完で誤判定）。独自 `DateTimeInput` 作成後に再対応。
 
 ---
 
@@ -149,13 +152,13 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| signupFormSchema (Step1) | ✅ | ✅ | ✅ | ✅ | ⬜ | Green完了（12テスト通過） |
-| signupStep2Schema | ✅ | ✅ | ✅ | ✅ | ⬜ | Green完了（5テスト通過） |
-| checkUserNameAvailability | ✅ | ✅ | ✅ | ⬜ | ⬜ | テスト設計済（モック）、実装はスタブ |
-| registerUser (createUser) | ✅ | ✅ | ✅ | ✅ | ⬜ | Green完了（テストはモック、実装はServer Action済） |
-| generateUserName | ✅ | ✅ | ✅ | ✅ | ⬜ | Green完了（6テスト通過） |
-| SignupModal | ✅ | ✅ | ✅ | ✅ | ⬜ | Green完了（29テスト通過） |
-| AuthRedirect | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（useDiscordAuth + AuthContext + callback）テスト未 |
+| signupFormSchema (Step1) | [x] | [x] | [x] | [x] | [ ] | Green完了（12テスト通過） |
+| signupStep2Schema | [x] | [x] | [x] | [x] | [ ] | Green完了（5テスト通過） |
+| checkUserNameAvailability | [x] | [x] | [x] | [ ] | [ ] | テスト設計済（モック）、実装はスタブ |
+| registerUser (createUser) | [x] | [x] | [x] | [x] | [ ] | Green完了（テストはモック、実装はServer Action済） |
+| generateUserName | [x] | [x] | [x] | [x] | [ ] | Green完了（6テスト通過） |
+| SignupModal | [x] | [x] | [x] | [x] | [ ] | Green完了（29テスト通過） |
+| AuthRedirect | [x] | [ ] | [ ] | [x] | [ ] | 実装済（useDiscordAuth + AuthContext + callback）テスト未 |
 
 **要件定義書**: `.claude/requirements/requirements-auth.md`
 
@@ -193,12 +196,12 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| profileFormSchema | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（17テスト通過、要件未定義） |
-| updateUserProfile | ⬜ | ✅ | 🔸 | ✅ | ⬜ | 実装済（テスト8件中6件 it.skip） |
-| getUserById | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（要件・テスト未） |
-| getUserByDiscordId (profile) | ⬜ | ⬜ | 🔸 | ✅ | ⬜ | 実装済（テスト2件中1件 skip） |
-| updateProfile (Server Action) | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
-| ProfileEditFormWrapper | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| profileFormSchema | [ ] | [x] | [x] | [x] | [ ] | 完了（17テスト通過、要件未定義） |
+| updateUserProfile | [ ] | [x] | [-] | [x] | [ ] | 実装済（テスト8件中6件 it.skip） |
+| getUserById | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（要件・テスト未） |
+| getUserByDiscordId (profile) | [ ] | [ ] | [-] | [x] | [ ] | 実装済（テスト2件中1件 skip） |
+| updateProfile (Server Action) | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未） |
+| ProfileEditFormWrapper | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未） |
 
 **テストファイル**:
 - `src/components/blocks/Profile/__tests__/schema.test.ts`
@@ -218,14 +221,17 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| reviewFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（19テスト通過） |
-| createReview | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト3件 it.skip） |
-| updateReview | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト2件 it.skip） |
-| deleteReview | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（主要テスト1件 it.skip） |
+| reviewFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了（19テスト通過） |
+| createReview | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト3件 it.skip） |
+| updateReview | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト2件 it.skip） |
+| deleteReview | [x] | [x] | [-] | [x] | [ ] | 実装済（主要テスト1件 it.skip） |
 
 **テストファイル**:
 - `src/app/(main)/scenarios/[id]/__tests__/schema.test.ts`
 - `src/app/(main)/scenarios/[id]/__tests__/adapter.test.ts`
+
+**TODO**:
+- [ ] セッション完了後のレビュー導線を実装（CompleteSessionDialog のサクセス画面「レビューを書く」ボタンを有効化し、レビュー画面へリンク）
 
 ---
 
@@ -233,9 +239,9 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| feedbackFormSchema | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（18テスト通過） |
-| createFeedbackAction | ✅ | ✅ | 🔸 | ✅ | ⬜ | 実装済（actions.test.ts はスキーマテスト14件のみ通過、Server Action呼び出しテスト3件 it.skip） |
-| FeedbackModal | ✅ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未） |
+| feedbackFormSchema | [x] | [x] | [x] | [x] | [ ] | 完了（18テスト通過） |
+| createFeedbackAction | [x] | [x] | [-] | [x] | [ ] | 実装済（actions.test.ts はスキーマテスト14件のみ通過、Server Action呼び出しテスト3件 it.skip） |
+| FeedbackModal | [x] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未） |
 | FeedbackButton | — | — | — | — | — | 廃止完了（削除済み、SpeedDialFABに統合） |
 
 **テストファイル**:
@@ -251,12 +257,12 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| SpeedDialFAB | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了（14テスト通過） |
-| useSpeedDial | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了（6テスト通過） |
-| shareCurrentPage | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了（3テスト通過） |
-| BottomNav統合 | ✅ | ✅ | ✅ | ✅ | ⬜ | 統合完了（専用テストなし、SpeedDialFAB経由で間接カバー） |
-| QuickSearchModal | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済（Phase 2） |
-| searchScenariosQuick | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 要件定義済（Phase 2） |
+| SpeedDialFAB | [x] | [x] | [x] | [x] | [ ] | 統合完了（14テスト通過） |
+| useSpeedDial | [x] | [x] | [x] | [x] | [ ] | 統合完了（6テスト通過） |
+| shareCurrentPage | [x] | [x] | [x] | [x] | [ ] | 統合完了（3テスト通過） |
+| BottomNav統合 | [x] | [x] | [x] | [x] | [ ] | 統合完了（専用テストなし、SpeedDialFAB経由で間接カバー） |
+| QuickSearchModal | [x] | [ ] | [ ] | [ ] | [ ] | 要件定義済（Phase 2） |
+| searchScenariosQuick | [x] | [ ] | [ ] | [ ] | [ ] | 要件定義済（Phase 2） |
 
 **要件定義書**: `.claude/requirements/requirements-fab-redesign.md`
 
@@ -272,16 +278,16 @@
 
 | 対象 | 要件定義 | テスト設計 | テスト実装 | 機能実装 | リファクタ | 状態 |
 |------|:-------:|:--------:|:--------:|:-------:|:---------:|------|
-| Button | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（23テスト通過） |
-| Card | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（8テスト通過） |
-| Chip | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（18テスト通過） |
-| Modal | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（8テスト通過） |
-| Select | ✅ | ✅ | ✅ | ✅ | ⬜ | 完了（14テスト通過） |
-| Input | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（23テスト通過） |
-| Textarea | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（16テスト通過） |
-| ToggleGroup | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（16テスト通過） |
-| Avatar | ⬜ | ✅ | ✅ | ✅ | ⬜ | 完了（12テスト通過） |
-| FormField | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | 実装済（テスト未、Storybook あり） |
+| Button | [ ] | [x] | [x] | [x] | [ ] | 完了（23テスト通過） |
+| Card | [ ] | [x] | [x] | [x] | [ ] | 完了（8テスト通過） |
+| Chip | [ ] | [x] | [x] | [x] | [ ] | 完了（18テスト通過） |
+| Modal | [ ] | [x] | [x] | [x] | [ ] | 完了（8テスト通過） |
+| Select | [x] | [x] | [x] | [x] | [ ] | 完了（14テスト通過） |
+| Input | [ ] | [x] | [x] | [x] | [ ] | 完了（23テスト通過） |
+| Textarea | [ ] | [x] | [x] | [x] | [ ] | 完了（16テスト通過） |
+| ToggleGroup | [ ] | [x] | [x] | [x] | [ ] | 完了（16テスト通過） |
+| Avatar | [ ] | [x] | [x] | [x] | [ ] | 完了（12テスト通過） |
+| FormField | [ ] | [ ] | [ ] | [x] | [ ] | 実装済（テスト未、Storybook あり） |
 
 **要件定義書**:
 - `Select`: `.claude/requirements/components/Select.md`
@@ -301,13 +307,13 @@
 
 ## インフラ・設定（TDD対象外）
 
-### DB接続・マイグレーション ✅
+### DB接続・マイグレーション [x]
 - [x] Supabase接続設定
 - [x] Supabase JS Client（旧Drizzle ORM — Supabase JS Client に移行済み）
 - [x] マイグレーション実行
 - [x] シードデータ投入
 
-### 認証設定 ✅
+### 認証設定 [x]
 - [x] Supabase Auth設定
 - [x] Discord OAuth連携
 - [x] 認証ミドルウェア
@@ -317,7 +323,7 @@
 - [ ] scenariosテーブル
 - [ ] sessionsテーブル
 
-### デプロイ設定 ✅
+### デプロイ設定 [x]
 - [x] Cloudflare Pages設定
 - [x] 不使用（Hyperdrive — Supabase JS Client 移行により廃止）
 - [x] GitHub Actions
@@ -348,14 +354,14 @@
 
 | 計画書 | 状態 | 備考 |
 |--------|------|------|
-| `icon-migration.md` | ✅ 完了 | lucide-react/react-icons の import は 0件。@phosphor-icons/react に統一済み |
+| `icon-migration.md` | [x] 完了 | lucide-react/react-icons の import は 0件。@phosphor-icons/react に統一済み |
 | `dashboard-redesign.md` | ほぼ完了 | HeroSection, UpcomingSessions, ActivityTimeline, NewScenarios, MiniCalendar, SystemNotice 実装済。**StatsSection, QuickActions 未実装** |
 | `scenario-search-redesign.md` | Phase 0-3 実装済 | Phase 0（Pencil統一）、Phase 2（ドラフト状態 useFilterDraft）、Phase 3（SearchTopBar/SearchSidebar/MobileSearchBar）完了 |
-| `select-redesign.md` | ✅ 完了 | Issue #1 マージ済（ValueText コンポーネント化、オーバーフロー対応） |
-| `e2e-testing-plan.md` | ✅ 基盤完了 | E2Eテスト基盤構築済み |
+| `select-redesign.md` | [x] 完了 | Issue #1 マージ済（ValueText コンポーネント化、オーバーフロー対応） |
+| `e2e-testing-plan.md` | [x] 基盤完了 | E2Eテスト基盤構築済み |
 | `e2e-test-expansion.md` | 未着手 | 前提条件の aria-current は実装済み |
 | `e2e-scenario-import.md` | 未着手 | — |
-| `components-folder-restructure.md` | ⬜ 未着手 | `_components/` フォルダ構成の刷新（Batch 1-10）。レビュー反映済み。[Issue #3](https://github.com/kotyabuchi/scenario-manager/issues/3) |
+| `components-folder-restructure.md` | [ ] 未着手 | `_components/` フォルダ構成の刷新（Batch 1-10）。レビュー反映済み。[Issue #3](https://github.com/kotyabuchi/scenario-manager/issues/3) |
 | `feedback-deferred-items.md` | 部分実装 | ActionSection 存在（削除・編集機能の一部が実装済みの可能性） |
 | `import-url-detection.md` | 未着手 | — |
 | `scenario-auto-import.md` | Step 5 完了、Step 6 未着手 | 下記セクション参照 |
@@ -370,13 +376,13 @@
 
 | ステップ | 内容 | 状態 |
 |---------|------|------|
-| Step 1 | DBスキーマ変更（source_type, source_url, source_fetched_at） | ✅ |
-| Step 1.5 | HTMLパーサー PoC（cheerio + Edge Runtime） | ✅ |
-| Step 2 | 外部サイトパーサー実装（url-validator, sanitizer, booth/talto-parser） | ✅ |
-| Step 3 | インポート登録ページ（/scenarios/import） | ✅ |
-| Step 4 | シナリオ一覧ページへの導線追加 | ✅ |
-| Step 5 | UI改善（配布元リンク表示、出典情報） | ✅ |
-| Step 6 | 利用規約・通報機能 | ⬜ |
+| Step 1 | DBスキーマ変更（source_type, source_url, source_fetched_at） | [x] |
+| Step 1.5 | HTMLパーサー PoC（cheerio + Edge Runtime） | [x] |
+| Step 2 | 外部サイトパーサー実装（url-validator, sanitizer, booth/talto-parser） | [x] |
+| Step 3 | インポート登録ページ（/scenarios/import） | [x] |
+| Step 4 | シナリオ一覧ページへの導線追加 | [x] |
+| Step 5 | UI改善（配布元リンク表示、出典情報） | [x] |
+| Step 6 | 利用規約・通報機能 | [ ] |
 
 > **Step 5 詳細**: 配布元リンク表示、ソースバッジ（Booth/TALTO）、インポートフォームソース情報バナー、readOnlyフィールド、著作権注意メッセージが全て実装済み。
 
@@ -384,8 +390,8 @@
 
 | サイト | 規約確認 | robots.txt | リスク評価 | 事前連絡 |
 |--------|:-------:|:----------:|-----------|:-------:|
-| BOOTH（pixiv） | ✅ | ✅ 商品ページ制限なし | 低（2025年10月に「常識的なスクレイピング歓迎」方針） | ⬜ |
-| TALTO（ココフォリア） | ✅ | ✅ /projects/* 許可 | 低〜中（「情報収集」条項の解釈に幅あり） | ⬜ |
+| BOOTH（pixiv） | [x] | [x] 商品ページ制限なし | 低（2025年10月に「常識的なスクレイピング歓迎」方針） | [ ] |
+| TALTO（ココフォリア） | [x] | [x] /projects/* 許可 | 低〜中（「情報収集」条項の解釈に幅あり） | [ ] |
 
 **「商業目的」条項**: scenario-managerは管理ツールでありBOOTH/TALTOと競合しない。事実情報のメタデータ参照のみで「サービスの商業利用」には非該当 → リスク低
 
@@ -394,35 +400,6 @@
 - [ ] pixiv社（BOOTH）への事前連絡・許諾確認
 - [ ] ココフォリア社（TALTO）への事前連絡・許諾確認
 - [ ] 連絡結果に応じた対応（許諾→公開 / 条件付き→調整 / 拒否→パーサー無効化）
-
----
-
-## DBスキーマ移行（discord_id → auth_user_id / game_schedules廃止）の残対応
-
-**経緯（2026-06-13）**: 初回ログインのプロフィール登録で `Could not find the 'discord_id' column` エラーが発生。原因は Supabase DB のスキーマが `feature/session-flow` ブランチのマイグレーションで変更済みだったが、`develop` の `src/db/types.ts` とコードが旧スキーマのままだったこと。develop に緊急対応を適用済み（commit `796d365`）。
-
-### develop に適用済み（応急処置）
-- [x] `src/db/types.ts` を `supabase gen types` で再生成
-- [x] `discord_id` → `auth_user_id` への置換（INSERT/SELECT/`.eq()` 全箇所）
-- [x] `game_schedules` テーブル廃止対応（`game_sessions.schedule_date` / `schedule_phase` を直接参照）
-- [x] `game_schedule_time_blocks` / `session_availability_time_blocks` への型置換（helpers.ts）
-
-### develop に残る潜在問題（feature/session-flow 側で本対応済み・マージで解消予定）
-
-> **方針**: develop 単独では修正しない（`feature/session-flow` が 113コミット未マージで、そちらに正しい実装が既にある。develop を先にリネームすると将来マージで大量コンフリクトになるため）。下記は session-flow マージ時に正版へ収束させる。
-
-| 項目 | develop の現状（劣化した応急処置） | feature/session-flow（正） |
-|------|-----------------------------------|---------------------------|
-| `AuthUser.discordId` / `DiscordMeta.discordId` | 中身が `auth_user_id`（Auth UUID）を保持＝**名前が実体と不一致** | 本物のDiscord ID（`discord_account_id`）を保持 |
-| `discord_account_id` カラム | **未保存**（`registerUser` が書き込まない） | `getDiscordAccountIdFromAuthUser()` で保存済み |
-| データアクセス関数名 | `getUserByDiscordId`（旧名のまま） | `getUserByAuthUserId` にリネーム済み |
-
-- [ ] `feature/session-flow` マージ時に上記3点を正版で取り込む（または develop 単独で運用継続する場合は別途リネーム＋`discord_account_id` 保存を実装）
-
-### feature/session-flow の未マージ状況（参考）
-- 最終コミット 2026-03-19（`47e430d`）。`[→]` 作業中マーカーなし＝中断中の途中作業はない。
-- develop 比 **113コミット先行**。セッション管理・日程調整・セッション詳細編集UI・モックデザイン適合・`discord_account_id` 対応などが含まれる。
-- 機能としての未実装項目（QuickSearchModal, checkUserNameAvailability 実装, user_favorite_systems テーブル等）は本タスク対象外（現状維持）。
 
 ---
 
@@ -435,6 +412,74 @@
 - [ ] Chipディレクトリ名をPascalCase→kebab-caseに統一する
 - [ ] deploy.yml の `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` を削除する
 - [ ] インフラセクションの歴史的記述（Drizzle/Hyperdrive）を整理する
+
+---
+
+## セッション画面 モックデザイン適合リファクタリング
+
+**モックディレクトリ**: `docs/designs/mocks/セッション/`
+
+### 画面一覧・対応表
+
+| # | モック名 | 実装ファイル | 状態 |
+|---|---------|-------------|------|
+| 1 | セッション募集フォーム_基本状態 | `sessions/new/_components/SessionForm.tsx` | [x] 完了 |
+| 2 | セッション募集フォーム_シナリオ選択状態 | `sessions/new/_components/sections/scenario/` | [x] 完了 |
+| 3 | セッション募集フォーム_シナリオ検索モーダル | `sessions/new/_components/sections/scenario/ScenarioSearchModal.tsx` | [x] 完了 |
+| 4 | セッション詳細ページ | `sessions/[id]/_components/SessionDetailContent.tsx` | [x] 完了 |
+| 5 | 日程回答画面（日程提出） | `sessions/[id]/schedule/availability/` | [x] 完了 |
+| 6 | 日程集計・確定画面 | `sessions/[id]/schedule/confirm/` | [x] 完了 |
+| 7 | キャンセル・辞退ダイアログ | `sessions/[id]/_components/CancelSessionDialog.tsx`, `WithdrawDialog.tsx` | [x] 完了 |
+| 8 | セッション参加申請モーダル | `sessions/[id]/_components/ParticipationRequestDialog.tsx` | [x] 完了 |
+| 9 | セッション完了ダイアログ | `sessions/[id]/_components/CompleteSessionDialog.tsx` | [x] 完了 |
+| 10 | 参加申請承認画面 | `sessions/[id]/applications/_components/` | [x] 完了 |
+| ~~11~~ | ~~日程候補選択画面~~ | ~~未実装~~ | 不要（日程提出方式に変更済み） |
+
+### 各画面の差分詳細
+
+#### #7 キャンセル・辞退ダイアログ
+
+**GMキャンセルダイアログ** (`CancelSessionDialog.tsx`):
+- [x] モックは「キャンセル」入力の二重確認フィールドなし → `confirmText` フィールドを削除し、シンプルな確認UIに変更
+- [x] 警告ヘッダーをモックの赤背景バー形式（`セッションをキャンセルしますか？`）に合わせる
+- [x] 影響説明ボックスの文言をモックに合わせる（「参加予定のプレイヤー全員に通知が送信されます」等）
+- [x] 理由フィールドのplaceholderをモックに合わせる
+
+**PLAYER辞退ダイアログ** (`WithdrawDialog.tsx`):
+- [x] タイトルを「セッションから辞退しますか？」に変更
+- [x] 警告ボックス追加（ベルアイコン + 「GMに参加辞退の連絡を送ります」説明文）
+- [x] 辞退理由を「必須」に変更（モックでは必須バッジあり）
+- [x] 文字数カウンター追加（0/200文字）
+- [x] ボタンラベルを「辞退する」+アイコンに変更
+
+#### #8 セッション参加申請モーダル
+
+- [x] セッション情報サマリーをモック形式に変更（SCENARIO / MEMBER / DATE の3行表示）
+- [x] 参加タイプに「GMとして参加」オプションを追加（3択: GM / プレイヤー / 観戦者）
+- [x] カード型ラジオUIをモックのレイアウトに合わせる（左アイコン + テキスト + 右ラジオ）
+- [x] 選択状態をモック準拠に変更（左アクセントバー + 緑背景 + 半透明ボーダー + アイコン/テキスト色変更）
+- [x] 送信ボタンを全幅の緑ボタン（「申請を送る」+アイコン + primaryシャドウ）に変更
+- [x] 下部の「キャンセル」をテキストリンクに変更（ボタンではなくテキスト）
+
+#### #9 セッション完了ダイアログ
+
+- [x] シナリオ情報カードを追加（サムネ + シナリオ名 + 日時情報）
+- [x] 完了時の処理チェックリストを追加（参加者ステータス更新、経験点配布、ログアーカイブ）
+- [x] GMメモフィールドの追加（ラベル変更 + 任意・非公開バッジ）
+- [x] 完了後のサクセス画面を追加（チェックマークアイコン + 「セッションが完了しました」 + 「レビューを書く（準備中）」ボタン）
+- [x] SessionActions の early return 修正（サクセス画面消滅対策）
+- [x] Storybook 追加（Default / WithoutSchedule / SuccessView）
+
+#### #10 参加申請承認画面 [x]
+
+- [x] パンくずナビゲーション → PageHeaderに置換
+- [x] 統計表示を「参加予定 N / M名」形式に変更
+- [x] 検索入力フィールドを追加
+- [x] ソート・フィルターボタンを追加
+- [x] カードデザインをモックに合わせる（申請メッセージ吹き出し風）
+- [x] ボタンラベルを「拒否する」「承認する」に統一
+- [x] ページネーションを追加
+- [x] border softトークン適用（カード・フィルターバー）
 
 ---
 
@@ -462,8 +507,8 @@
 | 2026-01-27 | セッション一覧画面の個別要件定義書を作成（requirements-session-list.md） |
 | 2026-01-27 | Server Action統合: 重複チェック・レートリミットをcreateScenarioActionに組み込み |
 | 2026-01-27 | フロントエンド改善: useSystemMessageでエラー・成功メッセージ表示 |
-| 2026-02-23 | PROGRESS全規模監査実施、テスト状態の細分化（✅/🔸/⬜）、計画書進捗セクション追加 |
-| 2026-06-13 | DBスキーマ移行の緊急対応（discord_id→auth_user_id、game_schedules廃止）を develop に適用（commit `796d365`）。残対応は feature/session-flow マージで収束予定として記録 |
+| 2026-02-23 | PROGRESS全規模監査実施、テスト状態の細分化（[x]/[-]/[ ]）、計画書進捗セクション追加 |
+| 2026-03-10 | セッションシナリオ変更機能 完了（adapter/action/schema/UI + テスト5件） |
 
 ---
 
@@ -481,11 +526,24 @@
 4. `checkUserNameAvailability` のSupabase実装
 5. SignupModal「好きなシステム」チップUI + `user_favorite_systems` テーブル
 
-### 優先度C: セキュリティ・運用
-0. DBスキーマ移行の残対応（`AuthUser.discordId` の実体不一致 / `discord_account_id` 未保存 / `getUserByDiscordId` 旧名）— feature/session-flow マージで収束。詳細は「DBスキーマ移行の残対応」セクション参照
-1. RLSポリシー設定
-2. シナリオ自動インポート Step 6: 利用規約・通報機能
-3. BOOTH/TALTOへの事前連絡
+### 優先度C: セッション詳細 編集UI（バックエンド実装済み → UI層のみ）
+
+| # | 対象 | 概要 | 状態 |
+|---|------|------|------|
+| 1 | ToolsSection | セッションリンクの一覧表示・追加・編集・削除UI | [x] |
+| 2 | キャラクターシート編集 | ParticipantCardにCS URL編集UIを追加 | [x] |
+| 3 | GMメモ インライン編集 | GMNotesSectionにインライン編集UIを追加 | [x] |
+| 4 | 基本情報編集 | BasicInfoSectionの編集フォーム（adapter/action/schemaも必要） | [x] |
+| 5 | シナリオ変更 | BasicInfoSectionのシナリオ変更/解除UI（adapter/action/schema + フェーズガード） | [x] |
+
+### 優先度D: 未完了タスク
+1. シナリオ編集画面
+2. RLSポリシー設定
+3. シナリオ自動インポート Step 6: 利用規約・通報機能
+4. BOOTH/TALTOへの事前連絡
+5. UI/UXリファクタリング残タスク
+6. FilterBottomSheet にスワイプダウンで閉じるジェスチャーを追加（ハンドルバーは見た目のみで未実装）
+7. `borders.soft` トークンを他の画面のカード・検索バーにも適用する（シナリオ一覧、セッション一覧等）。ダークモード対応時にトークン値の切り替えだけで済むようにする
 
 ### 優先度D: 品質改善
 1. `_components/` フォルダ構成の刷新（`docs/plans/components-folder-restructure.md`、Batch 1-10）— [Issue #3](https://github.com/kotyabuchi/scenario-manager/issues/3)

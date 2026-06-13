@@ -158,7 +158,7 @@ export const getRecentActivity = async (
         supabase
           .from('game_sessions')
           .select('game_session_id, session_name')
-          .eq('keeper_id', userId),
+          .or(`keeper_id.eq.${userId},created_by_id.eq.${userId}`),
         supabase
           .from('scenarios')
           .select('scenario_id, name')
@@ -204,7 +204,7 @@ export const getRecentActivity = async (
           ? supabase
               .from('game_sessions')
               .select('game_session_id, session_name, updated_at')
-              .eq('keeper_id', userId)
+              .or(`keeper_id.eq.${userId},created_by_id.eq.${userId}`)
               .eq('session_phase', 'COMPLETED')
               .order('updated_at', { ascending: false })
               .limit(5)
@@ -318,7 +318,7 @@ export const getSessionDatesForRange = async (
       supabase
         .from('game_sessions')
         .select('game_session_id')
-        .eq('keeper_id', userId),
+        .or(`keeper_id.eq.${userId},created_by_id.eq.${userId}`),
     ]);
 
     const sessionIds = new Set([
@@ -334,9 +334,9 @@ export const getSessionDatesForRange = async (
       .from('game_sessions')
       .select('schedule_date, game_session_id, session_name')
       .in('game_session_id', [...sessionIds])
+      .not('schedule_date', 'is', null)
       .gte('schedule_date', startDate)
-      .lte('schedule_date', endDate)
-      .not('schedule_date', 'is', null);
+      .lte('schedule_date', endDate);
 
     if (error) {
       return err(new Error(error.message));

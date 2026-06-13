@@ -1,5 +1,13 @@
 import { notFound } from 'next/navigation';
 
+import { getAllSystems, getCurrentUserId } from '../adapter';
+import { SessionDetailContent } from './_components/SessionDetailContent';
+import { buildSessionTimeline, getSessionDetail } from './adapter';
+import { hasUserAvailabilitySubmission } from './schedule/availability/adapter';
+
+import type { Database } from '@/db/types';
+import type { UserRole } from '../interface';
+
 export const metadata = {
   title: 'セッション詳細',
 };
@@ -11,15 +19,66 @@ type PageProps = {
 export default async function SessionDetailPage({ params }: PageProps) {
   const { id } = await params;
 
-  // TODO: Implement session detail page
   if (!id) {
     notFound();
   }
 
+  const [detailResult, currentUserId, systemsResult] = await Promise.all([
+    getSessionDetail(id),
+    getCurrentUserId(),
+    getAllSystems(),
+  ]);
+
+  if (!detailResult.success) {
+    notFound();
+  }
+
+  const session = detailResult.data;
+  const timeline = buildSessionTimeline(session);
+  const systems = systemsResult.success ? systemsResult.data : [];
+
+  // ユーザーのロールと参加ステータスを判定
+  let userRole: UserRole = 'guest';
+  let participantStatus:
+    | Database['public']['Enums']['participant_status']
+    | undefined;
+  let hasAvailabilitySubmission = false;
+  if (currentUserId) {
+    const isManager =
+      session.keeper?.userId === currentUserId ||
+      session.creator.userId === currentUserId;
+    if (isManager) {
+      userRole = 'manager';
+    } else {
+      // WITHDRAWN ユーザーは participants から除外済み（adapter.ts で filter）のため
+      // ここで見つかるのは PENDING/CONFIRMED のみ。WITHDRAWN ユーザーは guest 扱いとなり再申請可能
+      const participant = session.participants.find(
+        (p) => p.user.userId === currentUserId,
+      );
+      if (participant) {
+        userRole = 'participant';
+        participantStatus = participant.participantStatus;
+      }
+    }
+
+    const availabilitySubmissionResult = await hasUserAvailabilitySubmission(
+      id,
+      currentUserId,
+    );
+    if (availabilitySubmissionResult.success) {
+      hasAvailabilitySubmission = availabilitySubmissionResult.data;
+    }
+  }
+
   return (
-    <div>
-      <h1>セッション詳細: {id}</h1>
-      <p>この機能は準備中です。</p>
-    </div>
+    <SessionDetailContent
+      session={session}
+      timeline={timeline}
+      userRole={userRole}
+      currentUserId={currentUserId}
+      participantStatus={participantStatus}
+      hasAvailabilitySubmission={hasAvailabilitySubmission}
+      systems={systems}
+    />
   );
 }

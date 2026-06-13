@@ -30,6 +30,7 @@ export default defineConfig({
             'src/components/blocks/SpeedDialFAB/__tests__/*.test.ts',
           ],
           environment: 'node',
+          setupFiles: ['vitest.setup.ts'],
         },
       },
       // SpeedDialFAB のユニットテスト用（DOM APIが必要）

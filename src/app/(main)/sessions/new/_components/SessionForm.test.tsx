@@ -10,23 +10,29 @@ const { Default, Filled, WithErrors, Submitting } = composeStories(stories);
 describe('SessionForm', () => {
   // US-S101: GMとして、シナリオ未定でもセッションを募集できる
   describe('S101: シナリオ未定での募集', () => {
-    it('S101-01: シナリオ未選択でフォームが表示される', () => {
+    it('S101-01: シナリオセクションの空状態が表示される', () => {
       render(<Default />);
 
-      // シナリオ選択が「未定」または空の状態で表示されること
-      expect(screen.getByLabelText(/シナリオ/i)).toBeInTheDocument();
+      // シナリオセクションの見出しが表示されること
+      expect(
+        screen.getByRole('heading', { name: /シナリオ/i }),
+      ).toBeInTheDocument();
+
+      // 未定の案内が表示されること
+      expect(screen.getByText(/未定/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/シナリオが決まっている場合は検索してください/i),
+      ).toBeInTheDocument();
     });
 
-    it('S101-02: シナリオを選択できる', async () => {
-      const user = userEvent.setup();
+    it('S101-02: シナリオを検索ボタンが表示される', () => {
       render(<Default />);
 
-      // シナリオ選択ドロップダウンを操作
-      const scenarioSelect = screen.getByLabelText(/シナリオ/i);
-      await user.click(scenarioSelect);
-
-      // 選択肢が表示されることを確認（実装後に具体的な選択肢をテスト）
-      expect(scenarioSelect).toBeInTheDocument();
+      // 未選択状態で「シナリオを検索」ボタンが表示されること
+      const searchButton = screen.getByRole('button', {
+        name: /シナリオを検索/i,
+      });
+      expect(searchButton).toBeInTheDocument();
     });
   });
 
@@ -45,7 +51,9 @@ describe('SessionForm', () => {
       await user.type(screen.getByLabelText(/募集文/i), 'テスト説明');
 
       // 送信
-      await user.click(screen.getByRole('button', { name: /募集を投稿/i }));
+      await user.click(
+        screen.getByRole('button', { name: /セッションを作成/i }),
+      );
 
       await waitFor(() => {
         expect(handleSubmit).toHaveBeenCalled();
@@ -56,8 +64,14 @@ describe('SessionForm', () => {
       const user = userEvent.setup();
       render(<Default />);
 
-      // 日程入力フィールドを確認
-      const dateInput = screen.getByLabelText(/日時/i);
+      // 「開催日時を指定」スイッチをオン
+      const scheduleSwitch = screen.getByRole('checkbox', {
+        name: /開催日時を指定/i,
+      });
+      await user.click(scheduleSwitch);
+
+      // datetime-local が表示される
+      const dateInput = await screen.findByLabelText(/開催開始日時 1/i);
       expect(dateInput).toBeInTheDocument();
 
       // 日付を入力
@@ -81,7 +95,9 @@ describe('SessionForm', () => {
       await user.type(screen.getByLabelText(/募集文/i), 'テスト説明');
 
       // 送信
-      await user.click(screen.getByRole('button', { name: /募集を投稿/i }));
+      await user.click(
+        screen.getByRole('button', { name: /セッションを作成/i }),
+      );
 
       await waitFor(() => {
         expect(handleSubmit).toHaveBeenCalled();
@@ -89,17 +105,11 @@ describe('SessionForm', () => {
     });
 
     it('S103-02: 人数を指定できる', async () => {
-      const user = userEvent.setup();
       render(<Default />);
 
-      // 人数入力フィールドを確認
-      const playerCountInput = screen.getByLabelText(/募集人数/i);
-      expect(playerCountInput).toBeInTheDocument();
-
-      // 人数を入力
-      await user.clear(playerCountInput);
-      await user.type(playerCountInput, '4');
-      expect(playerCountInput).toHaveValue(4);
+      // NumberInput の spinbutton を確認
+      const spinbutton = screen.getByRole('spinbutton');
+      expect(spinbutton).toBeInTheDocument();
     });
   });
 
@@ -135,11 +145,13 @@ describe('SessionForm', () => {
       expect(toolsInput).toHaveValue('Discord + ココフォリア');
     });
 
-    it('FORM-04: 初心者歓迎チェックボックスを操作できる', async () => {
+    it('FORM-04: 初心者歓迎スイッチを操作できる', async () => {
       const user = userEvent.setup();
       render(<Default />);
 
-      const checkbox = screen.getByLabelText(/初心者歓迎/i);
+      const checkbox = screen.getByRole('checkbox', {
+        name: /初心者歓迎/i,
+      });
       expect(checkbox).not.toBeChecked();
 
       await user.click(checkbox);
@@ -150,15 +162,13 @@ describe('SessionForm', () => {
       const user = userEvent.setup();
       render(<Default />);
 
-      // 全体公開がデフォルトで選択されている
-      const publicRadio = screen.getByLabelText(/全体公開/i);
-      expect(publicRadio).toBeChecked();
+      const followersSwitch = screen.getByRole('checkbox', {
+        name: /フォロワー限定公開/i,
+      });
+      expect(followersSwitch).not.toBeChecked();
 
-      // フォロワーのみに変更
-      const followersRadio = screen.getByLabelText(/フォロワーのみ/i);
-      await user.click(followersRadio);
-      expect(followersRadio).toBeChecked();
-      expect(publicRadio).not.toBeChecked();
+      await user.click(followersSwitch);
+      expect(followersSwitch).toBeChecked();
     });
 
     it('FORM-06: 送信ボタンクリックでフォーム送信', async () => {
@@ -166,7 +176,9 @@ describe('SessionForm', () => {
       const handleSubmit = vi.fn();
       render(<Filled onSubmit={handleSubmit} />);
 
-      await user.click(screen.getByRole('button', { name: /募集を投稿/i }));
+      await user.click(
+        screen.getByRole('button', { name: /セッションを作成/i }),
+      );
 
       await waitFor(() => {
         expect(handleSubmit).toHaveBeenCalled();
@@ -184,8 +196,33 @@ describe('SessionForm', () => {
       render(<Submitting />);
 
       // 送信中は loadingText が表示される
-      const submitButton = screen.getByRole('button', { name: /投稿中/i });
+      const submitButton = screen.getByRole('button', { name: /作成中/i });
       expect(submitButton).toBeDisabled();
+    });
+  });
+
+  // 参加者セクションテスト
+  describe('参加者セクション', () => {
+    it('参加者セクションの見出しが表示される', () => {
+      render(<Default />);
+
+      expect(
+        screen.getByRole('heading', { name: /参加者/i }),
+      ).toBeInTheDocument();
+    });
+
+    it('メンバー検索入力が表示される', () => {
+      render(<Default />);
+
+      expect(screen.getByLabelText(/メンバー検索/i)).toBeInTheDocument();
+    });
+
+    it('メンバーが未追加の場合に空メッセージが表示される', () => {
+      render(<Default />);
+
+      expect(
+        screen.getByText(/メンバーを招待するとここに表示されます/i),
+      ).toBeInTheDocument();
     });
   });
 
@@ -204,19 +241,22 @@ describe('SessionForm', () => {
       await user.type(screen.getByLabelText(/募集文/i), 'テスト募集文です');
 
       // オプション項目
-      await user.type(screen.getByLabelText(/募集人数/i), '4');
+      const spinbutton = screen.getByRole('spinbutton');
+      await user.clear(spinbutton);
+      await user.type(spinbutton, '4');
       await user.type(screen.getByLabelText(/使用ツール/i), 'Discord');
-      await user.click(screen.getByLabelText(/初心者歓迎/i));
+      await user.click(screen.getByRole('checkbox', { name: /初心者歓迎/i }));
 
       // 送信
-      await user.click(screen.getByRole('button', { name: /募集を投稿/i }));
+      await user.click(
+        screen.getByRole('button', { name: /セッションを作成/i }),
+      );
 
       await waitFor(() => {
         expect(handleSubmit).toHaveBeenCalledWith(
           expect.objectContaining({
             sessionName: 'テストセッション',
             sessionDescription: 'テスト募集文です',
-            recruitedPlayerCount: 4,
             tools: 'Discord',
             isBeginnerFriendly: true,
           }),

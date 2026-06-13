@@ -82,6 +82,12 @@ argument-hint: "[plan-file-name]"
 - 依存関係は正しく整理されているか
 - 検証方法は明確か
 - 前提条件に漏れはないか
+- **Batch 粒度は適切か**（`.claude/rules/plan-mode.md` 参照）:
+  - 理想: 3-8ファイル / 100-300行 / 2-5 Step
+  - 上限: 15ファイル / 500行 / 8 Step（超えたら分割を指摘）
+- **Review Checkpoint が各 Batch 末尾に含まれているか**:
+  - `### Review Checkpoint: Batch N` の形式で存在すること
+  - `.claude/templates/plan-template.md` のフォーマットに準拠していること
 
 ### Step 4: レビューレポート出力
 

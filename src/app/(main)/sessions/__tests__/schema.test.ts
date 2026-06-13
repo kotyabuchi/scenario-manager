@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { searchFormSchema } from '../_components/schema';
+import { searchFormSchema } from '../_components/SearchPanel/schema';
 
 /**
  * セッション一覧ページの検索フォームスキーマテスト

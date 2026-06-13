@@ -11,7 +11,8 @@ import { sessionFormSchema } from '../schema';
  * - sessionDescription: 1〜500文字（必須）- 唯一の「必須」項目
  * - scenarioId: ULID形式（任意）
  * - scheduledAt: ISO8601日時文字列（任意）
- * - recruitedPlayerCount: 1〜10の整数（任意）
+ * - scheduleCandidates: ISO8601日時文字列の配列（任意 / 終了時刻は行ごとに任意）
+ * - recruitedPlayerCount: 0〜10の整数（任意）
  * - tools: 最大200文字（任意）
  * - isBeginnerFriendly: boolean（デフォルト: false）
  * - visibility: PUBLIC / FOLLOWERS_ONLY（デフォルト: PUBLIC）
@@ -214,6 +215,46 @@ describe('sessionFormSchema', () => {
     });
   });
 
+  describe('scheduleCandidates', () => {
+    it('開始のみが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        scheduleCandidates: [{ from: '2026-01-25T20:00' }],
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('開始〜終了が有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        scheduleCandidates: [
+          { from: '2026-01-25T20:00', to: '2026-01-25T23:00' },
+        ],
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('空行を含んでも有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        scheduleCandidates: [{ from: '', to: '' }],
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('不正な日時形式でエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        scheduleCandidates: [{ from: 'invalid-date', to: '2026-01-25T20:00' }],
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe('recruitedPlayerCount', () => {
     // T-SF-017: 1〜10の整数が有効
     it('1人が有効', () => {
@@ -234,17 +275,27 @@ describe('sessionFormSchema', () => {
       expect(result.success).toBe(true);
     });
 
-    // T-SF-018: 0人でエラー
-    it('0人でエラー', () => {
+    // T-SF-018: 0人は有効（スキーマは.min(0)で0を許可）
+    it('0人が有効', () => {
       const result = sessionFormSchema.safeParse({
         sessionName: 'テスト卓',
         sessionDescription: 'テスト募集文です',
         recruitedPlayerCount: 0,
       });
+      expect(result.success).toBe(true);
+    });
+
+    // T-SF-018b: -1人でエラー
+    it('-1人でエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        recruitedPlayerCount: -1,
+      });
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe(
-          '募集人数は1人以上で入力してください',
+          '募集人数は0人以上で入力してください',
         );
       }
     });
@@ -445,6 +496,110 @@ describe('sessionFormSchema', () => {
     });
   });
 
+  describe('invitedMembers', () => {
+    // T-SF-038: 空配列で有効（招待なし）
+    it('空配列で有効（招待なし）', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toEqual([]);
+      }
+    });
+
+    // T-SF-039: undefinedでデフォルト空配列
+    it('undefinedでデフォルト空配列', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toEqual([]);
+      }
+    });
+
+    // T-SF-040: PLAYERの招待メンバーが有効
+    it('PLAYERの招待メンバーが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSR00000000001AAAAA', participantType: 'PLAYER' },
+        ],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toHaveLength(1);
+        expect(result.data.invitedMembers[0]?.participantType).toBe('PLAYER');
+      }
+    });
+
+    // T-SF-041: SPECTATORの招待メンバーが有効
+    it('SPECTATORの招待メンバーが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          {
+            userId: '01HTESTUSR00000000001AAAAA',
+            participantType: 'SPECTATOR',
+          },
+        ],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers[0]?.participantType).toBe(
+          'SPECTATOR',
+        );
+      }
+    });
+
+    // T-SF-042: 複数メンバーが有効
+    it('複数メンバーが有効', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSR00000000001AAAAA', participantType: 'PLAYER' },
+          {
+            userId: '01HTESTUSR00000000002BBBBB',
+            participantType: 'SPECTATOR',
+          },
+        ],
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.invitedMembers).toHaveLength(2);
+      }
+    });
+
+    // T-SF-043: 不正なparticipantTypeでエラー
+    it('不正なparticipantTypeでエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [
+          { userId: '01HTESTUSR00000000001AAAAA', participantType: 'INVALID' },
+        ],
+      });
+      expect(result.success).toBe(false);
+    });
+
+    // T-SF-044: userIdなしでエラー
+    it('userIdなしでエラー', () => {
+      const result = sessionFormSchema.safeParse({
+        sessionName: 'テスト卓',
+        sessionDescription: 'テスト募集文です',
+        invitedMembers: [{ participantType: 'PLAYER' }],
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe('複合バリデーション', () => {
     // T-SF-035: 全項目を指定して有効
     it('全項目を指定して有効', () => {
@@ -458,6 +613,7 @@ describe('sessionFormSchema', () => {
         tools: 'Discord + ココフォリア',
         isBeginnerFriendly: true,
         visibility: 'PUBLIC',
+        creatorParticipantType: 'KEEPER',
       });
       expect(result.success).toBe(true);
       if (result.success) {
@@ -483,6 +639,7 @@ describe('sessionFormSchema', () => {
         // デフォルト値が設定されている
         expect(result.data.isBeginnerFriendly).toBe(false);
         expect(result.data.visibility).toBe('PUBLIC');
+        expect(result.data.creatorParticipantType).toBe('KEEPER');
         // オプション項目はundefined
         expect(result.data.scenarioId).toBeUndefined();
         expect(result.data.scheduledAt).toBeUndefined();

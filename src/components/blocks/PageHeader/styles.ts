@@ -1,18 +1,16 @@
 import { css } from '@/styled-system/css';
 
 export const header = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  h: '[56px]',
+  display: 'grid',
+  gridTemplateColumns: { base: '[1fr]', md: '[minmax(0,1fr) auto]' },
+  alignItems: { base: 'stretch', md: 'center' },
+  gap: '3',
+  minH: '[56px]',
   w: 'full',
-  px: '4',
+  px: { base: '4', md: '8' },
   py: '2',
   bg: 'white',
   shadow: 'subHeader.default',
-  md: {
-    px: '8',
-  },
 });
 
 export const header_left = css({

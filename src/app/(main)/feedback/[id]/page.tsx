@@ -40,7 +40,7 @@ export default async function FeedbackDetailPage({ params }: PageProps) {
     redirect('/');
   }
 
-  // Discord ID → アプリ userId 変換
+  // auth_user_id → アプリ userId 変換
   let currentUserId: string | undefined;
   let userRole: string | undefined;
 

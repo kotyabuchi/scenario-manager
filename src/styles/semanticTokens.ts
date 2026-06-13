@@ -305,6 +305,10 @@ export const semanticTokens = {
       neutralBg: { value: '{colors.gray.100}' },
       neutralDot: { value: '{colors.gray.500}' },
       neutralText: { value: '{colors.gray.700}' },
+      // ロールバッジ（白テキスト10pxでWCAG 4.5:1を確保するため700番台を使用）
+      keeperBg: { value: '{colors.primary.700}' },
+      playerBg: { value: '{colors.blue.700}' },
+      spectatorBg: { value: '{colors.gray.600}' },
     },
 
     // ========================================
@@ -456,6 +460,7 @@ export const semanticTokens = {
   borders: {
     focusRing: { value: '2px solid {colors.primary.500}' },
     focusRingDashed: { value: '2px dashed {colors.primary.500}' },
+    soft: { value: '1px solid {colors.gray.100}' },
   },
 
   shadows: {
@@ -481,6 +486,7 @@ export const semanticTokens = {
     // ボタン
     button: {
       primary: { value: '0 2px 4px rgba(5, 149, 104, 0.25)' },
+      primaryHover: { value: '0 4px 14px rgba(5, 149, 104, 0.30)' },
       secondary: { value: '0 1px 3px rgba(0, 0, 0, 0.10)' },
       destructive: { value: '0 2px 4px rgba(213, 68, 67, 0.25)' },
     },

@@ -5,17 +5,17 @@ import { err, ok, type Result } from '@/types/result';
 import type { User } from '@/components/blocks/Profile';
 
 /**
- * Discord IDでユーザーを取得する
+ * Supabase Auth UID でユーザーを取得する
  */
-export const getUserByDiscordId = async (
-  discordId: string,
+export const getUserByAuthUserId = async (
+  authUserId: string,
 ): Promise<Result<User | null>> => {
   try {
     const supabase = await createDbClient();
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('auth_user_id', discordId)
+      .eq('auth_user_id', authUserId)
       .maybeSingle();
 
     if (error) {

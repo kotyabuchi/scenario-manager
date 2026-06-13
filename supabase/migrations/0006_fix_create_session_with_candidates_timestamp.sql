@@ -1,0 +1,157 @@
+-- Fix return type mismatch for create_session_with_candidates
+-- game_sessions.scheduled_at is TIMESTAMP, so the function should match.
+
+CREATE OR REPLACE FUNCTION create_session_with_candidates(
+  p_game_session_id TEXT,
+  p_user_id TEXT,
+  p_session_name TEXT,
+  p_session_description TEXT,
+  p_scenario_id TEXT,
+  p_scheduled_at TIMESTAMP,
+  p_recruited_player_count INTEGER,
+  p_tools TEXT,
+  p_is_beginner_friendly BOOLEAN,
+  p_visibility session_visibility,
+  p_creator_participant_type participant_type,
+  p_schedule_candidates JSONB,
+  p_invited_members JSONB
+) RETURNS TABLE (
+  game_session_id TEXT,
+  session_name TEXT,
+  session_phase session_phase,
+  scenario_id TEXT,
+  scheduled_at TIMESTAMP,
+  recruited_player_count INTEGER,
+  tools TEXT,
+  is_beginner_friendly BOOLEAN,
+  visibility session_visibility
+) AS $$
+DECLARE
+  v_auth_uid TEXT := auth.uid()::text;
+  v_auth_role TEXT := auth.role();
+  v_user_id TEXT;
+  v_candidates JSONB;
+  v_invited JSONB;
+BEGIN
+  v_candidates := COALESCE(p_schedule_candidates, '[]'::jsonb);
+  v_invited := COALESCE(p_invited_members, '[]'::jsonb);
+
+  IF v_auth_role = 'service_role' THEN
+    v_user_id := p_user_id;
+  ELSE
+    IF v_auth_uid IS NULL THEN
+      RAISE EXCEPTION 'ログインが必要です';
+    END IF;
+
+    SELECT user_id INTO v_user_id
+    FROM users
+    WHERE user_id = p_user_id
+      AND discord_id = v_auth_uid;
+
+    IF v_user_id IS NULL THEN
+      RAISE EXCEPTION 'ユーザーが見つかりません';
+    END IF;
+  END IF;
+
+  INSERT INTO game_sessions (
+    game_session_id,
+    session_name,
+    session_description,
+    scenario_id,
+    keeper_id,
+    created_by_id,
+    session_phase,
+    scheduled_at,
+    recruited_player_count,
+    tools,
+    is_beginner_friendly,
+    visibility
+  ) VALUES (
+    p_game_session_id,
+    p_session_name,
+    p_session_description,
+    p_scenario_id,
+    CASE
+      WHEN p_creator_participant_type = 'KEEPER' THEN v_user_id
+      ELSE NULL
+    END,
+    v_user_id,
+    'RECRUITING',
+    p_scheduled_at,
+    p_recruited_player_count,
+    p_tools,
+    p_is_beginner_friendly,
+    p_visibility
+  );
+
+  INSERT INTO session_participants (
+    session_id,
+    user_id,
+    participant_type,
+    participant_status,
+    applied_at,
+    approved_at
+  ) VALUES (
+    p_game_session_id,
+    v_user_id,
+    p_creator_participant_type,
+    'CONFIRMED',
+    now(),
+    now()
+  );
+
+  IF jsonb_array_length(v_candidates) > 0 THEN
+    INSERT INTO schedule_candidates (
+      candidate_id,
+      session_id,
+      candidate_date,
+      end_time,
+      status,
+      created_by
+    )
+    SELECT
+      (c->>'candidateId')::text,
+      p_game_session_id,
+      (c->>'from')::timestamptz,
+      NULLIF(c->>'to', '')::timestamptz,
+      'CONFIRMED',
+      v_user_id
+    FROM jsonb_array_elements(v_candidates) AS c
+    WHERE COALESCE(trim(c->>'from'), '') <> '';
+  END IF;
+
+  IF jsonb_array_length(v_invited) > 0 THEN
+    INSERT INTO session_participants (
+      session_id,
+      user_id,
+      participant_type,
+      participant_status,
+      applied_at,
+      approved_at
+    )
+    SELECT
+      p_game_session_id,
+      (m->>'userId')::text,
+      (m->>'participantType')::participant_type,
+      'CONFIRMED',
+      now(),
+      now()
+    FROM jsonb_array_elements(v_invited) AS m
+    WHERE (m->>'userId')::text <> v_user_id;
+  END IF;
+
+  RETURN QUERY
+    SELECT
+      gs.game_session_id,
+      gs.session_name,
+      gs.session_phase,
+      gs.scenario_id,
+      gs.scheduled_at,
+      gs.recruited_player_count,
+      gs.tools,
+      gs.is_beginner_friendly,
+      gs.visibility
+    FROM game_sessions gs
+    WHERE gs.game_session_id = p_game_session_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;

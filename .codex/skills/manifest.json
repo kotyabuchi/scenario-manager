@@ -1,0 +1,107 @@
+{
+  "generatedAt": "2026-02-25T13:01:04.5093447+09:00",
+  "sourceDir": ".claude\\skills",
+  "outputDir": ".codex\\skills",
+  "prefix": "scenario-manager",
+  "skillCount": 14,
+  "skills": [
+    {
+      "sourceName": "agentation",
+      "exportedName": "scenario-manager-agentation",
+      "sourcePath": ".claude\\skills\\agentation",
+      "outputPath": ".codex\\skills\\scenario-manager-agentation",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "apply-plan-review",
+      "exportedName": "scenario-manager-apply-plan-review",
+      "sourcePath": ".claude\\skills\\apply-plan-review",
+      "outputPath": ".codex\\skills\\scenario-manager-apply-plan-review",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "apply-review",
+      "exportedName": "scenario-manager-apply-review",
+      "sourcePath": ".claude\\skills\\apply-review",
+      "outputPath": ".codex\\skills\\scenario-manager-apply-review",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "exec-plan",
+      "exportedName": "scenario-manager-exec-plan",
+      "sourcePath": ".claude\\skills\\exec-plan",
+      "outputPath": ".codex\\skills\\scenario-manager-exec-plan",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "netlify",
+      "exportedName": "scenario-manager-netlify",
+      "sourcePath": ".claude\\skills\\netlify",
+      "outputPath": ".codex\\skills\\scenario-manager-netlify",
+      "fileCount": 3
+    },
+    {
+      "sourceName": "react-doctor",
+      "exportedName": "scenario-manager-react-doctor",
+      "sourcePath": ".claude\\skills\\react-doctor",
+      "outputPath": ".codex\\skills\\scenario-manager-react-doctor",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "review-diff",
+      "exportedName": "scenario-manager-review-diff",
+      "sourcePath": ".claude\\skills\\review-diff",
+      "outputPath": ".codex\\skills\\scenario-manager-review-diff",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "review-impl",
+      "exportedName": "scenario-manager-review-impl",
+      "sourcePath": ".claude\\skills\\review-impl",
+      "outputPath": ".codex\\skills\\scenario-manager-review-impl",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "review-plan",
+      "exportedName": "scenario-manager-review-plan",
+      "sourcePath": ".claude\\skills\\review-plan",
+      "outputPath": ".codex\\skills\\scenario-manager-review-plan",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "stitch-design",
+      "exportedName": "scenario-manager-stitch-design",
+      "sourcePath": ".claude\\skills\\stitch-design",
+      "outputPath": ".codex\\skills\\scenario-manager-stitch-design",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "supabase-migrate",
+      "exportedName": "scenario-manager-supabase-migrate",
+      "sourcePath": ".claude\\skills\\supabase-migrate",
+      "outputPath": ".codex\\skills\\scenario-manager-supabase-migrate",
+      "fileCount": 1
+    },
+    {
+      "sourceName": "supabase-postgres-best-practices",
+      "exportedName": "scenario-manager-supabase-postgres-best-practices",
+      "sourcePath": ".claude\\skills\\supabase-postgres-best-practices",
+      "outputPath": ".codex\\skills\\scenario-manager-supabase-postgres-best-practices",
+      "fileCount": 31
+    },
+    {
+      "sourceName": "vercel-react-best-practices",
+      "exportedName": "scenario-manager-vercel-react-best-practices",
+      "sourcePath": ".claude\\skills\\vercel-react-best-practices",
+      "outputPath": ".codex\\skills\\scenario-manager-vercel-react-best-practices",
+      "fileCount": 46
+    },
+    {
+      "sourceName": "web-design-guidelines",
+      "exportedName": "scenario-manager-web-design-guidelines",
+      "sourcePath": ".claude\\skills\\web-design-guidelines",
+      "outputPath": ".codex\\skills\\scenario-manager-web-design-guidelines",
+      "fileCount": 1
+    }
+  ]
+}

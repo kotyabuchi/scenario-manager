@@ -5,8 +5,8 @@ export const zIndex = defineTokens.zIndex({
   base: { value: 0 },
   /** 粘着要素（sticky header等） */
   sticky: { value: 100 },
-  /** ドロップダウン、ポップオーバー、セレクト等 */
-  dropdown: { value: 1000 },
+  /** ドロップダウン、ポップオーバー、セレクト等（モーダル内のSelectにも対応するため modal より高い値） */
+  dropdown: { value: 1350 },
   /** 固定要素（FAB等） */
   fixed: { value: 1100 },
   /** オーバーレイ背景 */

@@ -133,7 +133,7 @@ export const getScenarioSessions = async (
   try {
     const supabase = await createDbClient();
 
-    // 完了済みセッションを取得（スケジュール情報付き）
+    // 完了済みセッションを取得（日程情報付き）
     const { data: sessionsData, error } = await supabase
       .from('game_sessions')
       .select(`
@@ -277,17 +277,17 @@ export const getUserScenarioPreference = async (
 };
 
 /**
- * Discord IDでユーザーを取得する
+ * Supabase Auth UIDでユーザーを取得する
  */
-export const getUserByDiscordId = async (
-  discordId: string,
+export const getUserByAuthUserId = async (
+  authUserId: string,
 ): Promise<Result<{ userId: string } | null>> => {
   try {
     const supabase = await createDbClient();
     const { data, error } = await supabase
       .from('users')
       .select('user_id')
-      .eq('auth_user_id', discordId)
+      .eq('auth_user_id', authUserId)
       .maybeSingle();
 
     if (error) {

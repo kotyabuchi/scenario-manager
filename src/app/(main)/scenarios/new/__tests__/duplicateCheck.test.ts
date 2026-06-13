@@ -66,7 +66,7 @@ afterEach(async () => {
   }
 });
 
-describe.skip('シナリオ重複チェック', () => {
+describe('シナリオ重複チェック', () => {
   describe('checkScenarioNameDuplicate', () => {
     // SN-30: 同一システムで同名シナリオが存在する場合、エラーメッセージが表示される
     it('同一システムで同名シナリオが存在する場合、重複と判定される', async () => {

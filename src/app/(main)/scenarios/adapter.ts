@@ -267,17 +267,17 @@ export const getAllTags = async (): Promise<Result<Tag[]>> => {
 };
 
 /**
- * Discord IDでユーザーを取得する
+ * Supabase Auth UIDでユーザーを取得する
  */
-export const getUserByDiscordId = async (
-  discordId: string,
+export const getUserByAuthUserId = async (
+  authUserId: string,
 ): Promise<Result<{ userId: string; role: string } | null>> => {
   try {
     const supabase = await createDbClient();
     const { data, error } = await supabase
       .from('users')
       .select('user_id, role')
-      .eq('auth_user_id', discordId)
+      .eq('auth_user_id', authUserId)
       .maybeSingle();
 
     if (error) {

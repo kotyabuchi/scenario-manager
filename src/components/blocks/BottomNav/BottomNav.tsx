@@ -18,6 +18,7 @@ import { shareCurrentPage } from '../SpeedDialFAB/share';
 import { useSpeedDial } from '../SpeedDialFAB/useSpeedDial';
 import * as styles from './styles';
 
+import { useBottomNavSlotTarget } from '@/hooks/useBottomNavSlot';
 import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 
 import type { Route } from 'next';
@@ -50,6 +51,7 @@ export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isScenarioRegisterOpen, setIsScenarioRegisterOpen] = useState(false);
   const { addMessage } = useSystemMessageActions();
+  const slotTargetRef = useBottomNavSlotTarget();
 
   const handleFeedbackOpen = () => {
     close();
@@ -106,81 +108,83 @@ export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
 
   return (
     <>
-      <nav
-        className={styles.nav}
-        aria-label="モバイルナビゲーション"
+      <div
+        className={styles.navWrapper}
         style={{
           transform: visible
             ? 'translateY(0)'
             : 'translateY(calc(100% + 16px))',
         }}
       >
-        {/* 左2つ */}
-        {navItems.slice(0, 2).map((item) => {
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={styles.navItem({ active })}
-              aria-current={active ? 'page' : undefined}
-            >
-              <item.icon size={24} weight={active ? 'fill' : 'regular'} />
-              <span className={styles.navLabel}>{item.label}</span>
-            </Link>
-          );
-        })}
+        <div ref={slotTargetRef} />
+        <nav className={styles.nav} aria-label="モバイルナビゲーション">
+          {/* 左2つ */}
+          {navItems.slice(0, 2).map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={styles.navItem({ active })}
+                aria-current={active ? 'page' : undefined}
+              >
+                <item.icon size={24} weight={active ? 'fill' : 'regular'} />
+                <span className={styles.navLabel}>{item.label}</span>
+              </Link>
+            );
+          })}
 
-        {/* Center Speed Dial FAB */}
-        <div className={styles.fabWrapper}>
-          {isOpen && (
-            <>
-              <button
-                type="button"
-                className={styles.speedDial_overlay}
-                onClick={close}
-                aria-label="メニューを閉じる"
-              />
-              <div className={styles.speedDial_menu} role="menu">
-                <SpeedDialPanel
-                  isAuthenticated={isAuthenticated}
-                  onClose={close}
-                  onFeedbackOpen={handleFeedbackOpen}
-                  onScenarioRegister={handleScenarioRegister}
-                  onShare={handleShare}
+          {/* Center Speed Dial FAB */}
+          <div className={styles.fabWrapper}>
+            {isOpen && (
+              <>
+                <button
+                  type="button"
+                  className={styles.speedDial_overlay}
+                  onClick={close}
+                  aria-label="メニューを閉じる"
                 />
-              </div>
-            </>
-          )}
-          <button
-            type="button"
-            className={styles.fab}
-            onClick={toggle}
-            aria-label="メニューを開く"
-            aria-expanded={isOpen}
-          >
-            <span className={styles.fabIcon({ open: isOpen })}>
-              <Plus size={28} weight="bold" />
-            </span>
-          </button>
-        </div>
-
-        {/* 右2つ */}
-        {navItems.slice(2).map((item) => {
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={styles.navItem({ active })}
-              aria-current={active ? 'page' : undefined}
+                <div className={styles.speedDial_menu} role="menu">
+                  <SpeedDialPanel
+                    isAuthenticated={isAuthenticated}
+                    onClose={close}
+                    onFeedbackOpen={handleFeedbackOpen}
+                    onScenarioRegister={handleScenarioRegister}
+                    onShare={handleShare}
+                  />
+                </div>
+              </>
+            )}
+            <button
+              type="button"
+              className={styles.fab}
+              onClick={toggle}
+              aria-label="メニューを開く"
+              aria-expanded={isOpen}
             >
-              <item.icon size={24} weight={active ? 'fill' : 'regular'} />
-              <span className={styles.navLabel}>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+              <span className={styles.fabIcon({ open: isOpen })}>
+                <Plus size={28} weight="bold" />
+              </span>
+            </button>
+          </div>
+
+          {/* 右2つ */}
+          {navItems.slice(2).map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={styles.navItem({ active })}
+                aria-current={active ? 'page' : undefined}
+              >
+                <item.icon size={24} weight={active ? 'fill' : 'regular'} />
+                <span className={styles.navLabel}>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
       <FeedbackModal
         open={isFeedbackOpen}
         onOpenChange={handleFeedbackOpenChange}

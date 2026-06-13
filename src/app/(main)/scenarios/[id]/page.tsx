@@ -14,7 +14,7 @@ import {
   getScenarioReviews,
   getScenarioSessions,
   getScenarioVideoLinks,
-  getUserByDiscordId,
+  getUserByAuthUserId,
   getUserScenarioPreference,
 } from './adapter';
 import * as styles from './styles';
@@ -42,7 +42,7 @@ export default async function ScenarioDetailPage({ params }: PageProps) {
   // Supabaseの認証IDからアプリのユーザーIDを取得
   let currentUserId: string | undefined;
   if (authUser) {
-    const userResult = await getUserByDiscordId(authUser.id);
+    const userResult = await getUserByAuthUserId(authUser.id);
     if (userResult.success && userResult.data) {
       currentUserId = userResult.data.userId;
     }

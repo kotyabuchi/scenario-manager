@@ -1,16 +1,44 @@
 import { isNil } from 'ramda';
 import { ulid } from 'ulid';
 
-import {
-  ParticipantStatuses,
-  ParticipantTypes,
-  SessionPhases,
-} from '@/db/enum';
 import { createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
 
+import type { Database, Json } from '@/db/types';
 import type { CreateSessionInput } from './schema';
+
+/**
+ * 組み込み Omit は K extends keyof any のため存在しないキーでもエラーにならない。
+ * StrictOmit は K extends keyof T に制約し、型再生成でキー名が変わった場合に
+ * コンパイルエラーとして検知できるようにする。
+ */
+type StrictOmit<T, K extends keyof T> = Omit<T, K>;
+
+/** Supabase gen types の RPC Args 型（NULL 非許容で生成される） */
+type GeneratedArgs =
+  Database['public']['Functions']['create_session_transaction']['Args'];
+
+/** NULL を受け付けるパラメータのキー */
+type NullableParamKeys =
+  | 'p_scenario_id'
+  | 'p_scheduled_at'
+  | 'p_recruited_player_count'
+  | 'p_tools';
+
+/**
+ * Supabase gen types は RPC パラメータの NULL 許容を生成しないため、
+ * DB関数で実際に NULL を受け付けるパラメータを明示的にオーバーライドする。
+ *
+ * StrictOmit により、型再生成でパラメータ名が変更された場合は
+ * NullableParamKeys の該当キーでコンパイルエラーが発生する。
+ */
+type CreateSessionRpcArgs = StrictOmit<GeneratedArgs, NullableParamKeys> & {
+  p_scenario_id: string | null;
+  p_scheduled_at: string | null;
+  p_recruited_player_count: number | null;
+  p_tools: string | null;
+};
 
 /**
  * セッション作成結果の型
@@ -73,7 +101,10 @@ export const createSession = async (
   try {
     const supabase = await createDbClient();
 
-    // ユーザーの存在確認
+    // ユーザー存在確認（ユーザーフレンドリーなエラーメッセージ提供）
+    // DB関数側では auth.uid() との所有権照合を行うが、
+    // service_role クライアントではスキップされるため、
+    // アプリ層での存在確認も併用する
     const { data: user } = await supabase
       .from('users')
       .select('user_id')
@@ -86,56 +117,83 @@ export const createSession = async (
 
     const gameSessionId = ulid();
 
-    // セッションを作成
-    const { data: createdSession, error: insertError } = await supabase
-      .from('game_sessions')
-      .insert({
-        game_session_id: gameSessionId,
-        created_by_id: userId,
-        session_name: input.sessionName,
-        session_description: input.sessionDescription,
-        scenario_id: input.scenarioId ?? null,
-        keeper_id: userId,
-        session_phase: SessionPhases.RECRUITING.value,
-        scheduled_at: input.scheduledAt
-          ? new Date(input.scheduledAt).toISOString()
-          : null,
-        recruited_player_count: input.recruitedPlayerCount ?? null,
-        tools: input.tools ?? null,
-        is_beginner_friendly: input.isBeginnerFriendly,
-        visibility: input.visibility,
-      })
-      .select()
-      .single();
+    const confirmedCandidates = (input.scheduleCandidates ?? []).filter(
+      (candidate) => candidate.from.trim() !== '',
+    );
+    const representativeScheduledAt =
+      confirmedCandidates.length > 0
+        ? confirmedCandidates
+            .map((candidate) => candidate.from)
+            .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0]
+        : (input.scheduledAt ?? null);
 
-    if (insertError || isNil(createdSession)) {
+    const initialAvailabilityTimeBlockPayload = confirmedCandidates.map(
+      (candidate) => {
+        const startAt = new Date(candidate.from);
+        const endAt =
+          candidate.to && candidate.to.trim() !== ''
+            ? new Date(candidate.to)
+            : new Date(startAt.getTime() + 30 * 60 * 1000);
+
+        return {
+          availabilityTimeBlockId: ulid(),
+          startAt: startAt.toISOString(),
+          endAt: endAt.toISOString(),
+        };
+      },
+    );
+
+    const rpcArgs: CreateSessionRpcArgs = {
+      p_game_session_id: gameSessionId,
+      p_user_id: userId,
+      p_session_name: input.sessionName,
+      p_session_description: input.sessionDescription,
+      p_scenario_id: input.scenarioId ?? null,
+      p_scheduled_at: representativeScheduledAt
+        ? new Date(representativeScheduledAt).toISOString()
+        : null,
+      p_recruited_player_count: input.recruitedPlayerCount ?? null,
+      p_tools: input.tools ?? null,
+      p_is_beginner_friendly: input.isBeginnerFriendly,
+      p_visibility: input.visibility,
+      p_creator_participant_type: input.creatorParticipantType,
+      // JSONB パラメータは Supabase 生成型の Json と構造的に互換だが
+      // TypeScript の index signature 推論が通らないため型アサーション
+      p_initial_availability_time_blocks:
+        initialAvailabilityTimeBlockPayload as unknown as Json,
+      p_invited_members: (input.invitedMembers ?? []) as unknown as Json,
+    };
+
+    const { data: createdSessions, error: createError } = await supabase.rpc(
+      'create_session_transaction',
+      rpcArgs as Database['public']['Functions']['create_session_transaction']['Args'],
+    );
+
+    if (createError || !createdSessions || createdSessions.length === 0) {
+      return err(
+        new Error(createError?.message ?? ERROR_MESSAGES.CREATE_FAILED),
+      );
+    }
+
+    const firstSession = createdSessions[0];
+    if (isNil(firstSession)) {
       return err(new Error(ERROR_MESSAGES.CREATE_FAILED));
     }
 
-    // 作成者をKEEPERとして参加者に追加（確定済み状態）
-    await supabase.from('session_participants').insert({
-      session_id: gameSessionId,
-      user_id: userId,
-      participant_type: ParticipantTypes.KEEPER.value,
-      participant_status: ParticipantStatuses.CONFIRMED.value,
-      applied_at: new Date().toISOString(),
-      approved_at: new Date().toISOString(),
-    });
-
-    const session = camelCaseKeys(
-      createdSession as Record<string, unknown>,
-    ) as Record<string, unknown>;
+    const session = camelCaseKeys(firstSession);
 
     return ok({
-      gameSessionId: session.gameSessionId as string,
-      sessionName: session.sessionName as string,
-      sessionPhase: session.sessionPhase as string,
+      gameSessionId: session.gameSessionId,
+      sessionName: session.sessionName,
+      sessionPhase: session.sessionPhase,
+      // DB関数の RETURNS TABLE は non-null で宣言されるが、
+      // 実データはカラムの nullable に従うためワイドニング
       scenarioId: session.scenarioId as string | null,
       scheduledAt: session.scheduledAt as string | null,
       recruitedPlayerCount: session.recruitedPlayerCount as number | null,
       tools: session.tools as string | null,
-      isBeginnerFriendly: session.isBeginnerFriendly as boolean,
-      visibility: session.visibility as string,
+      isBeginnerFriendly: session.isBeginnerFriendly,
+      visibility: session.visibility,
     });
   } catch (e) {
     return err(

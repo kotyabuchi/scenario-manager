@@ -31,17 +31,17 @@ export const getUserById = async (
 };
 
 /**
- * Discord IDでユーザーを取得する
+ * Supabase Auth UIDでユーザーを取得する
  */
-export const getUserByDiscordId = async (
-  discordId: string,
+export const getUserByAuthUserId = async (
+  authUserId: string,
 ): Promise<Result<User | null>> => {
   try {
     const supabase = await createDbClient();
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('auth_user_id', discordId)
+      .eq('auth_user_id', authUserId)
       .maybeSingle();
 
     if (error) {

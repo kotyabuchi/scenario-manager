@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>セッション詳細ページ - Shinapre Kanri-kun</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#059568",
+              "primary-dark": "#047a55",
+              "background-light": "#f5f8f7",
+              "background-dark": "#0f231d",
+            },
+            fontFamily: {
+              "display": ["'Noto Serif JP'", "serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Noto Serif JP', serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 min-h-screen">
+<!-- Navbar placeholder for context -->
+<nav class="bg-white dark:bg-[#162e26] border-b border-gray-200 dark:border-gray-700 h-16 flex items-center px-6 sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<span class="material-icons text-primary text-2xl">casino</span>
+<span class="font-bold text-lg tracking-wide text-primary">Shinapre Kanri-kun</span>
+</div>
+<div class="ml-auto flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+<span class="material-icons text-gray-500">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary/20 overflow-hidden border border-primary/30">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="User avatar thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhte7LOFfKCUNiWLmKn0pkk-MZAHqLHFJztKr10CWv6Elw3Q2te3juOf0WV4nwwU5ZQRu9k1V_o1ZLS1yZLvurlSX9LsuDFgcyHv2IaVOwXys8uQZ4XUqs-gxlqef9hv3Q2YyXC2vF-dPA3UO9ysgfk4RPj3vB8TEMRzGhopoy027pAwzfx1wS1QFCuMXeJcHXwGixVWC72L4gMQi4fM64F9AAOV-KUvJ1cynr_vs-hmoc4l-SrJzbCofdaZXNI1s4Z-EjOGCmTPs"/>
+</div>
+</div>
+</nav>
+<main class="container mx-auto max-w-5xl px-4 py-8">
+<!-- Header Section -->
+<header class="mb-8">
+<a class="inline-flex items-center text-sm text-gray-500 hover:text-primary transition-colors mb-4 group" href="#">
+<span class="material-icons text-sm mr-1 group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                セッション一覧
+            </a>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                    狂気山脈 セッション
+                </h1>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 bg-white dark:bg-[#162e26] border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2">
+<span class="material-icons text-sm">edit</span>
+                        編集
+                    </button>
+<button class="p-2.5 bg-white dark:bg-[#162e26] border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm flex items-center justify-center">
+<span class="material-icons">more_horiz</span>
+</button>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left Column (Main Info) -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Card 1: Basic Info -->
+<section class="bg-white dark:bg-[#162e26] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 relative overflow-hidden group">
+<!-- Decorative subtle gradient -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full border border-primary/20">
+                                クトゥルフ神話TRPG
+                            </span>
+<span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                準備中
+                            </span>
+</div>
+</div>
+<div class="space-y-6 relative z-10">
+<div>
+<label class="text-xs text-gray-400 uppercase tracking-wider mb-1 block">シナリオ</label>
+<a class="text-xl font-semibold text-primary hover:text-primary-dark underline decoration-primary/30 underline-offset-4 decoration-2 transition-all" href="#">
+                                狂気山脈 〜邪神の山嶺〜
+                            </a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div>
+<label class="text-xs text-gray-400 uppercase tracking-wider mb-1 block flex items-center gap-1">
+<span class="material-icons text-sm">calendar_today</span> 日時
+                                </label>
+<p class="text-gray-800 dark:text-gray-200 font-medium">2023/10/24 (火) 21:00 ~</p>
+</div>
+<div>
+<label class="text-xs text-gray-400 uppercase tracking-wider mb-1 block flex items-center gap-1">
+<span class="material-icons text-sm">construction</span> ツール
+                                </label>
+<div class="flex gap-2">
+<span class="inline-flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
+<img alt="Discord" class="w-4 h-4 object-contain" data-alt="Discord logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwcIGjZjXAXeLXYFydtx6e7yVtzHnESSFAH7ZobY102S4mGmygPSNXqWzTAMBBDbeVxI2SX81dKhEHDSjhM0kRnuIIjNDh3Rq-jqvEtTpAgZA2wtCjX4GTgowxDxVk-bWjbVMpEw8GdQ9l-a8R-2wcIltgiEAoD4yza_QNgOzFKMYUb92EvfAPCzgZZb-qjHHUqP7S-zbaL2bPTxhX32XdlPbd28V6HOLbeucNwKHPbf2gAMfl4fFqLv6WI5wh5202P1VdYQu-rLM"/>
+                                        Discord
+                                    </span>
+<span class="inline-flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
+<span class="material-icons text-sm text-primary">casino</span>
+                                        ココフォリア
+                                    </span>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+<label class="text-xs text-gray-400 uppercase tracking-wider mb-2 block">ゲームマスター (GM)</label>
+<div class="flex items-center gap-3">
+<img alt="GM Avatar" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover" data-alt="Portrait of a person acting as game master" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFRIeBWdrqdeU_YaflTg7D6iKhflm-9qtUonJKdRQ_QyqE-WalV3Q0A7Ndb7uxM7a6EpM3mjklP-Hg-PcKWJjDUzmOau9QZq7Hmc6a5cof-1fDCSDyIil6y9ReXINwF1KKDsNx2xSoR3QYxFW5XJYxLzWA5rHySheJjeJkboRr4I6gmD0LSUXZXXKNsmLBos38dqeQ09r50jjq5agEPKLvqyE7XQnMumU6LqOMErmLLcK5fojFUZTcW9NhJ_ftrwCEaxgGktNmXLM"/>
+<div>
+<p class="text-sm font-semibold text-gray-900 dark:text-white">Tanaka K.</p>
+<p class="text-xs text-gray-500">@tanaka_gm</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Card 2: Participants -->
+<section class="bg-white dark:bg-[#162e26] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-icons text-primary">groups</span>
+                        参加者
+                        <span class="text-xs font-normal text-gray-500 ml-auto bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">4 / 4</span>
+</h2>
+<div class="space-y-4">
+<!-- Participant 1 (GM) -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img alt="Avatar" class="w-10 h-10 rounded-full object-cover" data-alt="User avatar 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0NLN82yzfcP6M5u2AJQLbzj6mLD7kO2jR9PVaBAcG9XyT6xtOCiElyTwOYDmKgpT-MNZc0f2miC_i-5sCVJqp1tCHp5m77mlBp4Bfm1ScxaRiEt4KOTJa0axIYA8JJF8obCZg8OXWSjpQJtvKLGsnRJNBgpx2-DBtIXnCSsuiCpMTgwL8BveOSAdVTbUsq__0HWTweqMWTbMr_28X6dL89cJ676uLvbaSIuG5uAuHDJRS7EPDAlmVQV9kt7TYpbp34Xmg3L7pL8c"/>
+<span class="absolute -bottom-1 -right-1 bg-yellow-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white">GM</span>
+</div>
+<div>
+<p class="text-sm font-bold text-gray-900 dark:text-white">Tanaka K.</p>
+<p class="text-xs text-gray-500">キーパー</p>
+</div>
+</div>
+<span class="text-xs text-gray-400 italic">主催者</span>
+</div>
+<!-- Participant 2 (PL) -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img alt="Avatar" class="w-10 h-10 rounded-full object-cover" data-alt="User avatar 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9ZPS5KxEVWS4cxfYmGpcOBeGEF-PIsU0Aozk74cYwz9F9ZZhsZaiCM-EzYGyGoCiHXgOUMgP2bW1OpuExp5_qLzmqzZCDDl0AlINWCIH7EV2nKPAFu72Yx3PSZ--xSm2Js_QsRz4CvT-6O-2YAY5iJSPV34kfECi37b2S0P7mkB2q4S7A_P1vLI8HJ-qytErWbKvqVDBmPekRUlB3MwbKKovgDz9OJ4BgwGvlgGohVs2E_IYwrSn9miqtENa2n4AnWs5ogr6OPPA"/>
+<span class="absolute -bottom-1 -right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white">PL</span>
+</div>
+<div>
+<p class="text-sm font-bold text-gray-900 dark:text-white">Suzuki M.</p>
+<p class="text-xs text-gray-500">PC: 登山家</p>
+</div>
+</div>
+<a class="flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs rounded border border-green-200 dark:border-green-800 hover:bg-green-100 transition-colors" href="#">
+<span class="material-icons text-[14px]">check_circle</span>
+                                CS提出済
+                            </a>
+</div>
+<!-- Participant 3 (PL) -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img alt="Avatar" class="w-10 h-10 rounded-full object-cover" data-alt="User avatar 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtZmcDsBNecjeYvwTYeofXdiuEzHZyIySW_jnV1grunkCcgP1LCeu1LLpNt8DLJMOV9Z2_hLApJWF4digA6egqoZ9ZFE8FkQnYak4Hg8mbt5tePS3is09fmShlr2zmBoi_Bs0vFgAaaWV5Dvxx1EjkNp3_hdtl2jKIaIzu57gK8AhtOlSdgndv8kHx2e8-mIh3kKTGwvIhXY7Xuyvat4I393WTdRUtqBnWHsY2kWbwTdm4cmwnnnYPaTKVE_Dwn2tc8vaJ6CUYV8k"/>
+<span class="absolute -bottom-1 -right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white">PL</span>
+</div>
+<div>
+<p class="text-sm font-bold text-gray-900 dark:text-white">Sato R.</p>
+<p class="text-xs text-gray-500">PC: 記者</p>
+</div>
+</div>
+<a class="flex items-center gap-1 px-3 py-1.5 bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 text-xs rounded border border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100 transition-colors" href="#">
+<span class="material-icons text-[14px]">pending</span>
+                                CS確認中
+                            </a>
+</div>
+<!-- Participant 4 (Observer) -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700 opacity-75">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img alt="Avatar" class="w-10 h-10 rounded-full object-cover grayscale" data-alt="User avatar 4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVcxvZz6-9YUnpJtx3C8-BqNfxPC4gTUAGJouc_VfX5mvRBr7q4rf8RFsEBeVGEpmNlYxQAK6N6IfXAfuY1BXtvllLU-pxBqOg5dCgZIxlTDUt8mxExeGXkOgXXY4q8g8ohs421wAY56VrpWThDZmo7gvSzzZ0wNkh08vrvtJec1U-Uy934WE77cMzXmR_js9ZadV3aIPvHseRTPFuABvVmefIyfdHXoX84WkRy9AF_j1n2b1_M4bnA6BYA8uFjK56ydAa8p5RMaY"/>
+<span class="absolute -bottom-1 -right-1 bg-gray-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white">観</span>
+</div>
+<div>
+<p class="text-sm font-bold text-gray-900 dark:text-white">Yamada T.</p>
+<p class="text-xs text-gray-500">見学希望</p>
+</div>
+</div>
+<span class="text-xs text-gray-400">ステータスなし</span>
+</div>
+</div>
+</section>
+<!-- Card 4: GM Notes -->
+<section class="bg-white dark:bg-[#162e26] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+<div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+<span class="material-icons text-gray-400">lock</span>
+                            GMメモ
+                        </h2>
+<span class="text-[10px] font-bold uppercase tracking-wider text-white bg-gray-400 dark:bg-gray-600 px-2 py-0.5 rounded">GMのみ閲覧可</span>
+</div>
+<div class="p-0">
+<textarea class="w-full h-32 p-6 bg-[#EAEBED] dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border-none focus:ring-0 resize-none font-sans text-sm leading-relaxed" placeholder="ここにセッションのメモや進行表を記載してください..." readonly="">・KP情報はDiscordの専用チャンネルに投稿済み。
+・ハンドアウト配布完了。
+・PL2名のキャラクターシート未確認、要催促。</textarea>
+</div>
+</section>
+</div>
+<!-- Right Column (Sidebar) -->
+<div class="space-y-6">
+<!-- Card 3: Links -->
+<section class="bg-white dark:bg-[#162e26] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">会場・ツール</h2>
+<div class="flex flex-col gap-3">
+<a class="w-full flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] text-white py-3 px-4 rounded-lg font-medium transition-all shadow-sm hover:shadow group" href="#">
+<img alt="Discord" class="w-5 h-5 object-contain" data-alt="Discord white logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaIdUkz833M6gflAfdINZHETJfhi54p7BbOysKT5BGGql3sdEF_8ek-HY049cxWO1pdD2NnQrTie_UQ5sHUK0edUg9RuL1l0VWdQQxdZyVcaEJqlVSC-HjiZ85M6OiOD_vbDlNJZUS9iRs6I8bp9viQM2_7qilWh9Ao9WviumZhOFytOySaKc_XkC6OgMJFJ1Ii-9hDEiEl2Waa2T7NL48yGmOmQGx3HPSyS1RxPRKaVascbxphk7pNBqIgdGe0sv9vVOk77-JtCo"/>
+                            Discordへ移動
+                            <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity ml-auto">open_in_new</span>
+</a>
+<a class="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white py-3 px-4 rounded-lg font-medium transition-all shadow-sm hover:shadow group" href="#">
+<span class="material-icons text-xl">casino</span>
+                            ココフォリアを開く
+                            <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity ml-auto">open_in_new</span>
+</a>
+<button class="mt-2 w-full flex items-center justify-center gap-2 bg-white dark:bg-[#162e26] border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-2.5 px-4 rounded-lg font-medium text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+<span class="material-icons text-gray-500 dark:text-gray-400">event</span>
+                            カレンダーに追加
+                        </button>
+</div>
+</section>
+<!-- Card 5: Timeline -->
+<section class="bg-white dark:bg-[#162e26] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">タイムライン</h2>
+<div class="relative pl-2">
+<!-- Vertical Line -->
+<div class="absolute top-2 bottom-2 left-[15px] w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+<!-- Item 1 -->
+<div class="relative flex gap-4 pb-6 group">
+<div class="z-10 flex-shrink-0 w-7 h-7 rounded-full bg-primary flex items-center justify-center ring-4 ring-white dark:ring-[#162e26]">
+<span class="material-icons text-white text-[14px]">check</span>
+</div>
+<div class="flex-grow pt-1">
+<p class="text-xs text-gray-400 font-medium mb-0.5">10/01 19:30</p>
+<p class="text-sm text-gray-800 dark:text-gray-200">日程が確定しました</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="relative flex gap-4 pb-6 group">
+<div class="z-10 flex-shrink-0 w-7 h-7 rounded-full bg-white dark:bg-[#162e26] border-2 border-primary flex items-center justify-center ring-4 ring-white dark:ring-[#162e26]">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex-grow pt-1">
+<p class="text-xs text-gray-400 font-medium mb-0.5">09/28 12:00</p>
+<p class="text-sm text-gray-800 dark:text-gray-200">募集を開始しました</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="relative flex gap-4 group">
+<div class="z-10 flex-shrink-0 w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center ring-4 ring-white dark:ring-[#162e26]">
+<span class="material-icons text-gray-500 text-[14px]">edit_note</span>
+</div>
+<div class="flex-grow pt-1">
+<p class="text-xs text-gray-400 font-medium mb-0.5">09/28 11:45</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">セッションを作成しました</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Help Box -->
+<div class="bg-primary/5 rounded-lg border border-primary/10 p-4">
+<div class="flex gap-3">
+<span class="material-icons text-primary mt-0.5">info</span>
+<div>
+<h4 class="text-sm font-bold text-primary mb-1">お困りですか？</h4>
+<p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                                参加者の変更やスケジュールの再調整は「編集」ボタンから行えます。
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

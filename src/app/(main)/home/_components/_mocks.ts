@@ -10,26 +10,27 @@ import type {
 const baseSession = {
   sessionDescription: '',
   sessionMemo: null,
+  completedAt: null,
   completionNote: null,
   cancelReason: null,
-  completedAt: null,
-  createdById: 'user-1',
   isBeginnerFriendly: true,
-  maxParticipantCount: 4,
-  remainingSeatCount: 1,
+  maxParticipantCount: 5,
+  remainingSeatCount: 4,
   recruitedPlayerCount: 4,
   scheduledAt: null,
   scheduleDate: null,
   schedulePhase: 'ADJUSTING' as const,
   tools: 'ココフォリア',
   visibility: 'PUBLIC' as const,
+  createdById: 'user-1',
   createdAt: '2025-12-01T00:00:00Z',
   updatedAt: '2025-12-01T00:00:00Z',
 } satisfies Partial<UpcomingSession>;
 
 const baseUser = {
-  authUserId: 'auth-user-001',
+  authUserId: '00000000-0000-4000-8000-000000000001',
   discordAccountId: null,
+  discordId: 'discord-001',
   bio: null,
   role: 'MEMBER' as const,
   favoriteScenarios: null,
@@ -133,6 +134,8 @@ export const mockUpcomingSessions: UpcomingSession[] = [
         },
       },
     ],
+    scheduleDate: '2026-03-15',
+    schedulePhase: 'CONFIRMED' as const,
   },
   {
     ...baseSession,
@@ -170,6 +173,7 @@ export const mockUpcomingSessions: UpcomingSession[] = [
         },
       },
     ],
+    scheduleDate: '2026-03-22',
   },
   {
     ...baseSession,
@@ -249,6 +253,8 @@ export const mockUpcomingSessions: UpcomingSession[] = [
         },
       },
     ],
+    scheduleDate: '2026-02-10',
+    schedulePhase: 'CONFIRMED' as const,
   },
 ];
 
@@ -289,6 +295,8 @@ export const mockCompletedSession: UpcomingSession = {
       },
     },
   ],
+  scheduleDate: '2026-01-20',
+  schedulePhase: 'CONFIRMED' as const,
 };
 
 // ── ActivityItem モック ────────────────────────

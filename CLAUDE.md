@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 TRPG（テーブルトークRPG）のシナリオとセッションを管理するWebアプリケーション。
 
+## Communication Style
+
+- ユーザーの提案や意見に対して、技術的に問題がある場合は明確に反論すること
+- 「その通りです」「良いアイデアですね」等の同調から入らない。まず技術的な評価を述べる
+- 間違いを指摘する際は遠慮せず、根拠とともに代替案を提示する
+- ユーザーが間違っている場合、同意してから修正するのではなく、最初から正しい方向を示す
+- コードレビューでは「問題なし」より「問題の発見」を優先する姿勢で臨む
+
 ## Commands
 
 | コマンド | 用途 |
@@ -13,7 +21,7 @@ TRPG（テーブルトークRPG）のシナリオとセッションを管理す�
 | `pnpm dev` | 開発サーバー起動（Turbopack） |
 | `pnpm build` | ビルド |
 | `pnpm check` | lint + format 一括実行 |
-| `pnpm vitest` | テスト実行 |
+| `pnpm vitest` | テスト実行（`vitest run` のエイリアス。`run` を重ねて付けない） |
 | `pnpm storybook` | Storybook（port 6006） |
 | `pnpm prepare` | PandaCSS コード生成 |
 
@@ -80,6 +88,7 @@ src/
 | `agent-strategy.md` | サブエージェント活用、プロセス管理 |
 | `tdd-workflow.md` | TDD開発フロー、スキル一覧 |
 | `bash-rules.md` | Bashコマンド実行ルール |
+| `terminology.md` | UI用語の使い分け（スケジュール/日程） |
 
 すべてのルールファイルは `.claude/rules/` に配置。
 
@@ -102,6 +111,7 @@ src/
 | `/find-duplicates` | 保守 | 重複コード検出・リファクタリング提案 |
 | `/serena` | 汎用 | 調査・設計・実装 |
 | `/vibe` | Worktree | git worktree管理 |
+| `/supabase-migrate` | DB | マイグレーション適用 & 型再生成 |
 
 ## Memory Files Reference
 
@@ -114,11 +124,12 @@ Serenaメモリ（`.serena/memories/`）:
 
 **進捗管理ファイル**: `.claude/PROGRESS.md`
 
-| 状態 | マーク |
-|------|--------|
-| 未着手 | `[ ]` |
-| 作業中 | `[→]` |
-| 完了 | `[x]` |
+| 状態 | マーク | 用途 |
+|------|--------|------|
+| 未着手 | `[ ]` | タスク未開始、テスト不在 |
+| 作業中 | `[→]` | タスク着手中 |
+| 一部完了 | `[-]` | テストskip/偽陽性（コードは存在） |
+| 完了 | `[x]` | タスク完了、テスト通過 |
 
 ## Database Schema
 

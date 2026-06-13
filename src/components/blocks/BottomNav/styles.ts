@@ -1,11 +1,24 @@
 import { css, cva } from '@/styled-system/css';
 
-export const nav = css({
+export const navWrapper = css({
   position: 'fixed',
   bottom: '0',
   left: '0',
   right: '0',
   zIndex: 'fixed',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+  transition: 'transform',
+  transitionDuration: 'normal',
+  transitionTimingFunction: 'ease-out',
+  willChange: 'transform',
+  md: {
+    display: 'none',
+  },
+});
+
+export const nav = css({
   bg: 'white',
   borderTopWidth: '1px',
   borderColor: 'gray.100',
@@ -14,15 +27,8 @@ export const nav = css({
   gridTemplateColumns: '[repeat(5,1fr)]',
   height: '16',
   alignItems: 'center',
-  transition: 'transform',
-  transitionDuration: 'normal',
-  transitionTimingFunction: 'ease-out',
-  willChange: 'transform',
   // env(safe-area-inset-bottom) でノッチ付き端末に対応
   pb: '[env(safe-area-inset-bottom)]',
-  md: {
-    display: 'none',
-  },
 });
 
 export const navItem = cva({

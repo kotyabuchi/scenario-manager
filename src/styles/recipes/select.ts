@@ -37,6 +37,8 @@ export const select = defineSlotRecipe({
         opacity: 'disabled',
         cursor: 'not-allowed',
       },
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
       '& [data-placeholder]': {
         color: 'input.placeholder',
       },
@@ -45,6 +47,7 @@ export const select = defineSlotRecipe({
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
+      minW: '0',
     },
     indicator: {
       color: 'icon.muted',

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { isNil } from 'ramda';
 
 import { ProfileEditFormWrapper } from './_components';
-import { getUserByDiscordId } from './adapter';
+import { getUserByAuthUserId } from './adapter';
 import * as styles from './styles';
 
 import { createClient } from '@/lib/supabase/server';
@@ -24,7 +24,7 @@ export default async function ProfilePage() {
     redirect('/');
   }
 
-  const result = await getUserByDiscordId(authUser.id);
+  const result = await getUserByAuthUserId(authUser.id);
   if (!result.success || isNil(result.data)) {
     redirect('/');
   }

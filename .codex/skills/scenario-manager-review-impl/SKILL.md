@@ -1,0 +1,486 @@
+---
+name: scenario-manager-review-impl
+description: >
+  docs/plans/配下の実装計画に対して実装の充足度をレビューする。計画どおりに実装されているか確認し、
+  計画に書かれていない「永続的なサービスとして足りない項目」も検出する。
+  実装規模が大きい場合（8 Steps以上 or 実装ファイル10以上）はPart Bを3エージェントで並列レビュー。
+  「実装をレビューして」「計画の実装確認」「プランの実装チェック」で起動。
+argument-hint: "[plan-file-name]"
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Grep
+  - Glob
+  - Bash
+  - Task
+---
+<!-- Generated for Codex from .claude/skills/review-impl. Edit the source skill and re-run scripts/export-codex-skills.ps1. -->
+
+> Codex adaptation note
+>
+> - This is a generated Codex-oriented copy of the original skill "review-impl".
+> - Claude-specific tool names may appear in the text; interpret them with Codex equivalents (for example, task list updates => update_plan, user prompts => direct user questions / equest_user_input when available).
+> - Linked/exported skill name: "scenario-manager-review-impl".
+
+# Review Implementation - 計画に対する実装充足度レビュー
+
+`docs/plans/` のプランファイルと実際の実装を突き合わせ、**計画の充足度**と**サービスとしての完成度**の両面からレビューする。
+
+実装規模が大きい場合は Part B（サービス品質）を3つの専門グループで**並列レビュー**し、結果を統合レポートに集約する。
+
+## Position in Workflow
+
+```
+/review-plan → /apply-plan-review → /exec-plan → **★ /review-impl** → /review-diff → /commit
+                                                   ↑ 実装完了後に使う
+```
+
+- `/review-plan`: 計画自体の品質をレビュー（実装前）
+- `/review-diff`: 未コミット差分を汎用的にレビュー
+- **`/review-impl`**: 計画に対する実装の充足度 + サービス品質をレビュー（実装後）
+
+## When to Use
+
+- `/exec-plan` で計画を実装した後、充足度を確認したい
+- 計画どおりに実装できているか棚卸ししたい
+- 計画に書かれていなかったが本番サービスとして必要な項目を洗い出したい
+
+## Instructions
+
+### Step 1: 対象プランの特定
+
+引数 `$ARGUMENTS` が指定されている場合:
+- `docs/plans/` 内で一致するファイルを探す（拡張子 `.md` は省略可能）
+
+引数がない場合:
+- `docs/plans/` 内の `.md` ファイルを更新日時の降順で取得し、**最新のファイルを自動選択**する
+- 選択したファイル名をユーザーに表示してからレビューを開始する
+
+対象ファイルが見つからない場合はエラーメッセージを出して終了。
+
+### Step 2: プランの解析
+
+プランファイルを全文読み込み、以下を抽出する:
+
+1. **ファイル一覧** — 「新規ファイル」「変更ファイル」セクションから対象ファイルを特定
+2. **各 Step の仕様** — `### Step N-M.` の内容を個別に記録
+3. **決定事項** — 技術選定・設計判断
+4. **検証方法** — 自動テスト・手動テストの要件
+
+### Step 3: 実装の収集
+
+プランで言及されている**すべてのファイル**を読み込む。
+ファイルが存在しない場合は「未実装」として記録する。
+
+並列で以下も収集:
+- `git diff HEAD --stat` で現在の変更状況を把握
+- プロジェクトルール（`.claude/rules/`）の関連ファイル
+- 計画のレビューファイル（`docs/reviews/{plan-name}-review.md`）があれば、指摘事項の対応状況も確認
+
+### Step 3.5: レビューモード判定
+
+実装の収集後、以下のロジックでレビューモードを自動判定する:
+
+```
+1. プランから抽出した Step の総数を取得 → stepCount
+2. プランのファイル一覧（新規 + 変更）の件数を取得 → implFileCount
+3. 判定:
+   - stepCount >= 8 OR implFileCount >= 10 → パラレルモード
+   - それ以外 → シリアルモード
+```
+
+ユーザーに判定結果を通知する:
+- パラレルモード: `「実装規模が大きいため、Part Bを3エージェント並列レビューで実行します（N Steps, M files）」`
+- シリアルモード: `「シリアルモードでレビューを実行します（N Steps, M files）」`
+
+### Step 4: 計画充足度レビュー（Part A）— 常にシリアル実行
+
+各 Step を1つずつ実装と突き合わせ、以下の3段階で評価する:
+
+| 状態 | 意味 |
+|------|------|
+| **DONE** | 計画どおり実装完了 |
+| **PARTIAL** | 一部未実装、または仕様と乖離あり |
+| **MISSING** | 未実装 |
+
+各 Step について:
+- 計画で指定されたファイルが存在するか
+- 計画で指定された関数・型・コンポーネントが実装されているか
+- 計画の仕様（引数、戻り値、ロジック）と実装が一致しているか
+- 計画の決定事項（技術選定・命名等）が守られているか
+
+**パラレルモードの場合は Step 5P へ、シリアルモードの場合は Step 5S へ進む。**
+
+---
+
+## シリアルモード（既存フロー）
+
+### Step 5S: サービス品質レビュー（Part B）
+
+計画に書かれていなくても、**永続的な本番サービスとして当然あるべき項目**を検出する。
+以下の8つの観点で、実装に不足がないかチェックする。
+
+#### B1. エラーハンドリング
+
+- DB クエリの失敗に対する Result 型の使用
+- Server Action のエラーレスポンス
+- API 呼び出しの try-catch
+- `isNil` によるnullチェック
+- フォームバリデーションエラーの表示
+
+#### B2. エッジケース・空状態
+
+- データが0件のときの empty state UI
+- 配列が空のときのフォールバック
+- null / undefined が来たときの安全な表示
+- 極端に長いテキスト、極端に大きい数値への対応
+- 日付データの不正値（未来日・過去日・null）
+
+#### B3. ローディング・Suspense
+
+- Server Component のストリーミング（`loading.tsx` or `Suspense`）
+- データ取得中のスケルトン UI
+- 楽観的更新の対応（更新系操作がある場合）
+- `useTransition` の使用
+
+#### B4. セキュリティ
+
+- 認証チェック（Server Component での `supabase.auth.getUser()`）
+- 認可チェック（他ユーザーのデータへのアクセス制限）
+- 入力のサニタイゼーション
+- XSS リスク（`dangerouslySetInnerHTML` 等）
+
+#### B5. パフォーマンス
+
+- N+1 クエリの有無
+- 不必要な `'use client'` の使用（バンドルサイズ）
+- `React.cache()` によるリクエスト内重複排除
+- 画像の最適化（`next/image` の使用）
+- 不要な再レンダリング
+
+#### B6. アクセシビリティ
+
+- 見出し階層（h1→h2→h3 の順序）
+- `aria-label` / `alt` テキスト
+- キーボード操作可能性（`tabIndex`, フォーカス管理）
+- カラーコントラスト比（WCAG AA: 4.5:1 通常、3:1 大テキスト）
+- セマンティック HTML の使用
+
+#### B7. テストカバレッジ
+
+- 計画で指定されたテストファイルの存在
+- ユニットテストの網羅性（正常系・異常系・境界値）
+- Storybook ストーリーの存在
+- E2E テストの必要性の検討
+
+#### B8. プロジェクト規約準拠
+
+- `.claude/rules/` のルールへの準拠
+- 命名規則（ファイル名、変数名、スタイル名）
+- スタイル分離（`styles.ts`）
+- Import 順序
+- LogTape の使用（console.log 禁止）
+- PandaCSS セマンティックトークンの使用（ハードコード値禁止）
+
+**Step 6（レポート出力）へ進む。**
+
+---
+
+## パラレルモード（Part B を3エージェント並列）
+
+### Step 5P: 並列ディスパッチ
+
+Part A の結果を手元に保持したまま、Part B を3つの Task で**1つのメッセージで同時に**ディスパッチする。
+
+**一時ファイルパスの決定**:
+- Group A: `docs/reviews/.tmp-impl-group-a.md`
+- Group B: `docs/reviews/.tmp-impl-group-b.md`
+- Group C: `docs/reviews/.tmp-impl-group-c.md`
+
+各 Task に渡す共通コンテキスト:
+- 計画ファイル名とパス
+- 実装ファイルの一覧（パス）
+- Part A の結果サマリー（各 Step の DONE/PARTIAL/MISSING 状態）
+- 「各ファイルを Read ツールで読み、以下の観点でレビューせよ」という指示
+- **出力先の一時ファイルパス**
+
+**コンテキスト保護**: 各エージェントはレビュー結果をファイルに書き出し、メインセッションには短い完了通知のみ返す。これにより3エージェントの大量の結果がメインのコンテキストウィンドウを圧迫してコンパクションで消失する問題を防ぐ。
+
+```
+Task A: 堅牢性グループ（subagent_type: general-purpose, model: sonnet）
+  担当: B1（エラーハンドリング）, B2（エッジケース・空状態）, B4（セキュリティ）
+  参照ルール: error-handling.md, typescript-rules.md, coding-standards.md
+  出力先: docs/reviews/.tmp-impl-group-a.md
+
+Task B: 規約・テストグループ（subagent_type: general-purpose, model: sonnet）
+  担当: B7（テストカバレッジ）, B8（プロジェクト規約準拠）
+  参照ルール: coding-standards.md, typescript-rules.md, react-rules.md,
+              styling-rules.md, form-rules.md, icons.md, logging.md
+  出力先: docs/reviews/.tmp-impl-group-b.md
+
+Task C: UX・性能グループ（subagent_type: general-purpose, model: sonnet）
+  担当: B3（ローディング・Suspense）, B5（パフォーマンス）, B6（アクセシビリティ）
+  参照ルール: accessibility.md, react-rules.md, styling-rules.md
+  出力先: docs/reviews/.tmp-impl-group-c.md
+```
+
+#### 各エージェントへのプロンプトテンプレート
+
+各 Task のプロンプトには以下を含める:
+
+```
+あなたは実装レビューの専門エージェントです。
+以下の実装ファイルを Read ツールで読み込み、担当の観点でレビューしてください。
+
+## 担当観点
+{B1, B2, B4 等の観点名と詳細チェック項目（Step 5S の該当部分をコピー）}
+
+## 参照ルール
+以下のルールファイルを先に読んでください:
+{担当に応じたルールファイルパス}
+
+## 実装ファイル一覧
+{ファイルパスのリスト}
+
+## 出力先（厳守）
+レビュー結果は必ず以下のファイルに Write ツールで書き出してください:
+{一時ファイルパス}
+
+書き出し後、レスポンスには「レビュー完了。結果は {パス} に出力しました。」とだけ返してください。
+レビュー内容をレスポンスに含めないでください。
+
+## 出力フォーマット（厳守）
+
+### {B観点番号}. {観点名} {OK / WARN / NG}
+{評価コメント}
+
+（担当する各観点について繰り返し）
+
+### Findings
+| # | severity | perspective | file | finding | recommended_fix |
+（severity: required / recommended / consider）
+（perspective: 日本語の観点名）
+
+### Strengths
+- {箇条書き}
+```
+
+**重要**: 3つの Task は必ず1メッセージで同時に発行し、並列実行を保証すること。
+
+### Step 5.5P: 結果集約
+
+3エージェントの完了通知を受け取ったら、**一時ファイルを Read** して結果を取得し、以下のアルゴリズムで Part B を統合する:
+
+```
+1. Read docs/reviews/.tmp-impl-group-a.md → Group A の結果
+2. Read docs/reviews/.tmp-impl-group-b.md → Group B の結果
+3. Read docs/reviews/.tmp-impl-group-c.md → Group C の結果
+4. ファイルが存在しない or 空の場合 → 該当エージェント失敗として扱う
+5. 集約完了後、3つの一時ファイルを削除（Bash: rm）
+```
+
+#### 5.5P-1. 8観点の正規順序組み立て
+
+| 観点# | 担当グループ |
+|--------|------------|
+| B1. エラーハンドリング | Group A（堅牢性） |
+| B2. エッジケース・空状態 | Group A（堅牢性） |
+| B3. ローディング・Suspense | Group C（UX・性能） |
+| B4. セキュリティ | Group A（堅牢性） |
+| B5. パフォーマンス | Group C（UX・性能） |
+| B6. アクセシビリティ | Group C（UX・性能） |
+| B7. テストカバレッジ | Group B（規約・テスト） |
+| B8. プロジェクト規約準拠 | Group B（規約・テスト） |
+
+#### 5.5P-2. 指摘の重複排除
+
+1. 全エージェントの Findings テーブルを結合
+2. `file` をキーとしてグループ化（impl レビューは行番号を持たない場合がある）
+3. 同一ファイルに同趣旨の指摘がある場合:
+   - severity が異なる → 高い方を採用（`required` > `recommended` > `consider`）
+   - perspective が異なる → 両方の観点名を併記
+   - finding と recommended_fix は高 severity 側を採用
+
+#### 5.5P-3. 指摘のソート
+
+1. severity 別にグループ化: `required` → `recommended` → `consider`
+2. 各グループ内は種別（Part A / Part B）→ ファイルパス昇順
+3. 通し番号を振り直す（1から連番）
+4. Part A の指摘（PARTIAL / MISSING の Step）も同じテーブルに統合
+
+#### 5.5P-4. 良い点（Strengths）の統合
+
+1. 3エージェントの Strengths セクションを結合
+2. 意味が重複する項目を1つにまとめる
+3. 箇条書きとして出力
+
+#### 5.5P-5. サービス品質評価の算出
+
+以下のルールで総合評価を決定する:
+
+| 条件 | 評価 |
+|------|------|
+| NG 2つ以上 OR required 3件以上 | D |
+| NG 1つ + required 1件以上 | C |
+| required 1件以上 OR WARN あり | B |
+| 全 OK + required 0件 | A |
+| 未完了の観点あり（エージェント失敗） | 最高で B |
+
+#### 5.5P-6. エラーハンドリング
+
+| 状況 | 対応 |
+|------|------|
+| 1エージェント失敗 | 該当観点を `WARN (自動レビュー未完了)` に設定、サービス品質の上限を B に制限 |
+| 2エージェント以上失敗 | パラレルモードを中断し、Step 5S（シリアルモード）にフォールバック |
+
+エージェント失敗の判定: Task の返却結果が期待フォーマットに合致しない、またはエラーメッセージを含む場合。
+
+---
+
+## 共通ステップ
+
+### Step 6: レビューレポート出力
+
+`docs/reviews/` に以下の形式でレポートを出力する。
+
+**ファイル名**: `{元ファイル名}-impl-review.md`
+例: `dashboard-redesign.md` → `dashboard-redesign-impl-review.md`
+
+#### レポートフォーマット
+
+```markdown
+# {計画名} 実装レビュー
+
+> **レビュー日時**: YYYY-MM-DD
+> **対象計画**: `docs/plans/{file}`
+> **計画充足度**: {N}% ({done}/{total} Steps)
+> **サービス品質**: {A / B / C / D}
+> **レビューモード**: {シリアル / パラレル（3エージェント）}
+
+## サマリー
+
+{3-5文で実装状況と品質の全体評価}
+
+---
+
+## Part A: 計画充足度
+
+### Batch 1: {バッチ名}
+
+| Step | 仕様 | 状態 | 備考 |
+|------|------|:----:|------|
+| 1-1 | {Step名} | DONE / PARTIAL / MISSING | {差異の説明} |
+| 1-2 | ... | ... | ... |
+
+### Batch 2: {バッチ名}
+
+| Step | 仕様 | 状態 | 備考 |
+|------|------|:----:|------|
+| 2-1 | ... | ... | ... |
+
+### 計画レビュー指摘の対応状況
+
+（`docs/reviews/{plan}-review.md` が存在する場合のみ）
+
+| # | 指摘事項 | 対応状態 |
+|---|---------|---------|
+| 1 | {指摘内容} | 対応済 / 未対応 / 部分対応 |
+
+---
+
+## Part B: サービス品質
+
+### B1. エラーハンドリング {OK / WARN / NG}
+
+{評価コメントと具体的な指摘}
+
+### B2. エッジケース・空状態 {OK / WARN / NG}
+
+{評価コメント}
+
+### B3. ローディング・Suspense {OK / WARN / NG}
+
+{評価コメント}
+
+### B4. セキュリティ {OK / WARN / NG}
+
+{評価コメント}
+
+### B5. パフォーマンス {OK / WARN / NG}
+
+{評価コメント}
+
+### B6. アクセシビリティ {OK / WARN / NG}
+
+{評価コメント}
+
+### B7. テストカバレッジ {OK / WARN / NG}
+
+{評価コメント}
+
+### B8. プロジェクト規約準拠 {OK / WARN / NG}
+
+{評価コメント}
+
+---
+
+## 改善提案
+
+### 必須（リリース前に対処すべき）
+
+| # | 種別 | ファイル | 指摘事項 | 推奨対応 |
+|---|------|---------|---------|---------|
+| 1 | Part A/B | `path/to/file` | ... | ... |
+
+### 推奨（対応が望ましい）
+
+| # | 種別 | ファイル | 指摘事項 | 推奨対応 |
+|---|------|---------|---------|---------|
+
+### 検討（余裕があれば）
+
+| # | 種別 | ファイル | 指摘事項 | 推奨対応 |
+|---|------|---------|---------|---------|
+
+## 良い点
+
+{実装の中で良かった点を箇条書き}
+
+## 総合所見
+
+{全体的な評価と次のアクション}
+```
+
+#### 評価基準
+
+**計画充足度**: `(DONE の Step 数) / (全 Step 数) × 100%`
+
+**サービス品質**:
+
+| 評価 | 基準 |
+|------|------|
+| A | 必須指摘なし。リリース可能 |
+| B | 軽微な改善点あり。修正後にリリース可能 |
+| C | 重要な不足あり。修正が必要 |
+| D | 根本的な品質問題あり。大幅な追加実装が必要 |
+
+### Step 7: 結果の報告
+
+レビューレポートのサマリーをユーザーに報告する:
+- 計画充足度（%）と PARTIAL / MISSING の Step 数
+- サービス品質の総合評価
+- レビューモード（シリアル/パラレル）
+- 必須指摘の件数と概要
+- 推奨・検討の件数
+- レポートファイルのパス
+
+## Notes
+
+- このスキルは `/exec-plan` の実行後に使う想定。計画の実装前なら `/review-plan` を使う
+- Part A（充足度）と Part B（品質）は独立した評価軸。充足度100%でもサービス品質がDの場合がある
+- **自動モード判定**: 8 Steps 以上 OR 実装ファイル10以上でパラレルモード、それ以下でシリアルモード
+- **パラレルモード**: Part A は常にシリアル実行、Part B のみ3グループ（堅牢性 / 規約・テスト / UX・性能）で並列
+- **シリアルモード**: 従来どおり1パスで Part A + Part B すべてを評価（小さな実装向け）
+- `/apply-review` との互換性: パラレル/シリアルどちらのレポートも同一フォーマットのため、そのまま使用可能
+- 同名のレビューファイルが既に存在する場合は上書きする

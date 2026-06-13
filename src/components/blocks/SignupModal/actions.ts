@@ -2,6 +2,7 @@
 
 import { ulid } from 'ulid';
 
+import { getDiscordAccountIdFromAuthUser } from '@/lib/supabase/discordAuth';
 import { createClient } from '@/lib/supabase/server';
 
 type RegisterUserInput = {
@@ -33,6 +34,7 @@ export const registerUser = async (
     const { error } = await supabase.from('users').insert({
       user_id: userId,
       auth_user_id: authUser.id,
+      discord_account_id: getDiscordAccountIdFromAuthUser(authUser),
       user_name: input.userName,
       nickname: input.nickname,
       bio: input.bio || null,

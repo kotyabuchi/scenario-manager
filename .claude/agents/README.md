@@ -13,6 +13,24 @@
 | **ui-implementer** | 新規UIの設計・実装 | `/agents` → ui-implementer |
 | **serena-expert** | トークン効率的な開発 | `/agents` → serena-expert |
 
+### レビュー系（並列レビュー）
+
+| エージェント | 用途 | 呼び出し方 |
+|-------------|------|-----------|
+| **security-bug-reviewer** | セキュリティ + バグ検出（観点3, 6） | /review-diff から自動起動 |
+| **design-standards-reviewer** | 設計・保守性 + 規約準拠（観点1, 2） | /review-diff から自動起動 |
+| **ux-performance-reviewer** | UX・a11y + パフォーマンス（観点4, 5） | /review-diff から自動起動 |
+
+**並列レビューフロー**:
+```
+/review-diff（パラレルモード: 10ファイル以上 or 200行以上）
+    ├── security-bug-reviewer     → 観点3 + 6
+    ├── design-standards-reviewer → 観点1 + 2
+    └── ux-performance-reviewer   → 観点4 + 5
+    ↓
+  結果集約 → 統合レポート（docs/reviews/diff-review-*.md）
+```
+
 ### TDD系（自律実行）
 
 | エージェント | 用途 | 呼び出し方 |

@@ -11,6 +11,7 @@ import {
 import { isNil } from 'ramda';
 
 import { createClient } from '@/lib/supabase/client';
+import { getDiscordAccountIdFromAuthUser } from '@/lib/supabase/discordAuth';
 
 import type { Database } from '@/db/types';
 
@@ -18,7 +19,7 @@ type UserRole = Database['public']['Enums']['role'];
 
 interface AuthUser {
   userId: string;
-  discordId: string;
+  discordId: string | null;
   nickname: string;
   avatar: string | null;
   role: UserRole;
@@ -79,7 +80,7 @@ export const AuthProvider = ({
     // usersテーブルからユーザー情報を取得
     const { data: dbUser } = await supabase
       .from('users')
-      .select('user_id, auth_user_id, nickname, image, role')
+      .select('user_id, discord_account_id, nickname, image, role')
       .eq('auth_user_id', authUser.id)
       .single();
 
@@ -87,7 +88,7 @@ export const AuthProvider = ({
       // 既存ユーザー
       setUserState({
         userId: dbUser.user_id,
-        discordId: dbUser.auth_user_id,
+        discordId: dbUser.discord_account_id,
         nickname: dbUser.nickname,
         avatar: dbUser.image,
         role: dbUser.role,
@@ -97,7 +98,7 @@ export const AuthProvider = ({
       // 新規ユーザー（Discord認証済みだがusersテーブルに未登録）
       setUserState(null);
       setDiscordMeta({
-        discordId: authUser.id,
+        discordId: getDiscordAccountIdFromAuthUser(authUser) ?? authUser.id,
         avatarUrl: authUser.user_metadata?.avatar_url ?? null,
         userName: authUser.user_metadata?.custom_claims?.global_name ?? null,
         displayName: authUser.user_metadata?.full_name ?? null,

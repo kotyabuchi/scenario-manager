@@ -30,7 +30,7 @@ export default async function HomePage() {
     return null;
   }
 
-  // discord_id → user_id 解決
+  // auth_user_id → user_id 解決
   const dbUserResult = await getDashboardUser(user.id);
   if (!dbUserResult.success) {
     return null;

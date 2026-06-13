@@ -6,6 +6,11 @@ import { tokens } from './tokens';
 
 export default definePreset({
   name: 'custom-preset',
+  conditions: {
+    extend: {
+      focusVisibleWithin: '&:has(:focus-visible)',
+    },
+  },
   theme: {
     extend: {
       tokens,
