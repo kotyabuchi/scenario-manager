@@ -8,6 +8,13 @@ test.describe('グローバルナビゲーション', () => {
   const headerNav = (page: import('@playwright/test').Page) =>
     page.locator('header nav');
 
+  // viewport非依存のナビリンク取得（PC=ヘッダーnav / モバイル=BottomNav、可視な方を選ぶ）
+  const navLink = (page: import('@playwright/test').Page, name: string) =>
+    page
+      .getByRole('navigation')
+      .getByRole('link', { name, exact: true })
+      .filter({ visible: true });
+
   test('ヘッダーロゴがリンクとして存在する', async ({ page }) => {
     await page.goto('/scenarios');
     await page.waitForLoadState('domcontentloaded');
@@ -20,14 +27,14 @@ test.describe('グローバルナビゲーション', () => {
   test('「シナリオ」ナビリンクが /scenarios に遷移する', async ({ page }) => {
     await page.goto('/sessions');
     await page.waitForLoadState('domcontentloaded');
-    await headerNav(page).getByRole('link', { name: 'シナリオ' }).click();
+    await navLink(page, 'シナリオ').click();
     await expect(page).toHaveURL(/\/scenarios/);
   });
 
   test('「セッション」ナビリンクが /sessions に遷移する', async ({ page }) => {
     await page.goto('/scenarios');
     await page.waitForLoadState('domcontentloaded');
-    await headerNav(page).getByRole('link', { name: 'セッション' }).click();
+    await navLink(page, 'セッション').click();
     await expect(page).toHaveURL(/\/sessions/);
   });
 

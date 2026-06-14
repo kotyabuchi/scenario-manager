@@ -49,8 +49,8 @@ test.describe('シナリオ検索', () => {
   });
 
   test('ソートを変更するとURLに反映される', async ({ page }) => {
-    await scenariosPage.selectSort('高評価順');
-    await expect(page).toHaveURL(/sort=rating/);
+    await scenariosPage.selectSort('古い順');
+    await expect(page).toHaveURL(/sort=oldest/);
   });
 
   test('もっと見るボタンで追加のシナリオが読み込まれる', async () => {
@@ -72,8 +72,8 @@ test.describe('シナリオ検索', () => {
 test.describe('URLパラメータの復元', () => {
   test('ソートパラメータが復元される', async ({ page }) => {
     const scenariosPage = new ScenariosPage(page);
-    await page.goto('/scenarios?sort=rating');
-    await expect(scenariosPage.sortTrigger).toContainText('高評価順');
+    await page.goto('/scenarios?sort=oldest');
+    await expect(scenariosPage.sortTrigger).toContainText('古い順');
   });
 
   test('検索キーワードが復元される', async ({ page }) => {

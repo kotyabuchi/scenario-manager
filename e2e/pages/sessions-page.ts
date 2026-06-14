@@ -30,7 +30,10 @@ export class SessionsPage extends BasePage {
     // 公開卓タブのコンテンツ
     // ULID形式のIDは01で始まるため、/sessions/new等を除外できる
     this.sessionCards = page.locator('a[href^="/sessions/0"]');
-    this.resultCount = page.getByText(/\d+件のセッションが見つかりました/);
+    // レスポンシブ重複（可視/不可視の2要素）に備え可視要素に限定
+    this.resultCount = page
+      .getByText(/\d+件のセッションが見つかりました/)
+      .filter({ visible: true });
     // ソートのArkUI Select（「並び替え」ラベルの隣にあるSelectに限定し、フィルタ用Selectと区別）
     const sortArea = page.getByText('並び替え').locator('..');
     this.sortTrigger = sortArea.locator(
