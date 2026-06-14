@@ -44,8 +44,8 @@ export class SessionDetailPage extends BasePage {
 
     // ヘッダー
     this.pageTitle = page.getByRole('heading', { level: 1 });
-    this.backLink = page.getByRole('link', { name: 'セッション一覧' });
-    this.editButton = page.getByRole('button', { name: '編集' });
+    this.backLink = page.getByRole('link', { name: '戻る' });
+    this.editButton = page.getByRole('button', { name: '基本情報を編集' });
 
     // アクションボタン
     this.actionButtons = page.locator(

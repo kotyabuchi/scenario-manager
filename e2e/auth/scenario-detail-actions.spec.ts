@@ -31,19 +31,26 @@ test.describe('シナリオ詳細 認証済みアクション', () => {
     const fabButton = page.getByRole('button', { name: 'メニューを開く' });
     // FABは右下fixed要素で、開発時のagentationツールバーと重なるためdispatchEventを使用
     await fabButton.dispatchEvent('click');
-    // メニュー項目が表示される
-    await expect(page.getByText('セッション作成')).toBeVisible();
-    await expect(page.getByText('プレイ済み登録')).toBeVisible();
-    await expect(page.getByText('シェア')).toBeVisible();
+    // メニュー項目が表示される（menuitemロールで限定）
+    await expect(
+      page.getByRole('menuitem', { name: 'セッション募集' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('menuitem', { name: 'シナリオ検索' }),
+    ).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'シェア' })).toBeVisible();
   });
 
   test('FABメニュー外クリックでメニューが閉じる', async ({ page }) => {
     const fabButton = page.getByRole('button', { name: 'メニューを開く' });
     await fabButton.dispatchEvent('click');
-    await expect(page.getByText('セッション作成')).toBeVisible();
-    // メニュー外をクリック（FABから離れた場所）
-    await page.locator('article').click({ position: { x: 10, y: 10 } });
-    await expect(page.getByText('セッション作成')).not.toBeVisible();
+    const menuItem = page.getByRole('menuitem', { name: 'セッション募集' });
+    await expect(menuItem).toBeVisible();
+    // オーバーレイ（メニュー外）の左上隅をクリックして閉じる
+    await page
+      .getByTestId('speed-dial-overlay')
+      .click({ position: { x: 5, y: 5 } });
+    await expect(menuItem).not.toBeVisible();
   });
 
   test('アクセシビリティ違反がない', async ({ page }) => {
