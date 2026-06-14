@@ -75,9 +75,13 @@ test.describe('インポートページ - Tier 1: ページ構造・バリデー
 test.describe('インポートページ - Tier 2: URL解析フロー', () => {
   test.describe.configure({ retries: 2 });
 
-  const boothUrl = process.env.E2E_TEST_BOOTH_URL;
-  const taltoUrl = process.env.E2E_TEST_TALTO_URL;
-  const registeredUrl = process.env.E2E_TEST_REGISTERED_URL;
+  // Tier2 は TALTO/BOOTH へ実アクセスするライブ統合テスト（解析は Server Action で
+  // サーバー側 fetch のため page.route では傍受不可）。既定の決定論スイートでは実行せず、
+  // E2E_LIVE_IMPORT=1 のときのみ各URL環境変数を有効化する（未設定なら各testがskip）。
+  const live = process.env.E2E_LIVE_IMPORT === '1';
+  const boothUrl = live ? process.env.E2E_TEST_BOOTH_URL : undefined;
+  const taltoUrl = live ? process.env.E2E_TEST_TALTO_URL : undefined;
+  const registeredUrl = live ? process.env.E2E_TEST_REGISTERED_URL : undefined;
 
   let importPage: ImportPage;
 

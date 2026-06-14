@@ -23,6 +23,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { loading, loadingText, prefix, suffix, children, ...rest } = props;
 
+    // asChild の場合は子要素を Slot にそのまま渡す。
+    // prefix/suffix/loading のラッパー（フラグメント＋複数子）を挟むと
+    // Ark の Slot が単一子要素を要求するためマージに失敗し、何も描画されなくなる。
+    if (rest.asChild) {
+      return (
+        <StyledButton {...rest} ref={ref} disabled={loading || rest.disabled}>
+          {children}
+        </StyledButton>
+      );
+    }
+
     return (
       <StyledButton {...rest} ref={ref} disabled={loading || rest.disabled}>
         {loading ? (
