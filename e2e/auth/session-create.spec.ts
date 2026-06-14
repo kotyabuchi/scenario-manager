@@ -51,8 +51,7 @@ test.describe('セッション作成', () => {
     await expect(page).toHaveURL(/\/sessions\//);
     const id = page.url().match(/\/sessions\/([^/]+)/)?.[1];
     if (id) createdSessionIds.push(id);
-    await expect(
-      page.getByRole('heading', { name: /セッション詳細/ }),
-    ).toBeVisible();
+    // 詳細ページの見出し（h1）は作成したセッション名になる
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(name);
   });
 });

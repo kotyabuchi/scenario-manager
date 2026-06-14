@@ -47,9 +47,9 @@ test.describe('セッション認証済み機能', () => {
   test('セッション作成に必須フィールドが存在する', async ({ page }) => {
     await page.goto('/sessions/new');
     await page.waitForLoadState('domcontentloaded');
-    // セッション募集フォームの存在確認
+    // セッション募集フォームの存在確認（h1: セッションを作成）
     await expect(
-      page.getByRole('heading', { name: /セッション募集/ }),
+      page.getByRole('heading', { name: /セッションを作成/ }),
     ).toBeVisible();
   });
 
