@@ -424,8 +424,9 @@
 ### カテゴリC: テストセレクタ／レスポンシブの不備（page-object共通化で解決）
 - **対象**: `search`（ソートSelect :47/:70、`aria-busy`残留で操作不達）、`public`（:39 件数テキストが strict-mode 2要素）、`navigation`（モバイル :21/:31 が `header nav` を探すが実機はBottomNav）、`scenario-detail-actions`（FAB :34/:47）、`import` Tier1（:37/:40）、`scenario-new-banner:56`、`session-flow:67`、`session-create:22/:29`、`sessions:49`。
 - **根本原因**: 曖昧/レスポンシブ非対応ロケータ、Select/FAB操作の待機不足、`aria-busy`解消待ちなし。
-- **仕組み**: `e2e/pages/` のpage-objectに**堅牢なロケータ＆操作ヘルパー**を集約（viewport別nav取得、Select選択ヘルパー、`aria-busy`解消待ち、`.first()`/role/testid 優先）。
-- [ ] page-object共通ヘルパー整備 → 各specを移行
+- **仕組み**: `e2e/pages/` のpage-objectに**堅牢なロケータ＆操作ヘルパー**を集約（viewport別nav取得、visible限定、Select選択ヘルパー等）。
+- [x] 公開側（`331fa5d`）: resultCount を visible 限定 / navLink で viewport非依存 / search ソートを実在オプション(`古い順`)へ修正 → navigation+public 20 passed、search ソート 4 passed
+- [ ] 認証側（要継続）: `scenario-detail-actions`(FAB) / `scenario-new-banner` / `session-flow:67`(戻る) / `session-create:22/:29`(バリデーション) / `sessions:49`(必須フィールド)。auth-gatedで一部は Category B（seed）と絡む可能性
 
 ### カテゴリD: 実アプリのアクセシビリティバグ（コンポーネント側で解決）
 - **対象**: `sessions.spec.ts:59` セッション作成ページのa11y違反。axe `label`（critical）= NumberInput にラベル紐付けが無い。
