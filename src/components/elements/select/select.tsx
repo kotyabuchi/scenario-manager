@@ -132,7 +132,8 @@ export const Select = ({
       variant={variant}
       {...rest}
     >
-      <ArkSelect.HiddenSelect />
+      {/* フォーム送信用の隠しネイティブ<select>にもラベルを付与（axe select-name違反対策） */}
+      <ArkSelect.HiddenSelect aria-label={ariaLabel} />
       <ArkSelect.Control>
         <Trigger aria-label={ariaLabel} data-multiple={multiple || undefined}>
           <ValueText placeholder={placeholder} />

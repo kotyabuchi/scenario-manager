@@ -80,6 +80,8 @@ type NumberInputProps = {
   id?: string;
   /** 入力要素の名前 */
   name?: string;
+  /** 入力要素のアクセシブル名（可視ラベルが無い場合に指定） */
+  'aria-label'?: string;
 } & Omit<NumberInputRootProps, 'value' | 'onValueChange'>;
 
 /**
@@ -107,6 +109,7 @@ export const NumberInput = ({
   disabled,
   id,
   name,
+  'aria-label': ariaLabel,
   ...rest
 }: NumberInputProps) => {
   return (
@@ -129,6 +132,7 @@ export const NumberInput = ({
         <ArkNumberInput.Input
           id={id}
           name={name}
+          aria-label={ariaLabel}
           placeholder={placeholder}
           className={styles.numberInput_input}
         />

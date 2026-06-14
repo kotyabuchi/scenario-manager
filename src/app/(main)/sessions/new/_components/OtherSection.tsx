@@ -198,6 +198,7 @@ export const OtherSection = () => {
               control={control}
               render={({ field }) => (
                 <NumberInput
+                  aria-label="追加募集人数"
                   value={field.value != null ? String(field.value) : ''}
                   onValueChange={(d) => {
                     field.onChange(
