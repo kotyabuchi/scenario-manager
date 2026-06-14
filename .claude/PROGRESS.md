@@ -560,7 +560,7 @@
 | 2026-01-27 | フロントエンド改善: useSystemMessageでエラー・成功メッセージ表示 |
 | 2026-02-23 | PROGRESS全規模監査実施、テスト状態の細分化（[x]/[-]/[ ]）、計画書進捗セクション追加 |
 | 2026-03-10 | セッションシナリオ変更機能 完了（adapter/action/schema/UI + テスト5件） |
-| 2026-06-14 | E2E失敗対応 D/C/A/B 完了。63→1(fixme)。実バグ3件(Button asChild/Select a11y/新規セッションのクライアント検証非表示)修正。Bは誤診で実体staleセレクタ、投票リロードのみDB分離保留 |
+| 2026-06-14 | E2E失敗対応 D/C/A/B。フル実測 286 passed / 3 failed / 1 fixme（63→3）。実バグ3件(Button asChild/Select a11y/新規セッションのクライアント検証非表示)修正。Bは誤診で実体staleセレクタ。残3は並列実行+共有DBのフレーク2件(search:70 mobile / home:21)+新規表面化1件(session-lifecycle:138)＝Docker+seed分離の保留タスクで解消見込み |
 | 2026-06-14 | E2Eポート競合を根本解決（専用3100/`next start`/`kill-port`/`open:never`）+ dev3000固定（predevガード）。フル実行で221 passed/63 failed判明→4カテゴリに分類し対応方針を記録（`44f4807` 他） |
 | 2026-06-13 | `feature/session-flow`(113コミット)を develop へマージ（`da2cd09`）。DBスキーマ移行(discord_id→auth_user_id+discord_account_id、game_schedules廃止)を本対応で収束。検証: 旧スキーマ参照0 / tsc 0 / build 全25ルート成功 / biome クリーン / vitest 1168 passed・16 skipped。バックアップ: `backup/develop-pre-sessionflow-merge` |
 
