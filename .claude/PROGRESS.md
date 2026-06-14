@@ -428,7 +428,8 @@
 - **仕組み**: `e2e/pages/` のpage-objectに**堅牢なロケータ＆操作ヘルパー**を集約（viewport別nav取得、visible限定、Select選択ヘルパー等）。
 - [x] 公開側（`331fa5d`）: resultCount を visible 限定 / navLink で viewport非依存 / search ソートを実在オプション(`古い順`)へ修正 → navigation+public 20 passed、search ソート 4 passed
 - [x] **Button asChild の実バグ修正**（`f19fd30`）: asChild時にprefix/suffixラッパーでArk Slotが壊れ非描画だった問題を修正。これにより import:37/:40・scenario-new-banner:56 が解消（Linkボタン全般に波及）
-- [ ] 認証側 残り: `scenario-detail-actions`(FAB :34/:47)・`session-flow:67`(戻る) は要継続。`session-create:22/:29`・`sessions:49` は Category B（seed）依存のため B 実装時に解消見込み
+- [x] 認証側（`e334776`/`83fc6ac`/`16da6f5`）: FAB(実ラベル+overlay閉じ)・戻る/編集ボタン(stale locator)・詳細/新規見出し(stale)・**SessionFormのクライアント検証エラー非表示の実バグ**を修正
+- ✅ **Category C 完了**（公開側+認証側すべて）
 
 ### カテゴリD: 実アプリのアクセシビリティバグ（コンポーネント側で解決）
 - **対象**: `sessions.spec.ts:59` セッション作成ページのa11y違反。axe `label`（critical）= NumberInput にラベル紐付けが無い。
