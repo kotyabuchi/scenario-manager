@@ -430,11 +430,12 @@
 ### カテゴリD: 実アプリのアクセシビリティバグ（コンポーネント側で解決）
 - **対象**: `sessions.spec.ts:59` セッション作成ページのa11y違反。axe `label`（critical）= NumberInput にラベル紐付けが無い。
 - **根本原因**: Ark UI NumberInput がラベル未関連付け。**実アプリのバグ**（テストではない）。
-- **仕組み**: NumberInput/FormField コンポーネントで label（`aria-label`/`htmlFor`）関連付けを**必須化**。他フォーム要素も横断点検。
-- [ ] NumberInput のラベル関連付け修正 + フォーム要素のa11y横断点検
+- **仕組み**: 共有コンポーネント側で対応（`e387156`）。Select は隠し`<select>`へ aria-label 伝播、NumberInput は aria-label を`<input>`へ転送するprop追加。全Select/NumberInputに横断的に効く。
+- [x] Select/NumberInput のアクセシブル名修正（a11y E2E 2 passed / ユニット41 passed）
+- [ ] 他フォーム要素のa11y横断点検（フル再実行時に確認）
 
-### 補足: 要精査
-- `search` のソート未適用が本番ビルド(`next start`)のRSC/router遷移タイミングに起因しないか、`pnpm test:e2e:dev`（dev再利用）と比較して切り分ける。
+### 補足: 切り分け結果・要精査
+- ✅ **本番ビルド(`next start`)切替は無罪**: `search` ソート2件は `pnpm test:e2e:dev`（dev再利用）でも同一失敗。ポート/ビルド変更は回帰を生んでいない。63失敗はすべて潜在バグ。
 - `home:21 ウェルカムメッセージ`・`session-create:22/:29 バリデーション` はデータ/セレクタどちらか要確認。
 
 ---
