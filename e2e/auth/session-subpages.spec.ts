@@ -54,42 +54,31 @@ test.describe('申請管理ページ', () => {
     ).toBeVisible();
   });
 
-  test('3つのタブが表示される', async () => {
-    await expect(applicationsPage.tabAll).toBeVisible();
-    await expect(applicationsPage.tabAll).toContainText('すべて');
-
-    await expect(applicationsPage.tabPending).toBeVisible();
-    await expect(applicationsPage.tabPending).toContainText('承認待ち');
-
-    await expect(applicationsPage.tabConfirmed).toBeVisible();
-    await expect(applicationsPage.tabConfirmed).toContainText('承認済み');
+  test('ステータスフィルターに3つの選択肢がある', async () => {
+    await applicationsPage.openFilter();
+    await expect(applicationsPage.filterOption('すべて')).toBeVisible();
+    await expect(applicationsPage.filterOption('承認待ち')).toBeVisible();
+    await expect(applicationsPage.filterOption('承認済み')).toBeVisible();
   });
 
-  test('すべてタブが初期選択されている', async () => {
-    await expect(applicationsPage.tabAll).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+  test('フィルターは初期状態で「すべて」', async () => {
+    await expect(applicationsPage.filterTrigger).toContainText('すべて');
   });
 
-  test('タブ切り替えが動作する', async () => {
-    await applicationsPage.tabPending.click();
-    await expect(applicationsPage.tabPending).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
-    await expect(applicationsPage.tabAll).toHaveAttribute(
-      'aria-selected',
-      'false',
-    );
+  test('フィルター切り替えが動作する', async () => {
+    await applicationsPage.selectFilter('承認待ち');
+    await expect(applicationsPage.filterTrigger).toContainText('承認待ち');
   });
 
   test('GM（セッション作成者）が自動参加者として表示される', async ({
     page,
   }) => {
-    // セッション作成者はGMとして自動的に承認済み参加者になる
-    // サマリーの「承認済み N / N 件」で確認（タブ・バッジにも同テキストが出現するためスコープを限定）
-    await expect(page.getByText(/承認済み \d+ \/ \d+ 件/)).toBeVisible();
+    // セッション作成者はGMとして自動的に参加者になる
+    // サマリーの参加予定者数（progressbar）と「/ N名」表示で確認
+    await expect(
+      page.getByRole('progressbar', { name: '参加予定者数' }),
+    ).toBeVisible();
+    await expect(page.getByText(/\/\s*\d+\s*名/).first()).toBeVisible();
   });
 
   test('a11y違反がない', async ({ page }) => {

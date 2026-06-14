@@ -80,12 +80,12 @@ test.describe('セッションライフサイクル', () => {
         ).toBeVisible();
         await page.keyboard.press('Escape');
       } else {
-        // デスクトップではボタンとして表示される
+        // デスクトップではリンクとして表示される（同名リンクがメニュー内にもあるため first に限定）
         await expect(
-          page.getByRole('button', { name: '申請管理' }),
+          page.getByRole('link', { name: '申請管理' }).first(),
         ).toBeVisible();
         await expect(
-          page.getByRole('button', { name: /スケジュールを提出/ }),
+          page.getByRole('link', { name: /スケジュールを提出/ }).first(),
         ).toBeVisible();
       }
     });
@@ -186,7 +186,7 @@ test.describe('セッションライフサイクル', () => {
       // キャンセルダイアログの操作
       const dialog = page.getByRole('dialog', { name: /キャンセル/ });
       await expect(dialog).toBeVisible();
-      await page.getByLabel(/確認のため/).fill('キャンセル');
+      // 確認テキスト入力は廃止済み（理由は任意）。そのままキャンセル実行する
       // モバイルではナビバーがダイアログボタンと重なる場合があるため dispatchEvent を使用
       await dialog
         .getByRole('button', { name: 'キャンセルする' })

@@ -46,10 +46,9 @@ test.describe('シナリオ詳細 認証済みアクション', () => {
     await fabButton.dispatchEvent('click');
     const menuItem = page.getByRole('menuitem', { name: 'セッション募集' });
     await expect(menuItem).toBeVisible();
-    // オーバーレイ（メニュー外）の左上隅をクリックして閉じる
-    await page
-      .getByTestId('speed-dial-overlay')
-      .click({ position: { x: 5, y: 5 } });
+    // メニュー外への退出操作。モバイルではパネル/ヘッダー配置でoverlayクリック座標が
+    // 不安定なため、SpeedDialがサポートする Escape で閉じる（dismiss挙動を検証）
+    await page.keyboard.press('Escape');
     await expect(menuItem).not.toBeVisible();
   });
 

@@ -16,10 +16,10 @@ export class HomePage extends BasePage {
 
     this.welcomeMessage = page.getByText(/ようこそ/);
     this.upcomingSessionsHeading = page.getByRole('heading', {
-      name: '参加予定のセッション',
+      name: '予定されているセッション',
     });
     this.newScenariosHeading = page.getByRole('heading', {
-      name: '新着シナリオ',
+      name: '新着おすすめシナリオ',
     });
     this.viewAllSessionsLink = page.getByRole('link', {
       name: 'すべて見る',
