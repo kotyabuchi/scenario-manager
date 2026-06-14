@@ -403,6 +403,42 @@
 
 ---
 
+## E2Eテスト失敗の分類と対応方針（2026-06-14）
+
+**経緯**: ポート競合対策（E2E専用3100 / `next start` / `kill-port` 前処理）でフルスイートが初めて完走可能に。結果 **221 passed / 63 failed / 28 skipped / 19 did not run（7.0分）**。ポート起因の失敗は0。63失敗（≒ユニーク35テスト × chromium-auth/mobile-chrome-auth 二重計上）は従来ポート問題で可視化されていなかった潜在失敗。
+
+> **方針**: 個別パッチではなく、**共通の仕組みで一括解決**できるものは仕組み化して再発防止する。
+
+### カテゴリA: 外部ネットワーク依存（仕組みで解決）
+- **対象**: `import.spec.ts` Tier2 URL解析（:83 / :100 / :109 / :132）。TALTO/BOOTH へ実アクセスし30秒タイムアウト多発。
+- **根本原因**: E2Eが外部サイトの可用性・DB登録URLに依存。
+- **仕組み**: Playwright `page.route()` で外部ドメイン（talto/booth）を**モックレスポンスに差し替える共通フィクスチャ**を導入。E2Eは外部ネットワークを一切叩かない。
+- [ ] 外部URLモックfixture作成（`e2e/helpers/` に集約）→ import Tier2 を決定論化
+
+### カテゴリB: シードデータ依存（仕組みで解決）
+- **対象**: `feedback-detail`（投票 :36/:74/:99/:120）、`home`（:21/:24/:27 ダッシュボード各セクション）、`session-subpages`（:52/:60/:63/:68/:107）、`session-lifecycle`（:58/:68）、`session-create:47`。
+- **根本原因**: 認証ユーザーに紐づく特定データ（投票対象フィードバック・参加予定/RECRUITINGセッション・申請）が現DBに無く不定。
+- **仕組み**: E2E専用の**決定論的シード**を `globalSetup`／専用helper（既存 `e2e/helpers/cleanup.ts`・`supabase-auth.ts` を拡張）で投入→teardownで削除。テストがambient DB状態に依存しない構造へ。
+- [ ] テストデータfixture/seed機構の設計・実装
+
+### カテゴリC: テストセレクタ／レスポンシブの不備（page-object共通化で解決）
+- **対象**: `search`（ソートSelect :47/:70、`aria-busy`残留で操作不達）、`public`（:39 件数テキストが strict-mode 2要素）、`navigation`（モバイル :21/:31 が `header nav` を探すが実機はBottomNav）、`scenario-detail-actions`（FAB :34/:47）、`import` Tier1（:37/:40）、`scenario-new-banner:56`、`session-flow:67`、`session-create:22/:29`、`sessions:49`。
+- **根本原因**: 曖昧/レスポンシブ非対応ロケータ、Select/FAB操作の待機不足、`aria-busy`解消待ちなし。
+- **仕組み**: `e2e/pages/` のpage-objectに**堅牢なロケータ＆操作ヘルパー**を集約（viewport別nav取得、Select選択ヘルパー、`aria-busy`解消待ち、`.first()`/role/testid 優先）。
+- [ ] page-object共通ヘルパー整備 → 各specを移行
+
+### カテゴリD: 実アプリのアクセシビリティバグ（コンポーネント側で解決）
+- **対象**: `sessions.spec.ts:59` セッション作成ページのa11y違反。axe `label`（critical）= NumberInput にラベル紐付けが無い。
+- **根本原因**: Ark UI NumberInput がラベル未関連付け。**実アプリのバグ**（テストではない）。
+- **仕組み**: NumberInput/FormField コンポーネントで label（`aria-label`/`htmlFor`）関連付けを**必須化**。他フォーム要素も横断点検。
+- [ ] NumberInput のラベル関連付け修正 + フォーム要素のa11y横断点検
+
+### 補足: 要精査
+- `search` のソート未適用が本番ビルド(`next start`)のRSC/router遷移タイミングに起因しないか、`pnpm test:e2e:dev`（dev再利用）と比較して切り分ける。
+- `home:21 ウェルカムメッセージ`・`session-create:22/:29 バリデーション` はデータ/セレクタどちらか要確認。
+
+---
+
 ## 監査指摘事項（2026-02-23）
 
 - [ ] DB統合テストの実行環境を確立する（Supabase Local または モック化）
@@ -509,6 +545,7 @@
 | 2026-01-27 | フロントエンド改善: useSystemMessageでエラー・成功メッセージ表示 |
 | 2026-02-23 | PROGRESS全規模監査実施、テスト状態の細分化（[x]/[-]/[ ]）、計画書進捗セクション追加 |
 | 2026-03-10 | セッションシナリオ変更機能 完了（adapter/action/schema/UI + テスト5件） |
+| 2026-06-14 | E2Eポート競合を根本解決（専用3100/`next start`/`kill-port`/`open:never`）+ dev3000固定（predevガード）。フル実行で221 passed/63 failed判明→4カテゴリに分類し対応方針を記録（`44f4807` 他） |
 | 2026-06-13 | `feature/session-flow`(113コミット)を develop へマージ（`da2cd09`）。DBスキーマ移行(discord_id→auth_user_id+discord_account_id、game_schedules廃止)を本対応で収束。検証: 旧スキーマ参照0 / tsc 0 / build 全25ルート成功 / biome クリーン / vitest 1168 passed・16 skipped。バックアップ: `backup/develop-pre-sessionflow-merge` |
 
 ---
