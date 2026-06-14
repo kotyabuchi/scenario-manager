@@ -58,7 +58,7 @@ export const SessionForm = ({
       creatorParticipantType: defaultValues?.creatorParticipantType ?? 'KEEPER',
     },
   });
-  const { handleSubmit, control, setValue } = formMethod;
+  const { handleSubmit, control, setValue, formState } = formMethod;
 
   const [selectedScenario, setSelectedScenario] =
     useState<ScenarioSummary | null>(null);
@@ -126,9 +126,8 @@ export const SessionForm = ({
       <FormProvider {...formMethod}>
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <div className={styles.form_body}>
-            <BasicInfoSection
-              {...(externalErrors ? { errors: externalErrors } : {})}
-            />
+            {/* サーバー側エラー優先、なければクライアントバリデーション(formState)を表示 */}
+            <BasicInfoSection errors={externalErrors ?? formState.errors} />
 
             <hr className={styles.form_divider} />
 
