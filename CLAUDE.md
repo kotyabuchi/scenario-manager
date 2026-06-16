@@ -87,6 +87,7 @@ src/
 | `plan-mode.md` | Planエージェント使用ガイド |
 | `agent-strategy.md` | サブエージェント活用、プロセス管理 |
 | `tdd-workflow.md` | TDD開発フロー、スキル一覧 |
+| `testing-patterns.md` | テスト安定化（E2Eポート運用、セレクタ鉄則、共有DBフレーク対策、a11y/コンポーネント落とし穴） |
 | `bash-rules.md` | Bashコマンド実行ルール |
 | `terminology.md` | UI用語の使い分け（スケジュール/日程） |
 
