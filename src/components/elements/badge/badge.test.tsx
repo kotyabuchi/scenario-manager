@@ -4,8 +4,15 @@ import { describe, expect, it } from 'vitest';
 
 import * as stories from './badge.stories';
 
-const { Default, Success, Warning, ErrorVariant, Neutral, WithoutDot } =
-  composeStories(stories);
+const {
+  Default,
+  Success,
+  Recruiting,
+  Warning,
+  ErrorVariant,
+  Neutral,
+  WithoutDot,
+} = composeStories(stories);
 
 describe('Badge', () => {
   describe('バリアントの表示', () => {
@@ -25,6 +32,23 @@ describe('Badge', () => {
       const badge = screen.getByTestId('badge');
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveAttribute('data-variant', 'warning');
+    });
+
+    // BDG-02b: recruiting variantが正しく表示される
+    it('recruiting variantが正しいdata-variant属性を持つ', () => {
+      render(<Recruiting />);
+
+      const badge = screen.getByTestId('badge');
+      expect(badge).toBeInTheDocument();
+      expect(badge).toHaveAttribute('data-variant', 'recruiting');
+    });
+
+    // BDG-02c: recruiting variantのドットとテキストが表示される
+    it('recruiting variantでドットとテキストが表示される', () => {
+      render(<Recruiting />);
+
+      expect(screen.getByTestId('badge-dot')).toBeInTheDocument();
+      expect(screen.getByText('募集中')).toBeInTheDocument();
     });
 
     // BDG-03: error variantが正しく表示される

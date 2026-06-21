@@ -1,6 +1,11 @@
 import * as styles from './styles';
 
-export type BadgeVariant = 'success' | 'warning' | 'error' | 'neutral';
+export type BadgeVariant =
+  | 'success'
+  | 'recruiting'
+  | 'warning'
+  | 'error'
+  | 'neutral';
 
 export type BadgeProps = {
   /**

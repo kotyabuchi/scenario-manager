@@ -4,10 +4,11 @@ import { cva } from '@/styled-system/css';
  * Badgeのスタイル
  *
  * バリアント:
- * - success: 緑（公開中、完了）
- * - warning: 黄色（保留中、準備中）
+ * - success: 緑（公開中、完了、参加予定）
+ * - recruiting: ピンク（募集中）
+ * - warning: 黄色（保留中、準備中、締切間近）
  * - error: 赤（エラー、中止）
- * - neutral: グレー（下書き、非公開）
+ * - neutral: グレー（下書き、非公開、終了済み）
  */
 export const badge = cva({
   base: {
@@ -24,6 +25,10 @@ export const badge = cva({
       success: {
         backgroundColor: 'primary.100',
         color: 'primary.800',
+      },
+      recruiting: {
+        backgroundColor: 'pink.100',
+        color: 'pink.700',
       },
       warning: {
         backgroundColor: 'orange.100',
@@ -58,6 +63,9 @@ export const badgeDot = cva({
       success: {
         backgroundColor: 'primary.500',
       },
+      recruiting: {
+        backgroundColor: 'pink.500',
+      },
       warning: {
         backgroundColor: 'orange.500',
       },
@@ -86,6 +94,9 @@ export const badgeText = cva({
     variant: {
       success: {
         color: 'primary.800',
+      },
+      recruiting: {
+        color: 'pink.700',
       },
       warning: {
         color: 'orange.800',

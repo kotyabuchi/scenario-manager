@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['success', 'warning', 'error', 'neutral'],
+      options: ['success', 'recruiting', 'warning', 'error', 'neutral'],
     },
     showDot: {
       control: 'boolean',
@@ -39,6 +39,16 @@ export const Success: Story = {
   args: {
     variant: 'success',
     children: 'Active',
+  },
+};
+
+/**
+ * Recruiting（募集中）
+ */
+export const Recruiting: Story = {
+  args: {
+    variant: 'recruiting',
+    children: '募集中',
   },
 };
 
@@ -94,9 +104,29 @@ export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
       <Badge variant="success">Active</Badge>
+      <Badge variant="recruiting">Recruiting</Badge>
       <Badge variant="warning">Pending</Badge>
       <Badge variant="error">Error</Badge>
       <Badge variant="neutral">Draft</Badge>
+    </div>
+  ),
+};
+
+/**
+ * セッション状態の実用例
+ *
+ * 募集中=recruiting / 参加予定=success / 締切間近=warning / 終了済み=neutral
+ */
+export const SessionStatuses: Story = {
+  args: {
+    children: 'セッション状態',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <Badge variant="recruiting">募集中</Badge>
+      <Badge variant="success">参加予定</Badge>
+      <Badge variant="warning">締切間近</Badge>
+      <Badge variant="neutral">終了済み</Badge>
     </div>
   ),
 };
