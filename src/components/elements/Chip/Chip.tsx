@@ -1,6 +1,4 @@
-import { X } from '@phosphor-icons/react/ssr';
-
-import * as styles from './styles';
+import { Pill } from '../Pill';
 
 export type ChipProps = {
   /**
@@ -47,8 +45,8 @@ export type ChipProps = {
 /**
  * チップコンポーネント
  *
- * 選択可能なタグ、フィルタなどに使用する。
- * デザインシステムに準拠したボーダーレス、影ベースのデザイン。
+ * 選択可能なタグ、フィルタなどに使用する。共有基盤の {@link Pill} を
+ * 「操作可能・pill 形状」プリセットで使う薄いラッパー。
  *
  * @example
  * // 基本的な使い方
@@ -68,33 +66,20 @@ export const Chip = ({
   disabled = false,
   className,
 }: ChipProps) => {
-  const handleClick = () => {
-    if (disabled) return;
-    onClick?.();
-  };
-
-  const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (disabled) return;
-    onRemove?.();
-  };
-
   return (
-    <button
-      type="button"
-      onClick={handleClick}
+    <Pill
+      tone="green"
+      variant={selected ? 'subtle' : 'outline'}
+      shape="pill"
+      size={size}
+      selected={selected}
+      onClick={onClick}
+      removable={removable}
+      onRemove={onRemove}
       disabled={disabled}
-      className={`${styles.chip({ selected, size })} ${className ?? ''}`}
-      aria-pressed={selected}
+      className={className}
     >
-      <span>{label}</span>
-      {removable && (
-        <X
-          size={size === 'sm' ? 12 : size === 'lg' ? 18 : 14}
-          onClick={handleRemove}
-          aria-label={`${label}を削除`}
-        />
-      )}
-    </button>
+      {label}
+    </Pill>
   );
 };
