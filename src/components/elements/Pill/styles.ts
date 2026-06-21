@@ -38,6 +38,8 @@ export const pill = cva({
       orange: {},
       red: {},
       purple: {},
+      // データ駆動の動的色（CSS変数で注入。Tag コンポーネントが使用）
+      custom: {},
     },
     variant: {
       subtle: {},
@@ -97,6 +99,15 @@ export const pill = cva({
       tone: 'purple',
       css: { bg: 'purple.100', color: 'purple.800' },
     },
+    // データ駆動の動的色（CSS変数。Tag が --pill-bg / --pill-text を注入）
+    {
+      variant: 'subtle',
+      tone: 'custom',
+      css: {
+        bg: '[var(--pill-bg, token(colors.gray.100))]',
+        color: '[var(--pill-text, token(colors.gray.700))]',
+      },
+    },
     // 操作可能時のホバー
     {
       variant: 'subtle',
@@ -140,6 +151,10 @@ export const pillDot = cva({
       orange: { backgroundColor: 'orange.500' },
       red: { backgroundColor: 'red.500' },
       purple: { backgroundColor: 'purple.500' },
+      custom: {
+        backgroundColor:
+          '[var(--pill-dot, var(--pill-text, token(colors.gray.500)))]',
+      },
     },
   },
   defaultVariants: {

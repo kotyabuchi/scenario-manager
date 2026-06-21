@@ -2,7 +2,15 @@ import { X } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
-export type PillTone = 'gray' | 'green' | 'pink' | 'orange' | 'red' | 'purple';
+export type PillTone =
+  | 'gray'
+  | 'green'
+  | 'pink'
+  | 'orange'
+  | 'red'
+  | 'purple'
+  /** データ駆動の動的色。`style` で `--pill-bg` / `--pill-text` を注入して使う（Tag が利用） */
+  | 'custom';
 export type PillVariant = 'subtle' | 'outline';
 export type PillShape = 'rounded' | 'pill';
 export type PillSize = 'sm' | 'md' | 'lg';
@@ -39,6 +47,11 @@ export type PillProps = {
   disabled?: boolean;
   /** 追加クラス名 */
   className?: string | undefined;
+  /**
+   * インラインスタイル。`tone="custom"` で CSS 変数（`--pill-bg` / `--pill-text`）を
+   * 注入する用途に限定する（データ駆動の動的色のみ）。
+   */
+  style?: React.CSSProperties | undefined;
   /** テスト・識別用 */
   'data-testid'?: string | undefined;
 };
@@ -74,6 +87,7 @@ export const Pill = ({
   removeLabel,
   disabled = false,
   className,
+  style,
   'data-testid': dataTestId,
 }: PillProps) => {
   const interactive = onClick !== undefined || selected !== undefined;
@@ -117,6 +131,7 @@ export const Pill = ({
       <button
         type="button"
         className={classNames}
+        style={style}
         onClick={handleClick}
         disabled={disabled}
         aria-pressed={selected}
@@ -128,7 +143,7 @@ export const Pill = ({
   }
 
   return (
-    <span className={classNames} data-testid={dataTestId}>
+    <span className={classNames} style={style} data-testid={dataTestId}>
       {content}
     </span>
   );

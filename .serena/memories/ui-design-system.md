@@ -275,7 +275,7 @@ shadows: {
 
 | 禁止 | 理由 | 代替 |
 |------|------|------|
-| OKLCH形式 | コードベースはHEX | HEX形式を使用 |
+| OKLCH形式（静的色） | 静的トークンはHEX | HEX形式を使用。ただし**DB管理の動的色（例: tags.color）はOKLCH許可**（Tag→Pill tone="custom"、CSS変数注入。導出は src/lib/tagColor.ts。詳細 styling-rules.md「データ駆動の動的色」） |
 | `border: 1px solid` でカード輪郭 | カード輪郭は border 限定許可の対象外（基調どおり影で表現） | shadow で表現 |
 | ハードコードされた色を直接使用 | 一貫性が崩れる | セマンティックトークンを使用 |
 | `w: '48px', h: '48px'` でアイコンサイズ | ページ間で不統一 | `fontSize` トークン |
