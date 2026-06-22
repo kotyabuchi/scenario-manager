@@ -5,7 +5,7 @@ export const semanticTokens = {
     // ========================================
     bg: {
       // ページ背景（淡い青みがかった白）
-      page: { value: '#f6f8f7' },
+      page: { value: '{colors.canvas}' },
       // カード・パネル背景
       card: { value: '{colors.white}' },
       // 入力フィールド背景
@@ -15,9 +15,9 @@ export const semanticTokens = {
       // エラー入力背景
       error: { value: '{colors.red.50}' },
       // 成功/選択状態背景
-      success: { value: '{colors.primary.50}' },
+      success: { value: '{colors.green.50}' },
       // 警告背景
-      warning: { value: '{colors.orange.100}' },
+      warning: { value: '{colors.yellow.100}' },
     },
 
     // ========================================
@@ -37,21 +37,33 @@ export const semanticTokens = {
       // エラーテキスト
       error: { value: '{colors.red.500}' },
       // 成功テキスト
-      success: { value: '{colors.primary.800}' },
+      success: { value: '{colors.green.800}' },
       // 警告テキスト
-      warning: { value: '{colors.orange.800}' },
+      warning: { value: '{colors.yellow.800}' },
     },
 
     // ========================================
-    // プライマリ（緑）
+    // プライマリ（ブランド色 = green のセマンティックエイリアス）
+    // base は colors.green。primary.50-900 は緑スケールの別名、
+    // primary.default/hover/... は役割。コンポーネントは primary.* を参照する。
     // ========================================
     primary: {
-      default: { value: '{colors.primary.500}' },
-      hover: { value: '{colors.primary.600}' },
-      active: { value: '{colors.primary.700}' },
-      subtle: { value: '{colors.primary.100}' },
-      subtleHover: { value: '{colors.primary.50}' },
-      text: { value: '{colors.primary.800}' },
+      50: { value: '{colors.green.50}' },
+      100: { value: '{colors.green.100}' },
+      200: { value: '{colors.green.200}' },
+      300: { value: '{colors.green.300}' },
+      400: { value: '{colors.green.400}' },
+      500: { value: '{colors.green.500}' },
+      600: { value: '{colors.green.600}' },
+      700: { value: '{colors.green.700}' },
+      800: { value: '{colors.green.800}' },
+      900: { value: '{colors.green.900}' },
+      default: { value: '{colors.green.500}' },
+      hover: { value: '{colors.green.600}' },
+      active: { value: '{colors.green.700}' },
+      subtle: { value: '{colors.green.100}' },
+      subtleHover: { value: '{colors.green.50}' },
+      text: { value: '{colors.green.800}' },
       textOnPrimary: { value: '{colors.white}' },
     },
 
@@ -69,13 +81,13 @@ export const semanticTokens = {
     },
 
     // ========================================
-    // 警告（オレンジ）
+    // 警告（イエロー）
     // ========================================
     warning: {
-      default: { value: '{colors.orange.500}' },
-      hover: { value: '{colors.orange.600}' },
-      subtle: { value: '{colors.orange.100}' },
-      text: { value: '{colors.orange.800}' },
+      default: { value: '{colors.yellow.500}' },
+      hover: { value: '{colors.yellow.600}' },
+      subtle: { value: '{colors.yellow.100}' },
+      text: { value: '{colors.yellow.800}' },
       textOnWarning: { value: '{colors.white}' },
     },
 
@@ -105,7 +117,7 @@ export const semanticTokens = {
     // レーティング（黄色）
     // ========================================
     rating: {
-      filled: { value: '{colors.orange.400}' },
+      filled: { value: '{colors.yellow.500}' },
       empty: { value: '{colors.gray.200}' },
     },
 
@@ -124,7 +136,7 @@ export const semanticTokens = {
     border: {
       default: { value: '{colors.gray.300}' },
       subtle: { value: '{colors.gray.200}' },
-      focus: { value: '{colors.primary.500}' },
+      focus: { value: '{colors.green.500}' },
       error: { value: '{colors.red.500}' },
     },
 
@@ -132,7 +144,7 @@ export const semanticTokens = {
     // オーバーレイ
     // ========================================
     overlay: {
-      light: { value: 'rgba(255, 255, 255, 0.85)' },
+      light: { value: '{colors.whiteA.85}' },
       dark: { value: '{colors.overlay.40}' },
       darkHover: { value: '{colors.overlay.60}' },
       backdrop: { value: '{colors.overlay.20}' },
@@ -145,7 +157,7 @@ export const semanticTokens = {
       default: { value: '{colors.gray.500}' },
       muted: { value: '{colors.gray.400}' },
       white: { value: '{colors.white}' },
-      primary: { value: '{colors.primary.500}' },
+      primary: { value: '{colors.green.500}' },
       error: { value: '{colors.red.500}' },
     },
 
@@ -154,8 +166,8 @@ export const semanticTokens = {
     // ========================================
     button: {
       // Primary Button
-      primaryBg: { value: '{colors.primary.500}' },
-      primaryBgHover: { value: '{colors.primary.600}' },
+      primaryBg: { value: '{colors.green.500}' },
+      primaryBgHover: { value: '{colors.green.600}' },
       primaryText: { value: '{colors.white}' },
       // Secondary Button
       secondaryBg: { value: '{colors.white}' },
@@ -182,8 +194,8 @@ export const semanticTokens = {
     // ========================================
     chip: {
       // Selectable (緑)
-      selectableBg: { value: '{colors.primary.100}' },
-      selectableText: { value: '{colors.primary.800}' },
+      selectableBg: { value: '{colors.green.100}' },
+      selectableText: { value: '{colors.green.800}' },
       // Label (グレー)
       labelBg: { value: '{colors.gray.100}' },
       labelText: { value: '{colors.gray.600}' },
@@ -207,7 +219,7 @@ export const semanticTokens = {
       text: { value: '{colors.gray.800}' },
       placeholder: { value: '{colors.gray.400}' },
       label: { value: '{colors.gray.700}' },
-      focusBorder: { value: '{colors.primary.500}' },
+      focusBorder: { value: '{colors.green.500}' },
       errorBorder: { value: '{colors.red.500}' },
     },
 
@@ -216,9 +228,9 @@ export const semanticTokens = {
     // ========================================
     slider: {
       track: { value: '{colors.gray.200}' },
-      fill: { value: '{colors.primary.500}' },
+      fill: { value: '{colors.green.500}' },
       thumb: { value: '{colors.white}' },
-      valueText: { value: '{colors.primary.500}' },
+      valueText: { value: '{colors.green.500}' },
     },
 
     // ========================================
@@ -226,10 +238,10 @@ export const semanticTokens = {
     // ========================================
     toggle: {
       uncheckedBg: { value: '{colors.white}' },
-      checkedBg: { value: '{colors.primary.500}' },
+      checkedBg: { value: '{colors.green.500}' },
       disabledBg: { value: '{colors.gray.200}' },
       switchTrack: { value: '{colors.gray.200}' },
-      switchTrackOn: { value: '{colors.primary.500}' },
+      switchTrackOn: { value: '{colors.green.500}' },
     },
 
     // ========================================
@@ -239,9 +251,9 @@ export const semanticTokens = {
       bg: { value: '{colors.white}' },
       itemBg: { value: 'transparent' },
       itemBgHover: { value: '{colors.gray.50}' },
-      itemBgSelected: { value: '{colors.primary.50}' },
+      itemBgSelected: { value: '{colors.green.50}' },
       itemText: { value: '{colors.gray.800}' },
-      itemTextSelected: { value: '{colors.primary.500}' },
+      itemTextSelected: { value: '{colors.green.500}' },
     },
 
     // ========================================
@@ -252,7 +264,7 @@ export const semanticTokens = {
       activeBg: { value: '{colors.white}' },
       activeText: { value: '{colors.gray.800}' },
       inactiveText: { value: '{colors.gray.500}' },
-      underlineActive: { value: '{colors.primary.500}' },
+      underlineActive: { value: '{colors.green.500}' },
       underlineInactive: { value: '{colors.gray.200}' },
     },
 
@@ -269,8 +281,8 @@ export const semanticTokens = {
     // ========================================
     toast: {
       bg: { value: '{colors.white}' },
-      successIcon: { value: '{colors.primary.500}' },
-      successIconBg: { value: '{colors.primary.100}' },
+      successIcon: { value: '{colors.green.500}' },
+      successIconBg: { value: '{colors.green.100}' },
       errorIcon: { value: '{colors.red.500}' },
       errorIconBg: { value: '{colors.red.100}' },
       title: { value: '{colors.gray.800}' },
@@ -283,7 +295,7 @@ export const semanticTokens = {
     // ========================================
     pagination: {
       bg: { value: '{colors.white}' },
-      activeBg: { value: '{colors.primary.500}' },
+      activeBg: { value: '{colors.green.500}' },
       activeText: { value: '{colors.white}' },
       inactiveText: { value: '{colors.gray.700}' },
       icon: { value: '{colors.gray.500}' },
@@ -293,12 +305,12 @@ export const semanticTokens = {
     // バッジ
     // ========================================
     badge: {
-      successBg: { value: '{colors.primary.100}' },
-      successDot: { value: '{colors.primary.500}' },
-      successText: { value: '{colors.primary.800}' },
-      warningBg: { value: '{colors.orange.100}' },
-      warningDot: { value: '{colors.orange.500}' },
-      warningText: { value: '{colors.orange.800}' },
+      successBg: { value: '{colors.green.100}' },
+      successDot: { value: '{colors.green.500}' },
+      successText: { value: '{colors.green.800}' },
+      warningBg: { value: '{colors.yellow.100}' },
+      warningDot: { value: '{colors.yellow.500}' },
+      warningText: { value: '{colors.yellow.800}' },
       errorBg: { value: '{colors.red.100}' },
       errorDot: { value: '{colors.red.500}' },
       errorText: { value: '{colors.red.800}' },
@@ -306,7 +318,7 @@ export const semanticTokens = {
       neutralDot: { value: '{colors.gray.500}' },
       neutralText: { value: '{colors.gray.700}' },
       // ロールバッジ（白テキスト10pxでWCAG 4.5:1を確保するため700番台を使用）
-      keeperBg: { value: '{colors.primary.700}' },
+      keeperBg: { value: '{colors.green.700}' },
       playerBg: { value: '{colors.blue.700}' },
       spectatorBg: { value: '{colors.gray.600}' },
     },
@@ -316,8 +328,8 @@ export const semanticTokens = {
     // ========================================
     progress: {
       track: { value: '{colors.gray.200}' },
-      fill: { value: '{colors.primary.500}' },
-      text: { value: '{colors.primary.500}' },
+      fill: { value: '{colors.green.500}' },
+      text: { value: '{colors.green.500}' },
       circleBg: { value: '{colors.gray.200}' },
       circleFg: { value: '{colors.white}' },
     },
@@ -326,8 +338,8 @@ export const semanticTokens = {
     // アバター
     // ========================================
     avatar: {
-      bg: { value: '{colors.primary.100}' },
-      icon: { value: '{colors.primary.500}' },
+      bg: { value: '{colors.green.100}' },
+      icon: { value: '{colors.green.500}' },
       placeholder: { value: '{colors.gray.200}' },
     },
 
@@ -355,9 +367,9 @@ export const semanticTokens = {
     header: {
       bg: { value: '{colors.white}' },
       text: { value: '{colors.gray.500}' },
-      textActive: { value: '{colors.primary.500}' },
-      logo: { value: '{colors.primary.500}' },
-      logoBg: { value: '{colors.primary.100}' },
+      textActive: { value: '{colors.green.500}' },
+      logo: { value: '{colors.green.500}' },
+      logoBg: { value: '{colors.green.100}' },
     },
 
     // ========================================
@@ -384,10 +396,10 @@ export const semanticTokens = {
     // ========================================
     sideMenu: {
       bg: { value: '{colors.white}' },
-      brand: { value: '{colors.primary.600}' },
-      activeItemBg: { value: '{colors.primary.100}' },
-      activeItemText: { value: '{colors.primary.700}' },
-      activeItemIcon: { value: '{colors.primary.500}' },
+      brand: { value: '{colors.green.600}' },
+      activeItemBg: { value: '{colors.green.100}' },
+      activeItemText: { value: '{colors.green.700}' },
+      activeItemIcon: { value: '{colors.green.500}' },
       inactiveItemText: { value: '{colors.gray.600}' },
       inactiveItemIcon: { value: '{colors.gray.500}' },
       itemBgHover: { value: '{colors.gray.50}' },
@@ -397,7 +409,7 @@ export const semanticTokens = {
     // システムバッジ（TRPGシステム識別用）
     // ========================================
     systemBadge: {
-      green: { value: '{colors.primary.500}' },
+      green: { value: '{colors.green.500}' },
       purple: { value: '{colors.purple.500}' },
       orange: { value: '{colors.orange.500}' },
     },
@@ -407,7 +419,7 @@ export const semanticTokens = {
     // ========================================
     scrollbar: {
       track: { value: '{colors.gray.200}' },
-      thumb: { value: '{colors.primary.500}' },
+      thumb: { value: '{colors.green.500}' },
     },
 
     // ========================================
@@ -415,14 +427,14 @@ export const semanticTokens = {
     // ========================================
     hero: {
       gradient: {
-        from: { value: '{colors.primary.700}' },
-        to: { value: '{colors.primary.600}' },
+        from: { value: '{colors.green.700}' },
+        to: { value: '{colors.green.600}' },
       },
       glass: {
-        bg: { value: 'rgba(0, 0, 0, 0.1)' },
-        surface: { value: 'rgba(255, 255, 255, 0.1)' },
-        border: { value: 'rgba(255, 255, 255, 0.2)' },
-        text: { value: 'rgba(255, 255, 255, 0.9)' },
+        bg: { value: '{colors.overlay.10}' },
+        surface: { value: '{colors.whiteA.10}' },
+        border: { value: '{colors.whiteA.20}' },
+        text: { value: '{colors.whiteA.90}' },
       },
     },
     notice: {
@@ -431,10 +443,10 @@ export const semanticTokens = {
     },
     stats: {
       blue: { value: '{colors.blue.100}' },
-      green: { value: '{colors.primary.100}' },
+      green: { value: '{colors.green.100}' },
       amber: { value: '{colors.orange.100}' },
       iconBlue: { value: '{colors.blue.600}' },
-      iconGreen: { value: '{colors.primary.600}' },
+      iconGreen: { value: '{colors.green.600}' },
       iconAmber: { value: '{colors.orange.600}' },
     },
 
@@ -446,8 +458,8 @@ export const semanticTokens = {
       featureIndigo: { value: '{colors.indigo.500}' },
       featureIndigoBg: { value: '{colors.indigo.50}' },
       // CTA セクション
-      ctaBg: { value: '{colors.primary.500}' },
-      ctaSubtext: { value: '{colors.primary.100}' },
+      ctaBg: { value: '{colors.green.500}' },
+      ctaSubtext: { value: '{colors.green.100}' },
       // Footer
       footerBg: { value: '{colors.gray.800}' },
       footerText: { value: '{colors.gray.400}' },
@@ -456,7 +468,7 @@ export const semanticTokens = {
       sysGreenText: { value: '{colors.green.700}' },
       sysBlueBg: { value: '{colors.blue.50}' },
       sysBlueText: { value: '{colors.blue.800}' },
-      sysPurpleBg: { value: '#F3E8FF' },
+      sysPurpleBg: { value: '{colors.purple.100}' },
       sysPurpleText: { value: '{colors.purple.600}' },
       sysPinkBg: { value: '{colors.pink.50}' },
       sysPinkText: { value: '{colors.pink.700}' },
@@ -472,8 +484,8 @@ export const semanticTokens = {
   },
 
   borders: {
-    focusRing: { value: '2px solid {colors.primary.500}' },
-    focusRingDashed: { value: '2px dashed {colors.primary.500}' },
+    focusRing: { value: '2px solid {colors.green.500}' },
+    focusRingDashed: { value: '2px dashed {colors.green.500}' },
     soft: { value: '1px solid {colors.gray.100}' },
   },
 
@@ -482,16 +494,16 @@ export const semanticTokens = {
     // 汎用シャドウ
     // ========================================
     sm: {
-      value: '0 1px 2px rgba(0, 0, 0, 0.05)',
+      value: '0 1px 2px {colors.overlay.5}',
     },
     md: {
-      value: '0 1px 3px rgba(0, 0, 0, 0.10)',
+      value: '0 1px 3px {colors.overlay.10}',
     },
     lg: {
-      value: '0 4px 6px rgba(0, 0, 0, 0.10)',
+      value: '0 4px 6px {colors.overlay.10}',
     },
     xl: {
-      value: '0 8px 16px rgba(0, 0, 0, 0.15)',
+      value: '0 8px 16px {colors.overlay.15}',
     },
 
     // ========================================
@@ -499,70 +511,70 @@ export const semanticTokens = {
     // ========================================
     // ボタン
     button: {
-      primary: { value: '0 2px 4px rgba(5, 149, 104, 0.25)' },
-      primaryHover: { value: '0 4px 14px rgba(5, 149, 104, 0.30)' },
-      secondary: { value: '0 1px 3px rgba(0, 0, 0, 0.10)' },
-      destructive: { value: '0 2px 4px rgba(213, 68, 67, 0.25)' },
+      primary: { value: '0 2px 4px {colors.greenShadow.25}' },
+      primaryHover: { value: '0 4px 14px {colors.greenShadow.30}' },
+      secondary: { value: '0 1px 3px {colors.overlay.10}' },
+      destructive: { value: '0 2px 4px {colors.redShadow.25}' },
     },
     // カード
     card: {
-      default: { value: '0 4px 16px rgba(0, 0, 0, 0.06)' },
-      hover: { value: '0 8px 24px rgba(0, 0, 0, 0.10)' },
+      default: { value: '0 4px 16px {colors.overlay.6}' },
+      hover: { value: '0 8px 24px {colors.overlay.10}' },
     },
     // ヘッダー
     header: {
-      default: { value: '0 2px 8px rgba(0, 0, 0, 0.05)' },
+      default: { value: '0 2px 8px {colors.overlay.5}' },
     },
     // サブヘッダー（グローバルヘッダー直下のパネル用、下方向のみの影）
     subHeader: {
-      default: { value: '0 4px 8px -4px rgba(0, 0, 0, 0.08)' },
+      default: { value: '0 4px 8px -4px {colors.overlay.8}' },
     },
     // 検索パネル
     panel: {
-      default: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
+      default: { value: '0 4px 16px {colors.overlay.4}' },
     },
     // ドロップダウン/メニュー
     menu: {
-      default: { value: '0 4px 16px rgba(0, 0, 0, 0.08)' },
+      default: { value: '0 4px 16px {colors.overlay.8}' },
     },
     // トースト
     toast: {
-      default: { value: '0 4px 12px rgba(0, 0, 0, 0.08)' },
+      default: { value: '0 4px 12px {colors.overlay.8}' },
     },
     // ダイアログ
     dialog: {
-      default: { value: '0 8px 24px rgba(0, 0, 0, 0.12)' },
+      default: { value: '0 8px 24px {colors.overlay.12}' },
     },
     // 入力フィールド（チェックボックス等）
     input: {
-      default: { value: '0 1px 2px rgba(0, 0, 0, 0.08)' },
+      default: { value: '0 1px 2px {colors.overlay.8}' },
     },
     // スライダーつまみ
     slider: {
-      thumb: { value: '0 1px 3px rgba(0, 0, 0, 0.19)' },
+      thumb: { value: '0 1px 3px {colors.overlay.19}' },
     },
     // スイッチつまみ
     switch: {
-      thumb: { value: '0 1px 2px rgba(0, 0, 0, 0.12)' },
+      thumb: { value: '0 1px 2px {colors.overlay.12}' },
     },
     // FAB
     fab: {
-      default: { value: '0 4px 12px rgba(5, 149, 104, 0.25)' },
+      default: { value: '0 4px 12px {colors.greenShadow.25}' },
     },
     // スクロールボタン
     scrollButton: {
-      default: { value: '0 2px 8px rgba(0, 0, 0, 0.08)' },
+      default: { value: '0 2px 8px {colors.overlay.8}' },
     },
     // ランディングページ
     landing: {
       // ブラウズボタン
-      browseBtn: { value: '0 2px 8px rgba(0, 0, 0, 0.06)' },
+      browseBtn: { value: '0 2px 8px {colors.overlay.6}' },
       // CTAボタン（Hero）
-      heroCta: { value: '0 4px 12px rgba(5, 149, 104, 0.19)' },
+      heroCta: { value: '0 4px 12px {colors.greenShadow.19}' },
       // Feature カード
-      featureCard: { value: '0 4px 16px rgba(0, 0, 0, 0.04)' },
+      featureCard: { value: '0 4px 16px {colors.overlay.4}' },
       // CTAボタン（白背景）
-      ctaBtn: { value: '0 4px 12px rgba(0, 0, 0, 0.12)' },
+      ctaBtn: { value: '0 4px 12px {colors.overlay.12}' },
     },
   },
 };
