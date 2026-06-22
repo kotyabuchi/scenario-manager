@@ -241,7 +241,7 @@ export const cardAlt = css({
 export const cardAlt_thumb = css({
   position: 'relative',
   width: 'full',
-  aspectRatio: '[3 / 2]',
+  aspectRatio: '[3/2]',
   bg: 'gray.100',
   overflow: 'hidden',
 });
