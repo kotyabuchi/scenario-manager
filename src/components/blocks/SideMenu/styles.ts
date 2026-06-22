@@ -12,7 +12,7 @@ export const sideMenu = css({
     display: 'flex',
   },
   flexDirection: 'column',
-  gap: '6',
+  gap: '8',
   position: 'sticky',
   top: '0',
   height: '[100dvh]',
@@ -73,7 +73,7 @@ export const logoSubtitle = css({
 export const nav = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '1',
+  gap: '1.5',
 });
 
 export const navItem = cva({
@@ -82,7 +82,7 @@ export const navItem = cva({
     alignItems: 'center',
     gap: '3',
     px: '3',
-    py: '2.5',
+    py: '3',
     borderRadius: 'lg',
     fontSize: 'sm',
     fontWeight: 'medium',

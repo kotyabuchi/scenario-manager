@@ -385,9 +385,9 @@ export const semanticTokens = {
     sideMenu: {
       bg: { value: '{colors.white}' },
       brand: { value: '{colors.primary.600}' },
-      activeItemBg: { value: '{colors.primary.50}' },
+      activeItemBg: { value: '{colors.primary.100}' },
       activeItemText: { value: '{colors.primary.700}' },
-      activeItemIcon: { value: '{colors.primary.600}' },
+      activeItemIcon: { value: '{colors.primary.500}' },
       inactiveItemText: { value: '{colors.gray.600}' },
       inactiveItemIcon: { value: '{colors.gray.500}' },
       itemBgHover: { value: '{colors.gray.50}' },
