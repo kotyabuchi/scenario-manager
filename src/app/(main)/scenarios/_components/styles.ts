@@ -51,24 +51,24 @@ export const cardThumbnailPlaceholder = css({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 'xs',
-  background:
-    '[linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)]',
-  color: 'gray.500',
+  gap: '1.5',
+  // 淡色テーマに合わせたソフトなグラデ（緑みのある淡グレー）
+  bgGradient: 'to-br',
+  gradientFrom: 'gray.50',
+  gradientTo: 'gray.200',
+  color: 'icon.muted',
 });
 
 export const cardThumbnailPlaceholderIcon = css({
-  w: '8',
-  h: '8',
-  opacity: 'disabled',
-  color: 'white',
+  w: '7',
+  h: '7',
+  color: 'icon.muted',
 });
 
 export const cardThumbnailPlaceholderText = css({
   fontSize: 'xs',
   fontWeight: 'medium',
-  opacity: 'disabled',
-  color: 'white',
+  color: 'text.placeholder',
 });
 
 // システム名ラベル（CSS mask による逆角丸カットアウト）
@@ -212,23 +212,91 @@ export const cardTags = css({
   gap: '1.5',
 });
 
-export const cardTag = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  h: '6',
-  px: '2',
-  fontSize: '[11px]',
-  fontWeight: 'medium',
-  bg: 'gray.100',
-  borderRadius: 'sm',
-  color: 'gray.600',
-});
-
 export const cardDescription = css({
   fontSize: 'xs',
   color: 'gray.500',
   lineClamp: 3,
   lineHeight: 'relaxed',
+});
+
+// ===== ScenarioCardAlt（モック準拠の比較用バリアント） =====
+// ノッチ無し / 左上バッジ / 画像フルブリード / 概要なし
+export const cardAlt = css({
+  display: 'flex',
+  flexDirection: 'column',
+  bg: 'white',
+  borderRadius: '2xl',
+  overflow: 'hidden',
+  cursor: 'pointer',
+  boxShadow: 'card.default',
+  transitionProperty: 'common',
+  transitionDuration: 'normal',
+  transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
+  _hover: {
+    boxShadow: 'card.hover',
+    transform: 'translateY(-4px)',
+  },
+});
+
+export const cardAlt_thumb = css({
+  position: 'relative',
+  width: 'full',
+  aspectRatio: '[3 / 2]',
+  bg: 'gray.100',
+  overflow: 'hidden',
+});
+
+export const cardAlt_image = css({
+  objectFit: 'cover',
+  transitionProperty: 'common',
+  transitionDuration: 'normal',
+  _groupHover: {
+    transform: 'scale(1.05)',
+  },
+});
+
+export const cardAlt_badge = css({
+  position: 'absolute',
+  top: '2.5',
+  left: '2.5',
+  zIndex: '[1]',
+  boxShadow: 'sm',
+  borderRadius: 'full',
+});
+
+export const cardAlt_content = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
+  p: '3',
+});
+
+export const cardAlt_title = css({
+  fontSize: '[15px]',
+  fontWeight: 'semibold',
+  color: 'gray.800',
+  lineHeight: 'tight',
+  lineClamp: 2,
+  textWrap: 'balance',
+});
+
+export const cardAlt_system = css({
+  fontSize: '[13px]',
+  color: 'gray.500',
+});
+
+export const cardAlt_tags = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '1.5',
+});
+
+export const cardAlt_meta = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4',
+  fontSize: '[13px]',
+  color: 'gray.500',
 });
 
 // ScenarioList スタイル

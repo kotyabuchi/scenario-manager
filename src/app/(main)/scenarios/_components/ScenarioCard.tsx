@@ -1,10 +1,11 @@
-import { Clock, ImageBroken, Star, Users } from '@phosphor-icons/react/ssr';
+import { Clock, ImageSquare, Star, Users } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
 
+import { Tag } from '@/components/elements/Tag';
 import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
 import type { ScenarioCardProps } from '../interface';
@@ -48,7 +49,7 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
           />
         ) : (
           <div className={styles.cardThumbnailPlaceholder}>
-            <ImageBroken className={styles.cardThumbnailPlaceholderIcon} />
+            <ImageSquare className={styles.cardThumbnailPlaceholderIcon} />
             <span className={styles.cardThumbnailPlaceholderText}>
               No Image
             </span>
@@ -95,9 +96,12 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
         {tags.length > 0 && (
           <div className={styles.cardTags}>
             {tags.map((tag) => (
-              <span key={tag.tagId} className={styles.cardTag}>
-                {tag.name}
-              </span>
+              <Tag
+                key={tag.tagId}
+                label={tag.name}
+                color={tag.color}
+                size="sm"
+              />
             ))}
           </div>
         )}
