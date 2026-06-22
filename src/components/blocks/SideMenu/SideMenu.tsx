@@ -17,6 +17,7 @@ import { usePathname } from 'next/navigation';
 import * as styles from './styles';
 
 import { ScenarioRegisterDialog } from '@/components/blocks/ScenarioRegisterDialog';
+import { Divider } from '@/components/elements/Divider';
 import { useAuth } from '@/context';
 import { useDiscordAuth } from '@/hooks/useDiscordAuth';
 
@@ -100,6 +101,8 @@ export const SideMenu = () => {
                 シナリオを登録
               </button>
             </ScenarioRegisterDialog>
+
+            <Divider />
 
             <Link href="/profile" className={styles.userButton}>
               <span className={styles.avatar}>
