@@ -380,6 +380,20 @@ export const semanticTokens = {
     },
 
     // ========================================
+    // サイドメニュー（PCグローバルナビ）
+    // ========================================
+    sideMenu: {
+      bg: { value: '{colors.white}' },
+      brand: { value: '{colors.primary.600}' },
+      activeItemBg: { value: '{colors.primary.50}' },
+      activeItemText: { value: '{colors.primary.700}' },
+      activeItemIcon: { value: '{colors.primary.600}' },
+      inactiveItemText: { value: '{colors.gray.600}' },
+      inactiveItemIcon: { value: '{colors.gray.500}' },
+      itemBgHover: { value: '{colors.gray.50}' },
+    },
+
+    // ========================================
     // システムバッジ（TRPGシステム識別用）
     // ========================================
     systemBadge: {
