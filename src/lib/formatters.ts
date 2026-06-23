@@ -12,9 +12,15 @@ export const formatMinutesToHours = (minutes: number): string => {
   return `${hours}時間${mins}分`;
 };
 
+/** 分を時間に切り上げる（端数は1時間に繰り上げ） */
+const ceilToHours = (minutes: number): number => Math.ceil(minutes / 60);
+
 /**
- * プレイ時間を表示用にフォーマット
- * @example formatPlaytime(60, 120) // "1時間〜2時間"
+ * プレイ時間を表示用にフォーマット（時間単位に切り上げ、単位は末尾のみ）
+ * @example formatPlaytime(300, 360) // "5〜6時間"
+ * @example formatPlaytime(300, 300) // "5時間"
+ * @example formatPlaytime(180, null) // "3時間〜"
+ * @example formatPlaytime(null, 420) // "〜7時間"
  * @example formatPlaytime(null, null) // "-"
  */
 export const formatPlaytime = (
@@ -23,12 +29,14 @@ export const formatPlaytime = (
 ): string => {
   if (isNil(minMinutes) && isNil(maxMinutes)) return '-';
   if (isNil(minMinutes) && !isNil(maxMinutes))
-    return formatMinutesToHours(maxMinutes);
+    return `〜${ceilToHours(maxMinutes)}時間`;
   if (!isNil(minMinutes) && isNil(maxMinutes))
-    return formatMinutesToHours(minMinutes);
+    return `${ceilToHours(minMinutes)}時間〜`;
   if (!isNil(minMinutes) && !isNil(maxMinutes)) {
-    if (minMinutes === maxMinutes) return formatMinutesToHours(minMinutes);
-    return `${formatMinutesToHours(minMinutes)}〜${formatMinutesToHours(maxMinutes)}`;
+    const lo = ceilToHours(minMinutes);
+    const hi = ceilToHours(maxMinutes);
+    if (lo === hi) return `${lo}時間`;
+    return `${lo}〜${hi}時間`;
   }
   return '-';
 };
