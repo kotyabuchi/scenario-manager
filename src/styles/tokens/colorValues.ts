@@ -13,6 +13,13 @@ export const colorValues = {
   // Canvas（ページ背景。ごく淡い緑みの白）
   canvas: { value: 'oklch(0.975 0.004 150)' },
 
+  // Light green surface（ほぼ白の極淡グリーン。モックのボックス内側相当。
+  // 通常の green スケール=primary.50 より淡く、ボックス背景/枠に使う）
+  lightGreen: {
+    bg: { value: 'oklch(0.985 0.010 148)' },
+    border: { value: 'oklch(0.930 0.022 148)' },
+  },
+
   // Gray（H=265・極小彩度の青みグレー）
   gray: {
     50: { value: 'oklch(0.965 0.003 265)' },
