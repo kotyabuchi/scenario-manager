@@ -41,6 +41,21 @@ export const filterPanel = cva({
   },
 });
 
+// プレイ人数/時間: コンテナ幅が広い時だけ横並び
+export const rangeContainer = css({
+  containerType: 'inline-size',
+});
+
+export const rangeGrid = css({
+  display: 'grid',
+  gap: '4',
+  gridTemplateColumns: '1fr',
+  '@container (min-width: 600px)': {
+    gridTemplateColumns: 'repeat(2, 1fr)',
+  },
+  '& > *': { minWidth: '0' },
+});
+
 // フィルターセクション
 export const filterSection = css({
   display: 'flex',
@@ -93,10 +108,11 @@ export const selectableChip = cva({
         color: 'primary.800',
       },
       false: {
-        bg: 'gray.100',
+        bg: 'white',
         color: 'gray.600',
+        boxShadow: '[inset 0 0 0 1px token(colors.gray.50)]',
         _hover: {
-          bg: 'gray.200',
+          bg: 'gray.50',
         },
       },
     },
@@ -115,22 +131,22 @@ export const chipRemoveIcon = css({
   },
 });
 
-// 「すべて表示」ボタン
+// 「すべて表示」ボタン（未選択チップと同じ見た目に揃える）
 export const showAllButton = css({
   display: 'flex',
   alignItems: 'center',
   gap: '1',
-  paddingX: '2',
-  paddingY: '1',
+  height: '7',
+  paddingX: '2.5',
   fontSize: 'xs',
   fontWeight: 'medium',
   color: 'gray.600',
-  bg: 'gray.100',
-  borderRadius: 'sm',
+  bg: 'white',
+  boxShadow: '[inset 0 0 0 1px token(colors.gray.50)]',
+  borderRadius: 'md',
   cursor: 'pointer',
   _hover: {
-    bg: 'gray.200',
-    color: 'gray.700',
+    bg: 'gray.50',
   },
 });
 

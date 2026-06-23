@@ -29,6 +29,7 @@ export const FilterPanel = ({
   tags,
   filterState,
   showSystems = true,
+  showClear = true,
 }: FilterPanelProps) => {
   const {
     params,
@@ -154,48 +155,53 @@ export const FilterPanel = ({
         </div>
       </FilterSection>
 
-      {/* プレイ人数 */}
-      <FilterSection label="プレイ人数">
-        <div className={styles.sliderContainer}>
-          <Slider
-            aria-label="プレイ人数"
-            value={playerRange}
-            onValueChange={(details) => handlePlayerRangeChange(details.value)}
-            min={PLAYER_MIN}
-            max={PLAYER_MAX}
-            step={1}
-            range
-            showValue
-            formatValue={(v) => (v === PLAYER_MAX ? `${v}人+` : `${v}人`)}
-            minLabel={`${PLAYER_MIN}人`}
-            maxLabel={`${PLAYER_MAX}人+`}
-          />
-        </div>
-      </FilterSection>
+      {/* プレイ人数 / プレイ時間（広い時だけ横並び） */}
+      <div className={styles.rangeContainer}>
+        <div className={styles.rangeGrid}>
+          <FilterSection label="プレイ人数">
+            <div className={styles.sliderContainer}>
+              <Slider
+                aria-label="プレイ人数"
+                value={playerRange}
+                onValueChange={(details) =>
+                  handlePlayerRangeChange(details.value)
+                }
+                min={PLAYER_MIN}
+                max={PLAYER_MAX}
+                step={1}
+                range
+                showValue
+                formatValue={(v) => (v === PLAYER_MAX ? `${v}人+` : `${v}人`)}
+                minLabel={`${PLAYER_MIN}人`}
+                maxLabel={`${PLAYER_MAX}人+`}
+              />
+            </div>
+          </FilterSection>
 
-      {/* プレイ時間 */}
-      <FilterSection label="プレイ時間">
-        <div className={styles.sliderContainer}>
-          <Slider
-            aria-label="プレイ時間"
-            value={playtimeRange}
-            onValueChange={(details) =>
-              handlePlaytimeRangeChange(details.value)
-            }
-            min={PLAYTIME_MIN}
-            max={PLAYTIME_MAX}
-            step={1}
-            range
-            showValue
-            formatValue={(v) => (v === PLAYTIME_MAX ? `${v}h+` : `${v}h`)}
-            minLabel={`${PLAYTIME_MIN}h`}
-            maxLabel={`${PLAYTIME_MAX}h+`}
-          />
+          <FilterSection label="プレイ時間">
+            <div className={styles.sliderContainer}>
+              <Slider
+                aria-label="プレイ時間"
+                value={playtimeRange}
+                onValueChange={(details) =>
+                  handlePlaytimeRangeChange(details.value)
+                }
+                min={PLAYTIME_MIN}
+                max={PLAYTIME_MAX}
+                step={1}
+                range
+                showValue
+                formatValue={(v) => (v === PLAYTIME_MAX ? `${v}h+` : `${v}h`)}
+                minLabel={`${PLAYTIME_MIN}h`}
+                maxLabel={`${PLAYTIME_MAX}h+`}
+              />
+            </div>
+          </FilterSection>
         </div>
-      </FilterSection>
+      </div>
 
       {/* クリアボタン（bottomsheetは3ボタンフッターと重複するため非表示） */}
-      {variant !== 'bottomsheet' && activeFilterCount > 0 && (
+      {showClear && variant !== 'bottomsheet' && activeFilterCount > 0 && (
         <button type="button" onClick={clearAll} className={styles.clearButton}>
           フィルターをクリア
         </button>

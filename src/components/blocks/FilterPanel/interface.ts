@@ -44,4 +44,6 @@ export type FilterPanelProps = {
   onClose?: () => void;
   /** システム選択セクションの表示制御（デフォルト: true） */
   showSystems?: boolean;
+  /** パネル内「フィルターをクリア」ボタンの表示制御（デフォルト: true） */
+  showClear?: boolean;
 };
