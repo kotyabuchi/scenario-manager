@@ -605,6 +605,10 @@
      - `src/components/blocks/BottomNav/styles.ts:25`（上方向シャドウ）
      - `src/app/(main)/sessions/[id]/styles.ts:154,543`（boxShadow / radial-gradient）
    - 修正はアンダースコア→空白の置換だが、**今まで無効だったスタイルが突然適用されて見た目が変わる**ため、画面ごとに表示確認しながら適用すること（特にScheduleCalendar）
+8. [ ] 旧メインカラー（色相163の生OKLCH）の残骸をトークンへ置換（2026-07-09発見）
+   - `src/components/blocks/GlobalHeader/styles.ts` に8箇所（`oklch(0.59 0.13 163)` 等）
+   - 現行パレットは色相148。select.ts は primary.{subtle,subtleHover,text} へ置換済み
+   - GlobalHeader は lg 非表示化・廃止判断待ちのため、存続が決まったタイミングで対応
 
 ---
 

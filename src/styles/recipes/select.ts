@@ -94,14 +94,14 @@ export const select = defineSlotRecipe({
       borderRadius: '4px',
       transition: 'background-color {durations.faster} ease-out',
       _hover: {
-        bg: 'oklch(0.975 0.025 163)',
+        bg: 'primary.subtleHover',
       },
       _highlighted: {
-        bg: 'oklch(0.975 0.025 163)',
+        bg: 'primary.subtleHover',
       },
       _selected: {
-        bg: 'oklch(0.94 0.045 163)',
-        color: 'oklch(0.43 0.09 163)',
+        bg: 'primary.subtle',
+        color: 'primary.text',
         fontWeight: '500',
       },
       _disabled: {
@@ -124,7 +124,7 @@ export const select = defineSlotRecipe({
       },
       '&[data-state=checked] [data-icon=checked]': {
         display: 'inline-flex',
-        color: 'oklch(0.43 0.09 163)',
+        color: 'primary.text',
       },
       // マルチセレクト: 連続選択グルーピング（角丸除去）
       '[data-multiple] &[data-state=checked]:has(+ [data-state=checked])': {
@@ -137,7 +137,7 @@ export const select = defineSlotRecipe({
       },
     },
     itemIndicator: {
-      color: 'oklch(0.43 0.09 163)',
+      color: 'primary.text',
     },
     itemGroup: {
       py: '4px',
