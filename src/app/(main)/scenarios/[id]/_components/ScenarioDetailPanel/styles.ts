@@ -36,11 +36,10 @@ export const headerBar_back = css({
     color: 'primary.700',
     textDecoration: 'underline',
   },
-});
-
-// ハーフレディングを刈り取り、グリフ実寸でアイコンと上下中央を揃える
-export const textFit = css({
-  textTrim: true,
+  // ラベルのハーフレディングを刈り取り、CaretLeftと光学中央揃え
+  '& > span': {
+    textTrim: true,
+  },
 });
 
 export const headerBar_actions = css({

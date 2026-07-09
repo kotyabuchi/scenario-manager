@@ -722,8 +722,8 @@ export const reviewCard_userInfo = css({
 // インライン整列で自然にベースラインが揃う。下線は内側の単一インラインspanに
 // 引くことで、名前と@ハンドルの間隔も含めて1本に連続させる
 export const reviewCard_nameGroup = css({
-  // ディセンダー分だけ下に見えるのを補正し、視覚的に中央へ
-  mb: '0.5',
+  // ハーフレディングを刈り取り、アバターに対して光学中央揃え
+  textTrim: true,
   textDecoration: 'none',
   _hover: {
     '& > span': {

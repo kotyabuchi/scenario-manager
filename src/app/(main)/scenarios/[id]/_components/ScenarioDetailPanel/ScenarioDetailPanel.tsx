@@ -12,6 +12,7 @@ import { ScenarioDetailHead } from './ScenarioDetailHead';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
+import { buttonLabel } from '@/components/elements/button/styles';
 
 import type {
   ReviewWithUser,
@@ -74,7 +75,7 @@ export const ScenarioDetailPanel = ({
           <div className={styles.headerBar}>
             <Link href="/scenarios" className={styles.headerBar_back}>
               <CaretLeft size={16} />
-              <span className={styles.textFit}>シナリオ一覧に戻る</span>
+              <span>シナリオ一覧に戻る</span>
             </Link>
             <div className={styles.headerBar_actions}>
               <Button
@@ -103,8 +104,9 @@ export const ScenarioDetailPanel = ({
                     `/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'
                   }
                 >
+                  {/* asChild は Button の自動ラベルラップが効かないため、ラベルスタイルを直接適用 */}
                   <NotePencil size={16} />
-                  <span className={styles.textFit}>セッションを作成</span>
+                  <span className={buttonLabel}>セッションを作成</span>
                 </Link>
               </Button>
             </div>
