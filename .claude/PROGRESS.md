@@ -605,10 +605,19 @@
      - `src/components/blocks/BottomNav/styles.ts:25`（上方向シャドウ）
      - `src/app/(main)/sessions/[id]/styles.ts:154,543`（boxShadow / radial-gradient）
    - 修正はアンダースコア→空白の置換だが、**今まで無効だったスタイルが突然適用されて見た目が変わる**ため、画面ごとに表示確認しながら適用すること（特にScheduleCalendar）
-8. [ ] 旧メインカラー（色相163の生OKLCH）の残骸をトークンへ置換（2026-07-09発見）
-   - `src/components/blocks/GlobalHeader/styles.ts` に8箇所（`oklch(0.59 0.13 163)` 等）
-   - 現行パレットは色相148。select.ts は primary.{subtle,subtleHover,text} へ置換済み
-   - GlobalHeader は lg 非表示化・廃止判断待ちのため、存続が決まったタイミングで対応
+8. [ ] 旧メインカラー・生カラー直書きの残骸をトークンへ置換（2026-07-09棚卸し）
+   - 現行パレットは色相148。select.ts レシピは primary.{subtle,subtleHover,text} へ置換済み
+   - **旧メインカラー（H=163 / emerald #10b981 / #059568 / rgba(5,149,104)）の残り**:
+     - `src/components/blocks/GlobalHeader/styles.ts`: oklch直書き11箇所（163系8＋150系3）※lg非表示・廃止判断待ち
+     - `src/components/blocks/ScheduleCalendar/styles.ts`: `#10b981` 5箇所（＋slate系hex `#334155` `#64748b` 等が多数）
+     - `src/components/blocks/SignupModal/styles.ts`: `rgba(5,149,104,0.25)` 影2箇所
+     - `src/components/elements/system-badge/system-badge.tsx`: colorMap の green `#059568`
+     - `src/app/(main)/sessions/[id]/styles.ts` 3箇所、schedule/availability の2コンポーネント各1箇所
+   - **旧色ではないが規約違反の生カラー**（優先度低・機械的に置換可）:
+     - 影の直書き `[0 1px 2px rgba(0,0,0,0.05)]` 等: checkbox/dropdown/number-input/pagination/radio/switch/tags-input/tabs/skeleton/toast/toggle-group、select・comboboxレシピ → `shadows.*` トークンへ集約
+     - Tailwind系hex: tags-input `#D54443`、tabs `#E5E7EB`、skeleton のgradient
+   - 例外としてOK: Tag のOKLCH（データ駆動動的色）、stories/test 内のモック色
+   - 注意: 見た目が変わる置換（特に ScheduleCalendar・SignupModal）は画面確認しながら実施
 
 ---
 
