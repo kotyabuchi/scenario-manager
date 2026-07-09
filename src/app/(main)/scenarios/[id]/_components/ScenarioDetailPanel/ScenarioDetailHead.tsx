@@ -143,10 +143,6 @@ export const ScenarioDetailHead = ({
           </div>
         )}
 
-        {!isNil(scenario.description) && (
-          <p className={styles.head_description}>{scenario.description}</p>
-        )}
-
         <div className={styles.head_metaRow}>
           <MetaItem
             icon={<Users size={18} />}

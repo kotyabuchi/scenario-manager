@@ -1,0 +1,156 @@
+'use client';
+
+import { useOptimistic, useTransition } from 'react';
+import { CaretLeft, NotePencil, Star } from '@phosphor-icons/react/ssr';
+import Link from 'next/link';
+import { isNil } from 'ramda';
+
+import { ReviewSection } from '../ReviewSection';
+import { SessionSection } from '../SessionSection';
+import { VideoSection } from '../VideoSection';
+import { ScenarioDetailHead } from './ScenarioDetailHead';
+import * as styles from './styles';
+
+import { Button } from '@/components/elements/button/button';
+
+import type {
+  ReviewWithUser,
+  ScenarioDetail,
+  SessionWithKeeper,
+  VideoLinkWithSession,
+} from '../../interface';
+
+export type ScenarioDetailPanelProps = {
+  scenario: ScenarioDetail;
+  sessions: SessionWithKeeper[];
+  videos: VideoLinkWithSession[];
+  reviews: ReviewWithUser[];
+  reviewTotalCount: number;
+  currentUserId?: string;
+  isFavorite?: boolean;
+  isPlayed?: boolean;
+  isLoggedIn?: boolean;
+  onToggleFavorite?: () => Promise<void>;
+};
+
+/**
+ * ScenarioDetailPanel - シナリオ詳細ペイン（2ペイン右側）
+ *
+ * セクション縦並び（ScenarioDetailHead / SessionSection / VideoSection /
+ * ReviewSection）を束ねる。**タブは使わない**（全セクション常時表示）。
+ * 目次（SectionToc）はパネル内には置かない（必要になればページ側で検討）。
+ * ヘッダーは構成検討中のため一旦未配置。
+ */
+export const ScenarioDetailPanel = ({
+  scenario,
+  sessions,
+  videos,
+  reviews,
+  reviewTotalCount,
+  currentUserId,
+  isFavorite = false,
+  isPlayed = false,
+  isLoggedIn = false,
+  onToggleFavorite,
+}: ScenarioDetailPanelProps) => {
+  const scenarioId = scenario.scenarioId;
+
+  const [, startTransition] = useTransition();
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
+
+  const handleToggleFavorite = () => {
+    if (isNil(onToggleFavorite)) return;
+    startTransition(async () => {
+      setOptimisticFavorite(!optimisticFavorite);
+      await onToggleFavorite();
+    });
+  };
+
+  return (
+    <div className={styles.panel}>
+      <div className={styles.main}>
+        <div className={styles.mainCard}>
+          {/* ヘッダーバー: 戻るリンク＋主要アクション（主カード内・モック準拠） */}
+          <div className={styles.headerBar}>
+            <Link href="/scenarios" className={styles.headerBar_back}>
+              <CaretLeft size={16} />
+              <span className={styles.textFit}>シナリオ一覧に戻る</span>
+            </Link>
+            <div className={styles.headerBar_actions}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleToggleFavorite}
+                disabled={!isLoggedIn}
+                aria-pressed={optimisticFavorite}
+                prefix={
+                  <Star
+                    size={16}
+                    weight={optimisticFavorite ? 'fill' : 'regular'}
+                    className={
+                      optimisticFavorite
+                        ? styles.headerBar_starActive
+                        : undefined
+                    }
+                  />
+                }
+              >
+                お気に入り
+              </Button>
+              <Button variant="solid" status="primary" size="sm" asChild>
+                <Link
+                  href={
+                    `/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'
+                  }
+                >
+                  <NotePencil size={16} />
+                  <span className={styles.textFit}>セッションを作成</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          <section id="info" className={styles.sectionAnchor}>
+            <ScenarioDetailHead scenario={scenario} />
+          </section>
+
+          {!isNil(scenario.description) && (
+            <section id="overview" className={styles.sectionAnchor}>
+              <h2 className={styles.overview_title}>シナリオ概要</h2>
+              <p className={styles.overview_text}>{scenario.description}</p>
+            </section>
+          )}
+        </div>
+
+        <div className={styles.sectionsGrid}>
+          <section
+            id="sessions"
+            className={`${styles.sectionAnchor} ${styles.sectionCard}`}
+          >
+            <SessionSection scenarioId={scenarioId} sessions={sessions} />
+          </section>
+
+          <section
+            id="videos"
+            className={`${styles.sectionAnchor} ${styles.sectionCard}`}
+          >
+            <VideoSection videos={videos} isPlayed={isPlayed} />
+          </section>
+
+          <section
+            id="comments"
+            className={`${styles.sectionAnchor} ${styles.sectionCard}`}
+          >
+            <ReviewSection
+              reviews={reviews}
+              totalCount={reviewTotalCount}
+              {...(currentUserId ? { currentUserId } : {})}
+              scenarioId={scenarioId}
+              isPlayed={isPlayed}
+            />
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};

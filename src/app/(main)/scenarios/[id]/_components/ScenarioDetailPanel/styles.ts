@@ -10,40 +10,115 @@ export const panel = css({
   containerType: 'inline-size',
   display: 'flex',
   flexDirection: 'column',
-  gap: '6',
+  gap: '4',
 });
 
-export const layout = css({
-  display: 'grid',
-  gridTemplateColumns: '1fr',
-  gap: '6',
-  // パネルが広い時だけ右に目次カラムを出す
-  '@container (min-width: 900px)': {
-    gridTemplateColumns: '[1fr_200px]',
-    gap: '10',
+// --- ヘッダーバー（戻るリンク＋お気に入り/セッション作成） ---
+
+export const headerBar = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  columnGap: '3',
+  rowGap: '2',
+});
+
+export const headerBar_back = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '1',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: 'primary.600',
+  textDecoration: 'none',
+  _hover: {
+    color: 'primary.700',
+    textDecoration: 'underline',
   },
+});
+
+// ハーフレディングを刈り取り、グリフ実寸でアイコンと上下中央を揃える
+// （text-box未対応ブラウザでは無視され従来表示になる）
+export const textFit = css({
+  textBox: '[trim-both cap alphabetic]',
+});
+
+export const headerBar_actions = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+});
+
+// お気に入りON時の星色
+export const headerBar_starActive = css({
+  color: 'orange.400',
+});
+
+// ヘッド＋シナリオ概要をまとめる主カード（モック上段の白い面）
+export const mainCard = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '5',
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'paperBorder.50',
+  borderRadius: '2xl',
+  p: '5',
+  shadow: 'card.default',
+});
+
+export const overview_title = css({
+  fontSize: 'lg',
+  fontWeight: 'bold',
+  color: 'text.body',
+  mb: '2',
+});
+
+export const overview_text = css({
+  fontSize: 'sm',
+  lineHeight: 'relaxed',
+  color: 'text.secondary',
+  whiteSpace: 'pre-wrap',
 });
 
 export const main = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '8',
+  gap: '4',
   minWidth: '0',
+});
+
+// 関連セッション/プレイ動画/コメントの独立カード
+export const sectionCard = css({
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'paperBorder.50',
+  borderRadius: '2xl',
+  p: '5',
+  minWidth: '0',
+  shadow: 'card.default',
+});
+
+// セクションカード群の配置。狭い時は縦積み、
+// 広い時はセッション全幅＋動画/コメントを2カラム（3カラム均等はコメントが窮屈になるため不採用）
+export const sectionsGrid = css({
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '4',
+  '@container (min-width: 900px)': {
+    gridTemplateColumns: '[repeat(2, 1fr)]',
+    '& > :first-child': {
+      gridColumn: '[1 / -1]',
+    },
+  },
 });
 
 // アンカースクロール時に上端へ余白を確保
 export const sectionAnchor = css({
   scrollMarginTop: '6',
-});
-
-export const aside = css({
-  display: 'none',
-  '@container (min-width: 900px)': {
-    display: 'block',
-    position: 'sticky',
-    top: '6',
-    alignSelf: 'start',
-  },
 });
 
 // --- ScenarioDetailHead（上部情報群 / first-view）---
@@ -54,11 +129,8 @@ export const head = css({
   containerType: 'inline-size',
   display: 'flex',
   flexWrap: 'wrap',
-  // 背景は持たず背後に一致させる。シャドウも使わず最も薄い灰色のボーダーで輪郭を出す
-  borderRadius: '2xl',
-  borderWidth: '1px',
-  borderStyle: 'solid',
-  borderColor: 'gray.50',
+  // ボーダーは持たない（輪郭は主カード側の1枚だけ。概要と同じフラットな階層に揃える）
+  borderRadius: 'xl',
   overflow: 'hidden',
 });
 
