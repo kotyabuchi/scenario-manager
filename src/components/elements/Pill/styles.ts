@@ -163,6 +163,14 @@ export const pillDot = cva({
 });
 
 /**
+ * ラベルのスタイル
+ * ハーフレディングを刈り取り、ドット/削除アイコンと光学的に上下中央を揃える
+ */
+export const pillLabel = css({
+  textTrim: true,
+});
+
+/**
  * 削除アイコンのスタイル
  */
 export const pillRemove = css({

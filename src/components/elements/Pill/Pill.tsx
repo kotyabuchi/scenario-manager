@@ -112,7 +112,7 @@ export const Pill = ({
       {dot && (
         <span data-testid="pill-dot" className={styles.pillDot({ tone })} />
       )}
-      <span>{children}</span>
+      <span className={styles.pillLabel}>{children}</span>
       {removable && (
         <X
           size={removeIconSize(size)}

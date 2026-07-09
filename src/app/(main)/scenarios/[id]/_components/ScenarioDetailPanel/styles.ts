@@ -39,9 +39,8 @@ export const headerBar_back = css({
 });
 
 // ハーフレディングを刈り取り、グリフ実寸でアイコンと上下中央を揃える
-// （text-box未対応ブラウザでは無視され従来表示になる）
 export const textFit = css({
-  textBox: '[trim-both cap alphabetic]',
+  textTrim: true,
 });
 
 export const headerBar_actions = css({

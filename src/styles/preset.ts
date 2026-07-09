@@ -11,6 +11,21 @@ export default definePreset({
       focusVisibleWithin: '&:has(:focus-visible)',
     },
   },
+  utilities: {
+    extend: {
+      // ハーフレディングを刈り取り、グリフ実寸（cap〜baseline）でボックスをフィットさせる。
+      // アイコン横の単行ラベルの光学的な上下中央揃えに使う。
+      // text-box 未対応ブラウザ（Firefox等）では無視され従来表示になる
+      textTrim: {
+        className: 'text-trim',
+        values: { type: 'boolean' },
+        transform(value: boolean) {
+          if (!value) return {};
+          return { textBox: 'trim-both cap alphabetic' };
+        },
+      },
+    },
+  },
   theme: {
     extend: {
       tokens,
