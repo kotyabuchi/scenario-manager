@@ -13,6 +13,17 @@ export const colorValues = {
   // Canvas（ページ背景。ごく淡い緑みの白）
   canvas: { value: 'oklch(0.975 0.004 150)' },
 
+  // Paper（カード・パネル面。純白ではなく僅かに緑みのある白。モック実測 #FAFBF6〜#FBFCF9）
+  paper: { value: 'oklch(0.988 0.005 120)' },
+
+  // Paper border（カード面用の緑みグレーのボーダー。grayと同一Lランプ・色相のみ緑。
+  // モックのボックス枠実測 ≈ oklch(0.94 0.006-0.007 120)）
+  paperBorder: {
+    50: { value: 'oklch(0.965 0.006 120)' },
+    100: { value: 'oklch(0.935 0.009 120)' },
+    200: { value: 'oklch(0.875 0.012 120)' },
+  },
+
   // Light green surface（ほぼ白の極淡グリーン。モックのボックス内側相当。
   // 通常の green スケール=primary.50 より淡く、ボックス背景/枠に使う）
   lightGreen: {

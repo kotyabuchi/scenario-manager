@@ -6,8 +6,8 @@ export const semanticTokens = {
     bg: {
       // ページ背景（淡い青みがかった白）
       page: { value: '{colors.canvas}' },
-      // カード・パネル背景
-      card: { value: '{colors.white}' },
+      // カード・パネル背景（純白ではなく僅かに緑みのある白）
+      card: { value: '{colors.paper}' },
       // 入力フィールド背景
       input: { value: '{colors.gray.100}' },
       // 無効状態の背景
@@ -25,13 +25,13 @@ export const semanticTokens = {
     // ========================================
     text: {
       // タイトル・見出し
-      title: { value: '{colors.gray.800}' },
+      title: { value: '{colors.gray.900}' },
       // 本文・ラベル
-      body: { value: '{colors.gray.700}' },
+      body: { value: '{colors.gray.900}' },
       // サブテキスト・補足
-      secondary: { value: '{colors.gray.500}' },
+      secondary: { value: '{colors.gray.700}' },
       // プレースホルダー・無効テキスト
-      placeholder: { value: '{colors.gray.400}' },
+      placeholder: { value: '{colors.gray.500}' },
       // 白テキスト（濃い背景上）
       white: { value: '{colors.white}' },
       // エラーテキスト
@@ -376,7 +376,7 @@ export const semanticTokens = {
     // カード
     // ========================================
     card: {
-      bg: { value: '{colors.white}' },
+      bg: { value: '{colors.paper}' },
       title: { value: '{colors.gray.800}' },
       meta: { value: '{colors.gray.500}' },
     },
