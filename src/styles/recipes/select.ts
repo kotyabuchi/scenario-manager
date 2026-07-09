@@ -42,8 +42,17 @@ export const select = defineSlotRecipe({
       '& [data-placeholder]': {
         color: 'input.placeholder',
       },
+      // 先頭アイコン（prefix）
+      '& [data-prefix]': {
+        display: 'inline-flex',
+        flexShrink: 0,
+        color: 'icon.muted',
+      },
     },
     valueText: {
+      // prefix があっても値を左詰めで indicator を右端に保つ
+      flex: '1 1 auto',
+      textAlign: 'left',
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
@@ -165,6 +174,18 @@ export const select = defineSlotRecipe({
           },
           _disabled: {
             bg: 'gray.100',
+          },
+        },
+      },
+      // 背景なし。ラベル的に馴染ませたい箇所（並び替え等）向け
+      ghost: {
+        trigger: {
+          bg: 'transparent',
+          _hover: {
+            bg: 'gray.100',
+          },
+          _disabled: {
+            bg: 'transparent',
           },
         },
       },

@@ -63,7 +63,7 @@ type SelectItem = {
   disabled?: boolean;
 };
 
-type SelectVariant = 'form' | 'minimal';
+type SelectVariant = 'form' | 'minimal' | 'ghost';
 
 type SelectProps = {
   /** 選択肢リスト */
@@ -80,13 +80,16 @@ type SelectProps = {
   name?: string;
   /** 複数選択を許可 */
   multiple?: boolean;
-  /** スタイルバリアント: form（灰色背景）/ minimal（白背景） */
+  /** スタイルバリアント: form（灰色背景）/ minimal（白背景）/ ghost（背景なし） */
   variant?: SelectVariant;
+  /** トリガー先頭に表示するアイコン等 */
+  prefix?: React.ReactNode;
   /** トリガーボタンのアクセシブル名 */
   'aria-label'?: string;
 } & Omit<
   SelectRootProps<SelectItem>,
-  'collection' | 'value' | 'onValueChange' | 'multiple'
+  // prefix はHTML標準属性(string)と衝突するため除外して独自定義を優先する
+  'collection' | 'value' | 'onValueChange' | 'multiple' | 'prefix'
 >;
 
 /**
@@ -116,6 +119,7 @@ export const Select = ({
   name,
   multiple = false,
   variant = 'form',
+  prefix,
   'aria-label': ariaLabel,
   ...rest
 }: SelectProps) => {
@@ -136,6 +140,11 @@ export const Select = ({
       <ArkSelect.HiddenSelect aria-label={ariaLabel} />
       <ArkSelect.Control>
         <Trigger aria-label={ariaLabel} data-multiple={multiple || undefined}>
+          {prefix && (
+            <span data-prefix aria-hidden="true">
+              {prefix}
+            </span>
+          )}
           <ValueText placeholder={placeholder} />
           <Indicator>
             <CaretDown size={16} />

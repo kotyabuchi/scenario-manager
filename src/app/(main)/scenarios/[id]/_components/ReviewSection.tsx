@@ -1,7 +1,13 @@
 'use client';
 
 import { Fragment, useEffect, useState } from 'react';
-import { CaretDown, FileText, Sparkle, Star } from '@phosphor-icons/react/ssr';
+import {
+  ArrowsDownUp,
+  CaretDown,
+  FileText,
+  Sparkle,
+  Star,
+} from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
@@ -317,7 +323,8 @@ export const ReviewSection = ({
                 setSortOption(next);
               }
             }}
-            variant="minimal"
+            variant="ghost"
+            prefix={<ArrowsDownUp size={16} />}
             aria-label="コメントの並び順"
           />
         </div>
