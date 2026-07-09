@@ -1,7 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
-import { CaretLeft, NotePencil, Star } from '@phosphor-icons/react/ssr';
+import { CaretLeft, NotePencil, Star, X } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
@@ -32,6 +32,13 @@ export type ScenarioDetailPanelProps = {
   isPlayed?: boolean;
   isLoggedIn?: boolean;
   onToggleFavorite?: () => Promise<void>;
+  /**
+   * 表示コンテキスト。
+   * - `pane`: 一覧の隣に表示する2ペインの右パネル。一覧へのリンクは「閉じる」
+   * - `page`: 直URL・リロード・狭い画面での単独ページ。リンクは「シナリオ一覧に戻る」
+   * @default 'pane'
+   */
+  variant?: 'pane' | 'page';
 };
 
 /**
@@ -53,6 +60,7 @@ export const ScenarioDetailPanel = ({
   isPlayed = false,
   isLoggedIn = false,
   onToggleFavorite,
+  variant = 'pane',
 }: ScenarioDetailPanelProps) => {
   const scenarioId = scenario.scenarioId;
 
@@ -73,10 +81,19 @@ export const ScenarioDetailPanel = ({
         <div className={styles.mainCard}>
           {/* ヘッダーバー: 戻るリンク＋主要アクション（主カード内・モック準拠） */}
           <div className={styles.headerBar}>
-            <Link href="/scenarios" className={styles.headerBar_back}>
-              <CaretLeft size={16} />
-              <span>シナリオ一覧に戻る</span>
-            </Link>
+            {variant === 'pane' ? (
+              // 2ペイン: 隣に一覧が見えているので「閉じる」（URLを/scenariosへ戻してパネルを閉じる）
+              <Link href="/scenarios" className={styles.headerBar_back}>
+                <X size={16} />
+                <span>閉じる</span>
+              </Link>
+            ) : (
+              // 単独ページ: 一覧は画面にないので「戻る」
+              <Link href="/scenarios" className={styles.headerBar_back}>
+                <CaretLeft size={16} />
+                <span>シナリオ一覧に戻る</span>
+              </Link>
+            )}
             <div className={styles.headerBar_actions}>
               <Button
                 variant="outline"

@@ -201,6 +201,29 @@ export const NarrowPane: Story = {
 };
 
 /**
+ * 単独ページ表示（直URL・リロード・狭い画面）。戻るリンクの文言が変わる
+ */
+export const PageVariant: Story = {
+  args: {
+    variant: 'page',
+  },
+  decorators: [
+    (Story) => (
+      <div
+        style={{
+          background: '#f5f9f1',
+          padding: 24,
+          width: 1100,
+          maxWidth: '100%',
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+/**
  * 関連データなし（各セクションの空状態）
  */
 export const Empty: Story = {
