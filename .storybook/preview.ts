@@ -1,11 +1,32 @@
 import '../src/app/globals.css';
 
+import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
+
 import type { Preview } from '@storybook/react';
 
 const preview: Preview = {
   parameters: {
     nextjs: {
       appDirectory: true,
+    },
+
+    viewport: {
+      options: {
+        ...MINIMAL_VIEWPORTS,
+        // パネル幅の検証用プリセット。
+        // 高さを控えめ(700px)にしてキャンバスに収め、外側スクロールを防ぐ
+        // （端末プリセットは実機サイズ再現が目的のため、画面より背が高いと外側スクロールが出るのは仕様）
+        panelNarrow: {
+          name: '2ペイン詳細（狭 600px）',
+          styles: { width: '600px', height: '700px' },
+          type: 'desktop',
+        },
+        panelWide: {
+          name: '2ペイン詳細（広 1100px）',
+          styles: { width: '1100px', height: '700px' },
+          type: 'desktop',
+        },
+      },
     },
 
     controls: {
