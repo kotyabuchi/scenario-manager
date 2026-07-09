@@ -26,8 +26,6 @@ export const headerBar = css({
 
 export const headerBar_back = css({
   display: 'inline-flex',
-  // 行の上下中央ではなく上端に揃え、カードの上余白と左余白を一致させる
-  alignSelf: 'flex-start',
   alignItems: 'center',
   gap: '1',
   fontSize: 'sm',
