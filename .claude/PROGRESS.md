@@ -597,6 +597,14 @@
 4. インフラ記述（Drizzle/Hyperdrive 歴史的記述）の整理 + Chipディレクトリ名の kebab-case 化
 5. UI/UX P2残タスク 8件、FilterBottomSheet のスワイプダウン閉じジェスチャー
 6. `borders.soft` トークンを他画面（シナリオ一覧 / セッション一覧）へ展開
+7. [ ] PandaCSS任意値のアンダースコア記法バグ修正（2026-07-07発見）
+   - PandaCSSの `[...]` はTailwindと異なりアンダースコアを空白に変換しない → 不正値として宣言ごと破棄され**スタイルが静かに無効化**されている
+   - 対象（生成CSSで宣言が空 `{ }` になっているのを確認済み）:
+     - `src/components/blocks/ScheduleCalendar/styles.ts:24-25`（gridTemplateColumns/Rows → カレンダーのグリッド定義が無効）
+     - `src/components/blocks/ScheduleCalendar/styles.ts:208,227,246`（boxShadow 3箇所）
+     - `src/components/blocks/BottomNav/styles.ts:25`（上方向シャドウ）
+     - `src/app/(main)/sessions/[id]/styles.ts:154,543`（boxShadow / radial-gradient）
+   - 修正はアンダースコア→空白の置換だが、**今まで無効だったスタイルが突然適用されて見た目が変わる**ため、画面ごとに表示確認しながら適用すること（特にScheduleCalendar）
 
 ---
 
