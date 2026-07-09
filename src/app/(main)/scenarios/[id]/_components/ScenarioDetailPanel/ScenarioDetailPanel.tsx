@@ -82,13 +82,26 @@ export const ScenarioDetailPanel = ({
           {/* ヘッダーバー: 戻るリンク＋主要アクション（主カード内・モック準拠） */}
           <div className={styles.headerBar}>
             {variant === 'pane' ? (
-              // 2ペイン: 隣に一覧が見えているので「閉じる」（URLを/scenariosへ戻してパネルを閉じる）
-              <Link href="/scenarios" className={styles.headerBar_back}>
-                <X size={16} />
-                <span>閉じる</span>
-              </Link>
+              // 2ペイン: 広い画面では隣に一覧が見えるので「閉じる」、
+              // lg未満は一覧が隠れて単独表示になるため「戻る」をCSSで出し分け
+              <>
+                <Link
+                  href="/scenarios"
+                  className={`${styles.headerBar_back} ${styles.headerBar_backWide}`}
+                >
+                  <X size={16} />
+                  <span>閉じる</span>
+                </Link>
+                <Link
+                  href="/scenarios"
+                  className={`${styles.headerBar_back} ${styles.headerBar_backNarrow}`}
+                >
+                  <CaretLeft size={16} />
+                  <span>シナリオ一覧に戻る</span>
+                </Link>
+              </>
             ) : (
-              // 単独ページ: 一覧は画面にないので「戻る」
+              // 単独ページ: 一覧は画面にないので常に「戻る」
               <Link href="/scenarios" className={styles.headerBar_back}>
                 <CaretLeft size={16} />
                 <span>シナリオ一覧に戻る</span>

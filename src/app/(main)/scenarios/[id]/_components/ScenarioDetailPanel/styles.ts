@@ -42,6 +42,19 @@ export const headerBar_back = css({
   },
 });
 
+// pane時の出し分け: 2ペインが有効な lg 以上でだけ「閉じる」を表示。
+// lg 未満は一覧が隣に見えない（単独表示）ため「戻る」を表示する。
+// ブレークポイントは scenarios/layout.tsx の2ペイン切替(lg)と揃えること
+export const headerBar_backWide = css({
+  display: 'none',
+  lg: { display: 'inline-flex' },
+});
+
+export const headerBar_backNarrow = css({
+  display: 'inline-flex',
+  lg: { display: 'none' },
+});
+
 export const headerBar_actions = css({
   display: 'flex',
   alignItems: 'center',
