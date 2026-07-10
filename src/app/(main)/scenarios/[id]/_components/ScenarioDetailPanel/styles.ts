@@ -140,7 +140,10 @@ export const head = css({
   containerType: 'inline-size',
   display: 'flex',
   flexWrap: 'wrap',
-  // ボーダーは持たない（輪郭は主カード側の1枚だけ。概要と同じフラットな階層に揃える）
+  // 主カード内のサブカードとしてボーダーで輪郭を出す
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'paperBorder.100',
   borderRadius: 'xl',
   overflow: 'hidden',
 });
