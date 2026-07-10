@@ -20,7 +20,7 @@ const mockScenario = {
   author: '名無しのGM',
   description:
     '潮風が運ぶ不穏な噂。閉ざされた港町で起きる連続失踪事件を追う、現代日本クローズドシナリオ。',
-  scenarioImageUrl: 'https://picsum.photos/seed/umibe/600/450',
+  scenarioImageUrl: '/storybook/scenario-umibe.jpg',
   distributeUrl: null,
   sourceType: 'manual',
   minPlayer: 3,
@@ -46,7 +46,11 @@ const mockSessions: SessionWithKeeper[] = [
     sessionPhase: 'RECRUITING',
     createdAt: '2026-06-01T10:00:00Z',
     updatedAt: '2026-06-01T10:00:00Z',
-    keeper: { userId: 'u1', nickname: 'はるか', image: null },
+    keeper: {
+      userId: 'u1',
+      nickname: 'はるか',
+      image: '/storybook/avatar-haruka.jpg',
+    },
     participantCount: 2,
     scheduleDate: '2026-06-15T20:00:00Z',
   },
@@ -57,7 +61,11 @@ const mockSessions: SessionWithKeeper[] = [
     sessionPhase: 'COMPLETED',
     createdAt: '2026-05-01T10:00:00Z',
     updatedAt: '2026-05-20T10:00:00Z',
-    keeper: { userId: 'u2', nickname: 'もふもふ', image: null },
+    keeper: {
+      userId: 'u2',
+      nickname: 'もふもふ',
+      image: '/storybook/avatar-mofumofu.jpg',
+    },
     participantCount: 4,
     scheduleDate: '2026-05-18T21:00:00Z',
   },
@@ -96,7 +104,12 @@ const mockReviews = [
     openComment: 'とても素敵なシナリオでした…！この余韻がたまりません。',
     spoilerComment: null,
     createdAt: '2026-06-02T12:00:00Z',
-    user: { userId: 'u3', nickname: 'レン', userName: 'ren', image: null },
+    user: {
+      userId: 'u3',
+      nickname: 'レン',
+      userName: 'ren',
+      image: '/storybook/avatar-ren.jpg',
+    },
   },
   {
     userReviewId: 'r2',
@@ -110,7 +123,7 @@ const mockReviews = [
       userId: 'u2',
       nickname: 'もふもふ',
       userName: 'mofumofu',
-      image: null,
+      image: '/storybook/avatar-mofumofu.jpg',
     },
   },
 ] as unknown as ReviewWithUser[];

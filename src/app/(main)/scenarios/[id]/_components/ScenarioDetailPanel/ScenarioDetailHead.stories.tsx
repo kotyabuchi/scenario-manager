@@ -9,7 +9,7 @@ const base = {
   author: '名無しのGM',
   description:
     '海辺の街の不思議な噂を追う、探索とRPを中心とした現代日本クローズドシナリオです。',
-  scenarioImageUrl: 'https://picsum.photos/seed/umibe/600/450',
+  scenarioImageUrl: '/storybook/scenario-umibe.jpg',
   distributeUrl: 'https://example.com',
   sourceType: 'manual',
   minPlayer: 3,
