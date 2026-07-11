@@ -258,7 +258,7 @@ export const head_metaRow = css({
 export const head_metaDivider = css({
   alignSelf: 'stretch',
   width: '[1px]',
-  bg: 'paperBorder.200',
+  bg: 'paperBorder.100',
   flexShrink: 0,
 });
 
