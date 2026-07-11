@@ -149,18 +149,23 @@ export const ScenarioDetailHead = ({
             label="人数"
             value={formatPlayerCount(scenario.minPlayer, scenario.maxPlayer)}
           />
+          <span className={styles.head_metaDivider} aria-hidden="true" />
           <MetaItem
             icon={<Timer size={18} />}
             label="プレイ時間"
             value={formatPlaytime(scenario.minPlaytime, scenario.maxPlaytime)}
           />
           {!isNil(scenario.author) && (
-            <MetaItem
-              icon={<User size={18} />}
-              label="作者"
-              value={scenario.author}
-            />
+            <>
+              <span className={styles.head_metaDivider} aria-hidden="true" />
+              <MetaItem
+                icon={<User size={18} />}
+                label="作者"
+                value={scenario.author}
+              />
+            </>
           )}
+          <span className={styles.head_metaDivider} aria-hidden="true" />
           <MetaItem
             icon={<FileText size={18} />}
             label="ハンドアウト"

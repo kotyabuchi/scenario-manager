@@ -249,9 +249,17 @@ export const head_metaRow = css({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  columnGap: '5',
+  columnGap: '4',
   rowGap: '3',
   mt: '1',
+});
+
+// メタ項目間の縦区切り線（装飾のためaria-hidden）
+export const head_metaDivider = css({
+  alignSelf: 'stretch',
+  width: '[1px]',
+  bg: 'paperBorder.200',
+  flexShrink: 0,
 });
 
 export const head_metaItem = css({
