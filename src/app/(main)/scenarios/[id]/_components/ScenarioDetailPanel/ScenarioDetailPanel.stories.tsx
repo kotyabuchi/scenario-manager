@@ -27,7 +27,7 @@ const mockScenario = {
   maxPlayer: 4,
   minPlaytime: 240,
   maxPlaytime: 360,
-  handoutType: 'secret',
+  handoutType: 'SECRET',
   system: { name: 'クトゥルフ神話TRPG' },
   tags: [
     { tagId: 't1', name: 'クローズド', color: 'oklch(0.65 0.15 25)' },

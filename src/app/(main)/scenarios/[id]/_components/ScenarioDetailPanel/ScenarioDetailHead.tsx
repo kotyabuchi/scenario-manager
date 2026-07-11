@@ -24,7 +24,7 @@ export type ScenarioDetailHeadProps = {
   badges?: { label: string; variant: BadgeVariant }[];
 };
 
-const getHandoutText = (type: string): string => {
+const getHandoutText = (type: ScenarioDetail['handoutType']): string => {
   switch (type) {
     case 'NONE':
       return 'HOなし';
@@ -33,6 +33,7 @@ const getHandoutText = (type: string): string => {
     case 'SECRET':
       return '秘匿HO';
     default:
+      // DB外の値が来た場合のフォールバック（通常は到達しない）
       return 'HO不明';
   }
 };
