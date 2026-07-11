@@ -605,7 +605,13 @@
      - `src/components/blocks/BottomNav/styles.ts:25`（上方向シャドウ）
      - `src/app/(main)/sessions/[id]/styles.ts:154,543`（boxShadow / radial-gradient）
    - 修正はアンダースコア→空白の置換だが、**今まで無効だったスタイルが突然適用されて見た目が変わる**ため、画面ごとに表示確認しながら適用すること（特にScheduleCalendar）
-8. [ ] 旧メインカラー・生カラー直書きの残骸をトークンへ置換（2026-07-09棚卸し）
+8. [ ] SectionToc の下線アニメの _motionReduce(0ms化) を削除（2026-07-11方針決定）
+   - `src/components/blocks/SectionToc/styles.ts:56-58`
+   - 方針: 小さな機能フィードバック（アイコン回転・2px下線の伸長等）は
+     prefers-reduced-motion でも動かす（ネタバレキャレット f4726fa と同判断）。
+     reduced-motion で抑制するのは大きな移動・視差などの前庭刺激系のみ
+   - SectionToc は現在パネル未使用（将来のページ側目次で再利用予定）のため実害なし
+9. [ ] 旧メインカラー・生カラー直書きの残骸をトークンへ置換（2026-07-09棚卸し）
    - 現行パレットは色相148。select.ts レシピは primary.{subtle,subtleHover,text} へ置換済み
    - **旧メインカラー（H=163 / emerald #10b981 / #059568 / rgba(5,149,104)）の残り**:
      - `src/components/blocks/GlobalHeader/styles.ts`: oklch直書き11箇所（163系8＋150系3）※lg非表示・廃止判断待ち
