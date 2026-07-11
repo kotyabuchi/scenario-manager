@@ -797,6 +797,20 @@ export const reviewCard_spoilerToggle = css({
   _hover: {
     textDecoration: 'underline',
   },
+  // 開閉状態でキャレットを回転（data-expanded はコンポーネント側で付与）
+  '& svg': {
+    transitionProperty: '[transform]',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
+  },
+  '&[data-expanded] svg': {
+    transform: 'rotate(180deg)',
+  },
+  _motionReduce: {
+    '& svg': {
+      transitionDuration: '[0ms]',
+    },
+  },
 });
 
 export const reviewCard_spoilerContent = css({

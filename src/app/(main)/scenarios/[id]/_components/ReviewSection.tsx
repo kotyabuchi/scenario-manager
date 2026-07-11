@@ -194,6 +194,7 @@ const ReviewCard = ({
                 <button
                   type="button"
                   className={styles.reviewCard_spoilerToggle}
+                  data-expanded={isSpoilerExpanded ? '' : undefined}
                   onClick={onToggleSpoiler}
                 >
                   <CaretDown size={14} />
