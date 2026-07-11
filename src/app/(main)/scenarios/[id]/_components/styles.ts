@@ -797,7 +797,9 @@ export const reviewCard_spoilerToggle = css({
   _hover: {
     textDecoration: 'underline',
   },
-  // 開閉状態でキャレットを回転（data-expanded はコンポーネント側で付与）
+  // 開閉状態でキャレットを回転（data-expanded はコンポーネント側で付与）。
+  // 小さな機能フィードバックのため、Selectのインジケーターと同様に
+  // prefers-reduced-motion でも回転させる
   '& svg': {
     transitionProperty: '[transform]',
     transitionDuration: 'fast',
@@ -805,11 +807,6 @@ export const reviewCard_spoilerToggle = css({
   },
   '&[data-expanded] svg': {
     transform: 'rotate(180deg)',
-  },
-  _motionReduce: {
-    '& svg': {
-      transitionDuration: '[0ms]',
-    },
   },
 });
 
