@@ -6,6 +6,7 @@ import { css } from '@/styled-system/css';
 
 export const bodyStyle = css({
   minH: '[100vh]',
+  fontFamily: 'body',
   bg: '[linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})]',
 });
 

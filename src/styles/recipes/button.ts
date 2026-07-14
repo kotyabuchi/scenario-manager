@@ -17,7 +17,7 @@ export const button = defineRecipe({
     cursor: 'pointer',
     display: 'inline-flex',
     fontWeight: '500',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: 'body',
     isolation: 'isolate',
     minWidth: 'fit-content',
     justifyContent: 'center',

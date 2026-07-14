@@ -12,7 +12,7 @@ const sharedBase = {
   bg: 'input.bg',
   color: 'input.text',
   fontSize: '[14px]',
-  fontFamily: '[Inter, sans-serif]',
+  fontFamily: 'body',
   transitionProperty: 'common',
   transitionDuration: 'fast',
   transitionTimingFunction: 'ease-out',

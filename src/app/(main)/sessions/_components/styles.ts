@@ -32,7 +32,7 @@ export const tabButton = cva({
     border: 'none',
     borderRadius: 'md',
     fontSize: '[14px]',
-    fontFamily: '[Inter, sans-serif]',
+    fontFamily: 'body',
     px: '4',
     h: '9',
     cursor: 'pointer',

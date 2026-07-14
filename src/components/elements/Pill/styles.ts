@@ -16,7 +16,7 @@ export const pill = cva({
     alignItems: 'center',
     gap: '1',
     fontWeight: 'medium',
-    fontFamily: '[Inter, sans-serif]',
+    fontFamily: 'body',
     border: 'none',
     outline: 'none',
     userSelect: 'none',

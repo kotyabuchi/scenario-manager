@@ -26,7 +26,7 @@ export const select = defineSlotRecipe({
       borderRadius: '8px',
       color: 'input.text',
       fontSize: '14px',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: 'body',
       cursor: 'pointer',
       transition: 'all {durations.fast} ease-out',
       _focusVisible: {
