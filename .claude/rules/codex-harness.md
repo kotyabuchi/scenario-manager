@@ -92,7 +92,7 @@ Codex に渡すプロンプトのテンプレート（Codex は `AGENTS.md` を�
 
 ### Step 6. レビュー（ドライバー → `/review-diff`）
 - 未コミット差分を `/review-diff` でレビュー（`code-reviewer` は非推奨・使わない）。
-- レポートの **必須(blocking)** 指摘の有無で分岐。**推奨/検討(non-blocking)** ではループしない。
+- 判定は `/review-diff` が最終行に出力する **`REVIEW_RESULT ... blocking=<N>`** をパースする。`blocking>0` → 必須指摘をCodexに差し戻し、`blocking=0` → 通過。**推奨/検討(non-blocking)** ではループしない。
 
 ### Step 7. ループ制御
 - **1ラウンド = ゲート＋レビュー**。差し戻しは同一 Codex セッションへ、指摘（ゲート失敗ログ or 必須findings）を具体的に渡す。
