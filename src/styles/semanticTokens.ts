@@ -441,40 +441,6 @@ export const semanticTokens = {
       bg: { value: '{colors.info.50}' },
       border: { value: '{colors.info.200}' },
     },
-    stats: {
-      blue: { value: '{colors.blue.100}' },
-      green: { value: '{colors.green.100}' },
-      amber: { value: '{colors.orange.100}' },
-      iconBlue: { value: '{colors.blue.600}' },
-      iconGreen: { value: '{colors.green.600}' },
-      iconAmber: { value: '{colors.orange.600}' },
-    },
-
-    // ========================================
-    // ランディングページ
-    // ========================================
-    landing: {
-      // Feature カード
-      featureIndigo: { value: '{colors.indigo.500}' },
-      featureIndigoBg: { value: '{colors.indigo.50}' },
-      // CTA セクション
-      ctaBg: { value: '{colors.green.500}' },
-      ctaSubtext: { value: '{colors.green.100}' },
-      // Footer
-      footerBg: { value: '{colors.gray.800}' },
-      footerText: { value: '{colors.gray.400}' },
-      // システムバッジ
-      sysGreenBg: { value: '{colors.green.50}' },
-      sysGreenText: { value: '{colors.green.700}' },
-      sysBlueBg: { value: '{colors.blue.50}' },
-      sysBlueText: { value: '{colors.blue.800}' },
-      sysPurpleBg: { value: '{colors.purple.100}' },
-      sysPurpleText: { value: '{colors.purple.600}' },
-      sysPinkBg: { value: '{colors.pink.50}' },
-      sysPinkText: { value: '{colors.pink.700}' },
-      sysOrangeBg: { value: '{colors.orange.100}' },
-      sysOrangeText: { value: '{colors.orange.800}' },
-    },
   },
 
   opacity: {
