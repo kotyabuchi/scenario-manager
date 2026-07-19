@@ -96,6 +96,27 @@ MCPツールはPandaCSSが設定を解析済みの構造化データとして返
 
 **注意**: トークンの**追加・変更**時は引き続き該当ファイルを直接編集する。MCPは読み取り専用。
 
+## トークンの2層構造と追加ルール（乱立防止・厳守）
+
+色は必ずトークンで定義し、コンポーネントに生の色値をハードコードしない。トークンは **2層** に分け、役割を混ぜない。
+
+| 層 | ファイル | 役割 | 命名 | 値の形式 |
+|----|---------|------|------|---------|
+| **base（`colors`）** | `src/styles/tokens/colors.ts`（+`colorValues.ts`） | **ベースカラーの定義そのもの**。色相・明度のパレット。意味は持たない | 色相＋段階（`green.500`, `gray.100`, `paperBorder.50`） | **すべて OKLCH** |
+| **semantic（`semanticTokens`）** | `src/styles/semanticTokens.ts` | base に **意味・役割を与えた別名**。コンポーネントはこちらを参照 | 用途・役割（`bg.card`, `text.body`, `border.default`） | base への参照（`{colors.green.500}`） |
+
+- **`colors` と `semanticTokens` は別物**。`colors`＝「どんな色があるか」、`semanticTokens`＝「その色を何に使うか」。semantic は必ず base を参照し、**semantic やコンポーネントに生の色値（oklch/hex）を直書きしない**。
+- コンポーネントが参照するのは原則 **semantic トークン**。base を直接参照するのは意味付け不要な純粋な色相利用（例: `systemBadge.green`）に限る。
+
+**トークン追加ルール（同じ色のトークンを乱立させないため）:**
+
+1. **まず既存で賄えないか探す**（PandaCSS MCP の `get_tokens` / `get_semantic_tokens` で確認）。
+2. **その追加は本当に必要か問う**。既存の役割トークンに寄せられるなら追加しない。「この画面専用」の色を増やさない。
+3. **base への追加は OKLCH で**、同一 L/C ランプ・同一トーン設計を崩さない（色相のみ変える）。
+4. **semantic の命名は汎用的・カテゴリー的に**。詳細で固有の名前（`scenarioDetailHeadDivider` 等）は避け、**再利用できる役割名**（`border.subtle`, `bg.card`, `text.secondary`）を付ける。画面名プレフィックス（`landing.*` 等）は乱立の予兆。
+
+> DB 由来の動的色（`tags.color`）は例外系統。OKLCH 保存＋CSS変数注入で `Tag`→`Pill tone="custom"` に隔離する（下記「データ駆動の動的色」）。
+
 ## UI Design Guidelines
 
 プロジェクト全体のUIトーン: **モダン × ソフト × レイヤードUI**

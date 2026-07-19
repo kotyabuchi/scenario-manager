@@ -8,3 +8,11 @@ pre-commit:
     - name: type-check
       run: npx tsc --noEmit
       fail_text: "TypeScriptの型チェックに失敗しました"
+
+    - name: agents-md-sync
+      glob:
+        - ".claude/rules/*.md"
+        - ".claude/harness/agents-preamble.md"
+        - "scripts/gen-agents-md.mjs"
+      run: node scripts/gen-agents-md.mjs && git add AGENTS.md
+      fail_text: "AGENTS.md の再生成に失敗しました"

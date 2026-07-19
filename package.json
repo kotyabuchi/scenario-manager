@@ -25,6 +25,8 @@
     "test:e2e:dev": "cross-env E2E_PORT=3000 E2E_REUSE=1 playwright test",
     "test:e2e:ui": "cross-env E2E_PORT=3000 E2E_REUSE=1 playwright test --ui",
     "test:e2e:headed": "cross-env E2E_PORT=3000 E2E_REUSE=1 playwright test --headed",
+    "gen:agents": "node scripts/gen-agents-md.mjs",
+    "gen:agents:check": "node scripts/gen-agents-md.mjs --check",
     "codex:skills:export": "powershell -ExecutionPolicy Bypass -File scripts/export-codex-skills.ps1 -Clean",
     "codex:skills:link": "powershell -ExecutionPolicy Bypass -File scripts/link-codex-skills.ps1",
     "codex:skills:unlink": "powershell -ExecutionPolicy Bypass -File scripts/link-codex-skills.ps1 -Unlink"
