@@ -90,6 +90,7 @@ src/
 | `testing-patterns.md` | テスト安定化（E2Eポート運用、セレクタ鉄則、共有DBフレーク対策、a11y/コンポーネント落とし穴） |
 | `bash-rules.md` | Bashコマンド実行ルール |
 | `terminology.md` | UI用語の使い分け（スケジュール/日程） |
+| `codex-harness.md` | Codex CLI 経由の実装フロー（計画→指示→自動ゲート→レビュー→差し戻し） |
 
 すべてのルールファイルは `.claude/rules/` に配置。
 
