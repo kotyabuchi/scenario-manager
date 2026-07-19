@@ -24,6 +24,7 @@ Before reviewing, read and apply rules from:
 - `.claude/rules/error-handling.md` — Result type pattern, isNil usage
 - `.claude/rules/typescript-rules.md` — Type safety, no `any`, no `!`
 - `.claude/rules/coding-standards.md` — General standards for context
+- `.claude/rules/testing-patterns.md` — 共有クラウドSupabaseに対するE2Eの競合/フレーク（グローバル集計の厳密比較・状態変異のクリーンアップ漏れ）。テスト変更のロジック健全性に関わる
 
 ## Review Process
 
@@ -32,7 +33,7 @@ Before reviewing, read and apply rules from:
 2. **Read Changed Files**: For each changed file in the diff, read the full file content to understand context beyond the diff hunks.
 
 3. **Perspective 3: Security** — Evaluate:
-   - Input validation (especially in Server Actions, API routes, form handlers)
+   - Input validation (especially in Server Actions, API routes, form handlers)。**Server Action も API ルートと同様に認証・認可を自前で確認しているか**（`'use server'` 関数内で currentUserId 等の検証。RLS任せにせず境界で確認）
    - XSS/injection risks (dangerouslySetInnerHTML, unsanitized user input)
    - Authentication & authorization checks (Supabase RLS, middleware guards)
    - Hardcoded secrets or sensitive information (API keys, tokens, passwords)

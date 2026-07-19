@@ -21,10 +21,11 @@ Do NOT review other perspectives (coding standards, design, security, bugs). Oth
 ## Reference Rules (MUST READ)
 
 Before reviewing, read and apply rules from:
-- `.claude/rules/accessibility.md` — WCAG 2.1 AA compliance, contrast ratios, focus management, Ark UI
+- `.claude/rules/accessibility.md` — a11y方針。**重要: コントラスト比はAA厳守の対象外（ブランド色味優先）。コントラスト以外（フォーカス・キーボード・セマンティックHTML・ARIA・色以外での情報伝達）は必須**
 - `.claude/rules/styling-rules.md` — PandaCSS patterns, UI design guidelines, semantic tokens
 - `.claude/rules/react-rules.md` — Server/Client Components, optimistic updates, hooks usage
 - `.claude/rules/coding-standards.md` — Semantic HTML section specifically
+- `.claude/rules/testing-patterns.md` — a11y実バグの落とし穴（Button asChild / Select の HiddenSelect aria-label / NumberInput の aria-label・id / axe は color-contrast 無効）。テスト・UI変更時は必読
 
 ## Review Process
 
@@ -44,19 +45,19 @@ Before reviewing, read and apply rules from:
    - Image optimization (next/image usage, proper sizing)
 
 5. **Perspective 5: UX/Accessibility** — Evaluate:
-   - WCAG 2.1 AA compliance:
-     - Text contrast ratio >= 4.5:1 (normal text), >= 3:1 (large text)
-     - UI component contrast >= 3:1 (borders, focus rings, icons)
-   - Keyboard navigation (Tab, Enter, Space, Escape, arrow keys)
-   - Focus management (focus rings via `borders.focusRing` token, logical tab order)
-   - Screen reader support (ARIA attributes, alt text, semantic HTML)
-   - Error states (user-visible error messages, form validation feedback)
-   - Loading states (skeleton/spinner during async operations)
-   - Empty states (meaningful UI when no data)
-   - Semantic HTML (proper heading hierarchy, landmarks, form labels)
-   - Ark UI component usage (leveraging built-in a11y features)
-   - Icon usage with @phosphor-icons/react (not emoji)
-   - Color not as sole indicator (icons/text/shape supplement color meaning)
+   - **必須（required になりうる）:**
+     - Keyboard navigation (Tab, Enter, Space, Escape, arrow keys)
+     - Focus management (focus rings via `borders.focusRing` token, logical tab order, focus trap/restore in dialogs)
+     - Screen reader support (ARIA attributes, alt text, semantic HTML, form labels)
+     - Color not as sole indicator (icons/text/shape supplement color meaning)
+     - Error states (user-visible error messages, form validation feedback — RHF errors が画面に出るか)
+     - Loading/Empty states (skeleton/spinner during async; meaningful empty UI)
+     - Icon usage with **@phosphor-icons/react/ssr** (not emoji; `/ssr` 必須。`@phosphor-icons/react` 直 import は Server Component で createContext エラーになる実バグ)
+     - 楽観的更新 (react-rules: すべての更新系操作で `useOptimistic` + `useTransition`。更新系で欠落していれば指摘)
+   - **コントラスト（required にしない。recommended/情報提供に留める）:**
+     - テキスト 4.5:1 / 大 3:1 / UI 3:1 は**目標値**。不足を見つけても `recommended` 止まり。
+     - 理由: 本プロジェクトはコントラストをAA厳守の対象外とする方針（`accessibility.md` 正典 / `color-system-oklch` メモリ / E2E は color-contrast 無効）。コントラスト不足を `required` で挙げてはならない。
+   - Ark UI component usage (leveraging built-in a11y features; testing-patterns.md の Ark系落とし穴を参照)
 
 ## Output Format (STRICT)
 
@@ -87,8 +88,8 @@ You MUST output in exactly this format. Do not add extra sections or deviate.
 
 | Level | Meaning |
 |-------|---------|
-| `required` | Must fix before merge — WCAG violation, severe performance regression, missing error/loading state |
-| `recommended` | Should fix — performance improvement opportunity, accessibility enhancement |
+| `required` | Must fix before merge — キーボード/フォーカス/スクリーンリーダーの重大a11y欠陥、severe performance regression、missing error/loading state、`/ssr` 欠落によるアイコン import バグ。**コントラスト不足は required にしない** |
+| `recommended` | Should fix — performance improvement opportunity, accessibility enhancement, **コントラスト不足はここ** |
 | `consider` | Nice to have — minor optimization, progressive enhancement |
 
 ### Perspective Labels (Japanese)
@@ -121,7 +122,7 @@ This step prevents false positives caused by stale context or misremembered file
 
 - **Be thorough**: Check every UI-related change for accessibility and performance
 - **Be specific**: Always include exact `file:line` references
-- **WCAG matters**: Cite specific WCAG criteria (e.g., "1.4.3 Contrast Minimum") when relevant
+- **WCAG matters**: Cite specific WCAG criteria (e.g., "2.1.1 Keyboard", "4.1.2 Name, Role, Value", "1.3.1 Info and Relationships") when relevant。ただし 1.4.3 Contrast はプロジェクト方針で厳守外のため required にしない
 - **No false positives**: Only report genuine issues, not theoretical concerns
 - **Verify before reporting**: Re-read the exact line before including any finding
 - **Context matters**: Read the full component to understand rendering flow and user interaction

@@ -24,11 +24,21 @@ Before reviewing, read and apply rules from:
 - `.claude/rules/coding-standards.md` — Naming, imports, comments, git, testing, directory structure
 - `.claude/rules/typescript-rules.md` — Type strictness, Single Source of Truth, Supabase/Zod type derivation
 - `.claude/rules/react-rules.md` — Component definition, Server/Client Components, optimistic updates
-- `.claude/rules/styling-rules.md` — PandaCSS, style separation, UI design guidelines, semantic tokens
+- `.claude/rules/styling-rules.md` — PandaCSS, style separation, UI design guidelines, semantic tokens, **border方針（ボーダーレス基調だが最適な箇所は border 許可。カード面は paperBorder 薄ボーダー+影）**
 - `.claude/rules/form-rules.md` — React Hook Form + Zod, nuqs for URL state
 - `.claude/rules/error-handling.md` — Result type pattern, isNil usage
 - `.claude/rules/icons.md` — @phosphor-icons/react/ssr usage, emoji prohibition
 - `.claude/rules/logging.md` — LogTape usage, console.log prohibition
+- `.claude/rules/terminology.md` — 「スケジュール」(参加者個人の空き) と「日程」(セッション開催日時) の使い分け。UI文言の誤用を検出
+- `.claude/rules/testing-patterns.md` — テスト変更時のセレクタ鉄則（PandaCSSクラス依存禁止・role/aria優先）等
+
+### トークンガバナンス（今回策定・必読）
+
+Serena メモリ `ui-design-system.md` §1「トークンの2層構造」「トークン追加ルール」に従って評価する:
+- **2層分離**: `colors`(base=色の定義そのもの) と `semanticTokens`(意味・役割) は別物。**semantic に生の色値(oklch/hex)を直書きしていないか**、base を参照しているか。
+- **全カラーは OKLCH**（base定義）。コンポーネントは生値を持たずトークン名参照。
+- **命名は汎用的・カテゴリー的に**。`scenarioDetailHeadDivider` のような**画面固有・過度に詳細なトークン名は指摘**（`border.subtle` 等の役割名へ寄せる）。新規の画面名プレフィックス（`landing.*` 等）は乱立の予兆として指摘。
+- **追加の必要性**: 既存トークンで賄えるのに新色/新トークンを足していないか。
 
 ## Review Process
 
@@ -48,8 +58,12 @@ Before reviewing, read and apply rules from:
    - Semantic HTML (proper elements, heading hierarchy)
    - Style separation (styles in `styles.ts`, not inline)
    - Export format (`export const` for components, no `export default` at file end)
-   - PandaCSS token usage (no hardcoded color/spacing values)
-   - Icon usage (@phosphor-icons/react/ssr, not emoji)
+   - PandaCSS token usage (no hardcoded color/spacing values). **生の oklch/hex を semantic トークンやコンポーネントに直書きしていないか**（動的タグ色の CSS変数注入は例外）
+   - **トークンガバナンス**: base/semantic の2層分離、画面固有名の乱立、既存で賄える追加、を上記「トークンガバナンス」節に照らして評価
+   - **border方針**: カード/入力欄/フォーカスリング等での border は方針上許可。意図的な border を「ボーダーレス違反」と誤指摘しない。ただし `1px solid #...` のハードコードは指摘（`border.*`/`paperBorder.*` トークン参照が正）
+   - Icon usage (@phosphor-icons/react/ssr, not emoji。`/ssr` 欠落は指摘)
+   - フォーム: フォーム状態に `useState` を使っていないか（RHF+Zod必須）。URL同期状態に `useState` を使っていないか（nuqs必須）
+   - 用語: 「スケジュール/日程」の誤用（`terminology.md`）
 
 5. **Perspective 2: Design/Maintainability** — Evaluate:
    - Single Responsibility Principle (each file/function has one clear purpose)
@@ -60,6 +74,8 @@ Before reviewing, read and apply rules from:
    - Consistency with existing patterns (adapter.ts, interface.ts, page.tsx structure)
    - One component per file rule
    - Proper `_components/` directory usage for page-specific components
+   - 楽観的更新パターンの一貫性（react-rules: 更新系操作で `useOptimistic`+`useTransition` を使う設計になっているか）
+   - Storybook: 新規/変更 UI コンポーネントに対応する `.stories.tsx` があるか（react-rules で必須）
 
 ## Output Format (STRICT)
 
