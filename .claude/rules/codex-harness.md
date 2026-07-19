@@ -64,10 +64,11 @@ Codex に渡すプロンプトのテンプレート（Codex は `AGENTS.md` を�
 
 ## 対象ファイル / 配置
 <新規・変更するファイルパスと責務。既存パターン（page.tsx/adapter.ts/interface.ts/styles.ts）に従う>
+<テストの配置を明示する（既存の配置規約に従わせ、vitest.config を勝手に編集させない）>
 
 ## 受け入れ基準（必須）
 - <通すべきテスト。既にあるなら パス、無ければ TDD で先に書く>
-- pnpm check / pnpm vitest / (必要なら pnpm build) が通ること
+- pnpm check / pnpm vitest / (必要なら pnpm build) が通ること（ゲートはドライバーが実行）
 
 ## 特に注意する規約（AGENTS.md 参照。該当分を強調）
 - <例: Result型・isNil / 楽観的更新 / styles.ts分離 / @phosphor-icons/react/ssr / LogTape / トークンは semantic 参照>
@@ -79,7 +80,10 @@ Codex に渡すプロンプトのテンプレート（Codex は `AGENTS.md` を�
 
 ### Step 3. ドライバー起動（Opus → Sonnet subagent）
 - `Agent` で Codex ドライバーを起動（model は `models.json` の `codexDriver`）。
-- ドライバーは `codex exec --model <models.json.implementer.default>` でプロンプトを非対話実行。**Codex セッションを保持**し、以後の差し戻しは同一セッションを継続（resume）してコンテキストを維持する。
+- 初回実装: `codex exec -s workspace-write -m <models.json.implementer.default> <prompt>`（`-s workspace-write` でワークスペース書込を許可。プロンプトは引数 or stdin）。
+- **差し戻し（同一セッション継続）**: `codex exec resume --last -c sandbox_mode="workspace-write" <prompt>` を使う。
+  - 注意: `resume` サブコマンドは `-s` を受け付けない。sandbox は **`-c sandbox_mode="..."`** で指定する（`--last` は直近セッション、`SESSION_ID` 指定も可）。
+  - resume はセッションの文脈（前回何を実装したか）を保持するため、レビュー/ゲートの指摘だけを渡せば足りる。
 
 ### Step 4. Codex 実装
 - リポジトリの作業ツリー上で **in-place** に実装（既定。worktree は使わない）。
@@ -87,6 +91,7 @@ Codex に渡すプロンプトのテンプレート（Codex は `AGENTS.md` を�
 
 ### Step 5. 自動ゲート（ドライバー、決定論）
 - 順に `pnpm check`（Biome）→ `pnpm vitest`（関連テスト）→ 構造変更があれば `pnpm build`。
+- **ゲートはドライバーが実行する**（Codex のサンドボックス下では Biome 実行が `EPERM` で失敗するため、Codex の自己検証には依存しない）。`pnpm check` は `--write` で Biome の自動整形も適用される（セミコロン付与等）。
 - **1つでも失敗 → LLM レビューを回さず、失敗ログを Codex に差し戻す**（lint/型/テストが拾う問題に高価なレビュー往復を使わない）。
 - 全通過 → Step 6。
 

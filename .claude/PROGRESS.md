@@ -624,6 +624,13 @@
      - Tailwind系hex: tags-input `#D54443`、tabs `#E5E7EB`、skeleton のgradient
    - 例外としてOK: Tag のOKLCH（データ駆動動的色）、stories/test 内のモック色
    - 注意: 見た目が変わる置換（特に ScheduleCalendar・SignupModal）は画面確認しながら実施
+10. [ ] コーディング規約の「セミコロンなし」記述と実態の食い違いを解消（2026-07-20 Codexハーネスのドライランで発覚）
+    - 実態: `biome.json` に `semicolons` 設定が無く Biome デフォルト `"always"` が効く。コミット済みコードはセミコロンあり（例: `src/types/result.ts`）。ユーザーは打っていないが Biome が整形時に自動付与している
+    - 食い違い: `.claude/rules/coding-standards.md` §1 は「セミコロン: なし」（→ AGENTS.md にもミラーされ Codex に誤った指示が届く）
+    - 方針は現状維持で保留。将来どちらかに揃える:
+      - (A) 実態に合わせ coding-standards.md を「セミコロンあり（Biome自動付与）」に修正（biome.json 変更なし・差分ゼロ）
+      - (B) 本当に無しにするなら biome.json に `javascript.formatter.semicolons: "asNeeded"` を追加（`pnpm check` で全コード一括除去＝大きな整形差分）
+    - どちらでも決着後に `pnpm gen:agents` で AGENTS.md が自動追従する
 
 ---
 
