@@ -9,16 +9,20 @@ export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '3',
-  bg: 'white',
+  // レイヤードカード: paper面 + paperBorder薄ボーダー + 影（styling-rules.md）
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'paperBorder.50',
   borderRadius: '2xl',
   p: '3',
   cursor: 'pointer',
   transitionProperty: 'common',
   transitionDuration: 'normal',
   transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
-  boxShadow: '[0 4px 16px rgba(0, 0, 0, 0.06)]',
+  shadow: 'card.default',
   _hover: {
-    boxShadow: '[0 8px 24px rgba(0, 0, 0, 0.10)]',
+    shadow: 'card.hover',
     transform: 'translateY(-4px)',
   },
 });
@@ -83,7 +87,8 @@ export const cardSystemLabel = css({
   pr: '1',
   display: 'flex',
   alignItems: 'center',
-  bg: 'white',
+  // カード面（paper）と同色にしてカード角の切り欠きとして見せる
+  bg: 'card.bg',
   borderBottomRightRadius: '2xl',
   _before: {
     content: '""',
@@ -142,12 +147,13 @@ export const cardFavoriteButton = css({
   w: '[28px]',
   h: '[28px]',
   borderRadius: '[14px]',
-  bg: '[rgba(0, 0, 0, 0.25)]',
+  // 画像上のスクリム（生rgba→overlayトークン。値は同値: 0.25 / 0.40）
+  bg: 'overlay.25',
   transitionProperty: 'common',
   transitionDuration: 'fast',
   zIndex: '[1]',
   _hover: {
-    bg: '[rgba(0, 0, 0, 0.4)]',
+    bg: 'overlay.40',
   },
 });
 
@@ -224,7 +230,11 @@ export const cardDescription = css({
 export const cardAlt = css({
   display: 'flex',
   flexDirection: 'column',
-  bg: 'white',
+  // レイヤードカード: paper面 + paperBorder薄ボーダー + 影（styling-rules.md）
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'paperBorder.50',
   borderRadius: '2xl',
   overflow: 'hidden',
   cursor: 'pointer',
