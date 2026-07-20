@@ -99,7 +99,9 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div style={{ background: 'var(--colors-canvas)', padding: 24 }}>
+      // ScenarioDetailPanel のストーリー背景に合わせる
+      // （モック画像の背景実測値。現行 canvas トークンより緑みが強い）
+      <div style={{ background: '#f5f9f1', padding: 24 }}>
         <Story />
       </div>
     ),
