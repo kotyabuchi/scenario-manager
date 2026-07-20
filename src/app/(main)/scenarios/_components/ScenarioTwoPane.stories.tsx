@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type CSSProperties, useState } from 'react';
 
 import {
   ScenarioDetailPanel,
@@ -257,23 +257,38 @@ const TwoPane = () => {
     onSortChange: setSort,
   };
 
+  // 各ペインを1枚の面（paper + 濃いめの paperBorder + 強めの影）で囲み、
+  // #f5f9f1 の背景上で左右ペインの境界をはっきり見せる（モック準拠）
+  const paneFrame: CSSProperties = {
+    background: 'var(--colors-card-bg)',
+    border: '1px solid var(--colors-paper-border-200)',
+    borderRadius: 16,
+    padding: 16,
+    boxShadow: '0 10px 30px var(--colors-overlay-15)',
+    minWidth: 0,
+  };
+
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(360px, 4fr) minmax(0, 6fr)',
+        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
         gap: 24,
         minWidth: 1100,
       }}
     >
-      <ScenarioListPanel {...listPanelProps} />
-      <ScenarioDetailPanel
-        {...detailPanelProps}
-        isFavorite={isFavorite}
-        onToggleFavorite={async () => {
-          setIsFavorite((previous) => !previous);
-        }}
-      />
+      <div style={paneFrame}>
+        <ScenarioListPanel {...listPanelProps} />
+      </div>
+      <div style={paneFrame}>
+        <ScenarioDetailPanel
+          {...detailPanelProps}
+          isFavorite={isFavorite}
+          onToggleFavorite={async () => {
+            setIsFavorite((previous) => !previous);
+          }}
+        />
+      </div>
     </div>
   );
 };
