@@ -26,8 +26,8 @@ export const semanticTokens = {
     text: {
       // タイトル・見出し
       title: { value: '{colors.gray.900}' },
-      // 本文・ラベル
-      body: { value: '{colors.gray.900}' },
+      // 本文・ラベル（タイトルより一段淡く）
+      body: { value: '{colors.gray.800}' },
       // サブテキスト・補足
       secondary: { value: '{colors.gray.700}' },
       // プレースホルダー・無効テキスト
