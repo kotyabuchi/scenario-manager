@@ -13,6 +13,15 @@ export const panel = css({
   flexDirection: 'column',
   gap: '4',
   minWidth: '0',
+  // 一覧ペインを1枚の面で囲む。ボーダーは詳細フィルターと同じ lightGreen.border、
+  // 影はカード/セクションと同じ card.default トークンで色・強さを統一する。
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'lightGreen.border',
+  borderRadius: '2xl',
+  p: '4',
+  shadow: 'card.default',
 });
 
 // 検索結果ヘッダー（件数 + 並び替え）

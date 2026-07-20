@@ -1,4 +1,4 @@
-import { type CSSProperties, useState } from 'react';
+import { useState } from 'react';
 
 import {
   ScenarioDetailPanel,
@@ -257,18 +257,6 @@ const TwoPane = () => {
     onSortChange: setSort,
   };
 
-  // 一覧ペインだけを面で囲む（詳細ペインは囲まない）。
-  // ボーダーは詳細フィルターのボーダー(lightGreen.border)に、
-  // 影はカードと同じ緑シャドウ(greenShadowSoft)に合わせて色を統一する。
-  const listPaneFrame: CSSProperties = {
-    background: 'var(--colors-card-bg)',
-    border: '1px solid var(--colors-light-green-border)',
-    borderRadius: 16,
-    padding: 16,
-    boxShadow: '0 8px 24px var(--colors-green-shadow-soft-18)',
-    minWidth: 0,
-  };
-
   return (
     <div
       style={{
@@ -278,10 +266,11 @@ const TwoPane = () => {
         minWidth: 1100,
       }}
     >
-      <div style={listPaneFrame}>
+      {/* 一覧ペインは自身で面（枠+影）を持つ（ScenarioListPanel.styles.panel）。
+          詳細ペインは枠で囲まない。minWidth:0 は grid 縮小のためのみ。 */}
+      <div style={{ minWidth: 0 }}>
         <ScenarioListPanel {...listPanelProps} />
       </div>
-      {/* 詳細ペインは枠で囲まない（grid の縮小のため minWidth:0 のみ） */}
       <div style={{ minWidth: 0 }}>
         <ScenarioDetailPanel
           {...detailPanelProps}
