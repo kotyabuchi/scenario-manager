@@ -12,7 +12,10 @@ export const panel = css({
   gap: '4',
   bg: 'card.bg',
   borderRadius: '2xl',
-  boxShadow: 'panel.default',
+  // 影は持たず lightGreen.border で区切る（ペイン枠の中なので影は二重にしない）
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'lightGreen.border',
   p: '4',
 });
 
