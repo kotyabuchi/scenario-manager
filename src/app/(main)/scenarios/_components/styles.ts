@@ -312,8 +312,9 @@ export const cardAlt_meta = css({
 // ScenarioList スタイル
 export const scenarioListContainer = css({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-  gap: '8', // より広めの間隔
+  // 横幅730px前後で3列（各カード最小216px、1frで伸び730px時は約232px）
+  gridTemplateColumns: 'repeat(auto-fill, minmax(216px, 1fr))',
+  gap: '4',
 });
 
 // 空状態コンテナ（Pencilデザイン準拠）
