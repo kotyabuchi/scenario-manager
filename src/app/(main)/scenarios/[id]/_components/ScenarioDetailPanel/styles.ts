@@ -140,10 +140,8 @@ export const head = css({
   containerType: 'inline-size',
   display: 'flex',
   flexWrap: 'wrap',
-  // 主カード内のサブカードとしてボーダーで輪郭を出す
-  borderWidth: '1px',
-  borderStyle: 'solid',
-  borderColor: 'lightGreen.border',
+  // mainCard 内のブロックとして扱う。mainCard との二重ボーダーを避けるため
+  // 独自ボーダーは持たず、サムネの角丸クリップのため radius + overflow のみ残す
   borderRadius: 'xl',
   overflow: 'hidden',
 });

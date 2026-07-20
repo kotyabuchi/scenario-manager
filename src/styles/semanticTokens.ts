@@ -480,10 +480,10 @@ export const semanticTokens = {
       secondary: { value: '0 1px 3px {colors.overlay.10}' },
       destructive: { value: '0 2px 4px {colors.redShadow.25}' },
     },
-    // カード
+    // カード（影の色は緑寄りに統一。強さは default/hover で変える）
     card: {
-      default: { value: '0 4px 16px {colors.overlay.6}' },
-      hover: { value: '0 8px 24px {colors.overlay.10}' },
+      default: { value: '0 4px 16px {colors.greenShadowSoft.12}' },
+      hover: { value: '0 8px 24px {colors.greenShadowSoft.18}' },
     },
     // ヘッダー
     header: {

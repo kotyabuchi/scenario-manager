@@ -258,14 +258,14 @@ const TwoPane = () => {
   };
 
   // 一覧ペインだけを面で囲む（詳細ペインは囲まない）。
-  // ボーダーは詳細フィルターのボーダー(lightGreen.border)に合わせ、
-  // 影は緑寄り（詳細フィルター背景を少し暗くした程度の緑）。
+  // ボーダーは詳細フィルターのボーダー(lightGreen.border)に、
+  // 影はカードと同じ緑シャドウ(greenShadowSoft)に合わせて色を統一する。
   const listPaneFrame: CSSProperties = {
     background: 'var(--colors-card-bg)',
     border: '1px solid var(--colors-light-green-border)',
     borderRadius: 16,
     padding: 16,
-    boxShadow: '0 8px 24px oklch(0.7 0.05 148 / 0.35)',
+    boxShadow: '0 8px 24px var(--colors-green-shadow-soft-18)',
     minWidth: 0,
   };
 

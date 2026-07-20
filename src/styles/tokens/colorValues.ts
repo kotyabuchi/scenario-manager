@@ -203,6 +203,13 @@ export const colorValues = {
     30: { value: 'oklch(0.674 0.103 148 / 0.30)' },
   },
 
+  // Green soft shadow（低彩度・やや暗めの緑。黒でなく緑寄りのカード/パネル影に使う。
+  // green.500 影より彩度を落とし、面の影を統一した緑トーンにするための色）
+  greenShadowSoft: {
+    12: { value: 'oklch(0.55 0.06 148 / 0.12)' },
+    18: { value: 'oklch(0.55 0.06 148 / 0.18)' },
+  },
+
   // Red shadow（red.500 のアルファ）
   redShadow: {
     25: { value: 'oklch(0.674 0.103 20 / 0.25)' },
