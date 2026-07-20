@@ -136,23 +136,28 @@ const mkDraft = (): UseFilterDraftReturn =>
 const InteractivePanel = ({
   hasMore = false,
   empty = false,
+  width = 680,
 }: {
   hasMore?: boolean;
   empty?: boolean;
+  /** ペイン幅（px）。広さで列数が変わることを確認する */
+  width?: number;
 }) => {
   const [sort, setSort] = useState<SortOption>('newest');
   const list = empty ? [] : scenarios;
   return (
-    <ScenarioListPanel
-      systems={systems}
-      tags={tags}
-      draftState={mkDraft()}
-      scenarios={list}
-      totalCount={list.length}
-      sort={sort}
-      onSortChange={setSort}
-      hasMore={hasMore}
-    />
+    <div style={{ width, maxWidth: '100%' }}>
+      <ScenarioListPanel
+        systems={systems}
+        tags={tags}
+        draftState={mkDraft()}
+        scenarios={list}
+        totalCount={list.length}
+        sort={sort}
+        onSortChange={setSort}
+        hasMore={hasMore}
+      />
+    </div>
   );
 };
 
@@ -169,8 +174,6 @@ const meta = {
           // ScenarioDetailPanel のストーリー背景に合わせる（モック実測の緑みの白）
           background: '#f5f9f1',
           padding: 24,
-          width: 680,
-          maxWidth: '100%',
         }}
       >
         <Story />
@@ -201,4 +204,12 @@ export const WithLoadMore: Story = {
  */
 export const Empty: Story = {
   render: () => <InteractivePanel empty />,
+};
+
+/**
+ * シナリオ一覧だけを表示する単独ページ相当（広め）。
+ * この幅ではカードが3列で並ぶ。
+ */
+export const Wide: Story = {
+  render: () => <InteractivePanel width={900} />,
 };
