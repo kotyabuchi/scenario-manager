@@ -257,14 +257,15 @@ const TwoPane = () => {
     onSortChange: setSort,
   };
 
-  // 各ペインを1枚の面（paper + 濃いめの paperBorder + 強めの影）で囲み、
-  // #f5f9f1 の背景上で左右ペインの境界をはっきり見せる（モック準拠）
-  const paneFrame: CSSProperties = {
+  // 一覧ペインだけを面で囲む（詳細ペインは囲まない）。
+  // ボーダーは詳細フィルターのボーダー(lightGreen.border)に合わせ、
+  // 影は緑寄り（詳細フィルター背景を少し暗くした程度の緑）。
+  const listPaneFrame: CSSProperties = {
     background: 'var(--colors-card-bg)',
-    border: '1px solid var(--colors-paper-border-200)',
+    border: '1px solid var(--colors-light-green-border)',
     borderRadius: 16,
     padding: 16,
-    boxShadow: '0 10px 30px var(--colors-overlay-15)',
+    boxShadow: '0 8px 24px oklch(0.7 0.05 148 / 0.35)',
     minWidth: 0,
   };
 
@@ -277,10 +278,11 @@ const TwoPane = () => {
         minWidth: 1100,
       }}
     >
-      <div style={paneFrame}>
+      <div style={listPaneFrame}>
         <ScenarioListPanel {...listPanelProps} />
       </div>
-      <div style={paneFrame}>
+      {/* 詳細ペインは枠で囲まない（grid の縮小のため minWidth:0 のみ） */}
+      <div style={{ minWidth: 0 }}>
         <ScenarioDetailPanel
           {...detailPanelProps}
           isFavorite={isFavorite}
