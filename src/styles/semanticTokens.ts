@@ -377,8 +377,6 @@ export const semanticTokens = {
     // ========================================
     card: {
       bg: { value: '{colors.paper}' },
-      title: { value: '{colors.gray.800}' },
-      meta: { value: '{colors.gray.500}' },
     },
 
     // ========================================

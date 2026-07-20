@@ -186,7 +186,7 @@ export const cardContent = css({
 export const cardTitle = css({
   fontSize: '[16px]',
   fontWeight: 'semibold',
-  color: 'card.title',
+  color: 'text.body',
   lineClamp: 2,
   lineHeight: 'tight',
   textWrap: 'balance',
@@ -197,7 +197,7 @@ export const cardMeta = css({
   alignItems: 'center',
   gap: '4',
   fontSize: '[13px]',
-  color: 'card.meta',
+  color: 'text.secondary',
 });
 
 export const cardMetaItem = css({
@@ -220,7 +220,7 @@ export const cardTags = css({
 
 export const cardDescription = css({
   fontSize: 'xs',
-  color: 'card.meta',
+  color: 'text.secondary',
   lineClamp: 3,
   lineHeight: 'relaxed',
 });
@@ -284,7 +284,7 @@ export const cardAlt_content = css({
 export const cardAlt_title = css({
   fontSize: '[15px]',
   fontWeight: 'semibold',
-  color: 'card.title',
+  color: 'text.body',
   lineHeight: 'tight',
   lineClamp: 2,
   textWrap: 'balance',
@@ -292,7 +292,7 @@ export const cardAlt_title = css({
 
 export const cardAlt_system = css({
   fontSize: '[13px]',
-  color: 'card.meta',
+  color: 'text.secondary',
 });
 
 export const cardAlt_tags = css({
@@ -306,7 +306,7 @@ export const cardAlt_meta = css({
   alignItems: 'center',
   gap: '4',
   fontSize: '[13px]',
-  color: 'card.meta',
+  color: 'text.secondary',
 });
 
 // ScenarioList スタイル
