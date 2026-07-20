@@ -74,7 +74,7 @@ export const mainCard = css({
   bg: 'card.bg',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'paperBorder.50',
+  borderColor: 'lightGreen.border',
   borderRadius: '2xl',
   p: '5',
   shadow: 'card.default',
@@ -106,7 +106,7 @@ export const sectionCard = css({
   bg: 'card.bg',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'paperBorder.50',
+  borderColor: 'lightGreen.border',
   borderRadius: '2xl',
   p: '5',
   minWidth: '0',
@@ -143,7 +143,7 @@ export const head = css({
   // 主カード内のサブカードとしてボーダーで輪郭を出す
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'paperBorder.100',
+  borderColor: 'lightGreen.border',
   borderRadius: 'xl',
   overflow: 'hidden',
 });

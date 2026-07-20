@@ -9,11 +9,11 @@ export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '3',
-  // レイヤードカード: paper面 + paperBorder薄ボーダー + 影（styling-rules.md）
+  // レイヤードカード: paper面 + 緑の薄ボーダー(lightGreen.border) + 影（styling-rules.md）
   bg: 'card.bg',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'paperBorder.50',
+  borderColor: 'lightGreen.border',
   borderRadius: '2xl',
   p: '3',
   cursor: 'pointer',
@@ -230,11 +230,11 @@ export const cardDescription = css({
 export const cardAlt = css({
   display: 'flex',
   flexDirection: 'column',
-  // レイヤードカード: paper面 + paperBorder薄ボーダー + 影（styling-rules.md）
+  // レイヤードカード: paper面 + 緑の薄ボーダー(lightGreen.border) + 影（styling-rules.md）
   bg: 'card.bg',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'paperBorder.50',
+  borderColor: 'lightGreen.border',
   borderRadius: '2xl',
   overflow: 'hidden',
   cursor: 'pointer',
