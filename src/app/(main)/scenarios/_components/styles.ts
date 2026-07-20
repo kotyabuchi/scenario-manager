@@ -160,20 +160,20 @@ export const cardFavoriteButton = css({
 export const cardFavoriteIcon = css({
   w: '4',
   h: '4',
-  color: 'white',
+  color: 'icon.white',
 });
 
 export const cardFavoriteIconActive = css({
   w: '4',
   h: '4',
-  color: 'orange.500',
-  fill: 'orange.500',
+  color: 'favorite.active',
+  fill: 'favorite.active',
 });
 
 export const cardFavoriteCount = css({
   fontSize: 'xs',
   fontWeight: 'semibold',
-  color: 'white',
+  color: 'text.white',
 });
 
 export const cardContent = css({
@@ -186,7 +186,7 @@ export const cardContent = css({
 export const cardTitle = css({
   fontSize: '[16px]',
   fontWeight: 'semibold',
-  color: 'gray.800',
+  color: 'card.title',
   lineClamp: 2,
   lineHeight: 'tight',
   textWrap: 'balance',
@@ -197,7 +197,7 @@ export const cardMeta = css({
   alignItems: 'center',
   gap: '4',
   fontSize: '[13px]',
-  color: 'gray.500',
+  color: 'card.meta',
 });
 
 export const cardMetaItem = css({
@@ -209,7 +209,7 @@ export const cardMetaItem = css({
 export const cardMetaIcon = css({
   w: '3.5',
   h: '3.5',
-  color: 'gray.500',
+  color: 'icon.default',
 });
 
 export const cardTags = css({
@@ -220,7 +220,7 @@ export const cardTags = css({
 
 export const cardDescription = css({
   fontSize: 'xs',
-  color: 'gray.500',
+  color: 'card.meta',
   lineClamp: 3,
   lineHeight: 'relaxed',
 });
@@ -284,7 +284,7 @@ export const cardAlt_content = css({
 export const cardAlt_title = css({
   fontSize: '[15px]',
   fontWeight: 'semibold',
-  color: 'gray.800',
+  color: 'card.title',
   lineHeight: 'tight',
   lineClamp: 2,
   textWrap: 'balance',
@@ -292,7 +292,7 @@ export const cardAlt_title = css({
 
 export const cardAlt_system = css({
   fontSize: '[13px]',
-  color: 'gray.500',
+  color: 'card.meta',
 });
 
 export const cardAlt_tags = css({
@@ -306,7 +306,7 @@ export const cardAlt_meta = css({
   alignItems: 'center',
   gap: '4',
   fontSize: '[13px]',
-  color: 'gray.500',
+  color: 'card.meta',
 });
 
 // ScenarioList スタイル
