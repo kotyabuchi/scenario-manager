@@ -140,8 +140,8 @@ const InteractivePanel = ({
 }: {
   hasMore?: boolean;
   empty?: boolean;
-  /** ペイン幅（px）。広さで列数が変わることを確認する */
-  width?: number;
+  /** ペイン幅（px数値 or '100%' 等）。広さで列数が変わることを確認する */
+  width?: number | string;
 }) => {
   const [sort, setSort] = useState<SortOption>('newest');
   const list = empty ? [] : scenarios;
@@ -207,9 +207,9 @@ export const Empty: Story = {
 };
 
 /**
- * シナリオ一覧だけを表示する単独ページ相当（広め）。
- * この幅ではカードが3列で並ぶ。
+ * シナリオ一覧だけを表示する単独ページ相当（横いっぱい）。
+ * ビューポート幅に応じて列数が変わる。
  */
 export const Wide: Story = {
-  render: () => <InteractivePanel width={900} />,
+  render: () => <InteractivePanel width="100%" />,
 };
