@@ -19,6 +19,7 @@
     "check": "biome check --write",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
+    "test:storybook": "playwright test --config .storybook/playwright.config.ts",
     "vitest": "vitest run",
     "pretest:e2e": "kill-port 3100 9323",
     "test:e2e": "cross-env E2E_PORT=3100 playwright test",

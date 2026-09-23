@@ -568,7 +568,14 @@
 
 ## 次のアクション
 
-> **ベースライン**: `feature/session-flow`（113コミット）をマージ済み（2026-06-13, `da2cd09`）。develop が唯一の最新ソース。
+> **セッション機能の統合基点**: `feature/session-flow`（113コミット）は `develop` にマージ済み（2026-06-13, `da2cd09`）。シナリオUIの作業は `feature/ui-redesign-scenarios`、AI開発環境の整理は `chore/modernize-ai-workflows` にあり、両ブランチはまだ統合されていない。
+
+### シナリオUIリデザイン（2026-09-23確認）
+
+- 引継ぎ資料: [実装状況と再開計画](../docs/plans/ui-redesign-scenarios-status.md)。対象は `feature/ui-redesign-scenarios`。
+- 新しい一覧・詳細パネル、SideMenu、検索フィルターとStorybookは実装済み。実画面への主要な接続、共通ViewModel、2ペインルーティングは未着手。
+- Vitestのフォント初期化を修復。部品テスト50件を追加し、全52ファイル・657テスト成功（既存スキップ1件）。Storybookビルド・型チェックも成功。狭幅、検索、保存失敗のブラウザーテスト7件も成功。
+- 次は目次・検索項目・表示形式等の仕様差を確定し、一覧／SideMenu統合 → 詳細共通化 → 2ペイン遷移とE2Eの順に進める。お気に入りの失敗結果を新パネルに伝える接続も必要。
 
 ### 優先度A: テスト品質改善（横断的課題）
 1. DB統合テストのskip問題を解決（Supabase Local or モック化）

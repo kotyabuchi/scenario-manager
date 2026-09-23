@@ -6,6 +6,16 @@ import { afterEach, beforeAll, vi } from 'vitest';
 
 import * as projectAnnotations from './preview';
 
+// next/font は Next.js / Storybook のビルド時に変換されるため、
+// その変換を行わない Vitest ではフォントのメタデータだけを代替する。
+vi.mock('next/font/google', () => ({
+  Noto_Sans_JP: () => ({
+    className: 'test-noto-sans-jp',
+    variable: 'test-noto-sans-jp-variable',
+    style: { fontFamily: 'Noto Sans JP' },
+  }),
+}));
+
 // ResizeObserver mock for jsdom
 const ResizeObserverMock = vi.fn(() => ({
   observe: vi.fn(),

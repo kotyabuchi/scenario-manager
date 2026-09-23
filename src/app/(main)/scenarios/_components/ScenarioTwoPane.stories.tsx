@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 
 import {
   ScenarioDetailPanel,
@@ -8,20 +9,17 @@ import {
   ScenarioListPanel,
   type ScenarioListPanelProps,
 } from './ScenarioListPanel';
+import { useScenarioListFixture } from './ScenarioListPanel/useScenarioListFixture';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type {
-  SystemItem,
-  TagItem,
-  UseFilterDraftReturn,
-} from '@/components/blocks/FilterPanel';
+import type { SystemItem, TagItem } from '@/components/blocks/FilterPanel';
 import type {
   ReviewWithUser,
   ScenarioDetail,
   SessionWithKeeper,
   VideoLinkWithSession,
 } from '../[id]/interface';
-import type { ScenarioWithRelations, SortOption } from '../interface';
+import type { ScenarioWithRelations } from '../interface';
 
 const systems: SystemItem[] = [
   { systemId: 'coc7', name: 'クトゥルフ神話TRPG' },
@@ -57,6 +55,7 @@ const mk = (
     maxPlayer: number;
     minPlaytime: number;
     maxPlaytime: number;
+    createdAt: string;
   }>,
 ): ScenarioWithRelations =>
   ({
@@ -70,6 +69,7 @@ const mk = (
     scenarioImageUrl: null,
     system: { systemId: 'coc6', name: 'CoC 6版' },
     tags: [],
+    createdAt: '2026-07-01T00:00:00.000Z',
     ...over,
   }) as unknown as ScenarioWithRelations;
 
@@ -84,46 +84,23 @@ const scenarios: ScenarioWithRelations[] = [
     scenarioId: '2',
     name: '黄昏の街で、きみに問う',
     system: { systemId: 'coc7', name: 'クトゥルフ神話TRPG' },
-    tags: [tag('t3', 'クローズド', 20), tag('t4', '探索', 90)],
+    tags: [tag('t1', 'クローズド', 20), tag('t5', '探索', 90)],
     minPlayer: 2,
     maxPlayer: 3,
+    minPlaytime: 60,
+    maxPlaytime: 120,
+    createdAt: '2026-07-02T00:00:00.000Z',
   }),
   mk({
     scenarioId: '3',
     name: '夢のつづきは、花のあとで',
     system: { systemId: 'emo', name: 'エモクロアTRPG' },
-    tags: [tag('t5', '和風', 140), tag('t6', '感情RP', 312)],
+    tags: [tag('t6', '和風', 140), tag('t3', '青春', 312)],
+    minPlaytime: 360,
+    maxPlaytime: 480,
+    createdAt: '2026-07-03T00:00:00.000Z',
   }),
 ];
-
-const emptyParams = {
-  systems: [],
-  tags: [],
-  minPlayer: null,
-  maxPlayer: null,
-  minPlaytime: null,
-  maxPlaytime: null,
-  q: '',
-};
-
-const mkDraft = (): UseFilterDraftReturn =>
-  ({
-    mode: 'draft',
-    params: emptyParams,
-    draft: emptyParams,
-    committed: emptyParams,
-    isPending: false,
-    isDirty: false,
-    activeFilterCount: 0,
-    toggleSystem: () => {},
-    setSystems: () => {},
-    toggleTag: () => {},
-    setPlayerRange: () => {},
-    setPlaytimeRange: () => {},
-    setKeyword: () => {},
-    clearAll: () => {},
-    commit: () => {},
-  }) as unknown as UseFilterDraftReturn;
 
 const scenario = {
   scenarioId: 'scn_01',
@@ -244,17 +221,13 @@ const detailPanelProps: ScenarioDetailPanelProps = {
 };
 
 const TwoPane = () => {
-  const [sort, setSort] = useState<SortOption>('newest');
+  const listFixture = useScenarioListFixture(scenarios);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const listPanelProps: ScenarioListPanelProps = {
     systems,
     tags,
-    draftState: mkDraft(),
-    scenarios,
-    totalCount: scenarios.length,
-    sort,
-    onSortChange: setSort,
+    ...listFixture,
   };
 
   return (
@@ -292,9 +265,11 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div style={{ background: '#f5f9f1', padding: 24, overflowX: 'auto' }}>
-        <Story />
-      </div>
+      <NuqsTestingAdapter hasMemory>
+        <div style={{ background: '#f5f9f1', padding: 24, overflowX: 'auto' }}>
+          <Story />
+        </div>
+      </NuqsTestingAdapter>
     ),
   ],
 } satisfies Meta;

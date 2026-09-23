@@ -57,7 +57,10 @@ export const headerBar_backNarrow = css({
 
 export const headerBar_actions = css({
   display: 'flex',
+  flexWrap: 'wrap',
   alignItems: 'center',
+  minWidth: '0',
+  maxWidth: 'full',
   gap: '2',
 });
 

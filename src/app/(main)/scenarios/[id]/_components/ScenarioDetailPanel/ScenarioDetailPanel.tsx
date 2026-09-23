@@ -1,6 +1,6 @@
 'use client';
 
-import { useOptimistic, useTransition } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 import { CaretLeft, NotePencil, Star, X } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
@@ -11,6 +11,7 @@ import { VideoSection } from '../VideoSection';
 import { ScenarioDetailHead } from './ScenarioDetailHead';
 import * as styles from './styles';
 
+import { Alert } from '@/components/elements/alert/alert';
 import { Button } from '@/components/elements/button/button';
 import { buttonLabel } from '@/components/elements/button/styles';
 
@@ -31,6 +32,7 @@ export type ScenarioDetailPanelProps = {
   isFavorite?: boolean;
   isPlayed?: boolean;
   isLoggedIn?: boolean;
+  /** 成功時は確定したisFavoriteを更新し、失敗時はrejectする。 */
   onToggleFavorite?: () => Promise<void>;
   /**
    * 表示コンテキスト。
@@ -47,7 +49,7 @@ export type ScenarioDetailPanelProps = {
  * セクション縦並び（ScenarioDetailHead / SessionSection / VideoSection /
  * ReviewSection）を束ねる。**タブは使わない**（全セクション常時表示）。
  * 目次（SectionToc）はパネル内には置かない（必要になればページ側で検討）。
- * ヘッダーは構成検討中のため一旦未配置。
+ * ヘッダーバーに一覧への導線とお気に入り・セッション作成を配置する。
  */
 export const ScenarioDetailPanel = ({
   scenario,
@@ -64,14 +66,20 @@ export const ScenarioDetailPanel = ({
 }: ScenarioDetailPanelProps) => {
   const scenarioId = scenario.scenarioId;
 
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+  const [hasFavoriteError, setHasFavoriteError] = useState(false);
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
 
   const handleToggleFavorite = () => {
-    if (isNil(onToggleFavorite)) return;
+    if (!isLoggedIn || isPending || isNil(onToggleFavorite)) return;
+    setHasFavoriteError(false);
     startTransition(async () => {
       setOptimisticFavorite(!optimisticFavorite);
-      await onToggleFavorite();
+      try {
+        await onToggleFavorite();
+      } catch {
+        setHasFavoriteError(true);
+      }
     });
   };
 
@@ -112,8 +120,10 @@ export const ScenarioDetailPanel = ({
                 variant="outline"
                 size="sm"
                 onClick={handleToggleFavorite}
-                disabled={!isLoggedIn}
+                disabled={!isLoggedIn || isNil(onToggleFavorite) || isPending}
+                loading={isPending}
                 aria-pressed={optimisticFavorite}
+                aria-busy={isPending}
                 prefix={
                   <Star
                     size={16}
@@ -141,6 +151,13 @@ export const ScenarioDetailPanel = ({
               </Button>
             </div>
           </div>
+
+          {hasFavoriteError && (
+            <Alert
+              status="danger"
+              description="お気に入りの更新に失敗しました。もう一度お試しください。"
+            />
+          )}
 
           <section id="info" className={styles.sectionAnchor}>
             <ScenarioDetailHead scenario={scenario} />

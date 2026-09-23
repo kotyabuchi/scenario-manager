@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { expect, userEvent, within } from '@storybook/test';
 
+import { scenarioFixture } from './fixtures';
 import {
   ScenarioDetailPanel,
   type ScenarioDetailPanelProps,
@@ -140,6 +142,7 @@ const InteractivePanel = (args: ScenarioDetailPanelProps) => {
       {...args}
       isFavorite={isFavorite}
       onToggleFavorite={async () => {
+        await args.onToggleFavorite?.();
         setIsFavorite((prev) => !prev);
       }}
     />
@@ -172,7 +175,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * 広いペイン（目次カラム表示）
+ * 広いペイン
  */
 export const Default: Story = {
   decorators: [
@@ -193,7 +196,7 @@ export const Default: Story = {
 };
 
 /**
- * 狭いペイン（目次カラム非表示・1カラム）
+ * 狭いペイン（1カラム）
  */
 export const NarrowPane: Story = {
   decorators: [
@@ -236,6 +239,23 @@ export const PageVariant: Story = {
   ],
 };
 
+/** 320px幅で戻るリンクと主要アクションが欠けずに操作できることを確認する。 */
+export const MobilePage: Story = {
+  ...PageVariant,
+  parameters: {
+    viewport: {
+      options: {
+        smallMobile: {
+          name: 'Small mobile (320px)',
+          styles: { width: '320px', height: '740px' },
+          type: 'mobile',
+        },
+      },
+    },
+  },
+  globals: { viewport: { value: 'smallMobile', isRotated: false } },
+};
+
 /**
  * 関連データなし（各セクションの空状態）
  */
@@ -261,4 +281,99 @@ export const Empty: Story = {
       </div>
     ),
   ],
+};
+
+/** 未ログイン時は閲覧とセッション作成導線を表示し、お気に入りを無効にする。 */
+export const LoggedOut: Story = {
+  args: { isLoggedIn: false },
+};
+
+export const Favorite: Story = {
+  args: { isFavorite: true },
+};
+
+/** クリック直後の楽観表示と処理中の再操作防止を確認する。 */
+export const FavoritePending: Story = {
+  args: {
+    onToggleFavorite: async () => {
+      const responseDelayMs = 3000;
+      await new Promise((resolve) => setTimeout(resolve, responseDelayMs));
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'お気に入り' }));
+    await expect(
+      canvas.getByRole('button', { name: 'お気に入り' }),
+    ).toBeDisabled();
+  },
+};
+
+/** お気に入りを押すと通信失敗を再現し、元の状態への復帰と再試行を確認できる。 */
+export const FavoriteFailure: Story = {
+  args: {
+    onToggleFavorite: async () => {
+      const responseDelayMs = 500;
+      await new Promise((resolve) => setTimeout(resolve, responseDelayMs));
+      throw new Error('Storybook: お気に入り更新の失敗');
+    },
+  },
+};
+
+export const PlayedEmpty: Story = {
+  args: {
+    isPlayed: true,
+    sessions: [],
+    videos: [],
+    reviews: [],
+    reviewTotalCount: 0,
+  },
+};
+
+export const Minimal: Story = {
+  args: {
+    scenario: {
+      ...scenarioFixture,
+      scenarioImageUrl: null,
+      description: null,
+      author: null,
+      avgRating: null,
+      reviewCount: 0,
+      tags: [],
+      distributeUrl: null,
+    },
+    sessions: [],
+    videos: [],
+    reviews: [],
+    reviewTotalCount: 0,
+  },
+};
+
+/** 長文タイトル・概要を狭いペインで確認する。 */
+export const LongContent: Story = {
+  args: {
+    scenario: {
+      ...scenarioFixture,
+      name: '閉ざされた港町に残された約束と失踪事件の真相を探る長い物語',
+      description:
+        '潮風が運ぶ不穏な噂を頼りに、町の住人たちの記憶をたどります。\n'.repeat(
+          20,
+        ),
+    },
+  },
+  decorators: NarrowPane.decorators ?? [],
+};
+
+/** 改行機会のない英数字・URLを狭い画面で確認する。 */
+export const LongUnbrokenContent: Story = {
+  ...MobilePage,
+  args: {
+    variant: 'page',
+    scenario: {
+      ...scenarioFixture,
+      name: 'ScenarioTitleWithoutSpaces'.repeat(6),
+      author: 'AuthorNameWithoutSpaces'.repeat(5),
+      description: `https://example.com/${'long-path-without-spaces'.repeat(10)}`,
+    },
+  },
 };

@@ -1,75 +1,33 @@
-import { ScenarioFilters } from './ScenarioFilters';
+import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
+
+import { systems, tags } from '../ScenarioListPanel/fixtures';
+import { ScenarioFilters, type ScenarioFiltersProps } from './ScenarioFilters';
+
+import { useFilterDraft } from '@/components/blocks/FilterPanel';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type {
-  SystemItem,
-  TagItem,
-  UseFilterDraftReturn,
-} from '@/components/blocks/FilterPanel';
 
-const systems: SystemItem[] = [
-  { systemId: 'coc7', name: 'クトゥルフ神話TRPG' },
-  { systemId: 'coc6', name: 'CoC 6版' },
-  { systemId: 'sw25', name: 'ソード・ワールド2.5' },
-  { systemId: 'emo', name: 'エモクロアTRPG' },
-  { systemId: 'ins', name: 'インセイン' },
-  { systemId: 'dx', name: 'ダブルクロス The 3rd' },
-];
+const DraftFilters = (props: Omit<ScenarioFiltersProps, 'draftState'>) => (
+  <ScenarioFilters {...props} draftState={useFilterDraft()} />
+);
 
-const tags: TagItem[] = [
-  { tagId: 't1', name: 'クローズド' },
-  { tagId: 't2', name: '現代日本' },
-  { tagId: 't3', name: '青春' },
-  { tagId: 't4', name: 'ホラー' },
-  { tagId: 't5', name: '探索' },
-  { tagId: 't6', name: '和風' },
-];
-
-type DraftOver = {
-  systems?: string[];
-  tags?: string[];
-  q?: string;
-};
-
-const emptyParams = {
-  systems: [],
-  tags: [],
-  minPlayer: null,
-  maxPlayer: null,
-  minPlaytime: null,
-  maxPlaytime: null,
-  q: '',
-};
-
-const mkDraft = (over: DraftOver = {}): UseFilterDraftReturn => {
-  const params = { ...emptyParams, ...over };
-  return {
-    mode: 'draft',
-    params,
-    draft: params,
-    committed: emptyParams,
-    isPending: false,
-    isDirty: false,
-    activeFilterCount: (over.systems?.length ?? 0) + (over.tags?.length ?? 0),
-    toggleSystem: () => {},
-    setSystems: () => {},
-    toggleTag: () => {},
-    setPlayerRange: () => {},
-    setPlaytimeRange: () => {},
-    setKeyword: () => {},
-    clearAll: () => {},
-    commit: () => {},
-  } as unknown as UseFilterDraftReturn;
-};
+const InteractiveFilters = ({
+  initialSearchParams = '',
+  ...props
+}: Omit<ScenarioFiltersProps, 'draftState'> & {
+  initialSearchParams?: string;
+}) => (
+  <NuqsTestingAdapter searchParams={initialSearchParams} hasMemory>
+    <DraftFilters {...props} />
+  </NuqsTestingAdapter>
+);
 
 const meta = {
   title: 'Scenarios/ScenarioFilters',
-  component: ScenarioFilters,
+  component: InteractiveFilters,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'fullscreen',
-    nextjs: { appDirectory: true },
-  },
+  args: { systems, tags },
+  parameters: { layout: 'fullscreen', nextjs: { appDirectory: true } },
   decorators: [
     (Story) => (
       <div style={{ background: 'var(--colors-canvas)', padding: 24 }}>
@@ -79,33 +37,24 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof ScenarioFilters>;
+} satisfies Meta<typeof InteractiveFilters>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * 折りたたみ（基本行のみ）
- */
-export const Collapsed: Story = {
-  args: { systems, tags, draftState: mkDraft() },
-};
+/** 入力と選択を編集し、「この条件で検索」で確定できる。 */
+export const Collapsed: Story = {};
 
-/**
- * 詳細フィルター展開
- */
-export const Expanded: Story = {
-  args: { systems, tags, draftState: mkDraft(), defaultExpanded: true },
-};
+export const Expanded: Story = { args: { defaultExpanded: true } };
 
-/**
- * フィルター適用中（バッジ・クリア表示、選択チップ）
- */
 export const WithActiveFilters: Story = {
   args: {
-    systems,
-    tags,
-    draftState: mkDraft({ systems: ['coc7'], tags: ['t1', 't4'], q: '海辺' }),
+    initialSearchParams:
+      '?systems=coc7&tags=closed,horror&q=海辺&minPlayer=3&maxPlayer=5&minPlaytime=4&maxPlaytime=8',
     defaultExpanded: true,
   },
+};
+
+export const KeywordOnly: Story = {
+  args: { initialSearchParams: '?q=海辺' },
 };

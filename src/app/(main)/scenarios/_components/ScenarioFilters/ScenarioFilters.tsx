@@ -47,7 +47,7 @@ export const ScenarioFilters = ({
           <input
             type="search"
             className={styles.keywordInput}
-            placeholder="シナリオ名・作者名など"
+            placeholder="シナリオ名"
             value={params.q}
             onChange={(e) => setKeyword(e.target.value)}
             aria-label="フリーワード検索"
@@ -85,7 +85,7 @@ export const ScenarioFilters = ({
 
       {/* フッター: クリア + 検索 */}
       <div className={styles.footer}>
-        {activeFilterCount > 0 && (
+        {(activeFilterCount > 0 || params.q !== '') && (
           <Button type="button" variant="ghost" onClick={clearAll}>
             フィルターをクリア
           </Button>

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SideMenu } from './SideMenu';
 
@@ -26,8 +27,9 @@ vi.mock('@/context', () => ({
 }));
 
 // useDiscordAuth をモック
+const mockLogin = vi.fn();
 vi.mock('@/hooks/useDiscordAuth', () => ({
-  useDiscordAuth: () => ({ login: vi.fn() }),
+  useDiscordAuth: () => ({ login: mockLogin }),
 }));
 
 // ScenarioRegisterDialog をモック（Portal 回避）
@@ -53,6 +55,20 @@ const loggedInAuth: AuthContextType = {
 };
 
 describe('SideMenu', () => {
+  beforeEach(() => {
+    mockPathname.mockReturnValue('/home');
+    mockLogin.mockClear();
+    mockUseAuth.mockReturnValue({
+      user: null,
+      discordMeta: null,
+      isLoading: false,
+      isAuthenticated: false,
+      isNewUser: false,
+      setUser: vi.fn(),
+      clearUser: vi.fn(),
+    });
+  });
+
   describe('レンダリング', () => {
     it('ロゴがホームへのリンクになっている', () => {
       render(<SideMenu />);
@@ -85,6 +101,20 @@ describe('SideMenu', () => {
   });
 
   describe('アクティブ状態', () => {
+    it('詳細ルートでも親のシナリオだけが現在地になる', () => {
+      mockPathname.mockReturnValue('/scenarios/scenario-1');
+      render(<SideMenu />);
+      expect(screen.getByRole('link', { current: 'page' })).toHaveTextContent(
+        'シナリオ',
+      );
+    });
+
+    it('パスの先頭が似ている別ルートを現在地にしない', () => {
+      mockPathname.mockReturnValue('/scenarios-archive');
+      render(<SideMenu />);
+      expect(screen.queryByRole('link', { current: 'page' })).toBeNull();
+    });
+
     it('現在パスのリンクに aria-current=page が付く', () => {
       mockPathname.mockReturnValue('/scenarios');
       render(<SideMenu />);
@@ -99,6 +129,17 @@ describe('SideMenu', () => {
   });
 
   describe('未ログイン時', () => {
+    it('キーボードでログインを開始でき、登録導線は表示しない', async () => {
+      const user = userEvent.setup();
+      render(<SideMenu />);
+      screen.getByRole('button', { name: 'ログイン' }).focus();
+      await user.keyboard('{Enter}');
+      expect(mockLogin).toHaveBeenCalledTimes(1);
+      expect(
+        screen.queryByRole('button', { name: /シナリオを登録/ }),
+      ).not.toBeInTheDocument();
+    });
+
     it('ログインボタンが表示される', () => {
       mockUseAuth.mockReturnValue({
         user: null,
@@ -117,6 +158,18 @@ describe('SideMenu', () => {
   });
 
   describe('ログイン時', () => {
+    it('認証状態が変わるとログイン導線からプロフィール導線に切り替わる', () => {
+      const { rerender } = render(<SideMenu />);
+      expect(screen.getByRole('button', { name: 'ログイン' })).toBeVisible();
+      mockUseAuth.mockReturnValue(loggedInAuth);
+      rerender(<SideMenu />);
+      expect(screen.queryByRole('button', { name: 'ログイン' })).toBeNull();
+      expect(screen.getByRole('link', { name: 'はるか' })).toHaveAttribute(
+        'href',
+        '/profile',
+      );
+    });
+
     it('シナリオ登録ボタンとユーザー名が表示される', () => {
       mockUseAuth.mockReturnValue(loggedInAuth);
       render(<SideMenu />);

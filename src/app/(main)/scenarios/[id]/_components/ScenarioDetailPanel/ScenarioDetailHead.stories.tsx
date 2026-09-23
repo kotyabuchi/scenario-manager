@@ -1,3 +1,4 @@
+import { scenarioFixture } from './fixtures';
 import { ScenarioDetailHead } from './ScenarioDetailHead';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -85,4 +86,16 @@ export const Minimal: Story = {
       tags: [],
     } as unknown as ScenarioDetail,
   },
+};
+
+/** 長いタイトル・作者名を狭い画面でも保持する。 */
+export const LongContent: Story = {
+  args: {
+    scenario: {
+      ...scenarioFixture,
+      name: '閉ざされた港町に残された約束と失踪事件の真相を探る長い物語',
+      author: 'シナリオ制作サークル・海辺のアトリエ共同制作チーム',
+    },
+  },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
 };

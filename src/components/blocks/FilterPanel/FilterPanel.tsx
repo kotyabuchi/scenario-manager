@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X } from '@phosphor-icons/react/ssr';
 
 import { FilterSection } from './FilterSection';
@@ -45,17 +45,31 @@ export const FilterPanel = ({
   const [expandedSystems, setExpandedSystems] = useState(false);
   const [expandedTags, setExpandedTags] = useState(false);
 
-  // プレイ人数のローカル状態（スライダー操作中のUI更新用）
+  // 即時適用モードのdebounce中もスライダーの操作を表示に反映する。
   const [playerRange, setPlayerRangeLocal] = useState<number[]>([
     params.minPlayer ?? PLAYER_MIN,
     params.maxPlayer ?? PLAYER_MAX,
   ]);
 
-  // プレイ時間のローカル状態（スライダー操作中のUI更新用）
   const [playtimeRange, setPlaytimeRangeLocal] = useState<number[]>([
     params.minPlaytime ?? PLAYTIME_MIN,
     params.maxPlaytime ?? PLAYTIME_MAX,
   ]);
+
+  // 外部から確定条件が変わったときは、クリアや履歴移動の結果を表示する。
+  useEffect(() => {
+    setPlayerRangeLocal([
+      params.minPlayer ?? PLAYER_MIN,
+      params.maxPlayer ?? PLAYER_MAX,
+    ]);
+  }, [params.minPlayer, params.maxPlayer]);
+
+  useEffect(() => {
+    setPlaytimeRangeLocal([
+      params.minPlaytime ?? PLAYTIME_MIN,
+      params.maxPlaytime ?? PLAYTIME_MAX,
+    ]);
+  }, [params.minPlaytime, params.maxPlaytime]);
 
   // 表示するシステム
   const visibleSystems = expandedSystems
@@ -87,6 +101,13 @@ export const FilterPanel = ({
     );
   };
 
+  const handleClearAll = () => {
+    // debounce前はURLの範囲が変わらないため、操作中の表示も明示的に戻す。
+    setPlayerRangeLocal([PLAYER_MIN, PLAYER_MAX]);
+    setPlaytimeRangeLocal([PLAYTIME_MIN, PLAYTIME_MAX]);
+    clearAll();
+  };
+
   return (
     <div className={styles.filterPanel({ variant })}>
       {/* システム選択 */}
@@ -99,6 +120,7 @@ export const FilterPanel = ({
                 <button
                   key={system.systemId}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => toggleSystem(system.systemId)}
                   className={styles.selectableChip({ selected: isSelected })}
                 >
@@ -133,6 +155,7 @@ export const FilterPanel = ({
               <button
                 key={tag.tagId}
                 type="button"
+                aria-pressed={isSelected}
                 onClick={() => toggleTag(tag.tagId)}
                 className={styles.selectableChip({ selected: isSelected })}
               >
@@ -202,7 +225,11 @@ export const FilterPanel = ({
 
       {/* クリアボタン（bottomsheetは3ボタンフッターと重複するため非表示） */}
       {showClear && variant !== 'bottomsheet' && activeFilterCount > 0 && (
-        <button type="button" onClick={clearAll} className={styles.clearButton}>
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className={styles.clearButton}
+        >
           フィルターをクリア
         </button>
       )}
