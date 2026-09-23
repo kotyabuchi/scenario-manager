@@ -1,21 +1,21 @@
 # シナリオ一覧・詳細 UI リデザイン（2ペイン化 + PCサイドメニュー）
 
-> 実装状況・再開順序・検証結果は [実装状況と再開計画](ui-redesign-scenarios-status.md) を参照。新しい表示部品は実装済みだが、実画面への主要な接続と2ペインルーティングは未着手。本書と部品の差異は同資料の「統合前に確定する仕様」で管理する。
+> この設計は実画面に反映済み。実装範囲と検証結果は [実装状況](ui-redesign-scenarios-status.md) を参照。
 
 ## Context
 
 ChatGPT Image 2 のモックと簡易要件（`docs/redegins/requirements.md`）をもとに、全体トーンの微修正とシナリオ一覧・詳細の左右2ペイン化を行う。
 方針の詳細は `docs/redegins/design-direction.md` を参照。モック・ChatGPT要件は**レイアウト/トーンの参考**であり仕様書ではない。
 
-**現状:**
+**着手時の構成:**
 - グローバルナビは上部 `GlobalHeader` ＋ モバイル `BottomNav` ＋ `SpeedDialFAB`（左サイドメニューなし）。
 - `/scenarios` は「左フィルターレール（SearchSidebar）＋ 結果グリッド」の単一ペイン。`/scenarios/[id]` は独立フルページ（既にタブ無し・セクション縦並び）。
 - トーン（背景・カード・影・角丸・プライマリ・ノッチ式システムラベル）は既存 `semanticTokens.ts` で既にモックと一致。
 
 **ゴール:**
 - PC のみ左 `SideMenu`、モバイルは現状維持（ハイブリッド）。
-- `/scenarios/[id]` を PC で「一覧 | 詳細パネル」の2ペイン表示（Parallel + Intercepting Routes）。モバイルは詳細単独。
-- 詳細は**タブ禁止・セクション縦並び＋目次**（モックのタブは不採用）。
+- `/scenarios/[id]` はペイン領域を740px以上確保できる画面で「一覧 | 詳細パネル」の2ペイン表示（Parallel + Intercepting Routes）。それより狭い画面では詳細単独。
+- 詳細は**タブ禁止・セクション縦並び**。目次は単独ページだけに表示する。
 - フィルターはペイン上部へインライン化（SearchSidebar 廃止）。
 
 ## 決定事項
@@ -27,10 +27,14 @@ ChatGPT Image 2 のモックと簡易要件（`docs/redegins/requirements.md`）
 | ブランド名 | 既存「シナプレ管理くん」を踏襲 | モックの「シナリオノート」はChatGPTの創作で不採用 |
 | ナビ項目 | 既存ルート準拠（ホーム/シナリオ/セッション/スケジュール/ユーザー/マイページ） | 未実装ルート（マイリスト等）を投機的に作らない |
 | 詳細ルーティング | Parallel Routes (`@detail`) + Intercepting Routes (`(.)[id]`) | 一覧 state を保持しつつ詳細表示、直URLはフルページで動作 |
-| 詳細レイアウト | タブ禁止・セクション縦並び＋目次（TOC） | 要件採用。モックのタブは不採用 |
-| 目次の出し分け | 余裕あるPC=右固定 / 狭いパネル・タブレット=上部sticky横並び or FloatingButton+Drawer / モバイル=Drawer | 2ペインの詳細パネルは幅≈50%で右固定目次が窮屈 |
+| 詳細レイアウト | タブ禁止・セクション縦並び。目次は単独ページだけ | 2ペインの詳細パネルに目次を置かず、本文幅を確保する |
+| 目次の出し分け | 単独ページの広い画面=右固定 / 狭い画面=Drawer | 2ペインでは画面幅にかかわらず非表示 |
 | フィルターUI | ペイン上部インライン化、SearchSidebar/SearchTopBar/MobileSearchBar 廃止 | 3カラム化により左フィルターレールは破綻 |
-| タグ | カテゴリ別カラー導入を検討（配色は実装時 Pencil で確定） | 視覚情報量の向上。未確定なら現状グレー維持 |
+| 検索項目 | 基本行はシナリオ名キーワード。詳細はシステム・タグ・プレイ人数・プレイ時間 | 現行の検索契約と一致させる。カテゴリ・HO公開は含めない |
+| 表示形式 | MVPはカード表示のみ。カード／リスト切替は後続 | 実装・検証対象を明確にする |
+| タグ | DBの `tags.color` を受け取り、無効値は既定色へフォールバック | タグ名やカテゴリから固定色を割り当てない |
+| 2ペイン幅 | 左右1:1、ペイン間24px。ペイン領域の下限は740px | Storybookで展開した検索を含め実測。720pxでは結果行が不自然に折り返される |
+| 戻る・閉じる | 一覧から開いた詳細は元の一覧状態へ戻す | 検索条件・並び順・追加読込分・スクロール・発火元フォーカスを保持する |
 | セッション | 本計画スコープ外（後続）。共通基盤（トークン/SideMenu/カード規約）は波及考慮 | ユーザー主目的はシナリオ2ペイン |
 
 ## 前提条件
@@ -38,7 +42,7 @@ ChatGPT Image 2 のモックと簡易要件（`docs/redegins/requirements.md`）
 - PandaCSS セマンティックトークンは `src/styles/semanticTokens.ts` 管理（変更後 `pnpm prepare` で再生成）。
 - `scenarios/[id]/page.tsx` の既存フルページ詳細は**直URL/リロード用に保持**する。
 - ブランチ: `develop` から `feature/ui-redesign-scenarios` を切って作業（大規模のため）。
-- タグのカテゴリ別カラーを採用する場合、Batch 4 着手前に配色を Pencil/MCP で確定（未確定なら現状グレー維持で先送り可）。
+- `tags.color` は DB 由来のOKLCH値を `Tag` で表示する。新しいカテゴリ別カラートークンは作らない。
 
 ## 段階リリース方針
 
@@ -62,11 +66,11 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 | 順 | ユニット | 対応 Step | Storybook の主な状態 |
 |----|---------|----------|---------------------|
 | 0 | トークン基盤（前提） | Batch 1 | （コンポーネントではない。先行必須） |
-| 1 | 状態バッジ／カテゴリタグ | Batch 1(トークン)＋Batch 4 Step 4-1 | 募集中/参加予定/締切間近/終了、各カテゴリタグ、未選択/選択 |
+| 1 | 状態バッジ／DB色のタグ | Batch 1(トークン)＋Batch 4 Step 4-1 | 募集中/参加予定/締切間近/終了、DB色/無効色、未選択/選択 |
 | 2 | ScenarioCard | Batch 4 Step 4-2 | 通常/お気に入り済/長文/サムネ無/2ペイン縮小幅 |
 | 3 | ScenarioFilters | Batch 3 Step 3-1 | 基本のみ/詳細展開/フィルター適用中/clear |
 | 4 | SideMenu | Batch 2 Step 2-1 | 各ナビ active/未ログイン/ログイン済 |
-| 5 | SectionToc | Batch 6A Step 6A-3 | セクション 0/1/多数、PC右固定/狭幅横並び、現在地ハイライト |
+| 5 | SectionToc | Batch 6A Step 6A-3 | 単独ページ用。セクション 0/1/多数、広幅右固定/狭幅Drawer、現在地ハイライト |
 | 6 | ScenarioDetailPanel | Batch 6A Step 6A-2 | VM モックで full/最小（一部セクション欠）/お気に入り操作 |
 
 ### Track 2: 統合・配線（Storybook 化不可。Track 1 の該当部品が確定してから着手）
@@ -76,7 +80,7 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 | 1 | `layout.tsx` に SideMenu 組込・GlobalHeader lg 非表示・全画面余白棚卸し | Batch 2 Step 2-2〜2-4 |
 | 2 | `ScenariosContent` に ScenarioFilters/ScenarioCard 配線・結果行・旧フィルター廃止 | Batch 3 Step 3-2〜3-4 |
 | 3 | `viewModel` 抽出・`[id]/page.tsx` リファクタ | Batch 5 Step 5-3 |
-| 4 | Parallel/Intercepting Routes 基盤（`layout`/`@detail`/仮UI）・state 保持検証 | Batch 5 Step 5-1,5-2,5-4,5-5 |
+| 4 | Parallel/Intercepting Routes 基盤（`layout`/`@detail`）・state 保持検証 | Batch 5 Step 5-1,5-2,5-4,5-5 |
 | 5 | `@detail` 実描画・フルページ整合・アニメ | Batch 6B Step 6B-1〜6B-3 |
 | 6 | E2E/POM 更新 | Batch 3 Step 3-4 / Batch 6B Step 6B-4 |
 
@@ -100,11 +104,10 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 - 追加: `badge.recruiting.{bg,dot,text}`（募集中=ピンク〜淡赤系）。`warning`(オレンジ=締切間近) と色で区別。
 - 既存 `badge.success`(参加予定=緑) / `badge.neutral`(終了=グレー) は流用。
 
-### Step 1-3.（任意）タグ カテゴリ別カラートークン
+### Step 1-3. DB管理タグ色
 
-- 対象: `src/styles/semanticTokens.ts`
-- 追加: `tag.{closed,setting,genre,style,warning,default}.{bg,text}`（配色確定後）。
-- 未確定なら本ステップはスキップし、Batch 4 でグレー維持。
+- `Tag` は `tags.color` を受け取り、既存の `tagColor` で背景色と文字色を導出する。
+- 色が null または不正な場合は既定色にフォールバックする。カテゴリ別カラートークンは追加しない。
 
 ### Review Checkpoint: Batch 1
 - [ ] `pnpm prepare`（PandaCSS再生成）→ `pnpm check`
@@ -133,7 +136,7 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
   - `main`: `flex: 1; minW: 0`。
   - `GlobalHeader` は lg 以上で非表示（`display: { base: 'flex', lg: 'none' }`）。モバイルのみ残す。
   - `BottomNav` / `SpeedDialFAB` は現状維持（モバイル）。
-  - `SimpleFooter` の要否を確認（サイドメニュー構成での扱いを判断）。
+  - 共通フッターは設けない。権利表記は「サービスについて」の独立ページに集約する。
 
 ### Step 2-3. 全メインページの横余白棚卸し
 
@@ -161,8 +164,8 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 
 - 新規: `src/app/(main)/scenarios/_components/ScenarioFilters/{ScenarioFilters.tsx,styles.ts}`
 - 構成:
-  - 基本（常時表示）: フリーワード / システム / カテゴリ。
-  - 詳細（Accordion 展開）: プレイ時間 / 人数 / HO公開 / タグ。
+  - 基本（常時表示）: シナリオ名キーワード。
+  - 詳細（Accordion 展開）: システム / タグ / プレイ人数 / プレイ時間。
   - 既存 `useFilterDraft`（`FilterPanel`）のドラフト/コミット機構を流用。
 - Storybook 必須。
 
@@ -171,8 +174,8 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 - 対象: `src/app/(main)/scenarios/_components/ScenariosContent.tsx`
 - 変更:
   - `SearchSidebar` / `SearchTopBar` 参照を `ScenarioFilters` に置換。
-  - 検索結果行: 左=件数 / 右=並び順・表示形式（カード/リスト切替を追加）。
-  - サイドバー折りたたみ state を削除。モバイルは `FilterBottomSheet` を継続利用。
+  - 検索結果行: 左=件数 / 右=並び順。MVPはカード表示のみ。
+  - サイドバー折りたたみ state を削除。モバイルも `ScenarioFilters` を使用する。
 
 ### Step 3-3. 旧フィルターコンポーネント廃止
 
@@ -194,10 +197,10 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 
 ## Batch 4: シナリオカードのトーン微修正
 
-### Step 4-1.（任意）タグのカテゴリ別カラー
+### Step 4-1. DB管理タグ色
 
-- 対象: タグ表示コンポーネント（`ScenarioCard` 内 or 共通 Tag）
-- `cva` で Batch 1 のトークンをバリアント適用。配色未確定ならスキップ。
+- 対象: 共通 `Tag` と `ScenarioCard`。
+- DBの `tags.color` をそのまま受け渡し、null・不正値は既定色で表示する。カテゴリ別の固定色は作らない。
 
 ### Step 4-2. `ScenarioCard` 微調整
 
@@ -207,8 +210,7 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 
 ### Review Checkpoint: Batch 4
 - [ ] `pnpm check` / `pnpm vitest`
-- [ ] 見積: タグ cva + カード調整 + Storybook 更新で **100 行を超える見込み** → `/review-diff` を**実施**（スキップしない）→ 指摘修正 → コミット
-- [ ] タグ配色未確定でカラー化をスキップした場合は差分が小さくなるため、実差分で再判定
+- [ ] タグ色の受け渡し、カード調整、Storybook の差分をレビューし、指摘修正後にコミット
 
 ---
 
@@ -218,12 +220,15 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 
 - 新規: `src/app/(main)/scenarios/layout.tsx`
 - 構成: `children`（一覧）と `detail`（パネル）を横並び。
-  - `detail` あり: 一覧を縮小（`lg: { maxW: '50%' }` 目安）、`detail` を `w: { base: '100%', lg: '50%' }; minW: { lg: '480px' }`。
+  - `detail` あり: 一覧:詳細を1:1、間隔24pxで配置する。利用可能なペイン領域が740px以上（各ペイン358px以上）の場合だけ2ペインにする。740px未満では詳細を単独表示し、ページ全体に横スクロールを作らない。
+  - SideMenuの240px、左右余白24pxずつ、通常のスクロールバー幅を見込み、ビューポート幅1044pxを切替点とする。1044pxで各ペイン358px以上、1043pxで単独表示になることを実画面で確認する。
+  - 詳細ヘッダーの「閉じる」／「シナリオ一覧に戻る」もこの2ペイン判定に合わせる。現コンポーネントの `lg` によるラベル切替は統合時に置き換える。
   - `detail` なし（null）: 一覧フル幅。
 
-### Step 5-2. `@detail/default.tsx`
+### Step 5-2. `@detail` の空表示
 
-- 新規: `src/app/(main)/scenarios/@detail/default.tsx` → `return null`。
+- 新規: `src/app/(main)/scenarios/@detail/default.tsx` → `return null`。Next.js 16 の並列ルートではハードナビゲーション時のフォールバックが必要。
+- 一覧へクライアント遷移してパネルを閉じる経路には `@detail/page.tsx`（必要ならcatch-all）も `null` を返すようにする。`default.tsx` だけではソフトナビゲーション時に古いスロット表示が残る場合がある。
 
 ### Step 5-3. 詳細取得・Server Action の共通抽出
 
@@ -233,21 +238,26 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
   - **Cloudflare Workers 安定性のための直列取得（既存コメント）を維持**する。
   - 権限情報（per-user 状態）は**サーバー側で取得**したまま（クライアント出し分けで隠さない / 要件 6.4）。
 - お気に入りの Server Action は既存 `[id]/actions.ts` の `toggleFavoriteAction` を**両ルートから共有**する（インラインの `'use server'` クロージャを各ルートに複製しない）。
-- `[id]/page.tsx` を `getScenarioDetailViewModel` 利用に置き換える（リファクタのみ、表示は不変）。既存 E2E が通ることを確認。
+- `[id]/page.tsx` とインターセプト詳細の両方で `getScenarioDetailViewModel` を使用し、同じ詳細パネルにデータを渡す。
 
-### Step 5-4. インターセプトルート（UIは仮）
+### Step 5-4. インターセプトルート
 
 - 新規: `src/app/(main)/scenarios/@detail/(.)[id]/page.tsx`
-- 内容: Step 5-3 の `getScenarioDetailViewModel` と共有 Server Action を使う。UI は仮プレースホルダーで**ルーティング動作確認を優先**。
+- 内容: Step 5-3 の `getScenarioDetailViewModel` と共有 Server Action を使い、`ScenarioDetailPanel` を描画する。
 
 ### Step 5-5. 動作検証
 
 - 一覧カードクリック → パネル描画 / 直URL `/scenarios/[id]` → フルページ / ブラウザバック → パネル閉じる、を確認。
-- **一覧 state 保持の確認（必須）**: 現状の一覧は Client（`ScenariosContent`）の `useState` + `/api/scenarios/search` fetch で結果を保持している。intercept 遷移で `children`（一覧ツリー）が**アンマウント/再マウントされず**、以下が保持されることを確認:
+- **一覧 state 保持の確認（必須）**: `ScenariosContent` の子画面はインターセプト遷移でも再マウントされ得る。レイアウトの `ScenarioListSession` に確定済み検索結果と追加読込位置を保存し、以下が復元されることを確認:
   - 検索結果・適用中フィルター
   - スクロール位置
   - 「もっと見る」で追記済みの追加分
-- 保持されない場合はレイアウト境界（`scenarios/layout.tsx` の `children` セグメント）の構成を見直す。
+- スクロール位置と発火元カードもレイアウト側へ保存し、詳細を閉じた後に復元する。
+- 一覧カードの詳細リンクには、確定済みフィルターと並び順を含む一覧URLを `returnTo` として渡す。一覧から開いた詳細の「閉じる」は元の一覧履歴へ戻し、URLの条件とマウント中の追加読込結果・スクロール位置を残す。発火元カードへフォーカスを戻す。固定の `/scenarios` リンクで条件を消さない。
+- 直URL・リロードで表示された単独ページの「シナリオ一覧に戻る」は `returnTo` の一覧URLを使う。値がない場合は `/scenarios` に戻る。`returnTo` は同一オリジンの `/scenarios` と許可済み検索パラメータに限定し、外部URLへの遷移に流用しない。
+- リロード後はParallel Routesの未一致スロットの状態を復元できないため、単独ページとして描画する。`returnTo` にある確定済み検索条件・並び順を一覧へ戻る際に復元し、追加読込分・スクロール・発火元フォーカスをリロード後にも保証する場合は別途保存・復元する。MVPの必須受入条件は一覧からの通常遷移とブラウザ戻る／進むでの保持とする。
+
+ルーティングの前提: [Next.js Parallel Routes](https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes) / [Intercepting Routes](https://nextjs.org/docs/app/api-reference/file-conventions/intercepting-routes)。
 
 ### Review Checkpoint: Batch 5
 - [ ] `pnpm build`（並列・インターセプトの型/ビルド確認）
@@ -256,7 +266,7 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 
 ---
 
-## Batch 6A: 詳細パネル UI（パネル + 目次）
+## Batch 6A: 詳細パネル UI と単独ページ用目次
 
 詳細表示の UI を先に固める（intercept への接続は Batch 6B）。
 
@@ -266,14 +276,14 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 - 内容: 詳細のセクション配列を**単一ソース**として定義する（要件 6.4 の ViewModel 思想を先取り）。
   - 型例: `type DetailSection = { id: string; label: string; present: boolean }`
   - `overview / info / ho / sessions / videos / comments / links` を VM の有無（`present`）から生成。
-  - **目次（SectionToc）とコンテンツ（ScenarioDetailPanel）は同じ配列を参照**し、項目とアンカーの二重管理を防ぐ。
+  - 単独ページの**目次（SectionToc）と本文（ScenarioDetailPanel）は同じ配列を参照**し、項目とアンカーの二重管理を防ぐ。2ペインには目次を描画しない。
 
 ### Step 6A-2. `ScenarioDetailPanel` 作成
 
-- 新規: `src/app/(main)/scenarios/_components/ScenarioDetailPanel/{ScenarioDetailPanel.tsx,styles.ts,index.ts,ScenarioDetailPanel.stories.tsx}`
+- 対象: `src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/{ScenarioDetailPanel.tsx,styles.ts,index.ts,ScenarioDetailPanel.stories.tsx}`
 - 構成:
   - ヘッダーバー: 「一覧に戻る」/ お気に入り / 「セッションを作成」/ メニュー。
-  - ファーストビュー: 既存 `ScenarioHeader`/`ScenarioInfo` を再利用。
+  - ファーストビュー: `ScenarioDetailHead` に統合し、画像・システム・DB色のタグ・配布元表示を維持する。
   - 本体: **全セクションを縦に常時描画**。各セクションに Step 6A-1 の `id` をアンカーとして付与。既存 `SessionSection`/`VideoSection`/`ReviewSection` を再利用。
 - **フォーカス管理**（a11y）:
   - パネル open 時（カードクリック）にパネル先頭（ヘッダーバーの「一覧に戻る」or パネル見出し）へフォーカスを移動。
@@ -281,7 +291,7 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 
 ### Step 6A-3. 目次（TOC）コンポーネント
 
-- 新規: `_components/ScenarioDetailPanel/SectionToc.tsx`
+- 既存: `src/components/blocks/SectionToc/SectionToc.tsx`。単独ページから利用する。
 - 仕様:
   - **アンカースクロール**（コンテンツ差し替えではない）。`IntersectionObserver` で現在地ハイライト。
   - 入力は Step 6A-1 のセクション配列。**存在するセクションのみ**を項目化。
@@ -290,9 +300,9 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
     - 項目は `<a href="#id">`（リンク主体）。
     - 現在地は `aria-current="location"`。
     - **`role="tablist"` / `role="tab"` は使わない**（タブ誤認・スクリーンリーダー齟齬を防ぐ）。
-  - 出し分け: 余裕あるPC=右固定 / 狭いパネル・タブレット=上部sticky横並び or FloatingButton+Drawer / モバイル=Drawer。
+  - 出し分け: 単独ページの広い画面=右固定 / 狭い画面=Drawer。2ペインでは非表示。
   - **`IntersectionObserver` のエッジケース**: 末尾セクションが短くハイライトが当たらない問題は `rootMargin` を調整（例: 下端を負マージン）。セクション 0〜1 個時のフォールバック（目次自体を非表示 or 単一ハイライト固定）と初期表示時のハイライトを実装メモに残す。
-- Storybook 必須（セクション 0/1/多数、PC右固定・狭幅横並びの各状態）。
+- Storybook 必須（セクション 0/1/多数、単独ページの広幅右固定・狭幅Drawerの各状態）。
 
 ### Review Checkpoint: Batch 6A
 - [ ] `pnpm check` / `pnpm vitest`
@@ -308,13 +318,13 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 ### Step 6B-2. フルページ版 `[id]/page.tsx` 整合
 
 - 対象: `src/app/(main)/scenarios/[id]/page.tsx`
-- 変更: Step 5-3 の `getScenarioDetailViewModel` を引き続き使い、フルページレイアウトで再利用。目次は「余裕あるPC=右固定」モードで表示。タブが無いことを維持。
+- 変更: Step 5-3 の `getScenarioDetailViewModel` を引き続き使い、フルページレイアウトで再利用。目次は単独ページだけに表示し、広幅では右固定、狭幅ではDrawerにする。タブは設けない。
 - **フルページと2ペインで共有する具体コンポーネント**を列挙して二重実装を防ぐ:
-  - `ScenarioDetailPanel`（本体・目次・セクション）
+  - `ScenarioDetailPanel`（本体・セクション）と単独ページ用 `SectionToc`
   - VM: `getScenarioDetailViewModel`
   - Server Action: `[id]/actions.ts` の `toggleFavoriteAction`
   - セクション配列: `[id]/interface.ts`
-  - 差分は「外枠（パネル枠 vs フルページ枠）」と「目次の表示モード」のみに限定する。
+  - 差分は外枠と単独ページの目次の有無に限定する。
 
 ### Step 6B-3.（任意）パネルのスライドイン
 
@@ -350,23 +360,24 @@ Parallel + Intercepting Routes（Batch 5 以降）は App Router のルーティ
 | `src/app/(main)/scenarios/_components/ScenarioFilters/ScenarioFilters.stories.tsx` | Storybook | 3 |
 | `src/app/(main)/scenarios/layout.tsx` | `@detail` スロット付きレイアウト | 5 |
 | `src/app/(main)/scenarios/@detail/default.tsx` | パネルなし時 null | 5 |
-| `src/app/(main)/scenarios/@detail/(.)[id]/page.tsx` | インターセプト詳細（5で仮UI、6Bで実描画） | 5/6B |
+| `src/app/(main)/scenarios/@detail/page.tsx` | 一覧へのソフトナビゲーション時にパネルを閉じる | 5 |
+| `src/app/(main)/scenarios/@detail/(.)[id]/page.tsx` | インターセプト詳細 | 5/6B |
 | `src/app/(main)/scenarios/[id]/viewModel.ts` | 詳細取得 VM（フルページ/intercept 共有） | 5 |
-| `src/app/(main)/scenarios/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx` | 詳細パネル本体 | 6A |
-| `src/app/(main)/scenarios/_components/ScenarioDetailPanel/styles.ts` | スタイル | 6A |
-| `src/app/(main)/scenarios/_components/ScenarioDetailPanel/index.ts` | エクスポート | 6A |
-| `src/app/(main)/scenarios/_components/ScenarioDetailPanel/ScenarioDetailPanel.stories.tsx` | Storybook | 6A |
-| `src/app/(main)/scenarios/_components/ScenarioDetailPanel/SectionToc.tsx` | 目次（タブ不使用） | 6A |
+| `src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx` | 詳細パネル本体 | 6A |
+| `src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/styles.ts` | スタイル | 6A |
+| `src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/index.ts` | エクスポート | 6A |
+| `src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.stories.tsx` | Storybook | 6A |
+| `src/components/blocks/SectionToc/SectionToc.tsx` | 単独ページ用目次（タブ不使用） | 6A |
 
 ### 変更ファイル
 
 | ファイル | 変更内容 | Batch |
 |---------|---------|-------|
-| `src/styles/semanticTokens.ts` | sideMenu/badge.recruiting/(tag) トークン追加 | 1 |
+| `src/styles/semanticTokens.ts` | sideMenu/badge.recruiting トークン追加。タグ色はDB由来 | 1 |
 | `src/app/(main)/layout.tsx` | SideMenu 組み込み・GlobalHeader を lg で非表示 | 2 |
-| `src/app/(main)/scenarios/_components/ScenariosContent.tsx` | ScenarioFilters 統合・結果行に表示形式追加 | 3 |
+| `src/app/(main)/scenarios/_components/ScenariosContent.tsx` | ScenarioFilters 統合・結果行は件数と並び順 | 3 |
 | `src/app/(main)/scenarios/_components/ScenarioCard.tsx` | バッジ/タグ微修正・縮小幅対応 | 4 |
-| `src/app/(main)/scenarios/[id]/page.tsx` | VM 利用へリファクタ(5)・共通セクション再利用/右固定目次(6B) | 5/6B |
+| `src/app/(main)/scenarios/[id]/page.tsx` | VM 利用へリファクタ(5)・共通セクション再利用/単独ページの目次(6B) | 5/6B |
 | `src/app/(main)/scenarios/[id]/interface.ts` | 詳細セクション配列の単一ソース定義（目次/本体で共有） | 6A |
 | `e2e/pages/scenarios-page.ts` | フィルターインライン化に伴うセレクタ更新 | 3 |
 | `e2e/scenarios/filter.spec.ts` / `search.spec.ts` | フィルター/検索 UI 変更に追従 | 3 |
@@ -403,11 +414,12 @@ pnpm exec playwright test e2e/scenarios
 - [ ] PC: 全 7 メインページ（home/scenarios/sessions/schedules/users/feedback/profile）で余白・スクロール・固定ヘッダーが SideMenu と干渉しない
 - [ ] PC: 一覧カードクリック → 右にパネル、一覧が縮小
 - [ ] PC: パネル表示後も一覧の検索結果・フィルター・スクロール位置・「もっと見る」追加分が保持される
-- [ ] PC: 「一覧に戻る」/ ブラウザバック → パネルが閉じフル幅へ
+- [ ] PC: 「閉じる」/ ブラウザバック → パネルが閉じフル幅へ。検索条件・並び順・追加読込分・スクロール・発火元フォーカスを保持
 - [ ] 直URL `/scenarios/[id]` / リロード → フルページ詳細
 - [ ] モバイル: `SideMenu` 非表示・BottomNav/SpeedDialFAB 動作・詳細は単独ページ
 - [ ] 詳細に**タブが存在しない**／全セクションが縦に並ぶ
-- [ ] 目次: クリックでアンカースクロール・現在地ハイライト・存在セクションのみ表示
-- [ ] 狭い詳細パネルで目次が窮屈にならない（上部sticky or Drawer に切替）
-- [ ] フィルター: 基本3常時表示・詳細展開・お気に入り楽観的更新が一覧/パネル両方で動作
+- [ ] 単独ページだけに目次を表示。クリックでアンカースクロール・現在地ハイライト・存在セクションのみ表示し、狭幅はDrawerで利用できる
+- [ ] 2ペインは左右1:1で、ペイン領域740px未満では単独表示。横スクロールや結果行の不自然な折り返しがない
+- [ ] フィルター: シナリオ名の基本検索と、システム・タグ・人数・時間の詳細検索が動作。MVPの表示形式はカードのみ
+- [ ] DBのタグ色と無効値フォールバックが一覧/詳細で一致し、お気に入り楽観的更新が動作
 - [ ] a11y（axe）: select-name / aria 系違反なし（`testing-patterns.md` 参照）
