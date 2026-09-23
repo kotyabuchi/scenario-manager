@@ -1,3 +1,5 @@
+import { storybookAgentationPaths } from './storybookAgentationPaths.ts';
+
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,6 +19,7 @@ const config: StorybookConfig = {
   viteFinal: async (config) => {
     return {
       ...config,
+      plugins: [...(config.plugins ?? []), storybookAgentationPaths()],
       resolve: {
         ...config.resolve,
         alias: {

@@ -4,6 +4,8 @@ import { createElement } from 'react';
 import { Noto_Sans_JP } from 'next/font/google';
 import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
+import { AgentationCanvas } from './AgentationCanvas';
+
 import type { Preview } from '@storybook/react';
 
 // Storybook は layout.tsx を通らないため、next/font の CSS 変数が注入されない。
@@ -19,7 +21,7 @@ const notoSansJP = Noto_Sans_JP({
 
 const preview: Preview = {
   decorators: [
-    (Story) =>
+    (Story, context) =>
       createElement(
         'div',
         {
@@ -27,6 +29,12 @@ const preview: Preview = {
           style: { fontFamily: 'var(--font-noto-sans-jp), sans-serif' },
         },
         createElement(Story),
+        process.env.NODE_ENV === 'development' &&
+          context.viewMode === 'story' &&
+          createElement(AgentationCanvas, {
+            key: context.id,
+            storyId: context.id,
+          }),
       ),
   ],
   parameters: {
