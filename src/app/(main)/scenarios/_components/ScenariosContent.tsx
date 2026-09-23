@@ -1,42 +1,26 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { CaretDown, Faders } from '@phosphor-icons/react/ssr';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { isNil } from 'ramda';
 
 import { sortOptions } from '../searchParams';
-import { MobileSearchBar } from './MobileSearchBar';
-import { ScenarioList } from './ScenarioList';
-import { SearchSidebar } from './SearchSidebar';
-import { SearchTopBar } from './SearchTopBar';
-import * as styles from './styles';
-
-import { FilterBottomSheet } from '@/components/blocks/FilterBottomSheet';
-import { useFilterDraft } from '@/components/blocks/FilterPanel';
-import { Button } from '@/components/elements/button/button';
+import { ScenarioListPanel } from './ScenarioListPanel';
 import {
-  Select,
-  type SelectItem,
-  type SelectValueChangeDetails,
-} from '@/components/elements/select/select';
+  type ScenarioListSnapshot,
+  useScenarioListSession,
+} from './ScenarioListSession';
+
+import { useFilterDraft } from '@/components/blocks/FilterPanel';
 import { getAppLogger } from '@/lib/logger';
 
-import type { SystemItem, TagItem } from '@/components/blocks/FilterPanel';
 import type {
   ScenarioSystem,
   SearchResult,
   SortOption,
   Tag,
 } from '../interface';
-
-// ソートオプションの表示ラベル
-const sortSelectItems: SelectItem[] = [
-  { value: 'newest', label: '新着順' },
-  { value: 'oldest', label: '古い順' },
-  { value: 'playtime_asc', label: '短時間順' },
-  { value: 'playtime_desc', label: '長時間順' },
-];
 
 type ScenariosContentProps = {
   systems: ScenarioSystem[];
@@ -98,6 +82,8 @@ export const ScenariosContent = ({
   tags,
   initialResult,
 }: ScenariosContentProps) => {
+  const pathname = usePathname();
+  const listSession = useScenarioListSession();
   // ドラフト式フィルター状態
   const draftState = useFilterDraft();
 
@@ -107,54 +93,64 @@ export const ScenariosContent = ({
     parseAsStringLiteral(sortOptions).withDefault('newest'),
   );
 
-  // 検索結果状態
-  const [searchResult, setSearchResult] = useState<SearchResult>(initialResult);
-  const [offset, setOffset] = useState(0);
+  const searchQueryString = buildApiQueryString({
+    systems: draftState.committed.systems,
+    tags: draftState.committed.tags,
+    minPlayer: draftState.committed.minPlayer,
+    maxPlayer: draftState.committed.maxPlayer,
+    minPlaytime: draftState.committed.minPlaytime,
+    maxPlaytime: draftState.committed.maxPlaytime,
+    q: draftState.committed.q,
+    sort,
+  });
+
+  const [resultState, setResultState] = useState<ScenarioListSnapshot>(() => {
+    const snapshot = listSession.snapshot;
+    return snapshot?.queryString === searchQueryString
+      ? snapshot
+      : { queryString: searchQueryString, result: initialResult, offset: 0 };
+  });
+  const restoredQuery = useRef<string | null>(
+    listSession.snapshot?.queryString === searchQueryString
+      ? searchQueryString
+      : null,
+  );
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // モバイル用ボトムシートの開閉状態
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
-  // サイドバーの折りたたみ状態
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
-  // SystemItem/TagItem 形式に変換
-  const systemItems: SystemItem[] = systems.map((s) => ({
+  // FilterPanel の選択肢へ変換
+  const systemItems = systems.map((s) => ({
     systemId: s.systemId,
     name: s.name,
   }));
 
-  const tagItems: TagItem[] = tags.map((t) => ({
+  const tagItems = tags.map((t) => ({
     tagId: t.tagId,
     name: t.name,
   }));
 
+  useEffect(() => {
+    listSession.snapshot = resultState;
+  }, [listSession, resultState]);
+
   // committed の変更で検索を実行（ドラフトではなく確定値のみ監視）
   useEffect(() => {
+    if (restoredQuery.current === searchQueryString) return;
+    restoredQuery.current = null;
     const abortController = new AbortController();
-
-    // フィルター変更時はページネーションを即座にリセット
-    setOffset(0);
 
     const fetchResults = async () => {
       try {
-        const queryString = buildApiQueryString({
-          systems: draftState.committed.systems,
-          tags: draftState.committed.tags,
-          minPlayer: draftState.committed.minPlayer,
-          maxPlayer: draftState.committed.maxPlayer,
-          minPlaytime: draftState.committed.minPlaytime,
-          maxPlaytime: draftState.committed.maxPlaytime,
-          q: draftState.committed.q,
-          sort,
-        });
         const response = await fetch(
-          `/api/scenarios/search${queryString}&limit=20&offset=0`,
+          `/api/scenarios/search${searchQueryString}&limit=20&offset=0`,
           { signal: abortController.signal },
         );
         if (response.ok) {
           const data = (await response.json()) as SearchResult;
-          setSearchResult(data);
+          setResultState({
+            queryString: searchQueryString,
+            result: data,
+            offset: 0,
+          });
         }
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError')
@@ -168,153 +164,92 @@ export const ScenariosContent = ({
     return () => {
       abortController.abort();
     };
-  }, [
-    draftState.committed.systems,
-    draftState.committed.tags,
-    draftState.committed.minPlayer,
-    draftState.committed.maxPlayer,
-    draftState.committed.minPlaytime,
-    draftState.committed.maxPlaytime,
-    draftState.committed.q,
-    sort,
-  ]);
+  }, [searchQueryString]);
 
-  // ソート変更
+  // 一覧が並列ルートに保持されている間は、閉じた後に元のカードへフォーカスを戻す。
+  useEffect(() => {
+    if (pathname !== '/scenarios' || isNil(listSession.openedScenarioId))
+      return;
+    const scenarioId = listSession.openedScenarioId;
+    const frame = requestAnimationFrame(() => {
+      listSession.listPaneElement?.scrollTo({ top: listSession.scrollTop });
+      const cards = document.querySelectorAll<HTMLAnchorElement>(
+        'a[data-scenario-id]',
+      );
+      const card = Array.from(cards).find(
+        (element) => element.dataset.scenarioId === scenarioId,
+      );
+      card?.focus({ preventScroll: true });
+      listSession.openedScenarioId = null;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, listSession]);
+
   const handleSortChange = useCallback(
-    (details: SelectValueChangeDetails<SelectItem>) => {
-      setSort(details.value[0] as SortOption);
+    (nextSort: SortOption) => {
+      void setSort(nextSort);
     },
     [setSort],
   );
 
   // もっと見る
   const handleLoadMore = useCallback(async () => {
-    const newOffset = offset + 20;
+    if (resultState.queryString !== searchQueryString) return;
+    const newOffset = resultState.offset + 20;
     setIsLoadingMore(true);
 
     try {
-      const queryString = buildApiQueryString({
-        systems: draftState.committed.systems,
-        tags: draftState.committed.tags,
-        minPlayer: draftState.committed.minPlayer,
-        maxPlayer: draftState.committed.maxPlayer,
-        minPlaytime: draftState.committed.minPlaytime,
-        maxPlaytime: draftState.committed.maxPlaytime,
-        q: draftState.committed.q,
-        sort,
-      });
       const response = await fetch(
-        `/api/scenarios/search${queryString}&limit=20&offset=${newOffset}`,
+        `/api/scenarios/search${searchQueryString}&limit=20&offset=${newOffset}`,
       );
       if (response.ok) {
         const data = (await response.json()) as SearchResult;
-        setSearchResult((prev) => ({
-          scenarios: [...prev.scenarios, ...data.scenarios],
-          totalCount: data.totalCount,
+        setResultState((previous) => ({
+          queryString: searchQueryString,
+          result: {
+            scenarios: [...previous.result.scenarios, ...data.scenarios],
+            totalCount: data.totalCount,
+          },
+          offset: newOffset,
         }));
-        setOffset(newOffset);
       }
     } catch (error) {
       getAppLogger(['app', 'scenarios']).error`Load more failed: ${error}`;
     } finally {
       setIsLoadingMore(false);
     }
-  }, [draftState.committed, sort, offset]);
+  }, [searchQueryString, resultState.offset, resultState.queryString]);
 
-  const hasMore = searchResult.scenarios.length < searchResult.totalCount;
+  const hasMore =
+    resultState.queryString === searchQueryString &&
+    resultState.result.scenarios.length < resultState.result.totalCount;
+
+  const returnTo =
+    searchQueryString === '?' ? '/scenarios' : `/scenarios${searchQueryString}`;
 
   return (
-    <>
-      {/* PC: 上部検索バー（lg 以上） */}
-      <SearchTopBar systems={systemItems} draftState={draftState} />
-
-      {/* SP: 検索バー（lg 未満） */}
-      <MobileSearchBar systems={systemItems} draftState={draftState} />
-
-      {/* SP: フィルターボタン（lg 未満） */}
-      <div className={styles.mobileFilterRow}>
-        <button
-          type="button"
-          className={styles.mobileFilterButton}
-          onClick={() => setIsBottomSheetOpen(true)}
-        >
-          <Faders size={16} />
-          フィルター
-          {draftState.activeFilterCount > 0 && (
-            <span className={styles.mobileFilterBadge}>
-              {draftState.activeFilterCount}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* メインコンテンツエリア */}
-      <div className={styles.mainContent}>
-        {/* PC: サイドバー（lg 以上） */}
-        <SearchSidebar
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed((p) => !p)}
-          systems={systemItems}
-          tags={tagItems}
-          draftState={draftState}
-        />
-
-        {/* 結果コンテンツ（isPending 時はローディングオーバーレイ表示） */}
-        <div className={styles.resultsContent} aria-busy={draftState.isPending}>
-          <div className={styles.resultHeader}>
-            <div className={styles.resultCount}>
-              検索結果：{searchResult.totalCount}件
-            </div>
-
-            <div className={styles.sortArea}>
-              <span className={styles.sortLabel}>並び替え：</span>
-              <div className={styles.sortSelectWrapper}>
-                <Select
-                  items={sortSelectItems}
-                  value={[sort]}
-                  onValueChange={handleSortChange}
-                  variant="minimal"
-                  aria-label="並び替え"
-                />
-              </div>
-            </div>
-          </div>
-
-          <ScenarioList
-            scenarios={searchResult.scenarios}
-            isLoading={draftState.isPending}
-            onReset={() => {
-              draftState.clearAll();
-              draftState.commit();
-            }}
-          />
-
-          {hasMore && (
-            <div className={styles.loadMoreContainer}>
-              <Button
-                variant="outline"
-                status="primary"
-                onClick={handleLoadMore}
-                loading={isLoadingMore}
-                loadingText="読み込み中..."
-                className={styles.loadMoreButton}
-              >
-                <CaretDown size={18} className={styles.loadMoreIcon} />
-                もっと見る
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* SP: フィルターボトムシート */}
-      <FilterBottomSheet
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        systems={systemItems}
-        tags={tagItems}
-        filterState={draftState}
-      />
-    </>
+    <ScenarioListPanel
+      systems={systemItems}
+      tags={tagItems}
+      draftState={draftState}
+      scenarios={resultState.result.scenarios}
+      totalCount={resultState.result.totalCount}
+      sort={sort}
+      onSortChange={handleSortChange}
+      isLoading={draftState.isPending}
+      hasMore={hasMore}
+      isLoadingMore={isLoadingMore}
+      onLoadMore={handleLoadMore}
+      onResetFilters={() => {
+        draftState.clearAll();
+        draftState.commit();
+      }}
+      returnTo={returnTo}
+      onScenarioOpen={(scenarioId) => {
+        listSession.snapshot = resultState;
+        listSession.openedScenarioId = scenarioId;
+        listSession.scrollTop = listSession.listPaneElement?.scrollTop ?? 0;
+      }}
+    />
   );
 };

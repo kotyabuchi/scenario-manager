@@ -4,6 +4,7 @@ import {
   BookOpenText,
   CalendarPlus,
   ChatText,
+  Info,
   ListBullets,
   MagnifyingGlass,
   ShareNetwork,
@@ -138,6 +139,16 @@ export const SpeedDialPanel = ({
           </button>
         </>
       )}
+      <hr className={styles.speedDialFAB_divider} />
+      <button
+        type="button"
+        className={styles.speedDialFAB_menuItem}
+        role="menuitem"
+        onClick={() => handleNavigate('/about' as Route)}
+      >
+        <Info size={20} className={iconClass} />
+        サービスについて
+      </button>
     </>
   );
 };

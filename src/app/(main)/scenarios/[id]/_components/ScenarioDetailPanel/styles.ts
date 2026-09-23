@@ -3,7 +3,7 @@ import { css, cva } from '@/styled-system/css';
 /**
  * ScenarioDetailPanel（詳細ペイン）スタイル
  *
- * 2ペイン右側の詳細。タブを使わずセクション縦並び＋目次（SectionToc）。
+ * 2ペイン右側の詳細。タブと目次を使わずセクションを縦に並べる。
  * パネル幅でレイアウトを切り替えるためコンテナクエリを使う。
  */
 export const panel = css({
@@ -42,17 +42,16 @@ export const headerBar_back = css({
   },
 });
 
-// pane時の出し分け: 2ペインが有効な lg 以上でだけ「閉じる」を表示。
-// lg 未満は一覧が隣に見えない（単独表示）ため「戻る」を表示する。
-// ブレークポイントは scenarios/layout.tsx の2ペイン切替(lg)と揃えること
+// SideMenu 240px・左右余白48px・ペイン領域740pxに加え、
+// 通常のスクロールバー幅も含めた2ペイン切替点に合わせる。
 export const headerBar_backWide = css({
   display: 'none',
-  lg: { display: 'inline-flex' },
+  '@media (min-width: 1044px)': { display: 'inline-flex' },
 });
 
 export const headerBar_backNarrow = css({
   display: 'inline-flex',
-  lg: { display: 'none' },
+  '@media (min-width: 1044px)': { display: 'none' },
 });
 
 export const headerBar_actions = css({
@@ -335,4 +334,11 @@ export const head_distribute = css({
   color: 'primary.text',
   textDecoration: 'none',
   _hover: { textDecoration: 'underline' },
+});
+
+export const head_sourceRow = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  gap: '2',
 });

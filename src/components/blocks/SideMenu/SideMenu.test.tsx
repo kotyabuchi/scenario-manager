@@ -164,10 +164,9 @@ describe('SideMenu', () => {
       mockUseAuth.mockReturnValue(loggedInAuth);
       rerender(<SideMenu />);
       expect(screen.queryByRole('button', { name: 'ログイン' })).toBeNull();
-      expect(screen.getByRole('link', { name: 'はるか' })).toHaveAttribute(
-        'href',
-        '/profile',
-      );
+      expect(
+        screen.getByRole('link', { name: 'プロフィール: はるか' }),
+      ).toHaveAttribute('href', '/profile');
     });
 
     it('シナリオ登録ボタンとユーザー名が表示される', () => {

@@ -11,6 +11,16 @@ test.describe('スモークテスト', () => {
   test('ランディングページが表示される', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/シナプレ管理くん/);
+    await expect(page.locator('footer')).toHaveCount(0);
+  });
+
+  test('サービスについてのページに権利表記を表示する', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'サービスについて' }).click();
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.getByRole('heading', { name: '権利表記' })).toBeVisible();
+    await expect(page.getByText(/© 2026.*シナプレ管理くん/)).toBeVisible();
+    await expect(page.locator('footer')).toHaveCount(0);
   });
 
   test('シナリオ一覧ページが表示される', async ({ page }) => {
@@ -28,7 +38,6 @@ test.describe('アクセシビリティ', () => {
     new AxeBuilder({ page })
       .include('header')
       .include('main')
-      .include('footer')
       .disableRules(disabledRules);
 
   test('ランディングページにa11y違反がない', async ({ page }) => {

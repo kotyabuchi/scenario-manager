@@ -4,11 +4,7 @@ import { expect, test } from '@playwright/test';
  * グローバルナビゲーションのE2Eテスト
  */
 test.describe('グローバルナビゲーション', () => {
-  // ヘッダーのnav要素内にスコープ（ページ本文のリンクと区別）
-  const headerNav = (page: import('@playwright/test').Page) =>
-    page.locator('header nav');
-
-  // viewport非依存のナビリンク取得（PC=ヘッダーnav / モバイル=BottomNav、可視な方を選ぶ）
+  // viewport非依存のナビリンク取得（PC=SideMenu / モバイル=BottomNav、可視な方を選ぶ）
   const navLink = (page: import('@playwright/test').Page, name: string) =>
     page
       .getByRole('navigation')
@@ -47,8 +43,9 @@ test.describe('グローバルナビゲーション', () => {
   test('アクティブなナビリンクが aria-current を持つ', async ({ page }) => {
     await page.goto('/scenarios');
     await page.waitForLoadState('domcontentloaded');
-    const activeLink = headerNav(page).locator('a[aria-current="page"]');
-    await expect(activeLink).toHaveCount(1);
-    await expect(activeLink).toContainText('シナリオ');
+    await expect(navLink(page, 'シナリオ')).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
   });
 });

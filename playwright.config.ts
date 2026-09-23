@@ -84,6 +84,7 @@ export default defineConfig({
      * 再利用モード（test:e2e:dev / :ui / :headed）: 既存の dev サーバー（3000）を再利用し高速に反復。
      */
     command: E2E_REUSE ? 'pnpm dev' : `pnpm build && pnpm start -p ${E2E_PORT}`,
+    env: E2E_REUSE ? {} : { SCENARIO_E2E_BUILD: '1' },
     url: BASE_URL,
     reuseExistingServer: E2E_REUSE,
     timeout: 180_000,

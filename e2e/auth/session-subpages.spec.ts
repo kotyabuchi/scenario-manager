@@ -85,7 +85,6 @@ test.describe('申請管理ページ', () => {
     const results = await new AxeBuilder({ page })
       .include('header')
       .include('main')
-      .include('footer')
       .disableRules([
         'color-contrast',
         'heading-order',
@@ -151,7 +150,6 @@ test.describe('スケジュール提出ページ', () => {
     const results = await new AxeBuilder({ page })
       .include('header')
       .include('main')
-      .include('footer')
       .disableRules([
         'color-contrast',
         'heading-order',

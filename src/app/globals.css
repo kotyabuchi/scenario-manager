@@ -3,3 +3,87 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* ルートレイアウトと Storybook preview から読み込み、全画面のスクロール領域に適用する。 */
+@layer base {
+  /* Firefox: ネイティブの太さを保ったまま、色だけを揃える。 */
+  @supports (-moz-appearance: none) {
+    * {
+      scrollbar-color: var(--colors-scrollbar-thumb)
+        var(--colors-scrollbar-track);
+      scrollbar-width: auto;
+    }
+  }
+
+  /* Chromium / WebKit: 背景面に関係なくトラックを透過し、操作部分だけ色を付ける。 */
+  *::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+    background: var(--colors-scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-corner {
+    background: var(--colors-scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: var(--colors-scrollbar-thumb);
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--colors-primary-hover);
+  }
+
+  *::-webkit-scrollbar-button {
+    --scrollbar-control-color: var(--colors-scrollbar-thumb);
+    width: 16px;
+    height: 16px;
+    background-color: var(--colors-scrollbar-track);
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  *::-webkit-scrollbar-button:hover {
+    --scrollbar-control-color: var(--colors-primary-hover);
+  }
+
+  *::-webkit-scrollbar-button:vertical:decrement {
+    background-image: conic-gradient(
+      from 143deg at 50% 0%,
+      var(--scrollbar-control-color) 0 74deg,
+      transparent 0
+    );
+    background-size: 10px 7px;
+  }
+
+  *::-webkit-scrollbar-button:vertical:increment {
+    background-image: conic-gradient(
+      from -37deg at 50% 100%,
+      var(--scrollbar-control-color) 0 74deg,
+      transparent 0
+    );
+    background-size: 10px 7px;
+  }
+
+  *::-webkit-scrollbar-button:horizontal:decrement {
+    background-image: conic-gradient(
+      from 53deg at 0% 50%,
+      var(--scrollbar-control-color) 0 74deg,
+      transparent 0
+    );
+    background-size: 7px 10px;
+  }
+
+  *::-webkit-scrollbar-button:horizontal:increment {
+    background-image: conic-gradient(
+      from 233deg at 100% 50%,
+      var(--scrollbar-control-color) 0 74deg,
+      transparent 0
+    );
+    background-size: 7px 10px;
+  }
+}

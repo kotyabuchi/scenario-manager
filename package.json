@@ -94,6 +94,9 @@
     "neverBuiltDependencies": [
       "esbuild",
       "sharp"
-    ]
+    ],
+    "patchedDependencies": {
+      "next@16.1.6": "patches/next@16.1.6.patch"
+    }
   }
 }

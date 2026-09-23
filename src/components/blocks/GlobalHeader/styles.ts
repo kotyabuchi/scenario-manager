@@ -13,6 +13,9 @@ export const header = css({
     height: '[64px]',
     px: '8',
   },
+  lg: {
+    display: 'none',
+  },
 });
 
 export const logo = css({

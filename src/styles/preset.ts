@@ -42,6 +42,14 @@ export default definePreset({
             transform: 'translateY(0)',
           },
         },
+        slideInFromRight: {
+          '0%': {
+            transform: 'translateX(100%)',
+          },
+          '100%': {
+            transform: 'translateX(0)',
+          },
+        },
         slideInUp: {
           '0%': {
             opacity: '0',

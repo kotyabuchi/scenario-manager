@@ -104,7 +104,11 @@ export const SideMenu = () => {
 
             <Divider />
 
-            <Link href="/profile" className={styles.userButton}>
+            <Link
+              href="/profile"
+              aria-label={`プロフィール: ${displayName}`}
+              className={styles.userButton}
+            >
               <span className={styles.avatar}>
                 {avatarUrl ? (
                   <Image
@@ -131,6 +135,9 @@ export const SideMenu = () => {
             ログイン
           </button>
         )}
+        <Link href="/about" className={styles.aboutLink}>
+          サービスについて
+        </Link>
       </div>
     </aside>
   );

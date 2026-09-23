@@ -8,6 +8,7 @@ import * as styles from './styles';
 import { Tag } from '@/components/elements/Tag';
 import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
+import type { Route } from 'next';
 import type { ScenarioCardProps } from '../interface';
 
 // システムバリアントを決定
@@ -22,7 +23,11 @@ const getSystemVariant = (
   return 'default';
 };
 
-export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
+export const ScenarioCard = ({
+  scenario,
+  returnTo,
+  onOpen,
+}: ScenarioCardProps) => {
   const tags = scenario.tags
     ? scenario.tags.slice(0, 3)
     : scenario.scenarioTags
@@ -30,12 +35,18 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
       : [];
 
   const systemVariant = getSystemVariant(scenario.system.name);
+  const detailParams = new URLSearchParams(returnTo?.split('?')[1] ?? '');
+  if (returnTo) detailParams.set('returnTo', returnTo);
+  const detailQuery = detailParams.toString();
+  const detailHref = `/scenarios/${scenario.scenarioId}${detailQuery ? `?${detailQuery}` : ''}`;
 
   return (
     <Link
-      href={`/scenarios/${scenario.scenarioId}`}
+      href={detailHref as Route}
       className={`group ${styles.scenarioCard}`}
       prefetch={false}
+      data-scenario-id={scenario.scenarioId}
+      onClick={() => onOpen?.(scenario.scenarioId)}
     >
       {/* サムネイル */}
       <div className={styles.cardThumbnail}>

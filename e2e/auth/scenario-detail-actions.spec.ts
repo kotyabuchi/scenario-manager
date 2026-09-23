@@ -12,7 +12,7 @@ test.describe('シナリオ詳細 認証済みアクション', () => {
     const scenariosPage = new ScenariosPage(page);
     await scenariosPage.goto();
     await scenariosPage.clickScenarioCard(0);
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/\/scenarios\/01[A-Za-z0-9]{24}/);
   });
 
   test('お気に入りボタンが表示される', async ({ page }) => {
@@ -20,6 +20,20 @@ test.describe('シナリオ詳細 認証済みアクション', () => {
       name: /お気に入り/,
     });
     await expect(favoriteButton).toBeVisible();
+    await expect(favoriteButton).toBeEnabled();
+  });
+
+  test('現在のシナリオでセッションを作成できる導線がある', async ({ page }) => {
+    const scenarioId = new URL(page.url()).pathname.split('/').at(-1);
+    expect(scenarioId).toMatch(/^01[A-Za-z0-9]{24}$/);
+    const createSessionLink = page.getByRole('link', {
+      name: 'セッションを作成',
+      exact: true,
+    });
+    await expect(createSessionLink).toHaveAttribute(
+      'href',
+      `/sessions/new?scenarioId=${scenarioId}`,
+    );
   });
 
   test('FABメニューボタンが表示される', async ({ page }) => {
@@ -56,7 +70,6 @@ test.describe('シナリオ詳細 認証済みアクション', () => {
     const results = await new AxeBuilder({ page })
       .include('header')
       .include('main')
-      .include('footer')
       .disableRules(['color-contrast'])
       .analyze();
     expect(results.violations).toEqual([]);

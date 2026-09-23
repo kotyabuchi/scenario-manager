@@ -51,6 +51,35 @@ test('モバイルでも検索を入力・実行・リセットできる', async
   await expectNoHorizontalOverflow(page);
 });
 
+test('2ペインの下限幅で左右1:1と検索結果行を保つ', async ({ page }) => {
+  // Storyの左右余白48pxを除いた740pxが2ペインの利用可能幅。
+  await page.setViewportSize({ width: 788, height: 900 });
+  await openStory(page, 'scenarios-twopane--default');
+  await page.getByRole('button', { name: '詳細フィルター' }).click();
+  await expect(
+    page.getByText('プレイ人数', { exact: true }).first(),
+  ).toBeVisible();
+
+  const paneWidths = await page
+    .locator('#storybook-root > div > div > div')
+    .evaluate((grid) =>
+      Array.from(grid.children, (pane) => pane.getBoundingClientRect().width),
+    );
+  expect(paneWidths).toHaveLength(2);
+  expect(paneWidths[0]).toBeCloseTo(paneWidths[1], 0);
+  expect(paneWidths[0]).toBeGreaterThanOrEqual(358);
+
+  const sortLabelLines = await page
+    .getByText('並び替え：', { exact: true })
+    .evaluate((label) => {
+      const range = document.createRange();
+      range.selectNodeContents(label);
+      return range.getClientRects().length;
+    });
+  expect(sortLabelLines).toBe(1);
+  await expectNoHorizontalOverflow(page);
+});
+
 test('お気に入りの保存失敗を通知して再操作できる', async ({ page }) => {
   await page.setViewportSize({ width: 600, height: 900 });
   await openStory(page, 'scenarios-scenariodetailpanel--favorite-failure');

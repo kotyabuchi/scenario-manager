@@ -1,1 +1,0 @@
-export { SearchTopBar } from './SearchTopBar';

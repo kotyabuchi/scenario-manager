@@ -4,7 +4,7 @@ import { ScenariosPage } from '../pages/scenarios-page';
 
 /**
  * シナリオ検索機能のE2Eテスト
- * 対象要件: requirements-v1.md 5. シナリオ検索
+ * 基本検索、URL同期、結果一覧の回帰を確認する。
  */
 test.describe('シナリオ検索', () => {
   let scenariosPage: ScenariosPage;
@@ -29,11 +29,15 @@ test.describe('シナリオ検索', () => {
   test('シナリオ名で検索できる', async ({ page }) => {
     await expect(scenariosPage.searchInput).toBeVisible();
 
-    // シードデータに存在するキーワード（DB初期データに依存）
-    const searchKeyword = '山';
+    // 表示済みのカード名を使い、特定のシードデータ名に依存しない。
+    const searchKeyword = (
+      await scenariosPage.scenarioCards.first().locator('h3').textContent()
+    )?.trim();
+    expect(searchKeyword).toBeTruthy();
 
-    await scenariosPage.search(searchKeyword);
+    await scenariosPage.search(searchKeyword ?? '');
     await expect(page).toHaveURL(/q=/);
+    await expect(scenariosPage.scenarioCards.first()).toBeVisible();
   });
 
   test('検索結果が0件の場合、空メッセージが表示される', async () => {
@@ -45,7 +49,7 @@ test.describe('シナリオ検索', () => {
     page,
   }) => {
     await scenariosPage.clickScenarioCard(0);
-    await expect(page).toHaveURL(/\/scenarios\/[A-Za-z0-9]+$/);
+    await expect(page).toHaveURL(/\/scenarios\/[A-Za-z0-9]+(?:\?.*)?$/);
   });
 
   test('ソートを変更するとURLに反映される', async ({ page }) => {
@@ -57,9 +61,9 @@ test.describe('シナリオ検索', () => {
     // カードの初期表示を待つ
     await scenariosPage.scenarioCards.first().waitFor({ state: 'visible' });
 
-    // 20件以下の場合はもっと見るボタンが存在しない
+    // 20件以下の環境では追加読込の検証に必要なデータがない。
     const isVisible = await scenariosPage.loadMoreButton.isVisible();
-    if (!isVisible) return;
+    test.skip(!isVisible, '検索結果が20件以下のため追加読込を検証できない');
 
     const initialCount = await scenariosPage.getCardCount();
     await scenariosPage.loadMoreButton.click();
@@ -72,13 +76,13 @@ test.describe('シナリオ検索', () => {
 test.describe('URLパラメータの復元', () => {
   test('ソートパラメータが復元される', async ({ page }) => {
     const scenariosPage = new ScenariosPage(page);
-    await page.goto('/scenarios?sort=oldest');
+    await scenariosPage.goto('?sort=oldest');
     await expect(scenariosPage.sortTrigger).toContainText('古い順');
   });
 
   test('検索キーワードが復元される', async ({ page }) => {
     const scenariosPage = new ScenariosPage(page);
-    await page.goto('/scenarios?q=テスト');
+    await scenariosPage.goto('?q=テスト');
     await expect(scenariosPage.searchInput).toHaveValue('テスト');
   });
 });

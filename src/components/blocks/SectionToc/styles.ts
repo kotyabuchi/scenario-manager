@@ -53,9 +53,6 @@ export const item = cva({
       transitionDuration: 'normal',
       transitionTimingFunction: 'ease-out',
     },
-    _motionReduce: {
-      _after: { transitionDuration: '[0ms]' },
-    },
     // ホバー: 背景なし。文字色＋下線が左から伸びる
     _hover: {
       color: 'text.body',

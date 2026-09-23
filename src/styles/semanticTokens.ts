@@ -393,14 +393,14 @@ export const semanticTokens = {
     // サイドメニュー（PCグローバルナビ）
     // ========================================
     sideMenu: {
-      bg: { value: '{colors.white}' },
-      brand: { value: '{colors.green.600}' },
-      activeItemBg: { value: '{colors.green.100}' },
-      activeItemText: { value: '{colors.green.700}' },
-      activeItemIcon: { value: '{colors.green.500}' },
-      inactiveItemText: { value: '{colors.gray.600}' },
+      bg: { value: '{colors.canvas}' },
+      brand: { value: '{colors.green.700}' },
+      activeItemBg: { value: '{colors.green.50}' },
+      activeItemText: { value: '{colors.green.800}' },
+      activeItemIcon: { value: '{colors.green.600}' },
+      inactiveItemText: { value: '{colors.gray.700}' },
       inactiveItemIcon: { value: '{colors.gray.500}' },
-      itemBgHover: { value: '{colors.gray.50}' },
+      itemBgHover: { value: '{colors.paper}' },
     },
 
     // ========================================
@@ -416,7 +416,7 @@ export const semanticTokens = {
     // スクロールバー
     // ========================================
     scrollbar: {
-      track: { value: '{colors.gray.200}' },
+      track: { value: '{colors.transparent}' },
       thumb: { value: '{colors.green.500}' },
     },
 

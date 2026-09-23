@@ -20,6 +20,14 @@ const config: StorybookConfig = {
     return {
       ...config,
       plugins: [...(config.plugins ?? []), storybookAgentationPaths()],
+      // Ark UI の個別 import を事前バンドルし、実行時の再最適化リロードを防ぐ
+      optimizeDeps: {
+        ...config.optimizeDeps,
+        include: [
+          ...(config.optimizeDeps?.include ?? []),
+          '@ark-ui/react/collapsible',
+        ],
+      },
       resolve: {
         ...config.resolve,
         alias: {

@@ -42,6 +42,8 @@ export type ScenarioListPanelProps = {
   onLoadMore?: () => void;
   /** 空状態からの「条件をリセット」 */
   onResetFilters?: () => void;
+  returnTo?: string;
+  onScenarioOpen?: (scenarioId: string) => void;
 };
 
 /**
@@ -65,9 +67,11 @@ export const ScenarioListPanel = ({
   isLoadingMore = false,
   onLoadMore,
   onResetFilters,
+  returnTo,
+  onScenarioOpen,
 }: ScenarioListPanelProps) => {
   return (
-    <div className={styles.panel}>
+    <div className={styles.panel} aria-busy={isLoading}>
       {/* 上部インラインフィルター */}
       <ScenarioFilters systems={systems} tags={tags} draftState={draftState} />
 
@@ -96,6 +100,8 @@ export const ScenarioListPanel = ({
         scenarios={scenarios}
         isLoading={isLoading}
         {...(onResetFilters ? { onReset: onResetFilters } : {})}
+        {...(returnTo ? { returnTo } : {})}
+        {...(onScenarioOpen ? { onScenarioOpen } : {})}
       />
 
       {/* もっと見る */}

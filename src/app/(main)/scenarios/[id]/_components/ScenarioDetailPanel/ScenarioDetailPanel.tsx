@@ -1,10 +1,17 @@
 'use client';
 
-import { useOptimistic, useState, useTransition } from 'react';
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { CaretLeft, NotePencil, Star, X } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
+import { SCENARIO_DETAIL_SECTION_IDS } from '../../sections';
 import { ReviewSection } from '../ReviewSection';
 import { SessionSection } from '../SessionSection';
 import { VideoSection } from '../VideoSection';
@@ -15,6 +22,7 @@ import { Alert } from '@/components/elements/alert/alert';
 import { Button } from '@/components/elements/button/button';
 import { buttonLabel } from '@/components/elements/button/styles';
 
+import type { Route } from 'next';
 import type {
   ReviewWithUser,
   ScenarioDetail,
@@ -41,6 +49,8 @@ export type ScenarioDetailPanelProps = {
    * @default 'pane'
    */
   variant?: 'pane' | 'page';
+  /** 検索条件と並び順を保持した、検証済みの一覧内URL。 */
+  backHref?: string;
 };
 
 /**
@@ -48,7 +58,7 @@ export type ScenarioDetailPanelProps = {
  *
  * セクション縦並び（ScenarioDetailHead / SessionSection / VideoSection /
  * ReviewSection）を束ねる。**タブは使わない**（全セクション常時表示）。
- * 目次（SectionToc）はパネル内には置かない（必要になればページ側で検討）。
+ * 目次（SectionToc）は単独ページだけに配置し、パネル内には置かない。
  * ヘッダーバーに一覧への導線とお気に入り・セッション作成を配置する。
  */
 export const ScenarioDetailPanel = ({
@@ -63,12 +73,27 @@ export const ScenarioDetailPanel = ({
   isLoggedIn = false,
   onToggleFavorite,
   variant = 'pane',
+  backHref = '/scenarios',
 }: ScenarioDetailPanelProps) => {
   const scenarioId = scenario.scenarioId;
+  const listHref = backHref as Route;
 
   const [isPending, startTransition] = useTransition();
   const [hasFavoriteError, setHasFavoriteError] = useState(false);
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
+  const wideBackRef = useRef<HTMLAnchorElement>(null);
+  const narrowBackRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (variant !== 'pane') return;
+    const frame = requestAnimationFrame(() => {
+      const target = window.matchMedia('(min-width: 1044px)').matches
+        ? wideBackRef.current
+        : narrowBackRef.current;
+      target?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [variant]);
 
   const handleToggleFavorite = () => {
     if (!isLoggedIn || isPending || isNil(onToggleFavorite)) return;
@@ -94,14 +119,16 @@ export const ScenarioDetailPanel = ({
               // lg未満は一覧が隠れて単独表示になるため「戻る」をCSSで出し分け
               <>
                 <Link
-                  href="/scenarios"
+                  href={listHref}
+                  ref={wideBackRef}
                   className={`${styles.headerBar_back} ${styles.headerBar_backWide}`}
                 >
                   <X size={16} />
                   <span>閉じる</span>
                 </Link>
                 <Link
-                  href="/scenarios"
+                  href={listHref}
+                  ref={narrowBackRef}
                   className={`${styles.headerBar_back} ${styles.headerBar_backNarrow}`}
                 >
                   <CaretLeft size={16} />
@@ -110,7 +137,7 @@ export const ScenarioDetailPanel = ({
               </>
             ) : (
               // 単独ページ: 一覧は画面にないので常に「戻る」
-              <Link href="/scenarios" className={styles.headerBar_back}>
+              <Link href={listHref} className={styles.headerBar_back}>
                 <CaretLeft size={16} />
                 <span>シナリオ一覧に戻る</span>
               </Link>
@@ -159,12 +186,18 @@ export const ScenarioDetailPanel = ({
             />
           )}
 
-          <section id="info" className={styles.sectionAnchor}>
+          <section
+            id={SCENARIO_DETAIL_SECTION_IDS.info}
+            className={styles.sectionAnchor}
+          >
             <ScenarioDetailHead scenario={scenario} />
           </section>
 
           {!isNil(scenario.description) && (
-            <section id="overview" className={styles.sectionAnchor}>
+            <section
+              id={SCENARIO_DETAIL_SECTION_IDS.overview}
+              className={styles.sectionAnchor}
+            >
               <h2 className={styles.overview_title}>シナリオ概要</h2>
               <p className={styles.overview_text}>{scenario.description}</p>
             </section>
@@ -173,21 +206,21 @@ export const ScenarioDetailPanel = ({
 
         <div className={styles.sectionsGrid}>
           <section
-            id="sessions"
+            id={SCENARIO_DETAIL_SECTION_IDS.sessions}
             className={`${styles.sectionAnchor} ${styles.sectionCard}`}
           >
             <SessionSection scenarioId={scenarioId} sessions={sessions} />
           </section>
 
           <section
-            id="videos"
+            id={SCENARIO_DETAIL_SECTION_IDS.videos}
             className={`${styles.sectionAnchor} ${styles.sectionCard}`}
           >
             <VideoSection videos={videos} isPlayed={isPlayed} />
           </section>
 
           <section
-            id="comments"
+            id={SCENARIO_DETAIL_SECTION_IDS.comments}
             className={`${styles.sectionAnchor} ${styles.sectionCard}`}
           >
             <ReviewSection

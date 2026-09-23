@@ -42,6 +42,18 @@ describe('ScenarioDetailHead', () => {
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
+  it('配布元がBoothのときは配布リンクとともに出典を示す', () => {
+    render(
+      <ScenarioDetailHead
+        scenario={{ ...scenarioFixture, sourceType: 'booth' }}
+      />,
+    );
+    expect(screen.getByText('Booth')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '配布ページを開く' }),
+    ).toBeInTheDocument();
+  });
+
   it('画像・作者・評価・タグ・配布URLがなくても最低限の情報を表示する', () => {
     render(
       <ScenarioDetailHead

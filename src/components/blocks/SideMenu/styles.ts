@@ -18,6 +18,7 @@ export const sideMenu = css({
   height: '[100dvh]',
   width: '[240px]',
   flexShrink: '0',
+  overflowY: 'auto',
   bg: 'sideMenu.bg',
   px: '4',
   py: '6',
@@ -39,7 +40,7 @@ export const logoIconFrame = css({
   width: '9',
   height: '9',
   borderRadius: 'lg',
-  bg: 'primary.100',
+  bg: 'primary.50',
   flexShrink: '0',
 });
 
@@ -130,6 +131,20 @@ export const bottom = css({
   flexDirection: 'column',
   gap: '3',
   mt: 'auto',
+});
+
+export const aboutLink = css({
+  alignSelf: 'center',
+  color: 'text.secondary',
+  fontSize: 'xs',
+  textDecoration: 'underline',
+  textUnderlineOffset: '[3px]',
+  _hover: { color: 'primary.text' },
+  _focusVisible: {
+    outline: '[2px solid]',
+    outlineColor: 'border.focus',
+    outlineOffset: '[3px]',
+  },
 });
 
 export const registerButton = css({

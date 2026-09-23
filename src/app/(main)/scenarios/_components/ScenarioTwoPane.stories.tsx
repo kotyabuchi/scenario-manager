@@ -236,7 +236,7 @@ const TwoPane = () => {
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
         gap: 24,
-        minWidth: 1100,
+        minWidth: 740,
       }}
     >
       {/* 一覧ペインは自身で面（枠+影）を持つ（ScenarioListPanel.styles.panel）。

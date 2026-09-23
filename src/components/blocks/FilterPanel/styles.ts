@@ -50,7 +50,7 @@ export const rangeGrid = css({
   display: 'grid',
   gap: '4',
   gridTemplateColumns: '1fr',
-  '@container (min-width: 600px)': {
+  '@container (min-width: 540px)': {
     gridTemplateColumns: 'repeat(2, 1fr)',
   },
   '& > *': { minWidth: '0' },

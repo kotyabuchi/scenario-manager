@@ -2,6 +2,7 @@ import {
   ArrowSquareOut,
   FileText,
   ImageSquare,
+  LinkSimple,
   Star,
   Timer,
   User,
@@ -175,15 +176,24 @@ export const ScenarioDetailHead = ({
         </div>
 
         {!isNil(scenario.distributeUrl) && (
-          <a
-            href={scenario.distributeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.head_distribute}
-          >
-            <ArrowSquareOut size={16} />
-            配布ページを開く
-          </a>
+          <div className={styles.head_sourceRow}>
+            {!isNil(scenario.sourceType) &&
+              scenario.sourceType !== 'manual' && (
+                <Badge variant="neutral" showDot={false}>
+                  <LinkSimple size={12} />
+                  {scenario.sourceType === 'booth' ? 'Booth' : 'TALTO'}
+                </Badge>
+              )}
+            <a
+              href={scenario.distributeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.head_distribute}
+            >
+              <ArrowSquareOut size={16} />
+              配布ページを開く
+            </a>
+          </div>
         )}
       </div>
     </article>
