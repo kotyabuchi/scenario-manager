@@ -15,6 +15,14 @@ export const rewriteAgentationPreviewUrl = (requestUrl: string) => {
 export const storybookAgentationPaths = (): Plugin => ({
   name: 'storybook-agentation-paths',
   apply: 'serve',
+  config(config) {
+    // 遅延 import 後の再最適化で、React の異なるキャッシュ世代を混在させない。
+    return {
+      optimizeDeps: {
+        include: [...(config.optimizeDeps?.include ?? []), 'agentation'],
+      },
+    };
+  },
   configureServer(server) {
     server.middlewares.use(async (request, response, next) => {
       const previewUrl =

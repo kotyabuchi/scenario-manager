@@ -26,4 +26,6 @@ Storybook CanvasのURLには `/__agentation__/story/<Story ID>/iframe.html?id=<S
 
 `MCP Connected` が出ない場合は `http://127.0.0.1:4747/health` を開き、MCPサーバーが起動しているか確認する。Codex側にツールが見えない場合は `codex mcp get agentation` と新しいCodexタスクでのツール一覧を確認する。StorybookのStoryを切り替えた後も、注釈URLのStory IDと対象Storyが一致しているか確認する。
 
+開発用Storybookを同じ作業ツリーから複数同時に起動すると、Viteの依存関係キャッシュが競合してReactのフックエラーになることがある。`pnpm storybook` は6006番が使用中なら終了する。表示が崩れた場合は余分なStorybookプロセスを止め、1つだけ起動し直してからページをリロードする。
+
 Agentationの注釈には要素や周辺テキストも含まれるが、DOMパスはUI変更で変わる。修正時はStoryと実装を見て意図を判断し、関連する状態も検証する。

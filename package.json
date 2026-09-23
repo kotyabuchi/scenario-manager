@@ -17,7 +17,7 @@
     "lint": "biome lint --write",
     "format": "biome format --write",
     "check": "biome check --write",
-    "storybook": "storybook dev -p 6006 --no-open",
+    "storybook": "storybook dev -p 6006 --no-open --exact-port",
     "build-storybook": "storybook build",
     "test:storybook": "playwright test --config .storybook/playwright.config.ts",
     "vitest": "vitest run",
