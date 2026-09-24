@@ -3,25 +3,52 @@ import { css, cva } from '@/styled-system/css';
 /**
  * SideMenu（PCグローバルナビ）スタイル
  *
- * PC（lg以上）でのみ表示する左固定サイドメニュー。
+ * PC（lg以上）でのみ表示する左サイドメニュー。56pxまで折りたためる。
  * モバイルは BottomNav / SpeedDialFAB が担うため非表示。
  */
-export const sideMenu = css({
-  display: 'none',
-  lg: {
-    display: 'flex',
+export const sideMenu = cva({
+  base: {
+    display: 'none',
+    lg: { display: 'flex' },
+    flexDirection: 'column',
+    position: 'sticky',
+    top: '0',
+    height: '[100dvh]',
+    flexShrink: '0',
+    overflowY: 'auto',
+    bg: 'sideMenu.bg',
+    borderRightWidth: '1px',
+    borderRightStyle: 'solid',
+    borderRightColor: 'lightGreen.border',
+    py: '6',
   },
-  flexDirection: 'column',
-  gap: '8',
-  position: 'sticky',
-  top: '0',
-  height: '[100dvh]',
-  width: '[240px]',
+  variants: {
+    collapsed: {
+      true: { width: '[56px]', px: '2', gap: '0' },
+      false: { width: '[240px]', px: '4', gap: '8' },
+    },
+  },
+  defaultVariants: { collapsed: false },
+});
+
+export const toggleButton = css({
+  alignSelf: 'flex-end',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '9',
+  height: '9',
   flexShrink: '0',
-  overflowY: 'auto',
-  bg: 'sideMenu.bg',
-  px: '4',
-  py: '6',
+  borderRadius: 'lg',
+  color: 'sideMenu.inactiveItemIcon',
+  cursor: 'pointer',
+  _hover: { bg: 'sideMenu.itemBgHover' },
+  _focusVisible: { outline: '[2px solid]', outlineColor: 'border.focus' },
+});
+
+export const toggleButtonCollapsed = css({
+  alignSelf: 'center',
+  mt: '12',
 });
 
 // ロゴエリア

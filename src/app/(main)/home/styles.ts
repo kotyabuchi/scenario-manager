@@ -13,6 +13,31 @@ export const pageContainer = css({
   py: '8',
 });
 
+export const guestCard = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  gap: '4',
+  maxW: '[520px]',
+  mx: 'auto',
+  my: '12',
+  p: '8',
+  bg: 'bg.card',
+  borderRadius: '2xl',
+  shadow: 'card.default',
+});
+
+export const guestTitle = css({
+  fontSize: 'xl',
+  fontWeight: 'bold',
+  color: 'text.title',
+});
+
+export const guestDescription = css({
+  color: 'text.secondary',
+  lineHeight: 'relaxed',
+});
+
 export const pageGrid = css({
   display: 'grid',
   gap: '8',

@@ -74,20 +74,36 @@ type AuthMessage =
   | { type: 'error'; message: string };
 
 const createPopupResponse = (message: AuthMessage) => {
+  const serializedMessage = JSON.stringify(message).replaceAll('<', '\\u003c');
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>認証中...</title></head>
 <body>
 <p>認証処理中です。このウィンドウは自動的に閉じます。</p>
 <script>
-  try {
-    const channel = new BroadcastChannel('auth');
-    channel.postMessage(${JSON.stringify(message)});
-    channel.close();
-  } catch (e) {
-    console.error('BroadcastChannel error:', e);
+  const message = ${serializedMessage};
+  if (window.name === 'discord-auth') {
+    try {
+      const channel = new BroadcastChannel('auth');
+      channel.postMessage(message);
+      channel.close();
+    } finally {
+      window.close();
+    }
+  } else {
+    let returnTo = message.type === 'success' ? message.redirectTo : '/scenarios';
+    try {
+      const key = 'scenario-manager:auth-return-to';
+      const saved = window.sessionStorage.getItem(key);
+      window.sessionStorage.removeItem(key);
+      if (saved && saved.startsWith('/') && !saved.startsWith('//') && !saved.includes('\\') && !saved.startsWith('/auth/')) {
+        returnTo = saved;
+      }
+    } catch {
+      // ストレージが利用できない場合は既定の行き先に戻る。
+    }
+    window.location.replace(returnTo);
   }
-  window.close();
 </script>
 </body>
 </html>`;

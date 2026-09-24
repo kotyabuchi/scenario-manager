@@ -10,7 +10,10 @@ test.describe('シナリオ詳細', () => {
   let scenariosPage: ScenariosPage;
   let detailPage: ScenarioDetailPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    if (testInfo.project.name !== 'mobile-chrome') {
+      await page.setViewportSize({ width: 1360, height: 900 });
+    }
     scenariosPage = new ScenariosPage(page);
     detailPage = new ScenarioDetailPage(page);
     await scenariosPage.goto();

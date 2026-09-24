@@ -393,14 +393,14 @@ export const semanticTokens = {
     // サイドメニュー（PCグローバルナビ）
     // ========================================
     sideMenu: {
-      bg: { value: '{colors.canvas}' },
+      bg: { value: '{colors.paper}' },
       brand: { value: '{colors.green.700}' },
-      activeItemBg: { value: '{colors.green.50}' },
-      activeItemText: { value: '{colors.green.800}' },
-      activeItemIcon: { value: '{colors.green.600}' },
+      activeItemBg: { value: '{colors.green.500}' },
+      activeItemText: { value: '{colors.white}' },
+      activeItemIcon: { value: '{colors.white}' },
       inactiveItemText: { value: '{colors.gray.700}' },
       inactiveItemIcon: { value: '{colors.gray.500}' },
-      itemBgHover: { value: '{colors.paper}' },
+      itemBgHover: { value: '{colors.green.50}' },
     },
 
     // ========================================

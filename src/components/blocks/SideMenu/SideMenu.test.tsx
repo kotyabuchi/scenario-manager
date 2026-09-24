@@ -70,6 +70,20 @@ describe('SideMenu', () => {
   });
 
   describe('レンダリング', () => {
+    it('閉じるとナビゲーション領域を畳み、再び開ける', async () => {
+      const user = userEvent.setup();
+      render(<SideMenu />);
+
+      await user.click(
+        screen.getByRole('button', { name: 'サイドメニューを閉じる' }),
+      );
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+      await user.click(
+        screen.getByRole('button', { name: 'サイドメニューを開く' }),
+      );
+      expect(screen.getByRole('navigation')).toBeInTheDocument();
+    });
+
     it('ロゴがホームへのリンクになっている', () => {
       render(<SideMenu />);
       expect(

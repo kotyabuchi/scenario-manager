@@ -18,11 +18,13 @@ import { VideoSection } from '../VideoSection';
 import { ScenarioDetailHead } from './ScenarioDetailHead';
 import * as styles from './styles';
 
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
 import { Alert } from '@/components/elements/alert/alert';
 import { Button } from '@/components/elements/button/button';
 import { buttonLabel } from '@/components/elements/button/styles';
 
 import type { Route } from 'next';
+import type { MouseEvent } from 'react';
 import type {
   ReviewWithUser,
   ScenarioDetail,
@@ -81,22 +83,31 @@ export const ScenarioDetailPanel = ({
   const [isPending, startTransition] = useTransition();
   const [hasFavoriteError, setHasFavoriteError] = useState(false);
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
+  const openAuthPrompt = useAuthPrompt();
   const wideBackRef = useRef<HTMLAnchorElement>(null);
   const narrowBackRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     if (variant !== 'pane') return;
     const frame = requestAnimationFrame(() => {
-      const target = window.matchMedia('(min-width: 1044px)').matches
-        ? wideBackRef.current
-        : narrowBackRef.current;
+      const target =
+        wideBackRef.current &&
+        getComputedStyle(wideBackRef.current).display !== 'none'
+          ? wideBackRef.current
+          : narrowBackRef.current;
       target?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
   }, [variant]);
 
   const handleToggleFavorite = () => {
-    if (!isLoggedIn || isPending || isNil(onToggleFavorite)) return;
+    if (!isLoggedIn) {
+      openAuthPrompt({
+        message: 'お気に入りに追加するにはログインが必要です。',
+      });
+      return;
+    }
+    if (isPending || isNil(onToggleFavorite)) return;
     setHasFavoriteError(false);
     startTransition(async () => {
       setOptimisticFavorite(!optimisticFavorite);
@@ -105,6 +116,15 @@ export const ScenarioDetailPanel = ({
       } catch {
         setHasFavoriteError(true);
       }
+    });
+  };
+
+  const handleCreateSession = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (isLoggedIn) return;
+    event.preventDefault();
+    openAuthPrompt({
+      message: 'セッションを作成するにはログインが必要です。',
+      returnTo: `/sessions/new?scenarioId=${scenarioId}`,
     });
   };
 
@@ -147,7 +167,7 @@ export const ScenarioDetailPanel = ({
                 variant="outline"
                 size="sm"
                 onClick={handleToggleFavorite}
-                disabled={!isLoggedIn || isNil(onToggleFavorite) || isPending}
+                disabled={isLoggedIn && (isNil(onToggleFavorite) || isPending)}
                 loading={isPending}
                 aria-pressed={optimisticFavorite}
                 aria-busy={isPending}
@@ -170,6 +190,7 @@ export const ScenarioDetailPanel = ({
                   href={
                     `/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'
                   }
+                  onClick={handleCreateSession}
                 >
                   {/* asChild は Button の自動ラベルラップが効かないため、ラベルスタイルを直接適用 */}
                   <NotePencil size={16} />
@@ -209,7 +230,11 @@ export const ScenarioDetailPanel = ({
             id={SCENARIO_DETAIL_SECTION_IDS.sessions}
             className={`${styles.sectionAnchor} ${styles.sectionCard}`}
           >
-            <SessionSection scenarioId={scenarioId} sessions={sessions} />
+            <SessionSection
+              scenarioId={scenarioId}
+              sessions={sessions}
+              isLoggedIn={isLoggedIn}
+            />
           </section>
 
           <section

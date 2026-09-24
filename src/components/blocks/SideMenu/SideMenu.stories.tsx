@@ -1,3 +1,4 @@
+import { userEvent, within } from '@storybook/test';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
 import { SideMenu } from './SideMenu';
@@ -57,6 +58,16 @@ type Story = StoryObj<typeof meta>;
  * 未ログイン（ログインボタン表示）
  */
 export const LoggedOut: Story = {};
+
+/** サイドメニューを畳んだ状態でも開く操作を残す。 */
+export const Collapsed: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'サイドメニューを閉じる' }),
+    );
+  },
+};
 
 /**
  * ログイン済み（シナリオ登録 + ユーザー表示）

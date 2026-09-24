@@ -2,6 +2,7 @@ import { css } from '@/styled-system/css';
 
 export const shell = css({
   containerType: 'inline-size',
+  containerName: 'scenario-shell',
   display: 'flex',
   flex: '1',
   flexDirection: 'column',
@@ -19,7 +20,8 @@ export const grid = css({
 });
 
 export const twoPaneGrid = css({
-  '@media (min-width: 1044px)': {
+  // 左右余白48px + ペイン間24px + ペイン幅合計1000px。
+  '@container scenario-shell (min-width: 1072px)': {
     gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
     px: '6',
   },
@@ -47,7 +49,7 @@ export const scrollFade = css({
 
 export const scrollingListPane = css({
   py: '6',
-  '@media (min-width: 1044px)': {
+  '@container scenario-shell (min-width: 1072px)': {
     // 余白はスクロール領域の内側に置き、トラックはビューポート端まで伸ばす。
     maxHeight: '[100dvh]',
     overflowY: 'auto',
@@ -61,7 +63,7 @@ export const singleListPane = css({
 
 export const listPaneWithDetail = css({
   display: 'none',
-  '@media (min-width: 1044px)': {
+  '@container scenario-shell (min-width: 1072px)': {
     display: 'block',
     pr: '2',
   },
@@ -70,7 +72,7 @@ export const listPaneWithDetail = css({
 export const narrowOnlyToc = css({
   display: 'block',
   mb: '4',
-  '@media (min-width: 1044px)': {
+  '@container scenario-shell (min-width: 1072px)': {
     display: 'none',
   },
 });
@@ -88,7 +90,7 @@ export const detailPaneVisible = css({
   display: 'block',
   px: '6',
   py: '6',
-  '@media (min-width: 1044px)': {
+  '@container scenario-shell (min-width: 1072px)': {
     pl: '0',
     pr: '2',
     maxHeight: '[100dvh]',

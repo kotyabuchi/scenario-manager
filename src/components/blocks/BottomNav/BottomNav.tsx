@@ -11,6 +11,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { useAuthPrompt } from '../AuthPrompt';
 import { FeedbackModal } from '../FeedbackModal';
 import { ScenarioRegisterDialog } from '../ScenarioRegisterDialog';
 import { SpeedDialPanel } from '../SpeedDialFAB/SpeedDialPanel';
@@ -18,10 +19,12 @@ import { shareCurrentPage } from '../SpeedDialFAB/share';
 import { useSpeedDial } from '../SpeedDialFAB/useSpeedDial';
 import * as styles from './styles';
 
+import { useAuth } from '@/context';
 import { useBottomNavSlotTarget } from '@/hooks/useBottomNavSlot';
 import { useSystemMessageActions } from '@/hooks/useSystemMessage';
 
 import type { Route } from 'next';
+import type { MouseEvent } from 'react';
 
 type NavItem = {
   href: Route<string>;
@@ -51,6 +54,8 @@ export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isScenarioRegisterOpen, setIsScenarioRegisterOpen] = useState(false);
   const { addMessage } = useSystemMessageActions();
+  const { isAuthenticated: isAuthenticatedNow } = useAuth();
+  const openAuthPrompt = useAuthPrompt();
   const slotTargetRef = useBottomNavSlotTarget();
 
   const handleFeedbackOpen = () => {
@@ -105,6 +110,20 @@ export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+  const handleProtectedLink = (
+    event: MouseEvent<HTMLAnchorElement>,
+    href: Route<string>,
+  ) => {
+    if (isAuthenticatedNow) return;
+    event.preventDefault();
+    openAuthPrompt({
+      message:
+        href === '/home'
+          ? 'ホームを見るにはログインが必要です。'
+          : 'マイページを見るにはログインが必要です。',
+      returnTo: href,
+    });
+  };
 
   return (
     <>
@@ -127,6 +146,12 @@ export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
                 href={item.href}
                 className={styles.navItem({ active })}
                 aria-current={active ? 'page' : undefined}
+                {...(item.href === '/home'
+                  ? {
+                      onClick: (event: MouseEvent<HTMLAnchorElement>) =>
+                        handleProtectedLink(event, item.href),
+                    }
+                  : {})}
               >
                 <item.icon size={24} weight={active ? 'fill' : 'regular'} />
                 <span className={styles.navLabel}>{item.label}</span>
@@ -177,6 +202,12 @@ export const BottomNav = ({ isAuthenticated }: BottomNavProps) => {
                 href={item.href}
                 className={styles.navItem({ active })}
                 aria-current={active ? 'page' : undefined}
+                {...(item.href === '/profile'
+                  ? {
+                      onClick: (event: MouseEvent<HTMLAnchorElement>) =>
+                        handleProtectedLink(event, item.href),
+                    }
+                  : {})}
               >
                 <item.icon size={24} weight={active ? 'fill' : 'regular'} />
                 <span className={styles.navLabel}>{item.label}</span>

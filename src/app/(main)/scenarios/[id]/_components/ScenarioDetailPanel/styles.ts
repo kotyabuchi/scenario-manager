@@ -42,16 +42,17 @@ export const headerBar_back = css({
   },
 });
 
-// SideMenu 240px・左右余白48px・ペイン領域740pxに加え、
-// 通常のスクロールバー幅も含めた2ペイン切替点に合わせる。
+// 2ペインの表示領域に合わせ、親のシナリオレイアウトを基準に切り替える。
 export const headerBar_backWide = css({
   display: 'none',
-  '@media (min-width: 1044px)': { display: 'inline-flex' },
+  '@container scenario-shell (min-width: 1072px)': {
+    display: 'inline-flex',
+  },
 });
 
 export const headerBar_backNarrow = css({
   display: 'inline-flex',
-  '@media (min-width: 1044px)': { display: 'none' },
+  '@container scenario-shell (min-width: 1072px)': { display: 'none' },
 });
 
 export const headerBar_actions = css({

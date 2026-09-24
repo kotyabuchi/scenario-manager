@@ -8,6 +8,8 @@ import {
   type ScenarioDetailPanelProps,
 } from './ScenarioDetailPanel';
 
+import { AuthPromptContext } from '@/components/blocks/AuthPrompt/authPromptContext';
+
 const defaultProps: ScenarioDetailPanelProps = {
   scenario: scenarioFixture,
   sessions: [],
@@ -50,20 +52,47 @@ describe('ScenarioDetailPanel', () => {
     ).toHaveAttribute('href', '/scenarios');
   });
 
-  it('未ログイン時はお気に入りを実行できない', async () => {
+  it('未ログイン時はログイン案内を開き、お気に入り更新は実行しない', async () => {
     const onToggleFavorite = vi.fn(async () => {});
+    const openAuthPrompt = vi.fn();
     const user = userEvent.setup();
     render(
-      <ScenarioDetailPanel
-        {...defaultProps}
-        isLoggedIn={false}
-        onToggleFavorite={onToggleFavorite}
-      />,
+      <AuthPromptContext value={openAuthPrompt}>
+        <ScenarioDetailPanel
+          {...defaultProps}
+          isLoggedIn={false}
+          onToggleFavorite={onToggleFavorite}
+        />
+      </AuthPromptContext>,
     );
     const button = screen.getByRole('button', { name: 'お気に入り' });
-    expect(button).toBeDisabled();
+    expect(button).toBeEnabled();
     await user.click(button);
+    expect(openAuthPrompt).toHaveBeenCalledWith({
+      message: 'お気に入りに追加するにはログインが必要です。',
+    });
     expect(onToggleFavorite).not.toHaveBeenCalled();
+  });
+
+  it('未ログイン時のセッション作成導線はシナリオ指定を保持して認証案内を開く', async () => {
+    const openAuthPrompt = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <AuthPromptContext value={openAuthPrompt}>
+        <ScenarioDetailPanel {...defaultProps} isLoggedIn={false} />
+      </AuthPromptContext>,
+    );
+
+    for (const link of screen.getAllByRole('link', {
+      name: /セッションを作成/,
+    })) {
+      await user.click(link);
+    }
+    expect(openAuthPrompt).toHaveBeenCalledTimes(2);
+    expect(openAuthPrompt).toHaveBeenCalledWith({
+      message: 'セッションを作成するにはログインが必要です。',
+      returnTo: '/sessions/new?scenarioId=scn_01',
+    });
   });
 
   it('お気に入り処理が未接続の場合はボタンを無効にする', () => {

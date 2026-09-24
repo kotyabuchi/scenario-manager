@@ -62,7 +62,7 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
   test('広い画面では左右1:1の2ペインで開き、閉じると一覧へ戻る', async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize({ width: 1360, height: 900 });
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
     await list.goto();
@@ -134,7 +134,7 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
   });
 
   test('動きを抑える設定では詳細ペインをスライドさせない', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize({ width: 1360, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
@@ -167,8 +167,10 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
     await expect(list.listPane).toBeVisible();
   });
 
-  test('1044pxで2ペイン、1043pxで単独表示に切り替わる', async ({ page }) => {
-    await page.setViewportSize({ width: 1044, height: 900 });
+  test('2ペイン合計1000pxを境に切り替わり、サイドメニューを畳むと再び2ペインになる', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1360, height: 900 });
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
     await list.goto();
@@ -178,8 +180,7 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
     await expect(detail.pane).toBeVisible();
     const leftWidth = (await list.listPane.boundingBox())?.width;
     const rightWidth = (await detail.pane.boundingBox())?.width;
-    expect(leftWidth).toBeGreaterThanOrEqual(358);
-    expect(rightWidth).toBeGreaterThanOrEqual(358);
+    expect((leftWidth ?? 0) + (rightWidth ?? 0)).toBeGreaterThanOrEqual(1000);
     await expect
       .poll(() =>
         page.evaluate(
@@ -188,14 +189,33 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
       )
       .toBeLessThanOrEqual(1);
 
-    await page.setViewportSize({ width: 1043, height: 900 });
+    await page.setViewportSize({ width: 1312, height: 900 });
+    await expect(list.listPane).toBeVisible();
+    await page.setViewportSize({ width: 1311, height: 900 });
+    await expect(list.listPane).not.toBeVisible();
+    await expect(detail.backControl).toBeVisible();
+
+    await page.setViewportSize({ width: 1280, height: 900 });
     await expect(list.listPane).not.toBeVisible();
     await expect(detail.pane).toBeVisible();
+    await expect(detail.backControl).toBeVisible();
+
+    await page.getByRole('button', { name: 'サイドメニューを閉じる' }).click();
+    await expect(list.listPane).toBeVisible();
+    await expect(detail.closeControl).toBeVisible();
+    const expandedLeftWidth = (await list.listPane.boundingBox())?.width;
+    const expandedRightWidth = (await detail.pane.boundingBox())?.width;
+    expect(
+      (expandedLeftWidth ?? 0) + (expandedRightWidth ?? 0),
+    ).toBeGreaterThanOrEqual(1000);
+
+    await page.getByRole('button', { name: 'サイドメニューを開く' }).click();
+    await expect(list.listPane).not.toBeVisible();
     await expect(detail.backControl).toBeVisible();
   });
 
   test('直URLとリロードでは単独ページを表示する', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize({ width: 1360, height: 900 });
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
     await list.goto();
@@ -220,7 +240,7 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
   test('条件付き詳細URLをリロードしても戻り先の検索条件を保つ', async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize({ width: 1360, height: 900 });
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
     await list.goto('?sort=oldest');
@@ -239,7 +259,7 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
   test('ブラウザの戻る・進むで検索条件と2ペイン表示を復元する', async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize({ width: 1360, height: 900 });
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
     await list.goto('?sort=oldest');
@@ -260,7 +280,7 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
     page,
     request,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize({ width: 1360, height: 900 });
 
     // 既存の実データ1件をもとに一覧APIだけ40件へ拡張し、データ量に依存せず
     // 追加読込と一覧ペイン内スクロールの復元を検証する。

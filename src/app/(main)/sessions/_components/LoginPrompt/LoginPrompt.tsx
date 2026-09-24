@@ -2,21 +2,21 @@
 
 import * as styles from './styles';
 
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
 import { Button } from '@/components/elements/button/button';
-import { useDiscordAuth } from '@/hooks/useDiscordAuth';
 
 type LoginPromptProps = {
   message: string;
 };
 
 export const LoginPrompt = ({ message }: LoginPromptProps) => {
-  const { login } = useDiscordAuth();
+  const openAuthPrompt = useAuthPrompt();
 
   return (
     <div className={styles.loginPrompt}>
       <span className={styles.loginPromptText}>{message}</span>
-      <Button status="primary" onClick={login}>
-        ログイン
+      <Button status="primary" onClick={() => openAuthPrompt({ message })}>
+        ログイン / 新規登録
       </Button>
     </div>
   );

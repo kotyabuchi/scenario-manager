@@ -26,6 +26,7 @@ import type { SearchFormValues } from '../SearchPanel/schema';
 type PublicTabProps = {
   systems: ScenarioSystem[];
   initialResult: PublicSearchResult;
+  isLoggedIn?: boolean;
   initialParams: {
     systems: string[];
     phases: string[];
@@ -80,6 +81,7 @@ export const PublicTab = ({
   systems,
   initialResult,
   initialParams,
+  isLoggedIn = false,
 }: PublicTabProps) => {
   const [isPending, startTransition] = useTransition();
 
@@ -228,7 +230,7 @@ export const PublicTab = ({
         </div>
 
         {searchResult.sessions.length === 0 ? (
-          <EmptyState type="public" />
+          <EmptyState type="public" isLoggedIn={isLoggedIn} />
         ) : (
           <>
             <SessionList sessions={searchResult.sessions} variant="public" />

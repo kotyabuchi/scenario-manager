@@ -5,6 +5,7 @@ import { isNil } from 'ramda';
 
 import * as styles from './styles';
 
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
 import { Badge, type BadgeVariant } from '@/components/elements/badge';
 import { SessionPhases } from '@/db/enum';
 
@@ -13,6 +14,7 @@ import type { SessionWithKeeper } from '../interface';
 type SessionSectionProps = {
   scenarioId: string;
   sessions: SessionWithKeeper[];
+  isLoggedIn?: boolean;
 };
 
 // セッションフェーズ → バッジ色（募集中=ピンク / 進行系=緑 / 完了=グレー / 中止=赤）
@@ -85,7 +87,10 @@ const SessionRow = ({ session }: { session: SessionWithKeeper }) => {
 export const SessionSection = ({
   scenarioId,
   sessions,
+  isLoggedIn = false,
 }: SessionSectionProps) => {
+  const openAuthPrompt = useAuthPrompt();
+
   return (
     <section className={styles.section}>
       <h2 className={styles.section_title}>
@@ -102,6 +107,14 @@ export const SessionSection = ({
           <Link
             href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
             className={styles.section_ctaButton}
+            onClick={(event) => {
+              if (isLoggedIn) return;
+              event.preventDefault();
+              openAuthPrompt({
+                message: 'セッションを作成するにはログインが必要です。',
+                returnTo: `/sessions/new?scenarioId=${scenarioId}`,
+              });
+            }}
           >
             セッションを作成する
           </Link>

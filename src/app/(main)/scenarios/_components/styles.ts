@@ -312,8 +312,8 @@ export const cardAlt_meta = css({
 // ScenarioList スタイル
 export const scenarioListContainer = css({
   display: 'grid',
-  // 横幅730px前後で3列（各カード最小216px、1frで伸び730px時は約232px）
-  gridTemplateColumns: 'repeat(auto-fill, minmax(216px, 1fr))',
+  // カードは250px以上を確保し、画面がそれより狭い場合だけ幅に収める。
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))',
   gap: '4',
 });
 

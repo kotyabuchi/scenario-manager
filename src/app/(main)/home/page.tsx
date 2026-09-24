@@ -1,5 +1,6 @@
 import { ActivityTimeline } from './_components/ActivityTimeline';
 import { HeroSection } from './_components/HeroSection';
+import { HomeGuest } from './_components/HomeGuest';
 import { MiniCalendar } from './_components/MiniCalendar';
 import { NewScenarios } from './_components/NewScenarios';
 import { SystemNotice } from './_components/SystemNotice';
@@ -27,7 +28,7 @@ export default async function HomePage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return null;
+    return <HomeGuest />;
   }
 
   // auth_user_id → user_id 解決

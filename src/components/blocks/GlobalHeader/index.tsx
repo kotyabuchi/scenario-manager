@@ -7,11 +7,13 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import * as styles from './styles';
 
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
 import { ScenarioRegisterDialog } from '@/components/blocks/ScenarioRegisterDialog';
 import { useAuth } from '@/context';
 import { useDiscordAuth } from '@/hooks/useDiscordAuth';
 
 import type { Route } from 'next';
+import type { MouseEvent } from 'react';
 
 type NavItem = {
   href: Route<string>;
@@ -31,11 +33,20 @@ export const GlobalHeader = () => {
   const router = useRouter();
   const { user, discordMeta, isLoading, isAuthenticated } = useAuth();
   const { login } = useDiscordAuth();
+  const openAuthPrompt = useAuthPrompt();
 
   const isLoggedIn = !isLoading && isAuthenticated;
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+  const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (isAuthenticated) return;
+    event.preventDefault();
+    openAuthPrompt({
+      message: 'ホームを見るにはログインが必要です。',
+      returnTo: '/home',
+    });
+  };
 
   const showScenarioRegisterButton =
     pathname.startsWith('/scenarios') &&
@@ -55,7 +66,7 @@ export const GlobalHeader = () => {
   return (
     <header className={styles.header}>
       {/* Logo */}
-      <Link href="/home" className={styles.logo}>
+      <Link href="/home" className={styles.logo} onClick={handleHomeClick}>
         <div className={styles.logoIconFrame}>
           <BookOpen size={18} className={styles.logoIcon} />
         </div>
@@ -72,6 +83,7 @@ export const GlobalHeader = () => {
               href={item.href}
               aria-current={active ? 'page' : undefined}
               className={styles.navLink({ active })}
+              {...(item.href === '/home' ? { onClick: handleHomeClick } : {})}
             >
               <span className={styles.navLinkText({ active })}>
                 {item.label}

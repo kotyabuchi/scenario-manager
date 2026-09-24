@@ -11,14 +11,17 @@ import Link from 'next/link';
 
 import * as styles from './styles';
 
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
 import { Button } from '@/components/elements/button/button';
 
 type EmptyStateProps = {
   type: 'upcoming' | 'history' | 'public';
   onReset?: () => void;
+  isLoggedIn?: boolean;
 };
 
-export const EmptyState = ({ type }: EmptyStateProps) => {
+export const EmptyState = ({ type, isLoggedIn = false }: EmptyStateProps) => {
+  const openAuthPrompt = useAuthPrompt();
   if (type === 'upcoming') {
     return (
       <div className={styles.emptyState}>
@@ -66,12 +69,22 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
       <p className={styles.emptyState_subtitle}>
         検索条件を変更するか、新しいセッションを作成してみましょう
       </p>
-      <Link href="/sessions/new">
-        <Button status="primary">
+      <Button status="primary" asChild>
+        <Link
+          href="/sessions/new"
+          onClick={(event) => {
+            if (isLoggedIn) return;
+            event.preventDefault();
+            openAuthPrompt({
+              message: 'セッションを作成するにはログインが必要です。',
+              returnTo: '/sessions/new',
+            });
+          }}
+        >
           <Plus size={16} />
           セッションを作成する
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     </div>
   );
 };

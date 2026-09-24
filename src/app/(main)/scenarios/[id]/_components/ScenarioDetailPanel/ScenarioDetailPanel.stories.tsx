@@ -7,7 +7,11 @@ import {
   type ScenarioDetailPanelProps,
 } from './ScenarioDetailPanel';
 
+import { AuthPromptDialog } from '@/components/blocks/AuthPrompt';
+import { AuthPromptContext } from '@/components/blocks/AuthPrompt/authPromptContext';
+
 import type { Meta, StoryObj } from '@storybook/react';
+import type { AuthPromptRequest } from '@/components/blocks/AuthPrompt/authPromptContext';
 import type {
   ReviewWithUser,
   ScenarioDetail,
@@ -283,9 +287,25 @@ export const Empty: Story = {
   ],
 };
 
-/** 未ログイン時は閲覧とセッション作成導線を表示し、お気に入りを無効にする。 */
+/** 未ログイン時にお気に入りを押すと認証案内を表示する。 */
 export const LoggedOut: Story = {
   args: { isLoggedIn: false },
+  decorators: [
+    (Story) => {
+      const [request, setRequest] = useState<AuthPromptRequest | null>(null);
+      return (
+        <AuthPromptContext value={setRequest}>
+          <Story />
+          <AuthPromptDialog
+            open={request !== null}
+            request={request}
+            onClose={() => setRequest(null)}
+            onContinue={() => setRequest(null)}
+          />
+        </AuthPromptContext>
+      );
+    },
+  ],
 };
 
 export const Favorite: Story = {
