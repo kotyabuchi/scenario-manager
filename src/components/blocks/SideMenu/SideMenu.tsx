@@ -5,8 +5,8 @@ import {
   BookOpen,
   Calendar,
   CalendarBlank,
-  CaretLeft,
-  CaretRight,
+  CaretDoubleLeft,
+  CaretDoubleRight,
   House,
   Plus,
   SignIn,
@@ -76,76 +76,73 @@ export const SideMenu = () => {
       className={styles.sideMenu({ collapsed: isCollapsed })}
       aria-label="メインナビゲーション"
     >
-      <button
-        type="button"
-        className={`${styles.toggleButton} ${
-          isCollapsed ? styles.toggleButtonCollapsed : ''
-        }`}
-        aria-label={
-          isCollapsed ? 'サイドメニューを開く' : 'サイドメニューを閉じる'
-        }
-        aria-expanded={!isCollapsed}
-        onClick={() => setIsCollapsed((current) => !current)}
-      >
-        {isCollapsed ? <CaretRight size={20} /> : <CaretLeft size={20} />}
-      </button>
-      {!isCollapsed && (
-        <>
-          {/* ロゴ */}
-          <Link href="/home" className={styles.logo} onClick={handleHomeClick}>
+      <div className={styles.sideMenuContent}>
+        <div className={styles.header}>
+          <Link
+            href="/home"
+            className={`${styles.logo} ${isCollapsed ? styles.logoCollapsed : ''}`}
+            aria-label={isCollapsed ? 'シナプレ管理くん' : undefined}
+            onClick={handleHomeClick}
+          >
             <span className={styles.logoIconFrame}>
               <BookOpen size={20} weight="fill" className={styles.logoIcon} />
             </span>
-            <span className={styles.logoTexts}>
-              <span className={styles.logoTitle}>シナプレ管理くん</span>
-              <span className={styles.logoSubtitle}>
-                TRPGを、もっと楽しく。
+            {!isCollapsed && (
+              <span className={styles.logoTexts}>
+                <span className={styles.logoTitle}>シナプレ管理くん</span>
+                <span className={styles.logoSubtitle}>
+                  TRPGを、もっと楽しく。
+                </span>
               </span>
-            </span>
+            )}
           </Link>
+        </div>
 
-          {/* ナビゲーション */}
-          <nav className={styles.nav}>
-            {navItems.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className={styles.navItem({ active })}
-                  {...(item.href === '/home'
-                    ? { onClick: handleHomeClick }
-                    : {})}
-                >
-                  <item.icon
-                    size={20}
-                    weight={active ? 'fill' : 'regular'}
-                    className={styles.navIcon({ active })}
-                  />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+        <nav className={styles.nav} aria-label="メインメニュー">
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                aria-label={isCollapsed ? item.label : undefined}
+                title={isCollapsed ? item.label : undefined}
+                className={styles.navItem({ active })}
+                {...(item.href === '/home' ? { onClick: handleHomeClick } : {})}
+              >
+                <item.icon
+                  size={20}
+                  weight={active ? 'fill' : 'regular'}
+                  className={styles.navIcon({ active })}
+                  aria-hidden="true"
+                />
+                {!isCollapsed && item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-          {/* 下部: シナリオ登録 + ユーザー */}
-          <div className={styles.bottom}>
-            {isLoggedIn ? (
+        {/* 下部: シナリオ登録 + ユーザー */}
+        <div className={styles.bottom}>
+          {isCollapsed ? (
+            isLoggedIn ? (
               <>
                 <ScenarioRegisterDialog>
-                  <button type="button" className={styles.registerButton}>
-                    <Plus size={18} weight="bold" />
-                    シナリオを登録
+                  <button
+                    type="button"
+                    className={styles.compactPrimaryAction}
+                    aria-label="シナリオを登録"
+                    title="シナリオを登録"
+                  >
+                    <Plus size={20} weight="bold" />
                   </button>
                 </ScenarioRegisterDialog>
-
-                <Divider />
-
                 <Link
                   href="/profile"
+                  className={styles.compactAction}
                   aria-label={`プロフィール: ${displayName}`}
-                  className={styles.userButton}
+                  title="プロフィール"
                 >
                   <span className={styles.avatar}>
                     {avatarUrl ? (
@@ -160,25 +157,90 @@ export const SideMenu = () => {
                       <User size={20} />
                     )}
                   </span>
-                  <span className={styles.userName}>{displayName}</span>
                 </Link>
               </>
             ) : (
               <button
                 type="button"
-                className={styles.loginButton}
+                className={styles.compactPrimaryAction}
+                aria-label="ログイン"
+                title="ログイン"
                 onClick={() => login()}
               >
-                <SignIn size={18} weight="bold" />
-                ログイン
+                <SignIn size={20} weight="bold" />
               </button>
-            )}
-            <Link href="/about" className={styles.aboutLink}>
-              サービスについて
-            </Link>
-          </div>
-        </>
-      )}
+            )
+          ) : (
+            <>
+              {isLoggedIn ? (
+                <>
+                  <ScenarioRegisterDialog>
+                    <button type="button" className={styles.registerButton}>
+                      <Plus size={18} weight="bold" />
+                      シナリオを登録
+                    </button>
+                  </ScenarioRegisterDialog>
+
+                  <Divider />
+
+                  <Link
+                    href="/profile"
+                    aria-label={`プロフィール: ${displayName}`}
+                    className={styles.userButton}
+                  >
+                    <span className={styles.avatar}>
+                      {avatarUrl ? (
+                        <Image
+                          src={avatarUrl}
+                          alt=""
+                          width={36}
+                          height={36}
+                          className={styles.avatarImage}
+                        />
+                      ) : (
+                        <User size={20} />
+                      )}
+                    </span>
+                    <span className={styles.userName}>{displayName}</span>
+                  </Link>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.loginButton}
+                  onClick={() => login()}
+                >
+                  <SignIn size={18} weight="bold" />
+                  ログイン
+                </button>
+              )}
+              <Link href="/about" className={styles.aboutLink}>
+                サービスについて
+              </Link>
+            </>
+          )}
+          {isCollapsed && (
+            <span className={styles.aboutPlaceholder} aria-hidden="true">
+              &nbsp;
+            </span>
+          )}
+        </div>
+      </div>
+      <button
+        type="button"
+        className={styles.toggleHandle}
+        aria-label={
+          isCollapsed ? 'サイドメニューを開く' : 'サイドメニューを閉じる'
+        }
+        aria-expanded={!isCollapsed}
+        onClick={() => setIsCollapsed((current) => !current)}
+      >
+        {isCollapsed ? (
+          <CaretDoubleRight size={18} className={styles.toggleHandleIcon} />
+        ) : (
+          <CaretDoubleLeft size={18} className={styles.toggleHandleIcon} />
+        )}
+      </button>
     </aside>
   );
 };

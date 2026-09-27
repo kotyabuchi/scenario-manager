@@ -70,18 +70,38 @@ describe('SideMenu', () => {
   });
 
   describe('レンダリング', () => {
-    it('閉じるとナビゲーション領域を畳み、再び開ける', async () => {
+    it('閉じるとリンクをアイコンだけにし、サービス情報を隠して再び開ける', async () => {
       const user = userEvent.setup();
       render(<SideMenu />);
 
       await user.click(
         screen.getByRole('button', { name: 'サイドメニューを閉じる' }),
       );
-      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+      const home = screen.getByRole('link', { name: 'ホーム' });
+      expect(home).toHaveAttribute('href', '/home');
+      expect(home).not.toHaveTextContent('ホーム');
+      expect(home.querySelector('svg')).not.toBeNull();
+      const logo = screen.getByRole('link', { name: 'シナプレ管理くん' });
+      expect(logo).toHaveAttribute('href', '/home');
+      expect(logo.querySelector('svg')).not.toBeNull();
+      expect(screen.getByRole('link', { name: 'シナリオ' })).toHaveAttribute(
+        'href',
+        '/scenarios',
+      );
+      expect(
+        screen.queryByRole('link', { name: 'サービスについて' }),
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'ログイン' })).toBeVisible();
       await user.click(
         screen.getByRole('button', { name: 'サイドメニューを開く' }),
       );
       expect(screen.getByRole('navigation')).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'ホーム' })).toHaveTextContent(
+        'ホーム',
+      );
+      expect(
+        screen.getByRole('link', { name: 'サービスについて' }),
+      ).toBeVisible();
     });
 
     it('ロゴがホームへのリンクになっている', () => {

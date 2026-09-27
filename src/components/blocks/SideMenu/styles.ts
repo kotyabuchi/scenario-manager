@@ -3,7 +3,7 @@ import { css, cva } from '@/styled-system/css';
 /**
  * SideMenu（PCグローバルナビ）スタイル
  *
- * PC（lg以上）でのみ表示する左サイドメニュー。56pxまで折りたためる。
+ * PC（lg以上）でのみ表示する左サイドメニュー。折りたたみ時は内容に合わせた幅になる。
  * モバイルは BottomNav / SpeedDialFAB が担うため非表示。
  */
 export const sideMenu = cva({
@@ -15,40 +15,66 @@ export const sideMenu = cva({
     top: '0',
     height: '[100dvh]',
     flexShrink: '0',
-    overflowY: 'auto',
+    zIndex: 'sticky',
     bg: 'sideMenu.bg',
-    borderRightWidth: '1px',
-    borderRightStyle: 'solid',
-    borderRightColor: 'lightGreen.border',
-    py: '6',
+    boxShadow: 'xl',
   },
   variants: {
     collapsed: {
-      true: { width: '[56px]', px: '2', gap: '0' },
-      false: { width: '[240px]', px: '4', gap: '8' },
+      true: { width: '[max-content]' },
+      // false: { width: '[240px]' },
     },
   },
   defaultVariants: { collapsed: false },
 });
 
-export const toggleButton = css({
-  alignSelf: 'flex-end',
+export const sideMenuContent = css({
+  display: 'flex',
+  flexDirection: 'column',
+  height: 'full',
+  overflowY: 'auto',
+  p: '4',
+  gap: '8',
+});
+
+export const header = css({
+  display: 'flex',
+  alignItems: 'center',
+  minHeight: '11',
+});
+
+export const toggleHandle = css({
+  position: 'absolute',
+  top: '[50%]',
+  right: '-6',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '9',
-  height: '9',
-  flexShrink: '0',
-  borderRadius: 'lg',
-  color: 'sideMenu.inactiveItemIcon',
+  width: '6',
+  height: '28',
+  bg: 'transparent',
+  transform: 'translateY(-50%)',
+  color: 'primary.default',
   cursor: 'pointer',
-  _hover: { bg: 'sideMenu.itemBgHover' },
+  _hover: { color: 'sideMenu.brand' },
   _focusVisible: { outline: '[2px solid]', outlineColor: 'border.focus' },
+  _before: {
+    content: '""',
+    position: 'absolute',
+    inset: '[0 auto 0 0]',
+    width: '5',
+    background: 'sideMenu.bg',
+    clipPath:
+      'path("M 0 0 C 0 18 2 25 7 31 C 15 36 20 44 20 56 C 20 68 15 76 7 81 C 2 87 0 94 0 112 Z")',
+    filter: '[drop-shadow(5px 2px 5px rgb(28 51 32 / .08))]',
+    transition: '[background 180ms ease]',
+  },
 });
 
-export const toggleButtonCollapsed = css({
-  alignSelf: 'center',
-  mt: '12',
+export const toggleHandleIcon = css({
+  position: 'relative',
+  zIndex: '[1]',
+  marginLeft: '-3',
 });
 
 // ロゴエリア
@@ -56,8 +82,14 @@ export const logo = css({
   display: 'flex',
   alignItems: 'center',
   gap: '2.5',
-  px: '2',
+  height: '9',
+  minW: '0',
   textDecoration: 'none',
+});
+
+export const logoCollapsed = css({
+  justifyContent: 'center',
+  mx: 'auto',
 });
 
 export const logoIconFrame = css({
@@ -108,9 +140,11 @@ export const navItem = cva({
   base: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     gap: '3',
     px: '3',
-    py: '3',
+    height: '11',
+    flexShrink: '0',
     borderRadius: 'lg',
     fontSize: 'sm',
     fontWeight: 'medium',
@@ -140,6 +174,33 @@ export const navItem = cva({
   },
 });
 
+export const compactAction = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: '10',
+  borderRadius: 'lg',
+  color: 'sideMenu.inactiveItemIcon',
+  cursor: 'pointer',
+  _hover: { bg: 'sideMenu.itemBgHover' },
+  _focusVisible: { outline: '[2px solid]', outlineColor: 'border.focus' },
+});
+
+export const compactPrimaryAction = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: '10',
+  borderRadius: 'lg',
+  color: 'button.primaryText',
+  bg: 'button.primaryBg',
+  cursor: 'pointer',
+  _hover: { bg: 'button.primaryBgHover' },
+  _focusVisible: { outline: '[2px solid]', outlineColor: 'border.focus' },
+});
+
 export const navIcon = cva({
   base: {
     flexShrink: '0',
@@ -164,6 +225,7 @@ export const aboutLink = css({
   alignSelf: 'center',
   color: 'text.secondary',
   fontSize: 'xs',
+  lineHeight: 'normal',
   textDecoration: 'underline',
   textUnderlineOffset: '[3px]',
   _hover: { color: 'primary.text' },
@@ -172,6 +234,12 @@ export const aboutLink = css({
     outlineColor: 'border.focus',
     outlineOffset: '[3px]',
   },
+});
+
+export const aboutPlaceholder = css({
+  fontSize: 'xs',
+  lineHeight: 'normal',
+  visibility: 'hidden',
 });
 
 export const registerButton = css({

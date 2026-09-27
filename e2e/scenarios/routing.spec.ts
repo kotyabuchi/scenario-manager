@@ -174,13 +174,58 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
     const list = new ScenariosPage(page);
     const detail = new ScenarioDetailPage(page);
     await list.goto();
+    const sideMenu = page.getByRole('complementary', {
+      name: 'メインナビゲーション',
+    });
+    const toggle = sideMenu.getByRole('button', {
+      name: 'サイドメニューを閉じる',
+    });
+    const logo = sideMenu.getByRole('link', { name: /シナプレ管理くん/ });
+    const menuContent = sideMenu.locator(':scope > div').first();
+    await expect(menuContent).toHaveCSS('padding-top', '16px');
+    await expect(menuContent).toHaveCSS('padding-left', '16px');
+    await expect(menuContent).toHaveCSS('overflow-y', 'auto');
+    await expect(logo).toHaveCSS('padding-left', '0px');
+    await expect(logo).toHaveCSS('padding-right', '0px');
+    const toggleBox = await toggle.boundingBox();
+    const logoBox = await logo.boundingBox();
+    const sideMenuBox = await sideMenu.boundingBox();
+    const loginBox = await sideMenu
+      .getByRole('button', { name: 'ログイン' })
+      .boundingBox();
+    const navIcons = sideMenu.locator('nav a svg');
+    const iconBoxesBefore = await navIcons.evaluateAll((icons) =>
+      icons.map((icon) => {
+        const { x, y } = icon.getBoundingClientRect();
+        return { x, y };
+      }),
+    );
+    expect(toggleBox).not.toBeNull();
+    expect(logoBox).not.toBeNull();
+    expect(sideMenuBox).not.toBeNull();
+    if (toggleBox && sideMenuBox) {
+      const menuRight = sideMenuBox.x + sideMenuBox.width;
+      expect(Math.abs(toggleBox.x - menuRight)).toBeLessThanOrEqual(1);
+      expect(toggleBox.x + toggleBox.width).toBeGreaterThan(menuRight);
+      expect(toggleBox.height).toBe(112);
+      const menuCenterY = sideMenuBox.y + sideMenuBox.height / 2;
+      const toggleCenterY = toggleBox.y + toggleBox.height / 2;
+      expect(Math.abs(toggleCenterY - menuCenterY)).toBeLessThanOrEqual(1);
+    }
+    for (const label of ['シナプレ管理くん', 'TRPGを、もっと楽しく。']) {
+      const textFits = await sideMenu
+        .getByText(label, { exact: true })
+        .evaluate((element) => element.scrollWidth <= element.clientWidth);
+      expect(textFits).toBe(true);
+    }
     await list.clickScenarioCard();
 
     await expect(list.listPane).toBeVisible();
     await expect(detail.pane).toBeVisible();
     const leftWidth = (await list.listPane.boundingBox())?.width;
     const rightWidth = (await detail.pane.boundingBox())?.width;
-    expect((leftWidth ?? 0) + (rightWidth ?? 0)).toBeGreaterThanOrEqual(1000);
+    const paneWidth = (leftWidth ?? 0) + (rightWidth ?? 0);
+    expect(paneWidth).toBeGreaterThanOrEqual(1000);
     await expect
       .poll(() =>
         page.evaluate(
@@ -189,9 +234,13 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
       )
       .toBeLessThanOrEqual(1);
 
-    await page.setViewportSize({ width: 1312, height: 900 });
+    const outerWidth = 1360 - (sideMenuBox?.width ?? 0) - paneWidth;
+    const twoPaneBreakpoint = Math.ceil(
+      (sideMenuBox?.width ?? 0) + outerWidth + 1000,
+    );
+    await page.setViewportSize({ width: twoPaneBreakpoint, height: 900 });
     await expect(list.listPane).toBeVisible();
-    await page.setViewportSize({ width: 1311, height: 900 });
+    await page.setViewportSize({ width: twoPaneBreakpoint - 1, height: 900 });
     await expect(list.listPane).not.toBeVisible();
     await expect(detail.backControl).toBeVisible();
 
@@ -201,6 +250,77 @@ test.describe('シナリオ一覧と詳細のルーティング', () => {
     await expect(detail.backControl).toBeVisible();
 
     await page.getByRole('button', { name: 'サイドメニューを閉じる' }).click();
+    await expect(menuContent).toHaveCSS('padding-top', '16px');
+    await expect(menuContent).toHaveCSS('padding-left', '16px');
+    const homeIconLink = sideMenu.getByRole('link', { name: 'ホーム' });
+    await expect(homeIconLink).toBeVisible();
+    await expect(homeIconLink).toHaveText('');
+    await expect(homeIconLink).toHaveCSS('justify-content', 'flex-start');
+    await expect(homeIconLink).toHaveCSS('padding-left', '12px');
+    await expect(homeIconLink).toHaveCSS('padding-right', '12px');
+    const collapsedMenuBox = await sideMenu.boundingBox();
+    const collapsedNavLinkBox = await homeIconLink.boundingBox();
+    if (collapsedMenuBox && collapsedNavLinkBox) {
+      expect(collapsedNavLinkBox.width).toBeGreaterThanOrEqual(44);
+      expect(collapsedMenuBox.width).toBeGreaterThanOrEqual(
+        collapsedNavLinkBox.width + 32,
+      );
+    }
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveText('');
+    const collapsedLogoBox = await logo.boundingBox();
+    expect(collapsedLogoBox).not.toBeNull();
+    if (logoBox && collapsedLogoBox) {
+      expect(Math.abs(collapsedLogoBox.y - logoBox.y)).toBeLessThanOrEqual(1);
+    }
+    const collapsedLoginBox = await sideMenu
+      .getByRole('button', { name: 'ログイン' })
+      .boundingBox();
+    if (loginBox && collapsedLoginBox) {
+      expect(Math.abs(collapsedLoginBox.y - loginBox.y)).toBeLessThanOrEqual(1);
+    }
+    const openToggle = sideMenu.getByRole('button', {
+      name: 'サイドメニューを開く',
+    });
+    await expect(openToggle).toHaveCSS('margin-top', '0px');
+    await expect(openToggle).toHaveCSS('width', '24px');
+    await expect(openToggle).toHaveCSS('height', '112px');
+    await expect(openToggle).toHaveCSS('position', 'absolute');
+    await expect(openToggle.locator('svg')).toHaveCount(1);
+    const logoIconBox = await logo.locator('svg').boundingBox();
+    const openToggleBox = await openToggle.boundingBox();
+    const collapsedContentBox = await menuContent.boundingBox();
+    expect(logoIconBox).not.toBeNull();
+    expect(openToggleBox).not.toBeNull();
+    expect(collapsedContentBox).not.toBeNull();
+    if (logoIconBox && collapsedContentBox) {
+      const logoCenterX = logoIconBox.x + logoIconBox.width / 2;
+      const menuCenterX = collapsedContentBox.x + collapsedContentBox.width / 2;
+      expect(Math.abs(logoCenterX - menuCenterX)).toBeLessThanOrEqual(1);
+    }
+    if (openToggleBox && collapsedMenuBox) {
+      const menuRight = collapsedMenuBox.x + collapsedMenuBox.width;
+      expect(Math.abs(openToggleBox.x - menuRight)).toBeLessThanOrEqual(1);
+      expect(openToggleBox.x + openToggleBox.width).toBeGreaterThan(menuRight);
+    }
+    const iconBoxesAfter = await navIcons.evaluateAll((icons) =>
+      icons.map((icon) => {
+        const { x, y } = icon.getBoundingClientRect();
+        return { x, y };
+      }),
+    );
+    expect(iconBoxesAfter).toHaveLength(iconBoxesBefore.length);
+    for (const [index, after] of iconBoxesAfter.entries()) {
+      const before = iconBoxesBefore[index];
+      expect(before).toBeDefined();
+      if (before) {
+        expect(Math.abs(after.x - before.x)).toBeLessThanOrEqual(1);
+        expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(1);
+      }
+    }
+    await expect(
+      sideMenu.getByRole('link', { name: 'サービスについて' }),
+    ).toHaveCount(0);
     await expect(list.listPane).toBeVisible();
     await expect(detail.closeControl).toBeVisible();
     const expandedLeftWidth = (await list.listPane.boundingBox())?.width;
