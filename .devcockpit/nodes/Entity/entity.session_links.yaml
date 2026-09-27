@@ -1,0 +1,11 @@
+id: entity.session_links
+kind: Entity
+name: session_links
+description: Supabase public.session_links テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

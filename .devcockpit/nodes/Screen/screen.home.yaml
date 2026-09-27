@@ -1,0 +1,12 @@
+id: screen.home
+kind: Screen
+name: ホーム
+description: ログインユーザー向けのダッシュボード。
+properties:
+  route: /home
+  implementation:
+    - file: src/app/(main)/home/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,0 +1,14 @@
+id: field.session_participants.participant_status
+kind: Field
+name: participant_status
+description: "public.session_participants.participant_status。値: PENDING,
+  CONFIRMED, WITHDRAWN"
+parentId: entity.session_participants
+properties:
+  dataType: Database['public']['Enums']['participant_status']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

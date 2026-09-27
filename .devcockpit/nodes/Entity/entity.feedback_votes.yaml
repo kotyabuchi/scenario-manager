@@ -1,0 +1,11 @@
+id: entity.feedback_votes
+kind: Entity
+name: feedback_votes
+description: Supabase public.feedback_votes テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,0 +1,13 @@
+id: field.session_links.link_type
+kind: Field
+name: link_type
+description: "public.session_links.link_type。値: DISCORD, CCFOLIA, OTHER"
+parentId: entity.session_links
+properties:
+  dataType: Database['public']['Enums']['session_link_type']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

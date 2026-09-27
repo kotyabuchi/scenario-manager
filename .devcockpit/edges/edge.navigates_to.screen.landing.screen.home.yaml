@@ -1,0 +1,6 @@
+id: edge.navigates_to.screen.landing.screen.home
+kind: navigates_to
+source: screen.landing
+target: screen.home
+label: ""
+properties: {}

@@ -1,0 +1,13 @@
+id: api.api.scenarios.search.get
+kind: APIEndpoint
+name: GET /api/scenarios/search
+description: 条件でシナリオを検索しページング結果を返す。
+properties:
+  route: /api/scenarios/search
+  method: GET
+  implementation:
+    - file: src/app/api/scenarios/search/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

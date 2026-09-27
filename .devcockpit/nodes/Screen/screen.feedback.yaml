@@ -1,0 +1,12 @@
+id: screen.feedback
+kind: Screen
+name: フィードバック一覧
+description: 投稿の検索、一覧、投票、新規投稿を扱う。
+properties:
+  route: /feedback
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

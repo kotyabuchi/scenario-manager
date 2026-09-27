@@ -1,0 +1,13 @@
+id: field.session_participants.approved_at
+kind: Field
+name: approved_at
+description: public.session_participants.approved_at
+parentId: entity.session_participants
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

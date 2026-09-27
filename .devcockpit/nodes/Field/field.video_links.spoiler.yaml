@@ -1,0 +1,13 @@
+id: field.video_links.spoiler
+kind: Field
+name: spoiler
+description: public.video_links.spoiler
+parentId: entity.video_links
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

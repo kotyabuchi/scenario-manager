@@ -1,0 +1,6 @@
+id: edge.maps_to.step.join.session.review.screen.session.applications
+kind: maps_to
+source: step.join.session.review
+target: screen.session.applications
+label: ""
+properties: {}

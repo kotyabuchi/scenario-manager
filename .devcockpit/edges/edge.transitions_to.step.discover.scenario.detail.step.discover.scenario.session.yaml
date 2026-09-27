@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.discover.scenario.detail.step.discover.scenario.session
+kind: transitions_to
+source: step.discover.scenario.detail
+target: step.discover.scenario.session
+label: ""
+properties: {}

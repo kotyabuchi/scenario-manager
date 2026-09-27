@@ -1,0 +1,13 @@
+id: field.feedbacks.priority
+kind: Field
+name: priority
+description: "public.feedbacks.priority。値: LOW, MEDIUM, HIGH, CRITICAL"
+parentId: entity.feedbacks
+properties:
+  dataType: Database['public']['Enums']['feedback_priority'] | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

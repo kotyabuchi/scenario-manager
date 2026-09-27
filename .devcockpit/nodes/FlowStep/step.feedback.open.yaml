@@ -1,0 +1,11 @@
+id: step.feedback.open
+kind: FlowStep
+name: 投稿の詳細を開く
+description: 投稿の詳細を開く
+parentId: flow.feedback
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

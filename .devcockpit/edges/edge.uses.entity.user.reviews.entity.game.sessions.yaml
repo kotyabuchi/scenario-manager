@@ -1,0 +1,6 @@
+id: edge.uses.entity.user.reviews.entity.game.sessions
+kind: uses
+source: entity.user_reviews
+target: entity.game_sessions
+label: session_id
+properties: {}

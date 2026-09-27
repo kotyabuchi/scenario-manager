@@ -1,0 +1,13 @@
+id: relation.session_participants.session_id
+kind: Relation
+name: session_id → game_sessions.game_session_id
+description: public.session_participants.session_id は
+  public.game_sessions.game_session_id を参照する。
+parentId: entity.session_participants
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

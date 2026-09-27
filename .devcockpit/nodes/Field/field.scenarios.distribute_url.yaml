@@ -1,0 +1,13 @@
+id: field.scenarios.distribute_url
+kind: Field
+name: distribute_url
+description: public.scenarios.distribute_url
+parentId: entity.scenarios
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

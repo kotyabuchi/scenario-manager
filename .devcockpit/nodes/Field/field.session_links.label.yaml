@@ -1,0 +1,13 @@
+id: field.session_links.label
+kind: Field
+name: label
+description: public.session_links.label
+parentId: entity.session_links
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

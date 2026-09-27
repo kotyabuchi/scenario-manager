@@ -1,0 +1,11 @@
+id: step.discover.scenario.session
+kind: FlowStep
+name: 関連する公開卓を開く
+description: 関連する公開卓を開く
+parentId: flow.discover.scenario
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,12 @@
+id: screen.landing
+kind: Screen
+name: ランディング
+description: シナリオ検索への入口と Discord ログインを提供する。
+properties:
+  route: /
+  implementation:
+    - file: src/app/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

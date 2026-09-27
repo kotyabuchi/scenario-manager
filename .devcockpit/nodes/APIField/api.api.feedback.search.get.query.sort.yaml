@@ -1,0 +1,12 @@
+id: api.api.feedback.search.get.query.sort
+kind: APIField
+name: sort
+description: sort クエリパラメータ。
+parentId: api.api.feedback.search.get
+properties:
+  location: query
+  implementation:
+    - file: src/app/api/feedback/search/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

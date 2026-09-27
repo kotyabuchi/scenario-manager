@@ -1,0 +1,11 @@
+id: flow.discover.scenario
+kind: Flow
+name: シナリオを探す
+description: シナリオを探すユーザーフロー。
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

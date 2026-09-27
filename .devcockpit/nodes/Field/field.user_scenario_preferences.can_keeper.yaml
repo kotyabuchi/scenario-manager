@@ -1,0 +1,13 @@
+id: field.user_scenario_preferences.can_keeper
+kind: Field
+name: can_keeper
+description: public.user_scenario_preferences.can_keeper
+parentId: entity.user_scenario_preferences
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

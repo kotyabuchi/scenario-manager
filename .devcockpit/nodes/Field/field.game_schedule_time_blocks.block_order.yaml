@@ -1,0 +1,13 @@
+id: field.game_schedule_time_blocks.block_order
+kind: Field
+name: block_order
+description: public.game_schedule_time_blocks.block_order
+parentId: entity.game_schedule_time_blocks
+properties:
+  dataType: number
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

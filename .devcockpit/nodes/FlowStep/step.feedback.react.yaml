@@ -1,0 +1,11 @@
+id: step.feedback.react
+kind: FlowStep
+name: 投票またはコメントする
+description: 投票またはコメントする
+parentId: flow.feedback
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

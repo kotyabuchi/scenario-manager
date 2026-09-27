@@ -1,0 +1,12 @@
+id: screen.scenario.detail
+kind: Screen
+name: シナリオ詳細
+description: 基本情報、関連セッション、動画、レビュー、お気に入りを表示する。
+properties:
+  route: /scenarios/[id]
+  implementation:
+    - file: src/app/(main)/scenarios/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

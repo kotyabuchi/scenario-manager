@@ -1,0 +1,13 @@
+id: field.game_schedule_time_blocks.start_at
+kind: Field
+name: start_at
+description: public.game_schedule_time_blocks.start_at
+parentId: entity.game_schedule_time_blocks
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,12 @@
+id: relation.scenario_tags.tag_id
+kind: Relation
+name: tag_id → tags.tag_id
+description: public.scenario_tags.tag_id は public.tags.tag_id を参照する。
+parentId: entity.scenario_tags
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

@@ -1,0 +1,12 @@
+id: api.api.upload.post.response.data
+kind: APIField
+name: response
+description: url と key を返す。
+parentId: api.api.upload.post
+properties:
+  location: response
+  implementation:
+    - file: src/app/api/upload/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

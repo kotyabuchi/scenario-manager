@@ -1,0 +1,12 @@
+id: relation.video_links.scenario_id
+kind: Relation
+name: scenario_id → scenarios.scenario_id
+description: public.video_links.scenario_id は public.scenarios.scenario_id を参照する。
+parentId: entity.video_links
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

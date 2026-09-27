@@ -1,0 +1,11 @@
+id: entity.tags
+kind: Entity
+name: tags
+description: Supabase public.tags テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

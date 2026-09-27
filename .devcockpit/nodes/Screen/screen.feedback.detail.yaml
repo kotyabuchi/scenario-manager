@@ -1,0 +1,12 @@
+id: screen.feedback.detail
+kind: Screen
+name: フィードバック詳細
+description: 投稿内容、投票、コメント、管理者操作を表示する。
+properties:
+  route: /feedback/[id]
+  implementation:
+    - file: src/app/(main)/feedback/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,0 +1,13 @@
+id: field.session_participants.withdrawal_reason
+kind: Field
+name: withdrawal_reason
+description: public.session_participants.withdrawal_reason
+parentId: entity.session_participants
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

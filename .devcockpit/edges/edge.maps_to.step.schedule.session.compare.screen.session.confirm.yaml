@@ -1,0 +1,6 @@
+id: edge.maps_to.step.schedule.session.compare.screen.session.confirm
+kind: maps_to
+source: step.schedule.session.compare
+target: screen.session.confirm
+label: ""
+properties: {}

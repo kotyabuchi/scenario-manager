@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.schedules.list.screen.schedules
+kind: maps_to
+source: requirement.schedules.list
+target: screen.schedules
+label: ""
+properties: {}

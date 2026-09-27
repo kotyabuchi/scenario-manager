@@ -1,0 +1,13 @@
+id: field.game_schedule_time_blocks.session_id
+kind: Field
+name: session_id
+description: public.game_schedule_time_blocks.session_id
+parentId: entity.game_schedule_time_blocks
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

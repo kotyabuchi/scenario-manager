@@ -1,0 +1,12 @@
+id: screen.sessions
+kind: Screen
+name: セッション一覧
+description: 公開卓、参加予定、参加履歴をタブで探す。
+properties:
+  route: /sessions
+  implementation:
+    - file: src/app/(main)/sessions/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

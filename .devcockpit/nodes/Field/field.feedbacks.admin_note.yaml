@@ -1,0 +1,13 @@
+id: field.feedbacks.admin_note
+kind: Field
+name: admin_note
+description: public.feedbacks.admin_note
+parentId: entity.feedbacks
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,11 @@
+id: ui.session.applications.1
+kind: UIElement
+name: ApplicationApprovalContent
+description: 参加申請管理の構成要素。
+parentId: screen.session.applications
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/applications/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

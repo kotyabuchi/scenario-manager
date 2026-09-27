@@ -1,0 +1,13 @@
+id: field.session_participants.application_message
+kind: Field
+name: application_message
+description: public.session_participants.application_message
+parentId: entity.session_participants
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

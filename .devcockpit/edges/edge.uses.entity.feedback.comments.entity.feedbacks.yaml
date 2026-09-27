@@ -1,0 +1,6 @@
+id: edge.uses.entity.feedback.comments.entity.feedbacks
+kind: uses
+source: entity.feedback_comments
+target: entity.feedbacks
+label: feedback_id
+properties: {}

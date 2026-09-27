@@ -1,0 +1,13 @@
+id: field.feedbacks.title
+kind: Field
+name: title
+description: public.feedbacks.title
+parentId: entity.feedbacks
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,12 @@
+id: api.api.sessions.upcoming.get.query.limit
+kind: APIField
+name: limit
+description: limit クエリパラメータ。
+parentId: api.api.sessions.upcoming.get
+properties:
+  location: query
+  implementation:
+    - file: src/app/api/sessions/upcoming/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

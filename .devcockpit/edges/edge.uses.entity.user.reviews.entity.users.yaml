@@ -1,0 +1,6 @@
+id: edge.uses.entity.user.reviews.entity.users
+kind: uses
+source: entity.user_reviews
+target: entity.users
+label: user_id
+properties: {}

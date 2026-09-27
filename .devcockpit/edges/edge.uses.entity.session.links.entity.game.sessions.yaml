@@ -1,0 +1,6 @@
+id: edge.uses.entity.session.links.entity.game.sessions
+kind: uses
+source: entity.session_links
+target: entity.game_sessions
+label: session_id
+properties: {}

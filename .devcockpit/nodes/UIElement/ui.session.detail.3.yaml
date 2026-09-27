@@ -1,0 +1,11 @@
+id: ui.session.detail.3
+kind: UIElement
+name: SessionPhaseStepper
+description: セッション詳細の構成要素。
+parentId: screen.session.detail
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

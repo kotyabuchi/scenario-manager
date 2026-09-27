@@ -1,0 +1,13 @@
+id: field.scenarios.sort_playtime_asc
+kind: Field
+name: sort_playtime_asc
+description: public.scenarios.sort_playtime_asc
+parentId: entity.scenarios
+properties:
+  dataType: number | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

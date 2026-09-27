@@ -1,0 +1,6 @@
+id: edge.maps_to.step.schedule.session.submit.screen.session.availability
+kind: maps_to
+source: step.schedule.session.submit
+target: screen.session.availability
+label: ""
+properties: {}

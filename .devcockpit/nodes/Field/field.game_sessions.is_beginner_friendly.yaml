@@ -1,0 +1,13 @@
+id: field.game_sessions.is_beginner_friendly
+kind: Field
+name: is_beginner_friendly
+description: public.game_sessions.is_beginner_friendly
+parentId: entity.game_sessions
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.scenario.create.flow.create.scenario
+kind: maps_to
+source: requirement.scenario.create
+target: flow.create.scenario
+label: ""
+properties: {}

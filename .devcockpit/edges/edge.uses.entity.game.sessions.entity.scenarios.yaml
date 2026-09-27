@@ -1,0 +1,6 @@
+id: edge.uses.entity.game.sessions.entity.scenarios
+kind: uses
+source: entity.game_sessions
+target: entity.scenarios
+label: scenario_id
+properties: {}

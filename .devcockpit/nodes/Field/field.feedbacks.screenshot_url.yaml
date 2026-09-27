@@ -1,0 +1,13 @@
+id: field.feedbacks.screenshot_url
+kind: Field
+name: screenshot_url
+description: public.feedbacks.screenshot_url
+parentId: entity.feedbacks
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

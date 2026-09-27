@@ -1,0 +1,12 @@
+id: screen.session.confirm
+kind: Screen
+name: 日程確定
+description: 管理者が回答と推奨候補を確認して日時を確定する。
+properties:
+  route: /sessions/[id]/schedule/confirm
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/confirm/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

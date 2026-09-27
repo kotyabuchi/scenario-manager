@@ -1,0 +1,13 @@
+id: field.user_scenario_preferences.is_watched
+kind: Field
+name: is_watched
+description: public.user_scenario_preferences.is_watched
+parentId: entity.user_scenario_preferences
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

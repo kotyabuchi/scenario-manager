@@ -1,0 +1,13 @@
+id: field.game_sessions.scheduled_at
+kind: Field
+name: scheduled_at
+description: public.game_sessions.scheduled_at
+parentId: entity.game_sessions
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

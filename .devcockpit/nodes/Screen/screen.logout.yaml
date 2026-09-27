@@ -1,0 +1,12 @@
+id: screen.logout
+kind: Screen
+name: ログアウト
+description: ログアウト処理を行う画面遷移用ルート。
+properties:
+  route: /logout
+  implementation:
+    - file: src/app/(auth)/logout/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

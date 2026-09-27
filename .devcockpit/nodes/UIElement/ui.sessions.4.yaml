@@ -1,0 +1,11 @@
+id: ui.sessions.4
+kind: UIElement
+name: LoginPrompt
+description: セッション一覧の構成要素。
+parentId: screen.sessions
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

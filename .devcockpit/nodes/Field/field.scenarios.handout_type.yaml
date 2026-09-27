@@ -1,0 +1,13 @@
+id: field.scenarios.handout_type
+kind: Field
+name: handout_type
+description: "public.scenarios.handout_type。値: NONE, PUBLIC, SECRET"
+parentId: entity.scenarios
+properties:
+  dataType: Database['public']['Enums']['handout_type']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

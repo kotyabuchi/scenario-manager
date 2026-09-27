@@ -1,0 +1,14 @@
+id: field.users.user_id
+kind: Field
+name: user_id
+description: public.users.user_id
+parentId: entity.users
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

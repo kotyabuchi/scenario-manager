@@ -1,0 +1,11 @@
+id: entity.user_scenario_preferences
+kind: Entity
+name: user_scenario_preferences
+description: Supabase public.user_scenario_preferences テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

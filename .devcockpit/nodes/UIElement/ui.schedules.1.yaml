@@ -1,0 +1,11 @@
+id: ui.schedules.1
+kind: UIElement
+name: スケジュール見出し
+description: スケジュール一覧の構成要素。
+parentId: screen.schedules
+properties:
+  implementation:
+    - file: src/app/(main)/schedules/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,13 @@
+id: field.users.image
+kind: Field
+name: image
+description: public.users.image
+parentId: entity.users
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

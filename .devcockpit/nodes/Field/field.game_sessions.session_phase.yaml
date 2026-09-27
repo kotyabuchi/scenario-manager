@@ -1,0 +1,14 @@
+id: field.game_sessions.session_phase
+kind: Field
+name: session_phase
+description: "public.game_sessions.session_phase。値: RECRUITING, PREPARATION,
+  IN_PROGRESS, COMPLETED, CANCELLED"
+parentId: entity.game_sessions
+properties:
+  dataType: Database['public']['Enums']['session_phase']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

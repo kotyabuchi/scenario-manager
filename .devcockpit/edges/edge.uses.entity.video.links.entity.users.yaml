@@ -1,0 +1,6 @@
+id: edge.uses.entity.video.links.entity.users
+kind: uses
+source: entity.video_links
+target: entity.users
+label: created_by_id
+properties: {}

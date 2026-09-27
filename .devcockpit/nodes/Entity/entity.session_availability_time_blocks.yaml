@@ -1,0 +1,11 @@
+id: entity.session_availability_time_blocks
+kind: Entity
+name: session_availability_time_blocks
+description: Supabase public.session_availability_time_blocks テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

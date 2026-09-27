@@ -1,0 +1,6 @@
+id: edge.uses.entity.game.sessions.entity.users
+kind: uses
+source: entity.game_sessions
+target: entity.users
+label: created_by_id
+properties: {}

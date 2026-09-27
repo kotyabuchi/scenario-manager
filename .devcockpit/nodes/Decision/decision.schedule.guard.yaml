@@ -1,0 +1,11 @@
+id: decision.schedule.guard
+kind: Decision
+name: 日程調整の権限とフェーズ
+description: 日程提出は確認済み参加者か管理者に、日程確定は管理者に限定する。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

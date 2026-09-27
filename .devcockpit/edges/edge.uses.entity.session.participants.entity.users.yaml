@@ -1,0 +1,6 @@
+id: edge.uses.entity.session.participants.entity.users
+kind: uses
+source: entity.session_participants
+target: entity.users
+label: user_id
+properties: {}

@@ -1,0 +1,11 @@
+id: ui.session.confirm.1
+kind: UIElement
+name: ConfirmAvailabilityWorkspace
+description: 日程確定の構成要素。
+parentId: screen.session.confirm
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/confirm/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

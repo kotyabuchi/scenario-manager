@@ -1,0 +1,11 @@
+id: entity.users
+kind: Entity
+name: users
+description: Supabase public.users テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

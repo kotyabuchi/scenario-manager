@@ -1,0 +1,11 @@
+id: decision.data
+kind: Decision
+name: Supabase 型をデータ定義の基準にする
+description: ER 定義は public テーブルの生成型から導出する。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

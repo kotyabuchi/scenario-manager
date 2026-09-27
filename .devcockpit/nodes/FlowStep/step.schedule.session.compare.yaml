@@ -1,0 +1,11 @@
+id: step.schedule.session.compare
+kind: FlowStep
+name: 管理者が回答と推奨候補を比較する
+description: 管理者が回答と推奨候補を比較する
+parentId: flow.schedule.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

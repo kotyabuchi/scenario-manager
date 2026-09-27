@@ -1,0 +1,13 @@
+id: field.users.favorite_scenarios
+kind: Field
+name: favorite_scenarios
+description: public.users.favorite_scenarios
+parentId: entity.users
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

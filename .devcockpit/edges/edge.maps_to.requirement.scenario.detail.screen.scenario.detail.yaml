@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.scenario.detail.screen.scenario.detail
+kind: maps_to
+source: requirement.scenario.detail
+target: screen.scenario.detail
+label: ""
+properties: {}

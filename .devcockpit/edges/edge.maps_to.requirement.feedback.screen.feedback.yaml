@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.feedback.screen.feedback
+kind: maps_to
+source: requirement.feedback
+target: screen.feedback
+label: ""
+properties: {}

@@ -1,0 +1,11 @@
+id: flow.create.session
+kind: Flow
+name: セッションを作成・募集する
+description: セッションを作成・募集するユーザーフロー。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

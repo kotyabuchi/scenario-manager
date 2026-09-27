@@ -1,0 +1,12 @@
+id: api.api.scenarios.search.get.query.systems
+kind: APIField
+name: systems
+description: systems クエリパラメータ。
+parentId: api.api.scenarios.search.get
+properties:
+  location: query
+  implementation:
+    - file: src/app/api/scenarios/search/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

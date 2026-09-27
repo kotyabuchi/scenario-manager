@@ -1,0 +1,13 @@
+id: field.game_sessions.updated_at
+kind: Field
+name: updated_at
+description: public.game_sessions.updated_at
+parentId: entity.game_sessions
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

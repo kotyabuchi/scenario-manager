@@ -1,0 +1,13 @@
+id: field.notifications.updated_at
+kind: Field
+name: updated_at
+description: public.notifications.updated_at
+parentId: entity.notifications
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

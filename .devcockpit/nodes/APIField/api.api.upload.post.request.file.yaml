@@ -1,0 +1,14 @@
+id: api.api.upload.post.request.file
+kind: APIField
+name: file
+description: JPEG/PNG/WebP/GIF、5MB 以下の画像ファイル。
+parentId: api.api.upload.post
+properties:
+  dataType: File
+  required: true
+  location: request
+  implementation:
+    - file: src/app/api/upload/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

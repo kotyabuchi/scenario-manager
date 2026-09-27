@@ -1,0 +1,11 @@
+id: requirement.session.applications
+kind: Requirement
+name: 参加申請の管理
+description: 管理者が参加申請を確認し承認できる。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/applications/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

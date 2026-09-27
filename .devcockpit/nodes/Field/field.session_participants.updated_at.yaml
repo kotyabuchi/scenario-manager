@@ -1,0 +1,13 @@
+id: field.session_participants.updated_at
+kind: Field
+name: updated_at
+description: public.session_participants.updated_at
+parentId: entity.session_participants
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

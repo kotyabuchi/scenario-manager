@@ -1,0 +1,14 @@
+id: field.notifications.type
+kind: Field
+name: type
+description: "public.notifications.type。値: FEEDBACK_STATUS_CHANGED,
+  FEEDBACK_COMMENT, FEEDBACK_MERGED"
+parentId: entity.notifications
+properties:
+  dataType: Database['public']['Enums']['notification_type']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

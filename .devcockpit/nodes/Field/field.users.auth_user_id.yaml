@@ -1,0 +1,13 @@
+id: field.users.auth_user_id
+kind: Field
+name: auth_user_id
+description: public.users.auth_user_id
+parentId: entity.users
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

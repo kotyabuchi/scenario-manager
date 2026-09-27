@@ -1,0 +1,14 @@
+id: field.feedbacks.status
+kind: Field
+name: status
+description: "public.feedbacks.status。値: NEW, TRIAGED, PLANNED, IN_PROGRESS,
+  DONE, WONT_FIX, DUPLICATE"
+parentId: entity.feedbacks
+properties:
+  dataType: Database['public']['Enums']['feedback_status']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

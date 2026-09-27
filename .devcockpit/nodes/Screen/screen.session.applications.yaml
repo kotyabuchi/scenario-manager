@@ -1,0 +1,12 @@
+id: screen.session.applications
+kind: Screen
+name: 参加申請管理
+description: セッション管理者が参加申請を確認し承認する。
+properties:
+  route: /sessions/[id]/applications
+  implementation:
+    - file: src/app/(main)/sessions/[id]/applications/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

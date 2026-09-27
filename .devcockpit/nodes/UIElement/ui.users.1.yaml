@@ -1,0 +1,11 @@
+id: ui.users.1
+kind: UIElement
+name: ユーザー見出し
+description: ユーザー一覧の構成要素。
+parentId: screen.users
+properties:
+  implementation:
+    - file: src/app/(main)/users/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

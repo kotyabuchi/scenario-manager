@@ -1,0 +1,6 @@
+id: edge.uses.entity.scenarios.entity.scenario.systems
+kind: uses
+source: entity.scenarios
+target: entity.scenario_systems
+label: scenario_system_id
+properties: {}

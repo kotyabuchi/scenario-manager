@@ -1,0 +1,11 @@
+id: step.join.session.apply
+kind: FlowStep
+name: 参加申請を送る
+description: 参加申請を送る
+parentId: flow.join.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/applications/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

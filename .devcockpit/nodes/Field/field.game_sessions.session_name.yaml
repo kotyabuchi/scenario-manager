@@ -1,0 +1,13 @@
+id: field.game_sessions.session_name
+kind: Field
+name: session_name
+description: public.game_sessions.session_name
+parentId: entity.game_sessions
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,6 @@
+id: edge.uses.entity.scenarios.entity.users
+kind: uses
+source: entity.scenarios
+target: entity.users
+label: created_by_id
+properties: {}

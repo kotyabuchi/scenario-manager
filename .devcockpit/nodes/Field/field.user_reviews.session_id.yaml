@@ -1,0 +1,13 @@
+id: field.user_reviews.session_id
+kind: Field
+name: session_id
+description: public.user_reviews.session_id
+parentId: entity.user_reviews
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

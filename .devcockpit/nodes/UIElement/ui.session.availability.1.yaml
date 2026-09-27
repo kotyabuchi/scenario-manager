@@ -1,0 +1,11 @@
+id: ui.session.availability.1
+kind: UIElement
+name: SubmitAvailabilityWorkspace
+description: 参加可能日提出の構成要素。
+parentId: screen.session.availability
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

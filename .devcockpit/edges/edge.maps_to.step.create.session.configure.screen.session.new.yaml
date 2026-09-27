@@ -1,0 +1,6 @@
+id: edge.maps_to.step.create.session.configure.screen.session.new
+kind: maps_to
+source: step.create.session.configure
+target: screen.session.new
+label: ""
+properties: {}

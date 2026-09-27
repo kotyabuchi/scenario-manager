@@ -1,0 +1,13 @@
+id: field.notifications.is_read
+kind: Field
+name: is_read
+description: public.notifications.is_read
+parentId: entity.notifications
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,6 @@
+id: edge.maps_to.step.feedback.react.screen.feedback.detail
+kind: maps_to
+source: step.feedback.react
+target: screen.feedback.detail
+label: ""
+properties: {}

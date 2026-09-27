@@ -1,0 +1,6 @@
+id: edge.maps_to.step.join.session.find.screen.sessions
+kind: maps_to
+source: step.join.session.find
+target: screen.sessions
+label: ""
+properties: {}

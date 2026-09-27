@@ -1,0 +1,13 @@
+id: field.tags.updated_at
+kind: Field
+name: updated_at
+description: public.tags.updated_at
+parentId: entity.tags
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

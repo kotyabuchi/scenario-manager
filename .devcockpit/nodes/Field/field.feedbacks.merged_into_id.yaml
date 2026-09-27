@@ -1,0 +1,13 @@
+id: field.feedbacks.merged_into_id
+kind: Field
+name: merged_into_id
+description: public.feedbacks.merged_into_id
+parentId: entity.feedbacks
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

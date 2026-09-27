@@ -1,0 +1,12 @@
+id: relation.feedback_votes.feedback_id
+kind: Relation
+name: feedback_id → feedbacks.feedback_id
+description: public.feedback_votes.feedback_id は public.feedbacks.feedback_id を参照する。
+parentId: entity.feedback_votes
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

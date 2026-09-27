@@ -1,0 +1,11 @@
+id: requirement.session.create
+kind: Requirement
+name: セッションの作成
+description: シナリオ、基本情報、参加者を指定してセッションを作成する。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

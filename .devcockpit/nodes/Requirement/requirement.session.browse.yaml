@@ -1,0 +1,11 @@
+id: requirement.session.browse
+kind: Requirement
+name: セッションの検索と履歴
+description: 公開卓、参加予定、参加履歴をタブで表示する。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

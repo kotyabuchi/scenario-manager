@@ -1,0 +1,11 @@
+id: entity.game_schedule_time_blocks
+kind: Entity
+name: game_schedule_time_blocks
+description: Supabase public.game_schedule_time_blocks テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,0 +1,11 @@
+id: step.feedback.browse
+kind: FlowStep
+name: 一覧から投稿を探す
+description: 一覧から投稿を探す
+parentId: flow.feedback
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,13 @@
+id: field.feedbacks.category
+kind: Field
+name: category
+description: "public.feedbacks.category。値: BUG, FEATURE, UI_UX, OTHER"
+parentId: entity.feedbacks
+properties:
+  dataType: Database['public']['Enums']['feedback_category']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

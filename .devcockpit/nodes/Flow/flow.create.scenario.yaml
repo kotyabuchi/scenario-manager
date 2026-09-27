@@ -1,0 +1,11 @@
+id: flow.create.scenario
+kind: Flow
+name: シナリオを登録する
+description: シナリオを登録するユーザーフロー。
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

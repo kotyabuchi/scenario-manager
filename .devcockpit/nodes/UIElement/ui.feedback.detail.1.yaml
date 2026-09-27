@@ -1,0 +1,11 @@
+id: ui.feedback.detail.1
+kind: UIElement
+name: FeedbackDetailContent
+description: フィードバック詳細の構成要素。
+parentId: screen.feedback.detail
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

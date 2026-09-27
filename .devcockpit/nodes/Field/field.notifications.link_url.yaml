@@ -1,0 +1,13 @@
+id: field.notifications.link_url
+kind: Field
+name: link_url
+description: public.notifications.link_url
+parentId: entity.notifications
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

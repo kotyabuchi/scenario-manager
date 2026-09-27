@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.schedule.session.compare.step.schedule.session.confirm
+kind: transitions_to
+source: step.schedule.session.compare
+target: step.schedule.session.confirm
+label: ""
+properties: {}

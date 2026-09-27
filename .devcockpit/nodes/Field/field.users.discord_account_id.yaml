@@ -1,0 +1,13 @@
+id: field.users.discord_account_id
+kind: Field
+name: discord_account_id
+description: public.users.discord_account_id
+parentId: entity.users
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

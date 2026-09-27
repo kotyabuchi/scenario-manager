@@ -1,0 +1,12 @@
+id: screen.scenario.new
+kind: Screen
+name: シナリオ登録
+description: 手動入力でシナリオを登録する。
+properties:
+  route: /scenarios/new
+  implementation:
+    - file: src/app/(main)/scenarios/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

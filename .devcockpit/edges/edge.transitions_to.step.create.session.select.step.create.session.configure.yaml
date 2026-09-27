@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.create.session.select.step.create.session.configure
+kind: transitions_to
+source: step.create.session.select
+target: step.create.session.configure
+label: ""
+properties: {}

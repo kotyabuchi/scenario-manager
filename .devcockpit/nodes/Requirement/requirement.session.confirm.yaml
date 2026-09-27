@@ -1,0 +1,11 @@
+id: requirement.session.confirm
+kind: Requirement
+name: 開催日程の確定
+description: 管理者が候補と参加可否を比較して開催日時を確定する。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/confirm/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

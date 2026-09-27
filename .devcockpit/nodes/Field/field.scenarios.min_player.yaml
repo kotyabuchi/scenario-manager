@@ -1,0 +1,13 @@
+id: field.scenarios.min_player
+kind: Field
+name: min_player
+description: public.scenarios.min_player
+parentId: entity.scenarios
+properties:
+  dataType: number | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

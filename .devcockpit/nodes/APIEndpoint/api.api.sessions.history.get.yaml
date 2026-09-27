@@ -1,0 +1,13 @@
+id: api.api.sessions.history.get
+kind: APIEndpoint
+name: GET /api/sessions/history
+description: 認証ユーザーの参加履歴を返す。
+properties:
+  route: /api/sessions/history
+  method: GET
+  implementation:
+    - file: src/app/api/sessions/history/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

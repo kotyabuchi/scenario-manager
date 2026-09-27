@@ -1,0 +1,13 @@
+id: field.feedback_comments.content
+kind: Field
+name: content
+description: public.feedback_comments.content
+parentId: entity.feedback_comments
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,12 @@
+id: relation.game_sessions.scenario_id
+kind: Relation
+name: scenario_id → scenarios.scenario_id
+description: public.game_sessions.scenario_id は public.scenarios.scenario_id を参照する。
+parentId: entity.game_sessions
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

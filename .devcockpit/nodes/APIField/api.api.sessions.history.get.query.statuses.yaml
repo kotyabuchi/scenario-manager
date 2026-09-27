@@ -1,0 +1,12 @@
+id: api.api.sessions.history.get.query.statuses
+kind: APIField
+name: statuses
+description: statuses クエリパラメータ。
+parentId: api.api.sessions.history.get
+properties:
+  location: query
+  implementation:
+    - file: src/app/api/sessions/history/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

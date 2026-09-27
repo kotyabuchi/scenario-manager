@@ -1,0 +1,6 @@
+id: edge.maps_to.step.create.scenario.input.screen.scenario.import
+kind: maps_to
+source: step.create.scenario.input
+target: screen.scenario.import
+label: ""
+properties: {}

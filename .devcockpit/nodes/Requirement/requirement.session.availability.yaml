@@ -1,0 +1,11 @@
+id: requirement.session.availability
+kind: Requirement
+name: 参加可能日の提出
+description: 参加者と管理者は調整段階で参加可能日を提出する。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

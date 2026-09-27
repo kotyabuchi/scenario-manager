@@ -1,0 +1,11 @@
+id: requirement.scenario.detail
+kind: Requirement
+name: シナリオの詳細情報
+description: シナリオ情報、関連セッション、動画、レビューを一つの詳細画面で見られる。
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

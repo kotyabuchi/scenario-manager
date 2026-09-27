@@ -1,0 +1,14 @@
+id: field.feedback_votes.user_id
+kind: Field
+name: user_id
+description: public.feedback_votes.user_id
+parentId: entity.feedback_votes
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

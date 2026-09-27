@@ -1,0 +1,11 @@
+id: flow.feedback
+kind: Flow
+name: フィードバックを投稿・議論する
+description: フィードバックを投稿・議論するユーザーフロー。
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,0 +1,12 @@
+id: relation.video_links.session_id
+kind: Relation
+name: session_id → game_sessions.game_session_id
+description: public.video_links.session_id は public.game_sessions.game_session_id を参照する。
+parentId: entity.video_links
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

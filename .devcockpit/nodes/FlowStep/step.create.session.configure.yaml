@@ -1,0 +1,11 @@
+id: step.create.session.configure
+kind: FlowStep
+name: 基本情報と参加者を指定する
+description: 基本情報と参加者を指定する
+parentId: flow.create.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

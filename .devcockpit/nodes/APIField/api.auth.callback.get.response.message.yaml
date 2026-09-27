@@ -1,0 +1,12 @@
+id: api.auth.callback.get.response.message
+kind: APIField
+name: popup message
+description: 認証成功/失敗を BroadcastChannel auth で通知。
+parentId: api.auth.callback.get
+properties:
+  location: response
+  implementation:
+    - file: src/app/(auth)/auth/callback/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

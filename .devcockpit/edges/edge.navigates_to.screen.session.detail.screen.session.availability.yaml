@@ -1,0 +1,6 @@
+id: edge.navigates_to.screen.session.detail.screen.session.availability
+kind: navigates_to
+source: screen.session.detail
+target: screen.session.availability
+label: ""
+properties: {}

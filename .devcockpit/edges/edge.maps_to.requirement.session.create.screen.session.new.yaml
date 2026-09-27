@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.session.create.screen.session.new
+kind: maps_to
+source: requirement.session.create
+target: screen.session.new
+label: ""
+properties: {}

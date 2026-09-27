@@ -1,0 +1,12 @@
+id: screen.scenario.import
+kind: Screen
+name: シナリオインポート
+description: URLから情報を取得し確認して登録する。
+properties:
+  route: /scenarios/import
+  implementation:
+    - file: src/app/(main)/scenarios/import/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

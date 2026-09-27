@@ -1,0 +1,6 @@
+id: edge.uses.entity.scenario.tags.entity.tags
+kind: uses
+source: entity.scenario_tags
+target: entity.tags
+label: tag_id
+properties: {}

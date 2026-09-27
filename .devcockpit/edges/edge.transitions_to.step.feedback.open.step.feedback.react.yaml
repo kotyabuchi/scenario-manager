@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.feedback.open.step.feedback.react
+kind: transitions_to
+source: step.feedback.open
+target: step.feedback.react
+label: ""
+properties: {}
