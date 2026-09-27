@@ -19,7 +19,7 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 import { Textarea } from '@/components/elements/textarea';
 
 type CompleteSessionDialogView = 'confirm' | 'success';
@@ -69,10 +69,13 @@ export const CompleteSessionDialog = ({
   });
 
   const handleClose = () => {
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     reset();
     setServerError(null);
     setView('confirm');
-    onOpenChange({ open: false });
   };
 
   const onSubmit = (data: CompleteSessionValues) => {
@@ -98,15 +101,9 @@ export const CompleteSessionDialog = ({
 
   const confirmFooter = (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        status="primary"
-        onClick={handleClose}
-        disabled={isPending}
-      >
+      <ModalDismissButton onClick={handleClose} disabled={isPending}>
         キャンセル
-      </Button>
+      </ModalDismissButton>
       <Button
         type="submit"
         status="primary"
@@ -123,7 +120,12 @@ export const CompleteSessionDialog = ({
 
   if (view === 'success') {
     return (
-      <Modal open={open} onOpenChange={handleClose} title="完了">
+      <Modal
+        open={open}
+        onOpenChange={handleClose}
+        onExitComplete={handleExitComplete}
+        title="完了"
+      >
         <div className={styles.dialog_success_container}>
           <div className={styles.dialog_success_iconCircle}>
             <Check size={40} weight="bold" />
@@ -160,7 +162,10 @@ export const CompleteSessionDialog = ({
   return (
     <Modal
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={(details) => {
+        if (!details.open) handleClose();
+      }}
+      onExitComplete={handleExitComplete}
       title="セッションを完了にしますか？"
       footer={confirmFooter}
     >

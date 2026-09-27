@@ -89,9 +89,12 @@ export const ParticipationRequestDialog = ({
   const selectedType = watch('participantType');
 
   const handleClose = () => {
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     reset();
     setServerError(null);
-    onOpenChange({ open: false });
   };
 
   const onSubmit = (data: ParticipationRequestValues) => {
@@ -118,7 +121,14 @@ export const ParticipationRequestDialog = ({
     : `現${participantCount}人 (GM募集中)`;
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title="セッションに参加申請">
+    <Modal
+      open={open}
+      onOpenChange={(details) => {
+        if (!details.open) handleClose();
+      }}
+      onExitComplete={handleExitComplete}
+      title="セッションに参加申請"
+    >
       <form
         id="participation-request-form"
         onSubmit={handleSubmit(onSubmit)}

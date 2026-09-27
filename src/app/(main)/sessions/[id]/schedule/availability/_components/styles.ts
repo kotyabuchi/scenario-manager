@@ -98,6 +98,7 @@ export const mobileDrawerPositioner = css({
 });
 
 export const mobileDrawerContent = css({
+  outline: 'none',
   width: 'full',
   maxH: '[85dvh]',
   bg: 'white',
@@ -143,24 +144,6 @@ export const mobileDrawerTitle = css({
   fontSize: 'sm',
   fontWeight: 'semibold',
   color: 'gray.800',
-});
-
-export const iconButton = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '8',
-  height: '8',
-  borderRadius: 'md',
-  color: 'gray.600',
-  cursor: 'pointer',
-  _hover: {
-    bg: 'gray.100',
-    color: 'gray.800',
-  },
-  _focusVisible: {
-    outline: 'focusRing',
-  },
 });
 
 export const mobileDrawerBody = css({

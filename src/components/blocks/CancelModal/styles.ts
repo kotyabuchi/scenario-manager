@@ -7,31 +7,31 @@ export const content = css({
 });
 
 export const targetInfo = css({
-  bg: '[surface.subtle]',
-  rounded: 'lg',
-  p: '4',
+  color: 'text.body',
 });
 
 export const targetName = css({
-  color: '[text.default]',
-  fontSize: 'md',
+  color: 'text.body',
+  fontSize: 'sm',
   '& strong': {
     fontWeight: 'semibold',
   },
 });
 
 export const warningBox = css({
-  bg: '[danger.surface]',
-  rounded: 'lg',
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '3',
+  bg: 'error.subtleHover',
+  borderRadius: 'xl',
   p: '4',
-  borderLeft: '[4px solid]',
-  borderColor: '[danger.border]',
+  color: 'error.default',
 });
 
 export const warningText = css({
-  color: '[danger.text]',
+  color: 'error.textDark',
   fontSize: 'sm',
-  lineHeight: '[1.6]',
+  lineHeight: 'relaxed',
 });
 
 export const field = css({
@@ -43,24 +43,23 @@ export const field = css({
 export const label = css({
   fontSize: 'sm',
   fontWeight: 'medium',
-  color: '[text.muted]',
+  color: 'text.body',
 });
 
 export const textarea = css({
   px: '3',
   py: '2',
-  rounded: 'md',
-  bg: '[surface.input]',
+  borderRadius: 'md',
+  bg: 'input.bg',
   border: 'none',
   outline: 'none',
-  color: '[text.default]',
+  color: 'input.text',
   minH: '[80px]',
   resize: 'vertical',
   _placeholder: {
-    color: '[text.placeholder]',
+    color: 'input.placeholder',
   },
   _focusVisible: {
-    ring: '[2]',
-    ringColor: '[primary.500]',
+    outline: 'focusRing',
   },
 });

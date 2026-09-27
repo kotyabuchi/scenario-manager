@@ -3,7 +3,7 @@ import { css } from '@/styled-system/css';
 export const backdrop = css({
   position: 'fixed',
   inset: '0',
-  bg: '[overlay.backdrop]',
+  bg: 'overlay.dark',
   backdropFilter: '[blur(4px)]',
   zIndex: 'overlay',
 });
@@ -15,27 +15,29 @@ export const positioner = css({
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 'modal',
-  p: '4',
+  p: { base: '3', md: '4' },
 });
 
 export const content = css({
-  bg: '[dialog.bg]',
-  borderRadius: '[4]',
-  boxShadow: '[dialog.default]',
-  maxW: '[480px]',
+  bg: 'dialog.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'border.paper',
+  borderRadius: '2xl',
+  boxShadow: 'dialog.default',
+  maxW: '[560px]',
   w: 'full',
-  maxH: '[90vh]',
-  overflow: 'auto',
+  maxH: '[95dvh]',
+  overflowY: 'auto',
 });
 
 export const cardBody = css({
-  p: '8',
+  p: { base: '6', md: '8' },
   display: 'flex',
   flexDirection: 'column',
-  gap: '5',
+  gap: '6',
 });
 
-/* ── ステップインジケーター ── */
 export const stepIndicator = css({
   display: 'flex',
   flexDirection: 'column',
@@ -50,90 +52,91 @@ export const stepIndicator_labelRow = css({
 });
 
 export const stepIndicator_stepText = css({
-  fontSize: '[12px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
-  color: '[text.secondary]',
+  color: 'text.secondary',
 });
 
 export const stepIndicator_descText = css({
-  fontSize: '[12px]',
-  fontWeight: 'medium',
-  color: '[primary.500]',
+  fontSize: 'sm',
+  fontWeight: 'semibold',
+  color: 'primary.default',
 });
 
 export const stepIndicator_barBg = css({
   w: 'full',
   h: '1',
-  borderRadius: 'xs',
-  bg: '[gray.200]',
+  borderRadius: 'full',
+  bg: 'input.bg',
   overflow: 'hidden',
 });
 
-export const stepIndicator_barFillStep1 = css({
+const stepIndicator_barFill = {
   h: 'full',
-  w: '[50%]',
-  borderRadius: 'xs',
-  bg: '[primary.500]',
-  transitionProperty: '[width, background]',
+  borderRadius: 'full',
+  transitionProperty: 'common',
   transitionDuration: 'fast',
-  transitionTimingFunction: 'ease-in-out',
+} as const;
+
+export const stepIndicator_barFillStep1 = css({
+  ...stepIndicator_barFill,
+  w: '[50%]',
+  bg: 'primary.default',
 });
 
 export const stepIndicator_barFillStep2 = css({
-  h: 'full',
+  ...stepIndicator_barFill,
   w: 'full',
-  borderRadius: 'xs',
-  bg: '[primary.500]',
-  transitionProperty: '[width, background]',
-  transitionDuration: 'fast',
-  transitionTimingFunction: 'ease-in-out',
+  bg: 'primary.default',
 });
 
 export const stepIndicator_barFillError = css({
-  h: 'full',
+  ...stepIndicator_barFill,
   w: '[50%]',
-  borderRadius: 'xs',
-  bg: '[error.default]',
-  transitionProperty: '[width, background]',
-  transitionDuration: 'fast',
-  transitionTimingFunction: 'ease-in-out',
+  bg: 'error.default',
 });
 
-/* ── アバター ── */
+export const avatarSlot = css({
+  display: 'flex',
+  justifyContent: 'center',
+});
+
 export const avatarCircle = css({
   w: '16',
   h: '16',
   borderRadius: 'full',
-  bg: '[green.100]',
+  bg: 'primary.subtle',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '[primary.400]',
+  color: 'primary.default',
 });
 
-/* ── タイトルグループ ── */
 export const titleGroup = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '1',
 });
 
+export const titleGroupCentered = css({
+  textAlign: 'center',
+});
+
 export const title = css({
-  fontSize: '[20px]',
-  fontWeight: 'medium',
-  color: '[text.title]',
+  fontSize: 'xl',
+  fontWeight: 'semibold',
+  color: 'text.title',
 });
 
 export const subtitle = css({
-  fontSize: '[13px]',
-  color: '[text.secondary]',
+  fontSize: 'sm',
+  color: 'text.secondary',
 });
 
-/* ── フォーム ── */
 export const stepForm = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '5',
+  gap: '6',
 });
 
 export const formGroup = css({
@@ -144,122 +147,49 @@ export const formGroup = css({
 });
 
 export const errorText = css({
-  fontSize: '[12px]',
-  color: '[error.500]',
-  mt: '1',
-});
-
-export const usernameStatus = css({
-  fontSize: '[12px]',
+  fontSize: 'xs',
+  color: 'error.default',
   mt: '1',
 });
 
 export const usernameStatusChecking = css({
-  fontSize: '[12px]',
+  fontSize: 'xs',
   mt: '1',
-  color: '[text.secondary]',
+  color: 'text.secondary',
 });
 
 export const usernameStatusAvailable = css({
-  fontSize: '[12px]',
+  fontSize: 'xs',
   mt: '1',
-  color: '[success.default]',
+  color: 'text.success',
 });
 
 export const fieldHint = css({
-  fontSize: '[12px]',
-  color: '[text.secondary]',
+  fontSize: 'xs',
+  color: 'text.secondary',
 });
 
 export const charCounter = css({
-  fontSize: '[12px]',
-  color: '[text.secondary]',
+  fontSize: 'xs',
+  color: 'text.secondary',
   textAlign: 'right',
   mt: '1',
-});
-
-/* ── ボタン ── */
-export const primaryButton = css({
-  flex: '1',
-  h: '[44px]',
-  borderRadius: '[2]',
-  bg: '[primary.500]',
-  color: 'white',
-  fontSize: '[14px]',
-  fontWeight: 'semibold',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '2',
-  boxShadow: '[0 2px 4px rgba(5, 149, 104, 0.25)]',
-  _hover: {
-    bg: '[primary.600]',
-  },
-  _disabled: {
-    opacity: '[0.6]',
-    cursor: 'not-allowed',
-  },
-});
-
-export const primaryButtonFullWidth = css({
-  w: 'full',
-  mt: '1',
-  h: '[44px]',
-  borderRadius: '[2]',
-  bg: '[primary.500]',
-  color: 'white',
-  fontSize: '[14px]',
-  fontWeight: 'semibold',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '2',
-  boxShadow: '[0 2px 4px rgba(5, 149, 104, 0.25)]',
-  _hover: {
-    bg: '[primary.600]',
-  },
-  _disabled: {
-    opacity: '[0.6]',
-    cursor: 'not-allowed',
-  },
 });
 
 export const footerButtons = css({
   display: 'flex',
   flexDirection: 'row',
-  gap: '3',
+  gap: '2',
   w: 'full',
   mt: '1',
 });
 
-export const skipButton = css({
-  flex: '1',
-  h: '[44px]',
-  borderRadius: '[2]',
-  bg: 'white',
-  color: '[text.body]',
-  fontSize: '[14px]',
-  fontWeight: 'medium',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  boxShadow: '[0 1px 3px rgba(0, 0, 0, 0.1)]',
-  _hover: {
-    bg: '[gray.50]',
-  },
-});
-
-/* ── チップ ── */
 export const chipGroup = css({
   display: 'flex',
   flexWrap: 'wrap',
   gap: '2',
 });
 
-/* ── 完了画面 ── */
 export const completionCard = css({
   display: 'flex',
   flexDirection: 'column',
@@ -274,11 +204,11 @@ export const checkCircle = css({
   w: '16',
   h: '16',
   borderRadius: 'full',
-  bg: '[green.100]',
+  bg: 'primary.subtle',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '[primary.500]',
+  color: 'primary.default',
 });
 
 export const visuallyHidden = css({
@@ -290,5 +220,5 @@ export const visuallyHidden = css({
   overflow: 'hidden',
   clip: '[rect(0, 0, 0, 0)]',
   whiteSpace: 'nowrap',
-  border: '[0]',
+  borderWidth: '0',
 });

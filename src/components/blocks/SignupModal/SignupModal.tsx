@@ -185,16 +185,20 @@ export const SignupModal = ({
                     className={styles.stepForm}
                   >
                     {/* アバター */}
-                    {avatarUrl ? (
-                      <Avatar src={avatarUrl} alt="アバター" size="xl" />
-                    ) : (
-                      <div className={styles.avatarCircle}>
-                        <User size={32} />
-                      </div>
-                    )}
+                    <div className={styles.avatarSlot}>
+                      {avatarUrl ? (
+                        <Avatar src={avatarUrl} alt="アバター" size="xl" />
+                      ) : (
+                        <div className={styles.avatarCircle}>
+                          <User size={32} />
+                        </div>
+                      )}
+                    </div>
 
                     {/* タイトルグループ */}
-                    <div className={styles.titleGroup}>
+                    <div
+                      className={`${styles.titleGroup} ${styles.titleGroupCentered}`}
+                    >
                       <h2 className={styles.title}>プロフィール設定</h2>
                       <p className={styles.subtitle}>
                         はじめに、あなたのプロフィールを設定しましょう

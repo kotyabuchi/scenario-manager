@@ -57,6 +57,8 @@ export const colorValues = {
     700: { value: 'oklch(0.490 0.082 90)' },
     800: { value: 'oklch(0.400 0.064 90)' },
     900: { value: 'oklch(0.315 0.046 90)' },
+    // モーダル案の鮮やかな電球色（#FACC15 相当）。通常の同一トーンランプとは別のアクセント。
+    vivid: { value: 'oklch(0.861 0.173 92)' },
   },
 
   // Green: ブランドグリーン（基準。500=#68A872 相当・H=148）。semantic の primary が参照

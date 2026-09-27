@@ -1,10 +1,12 @@
 'use client';
 
+import { useRef } from 'react';
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
-import { X } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
+
+import { ModalCloseButton } from '@/components/elements/modal';
 
 import type { ReactNode } from 'react';
 
@@ -29,6 +31,8 @@ export const AvailabilityWorkspaceLayout = ({
   onMobileSidebarOpenChange,
   stickyBar,
 }: AvailabilityWorkspaceLayoutProps) => {
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
+
   return (
     <>
       <div className={styles.workspace}>
@@ -54,11 +58,15 @@ export const AvailabilityWorkspaceLayout = ({
         onOpenChange={(details) => onMobileSidebarOpenChange(details.open)}
         closeOnInteractOutside
         unmountOnExit
+        initialFocusEl={() => mobileDrawerRef.current}
       >
         <Portal>
           <Dialog.Backdrop className={styles.mobileDrawerBackdrop} />
           <Dialog.Positioner className={styles.mobileDrawerPositioner}>
-            <Dialog.Content className={styles.mobileDrawerContent}>
+            <Dialog.Content
+              ref={mobileDrawerRef}
+              className={styles.mobileDrawerContent}
+            >
               <div className={styles.mobileDrawerHandle} aria-hidden="true">
                 <div className={styles.mobileDrawerHandleBar} />
               </div>
@@ -66,11 +74,8 @@ export const AvailabilityWorkspaceLayout = ({
                 <Dialog.Title className={styles.mobileDrawerTitle}>
                   {mobileSidebarTitle}
                 </Dialog.Title>
-                <Dialog.CloseTrigger
-                  className={styles.iconButton}
-                  aria-label="閉じる"
-                >
-                  <X size={18} />
+                <Dialog.CloseTrigger asChild>
+                  <ModalCloseButton />
                 </Dialog.CloseTrigger>
               </header>
               <div className={styles.mobileDrawerBody}>

@@ -13,7 +13,7 @@ import * as styles from './styles';
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';
 import { Input } from '@/components/elements/input/input';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 import { Select } from '@/components/elements/select/select';
 import { SessionLinkTypes } from '@/db/enum';
 
@@ -95,15 +95,9 @@ export const LinkFormDialog = ({
 
   const footer = (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        status="primary"
-        onClick={handleClose}
-        disabled={isPending}
-      >
+      <ModalDismissButton onClick={handleClose} disabled={isPending}>
         キャンセル
-      </Button>
+      </ModalDismissButton>
       <Button
         type="submit"
         status="primary"

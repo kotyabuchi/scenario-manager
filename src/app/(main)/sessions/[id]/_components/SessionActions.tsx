@@ -258,64 +258,54 @@ export const SessionActions = ({
         </div>
       )}
 
-      {openDialog === 'participate' && (
-        <ParticipationRequestDialog
-          sessionId={session.gameSessionId}
-          sessionName={session.sessionName}
-          scenarioName={session.scenario?.name}
-          hasKeeper={!isNil(session.keeper)}
-          participantCount={
-            session.participants.filter(
-              (p) =>
-                p.participantStatus === ParticipantStatuses.CONFIRMED.value,
-            ).length
-          }
-          maxParticipantCount={session.maxParticipantCount}
-          scheduleLabel={getScheduleLabel(session)}
-          open
-          onOpenChange={({ open }) => !open && setOpenDialog(null)}
-        />
-      )}
-      {openDialog === 'withdraw' && (
-        <WithdrawDialog
-          sessionId={session.gameSessionId}
-          open
-          onOpenChange={({ open }) => !open && setOpenDialog(null)}
-        />
-      )}
-      {openDialog === 'cancelApplication' && (
-        <CancelApplicationDialog
-          sessionId={session.gameSessionId}
-          open
-          onOpenChange={({ open }) => !open && setOpenDialog(null)}
-        />
-      )}
-      {openDialog === 'cancelSession' && (
-        <CancelSessionDialog
-          sessionId={session.gameSessionId}
-          open
-          onOpenChange={({ open }) => !open && setOpenDialog(null)}
-        />
-      )}
-      {openDialog === 'complete' && (
-        <CompleteSessionDialog
-          sessionId={session.gameSessionId}
-          expectedUpdatedAt={session.updatedAt}
-          scenarioName={session.scenario?.name ?? '不明なシナリオ'}
-          systemName={session.scenario?.system?.name ?? ''}
-          scheduleLabel={
-            !isNil(session.scheduleDate)
-              ? new Date(session.scheduleDate).toLocaleDateString('ja-JP', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              : '日程未定'
-          }
-          open
-          onOpenChange={({ open }) => !open && setOpenDialog(null)}
-        />
-      )}
+      <ParticipationRequestDialog
+        sessionId={session.gameSessionId}
+        sessionName={session.sessionName}
+        scenarioName={session.scenario?.name}
+        hasKeeper={!isNil(session.keeper)}
+        participantCount={
+          session.participants.filter(
+            (p) => p.participantStatus === ParticipantStatuses.CONFIRMED.value,
+          ).length
+        }
+        maxParticipantCount={session.maxParticipantCount}
+        scheduleLabel={getScheduleLabel(session)}
+        open={openDialog === 'participate'}
+        onOpenChange={({ open }) => !open && setOpenDialog(null)}
+      />
+      <WithdrawDialog
+        sessionId={session.gameSessionId}
+        open={openDialog === 'withdraw'}
+        onOpenChange={({ open }) => !open && setOpenDialog(null)}
+      />
+      <CancelApplicationDialog
+        sessionId={session.gameSessionId}
+        open={openDialog === 'cancelApplication'}
+        onOpenChange={({ open }) => !open && setOpenDialog(null)}
+      />
+      <CancelSessionDialog
+        sessionId={session.gameSessionId}
+        sessionName={session.sessionName}
+        open={openDialog === 'cancelSession'}
+        onOpenChange={({ open }) => !open && setOpenDialog(null)}
+      />
+      <CompleteSessionDialog
+        sessionId={session.gameSessionId}
+        expectedUpdatedAt={session.updatedAt}
+        scenarioName={session.scenario?.name ?? '不明なシナリオ'}
+        systemName={session.scenario?.system?.name ?? ''}
+        scheduleLabel={
+          !isNil(session.scheduleDate)
+            ? new Date(session.scheduleDate).toLocaleDateString('ja-JP', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })
+            : '日程未定'
+        }
+        open={openDialog === 'complete'}
+        onOpenChange={({ open }) => !open && setOpenDialog(null)}
+      />
     </>
   );
 };

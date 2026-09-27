@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Info, LockSimple, WarningCircle } from '@phosphor-icons/react/ssr';
+import { LockSimple, WarningCircle } from '@phosphor-icons/react/ssr';
 import { isNil } from 'ramda';
 
 import { cancelSessionAction } from '../actions';
@@ -12,17 +12,19 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 import { Textarea } from '@/components/elements/textarea';
 
 type CancelSessionDialogProps = {
   sessionId: string;
+  sessionName: string;
   open: boolean;
   onOpenChange: (details: { open: boolean }) => void;
 };
 
 export const CancelSessionDialog = ({
   sessionId,
+  sessionName,
   open,
   onOpenChange,
 }: CancelSessionDialogProps) => {
@@ -42,9 +44,12 @@ export const CancelSessionDialog = ({
   });
 
   const handleClose = () => {
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     reset();
     setServerError(null);
-    onOpenChange({ open: false });
   };
 
   const onSubmit = (data: CancelSessionValues) => {
@@ -64,15 +69,9 @@ export const CancelSessionDialog = ({
 
   const footer = (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        status="primary"
-        onClick={handleClose}
-        disabled={isPending}
-      >
-        戻る
-      </Button>
+      <ModalDismissButton onClick={handleClose} disabled={isPending}>
+        継続する
+      </ModalDismissButton>
       <Button
         type="submit"
         status="danger"
@@ -82,7 +81,7 @@ export const CancelSessionDialog = ({
         form="cancel-session-form"
       >
         <LockSimple size={16} weight="fill" />
-        キャンセルする
+        セッションをキャンセルする
       </Button>
     </>
   );
@@ -90,20 +89,26 @@ export const CancelSessionDialog = ({
   return (
     <Modal
       open={open}
-      onOpenChange={onOpenChange}
-      title="セッションをキャンセルしますか？"
-      headerVariant="danger"
-      headerIcon={<WarningCircle size={24} weight="fill" />}
+      onOpenChange={(details) => {
+        if (!details.open) handleClose();
+      }}
+      onExitComplete={handleExitComplete}
+      title="セッションをキャンセル"
       footer={footer}
+      mobileSheet
     >
       <form
         id="cancel-session-form"
         onSubmit={handleSubmit(onSubmit)}
         className={styles.dialog_form}
       >
+        <p className={styles.dialog_targetName}>
+          対象セッション: <strong>{sessionName}</strong>
+        </p>
+
         {/* 情報ボックス */}
         <div className={styles.dialog_infoBox}>
-          <Info
+          <WarningCircle
             size={20}
             weight="fill"
             className={styles.dialog_infoBox_icon}

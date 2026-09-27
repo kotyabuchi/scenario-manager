@@ -136,6 +136,7 @@ export const semanticTokens = {
     border: {
       default: { value: '{colors.gray.300}' },
       subtle: { value: '{colors.gray.200}' },
+      paper: { value: '{colors.paperBorder.100}' },
       focus: { value: '{colors.green.500}' },
       error: { value: '{colors.red.500}' },
     },
@@ -159,6 +160,7 @@ export const semanticTokens = {
       white: { value: '{colors.white}' },
       primary: { value: '{colors.green.500}' },
       error: { value: '{colors.red.500}' },
+      idea: { value: '{colors.yellow.vivid}' },
     },
 
     // ========================================
@@ -355,10 +357,10 @@ export const semanticTokens = {
     // ダイアログ
     // ========================================
     dialog: {
-      bg: { value: '{colors.white}' },
+      bg: { value: '{colors.paper}' },
       title: { value: '{colors.gray.800}' },
-      content: { value: '{colors.gray.500}' },
-      close: { value: '{colors.gray.400}' },
+      content: { value: '{colors.gray.800}' },
+      close: { value: '{colors.gray.600}' },
     },
 
     // ========================================

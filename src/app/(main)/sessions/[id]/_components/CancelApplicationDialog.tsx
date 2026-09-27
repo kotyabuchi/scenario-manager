@@ -14,7 +14,7 @@ import {
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 
 type CancelApplicationDialogProps = {
   sessionId: string;
@@ -36,9 +36,12 @@ export const CancelApplicationDialog = ({
   });
 
   const handleClose = () => {
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     reset();
     setServerError(null);
-    onOpenChange({ open: false });
   };
 
   const onSubmit = (_data: CancelApplicationValues) => {
@@ -58,15 +61,9 @@ export const CancelApplicationDialog = ({
 
   const footer = (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        status="primary"
-        onClick={handleClose}
-        disabled={isPending}
-      >
+      <ModalDismissButton onClick={handleClose} disabled={isPending}>
         戻る
-      </Button>
+      </ModalDismissButton>
       <Button
         type="submit"
         status="danger"
@@ -84,7 +81,10 @@ export const CancelApplicationDialog = ({
   return (
     <Modal
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={(details) => {
+        if (!details.open) handleClose();
+      }}
+      onExitComplete={handleExitComplete}
       title="参加申請を取り消す"
       footer={footer}
     >

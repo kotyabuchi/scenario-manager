@@ -19,6 +19,7 @@ export const content = css({
   borderTopRadius: '2xl',
   borderBottomRadius: { base: '0', md: '2xl' },
   shadow: 'dialog.default',
+  outline: 'none',
   px: '6',
   pb: { base: '[calc(1.5rem + env(safe-area-inset-bottom))]', md: '6' },
   _open: { animation: '[slideInUp var(--durations-normal) ease-out]' },
@@ -48,19 +49,6 @@ export const title = css({
   fontSize: 'lg',
   fontWeight: 'bold',
   color: 'text.title',
-});
-
-export const closeButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '10',
-  h: '10',
-  rounded: 'lg',
-  color: 'text.secondary',
-  cursor: 'pointer',
-  _hover: { bg: 'bg.input' },
-  _focusVisible: { outline: 'focusRing' },
 });
 
 export const description = css({

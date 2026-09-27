@@ -284,7 +284,15 @@ export const dialog_infoBox = css({
   gap: '3',
   p: '4',
   borderRadius: 'xl',
-  bg: 'error.subtle',
+  bg: 'error.subtleHover',
+});
+
+export const dialog_targetName = css({
+  fontSize: 'sm',
+  color: 'text.body',
+  '& strong': {
+    fontWeight: 'semibold',
+  },
 });
 
 export const dialog_infoBox_icon = css({

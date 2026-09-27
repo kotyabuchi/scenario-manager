@@ -13,9 +13,9 @@ export const field = css({
 });
 
 export const label = css({
-  fontSize: '[13px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'text.secondary',
+  color: 'text.body',
 });
 
 export const required = css({
@@ -24,9 +24,66 @@ export const required = css({
 });
 
 export const radioGroup = css({
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  gap: '4',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  gap: '2',
+});
+
+export const categoryItem = css({
+  minH: '12',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  pl: '3',
+  py: '2',
+  borderRadius: 'lg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'border.default',
+  bg: 'bg.card',
+  color: 'text.secondary',
+  transitionProperty: 'common',
+  transitionDuration: 'fast',
+  _checked: {
+    borderColor: 'primary.text',
+    bg: 'primary.subtleHover',
+    color: 'primary.text',
+    '& [data-part="item-text"]': {
+      color: 'primary.text',
+      fontWeight: 'semibold',
+    },
+    '& [data-part="item-control"]': {
+      bg: 'primary.text',
+      borderColor: 'primary.text',
+    },
+  },
+  '&:has(input:focus-visible)': {
+    outline: 'focusRing',
+  },
+  '& [data-part="item-control"]': {
+    w: '4.5',
+    h: '4.5',
+    alignSelf: 'center',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'border.default',
+    boxShadow: '[none]',
+    bg: 'bg.card',
+  },
+  '& [data-part="item-text"]': {
+    display: 'flex',
+    alignItems: 'center',
+    alignSelf: 'center',
+    lineHeight: 'none',
+  },
+});
+
+export const categoryOption = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2',
+  whiteSpace: 'nowrap',
+  fontSize: 'sm',
+  lineHeight: 'none',
 });
 
 export const hintBox = css({
@@ -35,10 +92,8 @@ export const hintBox = css({
   gap: '1',
   py: '3',
   px: '4',
-  borderRadius: '[3]',
-  bg: '[bg.subtle]',
-  border: '[1px solid]',
-  borderColor: '[border.subtle]',
+  borderRadius: 'lg',
+  bg: 'primary.subtleHover',
 });
 
 export const hintRow = css({
@@ -48,20 +103,20 @@ export const hintRow = css({
 });
 
 export const hintIcon = css({
-  color: 'yellow.500',
+  color: 'icon.idea',
   flexShrink: '0',
 });
 
 export const hintText = css({
-  fontSize: '[13px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'text.secondary',
+  color: 'text.body',
 });
 
 export const hintLink = css({
-  fontSize: '[13px]',
+  fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'primary.default',
+  color: 'primary.text',
   cursor: 'pointer',
   _hover: {
     textDecoration: 'underline',
@@ -86,22 +141,22 @@ export const noticeIcon = css({
 });
 
 export const noticeText = css({
-  fontSize: '[12px]',
+  fontSize: 'xs',
   color: 'text.secondary',
 });
 
 export const serverError = css({
-  bg: '[error.subtle]',
-  color: '[error.text]',
+  bg: 'error.subtleHover',
+  color: 'error.text',
   p: '3',
-  borderRadius: '[3]',
-  fontSize: '[14px]',
+  borderRadius: 'lg',
+  fontSize: 'sm',
 });
 
 export const successMessage = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '1',
-  fontSize: '[14px]',
+  fontSize: 'sm',
   color: 'text.secondary',
 });

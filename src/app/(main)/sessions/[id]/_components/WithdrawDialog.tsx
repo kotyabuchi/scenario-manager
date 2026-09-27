@@ -12,7 +12,7 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 import { Textarea } from '@/components/elements/textarea';
 
 type WithdrawDialogProps = {
@@ -45,9 +45,12 @@ export const WithdrawDialog = ({
   const reasonLength = watch('reason')?.length ?? 0;
 
   const handleClose = () => {
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     reset();
     setServerError(null);
-    onOpenChange({ open: false });
   };
 
   const onSubmit = (data: WithdrawValues) => {
@@ -67,15 +70,9 @@ export const WithdrawDialog = ({
 
   const footer = (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        status="primary"
-        onClick={handleClose}
-        disabled={isPending}
-      >
+      <ModalDismissButton onClick={handleClose} disabled={isPending}>
         戻る
-      </Button>
+      </ModalDismissButton>
       <Button
         type="submit"
         status="danger"
@@ -93,7 +90,10 @@ export const WithdrawDialog = ({
   return (
     <Modal
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={(details) => {
+        if (!details.open) handleClose();
+      }}
+      onExitComplete={handleExitComplete}
       title="セッションから辞退しますか？"
       footer={footer}
     >

@@ -18,6 +18,7 @@ import { colorValues } from './colorValues';
  *
  * 基準は green.500 = oklch(0.674 0.103 148)（モックの「シナリオ登録」ボタン #68A872）。
  * ブランド色は green。semantic 側で primary → green を別名定義する（base は色相名のみ）。
+ * モックの高彩度な電球色 yellow.vivid のみ、共通ランプとは別のアクセント。
  * 色相(H): red 20 / orange 62 / yellow 90 / green 148 / blue 245 / info 255 /
  *          indigo 282 / purple 312 / pink 352 / gray 265(極小彩度の青みグレー)
  *

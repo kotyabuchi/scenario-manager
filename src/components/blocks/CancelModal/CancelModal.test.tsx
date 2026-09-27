@@ -31,7 +31,7 @@ describe('CancelModal', () => {
       render(<CancelSession />);
 
       expect(
-        screen.getByRole('button', { name: /キャンセル|中止|確認/i }),
+        screen.getByRole('button', { name: 'セッションをキャンセルする' }),
       ).toBeInTheDocument();
     });
 
@@ -41,7 +41,7 @@ describe('CancelModal', () => {
       render(<CancelSession onConfirm={handleConfirm} />);
 
       await user.click(
-        screen.getByRole('button', { name: /キャンセル|中止|確認/i }),
+        screen.getByRole('button', { name: 'セッションをキャンセルする' }),
       );
 
       await waitFor(() => {
@@ -142,12 +142,12 @@ describe('CancelModal', () => {
 
   // 共通：キャンセルボタン
   describe('キャンセルボタン（モーダルを閉じる）', () => {
-    it('「戻る」ボタンでモーダルを閉じられる', async () => {
+    it('「継続する」ボタンでモーダルを閉じられる', async () => {
       const user = userEvent.setup();
       const handleClose = vi.fn();
       render(<CancelSession onClose={handleClose} />);
 
-      await user.click(screen.getByRole('button', { name: /^戻る$/i }));
+      await user.click(screen.getByRole('button', { name: '継続する' }));
 
       expect(handleClose).toHaveBeenCalled();
     });
@@ -188,7 +188,7 @@ describe('CancelModal', () => {
 
       // 危険なアクションはvariant="danger"やred系の色で表示される想定
       const confirmButton = screen.getByRole('button', {
-        name: /キャンセル|中止|確認/i,
+        name: 'セッションをキャンセルする',
       });
       expect(confirmButton).toBeInTheDocument();
     });

@@ -18,7 +18,7 @@ import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
 import { Input } from '@/components/elements/input';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 import { Select } from '@/components/elements/select';
 
 import type { ScenarioSummary, SystemSummary } from '../../interface';
@@ -176,6 +176,10 @@ export const ScenarioSearchModal = ({
   };
 
   const handleClose = () => {
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     setIdOrUrl('');
     setQuery('');
     setSystemId(null);
@@ -186,7 +190,6 @@ export const ScenarioSearchModal = ({
       canKeeper: true,
       ownedByMembers: true,
     });
-    onOpenChange({ open: false });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -230,9 +233,7 @@ export const ScenarioSearchModal = ({
 
   const footer = (
     <div className={styles.footer}>
-      <Button type="button" variant="ghost" onClick={handleClose}>
-        キャンセル
-      </Button>
+      <ModalDismissButton onClick={handleClose}>キャンセル</ModalDismissButton>
       <Button
         type="button"
         status="primary"
@@ -250,6 +251,7 @@ export const ScenarioSearchModal = ({
       onOpenChange={(details) => {
         if (!details.open) handleClose();
       }}
+      onExitComplete={handleExitComplete}
       title="シナリオを選ぶ"
       size="lg"
       footer={footer}

@@ -79,6 +79,12 @@ export const drawerBackdrop = css({
   inset: '0',
   bg: 'overlay.dark',
   zIndex: 'overlay',
+  _open: {
+    animation: '[fadeIn var(--durations-normal) ease-out]',
+  },
+  _closed: {
+    animation: '[fadeOut var(--durations-normal) ease-in]',
+  },
 });
 
 export const drawerPositioner = css({
@@ -91,6 +97,7 @@ export const drawerPositioner = css({
 });
 
 export const drawerContent = css({
+  outline: 'none',
   width: 'full',
   maxH: '[85dvh]',
   overflowY: 'auto',
@@ -99,6 +106,12 @@ export const drawerContent = css({
   borderTopRightRadius: '2xl',
   p: '5',
   shadow: 'dialog.default',
+  _open: {
+    animation: '[slideInUp var(--durations-normal) ease-out]',
+  },
+  _closed: {
+    animation: '[slideOutDown var(--durations-normal) ease-in]',
+  },
 });
 
 export const drawerHeader = css({
@@ -107,19 +120,4 @@ export const drawerHeader = css({
   justifyContent: 'space-between',
   gap: '3',
   mb: '4',
-});
-
-export const drawerClose = css({
-  display: 'grid',
-  placeItems: 'center',
-  width: '9',
-  height: '9',
-  borderRadius: 'full',
-  cursor: 'pointer',
-  color: 'text.body',
-  _focusVisible: {
-    outline: '[2px solid]',
-    outlineColor: 'border.focus',
-    outlineOffset: '[2px]',
-  },
 });

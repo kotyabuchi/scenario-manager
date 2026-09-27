@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
-import { ListBullets, X } from '@phosphor-icons/react/ssr';
+import { ListBullets } from '@phosphor-icons/react/ssr';
 
 import * as styles from '../styles';
 
 import { SectionToc, type TocSection } from '@/components/blocks/SectionToc';
+import { ModalCloseButton } from '@/components/elements/modal';
 
 type ScenarioDetailTocProps = {
   sections: TocSection[];
@@ -20,6 +21,7 @@ export const ScenarioDetailToc = ({
   variant,
 }: ScenarioDetailTocProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   if (variant === 'desktop') {
     return (
@@ -38,7 +40,9 @@ export const ScenarioDetailToc = ({
         open={isOpen}
         onOpenChange={(details) => setIsOpen(details.open)}
         closeOnInteractOutside
+        lazyMount
         unmountOnExit
+        initialFocusEl={() => drawerRef.current}
       >
         <Dialog.Trigger className={styles.mobileTocTrigger}>
           <ListBullets size={18} />
@@ -47,14 +51,11 @@ export const ScenarioDetailToc = ({
         <Portal>
           <Dialog.Backdrop className={styles.drawerBackdrop} />
           <Dialog.Positioner className={styles.drawerPositioner}>
-            <Dialog.Content className={styles.drawerContent}>
+            <Dialog.Content ref={drawerRef} className={styles.drawerContent}>
               <div className={styles.drawerHeader}>
                 <Dialog.Title className={styles.tocTitle}>目次</Dialog.Title>
-                <Dialog.CloseTrigger
-                  className={styles.drawerClose}
-                  aria-label="目次を閉じる"
-                >
-                  <X size={18} />
+                <Dialog.CloseTrigger asChild>
+                  <ModalCloseButton aria-label="目次を閉じる" />
                 </Dialog.CloseTrigger>
               </div>
               <div
