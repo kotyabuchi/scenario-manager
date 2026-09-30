@@ -55,7 +55,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={onScenarioRegister}
           >
             <BookOpenText size={20} className={iconClass} />
@@ -64,7 +63,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={() => handleNavigate('/sessions/new' as Route)}
           >
             <CalendarPlus size={20} className={iconClass} />
@@ -73,7 +71,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={() => handleNavigate('/scenarios' as Route)}
           >
             <MagnifyingGlass size={20} className={iconClass} />
@@ -83,7 +80,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={onShare}
           >
             <ShareNetwork size={20} className={iconClass} />
@@ -92,7 +88,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={onFeedbackOpen}
           >
             <ChatText size={20} className={iconClass} />
@@ -101,7 +96,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={() => handleNavigate('/feedback' as Route)}
           >
             <ListBullets size={20} className={iconClass} />
@@ -113,7 +107,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={() => handleNavigate('/scenarios' as Route)}
           >
             <MagnifyingGlass size={20} className={iconClass} />
@@ -122,7 +115,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={onShare}
           >
             <ShareNetwork size={20} className={iconClass} />
@@ -131,7 +123,6 @@ export const SpeedDialPanel = ({
           <button
             type="button"
             className={styles.speedDialFAB_menuItem}
-            role="menuitem"
             onClick={handleLogin}
           >
             <SignIn size={20} className={iconClass} />
@@ -143,7 +134,6 @@ export const SpeedDialPanel = ({
       <button
         type="button"
         className={styles.speedDialFAB_menuItem}
-        role="menuitem"
         onClick={() => handleNavigate('/about' as Route)}
       >
         <Info size={20} className={iconClass} />

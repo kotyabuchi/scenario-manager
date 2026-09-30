@@ -5,7 +5,7 @@ export const speedDialFAB_container = css({
   position: 'fixed',
   bottom: '8',
   right: '8',
-  zIndex: 'overlay',
+  zIndex: 'modal',
   display: 'none',
   md: {
     display: 'block',
@@ -18,41 +18,82 @@ export const speedDialFAB_fab = css({
   width: '14',
   height: '14',
   borderRadius: 'full',
-  bg: 'primary.500',
-  color: 'white',
+  bg: 'primary.default',
+  color: 'primary.textOnPrimary',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  shadow: 'card.default',
+  boxShadow: 'button.primary',
   cursor: 'pointer',
   border: 'none',
   _hover: {
-    shadow: 'card.hover',
+    boxShadow: 'button.primaryHover',
   },
+  _focusVisible: { outline: 'focusRing', outlineOffset: '[2px]' },
 });
 
-export const speedDialFAB_overlay = css({
-  position: 'fixed',
-  inset: '0',
-  zIndex: '[1]',
-  bg: 'transparent',
-  border: 'none',
-  appearance: 'none',
-  cursor: 'default',
-  padding: '0',
+export const speedDialFAB_overlay = cva({
+  base: {
+    position: 'fixed',
+    inset: '0',
+    zIndex: '[1]',
+    bg: 'overlay.backdrop',
+    border: 'none',
+    appearance: 'none',
+    cursor: 'default',
+    p: '0',
+    opacity: '[0]',
+    pointerEvents: 'none',
+    transitionProperty: '[opacity]',
+    transitionDuration: 'normal',
+  },
+  variants: {
+    visible: {
+      true: { opacity: '[1]', pointerEvents: 'auto' },
+      false: {},
+    },
+  },
+  defaultVariants: { visible: false },
 });
 
-export const speedDialFAB_menu = css({
-  position: 'absolute',
-  bottom: '16',
-  right: '0',
-  zIndex: '[2]',
-  bg: 'white',
-  borderRadius: 'xl',
-  shadow: 'card.default',
-  minWidth: 'xs',
-  px: '2',
-  py: '2',
+export const speedDialFAB_menu = cva({
+  base: {
+    position: 'absolute',
+    bottom: '[calc(100% + 8px)]',
+    right: '0',
+    zIndex: '[2]',
+    width: '72',
+    maxW: '[calc(100vw - 32px)]',
+    maxH: '[60dvh]',
+    overflowY: 'auto',
+    bg: 'bg.card',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'border.paper',
+    borderRadius: 'xl',
+    boxShadow: 'card.default',
+    px: '2',
+    py: '2',
+    opacity: '[0]',
+    visibility: 'hidden',
+    pointerEvents: 'none',
+    transform: 'translateY(8px)',
+    transitionProperty: '[opacity,transform,visibility]',
+    transitionDuration: 'normal',
+    transitionTimingFunction: 'ease-out',
+  },
+  variants: {
+    visible: {
+      true: {
+        opacity: '[1]',
+        visibility: 'visible',
+        pointerEvents: 'auto',
+        transform: 'translateY(0)',
+      },
+      false: {},
+    },
+  },
+  defaultVariants: { visible: false },
 });
 
 /** FAB icon animation (used by SpeedDialFAB) */
@@ -87,6 +128,11 @@ export const speedDialFAB_menuItem = css({
   gap: '3',
   px: '3',
   py: '3',
+  minH: '11',
+  '@media (max-width: 767px)': {
+    py: '2',
+    minH: '10',
+  },
   borderRadius: 'lg',
   color: 'text.body',
   fontSize: 'sm',
@@ -100,22 +146,23 @@ export const speedDialFAB_menuItem = css({
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _hover: {
-    bg: 'gray.100',
+    bg: 'primary.subtleHover',
     color: 'text.title',
   },
+  _focusVisible: { outline: 'focusRing' },
 });
 
 /** Shared: menu item icon color */
 export const speedDialFAB_menuIcon = css({
-  color: 'primary.500',
+  color: 'icon.primary',
   flexShrink: '0',
 });
 
 /** Shared: divider style (used by SpeedDialPanel) */
 export const speedDialFAB_divider = css({
   height: '[1px]',
-  bg: 'gray.200',
+  bg: 'border.paper',
   border: 'none',
   mx: '2',
-  my: '1',
+  my: '0.5',
 });

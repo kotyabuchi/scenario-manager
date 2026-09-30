@@ -52,7 +52,9 @@ describe('SpeedDialFAB', () => {
       const fab = screen.getByRole('button', { name: 'メニューを開く' });
       await user.click(fab);
 
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(
+        screen.getByRole('region', { name: 'クイック操作' }),
+      ).toBeVisible();
     });
 
     // SD-C07: オーバーレイタップでメニューが閉じる
@@ -62,13 +64,17 @@ describe('SpeedDialFAB', () => {
 
       // メニューを開く
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(
+        screen.getByRole('region', { name: 'クイック操作' }),
+      ).toBeVisible();
 
       // オーバーレイをクリック
       const overlay = screen.getByTestId('speed-dial-overlay');
       await user.click(overlay);
 
-      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('region', { name: 'クイック操作' }),
+      ).not.toBeInTheDocument();
     });
 
     // SD-C08: Escapeキーでメニューが閉じる
@@ -78,33 +84,38 @@ describe('SpeedDialFAB', () => {
 
       // メニューを開く
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(
+        screen.getByRole('region', { name: 'クイック操作' }),
+      ).toBeVisible();
 
       // Escapeキー押下
       await user.keyboard('{Escape}');
 
-      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('region', { name: 'クイック操作' }),
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('認証済みユーザー', () => {
-    // SD-C03: 認証済みユーザーに6項目表示される
-    it('6項目のメニューが表示される', async () => {
+    // SD-C03: 認証済みユーザーに7項目表示される
+    it('7項目のメニューが表示される', async () => {
       const user = userEvent.setup();
       render(<Authenticated />);
 
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
-      const menu = screen.getByRole('menu');
-      const items = within(menu).getAllByRole('menuitem');
+      const menu = screen.getByRole('region', { name: 'クイック操作' });
+      const items = within(menu).getAllByRole('button');
 
-      expect(items).toHaveLength(6);
+      expect(items).toHaveLength(7);
       expect(items[0]).toHaveTextContent('シナリオ登録');
       expect(items[1]).toHaveTextContent('セッション募集');
       expect(items[2]).toHaveTextContent('シナリオ検索');
       expect(items[3]).toHaveTextContent('シェア');
       expect(items[4]).toHaveTextContent('フィードバック');
       expect(items[5]).toHaveTextContent('みんなのフィードバックを見る');
+      expect(items[6]).toHaveTextContent('サービスについて');
     });
 
     // SD-C05: 認証済みメニューにディバイダーがある
@@ -114,10 +125,10 @@ describe('SpeedDialFAB', () => {
 
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
-      const menu = screen.getByRole('menu');
-      const divider = within(menu).getByRole('separator');
+      const menu = screen.getByRole('region', { name: 'クイック操作' });
+      const dividers = within(menu).getAllByRole('separator');
 
-      expect(divider).toBeInTheDocument();
+      expect(dividers).toHaveLength(2);
     });
 
     // SD-C06: メニュー項目タップでアクション実行後に閉じる
@@ -128,29 +139,32 @@ describe('SpeedDialFAB', () => {
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
       // シェアをクリック
-      const shareItem = screen.getByRole('menuitem', { name: /シェア/ });
+      const shareItem = screen.getByRole('button', { name: /シェア/ });
       await user.click(shareItem);
 
       // メニューが閉じる
-      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('region', { name: 'クイック操作' }),
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('未認証ユーザー', () => {
-    // SD-C04: 未認証ユーザーに3項目表示される
-    it('3項目のメニューが表示される', async () => {
+    // SD-C04: 未認証ユーザーに4項目表示される
+    it('4項目のメニューが表示される', async () => {
       const user = userEvent.setup();
       render(<Unauthenticated />);
 
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
-      const menu = screen.getByRole('menu');
-      const items = within(menu).getAllByRole('menuitem');
+      const menu = screen.getByRole('region', { name: 'クイック操作' });
+      const items = within(menu).getAllByRole('button');
 
-      expect(items).toHaveLength(3);
+      expect(items).toHaveLength(4);
       expect(items[0]).toHaveTextContent('シナリオ検索');
       expect(items[1]).toHaveTextContent('シェア');
       expect(items[2]).toHaveTextContent('ログイン');
+      expect(items[3]).toHaveTextContent('サービスについて');
     });
 
     // SD-C09: 未認証ユーザーにシナリオ登録が表示されない
@@ -161,7 +175,7 @@ describe('SpeedDialFAB', () => {
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
       expect(
-        screen.queryByRole('menuitem', { name: /シナリオ登録/ }),
+        screen.queryByRole('button', { name: /シナリオ登録/ }),
       ).not.toBeInTheDocument();
     });
 
@@ -173,7 +187,7 @@ describe('SpeedDialFAB', () => {
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
       expect(
-        screen.getByRole('menuitem', { name: /ログイン/ }),
+        screen.getByRole('button', { name: /ログイン/ }),
       ).toBeInTheDocument();
     });
   });
@@ -202,25 +216,27 @@ describe('SpeedDialFAB', () => {
       expect(fab).toHaveAttribute('aria-expanded', 'true');
     });
 
-    // SD-A03: メニューに role="menu" がある
-    it('メニューに role="menu" がある', async () => {
+    // SD-A03: 操作群として名前が付いている
+    it('操作群に名前が付いている', async () => {
       const user = userEvent.setup();
       render(<Authenticated />);
 
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(
+        screen.getByRole('region', { name: 'クイック操作' }),
+      ).toBeInTheDocument();
     });
 
-    // SD-A04: メニュー項目に role="menuitem" がある
-    it('メニュー項目に role="menuitem" がある', async () => {
+    // SD-A04: メニュー項目を通常のボタンとして操作できる
+    it('メニュー項目を通常のボタンとして操作できる', async () => {
       const user = userEvent.setup();
       render(<Authenticated />);
 
       await user.click(screen.getByRole('button', { name: 'メニューを開く' }));
 
-      const menu = screen.getByRole('menu');
-      const items = within(menu).getAllByRole('menuitem');
+      const menu = screen.getByRole('region', { name: 'クイック操作' });
+      const items = within(menu).getAllByRole('button');
 
       expect(items.length).toBeGreaterThan(0);
     });

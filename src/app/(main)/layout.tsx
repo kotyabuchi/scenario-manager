@@ -67,12 +67,15 @@ export default async function MainLayout({ children }: PropsWithChildren) {
                 minWidth="0"
                 display="flex"
                 flexDirection="column"
-                pb={{ base: '20', md: '0' }}
+                pb={{
+                  base: '[calc(104px + env(safe-area-inset-bottom))]',
+                  md: '0',
+                }}
               >
                 {children}
               </styled.main>
             </Flex>
-            <BottomNav isAuthenticated={!!initialUser} />
+            <BottomNav />
             <SpeedDialFAB isAuthenticated={!!initialUser} />
             <SignupModalWrapper />
           </BottomNavSlotProvider>

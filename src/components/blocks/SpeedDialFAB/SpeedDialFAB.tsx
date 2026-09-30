@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DotsThree, X } from '@phosphor-icons/react/ssr';
 
 import { FeedbackModal } from '../FeedbackModal';
 import { ScenarioRegisterDialog } from '../ScenarioRegisterDialog';
 import { SpeedDialPanel } from './SpeedDialPanel';
+import { shareCurrentPage } from './share';
 import * as styles from './styles';
 import { useSpeedDial } from './useSpeedDial';
 
@@ -20,9 +21,31 @@ export const SpeedDialFAB = ({ isAuthenticated }: SpeedDialFABProps) => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isScenarioRegisterOpen, setIsScenarioRegisterOpen] = useState(false);
   const { addMessage } = useSystemMessageActions();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
+  const shouldRestoreFocusRef = useRef(true);
+
+  useEffect(() => {
+    const shouldFocusMenu = isOpen;
+    const shouldFocusToggle =
+      !isOpen && wasOpenRef.current && shouldRestoreFocusRef.current;
+    const focusTimer = window.setTimeout(() => {
+      if (shouldFocusMenu) menuRef.current?.querySelector('button')?.focus();
+      else if (shouldFocusToggle) toggleRef.current?.focus();
+    }, 50);
+    wasOpenRef.current = isOpen;
+    if (!isOpen) shouldRestoreFocusRef.current = true;
+    return () => window.clearTimeout(focusTimer);
+  }, [isOpen]);
+
+  const handleActionClose = () => {
+    shouldRestoreFocusRef.current = false;
+    close();
+  };
 
   const handleFeedbackOpen = () => {
-    close();
+    handleActionClose();
     setIsFeedbackOpen(true);
   };
 
@@ -31,7 +54,7 @@ export const SpeedDialFAB = ({ isAuthenticated }: SpeedDialFABProps) => {
   };
 
   const handleScenarioRegister = () => {
-    close();
+    handleActionClose();
     setIsScenarioRegisterOpen(true);
   };
 
@@ -40,43 +63,52 @@ export const SpeedDialFAB = ({ isAuthenticated }: SpeedDialFABProps) => {
   };
 
   const handleShare = useCallback(async () => {
+    shouldRestoreFocusRef.current = false;
     close();
     try {
-      await navigator.clipboard.writeText(location.href);
-      addMessage('success', 'リンクをコピーしました');
+      const result = await shareCurrentPage();
+      if (result === 'clipboard') {
+        addMessage('success', 'リンクをコピーしました');
+      }
     } catch {
-      addMessage('danger', 'コピーに失敗しました');
+      addMessage('danger', 'シェアに失敗しました');
     }
   }, [close, addMessage]);
 
   return (
     <div className={styles.speedDialFAB_container}>
-      {isOpen && (
-        <>
-          <button
-            type="button"
-            className={styles.speedDialFAB_overlay}
-            onClick={close}
-            data-testid="speed-dial-overlay"
-            aria-label="メニューを閉じる"
-          />
-          <div className={styles.speedDialFAB_menu} role="menu">
-            <SpeedDialPanel
-              isAuthenticated={isAuthenticated}
-              onClose={close}
-              onFeedbackOpen={handleFeedbackOpen}
-              onScenarioRegister={handleScenarioRegister}
-              onShare={handleShare}
-            />
-          </div>
-        </>
-      )}
       <button
         type="button"
+        className={styles.speedDialFAB_overlay({ visible: isOpen })}
+        onClick={close}
+        data-testid="speed-dial-overlay"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <section
+        id="desktop-quick-actions"
+        ref={menuRef}
+        className={styles.speedDialFAB_menu({ visible: isOpen })}
+        aria-label="クイック操作"
+        aria-hidden={!isOpen}
+        inert={!isOpen}
+      >
+        <SpeedDialPanel
+          isAuthenticated={isAuthenticated}
+          onClose={handleActionClose}
+          onFeedbackOpen={handleFeedbackOpen}
+          onScenarioRegister={handleScenarioRegister}
+          onShare={handleShare}
+        />
+      </section>
+      <button
+        type="button"
+        ref={toggleRef}
         className={styles.speedDialFAB_fab}
         onClick={toggle}
-        aria-label="メニューを開く"
+        aria-label={isOpen ? 'メニューを閉じる' : 'メニューを開く'}
         aria-expanded={isOpen}
+        aria-controls="desktop-quick-actions"
       >
         <span className={styles.speedDialFAB_fabIcon({ open: isOpen })}>
           {isOpen ? <X size={24} /> : <DotsThree size={24} weight="bold" />}

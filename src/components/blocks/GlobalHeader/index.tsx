@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Plus, SignIn } from '@phosphor-icons/react/ssr';
+import { BookOpen, Plus, SignIn, User } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -65,15 +65,15 @@ export const GlobalHeader = () => {
 
   return (
     <header className={styles.header}>
-      {/* Logo */}
+      {/* ロゴ */}
       <Link href="/home" className={styles.logo} onClick={handleHomeClick}>
         <div className={styles.logoIconFrame}>
-          <BookOpen size={18} className={styles.logoIcon} />
+          <BookOpen size={18} weight="fill" className={styles.logoIcon} />
         </div>
         <span className={styles.logoText}>シナプレ管理くん</span>
       </Link>
 
-      {/* Navigation Links */}
+      {/* ナビゲーション */}
       <nav className={styles.navLinks}>
         {navItems.map((item) => {
           const active = isActive(item.href);
@@ -94,7 +94,7 @@ export const GlobalHeader = () => {
         })}
       </nav>
 
-      {/* User Area */}
+      {/* ユーザー操作 */}
       <div className={styles.userArea}>
         {isLoggedIn ? (
           <>
@@ -120,7 +120,9 @@ export const GlobalHeader = () => {
                   height={36}
                   className={styles.avatarImage}
                 />
-              ) : null}
+              ) : (
+                <User size={22} aria-hidden="true" />
+              )}
             </button>
           </>
         ) : (
