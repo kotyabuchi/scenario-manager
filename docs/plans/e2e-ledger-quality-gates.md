@@ -133,8 +133,8 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Step 7-1. schema/policy/grantを空DBから再現
 - [x] Step 7-2. 環境manifestと所有権
 - [ ] Batch 8: 権限別fixtureと認証状態の分離
-- [ ] Step 8-1. actorと業務fixture
-- [ ] Step 8-2. 新configとcleanup
+- [x] Step 8-1. actorと業務fixture
+- [ ] Step 8-2. 新configとcleanup（実装・browser受入済み、build後M1整合の修正待ち）
 - [ ] Step 8-3. 既存suiteを実行するlocal互換経路
 - [ ] Batch 9: 日程確定のbrowser E2Eを導入
 - [ ] Step 9-1. UI操作と永続化
@@ -193,6 +193,13 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 7完了: 固定HEAD `524a5d1b4e3af9ec0d0aed645216f27216266063` から `pnpm e2e:environment:check` を実行し、独立run `77b7c2fb0dc0` / `8104753284e9` がともに24 migration→seed→全catalog検査を通過。同一SQL/seed hash・catalog fingerprint・5サービスimage IDを照合し、双方cleanup complete。別途Docker資源・CLIプロセス・lock各0を確認した。実port競合は既存serverを止めずlockingで拒否し、二重起動・URL/所有権・初期化失敗も回帰検査済み。
 - Batch 7追補の検証・レビュー: 全体38 files / 746 tests、check:ci 916 files、typecheck成功。最終C1修正後は対象Reproduce 29 tests（1追加）・Biome・typecheck成功、全体登録747。3担当レビューの必須1・推奨3を全解消し最終A（docs/reviews/diff-review-2026-11-04-8.md）。認可の安全性は未検証のまま維持し、実行条件・hash・過去SQL修復理由はdocs/testing/e2e-environment.mdに記録。次はBatch 8。
 - Batch 7時点のM1再確認: package.jsonのコマンド追加によるinventory staleを検出し、package hash/source fingerprintの2値のみ再生成した。base 6051fb6に対するreadonly gateはpassed、登録8・legacy348・不足473・issues0・policy delta0。baselineは再設定せずdigest `7d0a0243251f459c13a094413432994434e6da22e33a4618e946c29bc7764593` を維持。
+- Batch 8途中チェックポイント: Step 8-1/8-2の独立actor、Auth UUID/app ULID照合、SDK cookie、case journal、exact ID cleanup、Next本番build/start、専用Playwright configと証跡検査を実装。Step 8-2は下記M1整合の修正を残す。旧helperの修正はlocal互換runnerと一体のStep 8-3へまとめる。共通コマンド公開はBatch 11で行い、現時点の受入入口は `pnpm exec tsx scripts/e2e/fixtureCheck.ts`。既存ignoreで秘密・run出力は追跡されない。
+- Batch 8実検証: API診断run `fff1cdc461f4` で2 case / 8 actorの独立性を確認。ブラウザrun `5562cc8e0ed0` ではPC/mobile 4 testが成功し、各projectで2 worker、計4 journal・16 Auth/app user・4 sessionを照合した。全fixture/stack cleanup complete、独立した読取確認でも所有Docker資源・lock・app listener・CLI/Node・当該秘密設定fileの残留0。業務caseのverifiedやM2達成はまだ認定しない。
+- Batch 8検査・レビュー: 全tools 50 files / 929 tests、check:ci 951 files、typecheck成功。review 9は全指摘解消・最終A。review 10は必須0、推奨2のうちcontext終了待ちを修正し、追加の負例1件・Biome・担当再レビューで解消。残る推奨1件（長時間build/browser中の総合receiptとCLI進捗の細分化）は再開時へ保留。詳細はdocs/testing/e2e-fixtures.md、docs/reviews/diff-review-2026-11-04-9.md / -10.md。
+- Batch 8移行目録: 旧25 specの348登録をlocal319・既存mobile skip9・fixme2・deferred-live18へ分類し、exact key/fingerprintと結果を照合するvalidatorを保存。互換seed、legacy-local config/runner、旧認証/cleanup helper接続、4 project実行は未実施。
+- 停止直前の追加確認: base 6051fb6に対するM1は `STALE_ARTIFACT` で失敗した。Next buildで生成されたignoredのnext-env.d.tsと、そこから参照する `.next-e2e/run-5562cc8e0ed0/types/routes.d.ts` がsource manifestへ入り、fingerprintが変化する。再生成の差分はこの2入力とfingerprintのみだったため、run固有値を台帳へ固定せず生成差分を戻した。登録8・legacy348・不足473・policy delta0、baseline digestは不変。生成型の入力境界/復元契約を修正し、build前後のM1を通すことをStep 8-2の未完了条件とする。
+- 一時停止（2026-11-04）: ユーザーの「キリのいいところで一旦作業停止して」に従い、このBatch 8途中チェックポイントで停止する。Batch 8全体・M2は未完了。再開時はStep 8-2のbuild後M1整合を最優先で直し、review 10の推奨C1、Step 8-3のlocal互換経路へ進める。Batch 9以降には着手しない。クラウドDB変更・push・PR・デプロイは行っていない。
+- 保存点: fixture基盤・移行目録は `0ce6f61` まで、専用runtime・受入checkerは `4fa297b` まで保存済み。手書き500行以内の単位に分割し、各commitのlint/typecheck hookが成功した。停止記録はこの直後のdocs commitに保存する。ignoredのレビュー・実行証跡は当worktree内に保持する。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
