@@ -1,6 +1,10 @@
+import { extractActions } from './extractors/actions';
+import { extractApis } from './extractors/apis';
+import { extractDependencies } from './extractors/dependencies';
 import { extractRoutes } from './extractors/routes';
 import { inventorySchema } from './inventorySchema';
 import { loadSource } from './source';
+import { createSourceIndex } from './sourceIndex';
 
 import { randomUUID } from 'node:crypto';
 import {
@@ -37,14 +41,40 @@ export const serializeInventory = (input: Inventory) => {
 
 /** 解析結果を台帳向けの入口一覧に組み立てる。 */
 export const buildInventory = (context: SourceContext): Inventory => {
+  const index = createSourceIndex(context);
   const routes = extractRoutes(context.files.map((file) => file.path));
+  const actions = extractActions(context, index);
+  const apis = extractApis(context, index);
+  const dependencies = extractDependencies(context, index);
+  const routeModules = routes.nodes.map((node) => ({
+    from: node.id,
+    to: `module:${node.source.file}`,
+    kind: 'uses' as const,
+    source: node.source,
+  }));
   return inventorySchema.parse({
     schemaVersion: 1,
     extractorVersion: '1',
     source: context.manifest,
-    nodes: routes.nodes,
-    edges: [],
-    diagnostics: [...context.diagnostics, ...routes.diagnostics],
+    nodes: [
+      ...routes.nodes,
+      ...actions.nodes,
+      ...apis.nodes,
+      ...dependencies.nodes,
+    ],
+    edges: [
+      ...routeModules,
+      ...actions.edges,
+      ...apis.edges,
+      ...dependencies.edges,
+    ],
+    diagnostics: [
+      ...context.diagnostics,
+      ...routes.diagnostics,
+      ...actions.diagnostics,
+      ...apis.diagnostics,
+      ...dependencies.diagnostics,
+    ],
   });
 };
 
