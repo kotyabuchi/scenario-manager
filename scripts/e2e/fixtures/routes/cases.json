@@ -1,0 +1,197 @@
+{
+  "valid": [
+    {
+      "file": "src/app/page.tsx",
+      "kind": "page",
+      "url": "/",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/layout.tsx",
+      "kind": "layout",
+      "url": "/",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/(auth)/auth/callback/route.ts",
+      "kind": "route",
+      "url": "/auth/callback",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/api/upload/route.ts",
+      "kind": "route",
+      "url": "/api/upload",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/(main)/scenarios/[id]/page.tsx",
+      "kind": "page",
+      "url": "/scenarios/[id]",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/(main)/scenarios/@detail/(.)[id]/page.tsx",
+      "kind": "page",
+      "url": "/scenarios/[id]",
+      "slots": ["detail"],
+      "navigation": "intercepted"
+    },
+    {
+      "file": "src/app/(main)/scenarios/@detail/page.tsx",
+      "kind": "page",
+      "url": "/scenarios",
+      "slots": ["detail"],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/(main)/scenarios/@detail/default.tsx",
+      "kind": "default",
+      "url": "/scenarios",
+      "slots": ["detail"],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/(main)/sessions/[id]/loading.tsx",
+      "kind": "loading",
+      "url": "/sessions/[id]",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/error.jsx",
+      "kind": "error",
+      "url": "/",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/template.js",
+      "kind": "template",
+      "url": "/",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/not-found.tsx",
+      "kind": "not-found",
+      "url": "/",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/global-error.tsx",
+      "kind": "global-error",
+      "url": "/",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/docs/[...slug]/page.tsx",
+      "kind": "page",
+      "url": "/docs/[...slug]",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/search/[[...filters]]/page.tsx",
+      "kind": "page",
+      "url": "/search/[[...filters]]",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/feed/(group)/@modal/(..)photo/[id]/page.tsx",
+      "kind": "page",
+      "url": "/photo/[id]",
+      "slots": ["modal"],
+      "navigation": "intercepted"
+    },
+    {
+      "file": "src/app/a/(group)/b/@outer/@inner/(..)(..)photo/[id]/page.tsx",
+      "kind": "page",
+      "url": "/photo/[id]",
+      "slots": ["outer", "inner"],
+      "navigation": "intercepted"
+    },
+    {
+      "file": "src/app/a/b/c/@modal/(...)photo/[id]/page.tsx",
+      "kind": "page",
+      "url": "/photo/[id]",
+      "slots": ["modal"],
+      "navigation": "intercepted"
+    },
+    {
+      "file": "src/app/@modal/(.)photo/page.tsx",
+      "kind": "page",
+      "url": "/photo",
+      "slots": ["modal"],
+      "navigation": "intercepted"
+    },
+    {
+      "file": "src/app/%5Fpublic/page.tsx",
+      "kind": "page",
+      "url": "/_public",
+      "slots": [],
+      "navigation": "direct"
+    },
+    {
+      "file": "src/app/(group)/@children/page.tsx",
+      "kind": "page",
+      "url": "/",
+      "slots": ["children"],
+      "navigation": "direct"
+    }
+  ],
+  "ignored": [
+    "src/app/_components/page.tsx",
+    "src/app/public/_private/deep/route.ts",
+    "src/app/icon.tsx",
+    "src/app/opengraph-image.tsx",
+    "src/app/sitemap.ts",
+    "src/app/robots.ts",
+    "src/app/scenarios/adapter.ts",
+    "src/app/scenarios/page.test.tsx",
+    "src/pages/index.tsx",
+    "src/components/page.tsx"
+  ],
+  "invalid": [
+    {
+      "file": "src/app/@modal/(..)photo/page.tsx",
+      "code": "route.invalid-interception"
+    },
+    {
+      "file": "src/app/feed/(group)/@modal/(..)(..)photo/page.tsx",
+      "code": "route.invalid-interception"
+    },
+    { "file": "src/app/@modal/(.)/page.tsx", "code": "route.invalid-segment" },
+    {
+      "file": "src/app/feed/(..)(..)(..)photo/page.tsx",
+      "code": "route.invalid-segment"
+    },
+    {
+      "file": "src/app/(.)photo/(.)detail/page.tsx",
+      "code": "route.unsupported-interception"
+    },
+    { "file": "src/app/(group/page.tsx", "code": "route.invalid-segment" },
+    { "file": "src/app/@/page.tsx", "code": "route.invalid-slot" },
+    { "file": "src/app/[[slug]]/page.tsx", "code": "route.invalid-segment" },
+    {
+      "file": "src/app/[...slug]/details/page.tsx",
+      "code": "route.invalid-catch-all"
+    },
+    {
+      "file": "src/app/[id]/child/[id]/page.tsx",
+      "code": "route.duplicate-parameter"
+    },
+    { "file": "src/app//page.tsx", "code": "route.invalid-path" },
+    { "file": "src/app/../page.tsx", "code": "route.invalid-path" },
+    { "file": "src/app/a%2Fb/page.tsx", "code": "route.unsupported-segment" },
+    { "file": "src/app/page.mdx", "code": "route.unsupported-extension" }
+  ]
+}
