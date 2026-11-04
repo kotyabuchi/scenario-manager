@@ -126,9 +126,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 5: Playwrightの実test登録と既存資産の段階移行
 - [x] Step 5-1. list reporterで実登録を取得
 - [x] Step 5-2. 既存testとIDの対応を導入
-- [ ] Batch 6: 不足baselineと最初の静的CIゲート
-- [ ] Step 6-1. baselineをbootstrapして固定
-- [ ] Step 6-2. DB不要workflowへ接続
+- [x] Batch 6: 不足baselineと最初の静的CIゲート
+- [x] Step 6-1. baselineをbootstrapして固定
+- [x] Step 6-2. DB不要workflowへ接続
 - [ ] Batch 7: 専用Supabase環境の再現性
 - [ ] Step 7-1. schema/policy/grantを空DBから再現
 - [ ] Step 7-2. 環境manifestと所有権
@@ -178,7 +178,12 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 5境界: 子envのallowlist、dotenv抑止、SDK生成・通信・子process・run外書込みの拒否を先行load。catch後も失敗と呼出位置を保持する。一般的な悪意コードのsandboxとは扱わない。repeatの全件と各bindingを照合し、旧test本文・hook・loop・runtime skip変更をfingerprintへ保持する。
 - Batch 5で判明したPlaywright 1.57差分: ESM source map配信前に変換後の座標を返すため、Node公開findSourceMapをrunner同梱sourceMapSupportのfallbackへ接続する小さい版固定adapterを追加。実際に起動するCLIの1.57.0を検査し、未検証版を拒否する。ESM/CJS位置の回帰を追加。test.failのlist時expectedStatusはpassedでもfail annotationが付くため、Batch 11ではannotationも照合する。body内skipはlistで確定できないためBatch 8のdeferred分類へ保持する。
 - Batch 5検証: 全18ファイル326 tools tests成功、check:ci（868ファイル）・typecheck成功。生成legacyの反復/保存byte一致、binding/ledger/legacy issue0、不足110を確認。型検査と一時fixture削除の競合を防ぐためtest-resultsをtsconfigから除外し、inventoryを再生成（node1351・edge5792・warning347・source fingerprint 7b858374fe458989c42601ddce4a034fd554f1cba400cb9207534166f64c1598）。生成JSONはBiomeのformatterのみ対象外とし、構文lintは残す。
-- Batch 5レビュー: runtime skipを定義と誤認してfingerprintから落とす必須指摘を修正。版チェックのrunner実体との一致、診断のcaller位置（括弧path含む）、isNilを修正し3担当の未解消0、最終A。記録: docs/reviews/diff-review-2026-11-04-5.md。source/照合/guard/runner/legacy/test/初期データを各手書き500行以下の9コミットへ分割する。
+- Batch 5レビュー: runtime skipを定義と誤認してfingerprintから落とす必須指摘を修正。版チェックのrunner実体との一致、診断のcaller位置（括弧path含む）、isNilを修正し3担当の未解消0、最終A。記録: docs/reviews/diff-review-2026-11-04-5.md。source/照合/guard/runner/legacy/test/初期データを各手書き500行以下の9コミットへ分割済み（最終550b505）。
+- Batch 6実装: 不足identityと診断anchorによる完全比較、base契約のpolicy delta、理由付き移行履歴、Git objectからの比較元読込、独立した静的workflowを接続。通常checkは保存済み台帳を変更せず、初回bootstrapと明示的updateを分離した。
+- Batch 6初期抽出: node1351・edge5792・不足110・warning363・error0。warningは旧位置keyでは347となり、同位置から始まる異なるAST call16件を新たに分離した。473項目をbaselineに保持し、例外0。source fingerprint ac4da5cdfb72824d6abbf807e368d0c355b00facf4006b205446f2e41d2d699c、baseline digest 7d0a0243251f459c13a094413432994434e6da22e33a4618e946c29bc7764593。
+- Batch 6検証完了: 最終23ファイル442 tools tests、check:ci（884ファイル）、typecheck成功。実inventory readonly check成功。初回の外部承認なしcheckは意図どおり終了1、承認済初回はCI eventを通した実CLI fixtureで成功。保存コミット55cabf6をbaseにした実プロジェクトのe2e:ledger:checkはpassed、registrations8・legacy348・不足473・issues0・policyDeltas0。CI/管理変数は公開・変更していない。
+- Batch 6レビュー: 3担当で初回必須1・推奨3。初回承認へのmode混入、前回成功reportの残留、sourceとbase JSONの診断文脈を修正し、再確認で未解消0・最終A。記録: docs/reviews/diff-review-2026-11-04-6.md。実装と生成物は手書き500行以内の9コミット、実行記録を別コミットとする。
+- M1達成: Batch 1–6の静的整合ゲートを実装・検証・レビュー済み。実E2Eの成功は未認定。次はBatch 7でCLI 2.75.0と専用Docker環境の復元・所有権管理を実装する。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
