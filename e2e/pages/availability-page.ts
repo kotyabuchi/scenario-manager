@@ -33,9 +33,15 @@ export class AvailabilityPage extends BasePage {
     });
 
     // スケジュール入力
-    this.startInput = page.getByLabel('開始');
-    this.endInput = page.getByLabel('終了');
-    this.addButton = page.getByRole('button', { name: '追加' });
+    this.startInput = page
+      .getByLabel('開始', { exact: true })
+      .filter({ visible: true });
+    this.endInput = page
+      .getByLabel('終了', { exact: true })
+      .filter({ visible: true });
+    this.addButton = page
+      .getByRole('button', { name: '追加', exact: true })
+      .filter({ visible: true });
     this.editorErrorAlert = page.getByRole('alert');
 
     // 保存

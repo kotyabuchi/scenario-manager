@@ -16,7 +16,9 @@ export class ScheduleConfirmPage extends BasePage {
     super(page);
 
     this.pageTitle = page.getByRole('heading', { name: '日程を確定する' });
-    this.calendarTitle = page.getByText('日程確定カレンダー');
+    this.calendarTitle = page
+      .getByText('日程確定カレンダー', { exact: true })
+      .filter({ visible: true });
     this.emptyConfirmedMessage = page.getByText(
       'おすすめ一覧から候補を選択してください。',
     );
