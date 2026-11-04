@@ -1,5 +1,7 @@
 import 'dotenv/config';
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
+
+import { DESKTOP_DEVICE, MOBILE_DEVICE } from './e2e/devices';
 
 /**
  * E2Eテスト用のPlaywright設定
@@ -48,20 +50,20 @@ export default defineConfig({
     /* 公開ページ用（認証不要） */
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-      testIgnore: [/auth/],
+      use: { ...DESKTOP_DEVICE },
+      testIgnore: [/auth/, /isolated/],
     },
     {
       name: 'mobile-chrome',
-      use: { ...devices['Pixel 7'] },
-      testIgnore: [/auth/],
+      use: { ...MOBILE_DEVICE },
+      testIgnore: [/auth/, /isolated/],
     },
 
     /* 認証必須ページ用 */
     {
       name: 'chromium-auth',
       use: {
-        ...devices['Desktop Chrome'],
+        ...DESKTOP_DEVICE,
         storageState: 'e2e/.auth/user.json',
       },
       testDir: 'e2e/auth',
@@ -70,7 +72,7 @@ export default defineConfig({
     {
       name: 'mobile-chrome-auth',
       use: {
-        ...devices['Pixel 7'],
+        ...MOBILE_DEVICE,
         storageState: 'e2e/.auth/user.json',
       },
       testDir: 'e2e/auth',
