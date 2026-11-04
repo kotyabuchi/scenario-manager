@@ -1,3 +1,5 @@
+'use client';
+
 import { Clock, ImageSquare, Star, Users } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
