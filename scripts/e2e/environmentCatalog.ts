@@ -120,8 +120,10 @@ const canonical = (catalog: EnvironmentCatalog) => ({
     })),
   ),
   constraints: ordered(
-    catalog.constraints.map((constraint) => ({
+    catalog.constraints.map(({ name, ...constraint }) => ({
       ...constraint,
+      // FK名はPostgRESTの!constraint契約。PK等の名前は比較対象に含めない。
+      ...(constraint.type === 'f' ? { name } : {}),
       definition: sqlKey(constraint.definition),
     })),
   ),

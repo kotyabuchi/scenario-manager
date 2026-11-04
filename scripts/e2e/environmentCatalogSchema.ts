@@ -48,12 +48,21 @@ export const environmentCatalogSchema = z.strictObject({
     }),
   ),
   constraints: z.array(
-    z.strictObject({
-      table: named,
-      type: z.enum(['c', 'f', 'p', 'u', 'x']),
-      definition: named,
-      validated: z.boolean(),
-    }),
+    z
+      .strictObject({
+        table: named,
+        type: z.enum(['c', 'f', 'p', 'u', 'x']),
+        name: named.optional(),
+        definition: named,
+        validated: z.boolean(),
+      })
+      .refine(
+        (constraint) =>
+          constraint.type !== 'f' || typeof constraint.name === 'string',
+        {
+          message: 'PostgRESTの関係解決に使うFK名が必要です。',
+        },
+      ),
   ),
   policies: z.array(
     z.strictObject({

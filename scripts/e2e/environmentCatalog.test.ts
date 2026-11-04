@@ -189,6 +189,28 @@ describe('固定catalogとのschema再現性', () => {
     rejected(policy, 'policies:');
   });
 
+  it('PostgRESTが依存するFK名だけの変更も拒否する', () => {
+    const catalog = fixture();
+    const first = catalog.constraints.find((item) => item.type === 'f');
+    if (!first) throw new Error('FK fixtureがありません。');
+    first.name = 'different_foreign_key_name';
+    rejected(catalog, 'constraints:');
+  });
+
+  it('FK名の欠落を拒否し、PK名の差は比較対象に含めない', () => {
+    const missing = fixture();
+    const foreign = missing.constraints.find((item) => item.type === 'f');
+    if (!foreign) throw new Error('FK fixtureがありません。');
+    delete foreign.name;
+    expect(() => checkEnvironmentCatalog(missing)).toThrow('FK名');
+    const catalog = fixture();
+    const before = checkEnvironmentCatalog(catalog).fingerprint;
+    for (const item of catalog.constraints)
+      if (item.type !== 'f') item.name = 'ignored_constraint_name';
+    expect(checkEnvironmentCatalog(catalog).schemaParityPassed).toBe(true);
+    expect(checkEnvironmentCatalog(catalog).fingerprint).toBe(before);
+  });
+
   it('FKのON DELETE変更・未検証制約を拒否する', () => {
     const definition = fixture();
     for (const item of definition.constraints)

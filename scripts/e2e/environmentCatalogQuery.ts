@@ -51,7 +51,8 @@ SELECT jsonb_build_object(
   'constraints', COALESCE((SELECT jsonb_agg(jsonb_build_object(
     'table', t.relname, 'type', c.contype, 'definition', pg_get_constraintdef(c.oid, false),
     'validated', c.convalidated
-  ) ORDER BY t.relname, c.contype, pg_get_constraintdef(c.oid, false))
+  ) || CASE WHEN c.contype = 'f' THEN jsonb_build_object('name', c.conname) ELSE '{}'::jsonb END
+    ORDER BY t.relname, c.contype, pg_get_constraintdef(c.oid, false))
     FROM owned_tables t JOIN pg_constraint c ON c.conrelid = t.oid), '[]'::jsonb),
   'policies', COALESCE((SELECT jsonb_agg(jsonb_build_object(
     'table', p.tablename, 'name', p.policyname, 'command', p.cmd,
