@@ -1,0 +1,332 @@
+import { isNil } from 'ramda';
+
+import { runEnvironment } from './environment';
+import {
+  localCommandEnvironment,
+  runLocalCommand,
+} from './environmentCommands';
+import { createDockerDriver } from './environmentDocker';
+import { prepareEnvironmentInputs } from './environmentInputs';
+import { acquireEnvironmentLock } from './environmentLock';
+import { createEnvironmentPlan } from './environmentOwnership';
+import { environmentLeaseSchema } from './environmentSchema';
+import { writeArtifact } from './ledgerArtifacts';
+
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import { readFile, realpath, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const PORTS = { api: 57321, db: 57322, shadow: 57320 };
+const EXCLUDED_SERVICES = [
+  'realtime',
+  'imgproxy',
+  'mailpit',
+  'postgres-meta',
+  'studio',
+  'edge-runtime',
+  'logflare',
+  'vector',
+  'supavisor',
+].join(',');
+const CATALOG_QUERY = `
+SELECT json_build_object(
+  'tables', (SELECT json_agg(tablename ORDER BY tablename) FROM pg_tables WHERE schemaname = 'public'),
+  'policies', (SELECT json_agg(policyname ORDER BY policyname) FROM pg_policies WHERE schemaname = 'public'),
+  'functions', (SELECT json_agg(p.proname ORDER BY p.proname) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public'),
+  'seedCount', (SELECT count(*) FROM public.scenario_systems WHERE system_id = '00000000000000000000000001')
+);`;
+
+type EnvironmentProbeProgress = {
+  phase:
+    | 'checking-cli'
+    | 'locking'
+    | 'preparing-inputs'
+    | 'starting'
+    | 'inspecting'
+    | 'cleanup';
+  runId?: string;
+  workdir?: string;
+};
+
+const probeWithSignal = async (
+  root: string,
+  signal: AbortSignal,
+  progress: (value: EnvironmentProbeProgress) => void,
+) => {
+  progress({ phase: 'checking-cli' });
+  const worktreeRoot = await realpath(root);
+  signal.throwIfAborted();
+  const dockerHost = (
+    await runLocalCommand(
+      'docker',
+      ['context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'],
+      { cwd: worktreeRoot, env: process.env, signal },
+    )
+  ).trim();
+  const env = localCommandEnvironment(process.env, dockerHost);
+  // cleanup用runnerへ中断signalを渡さず、停止確認は中断後も実行する。
+  const run = (tool: 'docker' | 'supabase' | 'git', args: string[]) =>
+    runLocalCommand(tool, args, { cwd: worktreeRoot, env });
+  const runChecked = (tool: 'docker' | 'supabase' | 'git', args: string[]) => {
+    signal.throwIfAborted();
+    return runLocalCommand(tool, args, { cwd: worktreeRoot, env, signal });
+  };
+  if ((await runChecked('supabase', ['--version'])).trim() !== '2.75.0')
+    throw new Error('Supabase CLI 2.75.0が必要です。');
+  const dockerVersion = (
+    await runChecked('docker', ['info', '--format', '{{.ServerVersion}}'])
+  ).trim();
+  const commit = (await runChecked('git', ['rev-parse', 'HEAD'])).trim();
+  const repoRoot = dirname(
+    await realpath(
+      resolve(
+        worktreeRoot,
+        (await runChecked('git', ['rev-parse', '--git-common-dir'])).trim(),
+      ),
+    ),
+  );
+  const runId = randomBytes(6).toString('hex');
+  const ownerNonce = randomUUID();
+  const projectId = `sm-e2e-${runId}`;
+  signal.throwIfAborted();
+  progress({ phase: 'locking', runId });
+  const lock = await acquireEnvironmentLock({
+    registryRoot: join(
+      await realpath(tmpdir()),
+      'scenario-manager-e2e-locks-v1',
+    ),
+    repoKey: repoRoot,
+    worktreeRoot,
+    runId,
+    ownerNonce,
+    projectId,
+    ports: Object.values(PORTS),
+  });
+  let isLifecycleOwner = false;
+  try {
+    signal.throwIfAborted();
+    progress({ phase: 'preparing-inputs', runId });
+    const prepared = await prepareEnvironmentInputs(worktreeRoot, {
+      runId,
+      ports: PORTS,
+    });
+    signal.throwIfAborted();
+    const { workdir, inputHashes } = prepared;
+    progress({ phase: 'preparing-inputs', runId, workdir });
+    const manifest = createEnvironmentPlan({
+      runId,
+      ownerNonce,
+      worktreeRoot,
+      repoRoot,
+      commit,
+      ports: PORTS,
+      inputHashes,
+      createdAt: new Date().toISOString(),
+    });
+    const lease = environmentLeaseSchema.parse({
+      runId,
+      ownerNonce,
+      projectId,
+      worktreeRoot,
+    });
+    const leasePath = join(workdir, 'owner.json');
+    await writeFile(leasePath, JSON.stringify(lease), {
+      flag: 'wx',
+      mode: 0o600,
+    });
+    await writeFile(
+      join(workdir, 'runtime.json'),
+      JSON.stringify(
+        {
+          dockerVersion,
+          dockerHost,
+          lockFiles: lock.lockFiles,
+        },
+        null,
+        2,
+      ),
+      { flag: 'wx', mode: 0o600 },
+    );
+    const readLease = async () =>
+      environmentLeaseSchema.parse(
+        JSON.parse(await readFile(leasePath, 'utf8')),
+      );
+    signal.throwIfAborted();
+    let hasCollectedCatalog = false;
+    isLifecycleOwner = true;
+    const result = await runEnvironment(manifest, {
+      docker: createDockerDriver((args) => run('docker', args)),
+      save: async (value) => {
+        writeArtifact(
+          worktreeRoot,
+          relative(worktreeRoot, join(workdir, 'manifest.json')),
+          `${JSON.stringify(value, null, 2)}\n`,
+        );
+        if (value.state === 'stopping')
+          progress({ phase: 'cleanup', runId, workdir });
+      },
+      readLease,
+      start: async () => {
+        signal.throwIfAborted();
+        progress({ phase: 'starting', runId, workdir });
+        const actual = await readLease();
+        if (
+          Object.entries(lease).some(
+            ([key, value]) => Reflect.get(actual, key) !== value,
+          )
+        )
+          throw new Error('所有markerが一致しません。');
+        const config = await readFile(join(workdir, 'supabase/config.toml'));
+        if (
+          createHash('sha256').update(config).digest('hex') !==
+          inputHashes.config
+        )
+          throw new Error('起動前にconfigが変更されました。');
+        signal.throwIfAborted();
+        await runLocalCommand(
+          'supabase',
+          ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
+          {
+            cwd: workdir,
+            env,
+            signal,
+            log: join(workdir, 'start.private.log'),
+          },
+        );
+      },
+      verify: async (running) => {
+        signal.throwIfAborted();
+        progress({ phase: 'inspecting', runId, workdir });
+        const database = running.resources.containers.find(
+          (resource) =>
+            resource.name === `supabase_db_${projectId}` &&
+            resource.projectLabel === projectId,
+        );
+        if (isNil(database))
+          throw new Error('所有DB containerが確認できません。');
+        const catalog = await runChecked('docker', [
+          'exec',
+          database.id,
+          'psql',
+          '-X',
+          '-U',
+          'postgres',
+          '-d',
+          'postgres',
+          '-t',
+          '-A',
+          '-v',
+          'ON_ERROR_STOP=1',
+          '-c',
+          CATALOG_QUERY,
+        ]);
+        await writeFile(join(workdir, 'catalog.json'), catalog, {
+          flag: 'wx',
+        });
+        // metadataの採取だけではtable/RPC/policy/grantの契約検証を主張しない。
+        hasCollectedCatalog = true;
+      },
+      release: () => lock.release(),
+    });
+    const report = {
+      runId,
+      workdir,
+      cliVersion: manifest.cliVersion,
+      inputHashes,
+      migrationReplayPassed: result.passed,
+      catalogStatus: hasCollectedCatalog
+        ? 'collected-unverified'
+        : 'not-reached',
+      cleanup: result.manifest.cleanup,
+    };
+    writeArtifact(
+      worktreeRoot,
+      relative(worktreeRoot, join(workdir, 'replay.json')),
+      `${JSON.stringify(report, null, 2)}\n`,
+    );
+    return report;
+  } finally {
+    if (!isLifecycleOwner) await lock.release();
+  }
+};
+
+/**
+ * 空DBへのmigration→seedの診断probe。catalog採取と契約検証を区別する。
+ * lock取得前から中断を監視し、初期化失敗と全cleanupの終了後に監視を外す。
+ * 呼出元のAbortSignalでも協調中断できる。SIGKILLやWindowsコンソールによる
+ * process treeの強制終了ではfinallyの実行を保証できず、所有journalからの復旧が必要。
+ */
+export const probeEnvironment = async (
+  root: string,
+  signal?: AbortSignal,
+  onProgress?: (value: EnvironmentProbeProgress) => void,
+) => {
+  const controller = new AbortController();
+  const interrupt = () => controller.abort();
+  const forwardAbort = () => controller.abort(signal?.reason);
+  process.once('SIGINT', interrupt);
+  process.once('SIGTERM', interrupt);
+  signal?.addEventListener('abort', forwardAbort, { once: true });
+  try {
+    if (signal?.aborted) forwardAbort();
+    controller.signal.throwIfAborted();
+    return await probeWithSignal(root, controller.signal, (value) => {
+      try {
+        onProgress?.(value);
+      } catch {
+        // 表示先の失敗で所有resourceのcleanupを止めない。
+      }
+    });
+  } finally {
+    process.removeListener('SIGINT', interrupt);
+    process.removeListener('SIGTERM', interrupt);
+    signal?.removeEventListener('abort', forwardAbort);
+  }
+};
+
+/** CLIでは安全な段階情報をstderr、診断結果JSONをstdoutへ分けて出す。 */
+export const runEnvironmentProbeCli = async (
+  root: string,
+  signal?: AbortSignal,
+): Promise<number> => {
+  let latest: EnvironmentProbeProgress = { phase: 'checking-cli' };
+  try {
+    const report = await probeEnvironment(root, signal, (value) => {
+      latest = value;
+      process.stderr.write(`[e2e-environment] ${JSON.stringify(value)}\n`);
+    });
+    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+    return report.migrationReplayPassed ? 0 : 1;
+  } catch {
+    // 初期化前にはlog/manifestが存在しない。既存workdirだけを案内する。
+    const workdir =
+      !isNil(latest.workdir) && existsSync(latest.workdir)
+        ? latest.workdir
+        : undefined;
+    process.stderr.write(
+      `[e2e-environment] ${JSON.stringify({
+        status: 'failed',
+        phase: latest.phase,
+        runId: latest.runId,
+        workdir,
+        message:
+          '専用環境の診断に失敗しました。表示された段階の設定を確認してください。',
+      })}\n`,
+    );
+    return 1;
+  }
+};
+
+if (
+  !isNil(process.argv[1]) &&
+  import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+) {
+  runEnvironmentProbeCli(process.cwd()).then((code) => {
+    process.exitCode = code;
+  });
+}
+
+export type { EnvironmentProbeProgress };
