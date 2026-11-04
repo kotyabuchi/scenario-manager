@@ -184,6 +184,12 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 6検証完了: 最終23ファイル442 tools tests、check:ci（884ファイル）、typecheck成功。実inventory readonly check成功。初回の外部承認なしcheckは意図どおり終了1、承認済初回はCI eventを通した実CLI fixtureで成功。保存コミット55cabf6をbaseにした実プロジェクトのe2e:ledger:checkはpassed、registrations8・legacy348・不足473・issues0・policyDeltas0。CI/管理変数は公開・変更していない。
 - Batch 6レビュー: 3担当で初回必須1・推奨3。初回承認へのmode混入、前回成功reportの残留、sourceとbase JSONの診断文脈を修正し、再確認で未解消0・最終A。記録: docs/reviews/diff-review-2026-11-04-6.md。実装と生成物は手書き500行以内の9コミット、実行記録を別コミットとする。
 - M1達成: Batch 1–6の静的整合ゲートを実装・検証・レビュー済み。実E2Eの成功は未認定。次はBatch 7でCLI 2.75.0と専用Docker環境の復元・所有権管理を実装する。
+- Batch 7基盤実装: strict manifest/状態遷移、物理pathと所有nonce、worktree/project/port排他、専用config/SQL入力生成、Docker資源の観測・完全ID照合・削除、診断probeを追加。合成seedはシステム1件だけで、実利用者データは使っていない。
+- Batch 7実復元のブロッカー: CLI 2.75.0 / Docker 29.5.3のfresh run `19dde0ee35aa`は、既存0004の列挙値WITHDRAWNのcommit前利用でSQLSTATE 55P04。0000–0003は通過、seed/catalog未到達。後続migration追加では先行エラーを直せないため、計画どおりDB依存の後続Batchを保留し、M1は維持する。
+- Batch 7中断検証: Windowsのpnpm.cmd経由Ctrl+Cはprocess tree終了となり、run `ec388f20b189`に残った2 container/1 network/1 volumeを所有nonce・ID・lock inode/hash照合後に手動回収、残留0・5 lock解放。協調AbortSignalのrun `d2b43b8bc50d`では同じ種類の所有資源を自動cleanupし残留0。いずれもDB復元成功とは数えない。
+- Supabase接続: SQL Editorと連携ツールのSELECT 1が成功し、28P01は解消。schema metadataのみ監査し、生成列2・comment_count・trigger2・既定値1の履歴欠落を確認。既存15 tableのRLS無効とavailability RPC認可欠落も記録。運用DB変更・利用者データ読取は実施していない。
+- 再開判断待ち: 0004の2箇所だけ`participant_status::text != 'WITHDRAWN'`へ変える案を[専用環境手順](../testing/e2e-environment.md)に具体化した。過去SQL書換え禁止の限定例外が必要なため未適用。承認後にfresh復元・不足schema追補・seed・catalogを2回確認してからBatch 8へ進む。Batch 7は未完了のまま。
+- Batch 7基盤の最終検証: 36 files / 679 tools tests、check:ci（909 files）、typecheck成功。M1 readonly gateもbase 6051fb6に対してpassed（登録8・legacy348・不足473、差分0）。レビューでchildのclose待ち・Scoop native実体解決・安全なphase表示を修正し、3担当再確認で未解消0・最終A（docs/reviews/diff-review-2026-11-04-7.md）。修正版の実協調中断run `248addee4e6b`はDocker資源・CLIプロセス・lockの残留0。手書き500行以内の単位で基盤を保存し、復元完了とは分けて扱う。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
