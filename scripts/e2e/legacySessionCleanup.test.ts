@@ -39,6 +39,7 @@ type Query = {
 };
 beforeEach(() => vi.resetAllMocks());
 afterEach(async () => {
+  vi.unstubAllEnvs();
   for (const root of roots.splice(0)) {
     if (
       !resolve(root).startsWith(
@@ -217,6 +218,27 @@ const setup = async () => {
 };
 
 describe('local専用UI session cleanup', () => {
+  it('実DBのnaive/offset付きcreated_atをUTCで照合しraw値でexact削除する', async () => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+    const value = await setup();
+    const naive = '2026-11-05T00:01:00.123456';
+    value.session.created_at = naive;
+    for (const table of tables) {
+      const child = value.rows.get(table)?.[0];
+      if (isNil(child)) throw new Error('fixture不足');
+      child.created_at = table.endsWith('time_blocks')
+        ? `${naive}+00:00`
+        : naive;
+    }
+    await cleanupLegacySession(value.connection, value.context, ID);
+    expect(value.deleted).toHaveLength(8);
+    expect(value.deleted.at(-1)?.filters.created_at).toBe(naive);
+    expect((await value.receipts())[0]?.at(-1)).toMatchObject({
+      status: 'passed',
+      remaining: [],
+    });
+  });
+
   it('対応7テーブルがfixture保護一覧と固定catalogのincoming FKに完全一致する', () => {
     const expected = EXPECTED_ENVIRONMENT_CATALOG.constraints
       .filter(

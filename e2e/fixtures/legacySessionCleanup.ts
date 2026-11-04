@@ -6,6 +6,10 @@ import { fixtureOwnerTag } from './fixtureManifest';
 import { legacyAdmin, legacySessionPrefix } from './legacyContext';
 import { legacyContextSchema } from './legacySchema';
 import { LEGACY_SESSION_CHILDREN } from './legacySessionResources';
+import {
+  legacyTimestampAtOrAfter,
+  legacyTimestampSchema,
+} from './legacyTimestamp';
 
 import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, open, realpath } from 'node:fs/promises';
@@ -21,7 +25,7 @@ const sessionSchema = z.object({
   created_by_id: z.ulid(),
   keeper_id: z.ulid().nullable(),
   session_name: z.string(),
-  created_at: z.iso.datetime({ offset: true }),
+  created_at: legacyTimestampSchema,
 });
 const childTableSchema = z.custom<LegacySessionChildTable>(
   (value) =>
@@ -62,7 +66,7 @@ const readSession = async (
     row.game_session_id !== sessionId ||
     row.created_by_id !== context.actor.appUserId ||
     !row.session_name.startsWith(legacySessionPrefix(context)) ||
-    Date.parse(row.created_at) < Date.parse(context.startedAt) ||
+    !legacyTimestampAtOrAfter(row.created_at, context.startedAt) ||
     (!isNil(row.keeper_id) && row.keeper_id !== context.actor.appUserId)
   )
     throw new Error('legacy sessionの所有条件が一致しません。');
@@ -179,7 +183,7 @@ export const cleanupLegacySession = async (
           .parse(definition.schema.parse(raw));
         if (
           row.session_id !== sessionId ||
-          Date.parse(row.created_at ?? '') < Date.parse(context.startedAt) ||
+          !legacyTimestampAtOrAfter(row.created_at ?? '', context.startedAt) ||
           (!isNil(definition.owner) &&
             row[definition.owner] !== context.actor.appUserId)
         )

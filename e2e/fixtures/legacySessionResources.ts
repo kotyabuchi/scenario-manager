@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
+import { legacyTimestampSchema } from './legacyTimestamp';
+
 import type { Database } from '../../src/db/types';
 
 const common = {
   session_id: z.ulid(),
-  created_at: z.iso.datetime({ offset: true }),
+  created_at: legacyTimestampSchema,
 };
 const user = { ...common, user_id: z.ulid() };
 type ChildTable = {
