@@ -120,9 +120,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 3: Server Actions・HTTP入口と保守的な依存関係
 - [x] Step 3-1. file/inline ActionとAPIを抽出
 - [x] Step 3-2. file依存と既知の直接呼出
-- [ ] Batch 4: 台帳schemaと対象・観点の照合
-- [ ] Step 4-1. 台帳のschemaを固定
-- [ ] Step 4-2. 意味を補う契約とvalidator
+- [x] Batch 4: 台帳schemaと対象・観点の照合
+- [x] Step 4-1. 台帳のschemaを固定
+- [x] Step 4-2. 意味を補う契約とvalidator
 - [ ] Batch 5: Playwrightの実test登録と既存資産の段階移行
 - [ ] Step 5-1. list reporterで実登録を取得
 - [ ] Step 5-2. 既存testとIDの対応を導入
@@ -170,6 +170,10 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 3レビュー: 初回required2・recommended4を修正。可変member/getter、外部callback型、SDK schema options、注釈、source母集団の共用を確認。Panda生成物はmanifestにある既知rootの15moduleを境界として保持。3担当の再確認で全指摘解消、最終A。記録: docs/reviews/diff-review-2026-11-04-3.md。
 - Batch 3コミットは基盤・入口・由来・graph・索引fixture・入口fixture・依存fixtureの7単位へ分割（各手書き500行以下）。各hookでlint/typecheckを実行。
 - 一時停止: ユーザーの「キリのいいところで一旦作業停止して」に従い、Batch 3チェックポイントを停止点とする。Batch 4以降の実装は未着手。次はStep 4-1の台帳schemaから再開する。
+- 再開: 2026-11-04、ユーザーの「再開して」に従い、Batch 4から続行。停止時HEADは3655c9c、専用worktreeの未コミット変更なしを確認。
+- Batch 4完了: strict Zod台帳・JSON loader・kind既定要件・個別checkとexecutionの照合・完全一致例外を実装。schemaとvalidatorは実行成功を判定せず、planned/implementedと登録の食い違いを検出する。不足identityには既定8次元に加えprofileも含め、同名project/runtimeの別configを混同しない。
+- Batch 4契約: 独立仕様を根拠に日程5対象・7case・19executionを全件plannedで登録。creator/keeper各PC/mobile、Action拒否と入力不正、RPC認可/原子性、表示失敗を分離。RPCのSECURITY DEFINER内認可をRLS検証と数えない理由を明示。Batch 3の変更なしsource snapshotと照合しissues 0、不足110、例外0を確認した。
+- Batch 4検証・レビュー: tools 242成功（台帳関連67件を含む）、check:ci（852ファイル）・typecheck成功。3担当レビューで全観点免除/actor欠落を故障検査し、isNil・identity共通化・不正JSONのファイル名/cause診断を修正。最終A、記録: docs/reviews/diff-review-2026-11-04-4.md。手書き変更はschema/loader、照合、構造test、照合testの各500行以下と、初期JSON/実行記録へ分割。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類

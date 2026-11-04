@@ -1,0 +1,12 @@
+[
+  {
+    "id": "schedule",
+    "actors": [
+      "anonymous",
+      "creator-only",
+      "keeper-only",
+      "outsider",
+      "confirmed-player"
+    ]
+  }
+]
