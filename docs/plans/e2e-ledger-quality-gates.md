@@ -7,7 +7,7 @@
 - 専用作業先: C:/Users/kabocchi/.codex/worktrees/e2e-ledger-plan/scenario-manager
 - 実装の基準: b4c824e604e0e69da0e6e37f4a6bf60db83e71dc。managed worktreeをこのコミットから作成した。計画時点はdetached HEAD。
 - 背景資料: docs/research/e2e-strategy-2026-11-04.md。この資料は元の作業ツリーの未コミット改修も調査した記録であり、基準コミットの実装量とは異なる。
-- 本依頼で作成するのは計画とレビュー記録。アプリ・テスト基盤・DBの実装、コミット、公開はこの計画作成には含めない。
+- 計画作成時の範囲は計画とレビュー記録。後続のユーザー依頼により、専用branch `feat/e2e-ledger-quality-gates` で各Batchの実装・検証・レビュー・コミットを実行中。公開は含めない。
 
 目的は、機能追加・変更に伴う検証漏れを、実装の自動抽出、要件とテストの対応、実行対象と結果の照合で検出すること。AIが作成するテストの意味はレビューし、静的解析だけで要件の正しさやassertionの十分性まで保証したと扱わない。
 
@@ -114,9 +114,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 1: DB不要の品質検査とDBテストの分類
 - [x] Step 1-1. 非書込み検査とツール用テストproject
 - [x] Step 1-2. 実DBテストを個別に分類
-- [ ] Batch 2: 再現可能なsource一覧とNextルート抽出
-- [ ] Step 2-1. ソース読み込みと安定した出力
-- [ ] Step 2-2. Nextのルートを抽出
+- [x] Batch 2: 再現可能なsource一覧とNextルート抽出
+- [x] Step 2-1. ソース読み込みと安定した出力
+- [x] Step 2-2. Nextのルートを抽出
 - [ ] Batch 3: Server Actions・HTTP入口と保守的な依存関係
 - [ ] Step 3-1. file/inline ActionとAPIを抽出
 - [ ] Step 3-2. file依存と既知の直接呼出
@@ -164,6 +164,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - 既存問題の是正: SessionActionsのpending styleを既存opacity.disabledへ対応付け、optional callbackを条件付きで渡す。FilterPanelテストは人数・時間の両方の非同期更新を待つ。期待値・skip数は変えていない。
 - Batch 1レビュー: 3エージェント。SDK直接生成の拒否不足を修正してrequired解消。pure mockの理由付き登録を追加し推奨指摘も解消。最終A。記録: docs/reviews/diff-review-2026-11-04.md。
 
+- Batch 2完了: source/TypeScript基盤とNextルート抽出を並列実装。親が共有schema・決定的なJSON出力・readonly checkを統合。tools 114成功、check:ci・typecheck成功。実ソース486、manifest566、route関連35、診断0、2回生成byte一致・readonly check成功。
+- Batch 2レビュー: 通常route名の過剰除外、外部configの境界、stale時の診断隠蔽を修正。3エージェント再レビューで全指摘解消、最終A。記録: docs/reviews/diff-review-2026-11-04-2.md。小さな4コミットへ分割（source/schema、routes、inventory、探索の回帰fixture）。
+- Batch 3着手: 共通symbol解決、Action/API入口、依存関係を担当分離して実装する。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類

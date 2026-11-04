@@ -1,0 +1,10 @@
+{
+  "src/app/stories/page.tsx": "export default function Page() { return 'stories'; }\n",
+  "src/app/stories/actions.ts": "'use server';\nexport async function saveStory() { return true; }\n",
+  "src/app/api/tests/route.ts": "export function GET() { return new Response('tests'); }\n",
+  "src/app/api/tests/actions.ts": "'use server';\nexport async function saveTest() { return true; }\n",
+  "src/app/generated/page.tsx": "export default function Page() { return 'generated'; }\n",
+  "src/app/generated/actions.ts": "'use server';\nexport async function saveGenerated() { return true; }\n",
+  "src/app/styled-system/page.tsx": "export default function Page() { return 'styled-system'; }\n",
+  "src/app/styled-system/actions.ts": "'use server';\nexport async function saveStyle() { return true; }\n"
+}
