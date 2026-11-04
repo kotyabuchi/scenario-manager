@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createSourceFixture } from '../fixtures/createSource';
 import boundaries from '../fixtures/dependencies/boundaries.json';
 import fixture from '../fixtures/dependencies/graph.json';
-import { inventorySchema } from '../inventorySchema';
+import { diagnosticAnchorSchema, inventorySchema } from '../inventorySchema';
 import { createSourceIndex } from '../sourceIndex';
 import { extractDependencies } from './dependencies';
 
@@ -249,6 +249,46 @@ describe('extractDependencies', () => {
         'unresolved',
       ),
     ).toBe(true);
+  });
+
+  it('開始位置が同じ入れ子callも構文が異なれば別の警告として保持する', () => {
+    const { result } = extract({
+      'src/entry.ts': 'export function run() { missing()(); }',
+    });
+    expect(result.diagnostics).toHaveLength(2);
+    expect(
+      new Set(result.diagnostics.map((item) => JSON.stringify(item.source)))
+        .size,
+    ).toBe(1);
+    expect(
+      new Set(result.diagnostics.map((item) => item.anchor?.syntaxHash)).size,
+    ).toBe(2);
+    expect(result.diagnostics.map((item) => item.anchor?.occurrence)).toEqual([
+      0, 0,
+    ]);
+  });
+
+  it('全警告にanchorを付け、表示位置だけの変更では同一性を維持する', () => {
+    const warnings = extract().result.diagnostics;
+    expect(warnings.length).toBeGreaterThan(0);
+    for (const warning of warnings)
+      expect(diagnosticAnchorSchema.safeParse(warning.anchor).success).toBe(
+        true,
+      );
+    const before = extract({
+      'src/entry.ts': "export function run() { missing('a'); missing('a'); }",
+    }).result.diagnostics;
+    const after = extract({
+      'src/entry.ts':
+        '\n// コメントの追加\nexport function run() {\n  missing("a");\n  /* 再通知ではなく別の呼出 */ missing("a");\n}',
+    }).result.diagnostics;
+    expect(after.map((item) => item.anchor)).toEqual(
+      before.map((item) => item.anchor),
+    );
+    expect(after.map((item) => item.source)).not.toEqual(
+      before.map((item) => item.source),
+    );
+    expect(before.map((item) => item.anchor?.occurrence)).toEqual([0, 1]);
   });
 
   it('同じsnapshotは入力順と関係なくbyte一致する', () => {

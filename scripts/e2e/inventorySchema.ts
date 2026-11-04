@@ -57,12 +57,20 @@ export const inventoryEdgeSchema = z
   })
   .strict();
 
+export const diagnosticAnchorSchema = z
+  .object({
+    ownerId: z.string().min(1),
+    syntaxHash: z.string().regex(/^[a-f0-9]{64}$/),
+    occurrence: z.number().int().nonnegative(),
+  })
+  .strict();
 export const inventoryDiagnosticSchema = z
   .object({
     code: z.string().min(1),
     message: z.string().min(1),
     severity: z.enum(['error', 'warning']),
     source: sourceLocationSchema.optional(),
+    anchor: diagnosticAnchorSchema.optional(),
   })
   .strict();
 
@@ -116,6 +124,7 @@ export const inventorySchema = z
 export type SourceLocation = z.infer<typeof sourceLocationSchema>;
 export type InventoryNode = z.infer<typeof inventoryNodeSchema>;
 export type InventoryEdge = z.infer<typeof inventoryEdgeSchema>;
+export type DiagnosticAnchor = z.infer<typeof diagnosticAnchorSchema>;
 export type InventoryDiagnostic = z.infer<typeof inventoryDiagnosticSchema>;
 export type SourceManifest = z.infer<typeof sourceManifestSchema>;
 export type Inventory = z.infer<typeof inventorySchema>;

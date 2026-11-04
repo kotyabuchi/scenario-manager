@@ -1,5 +1,6 @@
 import ts from 'typescript';
 
+import { createDiagnosticAnchors } from '../diagnosticAnchors';
 import { createDatabaseResolver } from './database';
 import { createDependencyProvenance } from './dependencyProvenance';
 
@@ -50,6 +51,7 @@ export const extractDependencies = (
   const nodes = new Map<string, InventoryNode>();
   const edges = new Map<string, InventoryEdge>();
   const diagnostics = new Map<string, InventoryDiagnostic>();
+  const anchor = createDiagnosticAnchors(index);
   const provenance = createDependencyProvenance(context, index);
   const database = createDatabaseResolver(context, index, provenance);
   const addEdge = (
@@ -86,6 +88,7 @@ export const extractDependencies = (
       message,
       severity: 'warning',
       source: index.location(node),
+      anchor: anchor(node, code),
     };
     diagnostics.set(JSON.stringify(diagnostic), diagnostic);
   };
