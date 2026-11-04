@@ -44,7 +44,15 @@ export const inventoryEdgeSchema = z
   .object({
     from: z.string().min(1),
     to: z.string().min(1),
-    kind: z.enum(['imports', 'calls', 'renders', 'uses']),
+    kind: z.enum([
+      'imports',
+      'exports',
+      'contains',
+      'calls',
+      'renders',
+      'uses',
+      'unresolved',
+    ]),
     source: sourceLocationSchema,
   })
   .strict();
@@ -81,7 +89,29 @@ export const inventorySchema = z
     edges: z.array(inventoryEdgeSchema),
     diagnostics: z.array(inventoryDiagnosticSchema),
   })
-  .strict();
+  .strict()
+  .superRefine((inventory, context) => {
+    const ids = new Set<string>();
+    inventory.nodes.forEach((node, index) => {
+      if (ids.has(node.id))
+        context.addIssue({
+          code: 'custom',
+          path: ['nodes', index, 'id'],
+          message: `node IDが重複しています: ${node.id}`,
+        });
+      ids.add(node.id);
+    });
+    inventory.edges.forEach((edge, index) => {
+      for (const endpoint of ['from', 'to'] as const) {
+        if (!ids.has(edge[endpoint]))
+          context.addIssue({
+            code: 'custom',
+            path: ['edges', index, endpoint],
+            message: `edgeの参照先が存在しません: ${edge[endpoint]}`,
+          });
+      }
+    });
+  });
 
 export type SourceLocation = z.infer<typeof sourceLocationSchema>;
 export type InventoryNode = z.infer<typeof inventoryNodeSchema>;

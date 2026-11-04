@@ -1,5 +1,7 @@
 import ts from 'typescript';
 
+import { isSourceEntry } from './sourceFiles';
+
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, realpathSync } from 'node:fs';
@@ -7,11 +9,6 @@ import path from 'node:path';
 
 import type { InventoryDiagnostic, SourceManifest } from './inventorySchema';
 
-const SOURCE_EXTENSION = /\.(?:tsx?|jsx?)$/;
-const EXCLUDED_DIRECTORY =
-  /(?:^|\/)(?:__tests__|__mocks__|__fixtures__|__generated__)(?:\/|$)/;
-const EXCLUDED_FILE =
-  /\.(?:d|test|spec|stories|story|generated)\.(?:tsx?|jsx?)$/;
 const posix = (value: string) => value.replaceAll('\\', '/');
 const normalizeText = (value: string) => value.replace(/\r\n?/g, '\n');
 const compare = (left: string, right: string) =>
@@ -45,14 +42,6 @@ const listGitFiles = (root: string) =>
         .filter(Boolean),
     ),
   ].sort(compare);
-
-const isEntry = (file: string) =>
-  file.startsWith('src/') &&
-  SOURCE_EXTENSION.test(file) &&
-  !EXCLUDED_DIRECTORY.test(file) &&
-  !EXCLUDED_FILE.test(file) &&
-  !file.startsWith('src/styled-system/') &&
-  file !== 'src/db/types.ts';
 
 /** マシン固有の絶対pathを出力へ含めず、Gitにある大小文字を保持する。 */
 const createPaths = (root: string, gitFiles: string[]) => {
@@ -218,7 +207,7 @@ export const loadSource = (directory: string) => {
       return existsSync(absolute) && access.isAllowed(absolute);
     })
     // Gitはdirectory symlink自体を返すため、範囲検査を入口判定より先に行う。
-    .filter(isEntry);
+    .filter(isSourceEntry);
   const config = readConfig(root, relative, diagnostics, contents, access);
   // tsconfigで未許可でも、GitにあるJS入口を黙って落とさず解析する。
   const options = { ...config?.options, allowJs: true };
