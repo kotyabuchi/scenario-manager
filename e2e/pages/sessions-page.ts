@@ -23,7 +23,10 @@ export class SessionsPage extends BasePage {
     super(page);
 
     // タブボタン
-    this.publicTabButton = page.getByRole('button', { name: '公開卓を探す' });
+    this.publicTabButton = page.getByRole('link', {
+      name: '公開卓を探す',
+      exact: true,
+    });
     this.upcomingTabButton = page.getByRole('button', { name: '参加予定' });
     this.historyTabButton = page.getByRole('button', { name: '参加履歴' });
 
