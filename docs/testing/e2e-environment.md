@@ -2,7 +2,7 @@
 
 ## 現在の到達点
 
-Batch 1–6（M1）の静的ゲートは利用可能。Batch 7は**未完了**であり、M2以降のDB依存Batchへ進めていない。2026-11-04、破綻した過去migrationの修復をユーザーが許可したため、0004を最小修正して復元検証を再開している。
+Batch 1–6（M1）の静的ゲートに加え、Batch 7の専用環境復元を完了した。2026-11-04、破綻した過去migrationの修復をユーザーが許可したため、0004を最小修正し、固定コミットから独立した空DBを2回復元した。ブラウザ・利用者別認可・結果照合を含むM2全体の完了ではない。
 
 2026-11-04、Supabase CLI **2.75.0** / Docker Server **29.5.3** / PostgreSQL 17用の専用設定で、既存23 migrationの空DB復元を実行した。0000–0003を通過し、0004で次のエラーになった。
 
@@ -15,9 +15,19 @@ ERROR: unsafe use of new value "WITHDRAWN" of enum type participant_status (SQLS
 
 この初回失敗は復元成功として扱わない。以下の修復・再検証でも、schema一致を権限契約のverified証拠には転用しない。
 
-修復後のdebug run `40cc8dace77d`では24 migrationとseedが成功し、17 table・8 policy・8関数・合成seed 1件の存在、5サービスのimage ID、cleanup残留0を確認した。ただしこの時点のcatalogは一覧採取のみ。完全な検査を接続した`d235a8550b77`では、取得条件の違い（後述）と追加の既定値差を正しく失敗として検出した。最終受入には修正後の完全catalog検査付きfresh runを2回実行する。
+修復後のdebug run `40cc8dace77d`では24 migrationとseedが成功し、17 table・8 policy・8関数・合成seed 1件の存在、5サービスのimage ID、cleanup残留0を確認した。ただしこの時点のcatalogは一覧採取のみ。完全な検査を接続した`d235a8550b77`では、取得条件の違い（後述）と追加の既定値差を失敗として検出した。
 
 修正後のdebug run `945e7feb76f0`は24 migration・seed・完全catalog検査がすべて成功し、cleanup complete・残留0となった。固定HEADでの正式な2回検証は `pnpm e2e:environment:check` で行う。各runの独立性、同一commit・migration/seed hash・catalog fingerprint・5サービスimage ID、双方のcleanup完了を照合し、開始時に旧receiptをrunningへ置き換える。run IDが入るconfigは互いのhashを比較せず、それぞれの固定renderとの一致を検証する。結果は `test-results/quality/environment-reproduction.json` に保存する。
+
+正式受入はHEAD `524a5d1b4e3af9ec0d0aed645216f27216266063`、run `77b7c2fb0dc0` / `8104753284e9` で成功した。両方とも24 migration→seed→全catalog一致、5サービスimage一致、cleanup complete・issues 0。終了後の独立した読取確認でもcontainer/network/volume/lock/CLIプロセスは各0だった。
+
+| 共通証跡 | SHA-256 |
+|---|---|
+| migration入力 | `50170e59589338e88f2189453760df38a8299eebd2f4769060504e6f24f53f7a` |
+| seed入力 | `557a8ef210e7f9adc58c5bc8efc34d5be0fb4ec1a468f3a429c51d9b8fad6148` |
+| catalog | `ff3d809e33237e924320cd5a9ad2c7f52e6f8a7e77ef0bd2a7cb5e576c7c1500` |
+
+全体38 files / 746 tests、lint 916 files・型検査成功。最終の診断表示修正は対象Reproduce 29 tests（1件追加）・Biome・型検査で再確認した。レビュー8は初回の必須1・推奨3を全解消して最終A。実port競合の検証では既存serverが待受を続けたままlockingで拒否した。二重起動・不正URL・所有権不一致・起動途中失敗は基盤回帰も維持する。
 
 ## 診断用の実行
 
@@ -110,6 +120,6 @@ enum型の定数をcommit前に作らず、ラベル文字列を比較する。�
 
 根拠: [PostgreSQL 17のenum利用制約](https://www.postgresql.org/docs/17/sql-altertype.html#SQL-ALTERTYPE-NOTES)、[enumとtext比較](https://www.postgresql.org/docs/17/datatype-enum.html#DATATYPE-ENUM-TYPE-SAFETY)、[enum定数入力時の安全検査](https://github.com/postgres/postgres/blob/REL_17_STABLE/src/backend/utils/adt/enum.c#L101-L164)、[CLI 2.75のファイル単位batch](https://github.com/supabase/cli/blob/v2.75.0/pkg/migration/file.go#L67-L98)。一次資料と修復後の実DB再生で、先行55P04を解消したことを確認した。
 
-ユーザー指示に基づき計画Step 7-1も更新した。修復後SQLのSHA-256は`b248515ffa576911fd18813082e4ba714bd581126f1d3463137f6378428a31c3`。fresh環境の復元・追補schema・seed・catalogを2回確認してからBatch 8へ進む。運用DB適用禁止は維持する。[CLIは適用済versionを比較する](https://github.com/supabase/cli/blob/v2.75.0/pkg/migration/apply.go#L19-L51)ため、0004適用済のDBにこの変更だけで再適用されることはない。ただしcloudのmigration履歴自体は今回調べていない。
+ユーザー指示に基づき計画Step 7-1も更新した。修復後SQLのSHA-256は`b248515ffa576911fd18813082e4ba714bd581126f1d3463137f6378428a31c3`。fresh環境の復元・追補schema・seed・catalogを2回確認したためBatch 8へ進む。運用DB適用禁止は維持する。[CLIは適用済versionを比較する](https://github.com/supabase/cli/blob/v2.75.0/pkg/migration/apply.go#L19-L51)ため、0004適用済のDBにこの変更だけで再適用されることはない。ただしcloudのmigration履歴自体は今回調べていない。
 
 過去SQLのbytes不変を必須とする場合は、fresh専用の互換bootstrap（0000–0003→独立transactionでenum追加→原本0004以降）を別の計画変更として設計する必要がある。通常のCLI全再生とは異なる証跡・検査が必要になる。後続migration追加だけの案、同versionの重複、4桁versionの途中へ見かけ上入るprefixを付ける案は採らない。

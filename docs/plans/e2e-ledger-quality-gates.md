@@ -129,9 +129,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 6: 不足baselineと最初の静的CIゲート
 - [x] Step 6-1. baselineをbootstrapして固定
 - [x] Step 6-2. DB不要workflowへ接続
-- [ ] Batch 7: 専用Supabase環境の再現性
-- [ ] Step 7-1. schema/policy/grantを空DBから再現
-- [ ] Step 7-2. 環境manifestと所有権
+- [x] Batch 7: 専用Supabase環境の再現性
+- [x] Step 7-1. schema/policy/grantを空DBから再現
+- [x] Step 7-2. 環境manifestと所有権
 - [ ] Batch 8: 権限別fixtureと認証状態の分離
 - [ ] Step 8-1. actorと業務fixture
 - [ ] Step 8-2. 新configとcleanup
@@ -190,6 +190,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Supabase接続: SQL Editorと連携ツールのSELECT 1が成功し、28P01は解消。schema metadataのみ監査し、生成列2・comment_count・trigger2・既定値1の履歴欠落を確認。既存15 tableのRLS無効とavailability RPC認可欠落も記録。運用DB変更・利用者データ読取は実施していない。
 - 再開方針（承認済み）: 2026-11-04、ユーザーから「そもそも破綻している過去migrationは修正しても良い」と指示を受け、復元を阻む過去SQLの修復を許可する方針へ更新した。0004の2箇所だけ`participant_status::text != 'WITHDRAWN'`へ変更して再検証を進める。fresh復元・不足schema追補・seed・catalogを2回確認するまでBatch 7は未完了、運用DBへの適用は禁止を維持する。
 - Batch 7基盤の最終検証: 36 files / 679 tools tests、check:ci（909 files）、typecheck成功。M1 readonly gateもbase 6051fb6に対してpassed（登録8・legacy348・不足473、差分0）。レビューでchildのclose待ち・Scoop native実体解決・安全なphase表示を修正し、3担当再確認で未解消0・最終A（docs/reviews/diff-review-2026-11-04-7.md）。修正版の実協調中断run `248addee4e6b`はDocker資源・CLIプロセス・lockの残留0。手書き500行以内の単位で基盤を保存し、復元完了とは分けて扱う。
+- Batch 7完了: 固定HEAD `524a5d1b4e3af9ec0d0aed645216f27216266063` から `pnpm e2e:environment:check` を実行し、独立run `77b7c2fb0dc0` / `8104753284e9` がともに24 migration→seed→全catalog検査を通過。同一SQL/seed hash・catalog fingerprint・5サービスimage IDを照合し、双方cleanup complete。別途Docker資源・CLIプロセス・lock各0を確認した。実port競合は既存serverを止めずlockingで拒否し、二重起動・URL/所有権・初期化失敗も回帰検査済み。
+- Batch 7追補の検証・レビュー: 全体38 files / 746 tests、check:ci 916 files、typecheck成功。最終C1修正後は対象Reproduce 29 tests（1追加）・Biome・typecheck成功、全体登録747。3担当レビューの必須1・推奨3を全解消し最終A（docs/reviews/diff-review-2026-11-04-8.md）。認可の安全性は未検証のまま維持し、実行条件・hash・過去SQL修復理由はdocs/testing/e2e-environment.mdに記録。次はBatch 8。
+- Batch 7時点のM1再確認: package.jsonのコマンド追加によるinventory staleを検出し、package hash/source fingerprintの2値のみ再生成した。base 6051fb6に対するreadonly gateはpassed、登録8・legacy348・不足473・issues0・policy delta0。baselineは再設定せずdigest `7d0a0243251f459c13a094413432994434e6da22e33a4618e946c29bc7764593` を維持。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
