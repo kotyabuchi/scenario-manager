@@ -70,12 +70,54 @@ const registrationsFor = (ledger: Ledger): Registration[] =>
           binding,
           layer: item.layer,
           execution,
+          repeatEachIndex: 0,
+          repeatEach: 1,
         })),
       ),
     ),
   );
 
 describe('必要観点と実登録の照合', () => {
+  it('同じbindingの全repeatを要求し、一部欠落を不足にする', () => {
+    const { ledger, inventory, item } = fixture();
+    item.status = 'implemented';
+    const registrations = registrationsFor(ledger).flatMap((registration) =>
+      [0, 1].map((repeatEachIndex) => ({
+        ...registration,
+        testId: `${registration.testId}:${repeatEachIndex}`,
+        repeatEach: 2,
+        repeatEachIndex,
+      })),
+    );
+    expect(validateLedger({ inventory, ledger, registrations })).toMatchObject({
+      issues: [],
+      deficiencies: [],
+    });
+    registrations.pop();
+    const result = validateLedger({ inventory, ledger, registrations });
+    expect(
+      result.issues.some((issue) => issue.code === 'MISSING_REGISTRATION'),
+    ).toBe(true);
+    expect(result.deficiencies).toHaveLength(1);
+  });
+
+  it('repeat設定の不一致と範囲外を拒否する', () => {
+    const { ledger, inventory, item } = fixture();
+    item.status = 'implemented';
+    const registrations = registrationsFor(ledger).flatMap((registration) =>
+      [0, 1].map((repeatEachIndex) => ({
+        ...registration,
+        testId: `${registration.testId}:${repeatEachIndex}`,
+        repeatEach: repeatEachIndex === 0 ? 2 : 1,
+        repeatEachIndex,
+      })),
+    );
+    const result = validateLedger({ inventory, ledger, registrations });
+    expect(result.issues.some((issue) => issue.code === 'INVALID_REPEAT')).toBe(
+      true,
+    );
+    expect(result.deficiencies).toHaveLength(2);
+  });
   it('未契約の全入口を残し、内部依存だけでは義務を増やさない', () => {
     const { ledger, inventory } = fixture();
     ledger.contracts = [];

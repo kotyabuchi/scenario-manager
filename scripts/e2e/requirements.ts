@@ -195,12 +195,19 @@ export const validateLedger = ({
       registration.binding,
       registration.layer,
       executionKey(registration.execution),
+      registration.repeatEachIndex,
     ]);
     if (testIds.has(registration.testId) || registrationKeys.has(key))
       issues.push({
         code: 'DUPLICATE_REGISTRATION',
         subject: registration.testId,
         message: 'test IDまたは同じbindingの実行登録が重複しています',
+      });
+    if (registration.repeatEachIndex >= registration.repeatEach)
+      issues.push({
+        code: 'INVALID_REPEAT',
+        subject: registration.testId,
+        message: 'repeatEachIndexが設定した繰返し範囲を超えています',
       });
     testIds.add(registration.testId);
     registrationKeys.add(key);
@@ -242,14 +249,33 @@ export const validateLedger = ({
   for (const item of cases) {
     for (const execution of item.executions) {
       const registered = registrationsByCase.get(item.caseId) ?? [];
-      const missingBindings = item.testBindings.filter(
-        (binding) =>
-          !registered.some(
+      const missingBindings = item.testBindings.filter((binding) => {
+        const matches = registered.filter(
+          (registration) =>
+            registration.binding === binding &&
+            executionKey(registration.execution) === executionKey(execution),
+        );
+        const repeats = matches[0]?.repeatEach ?? 1;
+        if (
+          matches.some((registration) => registration.repeatEach !== repeats)
+        ) {
+          issues.push({
+            code: 'INVALID_REPEAT',
+            subject: item.caseId,
+            message: '同じbindingのrepeatEach設定が一致しません',
+          });
+          return true;
+        }
+        return (
+          new Set(matches.map((registration) => registration.repeatEachIndex))
+            .size !== repeats ||
+          matches.some(
             (registration) =>
-              registration.binding === binding &&
-              executionKey(registration.execution) === executionKey(execution),
-          ),
-      );
+              registration.repeatEachIndex < 0 ||
+              registration.repeatEachIndex >= repeats,
+          )
+        );
+      });
       if (
         item.status === 'implemented' &&
         !isNil(registrations) &&

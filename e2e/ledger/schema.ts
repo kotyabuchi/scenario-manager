@@ -121,6 +121,8 @@ export const registrationSchema = z.strictObject({
   binding: id,
   layer: layerSchema,
   execution: executionSchema,
+  repeatEachIndex: z.number().int().nonnegative().default(0),
+  repeatEach: z.number().int().positive().default(1),
 });
 export const ledgerIssueSchema = z.strictObject({
   code: text,
