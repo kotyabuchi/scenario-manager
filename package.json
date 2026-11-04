@@ -29,6 +29,7 @@
     "e2e:ledger:check": "tsx scripts/e2e/ledgerCheck.ts",
     "e2e:ledger:bootstrap": "tsx scripts/e2e/ledgerRefresh.ts bootstrap",
     "e2e:ledger:update": "tsx scripts/e2e/ledgerRefresh.ts update",
+    "e2e:environment:check": "tsx scripts/e2e/environmentReproduce.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "pretest:e2e": "kill-port 3100 9323",
     "test:e2e": "cross-env E2E_PORT=3100 playwright test",
