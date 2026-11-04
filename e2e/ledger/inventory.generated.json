@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "extractorVersion": "1",
   "source": {
-    "fingerprint": "439d65b77b774a479ac03507f96ed9182b4ffdf9a048b12ccae5c69a7177383e",
+    "fingerprint": "a1e6165c9b9088169f43f7ad033b4e9ab86070544c9edc364b93b89b3a799aa2",
     "files": [
       {
         "path": "node_modules/.pnpm/@tsconfig+strictest@2.0.8/node_modules/@tsconfig/strictest/tsconfig.json",
@@ -310,7 +310,7 @@
       },
       {
         "path": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "hash": "e295a73fdd83d42171b2874973a593be6cd153cae8ea4a4b2ebab634019b2a7b"
+        "hash": "d742bbf90057f0d768b79433b93b75c3a2f9f0e85eb261877f51b3204b6ef3ae"
       },
       {
         "path": "src/app/(main)/scenarios/_components/ScenarioCardAlt.tsx",
@@ -4156,7 +4156,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 26,
+        "line": 28,
         "column": 29
       },
       "symbol": "ScenarioCard",
@@ -4167,7 +4167,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 15,
+        "line": 17,
         "column": 26
       },
       "symbol": "getSystemVariant",
@@ -20788,7 +20788,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 37,
+        "line": 39,
         "column": 25
       }
     },
@@ -20798,7 +20798,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 95,
+        "line": 97,
         "column": 16
       }
     },
@@ -20808,7 +20808,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 101,
+        "line": 103,
         "column": 16
       }
     },
@@ -20818,7 +20818,7 @@
       "kind": "uses",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 73,
+        "line": 75,
         "column": 24
       }
     },
@@ -42038,7 +42038,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 26,
+        "line": 28,
         "column": 29
       }
     },
@@ -42048,7 +42048,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 15,
+        "line": 17,
         "column": 26
       }
     },
@@ -42058,7 +42058,7 @@
       "kind": "unresolved",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 49,
+        "line": 51,
         "column": 22
       }
     },
@@ -42068,7 +42068,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 6,
+        "line": 8,
         "column": 1
       }
     },
@@ -42078,7 +42078,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 8,
+        "line": 10,
         "column": 1
       }
     },
@@ -42088,7 +42088,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 9,
+        "line": 11,
         "column": 1
       }
     },
@@ -75205,7 +75205,7 @@
       "severity": "warning",
       "source": {
         "file": "src/app/(main)/scenarios/_components/ScenarioCard.tsx",
-        "line": 49,
+        "line": 51,
         "column": 22
       },
       "anchor": {
