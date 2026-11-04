@@ -117,9 +117,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 2: 再現可能なsource一覧とNextルート抽出
 - [x] Step 2-1. ソース読み込みと安定した出力
 - [x] Step 2-2. Nextのルートを抽出
-- [ ] Batch 3: Server Actions・HTTP入口と保守的な依存関係
-- [ ] Step 3-1. file/inline ActionとAPIを抽出
-- [ ] Step 3-2. file依存と既知の直接呼出
+- [x] Batch 3: Server Actions・HTTP入口と保守的な依存関係
+- [x] Step 3-1. file/inline ActionとAPIを抽出
+- [x] Step 3-2. file依存と既知の直接呼出
 - [ ] Batch 4: 台帳schemaと対象・観点の照合
 - [ ] Step 4-1. 台帳のschemaを固定
 - [ ] Step 4-2. 意味を補う契約とvalidator
@@ -166,7 +166,10 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 
 - Batch 2完了: source/TypeScript基盤とNextルート抽出を並列実装。親が共有schema・決定的なJSON出力・readonly checkを統合。tools 114成功、check:ci・typecheck成功。実ソース486、manifest566、route関連35、診断0、2回生成byte一致・readonly check成功。
 - Batch 2レビュー: 通常route名の過剰除外、外部configの境界、stale時の診断隠蔽を修正。3エージェント再レビューで全指摘解消、最終A。記録: docs/reviews/diff-review-2026-11-04-2.md。小さな4コミットへ分割（source/schema、routes、inventory、探索の回帰fixture）。
-- Batch 3着手: 共通symbol解決、Action/API入口、依存関係を担当分離して実装する。
+- Batch 3完了: 共通symbol解決、Action/API入口、依存関係を3担当で並列実装。175 tools tests、check:ci（838ファイル）、typecheck成功。実sourceのAction39・API6を保持し、日程inline Action→Action実体→adapter→RPCの経路を確認。node1351、edge5792、error0、warning347（未解決call346・CSS import1）を保持。生成後のreadonly check成功。
+- Batch 3レビュー: 初回required2・recommended4を修正。可変member/getter、外部callback型、SDK schema options、注釈、source母集団の共用を確認。Panda生成物はmanifestにある既知rootの15moduleを境界として保持。3担当の再確認で全指摘解消、最終A。記録: docs/reviews/diff-review-2026-11-04-3.md。
+- Batch 3コミットは基盤・入口・由来・graph・索引fixture・入口fixture・依存fixtureの7単位へ分割（各手書き500行以下）。各hookでlint/typecheckを実行。
+- 一時停止: ユーザーの「キリのいいところで一旦作業停止して」に従い、Batch 3チェックポイントを停止点とする。Batch 4以降の実装は未着手。次はStep 4-1の台帳schemaから再開する。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
