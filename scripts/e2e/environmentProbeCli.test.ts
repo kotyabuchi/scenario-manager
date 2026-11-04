@@ -103,7 +103,10 @@ describe('probeEnvironmentのCLI表示と進捗', () => {
     expect(output.stdout).toHaveBeenCalledTimes(1);
     expect(JSON.parse(String(output.stdout.mock.calls[0]?.[0]))).toMatchObject({
       migrationReplayPassed: true,
-      catalogStatus: 'collected-unverified',
+      schemaParityPassed: true,
+      catalogStatus: 'verified',
+      authorizationStatus: 'not-verified',
+      passed: true,
     });
     expect(
       output.messages().some((line) => line.includes('"phase":"starting"')),
@@ -118,7 +121,37 @@ describe('probeEnvironmentのCLI表示と進捗', () => {
     expect(JSON.parse(String(output.stdout.mock.calls[0]?.[0]))).toMatchObject({
       migrationReplayPassed: false,
       catalogStatus: 'not-reached',
+      passed: false,
       cleanup: { status: 'complete' },
+    });
+  });
+
+  it('CLIはreplay後のcatalog不正でも全体結果に従いexit 1を返す', async () => {
+    probeState.catalogText = 'private-invalid-json';
+    const output = captureCli();
+    expect(await runEnvironmentProbeCli(root)).toBe(1);
+    const result = String(output.stdout.mock.calls[0]?.[0]);
+    expect(JSON.parse(result)).toMatchObject({
+      migrationReplayPassed: true,
+      schemaParityPassed: false,
+      catalogStatus: 'mismatch',
+      authorizationStatus: 'not-verified',
+      passed: false,
+      cleanup: { status: 'complete' },
+    });
+    expect(result).not.toContain(probeState.catalogText);
+    expect(output.messages().at(-1)).toContain('"phase":"cleanup"');
+  });
+
+  it('CLIはcatalog一致後のlock解放失敗でもexit 1を返す', async () => {
+    release.mockRejectedValueOnce(new Error('private-release-error'));
+    const output = captureCli();
+    expect(await runEnvironmentProbeCli(root)).toBe(1);
+    expect(JSON.parse(String(output.stdout.mock.calls[0]?.[0]))).toMatchObject({
+      migrationReplayPassed: true,
+      schemaParityPassed: true,
+      catalogStatus: 'verified',
+      passed: false,
     });
   });
 

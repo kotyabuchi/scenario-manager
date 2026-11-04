@@ -1,6 +1,8 @@
 import { isNil } from 'ramda';
 import { describe, expect, it, vi } from 'vitest';
 
+import { ENVIRONMENT_CATALOG_QUERY } from './environmentCatalog';
+import { EXPECTED_ENVIRONMENT_CATALOG } from './environmentCatalogExpected';
 import { runLocalCommand } from './environmentCommands';
 import { createDockerDriver } from './environmentDocker';
 import { prepareEnvironmentInputs } from './environmentInputs';
@@ -30,16 +32,36 @@ vi.mock('./environmentInputs', () => ({ prepareEnvironmentInputs: vi.fn() }));
 vi.mock('./environmentLock', () => ({ acquireEnvironmentLock: vi.fn() }));
 
 describe('probeEnvironmentの診断と中断境界', () => {
-  it('replay成功と未検証catalog採取を区別して記録する', async () => {
+  it('replay成功・catalog一致・認可未検証を区別して記録する', async () => {
     const report = await probeEnvironment(root);
     expect(report.migrationReplayPassed).toBe(true);
-    expect(report.catalogStatus).toBe('collected-unverified');
-    expect(report).not.toHaveProperty('passed');
+    expect(report.schemaParityPassed).toBe(true);
+    expect(report.catalogStatus).toBe('verified');
+    expect(report.authorizationStatus).toBe('not-verified');
+    expect(report.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+    expect(report.passed).toBe(true);
     expect(report).not.toHaveProperty('catalogVerified');
     expect(report.cleanup?.status).toBe('complete');
     expect(
       JSON.parse(await readFile(join(workdir, 'replay.json'), 'utf8')),
     ).toEqual(report);
+    expect(await readFile(join(workdir, 'catalog.json'), 'utf8')).toBe(
+      probeState.catalogText,
+    );
+    expect(
+      JSON.parse(await readFile(join(workdir, 'catalog-check.json'), 'utf8')),
+    ).toMatchObject({
+      schemaParityPassed: true,
+      authorizationStatus: 'not-verified',
+      fingerprint: report.fingerprint,
+      issues: [],
+    });
+    const query = vi
+      .mocked(runLocalCommand)
+      .mock.calls.find(
+        ([tool, args]) => tool === 'docker' && args[0] === 'exec',
+      );
+    expect(query?.[1]).toContain(ENVIRONMENT_CATALOG_QUERY);
     expect(remove).toHaveBeenCalledTimes(1);
     expect(release).toHaveBeenCalledTimes(1);
   });
@@ -49,6 +71,9 @@ describe('probeEnvironmentの診断と中断境界', () => {
     const report = await probeEnvironment(root);
     expect(report.migrationReplayPassed).toBe(false);
     expect(report.catalogStatus).toBe('not-reached');
+    expect(report.schemaParityPassed).toBe(false);
+    expect(report.fingerprint).toBeNull();
+    expect(report.passed).toBe(false);
     expect(report.cleanup?.remaining).toEqual(empty());
     expect(remove).toHaveBeenCalledTimes(1);
     expect(release).toHaveBeenCalledTimes(1);
@@ -233,10 +258,113 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(acquireEnvironmentLock).not.toHaveBeenCalled();
   });
 
-  it('catalog採取できてもlock解放失敗ならreplay成功を報告しない', async () => {
+  it('lock解放失敗をreplay・catalogの成功と区別し全体を失敗にする', async () => {
     release.mockRejectedValueOnce(new Error('release failed'));
     const report = await probeEnvironment(root);
-    expect(report.catalogStatus).toBe('collected-unverified');
-    expect(report.migrationReplayPassed).toBe(false);
+    expect(report.catalogStatus).toBe('verified');
+    expect(report.migrationReplayPassed).toBe(true);
+    expect(report.schemaParityPassed).toBe(true);
+    expect(report.passed).toBe(false);
+  });
+
+  it('catalog不一致でもreplay完了を保持し検査失敗とcleanupを記録する', async () => {
+    const catalog = structuredClone(EXPECTED_ENVIRONMENT_CATALOG);
+    catalog.columns = catalog.columns.filter(
+      ({ name }) => name !== 'comment_count',
+    );
+    probeState.catalogText = JSON.stringify(catalog);
+    const report = await probeEnvironment(root);
+    expect(report).toMatchObject({
+      migrationReplayPassed: true,
+      schemaParityPassed: false,
+      catalogStatus: 'mismatch',
+      authorizationStatus: 'not-verified',
+      passed: false,
+      cleanup: { status: 'complete' },
+    });
+    expect(report.catalogIssues).toContainEqual(
+      expect.objectContaining({
+        code: 'CATALOG_MISSING',
+        subject: 'columns:feedbacks.comment_count.integer',
+      }),
+    );
+    expect(
+      JSON.parse(await readFile(join(workdir, 'catalog-check.json'), 'utf8')),
+    ).toMatchObject({
+      schemaParityPassed: false,
+      issues: report.catalogIssues,
+    });
+    expect(remove).toHaveBeenCalledTimes(1);
+    expect(release).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    '{private-invalid-json',
+    '{"schemaVersion":1}',
+  ])('JSON/構造不正を安全な失敗証跡に変換しcleanupする: %s', async (catalog) => {
+    probeState.catalogText = catalog;
+    const report = await probeEnvironment(root);
+    expect(report).toMatchObject({
+      migrationReplayPassed: true,
+      schemaParityPassed: false,
+      fingerprint: null,
+      catalogStatus: 'mismatch',
+      authorizationStatus: 'not-verified',
+      passed: false,
+      cleanup: { status: 'complete' },
+    });
+    expect(report.catalogIssues).toEqual([
+      {
+        code: 'CATALOG_INVALID',
+        subject: 'catalog.json',
+        message: expect.any(String),
+      },
+    ]);
+    const check = await readFile(join(workdir, 'catalog-check.json'), 'utf8');
+    expect(JSON.parse(check)).toMatchObject({
+      schemaParityPassed: false,
+      fingerprint: null,
+      authorizationStatus: 'not-verified',
+    });
+    expect(check).not.toContain(catalog);
+    expect(await readFile(join(workdir, 'catalog.json'), 'utf8')).toBe(catalog);
+    expect(remove).toHaveBeenCalledTimes(1);
+    expect(release).toHaveBeenCalledTimes(1);
+  });
+
+  it('catalog取得失敗では未到達を返し起動済みresourceを片付ける', async () => {
+    const run = vi.mocked(runLocalCommand).getMockImplementation();
+    if (isNil(run)) throw new Error('fixtureが未初期化です。');
+    vi.mocked(runLocalCommand).mockImplementation(
+      async (tool, args, options) => {
+        if (tool === 'docker' && args[0] === 'exec')
+          throw new Error('query failure');
+        return run(tool, args, options);
+      },
+    );
+    const report = await probeEnvironment(root);
+    expect(report).toMatchObject({
+      migrationReplayPassed: true,
+      schemaParityPassed: false,
+      catalogStatus: 'not-reached',
+      fingerprint: null,
+      passed: false,
+      cleanup: { status: 'complete' },
+    });
+    expect(remove).toHaveBeenCalledTimes(1);
+    expect(release).toHaveBeenCalledTimes(1);
+  });
+
+  it('cleanup失敗でもreplayとcatalogの成功を改変せず全体を失敗にする', async () => {
+    remove.mockRejectedValueOnce(new Error('cleanup failure'));
+    const report = await probeEnvironment(root);
+    expect(report).toMatchObject({
+      migrationReplayPassed: true,
+      schemaParityPassed: true,
+      catalogStatus: 'verified',
+      passed: false,
+      cleanup: null,
+    });
+    expect(release).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,11 @@ import { isNil } from 'ramda';
 
 import { runEnvironment } from './environment';
 import {
+  checkEnvironmentCatalog,
+  ENVIRONMENT_AUTHORIZATION_GAPS,
+  ENVIRONMENT_CATALOG_QUERY,
+} from './environmentCatalog';
+import {
   localCommandEnvironment,
   runLocalCommand,
 } from './environmentCommands';
@@ -31,13 +36,10 @@ const EXCLUDED_SERVICES = [
   'vector',
   'supavisor',
 ].join(',');
-const CATALOG_QUERY = `
-SELECT json_build_object(
-  'tables', (SELECT json_agg(tablename ORDER BY tablename) FROM pg_tables WHERE schemaname = 'public'),
-  'policies', (SELECT json_agg(policyname ORDER BY policyname) FROM pg_policies WHERE schemaname = 'public'),
-  'functions', (SELECT json_agg(p.proname ORDER BY p.proname) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public'),
-  'seedCount', (SELECT count(*) FROM public.scenario_systems WHERE system_id = '00000000000000000000000001')
-);`;
+type CatalogCheck = Omit<
+  ReturnType<typeof checkEnvironmentCatalog>,
+  'fingerprint'
+> & { fingerprint: string | null };
 
 type EnvironmentProbeProgress = {
   phase:
@@ -155,7 +157,11 @@ const probeWithSignal = async (
         JSON.parse(await readFile(leasePath, 'utf8')),
       );
     signal.throwIfAborted();
-    let hasCollectedCatalog = false;
+    let hasReplayedMigrations = false;
+    const catalogState: {
+      check: CatalogCheck | null;
+      status: 'verified' | 'mismatch' | 'not-reached';
+    } = { check: null, status: 'not-reached' };
     isLifecycleOwner = true;
     const result = await runEnvironment(manifest, {
       docker: createDockerDriver((args) => run('docker', args)),
@@ -196,6 +202,8 @@ const probeWithSignal = async (
             log: join(workdir, 'start.private.log'),
           },
         );
+        // startがseedまで完了した事実を、後続検査やcleanupの成否から分離する。
+        hasReplayedMigrations = true;
       },
       verify: async (running) => {
         signal.throwIfAborted();
@@ -221,13 +229,42 @@ const probeWithSignal = async (
           '-v',
           'ON_ERROR_STOP=1',
           '-c',
-          CATALOG_QUERY,
+          ENVIRONMENT_CATALOG_QUERY,
         ]);
+        catalogState.status = 'mismatch';
         await writeFile(join(workdir, 'catalog.json'), catalog, {
           flag: 'wx',
         });
-        // metadataの採取だけではtable/RPC/policy/grantの契約検証を主張しない。
-        hasCollectedCatalog = true;
+        try {
+          const input: unknown = JSON.parse(catalog);
+          catalogState.check = checkEnvironmentCatalog(input);
+        } catch {
+          // 生のJSONやvalidation errorを公開せず、失敗した検査もartifactに残す。
+          catalogState.check = {
+            schemaVersion: 1,
+            schemaParityPassed: false,
+            authorizationStatus: 'not-verified',
+            fingerprint: null,
+            issues: [
+              {
+                code: 'CATALOG_INVALID',
+                subject: 'catalog.json',
+                message: 'catalogのJSONまたはmetadata構造が不正です。',
+              },
+            ],
+            knownAuthorizationGaps: ENVIRONMENT_AUTHORIZATION_GAPS,
+          };
+        }
+        catalogState.status = catalogState.check.schemaParityPassed
+          ? 'verified'
+          : 'mismatch';
+        writeArtifact(
+          worktreeRoot,
+          relative(worktreeRoot, join(workdir, 'catalog-check.json')),
+          `${JSON.stringify(catalogState.check, null, 2)}\n`,
+        );
+        if (!catalogState.check.schemaParityPassed)
+          throw new Error('catalogが固定期待値と一致しません。');
       },
       release: () => lock.release(),
     });
@@ -236,10 +273,15 @@ const probeWithSignal = async (
       workdir,
       cliVersion: manifest.cliVersion,
       inputHashes,
-      migrationReplayPassed: result.passed,
-      catalogStatus: hasCollectedCatalog
-        ? 'collected-unverified'
-        : 'not-reached',
+      migrationReplayPassed: hasReplayedMigrations,
+      schemaParityPassed: catalogState.check?.schemaParityPassed ?? false,
+      catalogStatus: catalogState.status,
+      authorizationStatus: 'not-verified' as const,
+      fingerprint: catalogState.check?.fingerprint ?? null,
+      catalogIssues: catalogState.check?.issues ?? [],
+      knownAuthorizationGaps: ENVIRONMENT_AUTHORIZATION_GAPS,
+      passed:
+        result.passed && (catalogState.check?.schemaParityPassed ?? false),
       cleanup: result.manifest.cleanup,
     };
     writeArtifact(
@@ -254,7 +296,7 @@ const probeWithSignal = async (
 };
 
 /**
- * 空DBへのmigration→seedの診断probe。catalog採取と契約検証を区別する。
+ * 空DBへのmigration→seedと固定catalog期待値の一致を検査し、認可の安全性とは区別する。
  * lock取得前から中断を監視し、初期化失敗と全cleanupの終了後に監視を外す。
  * 呼出元のAbortSignalでも協調中断できる。SIGKILLやWindowsコンソールによる
  * process treeの強制終了ではfinallyの実行を保証できず、所有journalからの復旧が必要。
@@ -299,7 +341,7 @@ export const runEnvironmentProbeCli = async (
       process.stderr.write(`[e2e-environment] ${JSON.stringify(value)}\n`);
     });
     process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
-    return report.migrationReplayPassed ? 0 : 1;
+    return report.passed ? 0 : 1;
   } catch {
     // 初期化前にはlog/manifestが存在しない。既存workdirだけを案内する。
     const workdir =

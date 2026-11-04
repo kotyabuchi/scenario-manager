@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 import { afterEach, beforeEach, expect, vi } from 'vitest';
 
+import { EXPECTED_ENVIRONMENT_CATALOG } from '../../environmentCatalogExpected';
 import { runLocalCommand } from '../../environmentCommands';
 import { createDockerDriver } from '../../environmentDocker';
 import { prepareEnvironmentInputs } from '../../environmentInputs';
@@ -27,6 +28,7 @@ export const probeState = {
   shouldFailStart: false,
   shouldInterruptStart: false,
   version: '2.75.0',
+  catalogText: '',
 };
 let createdAt = '';
 let initialSignalCounts = { SIGINT: 0, SIGTERM: 0 };
@@ -73,6 +75,7 @@ beforeEach(async () => {
   probeState.shouldFailStart = false;
   probeState.shouldInterruptStart = false;
   probeState.version = '2.75.0';
+  probeState.catalogText = JSON.stringify(EXPECTED_ENVIRONMENT_CATALOG);
   createdAt = new Date().toISOString();
   initialSignalCounts = {
     SIGINT: process.listenerCount('SIGINT'),
@@ -95,7 +98,7 @@ beforeEach(async () => {
         throw new Error('synthetic start failure');
       return '';
     }
-    if (tool === 'docker' && args[0] === 'exec') return '{"tables":["users"]}';
+    if (tool === 'docker' && args[0] === 'exec') return probeState.catalogText;
     throw new Error('想定外のコマンドです。');
   });
   vi.mocked(acquireEnvironmentLock).mockImplementation(async (options) => ({
