@@ -3,13 +3,13 @@ import { isNil } from 'ramda';
 import { z } from 'zod';
 
 import { assertFixtureConnection } from '../../scripts/e2e/environmentCredentials';
+import { collectFixtureChildren } from './fixtureChildren';
 import { inspectFixtureReferences } from './fixtureCleanupRelations';
 import { fixtureOwnerTag } from './fixtureManifest';
 import {
   fixtureCleanupSchema,
   fixtureManifestSchema,
   fixtureResourceKey,
-  fixtureResourceSchema,
 } from './fixtureSchema';
 
 import { isDeepStrictEqual } from 'node:util';
@@ -23,6 +23,9 @@ import type { FixtureCleanup, FixtureResource } from './fixtureSchema';
 type RowResource = Exclude<FixtureResource, { kind: 'auth-user' }>;
 const row = z.record(z.string(), z.unknown());
 const ORDER: FixtureResource['kind'][] = [
+  'feedback_comments',
+  'feedback_votes',
+  'feedbacks',
   'game_schedule_time_blocks',
   'session_availability_time_blocks',
   'session_participants',
@@ -38,6 +41,12 @@ const primaryKey = (resource: RowResource): Record<string, string> => {
       return { user_id: resource.id };
     case 'scenarios':
       return { scenario_id: resource.id };
+    case 'feedbacks':
+      return { feedback_id: resource.id };
+    case 'feedback_comments':
+      return { comment_id: resource.id };
+    case 'feedback_votes':
+      return { feedback_id: resource.feedbackId, user_id: resource.userId };
     case 'game_sessions':
       return { game_session_id: resource.id };
     case 'session_participants':
@@ -57,7 +66,16 @@ const identity = (resource: RowResource): Record<string, string> => {
     case 'game_sessions':
       return { ...key, created_by_id: resource.createdBy };
     case 'session_participants':
+    case 'feedback_votes':
       return key;
+    case 'feedbacks':
+      return { ...key, user_id: resource.userId };
+    case 'feedback_comments':
+      return {
+        ...key,
+        feedback_id: resource.feedbackId,
+        user_id: resource.userId,
+      };
     case 'session_availability_time_blocks':
       return {
         ...key,
@@ -78,6 +96,11 @@ const dependencies = (resource: FixtureResource): string[] => {
       return [];
     case 'users':
       return [`auth-user:${resource.authUserId}`];
+    case 'feedbacks':
+      return [`users:${resource.userId}`];
+    case 'feedback_comments':
+    case 'feedback_votes':
+      return [`feedbacks:${resource.feedbackId}`, `users:${resource.userId}`];
     case 'scenarios':
     case 'game_sessions':
       return [`users:${resource.createdBy}`];
@@ -212,81 +235,44 @@ export const cleanupFixture = async (
       issue('OBSERVATION_FAILED', key);
     }
   }
-  // RPCが生成したIDはcase所有session内だけで収集し、保存後に削除対象へ加える。
+  // UI/RPC生成の子は同caseの親・userを照合し、journal保存後だけ削除対象へ加える。
   for (const resource of [...known.values()]) {
-    if (
-      resource.kind !== 'game_sessions' ||
-      denied.has(fixtureResourceKey(resource))
-    )
+    if (denied.has(fixtureResourceKey(resource))) continue;
+    const discovered = await collectFixtureChildren(client, resource);
+    if (discovered.issues.length > 0) {
+      for (const failure of discovered.issues)
+        issue(failure.code, failure.resource, failure.reference);
+      protect(resource);
       continue;
-    for (const table of [
-      'game_schedule_time_blocks',
-      'session_availability_time_blocks',
-    ] as const) {
-      try {
-        const result = await client
-          .from(table)
-          .select('*')
-          .eq('session_id', resource.id);
-        if (!isNil(result.error) || isNil(result.data)) {
-          issue('OBSERVATION_FAILED', `${table}:${resource.id}`);
-          protect(resource);
-          continue;
-        }
-        for (const raw of result.data) {
-          const data = row.parse(raw);
-          const parsed = fixtureResourceSchema.safeParse(
-            table === 'game_schedule_time_blocks'
-              ? {
-                  kind: table,
-                  id: data.game_schedule_time_block_id,
-                  sessionId: data.session_id,
-                  createdBy: data.created_by,
-                }
-              : {
-                  kind: table,
-                  id: data.availability_time_block_id,
-                  sessionId: data.session_id,
-                  userId: data.user_id,
-                },
-          );
-          if (!parsed.success) {
-            issue('OWNERSHIP_MISMATCH', `${table}:${resource.id}`);
-            protect(resource);
-            continue;
-          }
-          const child = parsed.data;
-          const key = fixtureResourceKey(child);
-          if (
-            dependencies(child).some(
-              (parent) => !known.has(parent) || denied.has(parent),
-            )
-          ) {
-            issue('OWNERSHIP_MISMATCH', key);
-            protect(resource);
-            continue;
-          }
-          const old = known.get(key);
-          if (!isNil(old)) {
-            if (!isDeepStrictEqual(old, child)) {
-              denied.add(key);
-              issue('OWNERSHIP_MISMATCH', key);
-            }
-            continue;
-          }
-          try {
-            await journal.reserve(child);
-            known.set(key, child);
-            pending.add(key);
-            await journal.record(child);
-          } catch {
-            issue('JOURNAL_SAVE_FAILED', key);
-            if (!known.has(key)) protect(resource);
-          }
-        }
-      } catch {
-        issue('OBSERVATION_FAILED', `${table}:${resource.id}`);
+    }
+    for (const child of discovered.children) {
+      const key = fixtureResourceKey(child);
+      if (
+        dependencies(child).some(
+          (parent) =>
+            !known.has(parent) || denied.has(parent) || removed.has(parent),
+        )
+      ) {
+        issue('OWNERSHIP_MISMATCH', key);
         protect(resource);
+        continue;
+      }
+      const old = known.get(key);
+      if (!isNil(old)) {
+        if (!isDeepStrictEqual(old, child)) {
+          denied.add(key);
+          issue('OWNERSHIP_MISMATCH', key);
+        }
+        continue;
+      }
+      try {
+        await journal.reserve(child);
+        known.set(key, child);
+        pending.add(key);
+        await journal.record(child);
+      } catch {
+        issue('JOURNAL_SAVE_FAILED', key);
+        if (!known.has(key)) protect(resource);
       }
     }
   }

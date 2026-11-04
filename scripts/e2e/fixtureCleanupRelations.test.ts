@@ -6,11 +6,10 @@ import { FIXTURE_PARENT_REFERENCES } from '../../e2e/fixtures/fixtureCleanupRela
 import { createFixtureJournal } from '../../e2e/fixtures/fixtureManifest';
 import { EXPECTED_ENVIRONMENT_CATALOG } from './environmentCatalogExpected';
 import {
-  createCleanupFixture,
-  scenario,
-  session,
-  user,
-} from './fixtures/environment/fixtureCleanup';
+  createFeedbackCleanupFixture,
+  feedback,
+} from './fixtures/environment/feedbackCleanup';
+import { scenario, session, user } from './fixtures/environment/fixtureCleanup';
 
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { join, resolve, sep } from 'node:path';
@@ -28,7 +27,7 @@ beforeEach(() => {
   mocks.assertConnection.mockReset();
 });
 const setup = () => {
-  const value = createCleanupFixture();
+  const value = createFeedbackCleanupFixture();
   mocks.createClient.mockReturnValue(value.client);
   return value;
 };
@@ -39,7 +38,7 @@ describe('親削除による記録外の行変更を防ぐ', () => {
       .filter((constraint) => constraint.type === 'f')
       .flatMap((constraint) => {
         const match =
-          /^FOREIGN KEY \(([^)]+)\) REFERENCES (users|scenarios|game_sessions)\(/.exec(
+          /^FOREIGN KEY \(([^)]+)\) REFERENCES (users|scenarios|game_sessions|feedbacks)\(/.exec(
             constraint.definition,
           );
         if (isNil(match)) return [];
@@ -55,7 +54,10 @@ describe('親削除による記録外の行変更を防ぐ', () => {
     expect(FIXTURE_PARENT_REFERENCES.map(key).sort()).toEqual(
       expected.map(key).sort(),
     );
-    expect(expected).toHaveLength(25);
+    expect(
+      expected.filter((reference) => reference.parent !== 'feedbacks'),
+    ).toHaveLength(25);
+    expect(expected).toHaveLength(27);
   });
 
   it('未記録participantを残し、session削除とscenarioのSET NULLを止める', async () => {
@@ -84,6 +86,7 @@ describe('親削除による記録外の行変更を防ぐ', () => {
   )('$table / $column の未記録行がある親 $parent を削除しない', async (reference) => {
     const value = setup();
     const ids = {
+      feedbacks: feedback.id,
       users: user.id,
       scenarios: scenario.id,
       game_sessions: session.id,

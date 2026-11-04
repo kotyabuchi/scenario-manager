@@ -28,6 +28,18 @@ export const fixtureResourceSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('auth-user'), id: uuid }),
   z.strictObject({ kind: z.literal('users'), id: ulid, authUserId: uuid }),
   z.strictObject({ kind: z.literal('scenarios'), id: ulid, createdBy: ulid }),
+  z.strictObject({ kind: z.literal('feedbacks'), id: ulid, userId: ulid }),
+  z.strictObject({
+    kind: z.literal('feedback_comments'),
+    id: ulid,
+    feedbackId: ulid,
+    userId: ulid,
+  }),
+  z.strictObject({
+    kind: z.literal('feedback_votes'),
+    feedbackId: ulid,
+    userId: ulid,
+  }),
   z.strictObject({
     kind: z.literal('game_sessions'),
     id: ulid,
@@ -56,7 +68,9 @@ export const fixtureResourceSchema = z.discriminatedUnion('kind', [
 export const fixtureResourceKey = (resource: FixtureResource): string =>
   resource.kind === 'session_participants'
     ? `${resource.kind}:${resource.sessionId}:${resource.userId}`
-    : `${resource.kind}:${resource.id}`;
+    : resource.kind === 'feedback_votes'
+      ? `${resource.kind}:${resource.feedbackId}:${resource.userId}`
+      : `${resource.kind}:${resource.id}`;
 
 export const fixtureCleanupSchema = z
   .strictObject({
@@ -133,6 +147,11 @@ export const fixtureManifestSchema = z
         ((resource.kind === 'session_participants' ||
           resource.kind === 'session_availability_time_blocks') &&
           has('game_sessions', resource.sessionId) &&
+          has('users', resource.userId)) ||
+        (resource.kind === 'feedbacks' && has('users', resource.userId)) ||
+        ((resource.kind === 'feedback_comments' ||
+          resource.kind === 'feedback_votes') &&
+          has('feedbacks', resource.feedbackId) &&
           has('users', resource.userId)) ||
         (resource.kind === 'game_schedule_time_blocks' &&
           has('game_sessions', resource.sessionId) &&

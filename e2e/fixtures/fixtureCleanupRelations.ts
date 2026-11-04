@@ -7,7 +7,7 @@ import type { Database } from '../../src/db/types';
 import type { FixtureCleanup, FixtureResource } from './fixtureSchema';
 
 type Table = keyof Database['public']['Tables'];
-type Parent = 'users' | 'scenarios' | 'game_sessions';
+type Parent = 'users' | 'scenarios' | 'game_sessions' | 'feedbacks';
 type Reference = {
   [Name in Table]: {
     parent: Parent;
@@ -18,6 +18,8 @@ type Reference = {
 
 // 固定catalogの全incoming FK。CASCADE/SET NULLだけでなくRESTRICTも同じ境界で確認する。
 export const FIXTURE_PARENT_REFERENCES = [
+  { parent: 'feedbacks', table: 'feedback_comments', column: 'feedback_id' },
+  { parent: 'feedbacks', table: 'feedback_votes', column: 'feedback_id' },
   { parent: 'users', table: 'feedback_comments', column: 'user_id' },
   { parent: 'users', table: 'feedback_votes', column: 'user_id' },
   { parent: 'users', table: 'feedbacks', column: 'user_id' },
@@ -77,7 +79,8 @@ export const inspectFixtureReferences = async (
   if (
     resource.kind !== 'users' &&
     resource.kind !== 'scenarios' &&
-    resource.kind !== 'game_sessions'
+    resource.kind !== 'game_sessions' &&
+    resource.kind !== 'feedbacks'
   )
     return [];
   const observations = await Promise.all(
