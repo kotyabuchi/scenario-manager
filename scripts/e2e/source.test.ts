@@ -83,7 +83,19 @@ describe('loadSource', () => {
         expect(inventory.nodes.map((node) => node.source.file)).toContain(file);
       }
     }
-    expect(inventory.diagnostics).toEqual([]);
+    // noLibのsource探索fixtureではError/Responseの実体は解決できない。
+    // 新しい依存抽出も通常segmentの呼出を捨てず、3箇所を診断する。
+    expect(before.diagnostics).toEqual([]);
+    expect(
+      inventory.diagnostics.map(({ code, source }) => ({
+        code,
+        file: source?.file,
+      })),
+    ).toEqual([
+      { code: 'UNRESOLVED_CALL', file: 'src/app/api/tests/route.ts' },
+      { code: 'UNRESOLVED_CALL', file: 'src/stories/helper.ts' },
+      { code: 'UNRESOLVED_CALL', file: 'src/tests/helper.ts' },
+    ]);
     for (const [file, content] of Object.entries(routeFixture))
       write(root, file, `${content}// 更新\n`);
     const after = loadSource(root);
