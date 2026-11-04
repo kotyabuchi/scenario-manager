@@ -1367,6 +1367,11 @@ export const sessionActions_menuItem = cva({
   },
 });
 
+export const sessionActions_pendingLink = css({
+  pointerEvents: 'none',
+  opacity: 'disabled',
+  cursor: 'not-allowed',
+});
 export const sessionActions_inline = css({
   display: 'flex',
   alignItems: 'center',

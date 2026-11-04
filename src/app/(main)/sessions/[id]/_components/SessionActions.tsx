@@ -151,16 +151,13 @@ export const SessionActions = ({
           status={action.variant === 'danger' ? 'danger' : 'primary'}
           aria-disabled={isPhaseUpdatePending || undefined}
           tabIndex={isPhaseUpdatePending ? -1 : undefined}
-          onClick={
-            isPhaseUpdatePending
-              ? (e: React.MouseEvent) => e.preventDefault()
-              : undefined
-          }
-          css={
-            isPhaseUpdatePending
-              ? { pointerEvents: 'none', opacity: 0.5, cursor: 'not-allowed' }
-              : undefined
-          }
+          {...(isPhaseUpdatePending
+            ? {
+                onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
+                  event.preventDefault(),
+                className: styles.sessionActions_pendingLink,
+              }
+            : {})}
         >
           {renderActionIcon(action)}
           {action.label}
