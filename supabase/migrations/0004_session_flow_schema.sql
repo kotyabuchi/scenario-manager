@@ -100,7 +100,7 @@ CREATE POLICY "schedule_candidates_select" ON schedule_candidates
           SELECT 1 FROM session_participants sp
           WHERE sp.session_id = gs.game_session_id
           AND sp.user_id = auth.uid()::text
-          AND sp.participant_status != 'WITHDRAWN'
+          AND sp.participant_status::text != 'WITHDRAWN'
         )
       )
     )
@@ -150,7 +150,7 @@ CREATE POLICY "schedule_responses_select" ON schedule_responses
           SELECT 1 FROM session_participants sp
           WHERE sp.session_id = sc.session_id
           AND sp.user_id = auth.uid()::text
-          AND sp.participant_status != 'WITHDRAWN'
+          AND sp.participant_status::text != 'WITHDRAWN'
         )
       )
     )

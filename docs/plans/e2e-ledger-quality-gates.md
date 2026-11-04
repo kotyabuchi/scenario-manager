@@ -188,7 +188,7 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 7実復元のブロッカー: CLI 2.75.0 / Docker 29.5.3のfresh run `19dde0ee35aa`は、既存0004の列挙値WITHDRAWNのcommit前利用でSQLSTATE 55P04。0000–0003は通過、seed/catalog未到達。後続migration追加では先行エラーを直せないため、計画どおりDB依存の後続Batchを保留し、M1は維持する。
 - Batch 7中断検証: Windowsのpnpm.cmd経由Ctrl+Cはprocess tree終了となり、run `ec388f20b189`に残った2 container/1 network/1 volumeを所有nonce・ID・lock inode/hash照合後に手動回収、残留0・5 lock解放。協調AbortSignalのrun `d2b43b8bc50d`では同じ種類の所有資源を自動cleanupし残留0。いずれもDB復元成功とは数えない。
 - Supabase接続: SQL Editorと連携ツールのSELECT 1が成功し、28P01は解消。schema metadataのみ監査し、生成列2・comment_count・trigger2・既定値1の履歴欠落を確認。既存15 tableのRLS無効とavailability RPC認可欠落も記録。運用DB変更・利用者データ読取は実施していない。
-- 再開判断待ち: 0004の2箇所だけ`participant_status::text != 'WITHDRAWN'`へ変える案を[専用環境手順](../testing/e2e-environment.md)に具体化した。過去SQL書換え禁止の限定例外が必要なため未適用。承認後にfresh復元・不足schema追補・seed・catalogを2回確認してからBatch 8へ進む。Batch 7は未完了のまま。
+- 再開方針（承認済み）: 2026-11-04、ユーザーから「そもそも破綻している過去migrationは修正しても良い」と指示を受け、復元を阻む過去SQLの修復を許可する方針へ更新した。0004の2箇所だけ`participant_status::text != 'WITHDRAWN'`へ変更して再検証を進める。fresh復元・不足schema追補・seed・catalogを2回確認するまでBatch 7は未完了、運用DBへの適用は禁止を維持する。
 - Batch 7基盤の最終検証: 36 files / 679 tools tests、check:ci（909 files）、typecheck成功。M1 readonly gateもbase 6051fb6に対してpassed（登録8・legacy348・不足473、差分0）。レビューでchildのclose待ち・Scoop native実体解決・安全なphase表示を修正し、3担当再確認で未解消0・最終A（docs/reviews/diff-review-2026-11-04-7.md）。修正版の実協調中断run `248addee4e6b`はDocker資源・CLIプロセス・lockの残留0。手書き500行以内の単位で基盤を保存し、復元完了とは分けて扱う。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
@@ -334,9 +334,9 @@ e2e:inventory、e2e:ledger:checkを公開。CIはcheckout→setup→tools tests�
 
 ### Step 7-1. schema/policy/grantを空DBから再現
 
-変更候補: supabase/config.toml、supabase/migrations（追加のみ）。新規: supabase/seed.sql、docs/testing/e2e-environment.md。
+変更候補: supabase/config.toml、supabase/migrations（追補と復元不能な過去SQLの修復）。新規: supabase/seed.sql、docs/testing/e2e-environment.md。
 
-固定CLIで空のlocal DBへ既存migrationを適用し、成功/失敗を記録する。管理外のpolicy/grant/extension/関数設定が必要なら、正規のschema取得手順で設定だけを確認し、必要最小限をversion管理へ戻す。現行クラウドの安全性を推測しない。migration追加は既存Supabase migrationスキルとCLI規約に従い、過去migrationの書換えや運用DBへの適用はしない。
+固定CLIで空のlocal DBへ既存migrationを適用し、成功/失敗を記録する。管理外のpolicy/grant/extension/関数設定が必要なら、正規のschema取得手順で設定だけを確認し、必要最小限をversion管理へ戻す。現行クラウドの安全性を推測しない。migration追加は既存Supabase migrationスキルとCLI規約に従う。2026-11-04のユーザー指示により、破綻している過去migrationの修復は、原因・変更前後・再実行結果を記録して実施できる。新たな仕様変更は原則追補migrationに分離し、運用DBへの適用は行わない。
 
 未知の仕様は当該契約を保留し、必要な設定が欠けたまま権限テストを合格させない。seedは公開master dataとテスト用最小データ。実ユーザーデータは使わない。
 
