@@ -1,0 +1,5053 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(auth)/logout/actions.ts#logout",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/feedback/actions.ts#checkRateLimitAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/feedback/actions.ts#createCommentAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/feedback/actions.ts#deleteFeedbackAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/feedback/actions.ts#toggleVoteAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/feedback/actions.ts#updateStatusAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/profile/actions.ts#updateProfile",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/scenarios/[id]/actions.ts#toggleFavoriteAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/scenarios/[id]/actions.ts#toggleFavoriteForCurrentUserAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/scenarios/[id]/actions.ts#togglePlayedAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/scenarios/import/actions.ts#createImportedScenarioAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/scenarios/import/actions.ts#parseScenarioUrlAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/scenarios/new/actions.ts#createScenarioAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelSessionAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#completeSessionAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#deleteLinkAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#updateBasicInfoAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#updateCharacterSheetAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#updateMemoAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#updateSessionPhaseAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#upsertLinkAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/actions.ts#withdrawFromSessionAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/applications/actions.ts#approveApplicationAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/applications/actions.ts#rejectApplicationAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/availability/actions.ts#saveAvailabilityTimeBlocksAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/availability/page.tsx#AvailabilityPage/saveTimeBlocksServerAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-action-deny",
+        "variant": "anonymous",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "anonymous"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-action-deny",
+        "variant": "outsider",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "outsider"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-action-deny",
+        "variant": "phase-recruiting",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "validation",
+        "layer": "integration",
+        "caseId": "schedule-action-invalid",
+        "variant": "empty",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "validation",
+        "layer": "integration",
+        "caseId": "schedule-action-invalid",
+        "variant": "off-grid",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "validation",
+        "layer": "integration",
+        "caseId": "schedule-action-invalid",
+        "variant": "overlap",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "aspect": "validation",
+        "layer": "integration",
+        "caseId": "schedule-action-invalid",
+        "variant": "reversed",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+        "aspect": "persist",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/new/actions.ts#createSessionAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/new/actions.ts#createSessionAndRedirect",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/new/actions.ts#searchScenariosForSessionAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/app/(main)/sessions/new/actions.ts#searchUsersAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/components/blocks/FeedbackModal/actions.ts#checkRateLimitAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/components/blocks/FeedbackModal/actions.ts#createFeedbackAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/components/blocks/FeedbackModal/actions.ts#updateFeedbackAction",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "action:src/components/blocks/SignupModal/actions.ts#registerUser",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "api:src/app/(auth)/auth/callback/route.ts#GET",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "api:src/app/api/feedback/search/route.ts#GET",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "api:src/app/api/scenarios/search/route.ts#GET",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "api:src/app/api/sessions/history/route.ts#GET",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "api:src/app/api/sessions/upcoming/route.ts#GET",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "api:src/app/api/upload/route.ts#POST",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "default:src/app/(main)/scenarios/@detail/default.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+        "aspect": "error-feedback",
+        "layer": "storybook",
+        "caseId": "schedule-save-error",
+        "variant": "save-error",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "storybook",
+        "project": "",
+        "runtime": "storybook"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "layout:src/app/(main)/layout.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "layout:src/app/(main)/scenarios/layout.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "layout:src/app/layout.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "loading:src/app/(main)/home/loading.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "loading:src/app/(main)/sessions/[id]/applications/loading.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "loading:src/app/(main)/sessions/[id]/loading.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(auth)/logout/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/about/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/feedback/[id]/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/feedback/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/home/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/profile/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/scenarios/@detail/(.)[id]/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/scenarios/@detail/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/scenarios/[id]/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/scenarios/import/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/scenarios/new/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/scenarios/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/schedules/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/applications/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/page.tsx",
+        "aspect": "render",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/page.tsx",
+        "aspect": "render",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/page.tsx",
+        "aspect": "render",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "chromium",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/page.tsx",
+        "aspect": "render",
+        "layer": "browser",
+        "caseId": "schedule-confirm-persist",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "observer",
+            "actor": "confirmed-player"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "isolated",
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/schedule/availability/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/new/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/sessions/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/users/[id]/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/(main)/users/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "page:src/app/page.tsx",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "route:src/app/(auth)/auth/callback/route.ts",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "route:src/app/api/feedback/search/route.ts",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "route:src/app/api/scenarios/search/route.ts",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "route:src/app/api/sessions/history/route.ts",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "route:src/app/api/sessions/upcoming/route.ts",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "route:src/app/api/upload/route.ts",
+        "aspect": "contract",
+        "layer": null,
+        "caseId": null,
+        "variant": null,
+        "actorBindings": null,
+        "profile": null,
+        "project": null,
+        "runtime": null
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "atomicity",
+        "layer": "integration",
+        "caseId": "schedule-rpc-atomic",
+        "variant": "creator-atomic-failure",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "atomicity",
+        "layer": "integration",
+        "caseId": "schedule-rpc-atomic",
+        "variant": "keeper-atomic-failure",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-rpc-allow",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-rpc-allow",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-rpc-deny",
+        "variant": "actor-mismatch",
+        "actorBindings": [
+          {
+            "role": "claimed-actor",
+            "actor": "creator-only"
+          },
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-rpc-deny",
+        "variant": "anonymous",
+        "actorBindings": [
+          {
+            "role": "claimed-actor",
+            "actor": "creator-only"
+          },
+          {
+            "role": "operator",
+            "actor": "anonymous"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "authorization",
+        "layer": "integration",
+        "caseId": "schedule-rpc-deny",
+        "variant": "outsider",
+        "actorBindings": [
+          {
+            "role": "claimed-actor",
+            "actor": "outsider"
+          },
+          {
+            "role": "operator",
+            "actor": "outsider"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "persist",
+        "layer": "integration",
+        "caseId": "schedule-rpc-allow",
+        "variant": "creator-only",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "creator-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "deficiency",
+      "deficiency": {
+        "target": "rpc:replace_confirmed_schedule_time_blocks",
+        "aspect": "persist",
+        "layer": "integration",
+        "caseId": "schedule-rpc-allow",
+        "variant": "keeper-only",
+        "actorBindings": [
+          {
+            "role": "operator",
+            "actor": "keeper-only"
+          }
+        ],
+        "profile": "integration",
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/_components/SignupModalWrapper.tsx#SignupModalWrapper",
+        "syntaxHash": "100dd97816ac80669221eb5e97d96f11d1484e4be719e97d12739fbf5553888d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/_components/SignupModalWrapper.tsx#SignupModalWrapper",
+        "syntaxHash": "2f112535edb4ee128b2776257fa80c076d37bd85ea4446ae0f0d3a470232e1e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/_components/SignupModalWrapper.tsx#SignupModalWrapper",
+        "syntaxHash": "3fbf797cd6d21a096233bfe90a8af61c77e1fc899453b93007bd0c274bb873ef",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/_components/SignupModalWrapper.tsx#SignupModalWrapper",
+        "syntaxHash": "9b5d0d3babc94ba2841dfd1d9d9c1ed44d5b2f6662976dea5dc1fe85a8e96aa0",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/[id]/_components/ActionSection.tsx#ActionSection/handleDelete",
+        "syntaxHash": "06248ad9cbec973ebfcd6406e4e229915155c68d93e6babde8285ebe77cf63e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/[id]/_components/ActionSection.tsx#ActionSection/handleDelete",
+        "syntaxHash": "7aff728a2c3bdbbd861be626f6f7c1f7ebd0959a72c761e6812a31212c2e5f8b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/[id]/_components/AdminSection.tsx#AdminSection",
+        "syntaxHash": "314079e1f1cb2e4266874229ab0b8c98bf230bac265aed3caf3a774ef7433d79",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/[id]/_components/AdminSection.tsx#AdminSection",
+        "syntaxHash": "836fdbdb2ea6aa047e4dd84b7a311559aea490b81e1126bf4c41ad23ee139243",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/[id]/_components/CommentSection.tsx#CommentSection/onSubmit",
+        "syntaxHash": "20bca9f9cf3364c8bc6755f88e2e5bca0fbf0c8c115958c6285b62d53c8e31d3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/_components/FeedbackContent.tsx#FeedbackContent",
+        "syntaxHash": "82989bd92c8cb698ea1c45d262a97c2ddbcff641a5f5e1931b25e0f43c28f88e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/_components/VoteButton.tsx#VoteButton/handleClick",
+        "syntaxHash": "0a5751de14e6cc96fa202775185b1f3983cd7e2ac7afcb7835012fae9105a96f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/_components/VoteButton.tsx#VoteButton/handleClick",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/_components/VoteButton.tsx#VoteButton/handleClick",
+        "syntaxHash": "8a18414a68aa5c689a48bf8f9618b440fdb5224b4f8fb60a0dd867cf65d715e5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "2529bbc7a070b41d00bd60007903e2f3b9dc4160a1c546382be30f095bce1d37",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "71be9b072aecd404482aeb370ed7af23354b28ea45016d949b9a5e5346d91546",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "8123426ec2b31eed37721be7b753df97e162e904c947b95d79d06ef92a0060bd",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "98d10b065276126fa2e033fdbbfcd519d2575584d63cda75aed35f09c8ed716e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "d17640e5caa4abf65847b7e3daad526608032060fade6205fee5f4991c9ae6c4",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "d691d861f97c06c8c01816a39beae681ed469f5b58ba96abbdb9db2073748b8e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "e756d107d6e67d871b540f5ff01700053fda25568dea7a2b238d870130dd4672",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "f2f769c77978be654ed924d47fa2701b4c7489be02671646b852d48841f46960",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/adapter.ts#searchFeedbacks",
+        "syntaxHash": "f9a5bc8739674408bfa59db46db40439353aed3fb858aed6d062352924507e49",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/feedback/hooks/useVoteToggle.ts#useVoteToggle/toggle",
+        "syntaxHash": "fe597c07c86d8b87a2066d6bb092c3168d21d9dfde482b4d13085a226f04fc46",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/home/_components/HomeGuest.tsx#HomeGuest",
+        "syntaxHash": "95b9e88fbc4ca7d62dbe01d09f0711ba45f70fd15a86abc1dc3783f0498ca48c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/home/page.tsx#HomePage",
+        "syntaxHash": "ed941af9d84712154d140dc533c87f1940f327fd09061db59a7175c736b67c3b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/@detail/(.)[id]/page.tsx#InterceptedScenarioDetailPage",
+        "syntaxHash": "e94b841f79d206221c83e390d32078e5526e794fd922382d876bfab961ec1105",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel/handleCreateSession",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel/handleCreateSession",
+        "syntaxHash": "39811d8e310871a17af7be4fbc2295a72f7830eaa0dd86c80bccbf7b32e1ccd2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel/handleToggleFavorite",
+        "syntaxHash": "6965b8275845ff64dfccfd3af9aac22b4b6e88b8a10255ea58b33bb6c99d9246",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel/handleToggleFavorite",
+        "syntaxHash": "c8f7b0e8321d25c24222dccb242ed6ffe713ae5459dc32c3b4af3d937820100d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/_components/SessionSection.tsx#SessionSection",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/_components/SessionSection.tsx#SessionSection",
+        "syntaxHash": "39811d8e310871a17af7be4fbc2295a72f7830eaa0dd86c80bccbf7b32e1ccd2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/[id]/page.tsx#ScenarioDetailPage",
+        "syntaxHash": "e94b841f79d206221c83e390d32078e5526e794fd922382d876bfab961ec1105",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/InterceptedDetailPresence.tsx#InterceptedDetailPresence",
+        "syntaxHash": "520afc37b73932e29f5166c34840e97daf7032a1c5f65ec6bbcf97b1dd20a7df",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/InterceptedDetailPresence.tsx#InterceptedDetailPresence",
+        "syntaxHash": "63f59b887b3a7b9d8fbcbb71d3c0512c69f879bf0221fd0279c8b91571a3bdce",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenarioCard.tsx#ScenarioCard",
+        "syntaxHash": "6dec6dafabe4d3561a1a189ace77789e8bed505dfe4b75e477b8dee71ee2430c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenarioFilters/ScenarioFilters.tsx#ScenarioFilters",
+        "syntaxHash": "33a57d4b9a94ab4780d9dc923f11674488e20ea152b8b88ea35f0c9f134324db",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenarioFilters/ScenarioFilters.tsx#ScenarioFilters",
+        "syntaxHash": "b45ce5427490fab55cb80fc26f8411755f7cae255df8c6d5b8f75b2deb6edf76",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenarioListPanel/ScenarioListPanel.tsx#ScenarioListPanel",
+        "syntaxHash": "2c7b42eeb028a7869a6349fa011dd23d5e7274d908f6419cfe0c5036308308c9",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenarioListPanel/useScenarioListFixture.ts#useScenarioListFixture/onResetFilters",
+        "syntaxHash": "b279dabe3abd2df0c9cbcdae24d4ef23de802989a5a69692b19e7017c01fbae0",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenariosContent.tsx#ScenariosContent",
+        "syntaxHash": "5aa7026d0ea46c42df6626cb7edd05eb6012d3b8a9b7e20442290b57a27ea055",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenariosContent.tsx#ScenariosContent",
+        "syntaxHash": "82989bd92c8cb698ea1c45d262a97c2ddbcff641a5f5e1931b25e0f43c28f88e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenariosContent.tsx#ScenariosContent",
+        "syntaxHash": "9f32bf09ec46ab8b537b40c90cd5c71397db29365d2270048751b5ebd813c4cf",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenariosContent.tsx#ScenariosContent",
+        "syntaxHash": "b279dabe3abd2df0c9cbcdae24d4ef23de802989a5a69692b19e7017c01fbae0",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/_components/ScenariosContent.tsx#ScenariosContent",
+        "syntaxHash": "b42319596ff57369896af68e1dab23e9cf651997cd295bb69c8e654f6b2d1b95",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "06db143abfea312a451da8eb4197779bb1070901c8593bb7c1a6dcb34dcae7e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "16e75556a4e48160e83780bd7534e91dcbe55b1288cd95c1b8726fe3b2bcd39c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "31d8b2e9eba0a3e771d0617aad0e79ac6f6ec5332d78bb3b60c51d8dd8a999f7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "4f9b795b0c443fb4dd2b1efb13056b1a256d49dff8e9d2d40c8ee97cee384094",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "5481c6822d2429749b97ae257c9467aafdc9d35a020f25f684d2ca7e777a040f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "6f583cde52d482a043f16b7b05f767a28e32b364a8dc89b4e6d0b395c19c8755",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#applyFilters",
+        "syntaxHash": "dc58e6ae95cabd0b05d5fc25240529a1a402a9c95dbb1f29804b1e4d6cbdbe14",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#getTagFilteredIds",
+        "syntaxHash": "50c8f94d56b6b8266d6194daf5bf4d6f13fb772a9a38c8ce12509d2ef1183a1e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#getTagFilteredIds",
+        "syntaxHash": "b35a631e06fdd2cc28f948c54d7e6ad254aaa2bf85da396362505265527d6f3c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#getTagFilteredIds",
+        "syntaxHash": "bc3e72383e7c2e06681f19062fa5edf71f8a613c9e78b9b1c6900bc40b8325c8",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "1813435033d4467d58d8bd5f823289e9b18d6404cf2385f0f082e4a812cb2c88",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "2baa1e95b2f1583c635d631235a347c833edf02c3c59bb354df2c746b5b17d5d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "348c0653ac5a6909bcaed7062b6e0bad86fa4370df26a73f9eea83c0987df988",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "34a287009dd55d0e64e656798f0ac8c80c281ad36b9ed402c21f7dc5bd77d278",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "3dd7a6f6028e1e455ba9aa758bad631208e8067ea953f9a7935e961ce5f35a3d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "541b730abdad62624f586055fe16e5e12e42bf24586abab2d23e35bf638989e3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "dd73d793d361e0320f781893708f2049d6eea3dde5c4d110cf82e4fa421e1d76",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/adapter.ts#searchWithDbSort",
+        "syntaxHash": "f2f769c77978be654ed924d47fa2701b4c7489be02671646b852d48841f46960",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/ImportPageContent.tsx#ImportPageContent",
+        "syntaxHash": "e9470db2971d8ac6c4a521252f369962cea0b0e1b1099ea6e0bd172dbd4a766e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/ImportScenarioForm.tsx#ImportScenarioForm/onSubmit",
+        "syntaxHash": "151155d0e9f2fd577d9bc94a43b0cf73e76249eee3f4637f4f927c7790bf09f1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/ImportScenarioForm.tsx#ImportScenarioForm/onSubmit",
+        "syntaxHash": "55065dced48cb8f20f52b8c864872d76bd6926ff21e7c9f03630a2417b4f5ea5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/ImportScenarioForm.tsx#ImportScenarioForm/onSubmit",
+        "syntaxHash": "5e74ca97ed3f828c68a5fa45eeb90e72ecd9d28dee16f0c7404c3636cb0e0eb1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/ImportScenarioForm.tsx#ImportScenarioForm/onSubmit",
+        "syntaxHash": "e50041bb0f444c89444916f17c99d36221aed83dbcfb9befe96d44c2397f0aa6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/ImportScenarioForm.tsx#ImportScenarioForm/onSubmit",
+        "syntaxHash": "f075b1c677c86585e89c8e063e042f87f61ed81f0fe554ee76c5f7fc07ced40d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/UrlInputStep.tsx#UrlInputStep/onSubmit",
+        "syntaxHash": "23edc1eb10f0a571bf3961e5483c2957fa39533a891860829a7c1ab626bbd0b5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/_components/schema.ts#optionalNumberString",
+        "syntaxHash": "85feee4b177b338336d3ddbad5c65899af8e83ff2cf905b94243c23d3eeaf579",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/import/actions.ts#createImportedScenarioAction",
+        "syntaxHash": "dfba3a5ade4201461c7d52bcf58517df1a622205fbc5d35154e22c07aa6076e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/layout.tsx#ScenariosLayout",
+        "syntaxHash": "0b2c2248e628217c8629776558c7a5e54c0be657acabf9f23467aeeecf3b41a5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/layout.tsx#ScenariosLayout",
+        "syntaxHash": "2ace57f75ef3e57805d803183216479a083332f358dc0d25724c5caff331d357",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm/onSubmit",
+        "syntaxHash": "151155d0e9f2fd577d9bc94a43b0cf73e76249eee3f4637f4f927c7790bf09f1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm/onSubmit",
+        "syntaxHash": "55065dced48cb8f20f52b8c864872d76bd6926ff21e7c9f03630a2417b4f5ea5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm/onSubmit",
+        "syntaxHash": "5e74ca97ed3f828c68a5fa45eeb90e72ecd9d28dee16f0c7404c3636cb0e0eb1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm/onSubmit",
+        "syntaxHash": "e50041bb0f444c89444916f17c99d36221aed83dbcfb9befe96d44c2397f0aa6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm/onSubmit",
+        "syntaxHash": "f075b1c677c86585e89c8e063e042f87f61ed81f0fe554ee76c5f7fc07ced40d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/_components/schema.ts#optionalNumberString",
+        "syntaxHash": "85feee4b177b338336d3ddbad5c65899af8e83ff2cf905b94243c23d3eeaf579",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/scenarios/new/actions.ts#createScenarioAction",
+        "syntaxHash": "34abed790e3a68ab0d4417e2c10709c52a9abd1dfb31cc131d777c10b54f235e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoEditForm.tsx#BasicInfoEditForm",
+        "syntaxHash": "5648dd47b64e62d0be5ec51312c46099334e1619a4d9b0aaa2b11c0c8dffa966",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoEditForm.tsx#BasicInfoEditForm",
+        "syntaxHash": "8d50a599a549377c182f950682ec37d053b568d38ab6c3b830eba4ac6ace28be",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoEditForm.tsx#BasicInfoEditForm/handleCancel",
+        "syntaxHash": "67ec0aa0a7f8707154ef715d6708cba978a2e1a653ed0b21948fdec85257f436",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoEditForm.tsx#BasicInfoEditForm/onSubmit",
+        "syntaxHash": "349ac865db362dee1fb07544b9b0a480841954b25c42ce90b9d70215efb701c6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoEditForm.tsx#BasicInfoEditForm/onSubmit",
+        "syntaxHash": "7661eae1ac192b806c13c9c6e6fad8844508c405db67d01445b0015dee40746a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/CancelApplicationDialog.tsx#CancelApplicationDialog/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/CancelApplicationDialog.tsx#CancelApplicationDialog/onSubmit",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/CancelSessionDialog.tsx#CancelSessionDialog/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/CancelSessionDialog.tsx#CancelSessionDialog/onSubmit",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/CompleteSessionDialog.tsx#CompleteSessionDialog/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ParticipantsSection/ParticipantCard.tsx#ParticipantCard",
+        "syntaxHash": "b73daf91e20bf8d3f88277c6bf02ba205a69eac742b84e7cb14892a3e0e84d9f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ParticipationRequestDialog.tsx#ParticipationRequestDialog/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ParticipationRequestDialog.tsx#ParticipationRequestDialog/onSubmit",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/SessionActions.tsx#SessionActions/handleActionSelect",
+        "syntaxHash": "6cd0a2141c5ff9870cdd256ab0cbb8e9ab49767338fa9843a48dc4f0df3d012f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/SessionActions.tsx#SessionActions/handleActionSelect",
+        "syntaxHash": "e4c565d8585bfb52c5d8d8a187df46bb7c747c121ee2755e2b1352ad5a9e1ed7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/SessionActions.tsx#SessionActions/renderActionButton/onClick",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/LinkFormDialog.tsx#LinkFormDialog",
+        "syntaxHash": "5e7463643ff1b6262dd7f76dbe5f300ceb9dfc723ea45b1e4fccf11b5c648c07",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/LinkFormDialog.tsx#LinkFormDialog/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/LinkFormDialog.tsx#LinkFormDialog/handleFormSubmit",
+        "syntaxHash": "ec75636f218e8c0cf71c6c253449ebf923e31008f84d1050035357e79d2f35ca",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/LinkItem.tsx#LinkItem",
+        "syntaxHash": "6692984d9a639b7a04a9a74c279a6f46b5ae23d074e3d1710d4d3b36aaece9e8",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/LinkItem.tsx#LinkItem/handleConfirmDelete",
+        "syntaxHash": "a80fe855128d8b1b2215472a8925ea3b58e81012e822b66d993f33f86bc49dc0",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/ToolsSection.tsx#ToolsSection/handleAddOrUpdate",
+        "syntaxHash": "44c563ba4fb4591c3b1f51cf6059f19fe33215e8e0945b8228a960e6c6f73d66",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/ToolsSection.tsx#ToolsSection/handleAddOrUpdate",
+        "syntaxHash": "6a2b84fe6be76e7a79bea8b188336568a7ebdbd01a5ca920138609b03dec19b7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/ToolsSection/ToolsSection.tsx#ToolsSection/handleDelete",
+        "syntaxHash": "221211c282c3c17d70f9c6930f41fa81226fe91049a334778f9a03f0ddfa20cc",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/WithdrawDialog.tsx#WithdrawDialog/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/_components/WithdrawDialog.tsx#WithdrawDialog/onSubmit",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/applications/_components/ApplicationApprovalContent.tsx#ApplicationApprovalContent/handleStatusChange",
+        "syntaxHash": "1e536de68feaf081c7bf17d985855b6f784a7bc4908ffb8b118d1625f9b280bb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/applications/_components/ApplicationCard.tsx#ApplicationCard/handleApprove",
+        "syntaxHash": "ca05f1780e9f3f49547cc5a30ececd98e91bdc359ebbc47dd3dcc92664321952",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/applications/_components/ApplicationCard.tsx#ApplicationCard/handleReject",
+        "syntaxHash": "145e58a7bea0de80e9b9bb8cb3b5c5a38e3c4a245d30ff672b3fabb26f7efb90",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/applications/_components/FilterBar.tsx#FilterBar",
+        "syntaxHash": "0179dc7ceb8e8482695a1dc545cd30823c12149dc62aff753c5acce50f4fffb2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/applications/_components/FilterBar.tsx#FilterBar",
+        "syntaxHash": "d060d9121783f0107432a6acf19dc3c0b243b49ebc252561e4eac462a67a180a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/applications/_components/FilterBar.tsx#FilterBar",
+        "syntaxHash": "efed9d26cd6e6b224d77bf15ff965b1b499686a6968b7fa117b17a5857044db3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/AvailabilityTimeBlockEditor.tsx#AvailabilityTimeBlockEditor/handleAdd",
+        "syntaxHash": "be1229d0dcc2109a3e565b7f7ad873a54fd5b630d29b94be216b8921a4d6a260",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/AvailabilityWorkspaceLayout.tsx#AvailabilityWorkspaceLayout",
+        "syntaxHash": "3b0fb6002cdf0908521fa7e57d53389b0af27dd26ce5e70b4ca7d6367dcd2944",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/BaseAvailabilityCalendar.tsx#BaseAvailabilityCalendar",
+        "syntaxHash": "1cf548a324dba5d2cab8ff656924f3c4c67f8c18d16740c945648649d16d1abc",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+        "syntaxHash": "7fd4c5eca9c8268dae71b3815e6b0ebe548ff51d5c76f406b1462ea3b2d7fe53",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+        "syntaxHash": "895e31fb636beacc4cdd0bc134a7454fbca8cb76639555aacf90290973e28ef2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace/addTimeBlock",
+        "syntaxHash": "d3469d8ec4c4113b7c3079335f504e9cf6892359d1d3cd05c31f89c16564c2d2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace/handleConfirm",
+        "syntaxHash": "c78eea8e947611fdbe32d2124a1fb5161bb18e12fc094934dc654a7c84b5ea3d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmSidebarContent.tsx#ConfirmSidebarContent",
+        "syntaxHash": "9a4248c8ebd756e9dbf8d21f9d4486dc2e16868c37e4aec99255fcf15a2985d8",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/SelectedTimeBlocksPanel.tsx#SelectedTimeBlocksPanel",
+        "syntaxHash": "c8cab79871085670db711b5333ff2fb447eabb3e4780b621b1271428d287c4a7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/SubmitAvailabilityWorkspace.tsx#SubmitAvailabilityWorkspace/handleSave",
+        "syntaxHash": "2e25997a6b8a84b7a57e8779407d15d1be977a15c9f5d90fcdeb688f3f98fb7f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/SubmitSidebarContent.tsx#SubmitSidebarContent",
+        "syntaxHash": "3b36d2f48d8a06b0c9ffc7b4956ac6a99b615f2c9b131e07fccc03def31bd7f1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/EmptyState/EmptyState.tsx#EmptyState",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/EmptyState/EmptyState.tsx#EmptyState",
+        "syntaxHash": "708244fbfcab2e3a49b726fb1b73bfac248d5e9954aad46c038c19e879c03322",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/FilterPanel/FilterPanel.tsx#FilterPanel/handleRoleChange",
+        "syntaxHash": "adb66131a10732c931d4adc9adca65782013d35ab07ecaa1c1f024feb87f10da",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/FilterPanel/FilterPanel.tsx#FilterPanel/handleStatusChange",
+        "syntaxHash": "a1b18bac989e76256bd68a317673e5cd0ba16b0b6ce311af06c779c4325d5a5b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/FilterPanel/FilterPanel.tsx#FilterPanel/handleSystemChange",
+        "syntaxHash": "03c665db15f939434ac64eedc8da7f08f7f1c7793196ebb54064008545982547",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/HistoryTab/HistoryTab.tsx#HistoryTab",
+        "syntaxHash": "28d76763f95f0a9007456d93678b835189bee01bea93a571be2c98a16b668603",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/HistoryTab/HistoryTab.tsx#HistoryTab",
+        "syntaxHash": "4bf6564b4648577818c22ee68ac1c7fdc8476ce93a911d276561479f48bc5001",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/HistoryTab/HistoryTab.tsx#HistoryTab",
+        "syntaxHash": "6c5bef0f7f7c0d1676e5357a0880259cb9d19c4407a00dbe8281dfd92cddf7c7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/HistoryTab/HistoryTab.tsx#HistoryTab",
+        "syntaxHash": "a1fcdade549ffd615fb922dacf95cd81078354cb13e6019b803553768d7ba11d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/LoginPrompt/LoginPrompt.tsx#LoginPrompt",
+        "syntaxHash": "9122a51e9ed20ca09214bfb06bca28e36f80710522fb09a6177d3c4324bcf2f8",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/PublicTab/PublicTab.tsx#PublicTab",
+        "syntaxHash": "4bf6564b4648577818c22ee68ac1c7fdc8476ce93a911d276561479f48bc5001",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SearchPanel/SearchPanel.tsx#SearchPanel",
+        "syntaxHash": "93ec0531ac7bb52ed975e2fb4273c2820d630b4e126d3f46b38b6f903553ee25",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SearchPanel/SearchPanel.tsx#SearchPanel",
+        "syntaxHash": "93ec0531ac7bb52ed975e2fb4273c2820d630b4e126d3f46b38b6f903553ee25",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SearchPanel/SearchPanel.tsx#SearchPanel",
+        "syntaxHash": "fd86af66013fa5b740b974b218cba4cfe91c9ee60ef6e1d50516693dc8887d85",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SearchPanel/SearchPanel.tsx#SearchPanel",
+        "syntaxHash": "fd86af66013fa5b740b974b218cba4cfe91c9ee60ef6e1d50516693dc8887d85",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SearchPanel/SearchPanel.tsx#SearchPanel/onSubmit",
+        "syntaxHash": "4e38f0573607b96013ebcd83d531cd0d883c516dc39aa4ce8c902357309f60e4",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SessionCard/SessionCard.tsx#MySessionCard",
+        "syntaxHash": "45f13648f85abf8778f4a26481f1fd8d8f1a79255236fbd191eedbb739851cad",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SessionCard/SessionCard.tsx#MySessionCard",
+        "syntaxHash": "a51dffb916dc61b074f1ca664bd209f89c8f5a987de20d9f47edb45b7cf83c6c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/SessionTabs.tsx#SessionTabs/handleProtectedTab",
+        "syntaxHash": "9f4e3f60827ddd847527b58ca07d2b39cc0e703240fb85e2bd54985909abed63",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/_components/UpcomingTab/UpcomingTab.tsx#UpcomingTab",
+        "syntaxHash": "4bf6564b4648577818c22ee68ac1c7fdc8476ce93a911d276561479f48bc5001",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getHistorySessions",
+        "syntaxHash": "00b19e172c548021469bffebaec5a28bcbec643c55dbc336519fefcfbb312708",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getHistorySessions",
+        "syntaxHash": "541b730abdad62624f586055fe16e5e12e42bf24586abab2d23e35bf638989e3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getHistorySessions",
+        "syntaxHash": "f2a65c3d1882eb95a3b0b8c3d0117ca40b6ebd6a6c62ac3314a0e6c4842ab6d9",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getHistorySessions",
+        "syntaxHash": "f2f769c77978be654ed924d47fa2701b4c7489be02671646b852d48841f46960",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getUpcomingSessions",
+        "syntaxHash": "541b730abdad62624f586055fe16e5e12e42bf24586abab2d23e35bf638989e3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getUpcomingSessions",
+        "syntaxHash": "f2a65c3d1882eb95a3b0b8c3d0117ca40b6ebd6a6c62ac3314a0e6c4842ab6d9",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#getUpcomingSessions",
+        "syntaxHash": "f2f769c77978be654ed924d47fa2701b4c7489be02671646b852d48841f46960",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#searchPublicSessions",
+        "syntaxHash": "541b730abdad62624f586055fe16e5e12e42bf24586abab2d23e35bf638989e3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#searchPublicSessions",
+        "syntaxHash": "77a8990cea81e450049cb0d71a2da662ae46578ccc88dc2b911ede8b6d13de73",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#searchPublicSessions",
+        "syntaxHash": "7d9530a795936e8ce0e8948fc7c1a8f017e789c7fbd66e87871bb6bc7c63b25e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#searchPublicSessions",
+        "syntaxHash": "f2a65c3d1882eb95a3b0b8c3d0117ca40b6ebd6a6c62ac3314a0e6c4842ab6d9",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#searchPublicSessions",
+        "syntaxHash": "f2f769c77978be654ed924d47fa2701b4c7489be02671646b852d48841f46960",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/adapter.ts#searchPublicSessions",
+        "syntaxHash": "f2f769c77978be654ed924d47fa2701b4c7489be02671646b852d48841f46960",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/OtherSection.tsx#OtherSection",
+        "syntaxHash": "75a940fe370ffaa1af1330d32de7eb2f69fb42869dc28faa994d962d7730df5b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/OtherSection.tsx#OtherSection",
+        "syntaxHash": "8b91834e7878a8d31d2c37c8a9dac003f3ec7623c0c82578daa378a2b7e213e1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/OtherSection.tsx#OtherSection",
+        "syntaxHash": "8d50a599a549377c182f950682ec37d053b568d38ab6c3b830eba4ac6ace28be",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/OtherSection.tsx#OtherSection",
+        "syntaxHash": "bf239821679de070e0fabe9d599e3abb97a361d440597a126dcb17c4f5cda8be",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberListItem.tsx#MemberListItem",
+        "syntaxHash": "340b171c8a8a1db85e6cd45bb3e977020d9b67649cf1e9375c94e0be46d7c707",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.tsx#MemberSearchInput",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.tsx#MemberSearchInput/handleInputChange",
+        "syntaxHash": "93caa003b13df76885c4603ba89d5e1a4e5519b3cb0b08dff4c296d9807a592f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.tsx#MemberSearchInput/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.tsx#MemberSearchInput/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.tsx#MemberSearchInput/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 2
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.tsx#MemberSearchInput/handleSelect",
+        "syntaxHash": "2e8e288cfbe2c31b36434fd32fe30b879ef6a9402cded0efa3706a944a56423c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ParticipantsSection/ParticipantsSection.tsx#ParticipantsSection",
+        "syntaxHash": "5c83f9707e2b6c4deec33cbed45f8111f479c02263106658626b59094ed239aa",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal",
+        "syntaxHash": "00d858265dee48de1fde74b14dbe3b33f4af7b60665125b609388b3965b34810",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal",
+        "syntaxHash": "0d8882efd9cccdd17e8f5afc8c4939e09e21d6b69cb19822e676e52626671626",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal",
+        "syntaxHash": "5b4462d0e89fbbaa89c2336b5fa874a60b9d665bbaace0435277a979c7a43466",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal",
+        "syntaxHash": "7ec5acad8f49645addb142bb841a9305a7322833a390815c7289d7e76c6524ce",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal",
+        "syntaxHash": "9bf71e179306a35e644881b616cd9cc391ee68d8558728c3f868a10c9b565c64",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleConfirm",
+        "syntaxHash": "70943ed4c84a7018b1ffcb96c255cf4f303e96818ae0b23e110766365497c850",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleIdOrUrlChange",
+        "syntaxHash": "0531af57c187fa1cee5723c47c7350201ed79c6ab9a65b147a9aad7480c7023d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 2
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleQueryChange",
+        "syntaxHash": "ed54fdfee9479f5d4548d18ce53600d52346b15430a75d9dd4f7f5d41305a1eb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleSmartFilterToggle",
+        "syntaxHash": "c034ae95111c635ef47d273c4fd8eed6227e5730f9ebcf65ede7626fad576497",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.tsx#ScenarioSearchModal/handleSystemChange",
+        "syntaxHash": "7176d44aca3dcdf8375af27736da84b1b76af08a386beebe003141bdcdc59fb6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSelectSection.tsx#ScenarioSelectSection",
+        "syntaxHash": "118be838e4f8a4eb0d201a5af3918b18c9cffdaa97c33ce21744fed7ea2f1d8f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSelectSection.tsx#ScenarioSelectSection",
+        "syntaxHash": "d8f8c93c566c242173e674520c5b5403d60c1e80190db0fd4ab89cfbb1a319f1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/SessionForm.tsx#SessionForm/onFormSubmit",
+        "syntaxHash": "d4e8867242bc61f88b7d4786a52412cda1cfd745dc4f984cce51731d460eb957",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/SessionFormContainer.tsx#SessionFormContainer/handleSubmit",
+        "syntaxHash": "6301a91f55fa7742b63e53bd8e1689e4261c199b2ceccaa88cc91c686e86184a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/_components/SessionFormContainer.tsx#SessionFormContainer/handleSubmit",
+        "syntaxHash": "c24975658da3b097e58f39e635816e8f20f812d7461137a64228c713f625be7e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/actions.ts#applySmartFilters",
+        "syntaxHash": "80dca305457ae9b2bd2d9ae181e94ed5af0656a0602bd24d0af7b88a9f89388a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/actions.ts#applySmartFilters",
+        "syntaxHash": "d48891c3b6996112a07489613372fabd2480b31b57593368c5584401f93f8c21",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/actions.ts#applySmartFilters",
+        "syntaxHash": "d6025a3e3ab0aee19aa40c6ccfa8bacee85252d82ca6d2c2df4a8701ec93a5a3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/(main)/sessions/new/actions.ts#applySmartFilters",
+        "syntaxHash": "dba60ff3b712b1a6027b5f10ce4811625fa7254f59e6da1bd9fe1d5ebc01a8e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/_components/DiscordLoginButton.tsx#DiscordLoginButton",
+        "syntaxHash": "2bb9ce4f8f0c7ab7c05c4adb9d0e79940fb88de3703f531dd5b1b1311819e326",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/api/upload/route.ts#POST",
+        "syntaxHash": "19064d906b7f2f66705a98096044151a618393acb1213fc2c21c76dc5a952979",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/app/api/upload/route.ts#POST",
+        "syntaxHash": "577d9e0464d0fe244e7cc715be91af71d5f959dc4c26aa5b281229cceb0a8e58",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ApplicationModal/ApplicationModal.tsx#ApplicationModal/handleClose",
+        "syntaxHash": "4e222fc72feb82e4f6d8f45911ab6805ebcae818af970c2b596e9e37f8ed28bb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ApplicationModal/ApplicationModal.tsx#ApplicationModal/handleSubmit",
+        "syntaxHash": "30b8264c8f8a258560116facf4dd7d14ed5245fa6191b25fbf9b0b2a6d8e4f57",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ApprovalModal/ApprovalModal.tsx#ApprovalModal/handleApprove",
+        "syntaxHash": "5f78766a82267d37318574a851904dcbe1e69161c5735b38a2db9efa04bce21c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ApprovalModal/ApprovalModal.tsx#ApprovalModal/handleClose",
+        "syntaxHash": "4e222fc72feb82e4f6d8f45911ab6805ebcae818af970c2b596e9e37f8ed28bb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ApprovalModal/ApprovalModal.tsx#ApprovalModal/handleReject",
+        "syntaxHash": "892cf0355c5df2d1a8adc1dcb75f485c26b47aae4775cb9c15fcb671f6b6648b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/AuthPrompt/AuthPromptDialog.tsx#AuthPromptDialog",
+        "syntaxHash": "d6db58f04568a865a610095b2abd85eddbece45a72f01e8e962229178db8b6e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/AuthPrompt/AuthPromptProvider.tsx#AuthPromptProvider/handleContinue",
+        "syntaxHash": "2f16ae2a65719d7b596061b21b18cf180b81aa15f04cf5eee0acf35c4a2b2261",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/BottomNav/BottomNav.tsx#BottomNav",
+        "syntaxHash": "1a8819e35fcec263f567ea4f9f35bfbf01bd8759d0af86117d6f08c2d15a3667",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/BottomNav/BottomNav.tsx#BottomNav",
+        "syntaxHash": "4f7a71e08e4ca990a5f73629ed4d01975e270312ff8b07223fd50c1c4133830d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/BottomNav/BottomNav.tsx#BottomNav",
+        "syntaxHash": "824901f36006ed657320bc1f728f3e17ac225826a731f125a44aa5d36ae8e092",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/BottomNav/BottomNav.tsx#BottomNav/handleActionClose",
+        "syntaxHash": "4f7a71e08e4ca990a5f73629ed4d01975e270312ff8b07223fd50c1c4133830d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/BottomNav/BottomNav.tsx#BottomNav/handleProtectedLink",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/BottomNav/BottomNav.tsx#BottomNav/handleProtectedLink",
+        "syntaxHash": "252fbfa0ad0489cef9221f93698274114e35ffb23475492675a4cdcf019461b1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/CancelModal/CancelModal.tsx#CancelModal",
+        "syntaxHash": "5bc38482ecfeb60266f85a80f71e42ec27127446d0384676a869ae858976ae16",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/CancelModal/CancelModal.tsx#CancelModal/handleClose",
+        "syntaxHash": "4e222fc72feb82e4f6d8f45911ab6805ebcae818af970c2b596e9e37f8ed28bb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FeedbackModal/FeedbackModal.tsx#FeedbackModal",
+        "syntaxHash": "0249b4b94a7ee72af863fffb073d945c7e826d01887c084e06fd244a349c6f65",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FeedbackModal/FeedbackModal.tsx#FeedbackModal",
+        "syntaxHash": "d17a5d276b5898667ad2998061e029e59bb820db7ef1c3acde2ede568e99b03d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FeedbackModal/FeedbackModal.tsx#FeedbackModal/handleClose",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FeedbackModal/FeedbackModal.tsx#FeedbackModal/handleModalOpenChange",
+        "syntaxHash": "179c5b6d8083865f817c22e9165b866fa6eb737bf33e033b695a2386c5b1f38c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FeedbackModal/FeedbackModal.tsx#FeedbackModal/handleSuccess",
+        "syntaxHash": "f05feb43e053d17487b7c1624fca213c93cb5458820769fe65f2a8769e0869e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet",
+        "syntaxHash": "2ae0950cf2eab3bcf4ba687a64415fe5a83314e1d7d822ab6f66f937e9446615",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet",
+        "syntaxHash": "2ae0950cf2eab3bcf4ba687a64415fe5a83314e1d7d822ab6f66f937e9446615",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet",
+        "syntaxHash": "d6db58f04568a865a610095b2abd85eddbece45a72f01e8e962229178db8b6e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet",
+        "syntaxHash": "d6db58f04568a865a610095b2abd85eddbece45a72f01e8e962229178db8b6e6",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet/handleApply",
+        "syntaxHash": "af11d05763195da8e0a9f44275d4479ae944276c1335f4001e6906754e5edbfb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet/handleApply",
+        "syntaxHash": "d6db58f04568a865a610095b2abd85eddbece45a72f01e8e962229178db8b6e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterBottomSheet/FilterBottomSheet.tsx#FilterBottomSheet/handleClear",
+        "syntaxHash": "9ff924922837115ec8bb4b966ec28c511176c3b2b089aa99d77497a22e5b5423",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/FilterPanel.tsx#FilterPanel",
+        "syntaxHash": "1e27753ed44c7711c4637376851d1a666a8818fb2d974449e08513846ab39f6c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/FilterPanel.tsx#FilterPanel",
+        "syntaxHash": "438b39ee1a6234ddd1891369b9e676f0d58bbeff49ee38027e2833b565f36d73",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/FilterPanel.tsx#FilterPanel/handleClearAll",
+        "syntaxHash": "9ff924922837115ec8bb4b966ec28c511176c3b2b089aa99d77497a22e5b5423",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/FilterPanel.tsx#FilterPanel/handlePlayerRangeChange",
+        "syntaxHash": "6dbafba143ed8a0fc0afa5b7e4bf75a304a7e85d7a4c81f9e77f10075ff5ce2f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/FilterPanel.tsx#FilterPanel/handlePlaytimeRangeChange",
+        "syntaxHash": "f69f61e5b7be467319108e0090c703ce2d651344a5abe4a51880d1ca9c50bd9c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/useFilterState.ts#useFilterState",
+        "syntaxHash": "3ee9d2493725d8d93fc21c5c0d1e1c591389e1509e672a91fb6d0a5715ea761e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/useFilterState.ts#useFilterState",
+        "syntaxHash": "cce2b7c005a9cca56c2dc5512479e8bc421a3631fcc7ba01e2e9724d641574f2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/FilterPanel/useFilterState.ts#useFilterState",
+        "syntaxHash": "e5b8a92d55350cdc888da32fb599d2f64ed633a9f61bc96e426d4249d4b938b1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/GlobalHeader/index.tsx#GlobalHeader/handleClickLogin",
+        "syntaxHash": "2bb9ce4f8f0c7ab7c05c4adb9d0e79940fb88de3703f531dd5b1b1311819e326",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/GlobalHeader/index.tsx#GlobalHeader/handleHomeClick",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/GlobalHeader/index.tsx#GlobalHeader/handleHomeClick",
+        "syntaxHash": "95b9e88fbc4ca7d62dbe01d09f0711ba45f70fd15a86abc1dc3783f0498ca48c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/Profile/ProfileEditForm.tsx#ProfileEditForm/onSubmit",
+        "syntaxHash": "6e90e3050be28d7c8339bfc534e59e63beddf2e2fd7c9212570f844d71e0e64a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ScheduleCalendar/ScheduleCalendar.tsx#ScheduleCalendar",
+        "syntaxHash": "2d1ee09f98a6669d934106e6d34747fc98d3bf3cb1df0cc8ca51dbe5dd62a93b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/ScheduleCalendar/ScheduleCalendar.tsx#ScheduleCalendar",
+        "syntaxHash": "dfbe48e3d8323cf5904cfb4912a4ce49975d434c49377eb9c7272cad277a397a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SectionToc/SectionToc.tsx#SectionToc/handleClick",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SideMenu/SideMenu.tsx#SideMenu",
+        "syntaxHash": "2bb9ce4f8f0c7ab7c05c4adb9d0e79940fb88de3703f531dd5b1b1311819e326",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SideMenu/SideMenu.tsx#SideMenu",
+        "syntaxHash": "2bb9ce4f8f0c7ab7c05c4adb9d0e79940fb88de3703f531dd5b1b1311819e326",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SideMenu/SideMenu.tsx#SideMenu/handleHomeClick",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SideMenu/SideMenu.tsx#SideMenu/handleHomeClick",
+        "syntaxHash": "95b9e88fbc4ca7d62dbe01d09f0711ba45f70fd15a86abc1dc3783f0498ca48c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SignupModal/SignupModal.tsx#SignupModal/handleStart",
+        "syntaxHash": "322511a529894906622ce7ebbd4b0c92d59ab7e1bf6468e5041d25db7885ad1e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SignupModal/SignupModal.tsx#SignupModal/submitAllData",
+        "syntaxHash": "8c40ba9f28c2c2d29dfde3863ebcaccd5623203a4810208477b42bb487e040d6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialFAB.tsx#SpeedDialFAB",
+        "syntaxHash": "1a8819e35fcec263f567ea4f9f35bfbf01bd8759d0af86117d6f08c2d15a3667",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialFAB.tsx#SpeedDialFAB",
+        "syntaxHash": "4f7a71e08e4ca990a5f73629ed4d01975e270312ff8b07223fd50c1c4133830d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialFAB.tsx#SpeedDialFAB",
+        "syntaxHash": "824901f36006ed657320bc1f728f3e17ac225826a731f125a44aa5d36ae8e092",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialFAB.tsx#SpeedDialFAB/handleActionClose",
+        "syntaxHash": "4f7a71e08e4ca990a5f73629ed4d01975e270312ff8b07223fd50c1c4133830d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialPanel.tsx#SpeedDialPanel/handleLogin",
+        "syntaxHash": "2bb9ce4f8f0c7ab7c05c4adb9d0e79940fb88de3703f531dd5b1b1311819e326",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialPanel.tsx#SpeedDialPanel/handleLogin",
+        "syntaxHash": "d6db58f04568a865a610095b2abd85eddbece45a72f01e8e962229178db8b6e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/SpeedDialPanel.tsx#SpeedDialPanel/handleNavigate",
+        "syntaxHash": "d6db58f04568a865a610095b2abd85eddbece45a72f01e8e962229178db8b6e6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SpeedDialFAB/useSpeedDial.ts#useSpeedDial",
+        "syntaxHash": "4f7a71e08e4ca990a5f73629ed4d01975e270312ff8b07223fd50c1c4133830d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/blocks/SystemMessage/SystemMessage.tsx#SystemMessage",
+        "syntaxHash": "1e07304b927def49744e96cad713758b85a1c8766c658af7975db4657b663ad3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/Pill/Pill.tsx#Pill/handleClick",
+        "syntaxHash": "a72190b3f05e429f0b565da3e961d415c4995de53f042683f8bfd32530e4cb76",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/Pill/Pill.tsx#Pill/handleRemove",
+        "syntaxHash": "89d8e14bc1468a36bdb60005f1018a1202d747a832af4c9feff03d25919e60f7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/Pill/Pill.tsx#Pill/handleRemove",
+        "syntaxHash": "8a18414a68aa5c689a48bf8f9618b440fdb5224b4f8fb60a0dd867cf65d715e5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "36344146d7f05421d6ad58f7e29cda984f81ed337ec8d2e63cdbd4d8ebf8c0bd",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "4ff047074f2cf097c036abd6118d683bb5f4af72e7c709c56b1baec40c270a2a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "64205a21e96ecff133fd565c2a03c360be26df7a2e57a9d88828cc5457041840",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "8a18414a68aa5c689a48bf8f9618b440fdb5224b4f8fb60a0dd867cf65d715e5",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "bbfeeadcad42f91217b2808fe8bcab23d72c7be3825de8b6b8364070900dfea6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "ded8204d7b251d877b7501b78067083680b0207e5b2d8381ebf064af01908588",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/alert/alert.tsx#Alert",
+        "syntaxHash": "e1d2a141ccc95c829b7010fb20dd0e288986e1ec86f1bf7a7552ec0a19ff3b20",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/date-picker/date-picker.tsx#DatePicker",
+        "syntaxHash": "4382e7b7ca942961e9382425045b69955c4f0e9cd4a1a888633fccf01991dca7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/date-picker/date-picker.tsx#DatePicker",
+        "syntaxHash": "baf60f3b1aa571b35f4a17e9625354f4c4fb724c667ffecfa59b0427b7fffa4b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/dropdown/dropdown.tsx#Dropdown/handleItemClick",
+        "syntaxHash": "9f555402b094058858862e7cd7808a4d1f0d6446b1e9946c3b7911f47ae50f66",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/dropdown/dropdown.tsx#Dropdown/handleItemKeyDown",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/dropdown/dropdown.tsx#Dropdown/handleTriggerKeyDown",
+        "syntaxHash": "1020445329f178e6765908b38890ae4146cc0121eccafdf261078c279caf6a0f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/pagination/pagination.tsx#Pagination",
+        "syntaxHash": "283a6cb2af0937f99d52ade2c323816c9a834b3542bf4c1bdfc636ba591edcf2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/pagination/pagination.tsx#Pagination",
+        "syntaxHash": "60e616a2310e7efc2de405b15b0ff2ac851f9bb077b748a27ee040c06664d821",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/pagination/pagination.tsx#Pagination",
+        "syntaxHash": "fede7bde2250fa96fd214e73f9d1aaf1eb23024e9a0bd8bbce1502e9d7f1b225",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/rating/rating.tsx#Rating/handleClick",
+        "syntaxHash": "0a22bcb725941c09426ff637d6ab1973a8bad2cbccbeb37b3a05d83027f60ba1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/slider/slider.tsx#SliderValueDisplay",
+        "syntaxHash": "05009a6dbf75e12ce8e688dce475a8110a4c235675c87d927d3c362855f3ea93",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/slider/slider.tsx#SliderValueDisplay",
+        "syntaxHash": "05009a6dbf75e12ce8e688dce475a8110a4c235675c87d927d3c362855f3ea93",
+        "occurrence": 1
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/slider/slider.tsx#SliderValueDisplay",
+        "syntaxHash": "f0bf4d4b023efdfed087176146382e8273734adb5cf582567678f84be4d15938",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/tags-input/tags-input.tsx#TagsInput/handleAddTag",
+        "syntaxHash": "5776c2d5640823b91490027e33871443c0090573d0b52e5fa3a1f41629636b52",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/tags-input/tags-input.tsx#TagsInput/handleKeyDown",
+        "syntaxHash": "15004db357b600075f34b9312fea3f29646e1bda922d118bdaec79f36e2b35a1",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/tags-input/tags-input.tsx#TagsInput/handleRemoveTag",
+        "syntaxHash": "5776c2d5640823b91490027e33871443c0090573d0b52e5fa3a1f41629636b52",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/toast/toast.tsx#Toast",
+        "syntaxHash": "4e222fc72feb82e4f6d8f45911ab6805ebcae818af970c2b596e9e37f8ed28bb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/toast/toast.tsx#Toast/handleClose",
+        "syntaxHash": "4e222fc72feb82e4f6d8f45911ab6805ebcae818af970c2b596e9e37f8ed28bb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/toggle-group/toggle-group.tsx#ToggleGroup",
+        "syntaxHash": "86a950a31e45601dc0c28ee651174b6a5535ad58cf134ec5b6338ef2afc0a460",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/elements/toggle-group/toggle-group.tsx#ToggleGroup",
+        "syntaxHash": "b542e9c94d24607f315448fa67d174babb8107edebcdfff3bc04bdc8bf108bf7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/utils/create-style-context.tsx#createStyleContext/withProvider",
+        "syntaxHash": "6cd5724182ca0075ef7cb0917faf49db6d8d640cafe9ceec2e96a991a076b6e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/utils/create-style-context.tsx#createStyleContext/withProvider",
+        "syntaxHash": "a02c01b09a6e68422249cacfa6d6ff5af0fa3a4bd6a500f33978e619d8909a0a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/utils/create-style-context.tsx#createStyleContext/withRootProvider/StyledComponent",
+        "syntaxHash": "6cd5724182ca0075ef7cb0917faf49db6d8d640cafe9ceec2e96a991a076b6e7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/components/utils/create-style-context.tsx#createStyleContext/withRootProvider/StyledComponent",
+        "syntaxHash": "a02c01b09a6e68422249cacfa6d6ff5af0fa3a4bd6a500f33978e619d8909a0a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/context/auth-context.tsx#AuthProvider",
+        "syntaxHash": "365be352b0c32f5984aeebf00cdb8832e50f7aebaef1ce627f214ba582c9e013",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/context/auth-context.tsx#AuthProvider",
+        "syntaxHash": "f59727e336f5fc53538c583c5a1b5f98faaf5e27790080883e0f596f8f3c6490",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/db/helpers.ts#resolveCurrentAppUserIdByAuthUid",
+        "syntaxHash": "0d108cd4a7e2457f2df7719905f3f45886fac46318e6a774e8040dd556b883b2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/db/helpers.ts#resolveCurrentAppUserIdByAuthUid",
+        "syntaxHash": "1f4c3ee0b6cacd3376001a87f326f9ca05da173ab763359aca62f5558669d825",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/db/helpers.ts#resolveCurrentAppUserIdByAuthUid",
+        "syntaxHash": "9879ff829f826d5cc0e9f2ae4d75ff75bc69df4dd0b00da710db7a1d3bc7daf8",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/db/helpers.ts#resolveCurrentAppUserIdByAuthUid",
+        "syntaxHash": "d4fa0fc7843d10c0d489d43a707561d8cb0bd9f328901cad788dffdda4e1bb69",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useBottomNavSlot.tsx#useBottomNavSlotTarget",
+        "syntaxHash": "13a91ac5221a4e9b8e22d3a11ef0111f36d97188197f4d6fe5415237eaad41db",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useBottomNavSlot.tsx#useBottomNavSlotTarget",
+        "syntaxHash": "a54c34eee7a476c8f26464717974fd6f64d073ec2d9d362f7f1e64ac5753ee02",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useDiscordAuth.ts#useDiscordAuth",
+        "syntaxHash": "108320d6c8121efb115a3206986f704d0d2925b2123c914b29087743df2ffef4",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useDiscordAuth.ts#useDiscordAuth",
+        "syntaxHash": "87c2edb4e2eb9701b4e254fe7e647a073cfaeed02621d9db8f90c09bc1810a5f",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useDiscordAuth.ts#useDiscordAuth",
+        "syntaxHash": "a34d90519865849779942c3ee137aa964bb4c822c713fdadd2582725fb480c67",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useImageUpload.ts#useImageUpload/handleImageRemove",
+        "syntaxHash": "72f28fd933a5ffc6c9b92e4d67bd541b2ce0bee087fc42a104c996fd2a5ae4b2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useImageUpload.ts#useImageUpload/handleImageRemove",
+        "syntaxHash": "793f7ab8798e01a83994f35885ab90f53c48c8796d813f05f3bb103ad9feb622",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useImageUpload.ts#useImageUpload/handleImageSelect",
+        "syntaxHash": "98241f38c270c8e32d56a7bf145124b10bf069162c3926eaa70b39f48738fe6e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useImageUpload.ts#useImageUpload/handleImageSelect",
+        "syntaxHash": "d1d2ab5ad8a69598c59ca69124f521246b8d6bb09e097ad5a5abec46c3dac8a3",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useRangeInputs.ts#useRangeInputs/handleMaxChange",
+        "syntaxHash": "2a4df4b84476df080736c3ed0ac203756329269a27c6e242a6ff54f63cdf6258",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useRangeInputs.ts#useRangeInputs/handleMinChange",
+        "syntaxHash": "07519241c70cfadca1f4447c939e75426bae4f18ac4862dbe00fb77ab6b42a1e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useRangeInputs.ts#useRangeInputs/handleSliderChange",
+        "syntaxHash": "2f6115e27272228df98ce2dfd38b3b9b9e5eb2d4956376b521b530931f2dceb4",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/hooks/useRangeInputs.ts#useRangeInputs/handleSliderChange",
+        "syntaxHash": "c31383cc730d89f3a33fd55bcc11431b0782a38ba0e0da2e9dbdedac225c041c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/instrumentation.ts#register",
+        "syntaxHash": "a326baf2d82dc244abe180ca5b8e1bed67985de65d541af726dd3c53d8657288",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/create-style-context.tsx#createStyleContext/withProvider",
+        "syntaxHash": "3598c1543044ff55518b4a148e8587c627addbb63164a96bba411accc0edc68b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/image.ts#canvasToBlob",
+        "syntaxHash": "61f06c99c70434f06e13637477b171dd1de1a87c25a73f79c5abc4cceb20d6ac",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/image.ts#canvasToBlob",
+        "syntaxHash": "63cb67af8067c1589f5efc7ac3ce176a2a45afedc54a3e867795b9f37e8aae77",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/image.ts#loadImage",
+        "syntaxHash": "a66f98179b5444aeb4c7fcf6eb1526069aacad41438fa3be572584f5fcdd35cf",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/image.ts#loadImage",
+        "syntaxHash": "dc9228d5ad7cbfc9ad25459586d7c117af16534cde7f906e8f192958bf934694",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/scenario-fetcher/index.ts#parseBooth",
+        "syntaxHash": "057c604673da8d1377affc0570214dd7abb440639e6aa1e41199c37eb4160bd6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/supabase/middleware.ts#updateSession",
+        "syntaxHash": "0d16a84d24268219ae50753ca5da576a5a8692c61a503b9ec8c23697734122c2",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/supabase/middleware.ts#updateSession/cookies/getAll",
+        "syntaxHash": "cd62429f229bed1f2af979eb2048246910260b668f3ffe152ddf8f5f224579e4",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/supabase/middleware.ts#updateSession/cookies/setAll",
+        "syntaxHash": "0c80a1d18cdc2f00360561b2ffc45d52b7d0c66affa0f6f3ab90e412f54d8606",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "function:src/lib/supabase/middleware.ts#updateSession/cookies/setAll",
+        "syntaxHash": "a0479f3fcf4c01d82f2a52f3f5ff27e7c10e9d2f355652fdb278ba87c78bf5db",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/_components/schema.ts",
+        "syntaxHash": "0695da806de1525127e17838e82ade2af1edec88646dad35632142da63766544",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/import/_components/schema.ts",
+        "syntaxHash": "188bf1205fe7d31782dcbfdbab63390b3b4e243a61954bf65e329f215f007d17",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/import/_components/schema.ts",
+        "syntaxHash": "496167646e6ebd3ed330b7f0e5361620bbe08744e64f481eea72f625992115d6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/import/_components/schema.ts",
+        "syntaxHash": "7a5a22c37a95783e5e5a2f934f5312841d55b120f4a7b4fdb274509ae1b149a9",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/import/_components/schema.ts",
+        "syntaxHash": "c8bf81ba3db8664bce967bad09edc80a4527881f99add8087e4bae2c60c094fd",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/new/_components/schema.ts",
+        "syntaxHash": "188bf1205fe7d31782dcbfdbab63390b3b4e243a61954bf65e329f215f007d17",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/new/_components/schema.ts",
+        "syntaxHash": "496167646e6ebd3ed330b7f0e5361620bbe08744e64f481eea72f625992115d6",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/new/_components/schema.ts",
+        "syntaxHash": "a68cff75bc3c5abd1d8cb296aeea441581e3519a8e8e5afe19a218be016a64a7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/scenarios/new/_components/schema.ts",
+        "syntaxHash": "c8bf81ba3db8664bce967bad09edc80a4527881f99add8087e4bae2c60c094fd",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/sessions/[id]/schedule/availability/schema.ts",
+        "syntaxHash": "f12fcc3c24324ed6e4ce1a002c1b599cde2c706a74b1042287d7c6d2860e050b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/sessions/[id]/schedule/confirm/schema.ts",
+        "syntaxHash": "202c8095e2e0a0e46af8e752de86d51bf66265dd10bc994bb648d61b970b8dfb",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/sessions/[id]/schema.ts",
+        "syntaxHash": "071e08a9b4b367e1909f648d9e98fc28a4d72cf5107962a07a546f6d6945e4a0",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/app/(main)/sessions/new/schema.ts",
+        "syntaxHash": "9162ca1362a2e5ddcb9aaf6b8c521e24de6a43419dedacb1c7a481597b2c990b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "164884b6762a092dcb2b04462a56282fb218d88581f8a68137e12f2967c57d36",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "17aa5a6450d44104095add5ad631b4685651df4f2ecbbb71e1efbf9aca94f430",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "1b2633ed438a530c9550f1efc3942f46329ccab915da84b449f806460cb7cf16",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "671f386666d63e0371b90f30476063d06c0d4d3eba5078283674248a159652c9",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "9b78b69febc1621c11b407adc127b95b0e9964ae49f5d9ff6049c6d0bd252c07",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "cb5832b3c6c0b5cdbba4eb6e762889776dfe951a4a442cefdd2a4645bb8aed85",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "d6708866be886436265afd9c1e709028c1ad89cfb5c1dba201569d594649738e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "d6cb4e92de9cfa7a130cee55dafdae74c61deac74660f3d1cf6a9f5f782bee90",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "d84914f3b3315d3b439d3d58bf726485bbab1106dd6e38339e0f1507a4b27d1b",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/combobox/combobox.tsx",
+        "syntaxHash": "e4b40c7dce18d9a5a466cdc9837b0b14dc5fa244ffdb14c72199c9f7a22b137a",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "0707f3113341e7f8385871d5ccb33945964c9524ed1cbe1a965fb10b5e2e55da",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "0b22ca839c66b0a2ca665e9da8fd06890658722fa200e52e0719f37f4e30b4c0",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "0f0860dc515dae7d09024f01e323c51d4bd347148de09098f883608d9c01ead8",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "10616caf65de3df6698570904c2430681343af9cf52eb4877622846d8682af7e",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "2861f337dd24b24aa2f87566f525d726c8865232cfa1b2f879176067a09935ad",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "3352d7399758abbd855905c5288239d0db7abde66e6b003b90778704c41fa322",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "9d43e3f0600504a56e5f9ce8b66657f19cb2a35bf6e921b22a251b32820f1b42",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "b379237b4e4dc9729ee34d1790f690ec6178325cffa4f8f80b2c0ab02acf2114",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "bd1de618110bdf88b42217c98fca947b874f8db212776541ce301c7bfacec079",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "c5ce8f8f4e568a692fe294ae0441a455607ded0c0ead1a9c5c1dac56317d6727",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "cf28dec9bf1ae790bf970939ebf44f4ad8a870175728ed976c6dbc6aae7a0125",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/menu/menu.tsx",
+        "syntaxHash": "de5cb1e0cd48252a08ae07538b8d670d0e29ac7bb5977df662734f632d362384",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "0a57adefceaf3d61dd9b07c08580d24f7e8b719ef8ae22cf9cd6500fb2b1a837",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "51ea313b2b65173cccca11d74c74092fe20268337a2d8b43ad65df7a2b4f9280",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "61e20c7729c145aee4d9248842b9324d464d62e64af08bbbd619943d39b22b46",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "740c3dc4e788233fc6167542eda520c80edec7835b9fe44e8f078a7736125f6d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "7ac7833cdb9415678f87a53ab8eb461cf6c6ef9dc733146e34a8060f78eb7950",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "7fdabe5ca3ac2a35636319f843a509c69136c9b9cd3d60830696a38065798895",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "857fbd779f9e26b7bd6c61ae7e900d16b82dc81a7d29628c5ff42b35549d1aea",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/components/elements/select/select.tsx",
+        "syntaxHash": "a881d3b3eb7adbb4b51f7500d7ffd410825f5c0d8e318ed12098b01e1eda90f7",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/store/systemMessage.ts",
+        "syntaxHash": "36d5d95812efc9c38da7a5494fa2090f0ab6879be12c0ddb979f734d6bf8b82c",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/store/systemMessage.ts",
+        "syntaxHash": "6ef0823fdd4911cf4ca8d2f8621f0324ded347455991c2ed2c06abb4c68c1410",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/store/systemMessage.ts",
+        "syntaxHash": "92dd1d3bc2d3a7648929a4c91a5f22dd234c179663306d25b0bb0bb3d2b0f02d",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_CALL",
+      "anchor": {
+        "ownerId": "module:src/store/systemMessage.ts",
+        "syntaxHash": "c5e744569cdecdba1ea1b3040f89608cd3db82f651bfb976219c1c9e6324e717",
+        "occurrence": 0
+      }
+    },
+    {
+      "category": "source-diagnostic",
+      "code": "UNRESOLVED_IMPORT",
+      "anchor": {
+        "ownerId": "module:src/app/layout.tsx",
+        "syntaxHash": "0802fedb8e6892b3b4f4f4a3e12a2841d310de12017d2e3b338d571cab9b5425",
+        "occurrence": 0
+      }
+    }
+  ]
+}
