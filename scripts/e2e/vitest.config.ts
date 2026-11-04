@@ -10,6 +10,8 @@ export default defineConfig({
     include: ['scripts/e2e/**/*.test.ts'],
     exclude: ['scripts/e2e/fixtures/**'],
     environment: 'node',
+    // Git・TypeScript・Playwright子プロセスの同時起動を抑える。
+    maxWorkers: 2,
     passWithNoTests: false,
   },
 });
