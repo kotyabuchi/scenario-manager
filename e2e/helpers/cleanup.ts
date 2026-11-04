@@ -1,10 +1,22 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { isNil } from 'ramda';
+
+import {
+  legacyContextFromEnvironment,
+  legacySessionPrefix,
+} from '../fixtures/legacyContext';
+import {
+  cleanupLegacySession,
+  cleanupLegacySessions,
+} from '../fixtures/legacySessionCleanup';
 
 const E2E_PREFIX = '[E2E]';
 
 /** E2Eテスト用のユニークなセッション名を生成する */
 export function generateE2ESessionName(base: string): string {
-  return `${E2E_PREFIX} ${Date.now()} ${base}`;
+  const local = legacyContextFromEnvironment();
+  const prefix = isNil(local) ? E2E_PREFIX : legacySessionPrefix(local.context);
+  return `${prefix} ${Date.now()} ${base}`;
 }
 
 /**
@@ -62,6 +74,11 @@ async function deleteSessionRelatedRecords(
  * セッションIDを指定して削除する。
  */
 export async function cleanupE2ESession(sessionId: string): Promise<void> {
+  const local = legacyContextFromEnvironment();
+  if (!isNil(local)) {
+    await cleanupLegacySession(local.connection, local.context, sessionId);
+    return;
+  }
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -86,6 +103,11 @@ export async function cleanupE2ESession(sessionId: string): Promise<void> {
  * cleanupE2ESession(sessionId) を使用すること。
  */
 export async function cleanupE2ESessions(): Promise<void> {
+  const local = legacyContextFromEnvironment();
+  if (!isNil(local)) {
+    await cleanupLegacySessions(local.connection, local.context);
+    return;
+  }
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
