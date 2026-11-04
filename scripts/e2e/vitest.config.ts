@@ -8,6 +8,7 @@ export default defineConfig({
   test: {
     name: 'e2e-tools',
     include: ['scripts/e2e/**/*.test.ts'],
+    exclude: ['scripts/e2e/fixtures/**'],
     environment: 'node',
     passWithNoTests: false,
   },
