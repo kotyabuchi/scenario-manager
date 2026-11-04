@@ -2,7 +2,7 @@
 
 ## 状態
 
-Batch 8のStep 8-1とStep 8-2の途中実装を保存し、ユーザーの依頼で一時停止した。実local DBのAPI診断と、Next本番buildを使うPC/mobileのPlaywright受入は成功した。build後のM1整合と旧25 specの4 project互換実行は未完了。業務caseのverified結果は作っていない。
+2026-11-05に再開し、Batch 8のStep 8-1/8-2を完了した。実local DBのAPI診断、Next本番buildを使うPC/mobileのPlaywright受入、build後のM1整合が成功した。旧25 specの4 project互換実行は未完了。業務caseのverified結果は作っていない。
 
 ## 所有単位と認証
 
@@ -36,9 +36,13 @@ runtime/config/受入checkerはreview 10で3担当が確認した。context終�
 
 ## 再開点
 
-最優先は停止前に発見したbuild後のM1失敗。ignoredのnext-env.d.tsとrun固有routes.d.tsが抽出source manifestへ混入し、STALE_ARTIFACTになる。新しいrunを台帳へ固定すると次回buildでまた変わるため、試行した再生成は保存済みinventoryへ戻した。baselineを増やさず、生成型の入力境界またはbuild後復元の契約を修正し、build前後でM1を確認する。現状の停止チェックポイントを全gate成功とは扱わない。
+停止前に発見したbuild後のM1失敗は解消した。補助型の自動入口をGit母集団とtsconfig列挙の共通部分に限定し、ignoredのnext-env.d.tsからrun固有型が自動流入する経路を止める。実装からimport/referenceで到達する型の変更は引き続きsnapshotへ残す。Nextの生成型そのものを変更せず、通常の型検査では利用する。[Next 16.1.6の生成型仕様](https://github.com/vercel/next.js/blob/v16.1.6/docs/01-app/03-api-reference/05-config/02-typescript.mdx)
 
-review 10の推奨C1も残る。長時間のbuild/readiness/browser中、総合receiptとCLIの表示が細かな段階へ追従しない。個別app/status.jsonは更新され、結果の合否や後始末には影響しない。安全な進捗callbackと途中保存を再開時に検討する。
+review 10の推奨C1も解消した。build/readiness/browser/evidenceの開始前に総合receiptとCLIを更新し、安全なphase/runIdだけを通知する。表示callbackの同期・非同期失敗がapp/serverの終了確認を中断しないことを回帰で確認した。
+
+再開後のrun `71c1c1dafe3b` はWindows journal renameのEPERMで3/4成功となったため失敗として保存した。Windowsの一時EPERM/EBUSYのみ最大6回再試行し、毎回BigInt file identity・物理path・既存manifest内容を確認する。恒久失敗や置換は成功にしない。Nodeの終了回帰にあったstdout受信前の中断raceも修正した。
+
+最終run `1104370cf0c1` は4/4成功、2 project・4 worker・4 journal・16 Auth/app user・4 sessionを照合。全cleanup完了と別途の残留0確認後、M1も再生成なしでpassed（登録8、legacy348、不足473、差分0）。tools全体53 files / 947 tests、Biome 955 files、typecheck成功。レビュー11の未解消指摘は0。基盤の受入であり、旧suite全体や業務caseのverifiedとは区別する。
 
 次はStep 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper接続、4 projectの実行。認証/helperの旧経路への変更をここでまとめる。Batch 9以降・CI切替には進んでいない。受入のみの再実行は `pnpm exec tsx scripts/e2e/fixtureCheck.ts` を使う。通常の品質コマンド公開と全業務caseの結果照合はBatch 11で接続する。
 

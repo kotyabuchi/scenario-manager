@@ -134,7 +134,7 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Step 7-2. 環境manifestと所有権
 - [ ] Batch 8: 権限別fixtureと認証状態の分離
 - [x] Step 8-1. actorと業務fixture
-- [ ] Step 8-2. 新configとcleanup（実装・browser受入済み、build後M1整合の修正待ち）
+- [x] Step 8-2. 新configとcleanup
 - [ ] Step 8-3. 既存suiteを実行するlocal互換経路
 - [ ] Batch 9: 日程確定のbrowser E2Eを導入
 - [ ] Step 9-1. UI操作と永続化
@@ -200,6 +200,12 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - 停止直前の追加確認: base 6051fb6に対するM1は `STALE_ARTIFACT` で失敗した。Next buildで生成されたignoredのnext-env.d.tsと、そこから参照する `.next-e2e/run-5562cc8e0ed0/types/routes.d.ts` がsource manifestへ入り、fingerprintが変化する。再生成の差分はこの2入力とfingerprintのみだったため、run固有値を台帳へ固定せず生成差分を戻した。登録8・legacy348・不足473・policy delta0、baseline digestは不変。生成型の入力境界/復元契約を修正し、build前後のM1を通すことをStep 8-2の未完了条件とする。
 - 一時停止（2026-11-04）: ユーザーの「キリのいいところで一旦作業停止して」に従い、このBatch 8途中チェックポイントで停止する。Batch 8全体・M2は未完了。再開時はStep 8-2のbuild後M1整合を最優先で直し、review 10の推奨C1、Step 8-3のlocal互換経路へ進める。Batch 9以降には着手しない。クラウドDB変更・push・PR・デプロイは行っていない。
 - 保存点: fixture基盤・移行目録は `0ce6f61` まで、専用runtime・受入checkerは `4fa297b` まで保存済み。手書き500行以内の単位に分割し、各commitのlint/typecheck hookが成功した。停止記録はこの直後のdocs commitに保存する。ignoredのレビュー・実行証跡は当worktree内に保持する。
+- 再開（2026-11-05）: ユーザーの「再開して」に従い、停止HEAD `07e885a` と未コミット変更なしを確認。Step 8-2のP1（build後M1整合）とC1（途中進捗）を修正し、実build前後を検証してからStep 8-3へ進む。
+- P1修正: 補助declarationの自動root追加をGit母集団とtsconfig列挙の共通部分へ限定し、host/import/referenceから到達する型とmanifest収集は維持した。Next固有pathの事後除外やbaseline再設定はしていない。source 18回帰と6観点レビュー（指摘0）が成功。既存build生成物を残した実worktreeのM1もpassed、登録8・legacy348・不足473・issues0・policy delta0、baseline digest不変。新しい実build後の再確認は後続ログへ記録する。
+- サブエージェント運用（2026-11-05、ユーザー承認）: 通常の実装・レビューは `gpt-6.1-sol` / `medium`、単純な読取調査は `gpt-6-luna` / `medium` を明示する。親のモデル・推論設定を継承させない。既存の継承設定で動いていた担当は中断し、この設定で担当を切り替えた。
+- 再開後の実run `71c1c1dafe3b`: 空DB復元・schema照合・Next本番buildが成功し、build中の総合receipt/CLI進捗を確認した。build後M1も再生成なしでpassed。ただしPWはjournalのatomic renameでWindows EPERMとなり3/4成功で受入失敗、全体toolsもNode出力受信前の中断raceで941/943成功。成功へ丸めず、journalの限定retryとテストの受信同期を追加する。失敗runのDB資源・lock・app/CLIプロセス・秘密設定fileの残留0を独立確認した。
+- Step 8-2完了（2026-11-05）: Windowsの一時rename EPERM/EBUSYを所有identity・保存内容の再確認付きで最大6回だけ再試行し、Node停止回帰は実stdout受信後に中断するよう修正。53 files / 947 tools tests、check:ci 955 files、typecheck成功。review 11は未解消0・最終A（docs/reviews/diff-review-2026-11-05.md）。
+- 最終fresh受入run `1104370cf0c1`: 空DB復元→本番build→PC/mobile 4/4 test成功、2 project・4 worker・4 journal・16 Auth/app user・4 sessionを照合。fixture/stack cleanup complete、別途資源・lock・process・listener・当該秘密設定fileの残留0を確認。新build後のM1もpassed（登録8・legacy348・不足473、issues/policy delta0、baseline digest不変）。P1/C1と再開時の2失敗を解消し、Step 8-3へ進む。Batch 8全体・M2は引き続き未完了。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
