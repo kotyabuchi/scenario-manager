@@ -44,7 +44,24 @@ review 10の推奨C1も解消した。build/readiness/browser/evidenceの開始�
 
 最終run `1104370cf0c1` は4/4成功、2 project・4 worker・4 journal・16 Auth/app user・4 sessionを照合。全cleanup完了と別途の残留0確認後、M1も再生成なしでpassed（登録8、legacy348、不足473、差分0）。tools全体53 files / 947 tests、Biome 955 files、typecheck成功。レビュー11の未解消指摘は0。基盤の受入であり、旧suite全体や業務caseのverifiedとは区別する。
 
-次はStep 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper接続、4 projectの実行。認証/helperの旧経路への変更をここでまとめる。Batch 9以降・CI切替には進んでいない。受入のみの再実行は `pnpm exec tsx scripts/e2e/fixtureCheck.ts` を使う。通常の品質コマンド公開と全業務caseの結果照合はBatch 11で接続する。
+Step 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper接続は実装した。4 projectの実受入は下記の途中状態で、Batch 9以降・CI切替には進んでいない。新fixture基盤だけの再実行は `pnpm exec tsx scripts/e2e/fixtureCheck.ts` を使う。通常の品質コマンド公開と全業務caseの結果照合はBatch 11で接続する。
+
+### Step 8-3の途中検証と停止（2026-11-05）
+
+入口は`pnpm exec tsx scripts/e2e/runLegacy.ts`。4 projectを順番に、それぞれ空DB・独立actor・固定旧state・Next本番buildで実行する。`--project chromium-auth`等は診断専用で、成功しても`partial-passed`。通常の受入は330件（local319、既存skip9、fixme2）を照合し、外部依存18件は実行しない。初期348登録の本文・状態を照合し、discovery前後と各実行前後に旧specの実bytesを検査する。
+
+| run | 結果 | 後始末 |
+|---|---|---|
+| `96c303104ea0` 公開PC初回 | 55成功・2失敗。公開卓リンクの旧button指定をPOMで修正 | fixture/stack complete、stateなし、別途Docker資源0 |
+| `c1edeaff9c4d` 公開PC修正後 | 57成功、結果照合passed | fixture/stack complete |
+| `7a2cdcf3fdb4` 公開mobile | 48成功・既存skip9。最初の結果parserは注釈locationを拒否 | fixture/stack complete。parser修正後、保存済実report57件の照合成功 |
+| `642b151a222a` 認証PC初回 | 64成功・29skip・15失敗。増skipを許可せず全体failed | UI行の日時検査失敗でfixture incomplete、stackはcomplete。別途Docker資源0・旧state/資格情報fileなし |
+
+認証PCで検出した修正は、(1) ScenarioCardのClient境界、(2) PostgRESTで使うFK名、(3) timestamp without time zoneのUTC解釈、(4) 認証タブ・レスポンシブ重複のPOM指定。これらの修正後の実browser再検証は未実施。DB日時はマイクロ秒精度で比較し、削除条件へは取得した元の文字列を使う。
+
+旧spec本文の修正が必要な5定義はまだ変更していない。FAB2件、GM action1件、作成後URL検査2件を、M1の規約に従ってcase ID付きの通常登録へ移行する。初期348登録の行き先と330実行義務を保つためのreplacement対応が次の作業であり、fingerprintの一括更新や新skipで通さない。
+
+全toolsは65 files / 1142 tests成功。その後、SQL文字列だけをなぞる2テストを除き、原migrationと確認済cloud metadataの等価性テスト1件を再実行して成功（登録総数1140）。Biome 983 files成功、型検査成功。レビュー指摘の秘密file部分書込み残留とspec差替えを修正し、実reportのannotation位置情報にも対応した。4 project受入・Batch 8全体・M2は未完了。
 
 ## 本番buildの分離
 
