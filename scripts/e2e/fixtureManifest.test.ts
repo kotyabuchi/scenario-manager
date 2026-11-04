@@ -21,6 +21,10 @@ import { join, resolve, sep } from 'node:path';
 vi.mock('./environmentCredentials', () => ({
   assertFixtureConnection: vi.fn(),
 }));
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  return { ...actual, rename: vi.fn(actual.rename) };
+});
 const directories: string[] = [];
 const auth = {
   kind: 'auth-user',
@@ -51,6 +55,7 @@ const setup = async () => {
   };
 };
 afterEach(async () => {
+  vi.mocked(rename).mockReset();
   for (const directory of directories.splice(0)) {
     if (
       !resolve(directory).startsWith(
@@ -63,6 +68,62 @@ afterEach(async () => {
 });
 
 describe('fixture journal', () => {
+  it.skipIf(process.platform !== 'win32')(
+    '一時的なEPERM/EBUSY後もatomic renameで保存する',
+    async () => {
+      const journal = await createFixtureJournal(await setup(), identity);
+      vi.mocked(rename)
+        .mockRejectedValueOnce(
+          Object.assign(new Error('locked'), { code: 'EPERM' }),
+        )
+        .mockRejectedValueOnce(
+          Object.assign(new Error('busy'), { code: 'EBUSY' }),
+        );
+      await journal.reserve(auth);
+      expect(rename).toHaveBeenCalledTimes(3);
+      expect(
+        JSON.parse(await readFile(journal.path, 'utf8')).resources,
+      ).toEqual([{ resource: auth, status: 'reserved' }]);
+    },
+  );
+
+  it.skipIf(process.platform !== 'win32')(
+    '恒久的なEPERMは上限で失敗し、予約と既存manifestを変更しない',
+    async () => {
+      const journal = await createFixtureJournal(await setup(), identity);
+      const previous = await readFile(journal.path, 'utf8');
+      const failure = Object.assign(new Error('locked'), { code: 'EPERM' });
+      vi.mocked(rename).mockRejectedValue(failure);
+      await expect(journal.reserve(auth)).rejects.toBe(failure);
+      expect(rename).toHaveBeenCalledTimes(6);
+      expect(journal.snapshot().resources).toEqual([]);
+      expect(await readFile(journal.path, 'utf8')).toBe(previous);
+    },
+  );
+
+  it.skipIf(process.platform !== 'win32')(
+    'retry待機中の保存先差替えを次のrename前に拒否する',
+    async () => {
+      const journal = await createFixtureJournal(await setup(), identity);
+      vi.mocked(rename).mockImplementationOnce(async () => {
+        await rm(journal.path);
+        await mkdir(journal.path);
+        throw Object.assign(new Error('locked'), { code: 'EPERM' });
+      });
+      await expect(journal.reserve(auth)).rejects.toThrow('置換');
+      expect(rename).toHaveBeenCalledTimes(1);
+      expect(journal.snapshot().resources).toEqual([]);
+    },
+  );
+
+  it('再試行対象外のrenameエラーを即座に保持する', async () => {
+    const journal = await createFixtureJournal(await setup(), identity);
+    const failure = Object.assign(new Error('denied'), { code: 'EACCES' });
+    vi.mocked(rename).mockRejectedValueOnce(failure);
+    await expect(journal.reserve(auth)).rejects.toBe(failure);
+    expect(rename).toHaveBeenCalledTimes(1);
+  });
+
   it('直接接続を渡してもworkdirのjunctionを拒否する', async () => {
     const connection = await setup();
     const target = join(connection.manifest.workdir, 'target');

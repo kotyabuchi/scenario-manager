@@ -9,10 +9,20 @@ import {
 } from './fixtureSchema';
 
 import { createHash, randomUUID } from 'node:crypto';
-import { lstat, mkdir, open, realpath, rename, unlink } from 'node:fs/promises';
+import {
+  lstat,
+  mkdir,
+  open,
+  readFile,
+  realpath,
+  rename,
+  unlink,
+} from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { setTimeout } from 'node:timers/promises';
 import { isDeepStrictEqual } from 'node:util';
 
+import type { BigIntStats } from 'node:fs';
 import type { FixtureConnection } from '../../scripts/e2e/environmentCredentials';
 import type {
   FixtureCleanup,
@@ -51,7 +61,11 @@ export const createFixtureJournal = async (
     );
   const directory = join(root, ownerTag);
   await mkdir(directory, { mode: 0o700 });
+  const directoryIdentity = await lstat(directory, { bigint: true });
   const path = join(directory, 'manifest.json');
+  let savedIdentity: BigIntStats | undefined;
+  // Windowsのウイルス対策等による短時間の共有ロックだけを限定再試行する。
+  const renameRetryDelays = [25, 50, 100, 200, 400] as const;
   let manifest = fixtureManifestSchema.parse({
     schemaVersion: 1,
     owner,
@@ -62,7 +76,7 @@ export const createFixtureJournal = async (
   const save = async (value: FixtureManifest, initial = false) => {
     if (
       (await realpath(directory)) !== directory ||
-      (await lstat(directory)).isSymbolicLink()
+      (await lstat(directory, { bigint: true })).isSymbolicLink()
     )
       throw new Error('fixture journalのディレクトリが置換されています。');
     const contents = `${JSON.stringify(fixtureManifestSchema.parse(value), null, 2)}\n`;
@@ -76,14 +90,61 @@ export const createFixtureJournal = async (
     }
     if (!initial) {
       try {
-        const target = await lstat(path);
-        if (!target.isFile() || target.isSymbolicLink())
-          throw new Error('fixture journalの保存先が置換されています。');
-        await rename(temporary, path);
+        const temporaryIdentity = await lstat(temporary, { bigint: true });
+        for (let attempt = 0; ; attempt += 1) {
+          const currentDirectory = await lstat(directory, { bigint: true });
+          if (
+            (await realpath(directory)) !== directory ||
+            currentDirectory.isSymbolicLink() ||
+            currentDirectory.dev !== directoryIdentity.dev ||
+            currentDirectory.ino !== directoryIdentity.ino
+          )
+            throw new Error(
+              'fixture journalのディレクトリが置換されています。',
+            );
+          const target = await lstat(path, { bigint: true });
+          const pending = await lstat(temporary, { bigint: true });
+          if (
+            !target.isFile() ||
+            target.isSymbolicLink() ||
+            target.dev !== savedIdentity?.dev ||
+            target.ino !== savedIdentity?.ino ||
+            !pending.isFile() ||
+            pending.isSymbolicLink() ||
+            pending.dev !== temporaryIdentity.dev ||
+            pending.ino !== temporaryIdentity.ino
+          )
+            throw new Error('fixture journalの保存先が置換されています。');
+          const saved = fixtureManifestSchema.parse(
+            JSON.parse(await readFile(path, 'utf8')),
+          );
+          if (!isDeepStrictEqual(saved, manifest))
+            throw new Error(
+              'fixture journalの所有identityまたは内容が変更されています。',
+            );
+          try {
+            await rename(temporary, path);
+            // atomic renameはtmpのfile identityを保つ。成功後に追加I/Oを挟まない。
+            savedIdentity = temporaryIdentity;
+            break;
+          } catch (error) {
+            const delay = renameRetryDelays[attempt];
+            if (
+              process.platform !== 'win32' ||
+              !(error instanceof Error) ||
+              !('code' in error) ||
+              (error.code !== 'EPERM' && error.code !== 'EBUSY') ||
+              isNil(delay)
+            )
+              throw error;
+            await setTimeout(delay);
+          }
+        }
       } finally {
         await unlink(temporary).catch(() => undefined);
       }
     }
+    if (initial) savedIdentity = await lstat(path, { bigint: true });
   };
   await save(manifest, true);
   // 同一case内で並列作成されても更新を失わない。失敗後のcleanupもqueueを継続する。

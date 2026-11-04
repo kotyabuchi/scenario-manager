@@ -1,18 +1,24 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   localCommandEnvironment,
   runLocalCommand,
 } from './environmentCommands';
 
-import { existsSync } from 'node:fs';
+import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { setTimeout } from 'node:timers/promises';
+
+// 実processを起動したまま、親がstdoutを受信した時点を観測する。
+vi.mock('node:child_process', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:child_process')>();
+  return { ...actual, execFile: vi.fn(actual.execFile) };
+});
 
 let root = '';
 beforeEach(async () => {
+  vi.mocked(execFile).mockClear();
   root = await realpath(await mkdtemp(join(tmpdir(), 'sm-owned-node-')));
 });
 afterEach(async () => {
@@ -67,9 +73,14 @@ describe('所有するNodeプロセスの終了確認', () => {
       () => ({ value: null }),
     );
     try {
-      const deadline = Date.now() + 3000;
-      while (!existsSync(ready) && Date.now() < deadline) await setTimeout(10);
-      expect(existsSync(ready)).toBe(true);
+      const spawnedChild = vi.mocked(execFile).mock.results.at(-1)?.value;
+      expect(spawnedChild).toBeDefined();
+      let output = '';
+      spawnedChild?.stdout?.on('data', (chunk: string | Buffer) => {
+        output += chunk.toString();
+      });
+      // ready fileの存在はstdoutの受信を保証しない。親の受信後にだけ停止する。
+      await expect.poll(() => output, { timeout: 3000 }).toBe('ready');
     } finally {
       controller.abort();
     }
