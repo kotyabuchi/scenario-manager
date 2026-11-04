@@ -28,6 +28,7 @@ import { join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import type { EnvironmentProbeProgress } from './environmentProbe';
+import type { AppProgress } from './isolatedApp';
 
 const RECEIPT = 'test-results/quality/fixture-check.json';
 const runtimeSchema = z.object({ dockerHost: z.string() });
@@ -40,7 +41,8 @@ export const runFixtureCheck = async (root: string) => {
   const state: {
     evidence: ReturnType<typeof validateFixtureCheckEvidence> | null;
     progress: EnvironmentProbeProgress | null;
-  } = { evidence: null, progress: null };
+    appProgress: AppProgress | null;
+  } = { evidence: null, progress: null, appProgress: null };
   let status: 'running' | 'passed' | 'failed' = 'running';
   const save = () =>
     writeArtifact(
@@ -55,11 +57,24 @@ export const runFixtureCheck = async (root: string) => {
           environment,
           evidence: state.evidence,
           environmentProgress: state.progress,
+          appProgress: state.appProgress,
         },
         null,
         2,
       )}\n`,
     );
+  const announce = (value: { phase: string; runId: string | undefined }) => {
+    try {
+      process.stderr.write(`[fixture-check] ${JSON.stringify(value)}\n`);
+    } catch {
+      // 表示先の失敗でもreceipt保存と所有環境のcleanupは継続する。
+    }
+  };
+  const begin = (next: string) => {
+    phase = next;
+    save();
+    announce({ phase, runId: state.progress?.runId });
+  };
   save();
   try {
     environment = await probeEnvironment(
@@ -67,10 +82,11 @@ export const runFixtureCheck = async (root: string) => {
       undefined,
       (progress) => {
         state.progress = progress;
-        process.stderr.write(`[fixture-check] ${JSON.stringify(progress)}\n`);
+        save();
+        announce({ phase: progress.phase, runId: progress.runId });
       },
       async (manifest, signal) => {
-        phase = 'credentials';
+        begin('credentials');
         const runtime = runtimeSchema.parse(
           JSON.parse(
             await readFile(join(manifest.workdir, 'runtime.json'), 'utf8'),
@@ -88,68 +104,81 @@ export const runFixtureCheck = async (root: string) => {
         const file = writeEnvironmentCredentials(manifest, raw);
         try {
           const connection = readEnvironmentCredentials(worktreeRoot, file);
-          phase = 'app';
-          await withIsolatedApp(connection, signal, async (context) => {
-            const parent = join(worktreeRoot, 'test-results', 'isolated');
-            if (!existsSync(parent)) await mkdir(parent);
-            if (
-              (await lstat(parent)).isSymbolicLink() ||
-              (await realpath(parent)) !== parent
-            )
-              throw new Error('browser結果の親directoryが不正です。');
-            // 同じrun IDの古い成功を読み取らない。
-            await mkdir(join(parent, manifest.runId));
-            phase = 'browser';
-            const cli = createRequire(
-              join(worktreeRoot, 'package.json'),
-            ).resolve('@playwright/test/cli');
-            let browserFailed = false;
-            try {
-              await runLocalCommand(
-                'node',
-                [cli, 'test', '--config', 'playwright.fixture-check.config.ts'],
-                {
-                  cwd: worktreeRoot,
-                  env: { ...context.env, SCENARIO_E2E_CREDENTIALS: file },
-                  signal: context.signal,
-                  log: join(manifest.workdir, 'fixture-browser.private.log'),
-                },
-              );
-            } catch {
-              browserFailed = true;
-            }
-            phase = 'evidence';
-            const output = readArtifact(
-              worktreeRoot,
-              `test-results/isolated/${manifest.runId}/playwright.json`,
-            );
-            if (isNil(output)) throw new Error('browser結果がありません。');
-            const directory = join(manifest.workdir, 'fixtures');
-            const journals: unknown[] = [];
-            for (const name of await readdir(directory)) {
-              const candidate = join(directory, name, 'manifest.json');
+          begin('app');
+          await withIsolatedApp(
+            connection,
+            signal,
+            async (context) => {
+              const parent = join(worktreeRoot, 'test-results', 'isolated');
+              if (!existsSync(parent)) await mkdir(parent);
               if (
-                !/^[a-f0-9]{64}$/.test(name) ||
-                (await realpath(candidate)) !== candidate
+                (await lstat(parent)).isSymbolicLink() ||
+                (await realpath(parent)) !== parent
               )
-                throw new Error('fixture journalのpathが不正です。');
-              const contents = readArtifact(
+                throw new Error('browser結果の親directoryが不正です。');
+              // 同じrun IDの古い成功を読み取らない。
+              await mkdir(join(parent, manifest.runId));
+              begin('browser');
+              const cli = createRequire(
+                join(worktreeRoot, 'package.json'),
+              ).resolve('@playwright/test/cli');
+              let browserFailed = false;
+              try {
+                await runLocalCommand(
+                  'node',
+                  [
+                    cli,
+                    'test',
+                    '--config',
+                    'playwright.fixture-check.config.ts',
+                  ],
+                  {
+                    cwd: worktreeRoot,
+                    env: { ...context.env, SCENARIO_E2E_CREDENTIALS: file },
+                    signal: context.signal,
+                    log: join(manifest.workdir, 'fixture-browser.private.log'),
+                  },
+                );
+              } catch {
+                browserFailed = true;
+              }
+              begin('evidence');
+              const output = readArtifact(
                 worktreeRoot,
-                relative(worktreeRoot, candidate),
+                `test-results/isolated/${manifest.runId}/playwright.json`,
               );
-              if (isNil(contents))
-                throw new Error('fixture journalがありません。');
-              journals.push(JSON.parse(contents));
-            }
-            state.evidence = validateFixtureCheckEvidence(
-              JSON.parse(output),
-              journals,
-            );
-            if (state.evidence.issues.length > 0)
-              throw new Error('fixtureの実行証跡が一致しません。');
-            if (browserFailed)
-              throw new Error('browser runnerが失敗しました。');
-          });
+              if (isNil(output)) throw new Error('browser結果がありません。');
+              const directory = join(manifest.workdir, 'fixtures');
+              const journals: unknown[] = [];
+              for (const name of await readdir(directory)) {
+                const candidate = join(directory, name, 'manifest.json');
+                if (
+                  !/^[a-f0-9]{64}$/.test(name) ||
+                  (await realpath(candidate)) !== candidate
+                )
+                  throw new Error('fixture journalのpathが不正です。');
+                const contents = readArtifact(
+                  worktreeRoot,
+                  relative(worktreeRoot, candidate),
+                );
+                if (isNil(contents))
+                  throw new Error('fixture journalがありません。');
+                journals.push(JSON.parse(contents));
+              }
+              state.evidence = validateFixtureCheckEvidence(
+                JSON.parse(output),
+                journals,
+              );
+              if (state.evidence.issues.length > 0)
+                throw new Error('fixtureの実行証跡が一致しません。');
+              if (browserFailed)
+                throw new Error('browser runnerが失敗しました。');
+            },
+            (progress) => {
+              state.appProgress = progress;
+              begin(progress.phase === 'operation' ? 'app' : progress.phase);
+            },
+          );
         } finally {
           // app・workerの終了とfixture cleanupを待ってから、このrunで作成した秘密fileを破棄する。
           await unlink(file);

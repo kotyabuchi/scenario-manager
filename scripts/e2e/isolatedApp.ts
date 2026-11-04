@@ -58,6 +58,10 @@ const metadataSchema = z.object({
 });
 const hash = (value: string) =>
   createHash('sha256').update(value).digest('hex');
+type AppProgress = {
+  phase: 'build' | 'readiness' | 'operation';
+  runId: string;
+};
 type AppContext = {
   baseURL: string;
   env: NodeJS.ProcessEnv;
@@ -200,8 +204,19 @@ export const withIsolatedApp = async (
   connection: FixtureConnection,
   signal: AbortSignal,
   operation: (context: AppContext) => Promise<void>,
+  onProgress?: (value: AppProgress) => void | Promise<void>,
 ): Promise<void> => {
   const { manifest } = connection;
+  const notify = (phase: AppProgress['phase']) => {
+    try {
+      // 表示用callbackの同期・非同期失敗で処理や所有processの終了確認を中断しない。
+      void Promise.resolve(
+        onProgress?.({ phase, runId: manifest.runId }),
+      ).catch(() => undefined);
+    } catch {
+      // 秘密を含み得るcallback errorを結果へ転記しない。
+    }
+  };
   let phase = 'preflight';
   let statusFile: string | undefined;
   let nextEnvBefore: string | undefined;
@@ -292,6 +307,7 @@ export const withIsolatedApp = async (
     const env = isolatedAppEnvironment(connection);
     phase = 'build';
     save('running');
+    notify('build');
     deadline = setTimeout(() => controller.abort(), BUILD_TIMEOUT_MS);
     await runLocalCommand('node', [nextCLI, 'build'], {
       cwd: manifest.worktreeRoot,
@@ -304,6 +320,7 @@ export const withIsolatedApp = async (
     await assertFreePort();
     phase = 'readiness';
     save('running');
+    notify('readiness');
     serverResult = runLocalCommand(
       'node',
       [nextCLI, 'start', '--hostname', '127.0.0.1', '--port', String(APP_PORT)],
@@ -328,6 +345,7 @@ export const withIsolatedApp = async (
     controller.signal.throwIfAborted();
     phase = 'operation';
     save('running');
+    notify('operation');
     deadline = setTimeout(() => controller.abort(), OPERATION_TIMEOUT_MS);
     operationResult = operation({
       baseURL: BASE_URL,
@@ -365,4 +383,4 @@ export const withIsolatedApp = async (
     );
 };
 
-export type { AppContext };
+export type { AppContext, AppProgress };
