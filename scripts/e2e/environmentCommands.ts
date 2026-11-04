@@ -42,18 +42,22 @@ export const localCommandEnvironment = (
 
 /** shellを使わず固定CLIを起動する。出力は呼出元か非公開logにのみ渡す。 */
 export const runLocalCommand = async (
-  tool: 'supabase' | 'docker' | 'git',
+  tool: 'supabase' | 'docker' | 'git' | 'node',
   args: string[],
   options: {
     cwd: string;
     env: NodeJS.ProcessEnv;
     log?: string;
     signal?: AbortSignal;
+    shouldAllowAbort?: boolean;
   },
 ): Promise<string> => {
   let executable: string;
   try {
-    executable = await resolveLocalExecutable(tool, options.env);
+    executable =
+      tool === 'node'
+        ? process.execPath
+        : await resolveLocalExecutable(tool, options.env);
     options.signal?.throwIfAborted();
   } catch {
     throw new Error(`${tool}の実行に失敗しました。`);
@@ -91,7 +95,11 @@ export const runLocalCommand = async (
                 mode: 0o600,
                 flag: 'wx',
               });
-            if (!isNil(error) || hasInputFailed)
+            const isExpectedAbort =
+              options.shouldAllowAbort === true &&
+              options.signal?.aborted === true &&
+              error?.name === 'AbortError';
+            if ((!isNil(error) && !isExpectedAbort) || hasInputFailed)
               throw new Error(`${tool}のlocal commandが失敗しました。`);
             return stdout;
           };

@@ -24,6 +24,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import type { EnvironmentManifest } from './environmentSchema';
+
 const PORTS = { api: 57321, db: 57322, shadow: 57320 };
 const EXCLUDED_SERVICES = [
   'realtime',
@@ -48,6 +50,7 @@ type EnvironmentProbeProgress = {
     | 'preparing-inputs'
     | 'starting'
     | 'inspecting'
+    | 'working'
     | 'cleanup';
   runId?: string;
   workdir?: string;
@@ -57,6 +60,11 @@ const probeWithSignal = async (
   root: string,
   signal: AbortSignal,
   progress: (value: EnvironmentProbeProgress) => void,
+  operation?: (
+    manifest: EnvironmentManifest,
+    signal: AbortSignal,
+  ) => Promise<void>,
+  additionalPorts: number[] = [],
 ) => {
   progress({ phase: 'checking-cli' });
   const worktreeRoot = await realpath(root);
@@ -105,7 +113,7 @@ const probeWithSignal = async (
     runId,
     ownerNonce,
     projectId,
-    ports: Object.values(PORTS),
+    ports: [...Object.values(PORTS), ...additionalPorts],
   });
   let isLifecycleOwner = false;
   try {
@@ -145,6 +153,7 @@ const probeWithSignal = async (
         {
           dockerVersion,
           dockerHost,
+          additionalPorts,
           lockFiles: lock.lockFiles,
         },
         null,
@@ -265,6 +274,13 @@ const probeWithSignal = async (
         );
         if (!catalogState.check.schemaParityPassed)
           throw new Error('catalogが固定期待値と一致しません。');
+        if (!isNil(operation)) {
+          signal.throwIfAborted();
+          progress({ phase: 'working', runId, workdir });
+          // fixture・build・testも所有lockの生存期間内で完了させる。
+          await operation(structuredClone(running), signal);
+          signal.throwIfAborted();
+        }
       },
       release: () => lock.release(),
     });
@@ -305,6 +321,11 @@ export const probeEnvironment = async (
   root: string,
   signal?: AbortSignal,
   onProgress?: (value: EnvironmentProbeProgress) => void,
+  operation?: (
+    manifest: EnvironmentManifest,
+    signal: AbortSignal,
+  ) => Promise<void>,
+  additionalPorts: number[] = [],
 ) => {
   const controller = new AbortController();
   const interrupt = () => controller.abort();
@@ -315,13 +336,19 @@ export const probeEnvironment = async (
   try {
     if (signal?.aborted) forwardAbort();
     controller.signal.throwIfAborted();
-    return await probeWithSignal(root, controller.signal, (value) => {
-      try {
-        onProgress?.(value);
-      } catch {
-        // 表示先の失敗で所有resourceのcleanupを止めない。
-      }
-    });
+    return await probeWithSignal(
+      root,
+      controller.signal,
+      (value) => {
+        try {
+          onProgress?.(value);
+        } catch {
+          // 表示先の失敗で所有resourceのcleanupを止めない。
+        }
+      },
+      operation,
+      additionalPorts,
+    );
   } finally {
     process.removeListener('SIGINT', interrupt);
     process.removeListener('SIGTERM', interrupt);
