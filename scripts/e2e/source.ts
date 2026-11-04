@@ -195,6 +195,7 @@ const createManifest = (contents: Map<string, string>): SourceManifest => {
 export const loadSource = (directory: string) => {
   const root = path.resolve(directory);
   const gitFiles = listGitFiles(root);
+  const gitFileSet = new Set(gitFiles);
   const relative = createPaths(root, gitFiles);
   const diagnostics: InventoryDiagnostic[] = [];
   const contents = new Map<string, string>();
@@ -215,8 +216,13 @@ export const loadSource = (directory: string) => {
   host.getCurrentDirectory = () => root;
   host.readFile = access.readFile;
   host.fileExists = (file) => access.isAllowed(file) && ts.sys.fileExists(file);
+  // 補助型の入口もGitを正本にし、buildが作るambient型を自動追加しない。
+  // 実装からimport/referenceで到達する型は、hostで除外せずsnapshotへ残す。
   const declarations = (config?.fileNames ?? []).filter(
-    (file) => file.endsWith('.d.ts') && access.isAllowed(file),
+    (file) =>
+      file.endsWith('.d.ts') &&
+      access.isAllowed(file) &&
+      gitFileSet.has(relative(file)),
   );
   const program = ts.createProgram({
     rootNames: [

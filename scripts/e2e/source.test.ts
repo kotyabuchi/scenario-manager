@@ -50,6 +50,98 @@ afterEach(() => {
 });
 
 describe('loadSource', () => {
+  it('build前後とrun変更後もignoredの補助型を入口へ追加しない', () => {
+    const root = createProject();
+    write(root, '.gitignore', 'src/ignored.ts\nnext-env.d.ts\n.next-e2e/\n');
+    write(
+      root,
+      'tsconfig.json',
+      JSON.stringify({
+        extends: './tsconfig.base.json',
+        include: ['src/**/*', 'next-env.d.ts', '.next-e2e/**/*.ts'],
+      }),
+    );
+    const before = buildInventory(loadSource(root));
+    for (const run of ['first', 'second']) {
+      write(
+        root,
+        'next-env.d.ts',
+        `import './.next-e2e/${run}/types/routes.d.ts';\n`,
+      );
+      write(
+        root,
+        `.next-e2e/${run}/types/routes.d.ts`,
+        `declare const generatedRoute: '${run}';\n`,
+      );
+      const source = loadSource(root);
+      expect(
+        source.program
+          .getSourceFiles()
+          .some(
+            (file) =>
+              file.fileName.includes('next-env.d.ts') ||
+              file.fileName.includes('.next-e2e/'),
+          ),
+      ).toBe(false);
+      expect(buildInventory(source)).toEqual(before);
+    }
+  });
+
+  it('ignore対象でもGitに追加した補助型は読込み変更を検出する', () => {
+    const root = createProject();
+    write(root, '.gitignore', 'src/ignored.ts\nnext-env.d.ts\n');
+    write(
+      root,
+      'tsconfig.json',
+      JSON.stringify({
+        extends: './tsconfig.base.json',
+        include: ['src/**/*', 'next-env.d.ts'],
+      }),
+    );
+    write(root, 'next-env.d.ts', 'declare const buildValue: string;\n');
+    git(root, 'add', '--force', '--', 'next-env.d.ts');
+    const before = loadSource(root);
+    expect(before.manifest.files.map((file) => file.path)).toContain(
+      'next-env.d.ts',
+    );
+    write(root, 'next-env.d.ts', 'declare const buildValue: number;\n');
+    expect(loadSource(root).manifest.fingerprint).not.toBe(
+      before.manifest.fingerprint,
+    );
+  });
+
+  it.each([
+    'import',
+    'reference',
+  ])('実装が明示参照するignored型はsnapshotに残す: %s', (mode) => {
+    const root = createProject();
+    write(root, '.gitignore', 'src/ignored.ts\n.next-e2e/\n');
+    write(
+      root,
+      '.next-e2e/types/result.d.ts',
+      'export type Result = string;\n',
+    );
+    write(
+      root,
+      'src/generatedConsumer.ts',
+      mode === 'import'
+        ? "import type { Result } from '../.next-e2e/types/result'; export const value: Result = 'value';\n"
+        : '/// <reference path="../.next-e2e/types/result.d.ts" />\nexport const value = 1;\n',
+    );
+    const before = loadSource(root);
+    expect(before.manifest.files.map((file) => file.path)).toContain(
+      '.next-e2e/types/result.d.ts',
+    );
+    write(
+      root,
+      '.next-e2e/types/result.d.ts',
+      'export type Result = number;\n',
+    );
+    expect(loadSource(root).manifest.fingerprint).not.toBe(
+      before.manifest.fingerprint,
+    );
+  });
+
   it('trackedとuntrackedを列挙しtests・stories・生成物・ignoreを入口から除く', () => {
     const source = loadSource(createProject());
     expect(source.files.map((file) => file.path)).toEqual([
