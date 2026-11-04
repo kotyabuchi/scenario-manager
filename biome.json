@@ -67,6 +67,12 @@
   },
   "overrides": [
     {
+      "includes": ["e2e/ledger/*.generated.json"],
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["docs/designs/mocks/**"],
       "linter": {
         "enabled": false

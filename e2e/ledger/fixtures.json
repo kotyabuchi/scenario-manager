@@ -8,5 +8,9 @@
       "outsider",
       "confirmed-player"
     ]
+  },
+  {
+    "id": "scenario-stories",
+    "actors": []
   }
 ]

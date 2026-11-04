@@ -1,0 +1,159 @@
+[
+  {
+    "scenarioId": "scenario-panels",
+    "title": "シナリオパネルの表示と操作",
+    "cases": [
+      {
+        "caseId": "scenario-detail-responsive",
+        "title": "狭幅から広幅まで詳細の戻るリンクと操作ボタンが収まる",
+        "status": "implemented",
+        "layer": "storybook",
+        "fixture": "scenario-stories",
+        "roles": [],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel",
+            "aspect": "render",
+            "layer": "storybook"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-320",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-390",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-600",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-1280",
+            "actorBindings": []
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "scenario-search-reset",
+        "title": "モバイルで検索を実行・リセットし結果表示を更新する",
+        "status": "implemented",
+        "layer": "storybook",
+        "fixture": "scenario-stories",
+        "roles": [],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/scenarios/_components/ScenarioListPanel/ScenarioListPanel.tsx#ScenarioListPanel",
+            "aspect": "render",
+            "layer": "storybook"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "mobile",
+            "actorBindings": []
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "scenario-two-pane",
+        "title": "左右ペインが同幅を保ち、結果行やページに横溢れがない",
+        "status": "implemented",
+        "layer": "storybook",
+        "fixture": "scenario-stories",
+        "roles": [],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel",
+            "aspect": "render",
+            "layer": "storybook"
+          },
+          {
+            "target": "function:src/app/(main)/scenarios/_components/ScenarioListPanel/ScenarioListPanel.tsx#ScenarioListPanel",
+            "aspect": "render",
+            "layer": "storybook"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "minimum-width",
+            "actorBindings": []
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "scenario-favorite-error",
+        "title": "モック保存失敗を通知し選択状態を戻して再操作できる",
+        "status": "implemented",
+        "layer": "storybook",
+        "fixture": "scenario-stories",
+        "roles": [],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel",
+            "aspect": "error-feedback",
+            "layer": "storybook"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "save-failure",
+            "actorBindings": []
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "scenario-detail-long-title",
+        "title": "空白のない長文タイトルが狭幅でも欠けない",
+        "status": "implemented",
+        "layer": "storybook",
+        "fixture": "scenario-stories",
+        "roles": [],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel",
+            "aspect": "render",
+            "layer": "storybook"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "unbroken-title",
+            "actorBindings": []
+          }
+        ],
+        "testBindings": ["main"]
+      }
+    ]
+  }
+]

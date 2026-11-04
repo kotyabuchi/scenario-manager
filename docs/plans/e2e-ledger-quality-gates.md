@@ -123,9 +123,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 4: 台帳schemaと対象・観点の照合
 - [x] Step 4-1. 台帳のschemaを固定
 - [x] Step 4-2. 意味を補う契約とvalidator
-- [ ] Batch 5: Playwrightの実test登録と既存資産の段階移行
-- [ ] Step 5-1. list reporterで実登録を取得
-- [ ] Step 5-2. 既存testとIDの対応を導入
+- [x] Batch 5: Playwrightの実test登録と既存資産の段階移行
+- [x] Step 5-1. list reporterで実登録を取得
+- [x] Step 5-2. 既存testとIDの対応を導入
 - [ ] Batch 6: 不足baselineと最初の静的CIゲート
 - [ ] Step 6-1. baselineをbootstrapして固定
 - [ ] Step 6-2. DB不要workflowへ接続
@@ -174,6 +174,11 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 4完了: strict Zod台帳・JSON loader・kind既定要件・個別checkとexecutionの照合・完全一致例外を実装。schemaとvalidatorは実行成功を判定せず、planned/implementedと登録の食い違いを検出する。不足identityには既定8次元に加えprofileも含め、同名project/runtimeの別configを混同しない。
 - Batch 4契約: 独立仕様を根拠に日程5対象・7case・19executionを全件plannedで登録。creator/keeper各PC/mobile、Action拒否と入力不正、RPC認可/原子性、表示失敗を分離。RPCのSECURITY DEFINER内認可をRLS検証と数えない理由を明示。Batch 3の変更なしsource snapshotと照合しissues 0、不足110、例外0を確認した。
 - Batch 4検証・レビュー: tools 242成功（台帳関連67件を含む）、check:ci（852ファイル）・typecheck成功。3担当レビューで全観点免除/actor欠落を故障検査し、isNil・identity共通化・不正JSONのファイル名/cause診断を修正。最終A、記録: docs/reviews/diff-review-2026-11-04-4.md。手書き変更はschema/loader、照合、構造test、照合testの各500行以下と、初期JSON/実行記録へ分割。
+- Batch 5完了: 既存configを--listで列挙しapp349（setup1を含む）・Storybook8、計357登録をASTへ照合。legacy348・登録済8・setup1・serial group6を生成JSONへ保存。既存Storybookの5caseを明示ID/variantでimplementedへ移行し、日程7caseはplannedを維持。ブラウザ実行のverifiedではない。
+- Batch 5境界: 子envのallowlist、dotenv抑止、SDK生成・通信・子process・run外書込みの拒否を先行load。catch後も失敗と呼出位置を保持する。一般的な悪意コードのsandboxとは扱わない。repeatの全件と各bindingを照合し、旧test本文・hook・loop・runtime skip変更をfingerprintへ保持する。
+- Batch 5で判明したPlaywright 1.57差分: ESM source map配信前に変換後の座標を返すため、Node公開findSourceMapをrunner同梱sourceMapSupportのfallbackへ接続する小さい版固定adapterを追加。実際に起動するCLIの1.57.0を検査し、未検証版を拒否する。ESM/CJS位置の回帰を追加。test.failのlist時expectedStatusはpassedでもfail annotationが付くため、Batch 11ではannotationも照合する。body内skipはlistで確定できないためBatch 8のdeferred分類へ保持する。
+- Batch 5検証: 全18ファイル326 tools tests成功、check:ci（868ファイル）・typecheck成功。生成legacyの反復/保存byte一致、binding/ledger/legacy issue0、不足110を確認。型検査と一時fixture削除の競合を防ぐためtest-resultsをtsconfigから除外し、inventoryを再生成（node1351・edge5792・warning347・source fingerprint 7b858374fe458989c42601ddce4a034fd554f1cba400cb9207534166f64c1598）。生成JSONはBiomeのformatterのみ対象外とし、構文lintは残す。
+- Batch 5レビュー: runtime skipを定義と誤認してfingerprintから落とす必須指摘を修正。版チェックのrunner実体との一致、診断のcaller位置（括弧path含む）、isNilを修正し3担当の未解消0、最終A。記録: docs/reviews/diff-review-2026-11-04-5.md。source/照合/guard/runner/legacy/test/初期データを各手書き500行以下の9コミットへ分割する。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類

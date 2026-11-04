@@ -1,0 +1,112 @@
+[
+  {
+    "target": "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["storybook"],
+        "expectation": "狭幅の操作ボタン、最小ペインでの左右比率、長文タイトルを確認する。Storybookで表示する部品のみを対象とし、実ページのdata取得や保存を保証しない。",
+        "basis": [
+          "docs/plans/ui-redesign-scenarios-status.md:34",
+          "docs/plans/ui-redesign-project.md:17"
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-320",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-390",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-600",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "width-1280",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "minimum-width",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "unbroken-title",
+            "actorBindings": []
+          }
+        ]
+      },
+      {
+        "aspect": "error-feedback",
+        "layers": ["storybook"],
+        "expectation": "お気に入り保存のmock失敗後、エラー表示と選択状態の復元を確認し、再操作できる。DB保存・権限の保証には使わない。",
+        "basis": [
+          "docs/plans/ui-redesign-scenarios-status.md:34",
+          "docs/plans/ui-redesign-project.md:17"
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "save-failure",
+            "actorBindings": []
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "function:src/app/(main)/scenarios/_components/ScenarioListPanel/ScenarioListPanel.tsx#ScenarioListPanel",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["storybook"],
+        "expectation": "モバイル検索の入力・実行・リセットと結果表示、最小ペインでの同幅と検索結果行の表示をStorybookの合成データで確認する。",
+        "basis": [
+          "docs/plans/ui-redesign-scenarios-status.md:34",
+          "docs/plans/ui-redesign-project.md:17"
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "mobile",
+            "actorBindings": []
+          },
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "minimum-width",
+            "actorBindings": []
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  }
+]
