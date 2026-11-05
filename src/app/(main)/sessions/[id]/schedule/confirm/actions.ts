@@ -98,9 +98,3 @@ export const getScheduleRecommendationsAction = async (
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
 };
-
-type ConfirmScheduleTimeBlocksResult = Awaited<
-  ReturnType<typeof confirmScheduleTimeBlocksAction>
->;
-
-export type { ConfirmScheduleTimeBlocksResult };

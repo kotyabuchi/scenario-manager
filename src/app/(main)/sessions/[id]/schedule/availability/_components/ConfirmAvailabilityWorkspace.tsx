@@ -23,7 +23,7 @@ import {
 } from '@/lib/availability/timeBlockUtils';
 import { err, type Result } from '@/types/result';
 
-import type { ConfirmScheduleTimeBlocksResult } from '../../confirm/actions';
+import type { confirmScheduleTimeBlocksAction } from '../../confirm/actions';
 import type {
   AvailabilityTimeBlockInput,
   AvailabilityWorkspaceData,
@@ -31,6 +31,10 @@ import type {
   RecommendationGroup,
   RecommendationItem,
 } from '../interface';
+
+type ConfirmScheduleTimeBlocksResult = Awaited<
+  ReturnType<typeof confirmScheduleTimeBlocksAction>
+>;
 
 type ConfirmAvailabilityWorkspaceProps = {
   workspaceData: AvailabilityWorkspaceData;
