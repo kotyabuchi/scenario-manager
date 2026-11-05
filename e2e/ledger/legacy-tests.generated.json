@@ -1916,22 +1916,6 @@
       "titlePath": [
         "セッションフロー",
         "サブページへの遷移",
-        "日程調整ページに遷移できる"
-      ],
-      "project": "chromium-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
-      "profile": "app",
-      "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "サブページへの遷移",
         "申請管理ページに遷移できる"
       ],
       "project": "chromium-auth",
@@ -2012,22 +1996,6 @@
       "titlePath": [
         "セッションフロー",
         "セッション詳細ページ（GMビュー）",
-        "タイムラインにセッション作成イベントがある"
-      ],
-      "project": "chromium-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
-      "profile": "app",
-      "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "セッション詳細ページ（GMビュー）",
         "参加者セクションが表示される"
       ],
       "project": "chromium-auth",
@@ -2044,22 +2012,6 @@
       "titlePath": [
         "セッションフロー",
         "セッション詳細ページ（GMビュー）",
-        "基本情報セクションが表示される"
-      ],
-      "project": "chromium-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
-      "profile": "app",
-      "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "セッション詳細ページ（GMビュー）",
         "戻るリンクが機能する"
       ],
       "project": "chromium-auth",
@@ -2069,22 +2021,6 @@
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"戻るリンクが機能する\"],0]",
       "profile": "app",
       "fingerprint": "377510b062ff397629f3f282af3158c91227e75419eb0e9bb06a6af89268f65b",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "ダイアログ操作",
-        "キャンセルダイアログが開閉できる"
-      ],
-      "project": "chromium-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
-      "profile": "app",
-      "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
       "serialGroup": null
     },
     {
@@ -4477,22 +4413,6 @@
       "titlePath": [
         "セッションフロー",
         "サブページへの遷移",
-        "日程調整ページに遷移できる"
-      ],
-      "project": "mobile-chrome-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
-      "profile": "app",
-      "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "サブページへの遷移",
         "申請管理ページに遷移できる"
       ],
       "project": "mobile-chrome-auth",
@@ -4573,22 +4493,6 @@
       "titlePath": [
         "セッションフロー",
         "セッション詳細ページ（GMビュー）",
-        "タイムラインにセッション作成イベントがある"
-      ],
-      "project": "mobile-chrome-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
-      "profile": "app",
-      "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "セッション詳細ページ（GMビュー）",
         "参加者セクションが表示される"
       ],
       "project": "mobile-chrome-auth",
@@ -4605,22 +4509,6 @@
       "titlePath": [
         "セッションフロー",
         "セッション詳細ページ（GMビュー）",
-        "基本情報セクションが表示される"
-      ],
-      "project": "mobile-chrome-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
-      "profile": "app",
-      "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "セッション詳細ページ（GMビュー）",
         "戻るリンクが機能する"
       ],
       "project": "mobile-chrome-auth",
@@ -4630,22 +4518,6 @@
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"戻るリンクが機能する\"],0]",
       "profile": "app",
       "fingerprint": "377510b062ff397629f3f282af3158c91227e75419eb0e9bb06a6af89268f65b",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/session-flow.spec.ts",
-      "titlePath": [
-        "セッションフロー",
-        "ダイアログ操作",
-        "キャンセルダイアログが開閉できる"
-      ],
-      "project": "mobile-chrome-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
-      "profile": "app",
-      "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
       "serialGroup": null
     },
     {
@@ -5201,6 +5073,44 @@
       "file": "e2e/auth/session-flow.spec.ts",
       "titlePath": [
         "セッションフロー",
+        "サブページへの遷移",
+        "日程調整ページに遷移できる"
+      ],
+      "project": "chromium-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+      "profile": "app",
+      "fingerprint": "16f90fddcf220a0ea68d6140b3977886e434d4576fe583f2fa75f354afc361de",
+      "serialGroup": null,
+      "caseId": "legacy-session-schedule-navigation",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
+        "セッション詳細ページ（GMビュー）",
+        "タイムラインにセッション作成イベントがある"
+      ],
+      "project": "chromium-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+      "profile": "app",
+      "fingerprint": "c41939d11cce90b61e9211b410d23099ef2b5fb448e613f3cfcb1d35ddb39f02",
+      "serialGroup": null,
+      "caseId": "legacy-session-timeline-created",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
         "セッション詳細ページ（GMビュー）",
         "募集中フェーズでGM用アクションが表示される"
       ],
@@ -5213,6 +5123,44 @@
       "fingerprint": "12a0fc5f79ed54a85b303483fdd8fc7558a388eb54609515512f9290263571de",
       "serialGroup": null,
       "caseId": "legacy-session-gm-actions",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
+        "セッション詳細ページ（GMビュー）",
+        "基本情報セクションが表示される"
+      ],
+      "project": "chromium-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+      "profile": "app",
+      "fingerprint": "bb767ffc2d49ec54636299920dc19a87c13ed2b698edc5d2509fc88cef88e3ea",
+      "serialGroup": null,
+      "caseId": "legacy-session-basic-info",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
+        "ダイアログ操作",
+        "キャンセルダイアログが開閉できる"
+      ],
+      "project": "chromium-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+      "profile": "app",
+      "fingerprint": "57a4a8180cde6d4fdf0da995b6652acaa1169df071889638daa778fb800f6762",
+      "serialGroup": null,
+      "caseId": "legacy-session-cancel-dismiss",
       "variant": "default",
       "binding": "main"
     },
@@ -5292,6 +5240,44 @@
       "file": "e2e/auth/session-flow.spec.ts",
       "titlePath": [
         "セッションフロー",
+        "サブページへの遷移",
+        "日程調整ページに遷移できる"
+      ],
+      "project": "mobile-chrome-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+      "profile": "app",
+      "fingerprint": "16f90fddcf220a0ea68d6140b3977886e434d4576fe583f2fa75f354afc361de",
+      "serialGroup": null,
+      "caseId": "legacy-session-schedule-navigation",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
+        "セッション詳細ページ（GMビュー）",
+        "タイムラインにセッション作成イベントがある"
+      ],
+      "project": "mobile-chrome-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+      "profile": "app",
+      "fingerprint": "c41939d11cce90b61e9211b410d23099ef2b5fb448e613f3cfcb1d35ddb39f02",
+      "serialGroup": null,
+      "caseId": "legacy-session-timeline-created",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
         "セッション詳細ページ（GMビュー）",
         "募集中フェーズでGM用アクションが表示される"
       ],
@@ -5304,6 +5290,44 @@
       "fingerprint": "12a0fc5f79ed54a85b303483fdd8fc7558a388eb54609515512f9290263571de",
       "serialGroup": null,
       "caseId": "legacy-session-gm-actions",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
+        "セッション詳細ページ（GMビュー）",
+        "基本情報セクションが表示される"
+      ],
+      "project": "mobile-chrome-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+      "profile": "app",
+      "fingerprint": "bb767ffc2d49ec54636299920dc19a87c13ed2b698edc5d2509fc88cef88e3ea",
+      "serialGroup": null,
+      "caseId": "legacy-session-basic-info",
+      "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/session-flow.spec.ts",
+      "titlePath": [
+        "セッションフロー",
+        "ダイアログ操作",
+        "キャンセルダイアログが開閉できる"
+      ],
+      "project": "mobile-chrome-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+      "profile": "app",
+      "fingerprint": "57a4a8180cde6d4fdf0da995b6652acaa1169df071889638daa778fb800f6762",
+      "serialGroup": null,
+      "caseId": "legacy-session-cancel-dismiss",
       "variant": "default",
       "binding": "main"
     },

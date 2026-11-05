@@ -768,7 +768,32 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
       "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "サブページへの遷移",
+            "日程調整ページに遷移できる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+          "profile": "app",
+          "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-schedule-navigation",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"申請管理ページに遷移できる\"],0]",
@@ -798,7 +823,32 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
       "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "タイムラインにセッション作成イベントがある"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+          "profile": "app",
+          "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-timeline-created",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
@@ -838,7 +888,32 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
       "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "基本情報セクションが表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-basic-info",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"戻るリンクが機能する\"],0]",
@@ -848,7 +923,32 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
       "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "ダイアログ操作",
+            "キャンセルダイアログが開閉できる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+          "profile": "app",
+          "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-cancel-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「キャンセル」がメニュー内に表示される\"],0]",
@@ -1817,7 +1917,32 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
       "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "サブページへの遷移",
+            "日程調整ページに遷移できる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+          "profile": "app",
+          "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-schedule-navigation",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"申請管理ページに遷移できる\"],0]",
@@ -1847,7 +1972,32 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
       "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "タイムラインにセッション作成イベントがある"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+          "profile": "app",
+          "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-timeline-created",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
@@ -1887,7 +2037,32 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
       "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "基本情報セクションが表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-basic-info",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"戻るリンクが機能する\"],0]",
@@ -1897,7 +2072,32 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
       "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "ダイアログ操作",
+            "キャンセルダイアログが開閉できる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+          "profile": "app",
+          "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-cancel-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「キャンセル」がメニュー内に表示される\"],0]",
