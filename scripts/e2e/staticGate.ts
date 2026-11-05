@@ -10,6 +10,11 @@ import {
 import { discover } from './discover';
 import { discoverIntegration } from './discoverIntegration';
 import { bindDiscovery } from './discoveryBindings';
+import { verifyGithubPushBootstrapApproval } from './githubEvent';
+import {
+  type GithubEventPolicy,
+  githubEventPolicySchema,
+} from './githubEventSchema';
 import { buildInventory, serializeInventory } from './inventory';
 import { loadLedger } from './ledger';
 import { parseArtifact, readArtifact } from './ledgerArtifacts';
@@ -130,9 +135,21 @@ export const checkStaticState = async ({
 }: {
   root: string;
   state: StaticState;
-  revisions: { base: string; head: string };
+  revisions: { base: string; head: string; eventPolicy?: GithubEventPolicy };
   bootstrapApproval?: string;
 }) => {
+  const policy = isNil(revisions.eventPolicy)
+    ? undefined
+    : githubEventPolicySchema.parse(revisions.eventPolicy);
+  const staticBase = policy?.staticBase;
+  if (
+    !isNil(policy) &&
+    !isNil(staticBase) &&
+    (revisions.head !== policy.head ||
+      revisions.base !==
+        (staticBase.kind === 'push-bootstrap' ? policy.head : staticBase.sha))
+  )
+    throw new Error('静的比較のbase/headがGitHubイベントと一致しません');
   const issues: LedgerIssue[] = [];
   for (const [file, expected] of [
     [ARTIFACTS.inventory, serializeInventory(state.inventory)],
@@ -156,6 +173,28 @@ export const checkStaticState = async ({
     ),
   );
   const baseText = readRevisionFile(root, revisions.base, ARTIFACTS.baseline);
+  if (
+    isNil(baseText) &&
+    (staticBase?.kind === 'self' || staticBase?.kind === 'push-bootstrap')
+  )
+    throw new Error('固定HEADに保存済みbaselineがありません');
+  const isPushBootstrap = staticBase?.kind === 'push-bootstrap';
+  const isBaselineMissing = isNil(baseText);
+  if (policy?.event === 'push' && (isPushBootstrap || isBaselineMissing)) {
+    const { staticBase: pushBase } = policy;
+    verifyGithubPushBootstrapApproval(
+      {
+        event: 'push',
+        repository: policy.repository,
+        ref: policy.eventRef,
+        before:
+          pushBase.kind === 'push-bootstrap' ? pushBase.before : pushBase.sha,
+        head: policy.head,
+        baselineDigest: baselineDigest(head),
+      },
+      bootstrapApproval,
+    );
+  }
   const baseLedger = await readRevisionLedger(root, revisions.base);
   const baseMigrationText = readRevisionFile(
     root,
@@ -208,6 +247,11 @@ export const checkStaticState = async ({
     revisions.base,
     ARTIFACTS.legacy,
   );
+  if (
+    policy?.event === 'pull_request' &&
+    isBaselineMissing !== isNil(baseLegacyText)
+  )
+    throw new Error('PRの比較元にはbaselineとlegacy目録の両方が必要です');
   // 初回でも既存の契約・旧testが存在すれば比較を省略しない。
   const policyDeltas = isNil(baseLedger)
     ? []
@@ -226,19 +270,18 @@ export const checkStaticState = async ({
     );
   } else if (!isNil(baseText))
     throw new Error('baseのlegacy目録が欠落しています');
-  let isBootstrap = false;
+  const isBootstrap = isPushBootstrap || isBaselineMissing;
   if (isNil(baseText)) {
-    // 欠落したbase commitの扱いはtrustedRevisionで既に失敗する。
-    // schema未導入という事実だけでは承認せず、外部の固定tupleを要求する。
-    isBootstrap = true;
-    verifyBootstrapApproval(
-      {
-        base: revisions.base,
-        head: revisions.head,
-        digest: baselineDigest(head),
-      },
-      bootstrapApproval,
-    );
+    // PRとローカル初回導入にも、固定した比較元・HEAD・baselineの承認が必要。
+    if (policy?.event !== 'push')
+      verifyBootstrapApproval(
+        {
+          base: revisions.base,
+          head: revisions.head,
+          digest: baselineDigest(head),
+        },
+        bootstrapApproval,
+      );
     issues.push(
       ...checkBaseline({ base: head, head, current: state.baseline.items }),
     );
@@ -252,7 +295,16 @@ export const checkStaticState = async ({
       }),
     );
   }
-  return { issues, policyDeltas, isBootstrap };
+  return {
+    issues,
+    policyDeltas,
+    isBootstrap,
+    ...(isPushBootstrap
+      ? { historicalComparison: 'unavailable' as const }
+      : policy?.event === 'push' && isBaselineMissing
+        ? { historicalComparison: 'baseline-not-introduced' as const }
+        : {}),
+  };
 };
 
 type StaticState = Awaited<ReturnType<typeof collectStaticState>>;

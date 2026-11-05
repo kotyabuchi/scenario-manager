@@ -18,6 +18,8 @@ import { dirname, join, resolve } from 'node:path';
 
 import type { StaticState } from './staticGate';
 
+// Windowsの高負荷時も、複数のguard付きcollectorと後始末の完了を待つ。
+const STATIC_GATE_TIMEOUT_MS = 90_000;
 const roots: string[] = [];
 const git = (root: string, ...args: string[]) =>
   execFileSync('git', args, {
@@ -157,7 +159,7 @@ afterEach(async () => {
   }
 });
 
-describe('M1静的品質ゲートの接続', () => {
+describe('M1静的品質ゲートの接続', { timeout: STATIC_GATE_TIMEOUT_MS }, () => {
   it('integrationのclaimを同じ台帳へ接続し、claim削除を拒否する', async () => {
     const { root } = await createFixture();
     const target = 'page:src/app/page.tsx';
@@ -236,7 +238,7 @@ describe('M1静的品質ゲートの接続', () => {
       "import {test} from 'vitest'; test('read',()=>{});",
     );
     await expect(collectStaticState(root)).rejects.toThrow();
-  }, 60_000);
+  });
 
   it('isolatedのimplemented登録を検査しタグ欠落で未実装扱いへ戻せない', async () => {
     const { root } = await createFixture();
@@ -318,7 +320,7 @@ describe('M1静的品質ゲートの接続', () => {
     await expect(collectStaticState(root)).rejects.toThrow(
       '静的台帳の整合エラー',
     );
-  }, 30_000);
+  });
 
   it('実登録からbootstrapした台帳をreadonlyで検査し二度目のbootstrapは拒否する', async () => {
     const { root, base, state, check } = await createFixture();
@@ -333,7 +335,10 @@ describe('M1静的品質ゲートの接続', () => {
     expect((await check()).issues).toEqual([]);
     vi.spyOn(process.stdout, 'write').mockReturnValue(true);
     expect(
-      await runLedgerCheck(['--base', base], root, { ...process.env, CI: '' }),
+      await runLedgerCheck(['--base', base], root, {
+        ...process.env,
+        CI: '',
+      }),
     ).toBe(true);
     expect(
       Object.values(ARTIFACTS).map((file) => readArtifact(root, file)),
@@ -353,7 +358,7 @@ describe('M1静的品質ゲートの接続', () => {
       status: 'failed',
     });
     expect(failedReport).not.toHaveProperty('issues');
-  }, 30_000);
+  });
 
   it('PR内再baselineと保存inventory更新だけでは新Action不足を通せない', async () => {
     const { root, check } = await createFixture();
@@ -375,7 +380,7 @@ describe('M1静的品質ゲートの接続', () => {
     expect(result.issues.some((issue) => issue.subject.includes('save'))).toBe(
       true,
     );
-  }, 30_000);
+  });
 
   it('旧testを消して目録を再生成してもbaseの登録から削除を検出する', async () => {
     const { root, check } = await createFixture();
@@ -391,7 +396,7 @@ describe('M1静的品質ゲートの接続', () => {
         (issue) => issue.code === 'REMOVED_LEGACY',
       ),
     ).toBe(true);
-  }, 30_000);
+  });
 
   it('保存物が古いだけの変更とbase不在を区別して失敗する', async () => {
     const { root, state, check } = await createFixture();
@@ -405,7 +410,7 @@ describe('M1静的品質ゲートの接続', () => {
       'STALE_ARTIFACT',
     );
     await expect(check(state, 'f'.repeat(40))).rejects.toThrow();
-  }, 30_000);
+  });
 
   it('初回schema未導入でも承認なし・別head・別digestは通さない', async () => {
     const { root, before, base, state, check } = await createFixture();
@@ -420,7 +425,15 @@ describe('M1静的品質ゲートの接続', () => {
     ).toBe(true);
     const eventPath = join(root, 'test-results/event.json');
     await json(root, 'test-results/event.json', {
-      pull_request: { base: { sha: before }, head: { sha: base } },
+      number: 1,
+      pull_request: {
+        base: {
+          sha: before,
+          ref: 'main',
+          repo: { full_name: 'owner/repository' },
+        },
+        head: { sha: base },
+      },
     });
     vi.spyOn(process.stdout, 'write').mockReturnValue(true);
     expect(
@@ -429,6 +442,9 @@ describe('M1静的品質ゲートの接続', () => {
         CI: 'true',
         GITHUB_EVENT_NAME: 'pull_request',
         GITHUB_EVENT_PATH: eventPath,
+        GITHUB_SHA: base,
+        GITHUB_REF: 'refs/pull/1/merge',
+        GITHUB_REPOSITORY: 'owner/repository',
         E2E_LEDGER_BOOTSTRAP_APPROVAL: JSON.stringify(approval),
       }),
     ).toBe(true);
@@ -442,7 +458,7 @@ describe('M1静的品質ゲートの接続', () => {
         JSON.stringify({ ...approval, digest: '0'.repeat(64) }),
       ),
     ).rejects.toThrow('一致');
-  }, 30_000);
+  });
 
   it('移行理由の別baseへの追加や既存履歴の削除を拒否する', async () => {
     const { root, before, check } = await createFixture();
@@ -458,5 +474,5 @@ describe('M1静的品質ゲートの接続', () => {
     expect(
       (await check(undefined, revision)).issues.map((issue) => issue.code),
     ).toContain('REMOVED_MIGRATION_HISTORY');
-  }, 30_000);
+  });
 });
