@@ -8,6 +8,7 @@ import { verificationReportSchema } from '../verificationSchema';
 
 import { realpathSync, writeFileSync } from 'node:fs';
 import { isAbsolute, relative, sep } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 
 import type {
   FullConfig,
@@ -15,6 +16,9 @@ import type {
   Reporter,
   Suite,
   TestCase,
+  TestError,
+  TestResult,
+  TestStep,
 } from 'playwright/types/testReporter';
 
 const annotations = (values: TestCase['annotations']) =>
@@ -33,6 +37,16 @@ const titlePath = (test: TestCase) => {
   return titles;
 };
 
+const isHookOrFixture = (step: TestStep) => {
+  let current: TestStep | undefined = step;
+  while (!isNil(current)) {
+    if (current?.category === 'hook' || current?.category === 'fixture')
+      return true;
+    current = current?.parent;
+  }
+  return false;
+};
+
 /** 標準runner値だけを共通結果に保存し、本文・添付・SDK情報を持ち込まない。 */
 export default class ResultsReporter implements Reporter {
   private readonly root = realpathSync(process.cwd());
@@ -40,6 +54,8 @@ export default class ResultsReporter implements Reporter {
   private config: FullConfig | undefined;
   private tests: TestCase[] = [];
   private errorCount = 0;
+  private readonly failedHooks = new WeakSet<TestResult>();
+  private readonly failedExpects = new WeakMap<TestResult, TestError[]>();
 
   constructor(private readonly options: { profile: string }) {
     if (isNil(this.context))
@@ -54,6 +70,28 @@ export default class ResultsReporter implements Reporter {
 
   onError(): void {
     this.errorCount++;
+  }
+
+  onStepEnd(_test: TestCase, attempt: TestResult, step: TestStep): void {
+    if (isNil(step.error)) return;
+    if (isHookOrFixture(step)) this.failedHooks.add(attempt);
+    if (step.category === 'expect') {
+      const errors = this.failedExpects.get(attempt) ?? [];
+      errors.push(step.error);
+      this.failedExpects.set(attempt, errors);
+    }
+  }
+
+  private isAssertionFailure(attempt: TestResult) {
+    const errors = this.failedExpects.get(attempt);
+    // 捕捉済みexpectと別の失敗を混同しない。例外値はメモリ内の照合だけに使う。
+    return (
+      attempt.status === 'failed' &&
+      attempt.errors.length === 1 &&
+      errors?.length === 1 &&
+      !this.failedHooks.has(attempt) &&
+      isDeepStrictEqual(errors[0], attempt.errors[0])
+    );
   }
 
   async onEnd(
@@ -98,6 +136,9 @@ export default class ResultsReporter implements Reporter {
               status: attempt.status,
               errorCount: attempt.errors.length,
               annotations: annotations(attempt.annotations),
+              ...(this.isAssertionFailure(attempt)
+                ? { failureKind: 'assertion' }
+                : {}),
             })),
           };
         }),

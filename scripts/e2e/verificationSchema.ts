@@ -28,6 +28,7 @@ export const verificationAttemptSchema = z.strictObject({
   status: discoveryTestSchema.shape.expectedStatus,
   errorCount: z.number().int().nonnegative(),
   annotations: discoveryTestSchema.shape.annotations,
+  failureKind: z.literal('assertion').optional(),
 });
 export const verificationTestResultSchema = discoveryTestSchema
   .pick({
