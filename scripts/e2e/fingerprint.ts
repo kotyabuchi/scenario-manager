@@ -38,7 +38,7 @@ export const inputFingerprintSchema = z.strictObject({
   files: z.array(fileSchema),
   digest: HASH,
 });
-const changesSchema = z.strictObject({
+export const changesSchema = z.strictObject({
   added: z.array(z.string()),
   removed: z.array(z.string()),
   changed: z.array(z.string()),

@@ -14,8 +14,9 @@ import { verifyResults } from './verifyResults';
 import { randomBytes } from 'node:crypto';
 import { realpath } from 'node:fs/promises';
 
-import type { InputChanges, InputFingerprint } from './fingerprint';
+import type { InputFingerprint } from './fingerprint';
 import type { RunnerSelection } from './runnerSelection';
+import type { VerificationReceipt } from './verificationReceiptSchema';
 
 const LATEST_RECEIPT = 'test-results/quality/verification.json';
 
@@ -47,23 +48,7 @@ export const runVerification = async (
   const prefix = `test-results/verification/${verificationId}`;
   const controller = new AbortController();
   const interrupt = () => controller.abort();
-  const state: {
-    schemaVersion: 1;
-    verificationId: string;
-    mode: 'full-required' | 'partial';
-    selection: VerificationRunOptions['selection'] | null;
-    status: 'running' | 'passed' | 'failed';
-    phase: string;
-    selectionDigest: string | null;
-    inputDigestBefore: string | null;
-    inputDigestAfter: string | null;
-    checkpoints: { phase: string; digest: string; changes: InputChanges }[];
-    execution: Awaited<ReturnType<typeof runVerificationStages>> | null;
-    verification: ReturnType<typeof verifyResults> | null;
-    failure: string | null;
-    legacyLocalRequested: boolean;
-    integrationLegacyExecuted: false;
-  } = {
+  const state: VerificationReceipt = {
     schemaVersion: 1,
     verificationId,
     mode: options.mode ?? 'full-required',
