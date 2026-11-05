@@ -1,6 +1,6 @@
 import { isNil } from 'ramda';
 
-import { legacyManifestSchema } from './legacy';
+import { legacyKey, legacyManifestSchema } from './legacy';
 import {
   legacyExecutionResultsSchema,
   legacyExecutionSchema,
@@ -68,7 +68,19 @@ const checkBaseline = (
         '旧testの本文を新しい基準へ自動更新できません。',
       );
     if (
+      old.disposition === 'replacement' &&
+      (entry.disposition !== 'replacement' ||
+        JSON.stringify(old.origin) !== JSON.stringify(entry.origin) ||
+        JSON.stringify(old.replacement) !== JSON.stringify(entry.replacement))
+    )
+      add(
+        'REPLACEMENT_BASELINE_CHANGED',
+        entry.key,
+        '固定した置換元・置換先を変更できません。',
+      );
+    if (
       entry.disposition !== 'local' &&
+      !(entry.disposition === 'replacement' && old.disposition === 'local') &&
       (old.disposition !== entry.disposition ||
         ('expectedAnnotation' in entry &&
           (!('expectedAnnotation' in old) ||
@@ -94,7 +106,9 @@ const checkDeclaredState = (
   add: AddIssue,
 ) => {
   if (
-    (entry.disposition === 'local' || entry.disposition === 'deferred-live') &&
+    (entry.disposition === 'local' ||
+      entry.disposition === 'replacement' ||
+      entry.disposition === 'deferred-live') &&
     (source.expectedStatus !== 'passed' ||
       controlAnnotations(source.annotations).length > 0)
   )
@@ -130,6 +144,7 @@ const checkDeclaredState = (
 const checkResults = (
   results: LegacyExecutionResult[],
   entries: Map<string, LegacyExecutionEntry>,
+  registered: Map<string, LegacyManifest['registered'][number]>,
   add: AddIssue,
 ) => {
   const seen = new Set<string>();
@@ -142,7 +157,21 @@ const checkResults = (
       add('UNKNOWN_RESULT', result.key, '実行先台帳にない結果です。');
       continue;
     }
-    if (result.fingerprint !== entry.fingerprint)
+    const expectedFingerprint =
+      entry.disposition === 'replacement'
+        ? registered.get(entry.key)?.fingerprint
+        : entry.fingerprint;
+    if (
+      entry.disposition === 'replacement'
+        ? result.originFingerprint !== entry.fingerprint
+        : !isNil(result.originFingerprint)
+    )
+      add(
+        'RESULT_ORIGIN_FINGERPRINT_MISMATCH',
+        result.key,
+        '置換元fingerprintの証跡が一致しません。',
+      );
+    if (result.fingerprint !== expectedFingerprint)
       add(
         'RESULT_FINGERPRINT_MISMATCH',
         result.key,
@@ -156,7 +185,7 @@ const checkResults = (
       );
       continue;
     }
-    if (entry.disposition === 'local') {
+    if (entry.disposition === 'local' || entry.disposition === 'replacement') {
       if (
         result.status !== 'passed' ||
         result.expectedStatus !== 'passed' ||
@@ -207,6 +236,77 @@ export const validateLegacyExecution = (input: LegacyExecutionInput) => {
     ].map(({ key }) => key),
   );
   const entries = entriesByKey(execution, 'DUPLICATE_EXECUTION', add);
+  const registered = new Map(
+    legacy.registered
+      .filter(({ profile }) => profile === 'app')
+      .map((entry) => [entry.key, entry]),
+  );
+  const targets = new Set<string>();
+  for (const entry of entries.values()) {
+    if (entry.disposition !== 'replacement') continue;
+    const origin = entry.origin.registration;
+    if (
+      origin.profile !== 'app' ||
+      origin.key !== entry.key ||
+      origin.key !== legacyKey(origin.profile, origin) ||
+      origin.fingerprint !== entry.fingerprint
+    )
+      add(
+        'REPLACEMENT_ORIGIN_MISMATCH',
+        entry.key,
+        '置換元の完全な旧app登録identityが一致しません。',
+      );
+    const original = source.get(entry.key);
+    if (!isNil(original) && JSON.stringify(original) !== JSON.stringify(origin))
+      add(
+        'REPLACEMENT_ORIGIN_MISMATCH',
+        entry.key,
+        '置換元と旧目録の登録が一致しません。',
+      );
+    if (isNil(original)) source.set(entry.key, origin);
+    const target = registered.get(entry.key);
+    const targetId = JSON.stringify([
+      origin.profile,
+      origin.project,
+      origin.repeatEachIndex,
+      entry.replacement.caseId,
+      entry.replacement.variant,
+      entry.replacement.binding,
+    ]);
+    if (targets.has(targetId))
+      add(
+        'DUPLICATE_REPLACEMENT_TARGET',
+        entry.key,
+        '置換先case登録が重複しています。',
+      );
+    targets.add(targetId);
+    if (
+      isNil(target) ||
+      target.caseId !== entry.replacement.caseId ||
+      target.variant !== entry.replacement.variant ||
+      target.binding !== entry.replacement.binding ||
+      target.profile !== origin.profile ||
+      target.project !== origin.project ||
+      target.file !== origin.file ||
+      JSON.stringify(target.titlePath) !== JSON.stringify(origin.titlePath) ||
+      target.repeatEachIndex !== origin.repeatEachIndex ||
+      target.serialGroup !== origin.serialGroup ||
+      target.expectedStatus !== 'passed' ||
+      controlAnnotations(target.annotations).length > 0
+    )
+      add(
+        'REPLACEMENT_TARGET_MISMATCH',
+        entry.key,
+        '現在の登録済みapp caseと置換契約が一致しません。',
+      );
+  }
+  for (const key of registered.keys())
+    if (entries.get(key)?.disposition !== 'replacement')
+      add(
+        'REGISTERED_APP_UNMAPPED',
+        key,
+        '登録済みapp caseの置換元がありません。',
+      );
   if (source.size === 0)
     add('EMPTY_LEGACY', 'app', '旧app testの登録集合が空です。');
   for (const entry of entries.values()) {
@@ -241,6 +341,7 @@ export const validateLegacyExecution = (input: LegacyExecutionInput) => {
     checkResults(
       legacyExecutionResultsSchema.parse(input.results),
       entries,
+      registered,
       add,
     );
   const count = (disposition: LegacyExecutionEntry['disposition']) =>
@@ -256,6 +357,7 @@ export const validateLegacyExecution = (input: LegacyExecutionInput) => {
     counts: {
       total: execution.entries.length,
       local: count('local'),
+      replacement: count('replacement'),
       existingSkip: count('existing-skip'),
       existingFixme: count('existing-fixme'),
       deferredLive: count('deferred-live'),

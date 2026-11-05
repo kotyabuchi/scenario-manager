@@ -12,7 +12,7 @@ import { isAbsolute, relative, resolve, sep } from 'node:path';
 import type { DiscoveredTest, Discovery } from './discoverySchema';
 
 const text = z.string().trim().min(1);
-const entrySchema = discoveryTestSchema
+export const legacyEntrySchema = discoveryTestSchema
   .pick({
     file: true,
     titlePath: true,
@@ -30,11 +30,11 @@ const entrySchema = discoveryTestSchema
 export const legacyManifestSchema = z
   .strictObject({
     schemaVersion: z.literal(1),
-    tests: z.array(entrySchema),
+    tests: z.array(legacyEntrySchema),
     registered: z.array(
-      entrySchema.extend({ caseId: text, variant: text, binding: text }),
+      legacyEntrySchema.extend({ caseId: text, variant: text, binding: text }),
     ),
-    setups: z.array(entrySchema),
+    setups: z.array(legacyEntrySchema),
     groups: z.array(
       z.strictObject({
         id: text,
@@ -137,7 +137,7 @@ export const buildLegacy = async (
               ]),
             )
             .digest('hex')}`;
-      const entry = entrySchema.parse({
+      const entry = legacyEntrySchema.parse({
         key,
         profile: report.profile,
         file: test.file,

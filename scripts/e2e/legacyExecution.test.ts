@@ -111,6 +111,7 @@ describe('旧登録の実行先集合', () => {
       counts: {
         total: 4,
         local: 1,
+        replacement: 0,
         existingSkip: 1,
         existingFixme: 1,
         deferredLive: 1,
@@ -397,7 +398,7 @@ describe('runtimeのskipと失敗', () => {
 });
 
 describe('保存した348登録の対応表', () => {
-  it('旧目録を変更せず319/9/2/18へ分類し、setupとStorybookを別に保つ', () => {
+  it('旧348登録を309/10/9/2/18へ分類し、setupとStorybookを別に保つ', () => {
     const read = (name: string): unknown =>
       JSON.parse(
         readFileSync(
@@ -415,16 +416,20 @@ describe('保存した348登録の対応表', () => {
     expect(report.issues).toEqual([]);
     expect(report.counts).toEqual({
       total: 348,
-      local: 319,
+      local: 309,
+      replacement: 10,
       existingSkip: 9,
       existingFixme: 2,
       deferredLive: 18,
     });
     expect(legacy.setups).toHaveLength(1);
-    expect(legacy.registered).toHaveLength(8);
+    expect(legacy.registered).toHaveLength(18);
     const byKey = new Map(legacy.tests.map((entry) => [entry.key, entry]));
     for (const entry of execution.entries) {
-      const source = byKey.get(entry.key);
+      const source =
+        entry.disposition === 'replacement'
+          ? entry.origin.registration
+          : byKey.get(entry.key);
       if (isNil(source)) throw new Error('対応する旧登録がありません。');
       if (entry.disposition === 'existing-skip') {
         expect(source.project).toBe('mobile-chrome');

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { discoveryTestSchema } from './discoverySchema';
+import { legacyEntrySchema } from './legacy';
 
 const text = z.string().trim().min(1);
 const identity = {
@@ -11,6 +12,16 @@ const identity = {
 /** 既存登録ごとの実行先。未実行理由をlocalの成功へ混ぜない。 */
 export const legacyExecutionEntrySchema = z.discriminatedUnion('disposition', [
   z.strictObject({ ...identity, disposition: z.literal('local') }),
+  z.strictObject({
+    ...identity,
+    disposition: z.literal('replacement'),
+    reason: text,
+    origin: z.strictObject({
+      revision: z.string().regex(/^[a-f0-9]{40}$/),
+      registration: legacyEntrySchema.strict(),
+    }),
+    replacement: z.strictObject({ caseId: text, variant: text, binding: text }),
+  }),
   z.strictObject({
     ...identity,
     disposition: z.literal('existing-skip'),
@@ -44,6 +55,7 @@ export const legacyExecutionSchema = z.strictObject({
 /** adapterが登録identityを付けた最終結果。retryの生行を重複投入しない。 */
 export const legacyExecutionResultSchema = z.strictObject({
   ...identity,
+  originFingerprint: identity.fingerprint.optional(),
   status: discoveryTestSchema.shape.expectedStatus,
   expectedStatus: discoveryTestSchema.shape.expectedStatus,
   annotations: discoveryTestSchema.shape.annotations,
