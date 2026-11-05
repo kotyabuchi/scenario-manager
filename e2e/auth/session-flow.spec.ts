@@ -151,9 +151,24 @@ test.describe('セッションフロー', () => {
       },
     );
 
-    test('基本情報セクションが表示される', async ({ page }) => {
-      await expect(page.getByText('E2Eテスト用のセッション')).toBeVisible();
-    });
+    test(
+      '基本情報セクションが表示される',
+      {
+        tag: [
+          '@case:legacy-session-basic-info',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await expect(
+          detailPage.basicInfoSection
+            .getByRole('paragraph')
+            .filter({ hasText: 'E2Eテスト用のセッション' }),
+        ).toBeVisible();
+      },
+    );
 
     test('参加者セクションが表示される', async ({ page }) => {
       // 作成者が参加者として表示される
@@ -166,9 +181,24 @@ test.describe('セッションフロー', () => {
       await expect(detailPage.gmNotesSection).toBeVisible();
     });
 
-    test('タイムラインにセッション作成イベントがある', async ({ page }) => {
-      await expect(page.getByText('セッション作成')).toBeVisible();
-    });
+    test(
+      'タイムラインにセッション作成イベントがある',
+      {
+        tag: [
+          '@case:legacy-session-timeline-created',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await expect(
+          detailPage.timelineSection
+            .getByRole('paragraph')
+            .filter({ hasText: /^セッション作成$/ }),
+        ).toBeVisible();
+      },
+    );
   });
 
   test.describe('サブページへの遷移', () => {
@@ -186,12 +216,22 @@ test.describe('セッションフロー', () => {
       await expect(page).toHaveURL(/\/applications$/);
     });
 
-    test('日程調整ページに遷移できる', async ({ page }) => {
-      const detailPage = new SessionDetailPage(page);
-      await detailPage.goto(createdSessionId ?? '');
-      await detailPage.clickScheduleLink();
-      await expect(page).toHaveURL(/\/schedule$/);
-    });
+    test(
+      '日程調整ページに遷移できる',
+      {
+        tag: [
+          '@case:legacy-session-schedule-navigation',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await detailPage.goto(createdSessionId ?? '');
+        await detailPage.clickScheduleLink();
+        await expect(page).toHaveURL(/\/schedule\/availability$/);
+      },
+    );
   });
 
   test.describe('ダイアログ操作', () => {
@@ -204,18 +244,27 @@ test.describe('セッションフロー', () => {
       await detailPage.goto(createdSessionId ?? '');
     });
 
-    test('キャンセルダイアログが開閉できる', async ({ page }) => {
-      const detailPage = new SessionDetailPage(page);
-      await detailPage.clickCancelSessionButton();
-      await expect(detailPage.cancelSessionDialog).toBeVisible();
+    test(
+      'キャンセルダイアログが開閉できる',
+      {
+        tag: [
+          '@case:legacy-session-cancel-dismiss',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await detailPage.clickCancelSessionButton();
+        await expect(detailPage.cancelSessionDialog).toBeVisible();
 
-      // ダイアログ内のキャンセルボタンで閉じる
-      await detailPage.cancelSessionDialog
-        .getByRole('button', { name: 'キャンセル' })
-        .first()
-        .click();
-      await expect(detailPage.cancelSessionDialog).not.toBeVisible();
-    });
+        // セッションを取り消さず、継続する操作でダイアログだけを閉じる
+        await detailPage.cancelSessionDialog
+          .getByRole('button', { name: '継続する', exact: true })
+          .click();
+        await expect(detailPage.cancelSessionDialog).not.toBeVisible();
+      },
+    );
   });
 
   test.describe('アクセシビリティ', () => {

@@ -49,7 +49,13 @@ export class AvailabilityPage extends BasePage {
     this.successMessage = page.getByText('スケジュールを保存しました。');
 
     // 状態表示
-    this.emptyScheduleMessage = page.getByText('まだスケジュールがありません');
+    this.emptyScheduleMessage = page
+      .getByRole('main')
+      .getByText(
+        'まだスケジュールがありません。右側からコピーするか、上のフォームで追加してください。',
+        { exact: true },
+      )
+      .filter({ visible: true });
     // aria-live="polite" 内のスケジュール件数に限定し strict mode violation を回避
     this.scheduleCountText = page
       .locator('[aria-live="polite"]')

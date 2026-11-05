@@ -8,6 +8,7 @@ import type { Locator, Page } from '@playwright/test';
 export class SessionDetailPage extends BasePage {
   // ヘッダー
   readonly pageTitle: Locator;
+  readonly sessionHeader: Locator;
   readonly backLink: Locator;
   readonly editButton: Locator;
 
@@ -44,6 +45,7 @@ export class SessionDetailPage extends BasePage {
 
     // ヘッダー
     this.pageTitle = page.getByRole('heading', { level: 1 });
+    this.sessionHeader = page.locator('header').filter({ has: this.pageTitle });
     this.backLink = page.getByRole('link', { name: '戻る' });
     this.editButton = page.getByRole('button', { name: '基本情報を編集' });
 
@@ -53,11 +55,27 @@ export class SessionDetailPage extends BasePage {
     );
 
     // セクション
-    this.basicInfoSection = page.getByText('基本情報').locator('..');
-    this.participantsSection = page.getByText('参加者').first().locator('..');
-    this.gmNotesSection = page.getByText('GMメモ').locator('..');
+    this.basicInfoSection = page.locator('section').filter({
+      has: page.getByRole('heading', {
+        level: 2,
+        name: '基本情報',
+        exact: true,
+      }),
+    });
+    this.participantsSection = page.locator('section').filter({
+      has: page.getByRole('heading', { level: 2, name: '参加者', exact: true }),
+    });
+    this.gmNotesSection = page.locator('section').filter({
+      has: page.getByRole('heading', { level: 2, name: 'GMメモ', exact: true }),
+    });
     this.toolsSection = page.getByText('ツール・リンク').locator('..');
-    this.timelineSection = page.getByText('タイムライン').locator('..');
+    this.timelineSection = page.locator('section').filter({
+      has: page.getByRole('heading', {
+        level: 2,
+        name: 'タイムライン',
+        exact: true,
+      }),
+    });
 
     // フェーズ
     this.phaseSection = page.locator(
@@ -65,9 +83,9 @@ export class SessionDetailPage extends BasePage {
     );
 
     // メニュー
-    this.moreActionsButton = page.getByRole('button', {
-      name: 'その他の操作',
-    });
+    this.moreActionsButton = this.sessionHeader
+      .getByRole('button', { name: 'その他の操作', exact: true })
+      .filter({ visible: true });
 
     // ダイアログ
     this.participationDialog = page.getByRole('dialog', { name: /参加申請/ });
@@ -88,7 +106,10 @@ export class SessionDetailPage extends BasePage {
 
   /** キャンセルボタンをクリック */
   async clickCancelSessionButton() {
-    await this.page.getByRole('button', { name: 'キャンセル' }).click();
+    await this.clickMoreActionsMenu();
+    await this.sessionHeader
+      .getByRole('menuitem', { name: 'キャンセル', exact: true })
+      .click();
   }
 
   /** 完了ボタンをクリック */
@@ -98,17 +119,34 @@ export class SessionDetailPage extends BasePage {
 
   /** 申請管理リンクをクリック */
   async clickApplicationsLink() {
-    await this.page.getByRole('link', { name: '申請管理' }).click();
+    await this.clickHeaderAction('申請管理');
   }
 
-  /** 日程調整リンクをクリック */
+  /** 募集中セッションのスケジュール提出導線をクリック */
   async clickScheduleLink() {
-    await this.page.getByRole('link', { name: '日程調整' }).click();
+    await this.clickHeaderAction('スケジュールを提出');
   }
 
   /** その他の操作メニューを開く */
   async clickMoreActionsMenu() {
     await this.moreActionsButton.click();
+  }
+
+  /** ヘッダーの可視配置に合わせてリンクまたはメニュー項目を操作する */
+  private async clickHeaderAction(name: string) {
+    await this.moreActionsButton.waitFor({ state: 'visible' });
+    const inlineLink = this.sessionHeader.getByRole('link', {
+      name,
+      exact: true,
+    });
+    if (await inlineLink.isVisible()) {
+      await inlineLink.click();
+      return;
+    }
+    await this.clickMoreActionsMenu();
+    await this.sessionHeader
+      .getByRole('menuitem', { name, exact: true })
+      .click();
   }
 
   /** 現在のフェーズテキストを取得 */

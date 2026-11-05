@@ -1,4 +1,16 @@
 {
   "schemaVersion": 1,
-  "entries": []
+  "entries": [
+    {
+      "base": "01e24d8075ac05ca10f2e881159d7a5998598b71",
+      "policy": [
+        {
+          "deltaId": "e17cef90cf778bf3c26b953445ea8b6cfd2b58b5647c0abaf285d9557dcb56a2",
+          "reason": "既存のGM操作表示の保証を維持したまま、旧日程遷移テストをcase ID付きへ移行して通常クリック後の到達URLも確認する。実画面の導線が/schedule/availabilityであることを確認したため、旧/schedule期待を修正し、保存・認可の保証は追加しない。",
+          "reference": "e2e/ledger/scenarios/legacy-compatibility.json#legacy-session-schedule-navigation"
+        }
+      ],
+      "legacy": []
+    }
+  ]
 }

@@ -34,7 +34,7 @@ describe('旧testのexact選択', () => {
       const selection = createLegacySelection({ ...input(), project });
       expect(
         selection.entries.filter((entry) => 'caseId' in entry),
-      ).toHaveLength(5);
+      ).toHaveLength(9);
       expect(selection.keys).toHaveLength(108);
     }
   });
@@ -56,8 +56,8 @@ describe('旧testのexact選択', () => {
   });
   it('全348登録を照合したうえで4projectの非deferred330件だけを選択する', () => {
     const value = input();
-    expect(value.currentLegacy.tests).toHaveLength(338);
-    expect(value.currentLegacy.registered).toHaveLength(10);
+    expect(value.currentLegacy.tests).toHaveLength(330);
+    expect(value.currentLegacy.registered).toHaveLength(18);
     const selections = [
       ...new Set(legacy.tests.map((entry) => entry.project)),
     ].map((project) => createLegacySelection({ ...value, project }));

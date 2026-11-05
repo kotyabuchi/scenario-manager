@@ -4,6 +4,174 @@
     "title": "既存認証済みUIテストのcase ID移行",
     "cases": [
       {
+        "caseId": "legacy-session-timeline-created",
+        "title": "タイムラインにセッション作成イベントがある",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/_components/TimelineSection.tsx#TimelineSection",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-session-basic-info",
+        "title": "基本情報セクションが表示される",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoSection.tsx#BasicInfoSection",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-session-schedule-navigation",
+        "title": "日程調整ページに遷移できる",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/_components/SessionActions.tsx#SessionActions",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-session-cancel-dismiss",
+        "title": "キャンセルダイアログが開閉できる",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/_components/CancelSessionDialog.tsx#CancelSessionDialog",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
         "caseId": "legacy-fab-open",
         "title": "FABメニューを開くとメニュー項目が表示される",
         "status": "implemented",

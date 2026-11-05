@@ -14,7 +14,10 @@ export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    this.welcomeMessage = page.getByText(/ようこそ/);
+    this.welcomeMessage = page.getByRole('heading', {
+      level: 1,
+      name: /^ようこそ、.+さん$/,
+    });
     this.upcomingSessionsHeading = page.getByRole('heading', {
       name: '予定されているセッション',
     });

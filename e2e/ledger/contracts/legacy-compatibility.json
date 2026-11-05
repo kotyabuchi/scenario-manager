@@ -1,5 +1,122 @@
 [
   {
+    "target": "function:src/app/(main)/sessions/[id]/_components/TimelineSection.tsx#TimelineSection",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["browser"],
+        "expectation": "作成したセッションの可視タイムラインセクションに、セッション作成イベントを表す「セッション作成」のparagraphが表示される。イベントの保存処理や件数の集計はこの表示検証の対象に含めない。",
+        "basis": ["e2e/auth/session-flow.spec.ts"],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "function:src/app/(main)/sessions/[id]/_components/BasicInfoSection/BasicInfoSection.tsx#BasicInfoSection",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["browser"],
+        "expectation": "作成したセッションの基本情報セクションに、「E2Eテスト用のセッション」を含む募集文のparagraphが可視表示される。",
+        "basis": ["e2e/auth/session-flow.spec.ts"],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "function:src/app/(main)/sessions/[id]/_components/CancelSessionDialog.tsx#CancelSessionDialog",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["browser"],
+        "expectation": "詳細ヘッダー内のその他の操作からキャンセルmenuitemを通常clickすると、セッションをキャンセルするdialogが表示される。「継続する」を通常clickすると、セッションの取消実行buttonを押さずにdialogが閉じる。",
+        "basis": ["e2e/auth/session-flow.spec.ts"],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
     "target": "function:src/components/blocks/SpeedDialFAB/SpeedDialPanel.tsx#SpeedDialPanel",
     "classification": "support",
     "requirements": [
@@ -45,7 +162,7 @@
       {
         "aspect": "render",
         "layers": ["browser"],
-        "expectation": "creator-onlyで作成した募集中セッションの詳細見出しを含むヘッダー内SessionActionsで、申請管理・スケジュールを提出の操作が表示され、有効である。デスクトップの可視リンクでは申請管理・空き時間提出のhrefも確認する。モバイルではその他の操作メニューを開いて同じ2操作を確認し、両端末でメニュー内のキャンセル操作が表示され有効であることを確認する。遷移先の操作・他actorの認可はこの表示検証の対象に含めない。",
+        "expectation": "creator-onlyで作成した募集中セッションの詳細見出しを含むヘッダー内SessionActionsで、申請管理・スケジュールを提出の操作が表示され、有効である。デスクトップの可視リンクでは申請管理・空き時間提出のhrefも確認する。モバイルではその他の操作メニューを開いて同じ2操作を確認し、両端末でメニュー内のキャンセル操作が表示され有効であることを確認する。スケジュールを提出の導線を通常clickすると/schedule/availabilityのスケジュール提出ページへ遷移する。遷移後の保存操作・他actorの認可はこの検証の対象に含めない。",
         "basis": ["e2e/auth/session-flow.spec.ts"],
         "executions": [
           {
