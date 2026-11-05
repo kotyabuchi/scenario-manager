@@ -66,7 +66,7 @@ export const SessionDetailContent = ({
         {/* 2カラムグリッド */}
         <div className={styles.pageGrid}>
           {/* メインカラム */}
-          <main className={styles.mainColumn}>
+          <div className={styles.mainColumn}>
             <BasicInfoSection
               session={session}
               showEditButton={userRole === 'manager'}
@@ -88,7 +88,7 @@ export const SessionDetailContent = ({
                 showEditButton
               />
             )}
-          </main>
+          </div>
 
           {/* サイドバーカラム */}
           <aside className={styles.sidebarColumn}>

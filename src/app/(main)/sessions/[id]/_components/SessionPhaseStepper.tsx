@@ -122,7 +122,12 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
         </span>
       </div>
 
-      <div className={styles.phaseOverview_trackWrap}>
+      <section
+        className={styles.phaseOverview_trackWrap}
+        aria-label="進行フェーズ一覧"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: 横スクロール領域をキーボードでも操作できるようにする
+        tabIndex={0}
+      >
         <ol className={styles.phaseOverview_track}>
           {FLOW_STEPS.map((step, index) => {
             const isCompleted = !isCancelled && currentIndex > index;
@@ -182,7 +187,7 @@ export const SessionPhaseStepper = ({ phase }: SessionPhaseStepperProps) => {
             );
           })}
         </ol>
-      </div>
+      </section>
 
       {isCancelled && (
         <p className={styles.phaseOverview_cancelNote}>
