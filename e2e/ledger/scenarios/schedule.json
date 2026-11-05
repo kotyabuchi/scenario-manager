@@ -101,9 +101,56 @@
         "testBindings": ["main"]
       },
       {
+        "caseId": "schedule-action-allow",
+        "title": "独立した主催者とGMの実JWTをNext cookie境界で認証し、Actionから複数枠を保存する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "persist",
+            "layer": "integration"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
         "caseId": "schedule-action-deny",
         "title": "匿名・部外者・準備中以外のAction呼出を拒否して旧状態を保持する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "integration",
         "fixture": "schedule",
         "roles": ["operator"],
@@ -157,7 +204,7 @@
       {
         "caseId": "schedule-action-invalid",
         "title": "空枠・逆転・30分境界外・重複を拒否して旧状態を保持する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "integration",
         "fixture": "schedule",
         "roles": ["operator"],
@@ -223,7 +270,7 @@
       {
         "caseId": "schedule-rpc-allow",
         "title": "主催者とGM/KPの利用者JWTでRPC全置換を独立に許可する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "integration",
         "fixture": "schedule",
         "roles": ["operator"],
@@ -270,7 +317,7 @@
       {
         "caseId": "schedule-rpc-deny",
         "title": "RPC直接呼出の匿名・部外者・actor申告不一致を拒否する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "integration",
         "fixture": "schedule",
         "roles": ["operator", "claimed-actor"],
@@ -336,7 +383,7 @@
       {
         "caseId": "schedule-rpc-atomic",
         "title": "RPCの途中失敗で旧枠とセッション状態の両方を保持する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "integration",
         "fixture": "schedule",
         "roles": ["operator"],

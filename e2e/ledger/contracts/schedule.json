@@ -99,8 +99,8 @@
     "requirements": [
       {
         "aspect": "persist",
-        "layers": ["browser"],
-        "expectation": "inline Action経由のUI保存からexport Actionを通り、複数枠の確定と再編集による全置換が永続化される。再読込と別参加者の表示で同じ枠を確認し、session_phaseは変えない。",
+        "layers": ["browser", "integration"],
+        "expectation": "inline Action経由のUI保存からexport Actionを通り、複数枠の確定と再編集による全置換が永続化される。再読込と別参加者の表示で同じ枠を確認し、session_phaseは変えない。 専用integrationでもcreator-only/keeper-onlyの利用者JWTをNext cookie境界から実認証し、Action正常保存と利用者の再取得、再検証要求を確認する。service-roleを実行主体には使わない。",
         "basis": [
           "docs/plans/session-availability-confirmation-redesign.md:417-441",
           "docs/plans/e2e-ledger-quality-gates.md#step-9-1-ui操作と永続化"
@@ -169,13 +169,37 @@
                 "actor": "confirmed-player"
               }
             ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
           }
         ]
       },
       {
         "aspect": "authorization",
         "layers": ["browser", "integration"],
-        "expectation": "creator-onlyとkeeper-onlyのPREPARATIONでの保存を個別に許可する。匿名・非参加outsider・RECRUITINGのcreator-onlyによるAction呼出を拒否し、確定枠とセッション状態を変更しない。phase制約はこのActionの要件であり、RPC直接呼出のphase保証を意味しない。",
+        "expectation": "creator-onlyとkeeper-onlyのPREPARATIONでの保存を個別に許可する。匿名・非参加outsider・RECRUITINGのcreator-onlyによるAction呼出を拒否し、確定枠とセッション状態を変更しない。phase制約はこのActionの要件であり、RPC直接呼出のphase保証を意味しない。 専用integrationでもcreator-only/keeper-onlyの利用者JWTをNext cookie境界から実認証し、Action正常保存と利用者の再取得、再検証要求を確認する。service-roleを実行主体には使わない。",
         "basis": [
           "docs/plans/session-availability-confirmation-redesign.md:16-17",
           "docs/plans/session-availability-confirmation-redesign.md:425-426",
@@ -279,6 +303,30 @@
               {
                 "role": "operator",
                 "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
               }
             ]
           }
