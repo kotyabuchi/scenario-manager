@@ -139,9 +139,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 9: 日程確定のbrowser E2Eを導入
 - [x] Step 9-1. UI操作と永続化
 - [x] Step 9-2. UI失敗状態と境界
-- [ ] Batch 10: Action/RPC認可とDBテストの証拠
-- [ ] Step 10-1. UIの外側にある拒否と原子性
-- [ ] Step 10-2. integration結果adapterと偽成功の解消
+- [x] Batch 10: Action/RPC認可とDBテストの証拠
+- [x] Step 10-1. UIの外側にある拒否と原子性
+- [x] Step 10-2. integration結果adapterと偽成功の解消
 - [ ] Batch 11: 実行結果の厳密な照合
 - [ ] Step 11-1. reporterと外部checker
 - [ ] Step 11-2. fingerprintと実行入口
@@ -229,6 +229,14 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 9の証跡修正: 実Playwright JSONのcompiled座標と列挙の原TS座標の差を、既存の1.57限定source map adapterを実workerにも適用して解消。座標一致の条件は維持した。無DB/無browserの2project×同位置loop回帰で、列挙・report・実workerのID/位置が一致することを確認した。
 - Batch 9検証・レビュー: staticGate7、schedule tools28、既存fixture evidence/progress31、source map実回帰1、日時schema12件が成功。全体Biome1004 filesと型検査成功。Sol/mediumの3担当と親のレビューで未解消0。記録は `docs/reviews/diff-review-2026-11-05-4.md`。通常登録35（app18/isolated8/Storybook9）、legacy330、不足453、baseline digest `fd3507e0f6fa04d244874cdce650128d7be6071465bf1641be60cf63e3908b1d`。新規不足・例外追加なし。
 - Batch 9後始末: 最終8 journal/stackのcleanup completeを確認し、Docker資源・lock・process・listener・秘密接続fileの残留0を独立確認した。ビルド前後のM1もpassed、issues/policy delta0。失敗run3件も保持し、後始末済みを確認。最終receiptは `test-results/quality/batch9-schedule-final.json`、残留確認は `batch9-final-residue-check.json`。Batch 10から続行し、M2全体は未完了。
+
+- Batch 10初期16条件: Next cookies/cacheだけをmockし、本人JWTで正常Action・RPC、匿名/第三者/phase/入力/actor不一致拒否、全置換の原子性を実装。Vitest標準結果とfixture全actor roster・所有journal・check完了・cleanupを厳密照合する。DB無しのguarded collectionも静的ゲートへ接続し、実登録51・legacy330・不足437、issues/policy delta0を確認した。
+- 初回実run `522fd686305d` は15/16成功。匿名RPCにSQL実行権限拒否を期待したが、復元catalogではanon EXECUTE可能、関数先頭のauth.uid()検査が `P0001 / Not authenticated` で拒否する既存契約だった。期待を実SQL契約へ合わせ、匿名identity・null data・旧親子全値保持の検査を維持した。単独failureの元errorも保持し、複数failureは集約する。
+- 修正HEAD `d3850da` のfresh run `125b7a013e86` は16/16成功、全16journal/stack cleanup complete。独立確認でもDocker資源・lock・process・listener・秘密接続fileの残留0。初回失敗runも同じく残留0で記録を保持。receiptは `test-results/quality/batch10-integration-16-final.json` と `batch10-integration-16-residue-check.json`。Batch 10全体はcalendar4件の移行・受入を続け、M2は未完了。
+
+- Batch 10完了: getCalendarSessionsの既存4件を独立した利用者JWT/cookie fixtureへ移管し、非存在・本人の確定日程・全表示項目・未確定日程を既知IDで無条件比較した。元fileの残17件とhooksは維持し、未移行11 DBファイルをlegacyへ残す。必要20条件、actor交換/service-role/未実行/早期終了/check欠落等を拒否する証跡検査を維持した。
+- 最終HEAD `4cdfb90` のfresh run `01cc518d201c` は20/20成功、必要20・実結果20・成功20・journal20でissues0。全fixture/stack cleanup complete、独立確認でもDocker資源・lock・process・listener・秘密fileの残留0。receiptは `test-results/quality/batch10-integration-final.json` / `batch10-final-residue-check.json`。
+- Batch 10最終検証: 全tools 76 files / 1326件中1325件成功後、Batch9由来の固定登録数26の古い期待だけを35へ整合し、app移行済18件の独立assertも保持して対象28件を再検証した。関連77件、isNil修正後evidence52件、全体型検査・Biome1032 files・各commit hook成功。3担当レビューの必須1件（isNil）を解消、追加小差分も再確認し最終A（review5/6）。保存後M1は55登録・legacy330・不足437、issues/policy delta0、baseline digest不変。次はBatch 11の結果照合共通化と全入力fingerprint。M2はまだ未完了。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
 
