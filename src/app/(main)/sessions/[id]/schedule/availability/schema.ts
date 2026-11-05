@@ -9,8 +9,10 @@ const isThirtyMinuteBoundary = (iso: string): boolean => {
 
 const availabilityTimeBlockInputSchema = z
   .object({
-    startAt: z.string().datetime({ message: '開始日時が不正です' }),
-    endAt: z.string().datetime({ message: '終了日時が不正です' }),
+    startAt: z
+      .string()
+      .datetime({ offset: true, message: '開始日時が不正です' }),
+    endAt: z.string().datetime({ offset: true, message: '終了日時が不正です' }),
   })
   .refine(
     (timeBlock) =>
