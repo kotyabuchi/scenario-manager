@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { inputFingerprintSchema } from './fingerprint';
+import { createVerificationRunResult as runResult } from './fixtures/changedVerificationRun';
 import {
   calendarFile,
   impactFixture,
   snapshotFixture,
 } from './fixtures/selection';
-import { verificationFixture } from './fixtures/verification';
 import { integrationCollectionSchema } from './integrationSchema';
 import { writeArtifact } from './ledgerArtifacts';
 import { prepareChangedVerification } from './prepareChangedVerification';
@@ -132,6 +132,12 @@ const prepare = (path: string, forceFull = false) => {
     }),
   };
   const selection = {
+    revisions: {
+      base: snapshot.base,
+      head: snapshot.head,
+      mode: 'local' as const,
+    },
+    eventPolicy: undefined,
     prepared,
     capture: { snapshot },
     graph: fixture.graph,
@@ -157,34 +163,6 @@ const prepare = (path: string, forceFull = false) => {
   } satisfies Awaited<ReturnType<typeof prepareChangedVerification>>;
   vi.mocked(prepareChangedVerification).mockResolvedValue(selection);
   return selection;
-};
-
-const runResult = (
-  options: VerificationRunOptions | undefined,
-  verificationId: string,
-  status: 'passed' | 'failed' = 'passed',
-): Awaited<ReturnType<typeof runVerification>> => {
-  const { prepared } = options ?? {};
-  if (prepared === undefined) throw new Error('fixtureの実行plan不足');
-  return {
-    schemaVersion: 1,
-    verificationId,
-    mode: options?.mode ?? 'full-required',
-    selection: options?.selection ?? null,
-    status,
-    phase: status === 'passed' ? 'complete' : 'verification',
-    selectionDigest: digestVerificationPlan(prepared.plan),
-    inputDigestBefore: prepared.inputs.digest,
-    inputDigestAfter: prepared.inputs.digest,
-    checkpoints: [],
-    execution: { stages: [verificationFixture().stage], runs: [] },
-    verification: null,
-    failure: null,
-    legacyLocalRequested: prepared.plan.requirements.some(
-      ({ profile }) => profile === 'app',
-    ),
-    integrationLegacyExecuted: false,
-  };
 };
 
 const latestReceipt = () =>
@@ -220,6 +198,22 @@ beforeEach(() => {
 });
 
 describe('差分検証のroot入口', () => {
+  it('親runの中断を引き継ぎ、準備を起動せずに中断を保存する', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const result = await runChangedVerification(repository, {
+      signal: controller.signal,
+    });
+    expect(result).toMatchObject({
+      status: 'failed',
+      phase: 'preparation',
+      failure: 'INTERRUPTED',
+    });
+    expect(prepareChangedVerification).not.toHaveBeenCalled();
+    expect(runVerification).not.toHaveBeenCalled();
+    expect(JSON.parse(latestReceipt() ?? '{}')).toEqual(result);
+  });
+
   it('部分と全件を順に実行し、同じ固定入力・全列挙から別の実行contextを作る', async () => {
     const selection = prepare(calendarFile);
     const result = await runChangedVerification(repository, {

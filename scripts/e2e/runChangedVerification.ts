@@ -38,6 +38,7 @@ export const runChangedVerification = async (
     env?: NodeJS.ProcessEnv;
     forceFull?: boolean;
     shadow?: boolean;
+    signal?: AbortSignal;
   } = {},
 ) => {
   const worktreeRoot = await realpath(root);
@@ -51,6 +52,7 @@ export const runChangedVerification = async (
     status: 'running' | 'passed' | 'failed';
     phase: string;
     decision: SelectionDecision | null;
+    effectiveSelectionDigest: string | null;
     partial: ReturnType<typeof summary> | null;
     full: ReturnType<typeof summary> | null;
     shadow: ShadowResult | null;
@@ -63,6 +65,7 @@ export const runChangedVerification = async (
     status: 'running',
     phase: 'preparation',
     decision: null,
+    effectiveSelectionDigest: null,
     partial: null,
     full: null,
     shadow: null,
@@ -81,12 +84,15 @@ export const runChangedVerification = async (
     if (hasDirectory)
       writeArtifact(worktreeRoot, `${prefix}/selection-receipt.json`, contents);
   };
+  options.signal?.addEventListener('abort', interrupt, { once: true });
+  if (options.signal?.aborted) interrupt();
   process.once('SIGINT', interrupt);
   process.once('SIGTERM', interrupt);
   try {
     save();
     prepareVerificationDirectory(worktreeRoot, selectionId);
     hasDirectory = true;
+    controller.signal.throwIfAborted();
     const selection = await prepareChangedVerification({
       root: worktreeRoot,
       prefix,
@@ -103,6 +109,7 @@ export const runChangedVerification = async (
       provenUnversionedPaths,
     } = selection;
     state.decision = decision;
+    state.effectiveSelectionDigest = effective?.selectionDigest ?? null;
     const provenance = {
       snapshotDigest: capture.snapshot.digest,
       inputDigest: prepared.inputs.digest,
@@ -239,6 +246,7 @@ export const runChangedVerification = async (
       ? 'INTERRUPTED'
       : 'SELECTION_VERIFICATION_FAILED';
   } finally {
+    options.signal?.removeEventListener('abort', interrupt);
     process.removeListener('SIGINT', interrupt);
     process.removeListener('SIGTERM', interrupt);
   }
