@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 import { z } from 'zod';
 
+import { parseGithubEvent, resolveGithubEventPolicy } from './githubEvent';
 import {
   assertGitCommit,
   gitObjectFormat,
@@ -14,17 +15,17 @@ import { parseLedger } from './ledger';
 
 import { readFile } from 'node:fs/promises';
 
-const eventSchema = z.object({
-  pull_request: z.object({
-    base: z.object({ sha: gitShaSchema }),
-    head: z.object({ sha: gitShaSchema }),
-  }),
-});
+import type { GithubEventPolicy } from './githubEventSchema';
+
 const approvalSchema = z.strictObject({
   base: gitShaSchema,
   head: gitShaSchema,
   digest: z.string().regex(/^[a-f0-9]{64}$/),
 });
+
+type ResolvedRevisions =
+  | { base: string; head: string; mode: 'local' }
+  | { base: string; head: string; mode: 'ci'; eventPolicy: GithubEventPolicy };
 
 /** CIはイベントだけを比較元にし、ローカルでは明示されたrefをcommitへ固定する。 */
 export const resolveRevisions = async ({
@@ -35,20 +36,28 @@ export const resolveRevisions = async ({
   root: string;
   env: NodeJS.ProcessEnv;
   base?: string;
-}) => {
-  if (env.CI) {
+}): Promise<ResolvedRevisions> => {
+  if (env.CI || env.GITHUB_ACTIONS === 'true') {
     if (!isNil(base)) throw new Error('CIではbaseの上書きを許可しません');
-    if (env.GITHUB_EVENT_NAME !== 'pull_request' || !env.GITHUB_EVENT_PATH)
-      throw new Error('CIにはpull_requestイベントが必要です');
-    const event = eventSchema.parse(
-      JSON.parse(await readFile(env.GITHUB_EVENT_PATH, 'utf8')),
-    );
-    const revisions = event.pull_request;
-    const expectedHead = assertGitCommit(root, revisions.head.sha);
-    const expectedBase = assertGitCommit(root, revisions.base.sha);
-    if (resolveGitCommit(root, 'HEAD') !== expectedHead)
-      throw new Error('checkout HEADがPR head SHAと一致しません');
-    return { base: expectedBase, head: expectedHead, mode: 'ci' as const };
+    if (!env.GITHUB_EVENT_PATH)
+      throw new Error('CIにはGitHub Actionsイベントが必要です');
+    const event = parseGithubEvent({
+      name: env.GITHUB_EVENT_NAME,
+      payload: JSON.parse(await readFile(env.GITHUB_EVENT_PATH, 'utf8')),
+      context: {
+        sha: env.GITHUB_SHA,
+        ref: env.GITHUB_REF,
+        repository: env.GITHUB_REPOSITORY,
+      },
+    });
+    const eventPolicy = resolveGithubEventPolicy({ root, event });
+    const { head, staticBase } = eventPolicy;
+    return {
+      base: staticBase.kind === 'push-bootstrap' ? head : staticBase.sha,
+      head,
+      mode: 'ci' as const,
+      eventPolicy,
+    };
   }
   if (isNil(base)) throw new Error('ローカル検査にはbaseを明示してください');
   return {

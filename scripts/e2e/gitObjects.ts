@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { devNull } from 'node:os';
 
 export const gitShaSchema = z
   .string()
@@ -19,43 +20,48 @@ export const MAX_GIT_FILE_BYTES = 8 * 1024 * 1024;
 const MAX_GIT_OUTPUT_BYTES = 16 * 1024 * 1024;
 const MAX_GIT_BLOB_SET_BYTES = 128 * 1024 * 1024;
 
-/** ローカルGit設定を読む際も、別のindex/objectsや外部処理への誘導を防ぐ。 */
+/** Git環境変数・外部処理・置換履歴を信頼せず、読み取り専用の出力だけを返す。 */
 export const gitRead = (
   root: string,
   args: string[],
   input?: string,
   maxBuffer = MAX_GIT_OUTPUT_BYTES,
+  options?: { rejectStderr: true },
 ) => {
   const env = { ...process.env };
   for (const key of Object.keys(env))
     if (/^GIT_/i.test(key)) Reflect.deleteProperty(env, key);
   env.GIT_NO_LAZY_FETCH = '1';
-  try {
-    return execFileSync(
-      'git',
-      [
-        '--no-replace-objects',
-        '--no-optional-locks',
-        '-c',
-        'core.fsmonitor=false',
-        '-c',
-        'core.untrackedCache=false',
-        '-C',
-        root,
-        ...args,
-      ],
-      {
-        env,
-        input,
-        maxBuffer,
-        timeout: 30_000,
-        windowsHide: true,
-        stdio: [input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'],
-      },
-    );
-  } catch {
+  env.GIT_GRAFT_FILE = devNull;
+  const result = spawnSync(
+    'git',
+    [
+      '--no-replace-objects',
+      '--no-optional-locks',
+      '-c',
+      'core.fsmonitor=false',
+      '-c',
+      'core.untrackedCache=false',
+      '-C',
+      root,
+      ...args,
+    ],
+    {
+      env,
+      input,
+      maxBuffer,
+      timeout: 30_000,
+      windowsHide: true,
+      stdio: [input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'],
+    },
+  );
+  if (
+    result.error ||
+    result.status !== 0 ||
+    (options?.rejectStderr && result.stderr.length > 0)
+  )
     throw new Error(`Gitの読み取りに失敗しました: ${args[0]}`);
-  }
+  return result.stdout;
 };
 
 export const resolveGitCommit = (root: string, revision: string) => {
