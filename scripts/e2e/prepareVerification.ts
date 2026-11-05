@@ -56,7 +56,7 @@ const scopeProfile = (ledger: Ledger, profile: string): Ledger => ({
 });
 
 /** DBやアプリの起動前に全collectorの終了を待ち、実行する全集合を固定する。 */
-export const prepareVerification = async (root: string) => {
+export const prepareVerificationDetails = async (root: string) => {
   const inputs = await captureInputs(root);
   const results = await Promise.allSettled([
     loadLedger(root),
@@ -151,5 +151,21 @@ export const prepareVerification = async (root: string) => {
   const changes = compareInputs(inputs, after);
   if (Object.values(changes).some((paths) => paths.length > 0))
     throw new Error('列挙中に検証入力が変化しました。');
+  return {
+    plan,
+    inputs,
+    scheduleExpected,
+    integrationExpected,
+    ledger,
+    discoveries,
+    legacy,
+    integrationCollection: integration,
+  };
+};
+
+/** 既存の全件runnerには従来の実行入力だけを渡す。 */
+export const prepareVerification = async (root: string) => {
+  const { plan, inputs, scheduleExpected, integrationExpected } =
+    await prepareVerificationDetails(root);
   return { plan, inputs, scheduleExpected, integrationExpected };
 };
