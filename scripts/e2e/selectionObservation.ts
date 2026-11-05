@@ -8,8 +8,8 @@ import { verifyResults } from './verifyResults';
 
 import { isDeepStrictEqual } from 'node:util';
 
-import type { runVerification } from './run';
 import type { ShadowObservation } from './selectionShadow';
+import type { runVerification } from './verificationRun';
 import type {
   VerificationPlan,
   VerificationStageResult,

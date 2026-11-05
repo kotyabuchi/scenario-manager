@@ -2,7 +2,6 @@ import { isNil } from 'ramda';
 
 import { writeArtifact } from './ledgerArtifacts';
 import { prepareChangedVerification } from './prepareChangedVerification';
-import { runVerification } from './run';
 import { selectedPreparation } from './selectedPreparation';
 import { assertNoOpDecision } from './selectionNoOp';
 import { observeSelectionRun } from './selectionObservation';
@@ -13,6 +12,7 @@ import {
 import { prepareVerificationDirectory } from './verificationContext';
 import { digestVerificationPlan } from './verificationPlanDigest';
 import { hasReleasedStageResources } from './verificationRelease';
+import { runVerification } from './verificationRun';
 
 import { createHash, randomBytes } from 'node:crypto';
 import { realpath } from 'node:fs/promises';

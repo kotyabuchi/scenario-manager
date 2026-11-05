@@ -10,20 +10,23 @@ import { verificationFixture } from './fixtures/verification';
 import { integrationCollectionSchema } from './integrationSchema';
 import { writeArtifact } from './ledgerArtifacts';
 import { prepareChangedVerification } from './prepareChangedVerification';
-import { runVerification, type VerificationRunOptions } from './run';
 import { runChangedVerification } from './runChangedVerification';
 import { projectSelection, selectImpacts } from './select';
 import { selectionConsoleSummary } from './selectionConsoleSummary';
 import { observeSelectionRun } from './selectionObservation';
 import { prepareVerificationDirectory } from './verificationContext';
 import { digestVerificationPlan } from './verificationPlanDigest';
+import {
+  runVerification,
+  type VerificationRunOptions,
+} from './verificationRun';
 
 import type { Discovery } from './discoverySchema';
 
 vi.mock('./prepareChangedVerification', () => ({
   prepareChangedVerification: vi.fn(),
 }));
-vi.mock('./run', () => ({ runVerification: vi.fn() }));
+vi.mock('./verificationRun', () => ({ runVerification: vi.fn() }));
 vi.mock('./ledgerArtifacts', () => ({ writeArtifact: vi.fn() }));
 vi.mock('./verificationContext', () => ({
   prepareVerificationDirectory: vi.fn(),
