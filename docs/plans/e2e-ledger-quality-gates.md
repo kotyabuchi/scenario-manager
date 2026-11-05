@@ -148,10 +148,10 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 12: 機能単位の保守的な変更選択
 - [x] Step 12-1. Git差分を固定して選択
 - [x] Step 12-2. executionGroupと選択結果の検証
-- [ ] Batch 13: ローカル品質ゲート・CI・開発規約へ接続
-- [ ] Step 13-1. 共通qualityコマンド
-- [ ] Step 13-2. 専用環境とCIを一体で切替
-- [ ] Step 13-3. 規約と移行運用
+- [x] Batch 13: ローカル品質ゲート・CI・開発規約へ接続
+- [x] Step 13-1. 共通qualityコマンド
+- [x] Step 13-2. 専用環境とCIを一体で切替
+- [x] Step 13-3. 規約と移行運用
 - [ ] Batch 14: UI surfaceとprops依存の抽出を拡張
 - [ ] Step 14-1. 実在する書き方を追跡
 - [ ] Step 14-2. 観測から必須化へ移行
@@ -255,6 +255,11 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 13統合検査: ソース固定後のWindows toolsは117 files / 1812件成功（379.13秒）、非書換Biome 1149 files・型検査・AGENTS同期・actionlint成功。以前の実部分/full receipt（6/28 checkpoints）も新しい共通validatorで再照合した。Linux追加検証では263件中262件が成功し、Vitest worker初期化のTinypool CPU probeが副作用guardを発火するOS差を発見したため、CI受入前に修正する。
 - Batch 13 Linux是正: 固定installed Tinypoolだけをworkerのtest import前に初期化し、CPU probeのshell起動を抑止。既存guard/Worker拒否は維持し、ESM execSyncの追加負例も含めLinux 18 files / 275件、Windows対象2 files / 16件成功。再lint・型検査成功、追加securityレビュー必須0、検証container/一時fixture残留0。公開CIのplanner/workerと同じ収集経路のOS差を解消した。
 - Batch 13受入準備: 品質前段用unitは89 files / 1090成功・既存8skip。既存の日程確定UIに通常位置とsticky位置の2ボタンがあるため、失敗保存と再試行のテストを両導線へ合わせた。実装CLIのclean HEAD実行とCI相当のDB/browser受入はこの後に記録し、現時点でM3完了とはしない。
+
+- Batch 13/M3実受入完了: code HEAD `fe7a8cd0bb8f6864052e7077fe32e8e78d4d3018`。ローカルquality `9ae97153256c`は全品質前段→M1→選択`c2cd35da1265`→Storybook部分`f62a5cc875fe`の1/1→unique証跡再照合でpassed（shadow省略）。一時コメントは元SHA-256へ完全復元。初回`623562441897`はSTALE_ARTIFACTで正しく停止し、保存inventoryのpackage.json hashとsource fingerprintの2値だけを同期して再受入した。nodes/edges/diagnostics・不足baselineは不変。
+- Batch 13 CI相当受入: 同じclean HEAD、比較元`0c4fa3f`の合成PRイベント、run `2026110513013` / attempt 1でplanner→required `1552334612bb`→legacy `5f3c9fd78fd6`→aggregateがpassed。必須37/37＋18/18、追加legacy312（301成功＋既存例外11）、全367登録中356成功。integration20、Storybook9、isolated8、公開PC57、公開mobile48＋skip9、認証付き各107＋既存fixme1。前段はunit 1090成功・既存8skip、tools1813成功。CIの全件選択と分割集合・結果が一致し、別IDのreceiptを一つのfull実行に偽装していない。
+- Batch 13否定系・後始末: 成功した実artifactのメモリ上コピーで必須skip（local/CI）、job skip、legacy artifact欠落、同IDで異選択、必須checkpoint欠落を拒否。実legacy実行目録の1件をコピーから除くとEXECUTION_MISSING/REMOVED_EXECUTION_ENTRYを検出。原本は未変更。required18回・legacy17回のcheckpoint一致、6 DB環境のcontainer/network/volume/lock/process/listener/認証ファイル残留0、32 journals完了、所有Node/Storybook6007 listenerも0。証跡は`test-results/quality/batch13-acceptance.json`と`batch13-negative-acceptance.json`。
+- Batch 13の範囲: Linuxは18 suites/275 fixturesで検証。実DB/browserのCI相当受入はWindowsで行い、GitHub hosted workflowは起動していない。push・PR・branch protection設定変更なし。M3達成とし、Batch 14/M4へ進む。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
 

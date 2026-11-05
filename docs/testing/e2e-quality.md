@@ -66,3 +66,16 @@ private log、認証state、DB接続情報、raw trace、`test-results` 全体�
 ## GitHub設定
 
 公開後にrequired status checkとして指定する名前は **E2E verification gate**。旧 `Static Ledger Gate` は統合された。2026-11-05の読み取り時点ではmainにbranch protection/rulesetとrequired checkは設定されていない。本実装作業では設定・push・PR作成を行わない。
+
+## M3の受入結果（2026-11-05）
+
+code HEAD `fe7a8cd0bb8f6864052e7077fe32e8e78d4d3018` で次を確認した。ローカルの証跡索引は `test-results/quality/batch13-acceptance.json`。
+
+- `quality:changed --base HEAD --no-shadow`: 品質前段、M1、変更選択、Storybook 1件、独立receipt再照合まで成功。検証用の一時コメントは元のbytesへ復元した。部分実行の結果であり、shadowの成功は主張しない。
+- WindowsのCI相当実行: 合成PRイベントでplanner、required、legacy-local、aggregateが成功。必須55/55、追加legacy312登録は301成功・既存例外11件。合計367登録中356成功。品質前段はunit 1090成功・既存8skip、tools1813成功。
+- 成功した実artifactのコピーに対する7つの否定検査: 必須test/jobのskip、成果物欠落、異なる選択の混入、必須checkpoint欠落、legacy目録の削除を拒否。原本は変更していない。
+- 6 DB環境のcontainer、network、volume、lock、process、listener、認証ファイルの残留0。32 journals完了、所有NodeとStorybook listenerも0。
+
+初回のローカル実行は、品質コマンド追加後の保存inventoryが古く、M1の `STALE_ARTIFACT` で停止した。`test-results/verification/<selectionId>/static.json` で指摘を確認できる。inventoryのpackage.json hashとsource fingerprintのみ同期して再受入し、nodes、edges、diagnostics、不足baselineは変更していない。
+
+Linuxでは18 suites / 275 fixturesが成功した。実DB・ブラウザを使ったCI相当受入はWindowsで行った。GitHub hosted workflowの実行、push、PR作成、branch protection変更は行っていない。
