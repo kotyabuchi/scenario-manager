@@ -89,8 +89,9 @@ TodoList の各タスクを上から順番に実行する。
    - 前のタスクで変更したファイルの情報（依存がある場合）
 
 4. **実装完了後**:
-   - `pnpm check` で lint/format 確認
-   - 必要に応じて `pnpm vitest run` でテスト実行
+   - 編集時の整形は `pnpm check`、限定回帰は `test:unit` / `test:e2e-tools` を使う
+   - Batch判定は `pnpm quality:changed --base <開始時に固定した比較元>` に一本化する。readonly lint・型・pure/unit/tools・全体台帳・関連runner・保存receiptを共通規則で検査する
+   - requiredのskip/xfail/中断/不足やcleanup失敗を成功にしない。NoOp・legacy既存例外・deferred領域をverifiedと混同しない
    - **TaskUpdate** でステータスを `completed` に変更
 
 5. **実装に失敗した場合**:
@@ -108,8 +109,8 @@ TodoList の各タスクを上から順番に実行する。
 
 **実行フロー**:
 
-1. `pnpm check` でlint/format確認
-2. `pnpm vitest` でテスト実行（関連テストがある場合）
+1. `pnpm quality:changed --base <固定比較元>` を実行し、unique品質receiptと各runnerの結果を確認する。既定の全件shadowを省略した場合はその範囲を記録する
+2. 同じ合否は `.claude/rules/testing-patterns.md` を正本にする。操作数・成功件数だけでassertionの十分性を決めず、拒否・失敗・再試行の反例をレビューする
 3. **閾値チェック**: `git diff HEAD --stat -- . ":(exclude)docs/"` でファイル数・変更行数を確認
 4. **閾値超え**（ファイル数 > 5 or 変更行数 > 100）の場合:
    - `/review-diff` を実行（Skill ツールで呼び出し）

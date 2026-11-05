@@ -20,7 +20,10 @@ TRPG（テーブルトークRPG）のシナリオとセッションを管理す�
 |---------|------|
 | `pnpm dev` | 開発サーバー起動（Turbopack、port 3000固定） |
 | `pnpm build` | ビルド |
-| `pnpm check` | Biome lint + format 一括実行 |
+| `pnpm check` | Biome lint + format（編集用） |
+| `pnpm quality:changed --base <ref>` | lint・型・unit/tools・全体台帳・関連runner・receiptを共通検査 |
+| `pnpm check:ci` | Biome readonly検査 |
+| `pnpm e2e:ledger:staged` | index上の台帳schema・ID・参照検査 |
 | `pnpm vitest` | Vitest ユニットテスト（`vitest run` のエイリアス） |
 | `pnpm storybook` | Storybook（port 6006） |
 | `pnpm prepare` | PandaCSS コード生成（トークン変更後は必須） |
