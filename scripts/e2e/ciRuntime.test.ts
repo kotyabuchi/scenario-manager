@@ -12,9 +12,12 @@ import {
 import { runCiShard } from './ciShard';
 import { assertCiStaticReport } from './ciStaticReport';
 import { ciRuntimeFixture } from './fixtures/ciRuntime';
+import { inventoryFixture } from './fixtures/selection';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { readArtifact } from './ledgerArtifacts';
 import { prepareVerificationDetails } from './prepareVerification';
 import { ARTIFACTS, baselineDigest } from './staticGate';
+import { SURFACE_ARTIFACTS } from './surfaceGate';
 import { readRevisionFile } from './trustedRevision';
 import {
   loadVerificationArtifacts,
@@ -56,6 +59,7 @@ const env = {
   CI_LEGACY_RESULT: 'success',
 };
 const signal = new AbortController().signal;
+const surface = surfaceLedgerFixture();
 const artifacts = new Map<string, unknown>();
 let setup = ciRuntimeFixture();
 
@@ -83,11 +87,20 @@ beforeEach(() => {
     issues: [],
     isBootstrap: false,
     baselineDigest: baselineDigest(baseline),
+    ...surface.receipt,
   });
   vi.mocked(readArtifact).mockImplementation((_root, path) =>
     path === ARTIFACTS.baseline ? JSON.stringify(baseline) : undefined,
   );
-  vi.mocked(readRevisionFile).mockReturnValue(JSON.stringify(baseline));
+  const savedFiles = new Map<string, unknown>([
+    [ARTIFACTS.baseline, baseline],
+    [ARTIFACTS.inventory, inventoryFixture()],
+    [SURFACE_ARTIFACTS.pending, surface.pending],
+    [SURFACE_ARTIFACTS.migration, surface.migration],
+  ]);
+  vi.mocked(readRevisionFile).mockImplementation((_root, _revision, path) =>
+    savedFiles.has(path) ? JSON.stringify(savedFiles.get(path)) : undefined,
+  );
   for (const [shard, { envelope, verification }] of Object.entries(
     fixture.shards,
   )) {
@@ -103,8 +116,8 @@ beforeEach(() => {
   });
   vi.mocked(readCiContext).mockResolvedValue(context);
   vi.mocked(readCiLedgers).mockImplementation(
-    async (root, policy, report, binding) => {
-      assertCiStaticReport(root, report, policy, binding);
+    async (root, policy, report, binding, options) => {
+      assertCiStaticReport(root, report, policy, binding, options);
       return ledgers;
     },
   );
@@ -400,6 +413,7 @@ describe('CI aggregate', () => {
       issues: [],
       isBootstrap: false,
       baselineDigest: 'b'.repeat(64),
+      ...surface.receipt,
     });
     await expect(aggregateCiVerification(root, env, signal)).rejects.toThrow(
       'baseline',

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { buildPendingItems } from './baseline';
 import { assertCiStaticReport } from './ciStaticReport';
@@ -6,7 +6,9 @@ import { createGithubEventGit } from './fixtures/githubEventGit';
 import events from './fixtures/githubEvents.json';
 import { createLedgerFixture } from './fixtures/ledger';
 import { inventoryFixture } from './fixtures/selection';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { parseGithubEvent, resolveGithubEventPolicy } from './githubEvent';
+import { serializeInventory } from './inventory';
 import {
   ARTIFACTS,
   baselineDigest,
@@ -15,6 +17,16 @@ import {
 } from './staticGate';
 
 const roots: ReturnType<typeof createGithubEventGit>[] = [];
+// イベントとcoreの比較境界。UI移行は専用の実境界testで照合する。
+vi.mock('./surfaceGate', async (original) => ({
+  ...(await original<typeof import('./surfaceGate')>()),
+  checkSurfaceState: async () => surfaceLedgerFixture().receipt,
+}));
+// UI証跡の独立照合はsurfaceReceipt.test.tsで扱う。
+vi.mock('./surfaceReceipt', async (original) => ({
+  ...(await original<typeof import('./surfaceReceipt')>()),
+  assertSurfaceReceipt: vi.fn(),
+}));
 afterEach(() => {
   for (const repo of roots.splice(0)) repo.cleanup();
 });
@@ -31,6 +43,7 @@ const createState = (): StaticState => ({
     registered: [],
   },
   registrations: 0,
+  surfacePending: surfaceLedgerFixture().pending,
 });
 
 const createFixture = () => {
@@ -50,7 +63,7 @@ const createFixture = () => {
       'scenarios/schedule.json': ledger.scenarios,
     }))
       json(`e2e/ledger/${name}`, value);
-    json(ARTIFACTS.inventory, state.inventory);
+    repo.write(ARTIFACTS.inventory, serializeInventory(state.inventory));
     json(ARTIFACTS.legacy, state.legacy);
     json(ARTIFACTS.migrations, { schemaVersion: 1, entries: [] });
     if (withBaseline) json(ARTIFACTS.baseline, state.baseline);
@@ -121,6 +134,7 @@ describe('CI静的検査へのイベント接続', { timeout: 30_000 }, () => {
         bootstrapApproval: JSON.stringify(approval),
       }),
     ).resolves.toEqual({
+      ...surfaceLedgerFixture().receipt,
       issues: [],
       policyDeltas: [],
       isBootstrap: true,
@@ -183,6 +197,7 @@ describe('CI静的検査へのイベント接続', { timeout: 30_000 }, () => {
       }),
     });
     expect(result).toEqual({
+      ...surfaceLedgerFixture().receipt,
       issues: [],
       policyDeltas: [],
       isBootstrap: true,

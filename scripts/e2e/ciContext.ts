@@ -3,7 +3,11 @@ import { isNil } from 'ramda';
 import { readCiSmokeReference } from './ciBootstrap';
 import { ciWorkflowSchema } from './ciPartitionSchema';
 import { ciSnapshotOptions } from './ciSnapshotOptions';
-import { assertCiStaticReport, type CiStaticBinding } from './ciStaticReport';
+import {
+  assertCiStaticReport,
+  type CiStaticBinding,
+  type CiStaticReportOptions,
+} from './ciStaticReport';
 import { captureInputs, compareInputs } from './fingerprint';
 import { captureGitSnapshot } from './gitSnapshot';
 import { loadLedger } from './ledger';
@@ -32,12 +36,14 @@ export const readCiLedgers = async (
   policy: GithubEventPolicy,
   rawStaticReport: unknown,
   binding: CiStaticBinding,
+  options?: CiStaticReportOptions,
 ) => {
   const staticReport = assertCiStaticReport(
     root,
     rawStaticReport,
     policy,
     binding,
+    options,
   );
   return {
     ledger: await loadLedger(root),

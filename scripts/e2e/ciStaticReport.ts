@@ -6,10 +6,12 @@ import { ciPartitionManifestSchema } from './ciPartitionSchema';
 import { githubEventPolicySchema } from './githubEventSchema';
 import { parseArtifact, readArtifact } from './ledgerArtifacts';
 import { ARTIFACTS, baselineDigest } from './staticGate';
+import { assertSurfaceReceipt, surfaceReceiptSchema } from './surfaceReceipt';
 import { readRevisionFile } from './trustedRevision';
 
 import { isDeepStrictEqual } from 'node:util';
 
+import type { InputFingerprint } from './fingerprint';
 import type { GithubEventPolicy } from './githubEventSchema';
 
 const staticBindingSchema = ciPartitionManifestSchema.pick({
@@ -20,6 +22,7 @@ const staticBindingSchema = ciPartitionManifestSchema.pick({
 
 const reportSchema = z.object({
   ...staticBindingSchema.shape,
+  ...surfaceReceiptSchema.shape,
   status: z.literal('passed'),
   mode: z.literal('ci'),
   base: z.string(),
@@ -33,18 +36,25 @@ const reportSchema = z.object({
   baselineDigest: z.string().regex(/^[a-f0-9]{64}$/),
 });
 
+type CiStaticReportOptions = {
+  bootstrapApproval?: string | undefined;
+  inputs?: InputFingerprint;
+};
+
 /** 静的ゲート成果物の欠落・古いイベント・別baselineも集約で拒否する。 */
 export const assertCiStaticReport = (
   root: string,
   raw: unknown,
   policy: GithubEventPolicy,
   binding: CiStaticBinding,
+  options: CiStaticReportOptions = {},
 ) => {
   const report = reportSchema.parse(raw);
   if (
     !isDeepStrictEqual(report.workflow, binding.workflow) ||
     report.snapshotDigest !== binding.snapshotDigest ||
-    report.inputsDigest !== binding.inputsDigest
+    report.inputsDigest !== binding.inputsDigest ||
+    (!isNil(options.inputs) && options.inputs.digest !== binding.inputsDigest)
   )
     throw new Error(
       'CI静的検査のworkflow attemptまたは固定入力が一致しません。',
@@ -76,8 +86,15 @@ export const assertCiStaticReport = (
     throw new Error(
       'CI静的検査の由来が現在のイベント・baselineと一致しません。',
     );
+  assertSurfaceReceipt({
+    root,
+    policy,
+    report,
+    artifacts: ARTIFACTS,
+    ...options,
+  });
   return report;
 };
 
 type CiStaticBinding = z.infer<typeof staticBindingSchema>;
-export type { CiStaticBinding };
+export type { CiStaticBinding, CiStaticReportOptions };

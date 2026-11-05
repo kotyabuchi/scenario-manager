@@ -42,6 +42,10 @@ export const aggregateCiVerification = async (
     context.eventPolicy,
     readCiArtifact(root, 'plan/static.json'),
     manifest,
+    {
+      bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL,
+      inputs: initial.inputs,
+    },
   );
   if (
     initial.inputs.digest !== manifest.inputsDigest ||

@@ -81,7 +81,10 @@ export const planCiVerification = async (
   const staticReport = { ...selection.staticReport, ...binding };
   const partitionInput = {
     ...context,
-    ...(await readCiLedgers(root, context.eventPolicy, staticReport, binding)),
+    ...(await readCiLedgers(root, context.eventPolicy, staticReport, binding, {
+      bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL,
+      inputs: initial.inputs,
+    })),
     snapshotDigest: initial.snapshot.digest,
     inputsDigest: initial.inputs.digest,
     fullCollectionDigest: digestCiFullCollection(

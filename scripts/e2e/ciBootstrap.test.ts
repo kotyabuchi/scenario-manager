@@ -10,6 +10,7 @@ import {
   validateCiPartitionManifest,
 } from './ciPartition';
 import { ciPartitionFixture } from './fixtures/ciPartition';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { assertGitCommit, gitRead } from './gitObjects';
 import { loadLedger } from './ledger';
 import { readArtifact } from './ledgerArtifacts';
@@ -36,6 +37,12 @@ vi.mock('./trustedRevision', async (original) => ({
   readRevisionFile: vi.fn(),
 }));
 
+// UI初期移行はsurfaceReceipt.test.tsの独立fixtureで検査する。
+vi.mock('./surfaceReceipt', async (original) => ({
+  ...(await original<typeof import('./surfaceReceipt')>()),
+  assertSurfaceReceipt: vi.fn(),
+}));
+
 const root = 'fixture-ci-root';
 const baseline = { schemaVersion: 1 as const, items: [] };
 
@@ -45,6 +52,7 @@ const setup = (isBootstrap = true) => {
   if (policy.event !== 'pull_request')
     throw new Error('PR fixtureがありません。');
   const report = {
+    ...surfaceLedgerFixture().receipt,
     workflow: input.workflow,
     snapshotDigest: input.snapshotDigest,
     inputsDigest: input.inputsDigest,

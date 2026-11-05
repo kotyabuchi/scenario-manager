@@ -11,6 +11,7 @@ import { ciPartitionManifestSchema } from './ciPartitionSchema';
 import { planCiVerification } from './ciPlan';
 import { ciRuntimeFixture } from './fixtures/ciRuntime';
 import { inventoryFixture } from './fixtures/selection';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { mergeImpactGraphs } from './impactGraph';
 import { loadImpactRules } from './loadImpactRules';
 import { PlaywrightSelectionRepresentationError } from './playwrightTestList';
@@ -93,6 +94,7 @@ const selectionFixture = () => {
     proof: null,
     provenUnversionedPaths: [],
     staticReport: {
+      ...surfaceLedgerFixture().receipt,
       ...revisions,
       status: 'passed',
       issues: [],

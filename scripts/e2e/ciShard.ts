@@ -42,6 +42,16 @@ export const runCiShard = async (
   const rawManifest = ciPartitionManifestSchema.parse(
     readCiArtifact(root, 'plan/manifest.json'),
   );
+  onProgress?.({ phase: 'inputs' });
+  const initial = await captureCiInputs(root, context.eventPolicy);
+  if (
+    !isDeepStrictEqual(rawManifest.eventPolicy, context.eventPolicy) ||
+    !isDeepStrictEqual(rawManifest.workflow, context.workflow) ||
+    initial.snapshot.digest !== rawManifest.snapshotDigest ||
+    initial.inputs.digest !== rawManifest.inputsDigest
+  )
+    throw new Error('CI workerのイベント・入力がplannerと一致しません。');
+  onProgress?.({ phase: 'manifest' });
   const { manifest, plans } = validateCiPartitionManifest({
     manifest: rawManifest,
     ...(await readCiLedgers(
@@ -49,17 +59,12 @@ export const runCiShard = async (
       context.eventPolicy,
       readCiArtifact(root, 'plan/static.json'),
       rawManifest,
+      {
+        bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL,
+        inputs: initial.inputs,
+      },
     )),
   });
-  onProgress?.({ phase: 'inputs' });
-  const initial = await captureCiInputs(root, context.eventPolicy);
-  if (
-    !isDeepStrictEqual(manifest.eventPolicy, context.eventPolicy) ||
-    !isDeepStrictEqual(manifest.workflow, context.workflow) ||
-    initial.snapshot.digest !== manifest.snapshotDigest ||
-    initial.inputs.digest !== manifest.inputsDigest
-  )
-    throw new Error('CI workerのイベント・入力がplannerと一致しません。');
   onProgress?.({ phase: 'collection' });
   const prepared = await prepareVerificationDetails(root);
   if (

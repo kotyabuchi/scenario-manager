@@ -73,6 +73,15 @@ jobs:
           scripts/e2e/extractors/
           scripts/e2e/selection.test.ts
           scripts/e2e/ciBootstrap.test.ts
+          scripts/e2e/surfaceInventory.test.ts
+          scripts/e2e/surfacePolicy.test.ts
+          scripts/e2e/surfaceSelection.test.ts
+          scripts/e2e/surfaceMigration.test.ts
+          scripts/e2e/surfaceMigrationObservation.test.ts
+          scripts/e2e/surfaceGate.test.ts
+          scripts/e2e/ledgerSurfaceRefresh.test.ts
+          scripts/e2e/ledgerSurfaceRecovery.test.ts
+          scripts/e2e/surfaceReceipt.test.ts
           scripts/e2e/ciPartition.test.ts
           scripts/e2e/ciPartitionAggregate.test.ts
 
@@ -103,6 +112,8 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
       - id: verify
         run: pnpm e2e:ci shard required
+        env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
       - uses: actions/upload-artifact@v4
         with:
           name: e2e-required-${{ github.run_id }}-${{ github.run_attempt }}
@@ -141,6 +152,8 @@ jobs:
       - *install-chromium
       - id: verify
         run: pnpm e2e:ci shard legacy-local
+        env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
       - uses: actions/upload-artifact@v4
         with:
           name: e2e-legacy-local-${{ github.run_id }}-${{ github.run_attempt }}
@@ -191,6 +204,7 @@ jobs:
         if: ${{ always() && steps.setup.outcome == 'success' }}
         run: pnpm e2e:ci aggregate
         env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
           CI_PLANNER_RESULT: ${{ needs.planner.result }}
           CI_REQUIRED_RESULT: ${{ needs.e2e-required.result }}
           CI_LEGACY_RESULT: ${{ needs.e2e-legacy-local.result }}
