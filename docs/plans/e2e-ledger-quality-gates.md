@@ -245,6 +245,7 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 11最終実受入: 保存HEAD `6a480e14a36c2058087ab9f8d363930411c4812c`、verification `0a45a0cffc24`で全7stage成功。必須55/55、追加legacy312、issues0。物理結果367＝成功356＋既存skip9/fixme2。app必須18はlegacy330の内数で二重計数しない。deferred-live18・未移行integration-legacy11 files・fixture診断4は今回の実行集合外。
 - Batch 11入力/後始末: 開始/終了digestは`bbbff02ffb690acb4bd0540aa930ad22acb2ae312d6689b62fb5e6bc4d0205c7`で一致、全28checkpointの差分0。integration `7289cb8cced6`、isolated `2de930d6e170`、legacy `a008b56d3646` / `45df9e452bb8` / `0130b08fb5fb` / `6cc3e1c5b9dd` の全32journal/stack cleanup complete。独立Docker/process/port/lock/秘密file検査も残存0、Storybook6007も解放。
 - M2達成: 同じ保存HEADの最終M1もpassed（登録55/legacy330/不足437、issues/policy delta0、baseline digest不変）。receiptは`test-results/quality/batch11-verification-final.json` / `batch11-static-final.json` / `batch11-final-residue-check.json`。次はBatch 12のGit snapshot・保守的選択・shadow比較。事前設計は`test-results/quality/batch12-design.md`と`batch12-panda-provenance.md`に保持し、実装は未着手。
+- Batch 12実装・コードレビュー（2026-11-05）: Git四時点/VFS、機能対応表と保守的選択、group/runner閉包、部分runner、独立NoOp、Panda由来証明、同一snapshotのshadowを実装。3担当レビューの必須4件を修正し、独立group照合・実行mode・存在チェックも改善。性能改善候補を保持した最終レビューはB、記録は`docs/reviews/diff-review-2026-11-05-8.md`。実partial/full shadow受入は保存HEADでこれから実施するため、Batch 12とM3/M4は未完了。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
 
