@@ -38,6 +38,7 @@ const setup = async () => {
     status: 'passed',
     phase: 'complete',
     runId: 'a'.repeat(12),
+    environment: null,
     evidence: {
       issues: [],
       counts: { expected: 20, tests: 20, passed: 20, journals: 20 },
@@ -137,6 +138,7 @@ describe('integrationの実行入口', () => {
       status: 'failed',
       phase: 'evidence',
       runId: 'b'.repeat(12),
+      environment: null,
       evidence: {
         issues: [],
         counts: { expected: 20, tests: 20, passed: 20, journals: 20 },

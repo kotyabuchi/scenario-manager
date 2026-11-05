@@ -12,6 +12,10 @@ import {
 import { probeEnvironment } from './environmentProbe';
 import { validateIntegrationEvidence } from './evidence/vitest';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
+import {
+  type VerificationStageHooks,
+  verificationEnvironment,
+} from './verificationContext';
 
 import { existsSync } from 'node:fs';
 import {
@@ -36,6 +40,7 @@ const runtimeSchema = z.object({ dockerHost: z.string() });
 export const runIntegrationEnvironment = async (
   root: string,
   expected: IntegrationExpectation[],
+  verification?: VerificationStageHooks,
 ) => {
   const worktreeRoot = await realpath(root);
   let phase = 'environment';
@@ -67,9 +72,10 @@ export const runIntegrationEnvironment = async (
   };
   save();
   try {
+    await verification?.checkpoint('before-environment');
     environment = await probeEnvironment(
       worktreeRoot,
-      undefined,
+      verification?.signal,
       (progress) => {
         state.progress = progress;
         save();
@@ -102,6 +108,7 @@ export const runIntegrationEnvironment = async (
           const cli = createRequire(join(worktreeRoot, 'package.json')).resolve(
             'vitest/vitest.mjs',
           );
+          await verification?.checkpoint('before-tests');
           begin('tests');
           let runnerFailed = false;
           try {
@@ -114,14 +121,19 @@ export const runIntegrationEnvironment = async (
                   ...env,
                   SCENARIO_E2E_RUN_ID: manifest.runId,
                   SCENARIO_E2E_CREDENTIALS: file,
+                  ...(isNil(verification)
+                    ? {}
+                    : verificationEnvironment(verification.context)),
                 },
                 signal,
                 log: join(manifest.workdir, 'integration.private.log'),
+                onClose: verification?.onExit,
               },
             );
           } catch {
             runnerFailed = true;
           }
+          await verification?.checkpoint('after-tests');
           begin('evidence');
           const output = readArtifact(
             worktreeRoot,
@@ -161,6 +173,7 @@ export const runIntegrationEnvironment = async (
         }
       },
     );
+    await verification?.checkpoint('after-cleanup');
     status =
       environment.passed &&
       !isNil(state.evidence) &&
@@ -177,5 +190,6 @@ export const runIntegrationEnvironment = async (
     phase,
     runId: environment?.runId ?? state.progress?.runId ?? null,
     evidence: state.evidence,
+    environment,
   };
 };

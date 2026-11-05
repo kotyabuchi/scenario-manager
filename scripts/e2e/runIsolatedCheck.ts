@@ -13,6 +13,10 @@ import { probeEnvironment } from './environmentProbe';
 import { APP_PORT, withIsolatedApp } from './isolatedApp';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
 import { playwrightSourceMapOptions } from './playwrightSourceMaps';
+import {
+  type VerificationStageHooks,
+  verificationEnvironment,
+} from './verificationContext';
 
 import { existsSync } from 'node:fs';
 import {
@@ -35,6 +39,7 @@ type IsolatedCheckOptions<Evidence> = {
   receipt: string;
   label: string;
   config: string;
+  verification?: VerificationStageHooks;
   validate: (input: {
     report: unknown;
     journals: unknown[];
@@ -49,6 +54,7 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
   options: IsolatedCheckOptions<Evidence>,
 ) => {
   const worktreeRoot = await realpath(root);
+  const verification = options.verification;
   let phase = 'environment';
   let environment: Awaited<ReturnType<typeof probeEnvironment>> | null = null;
   const state: {
@@ -90,9 +96,10 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
   };
   save();
   try {
+    await verification?.checkpoint('before-environment');
     environment = await probeEnvironment(
       worktreeRoot,
-      undefined,
+      verification?.signal,
       (progress) => {
         state.progress = progress;
         save();
@@ -131,6 +138,7 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
                 throw new Error('browser結果の親directoryが不正です。');
               // 同じrun IDの古い成功を読み取らない。
               await mkdir(join(parent, manifest.runId));
+              await verification?.checkpoint('before-tests');
               begin('browser');
               const cli = createRequire(
                 join(worktreeRoot, 'package.json'),
@@ -147,14 +155,19 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
                       ...context.env,
                       ...sourceMaps.env,
                       SCENARIO_E2E_CREDENTIALS: file,
+                      ...(isNil(verification)
+                        ? {}
+                        : verificationEnvironment(verification.context)),
                     },
                     signal: context.signal,
                     log: join(manifest.workdir, 'fixture-browser.private.log'),
+                    onClose: verification?.onExit,
                   },
                 );
               } catch {
                 browserFailed = true;
               }
+              await verification?.checkpoint('after-tests');
               begin('evidence');
               const output = readArtifact(
                 worktreeRoot,
@@ -200,6 +213,7 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
       },
       [APP_PORT],
     );
+    await verification?.checkpoint('after-cleanup');
     status =
       environment.passed &&
       !isNil(state.evidence) &&
@@ -216,5 +230,6 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
     phase,
     runId: environment?.runId ?? state.progress?.runId ?? null,
     evidence: state.evidence,
+    environment,
   };
 };

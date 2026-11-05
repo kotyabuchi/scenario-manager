@@ -1,3 +1,4 @@
+import { isNil } from 'ramda';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cleanupFixture } from '../../e2e/fixtures/fixtureCleanup';
@@ -29,6 +30,12 @@ vi.mock('../../e2e/fixtures/legacySeed', () => ({
 vi.mock('../../e2e/fixtures/legacySessionCleanup', () => ({
   cleanupLegacySessions: vi.fn(),
 }));
+vi.mock('./playwrightSourceMaps', () => ({
+  playwrightSourceMapOptions: vi.fn(async () => ({
+    args: ['--enable-source-maps'],
+    env: { E2E_DISCOVERY_PLAYWRIGHT_PACKAGE: 'mock-playwright' },
+  })),
+}));
 vi.mock('./environmentCommands', () => ({
   runLocalCommand: vi.fn(),
   localCommandEnvironment: vi.fn(() => ({})),
@@ -47,6 +54,147 @@ beforeEach(() => vi.resetAllMocks());
 afterEach(cleanupLegacyProjectRuns);
 
 describe('legacy projectの障害伝播と後始末', () => {
+  it('外側AbortSignal単独の中断を伝え、実close前に後始末へ進まない', async () => {
+    const value = await setup();
+    const primary = new AbortController();
+    const outer = new AbortController();
+    let start = () => {};
+    let close = () => {};
+    const started = new Promise<void>((resolve) => {
+      start = resolve;
+    });
+    const pending = new Promise<void>((resolve) => {
+      close = resolve;
+    });
+    const original = vi.mocked(runLocalCommand).getMockImplementation();
+    if (isNil(original)) throw new Error('command mock不足');
+    vi.mocked(runLocalCommand).mockImplementation(
+      async (tool, args, options) => {
+        if (tool !== 'node') return original(tool, args, options);
+        start();
+        await pending;
+        options.onClose?.({ exitCode: null, signal: 'SIGTERM' });
+        throw new Error('private-abort');
+      },
+    );
+    const context = {
+      verificationId: '123456abcdef',
+      stageId: 'legacy',
+      selectionDigest: 'a'.repeat(64),
+      inputDigest: 'b'.repeat(64),
+    };
+    const onExit = vi.fn();
+    const running = runLegacyProject(
+      value.root,
+      value.input,
+      primary.signal,
+      undefined,
+      { context, signal: outer.signal, checkpoint: async () => {}, onExit },
+    );
+    try {
+      await started;
+      const signal = vi.mocked(probeEnvironment).mock.calls[0]?.[1];
+      expect(signal?.aborted).toBe(false);
+      outer.abort();
+      expect(signal?.aborted).toBe(true);
+      expect(primary.signal.aborted).toBe(false);
+      expect(onExit).not.toHaveBeenCalled();
+      expect(existsSync(value.credentials)).toBe(true);
+      expect(value.events).not.toContain('app-close');
+    } finally {
+      close();
+    }
+    expect((await running).status).toBe('failed');
+    expect(onExit).toHaveBeenCalledExactlyOnceWith({
+      exitCode: null,
+      signal: 'SIGTERM',
+    });
+    expect(existsSync(value.credentials)).toBe(false);
+    expect(value.events.at(-1)).toBe('environment-close');
+  });
+  it.each([
+    'none',
+    'before-tests',
+    'after-tests',
+    'after-cleanup',
+    'runner',
+  ])('verification %sも実closeと全cleanup後のfailedを保持する', async (fault) => {
+    const value = await setup();
+    value.control.browserFailure = fault === 'runner';
+    const command = vi.mocked(runLocalCommand).getMockImplementation();
+    if (isNil(command)) throw new Error('command mock不足');
+    vi.mocked(runLocalCommand).mockImplementation(
+      async (tool, args, options) => {
+        try {
+          return await command(tool, args, options);
+        } finally {
+          if (tool === 'node') {
+            value.events.push('runner-close');
+            options.onClose?.({
+              exitCode: value.control.browserFailure ? 7 : 0,
+              signal: null,
+            });
+          }
+        }
+      },
+    );
+    const signal = new AbortController().signal;
+    const context = {
+      verificationId: '123456abcdef',
+      stageId: 'legacy',
+      selectionDigest: 'a'.repeat(64),
+      inputDigest: 'b'.repeat(64),
+    };
+    const onExit = vi.fn(() => {
+      expect(existsSync(value.credentials)).toBe(true);
+      expect(value.events).not.toContain('app-close');
+    });
+    const checkpoint = vi.fn(async (phase: string) => {
+      if (phase === 'after-tests')
+        expect(value.events.at(-1)).toBe('runner-close');
+      if (phase === 'after-cleanup') {
+        expect(value.events.at(-1)).toBe('environment-close');
+        expect(existsSync(value.credentials)).toBe(false);
+      }
+      if (phase === fault) throw new Error('private-input-changed');
+    });
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      signal,
+      undefined,
+      { context, signal, checkpoint, onExit },
+    );
+    expect(output.status).toBe(fault === 'none' ? 'passed' : 'failed');
+    expect(value.events.slice(-5)).toEqual([
+      'app-close',
+      'ui-cleanup',
+      'context-close',
+      'fixture-cleanup',
+      'environment-close',
+    ]);
+    expect(existsSync(value.credentials)).toBe(false);
+    const runner = vi
+      .mocked(runLocalCommand)
+      .mock.calls.find(([tool]) => tool === 'node');
+    if (fault === 'before-tests') {
+      expect(runner).toBeUndefined();
+      expect(onExit).not.toHaveBeenCalled();
+    } else {
+      expect(runner?.[1][0]).toBe('--enable-source-maps');
+      expect(runner?.[2].env).toMatchObject({
+        SCENARIO_E2E_VERIFICATION_ID: context.verificationId,
+        SCENARIO_E2E_STAGE_ID: context.stageId,
+        SCENARIO_E2E_SELECTION_DIGEST: context.selectionDigest,
+        SCENARIO_E2E_INPUT_DIGEST: context.inputDigest,
+        E2E_DISCOVERY_PLAYWRIGHT_PACKAGE: 'mock-playwright',
+      });
+      expect(onExit).toHaveBeenCalledExactlyOnceWith({
+        exitCode: fault === 'runner' ? 7 : 0,
+        signal: null,
+      });
+    }
+  });
   it('app終了→UI行→context/state→seed→credentials→環境の順序で片付けて成功する', async () => {
     const value = await setup();
     const signal = new AbortController().signal;

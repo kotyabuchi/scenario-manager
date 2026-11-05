@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { discover } from './discover';
 import { appFixture } from './fixtures/isolatedApp';
+import { verificationFixture } from './fixtures/verification';
 import { writeArtifact } from './ledgerArtifacts';
 import { buildLegacy, legacyManifestSchema } from './legacy';
 import { legacyExecutionSchema } from './legacyExecutionSchema';
@@ -278,7 +279,17 @@ describe('legacy実行の集約と中断', () => {
   });
   it('guard列挙と全348登録を照合してから4projectを順に実行し330件を集約する', async () => {
     const value = await setup();
-    const result = await runLegacy(value.root);
+    const verification = vi.fn((project: string) => ({
+      context: { ...verificationFixture().report.context, stageId: project },
+      signal: new AbortController().signal,
+      checkpoint: async () => {},
+      onExit: () => {},
+    }));
+    const result = await runLegacy(value.root, [], verification);
+    expect(verification.mock.calls.flat()).toEqual(legacyProjectSchema.options);
+    expect(
+      vi.mocked(runLegacyProject).mock.calls.map((call) => call[4]),
+    ).toEqual(verification.mock.results.map(({ value }) => value));
     expect(result.status).toBe('passed');
     expect(result.results).toHaveLength(330);
     expect(result.projects.map((project) => project.runId)).toEqual([

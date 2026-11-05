@@ -95,7 +95,7 @@ const setup = () => {
       '--config',
       'vitest.integration.verified.config.ts',
     ]);
-    expect(options.env).toEqual({
+    expect(options.env).toMatchObject({
       SCENARIO_E2E_RUN_ID: manifest.runId,
       SCENARIO_E2E_CREDENTIALS: file,
     });
@@ -114,6 +114,7 @@ const setup = () => {
         '{}',
       );
     state.runnerClosed = true;
+    options.onClose?.({ exitCode: state.failRunner ? 7 : 0, signal: null });
     if (state.failRunner) throw new Error('private-runner-sentinel');
     return '';
   });
@@ -127,7 +128,7 @@ const setup = () => {
         workdir: manifest.workdir,
       });
       try {
-        await operation?.(manifest, new AbortController().signal);
+        await operation?.(manifest, _signal ?? new AbortController().signal);
         passed = true;
       } catch {
         /* 所有probeはoperation失敗もcleanup後に返す。 */
@@ -175,6 +176,73 @@ afterEach(() => {
 });
 
 describe('integration専用環境の所有lifecycle', () => {
+  it.each([
+    'none',
+    'before-tests',
+    'after-tests',
+    'after-cleanup',
+    'runner',
+  ])('verification %sでもclose→秘密削除→stackcleanupを維持する', async (fault) => {
+    const fixture = setup();
+    const controller = new AbortController();
+    const context = {
+      verificationId: '123456abcdef',
+      stageId: 'integration',
+      selectionDigest: 'a'.repeat(64),
+      inputDigest: 'b'.repeat(64),
+    };
+    const checkpoint = vi.fn(async (phase: string) => {
+      if (phase === 'after-tests') {
+        expect(fixture.state.runnerClosed).toBe(true);
+        expect(existsSync(fixture.file)).toBe(true);
+      }
+      if (phase === 'after-cleanup')
+        expect(existsSync(fixture.file)).toBe(false);
+      if (phase === fault) throw new Error('private-input-changed');
+    });
+    const onExit = vi.fn(() => {
+      expect(existsSync(fixture.file)).toBe(true);
+    });
+    fixture.state.failRunner = fault === 'runner';
+    fixture.pending.release();
+    const result = await runIntegrationEnvironment(fixture.root, [], {
+      context,
+      signal: controller.signal,
+      checkpoint,
+      onExit,
+    });
+    expect(result.status).toBe(fault === 'none' ? 'passed' : 'failed');
+    expect(result.environment).toMatchObject({
+      runId: fixture.connection.manifest.runId,
+    });
+    expect(existsSync(fixture.file)).toBe(false);
+    expect(fixture.receipt()).toMatchObject({
+      environmentProgress: { phase: 'cleanup' },
+    });
+    const runner = vi
+      .mocked(runLocalCommand)
+      .mock.calls.find(([tool]) => tool === 'node');
+    if (fault === 'before-tests') {
+      expect(runner).toBeUndefined();
+      expect(onExit).not.toHaveBeenCalled();
+    } else {
+      expect(runner?.[2].signal).toBe(controller.signal);
+      expect(runner?.[2].env).toMatchObject({
+        SCENARIO_E2E_VERIFICATION_ID: context.verificationId,
+        SCENARIO_E2E_STAGE_ID: context.stageId,
+        SCENARIO_E2E_SELECTION_DIGEST: context.selectionDigest,
+        SCENARIO_E2E_INPUT_DIGEST: context.inputDigest,
+      });
+      expect(onExit).toHaveBeenCalledExactlyOnceWith({
+        exitCode: fault === 'runner' ? 7 : 0,
+        signal: null,
+      });
+      expect(fixture.state.cleanupSawClosed).toBe(true);
+    }
+    expect(JSON.stringify(fixture.receipt())).not.toContain(
+      'private-input-changed',
+    );
+  });
   it('worker終了までは秘密fileを保ち、証跡照合後に秘密fileとstackを片付ける', async () => {
     const fixture = setup();
     const running = runIntegrationEnvironment(fixture.root, []);

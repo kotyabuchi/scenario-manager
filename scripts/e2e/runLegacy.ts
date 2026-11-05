@@ -20,6 +20,7 @@ import { pathToFileURL } from 'node:url';
 import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
 import type { LegacyExecutionResult } from './legacyExecutionSchema';
 import type { LegacyProgress } from './legacyProjectRun';
+import type { VerificationStageHooks } from './verificationContext';
 
 const RECEIPT = 'test-results/quality/legacy-run.json';
 const DISCOVERY = 'test-results/quality/legacy-run-discovery.json';
@@ -39,7 +40,11 @@ export const parseLegacyArguments = (args: string[]): LegacyProject[] => {
 };
 
 /** 現在の登録を照合した上で、4 projectを別の所有環境で順に実行する。 */
-export const runLegacy = async (root: string, args: string[] = []) => {
+export const runLegacy = async (
+  root: string,
+  args: string[] = [],
+  verification?: (project: LegacyProject) => VerificationStageHooks,
+) => {
   const projects = parseLegacyArguments(args);
   const worktreeRoot = await realpath(root);
   const controller = new AbortController();
@@ -128,6 +133,7 @@ export const runLegacy = async (root: string, args: string[] = []) => {
         { ...input, project },
         controller.signal,
         announce,
+        verification?.(project),
       );
       state.projects.push(result);
       state.phase = 'source-check';

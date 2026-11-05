@@ -10,6 +10,7 @@ import { runFixtureCheck } from './fixtureCheck';
 import { validateFixtureCheckEvidence } from './fixtureCheckEvidence';
 import { appFixture } from './fixtures/isolatedApp';
 import { withIsolatedApp } from './isolatedApp';
+import { runIsolatedCheck } from './runIsolatedCheck';
 
 import {
   existsSync,
@@ -138,6 +139,10 @@ const setup = () => {
         ),
         '{}',
       );
+    options.onClose?.({
+      exitCode: state.shouldFailBrowser ? 7 : 0,
+      signal: null,
+    });
     if (state.shouldFailBrowser) throw new Error('private-browser-error');
     return '';
   });
@@ -175,7 +180,7 @@ const setup = () => {
         workdir: manifest.workdir,
       });
       try {
-        await operation?.(manifest, new AbortController().signal);
+        await operation?.(manifest, _signal ?? new AbortController().signal);
         passed = true;
       } catch {
         // 実probeと同様、operationの失敗後もcleanupを完了して診断を返す。
@@ -220,6 +225,73 @@ afterEach(() => {
 });
 
 describe('fixture受入の実行中receiptとCLI進捗', () => {
+  it.each([
+    'none',
+    'before-tests',
+    'after-tests',
+    'after-cleanup',
+    'runner',
+  ])('verification %sでもapp→秘密→stackの回収を維持する', async (fault) => {
+    const value = setup();
+    value.releaseAll();
+    value.state.shouldFailBrowser = fault === 'runner';
+    const controller = new AbortController();
+    const context = {
+      verificationId: '123456abcdef',
+      stageId: 'isolated',
+      selectionDigest: 'a'.repeat(64),
+      inputDigest: 'b'.repeat(64),
+    };
+    const onExit = vi.fn(() => {
+      expect(existsSync(value.file)).toBe(true);
+      expect(value.state.hasAppClosed).toBe(false);
+    });
+    const checkpoint = vi.fn(async (phase: string) => {
+      if (phase === 'after-cleanup') {
+        expect(
+          value.state.hasAppClosed && value.state.hasEnvironmentClosed,
+        ).toBe(true);
+        expect(existsSync(value.file)).toBe(false);
+      }
+      if (phase === fault) throw new Error('private-input-changed');
+    });
+    const result = await runIsolatedCheck(value.root, {
+      stage: 'fixture-check',
+      receipt: 'test-results/quality/fixture-check.json',
+      label: 'fixture-check',
+      config: 'playwright.isolated.config.ts',
+      validate: ({ report, journals }) =>
+        validateFixtureCheckEvidence(report, journals),
+      verification: { context, signal: controller.signal, checkpoint, onExit },
+    });
+    expect(result.status).toBe(fault === 'none' ? 'passed' : 'failed');
+    expect(result.environment).toMatchObject({
+      runId: value.connection.manifest.runId,
+    });
+    expect(value.state.hasAppClosed && value.state.hasEnvironmentClosed).toBe(
+      true,
+    );
+    expect(existsSync(value.file)).toBe(false);
+    const runner = vi
+      .mocked(runLocalCommand)
+      .mock.calls.find(([tool]) => tool === 'node');
+    if (fault === 'before-tests') {
+      expect(runner).toBeUndefined();
+      expect(onExit).not.toHaveBeenCalled();
+    } else {
+      expect(runner?.[2].signal).toBe(controller.signal);
+      expect(runner?.[2].env).toMatchObject({
+        SCENARIO_E2E_VERIFICATION_ID: context.verificationId,
+        SCENARIO_E2E_STAGE_ID: context.stageId,
+        SCENARIO_E2E_SELECTION_DIGEST: context.selectionDigest,
+        SCENARIO_E2E_INPUT_DIGEST: context.inputDigest,
+      });
+      expect(onExit).toHaveBeenCalledExactlyOnceWith({
+        exitCode: fault === 'runner' ? 7 : 0,
+        signal: null,
+      });
+    }
+  });
   it('build/readiness/browserを待機中でも現在段階をreceiptとstderrから確認できる', async () => {
     const value = setup();
     const running = runFixtureCheck(value.root);

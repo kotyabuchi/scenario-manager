@@ -36,6 +36,7 @@ describe('日程browserの実行入口', () => {
         status: 'passed',
         phase: 'complete',
         runId: value.input.lease.runId,
+        environment: null,
         evidence,
       };
     });
@@ -123,6 +124,7 @@ describe('日程browserの実行入口', () => {
       status: 'failed',
       phase: 'evidence',
       runId: '012345abcdef',
+      environment: null,
       evidence: options.validate(scheduleEvidenceFixture().input),
     }));
     expect(await runScheduleCheck('/repository')).toMatchObject({
