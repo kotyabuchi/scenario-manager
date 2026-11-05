@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import fixture from './fixtures/source/project.json';
 import routeFixture from './fixtures/source/routes.json';
@@ -42,6 +42,7 @@ const createProject = (crlf = false) => {
 };
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   for (const root of roots.splice(0)) {
     if (path.dirname(root) !== path.resolve(os.tmpdir()))
       throw new Error('fixtureの削除範囲が不正です');
@@ -50,6 +51,32 @@ afterEach(() => {
 });
 
 describe('loadSource', () => {
+  it('外部checkoutを指すGit環境変数を無視し、親環境はそのまま保つ', () => {
+    const root = createProject();
+    const foreign = createProject();
+    const ignored = 'src/foreign.ts';
+    const local = 'src/local.ts';
+    write(root, '.gitignore', `${ignored}\n`);
+    write(root, ignored, 'export const ignored = 1;\n');
+    write(root, local, 'export const local = 1;\n');
+    write(foreign, ignored, 'export const foreign = 1;\n');
+    git(foreign, 'add', '--', ignored);
+    const expected = buildInventory(loadSource(root));
+    const pollution = {
+      GIT_DIR: path.join(foreign, '.git'),
+      GIT_WORK_TREE: foreign,
+      GIT_INDEX_FILE: path.join(foreign, '.git', 'index'),
+    };
+    for (const [name, value] of Object.entries(pollution))
+      vi.stubEnv(name, value);
+    const source = loadSource(root);
+    expect(source.files.map(({ path }) => path)).toContain(local);
+    expect(source.files.map(({ path }) => path)).not.toContain(ignored);
+    expect(buildInventory(source)).toEqual(expected);
+    for (const [name, value] of Object.entries(pollution))
+      expect(process.env[name]).toBe(value);
+  });
+
   it('build前後とrun変更後もignoredの補助型を入口へ追加しない', () => {
     const root = createProject();
     write(root, '.gitignore', 'src/ignored.ts\nnext-env.d.ts\n.next-e2e/\n');
