@@ -55,6 +55,12 @@ const createFixture = async () => {
   roots.push(root);
   await write(root, '.gitignore', 'test-results/\n');
   await json(root, 'package.json', { type: 'module' });
+  await json(root, 'scripts/e2e/db-test-files.json', {
+    schemaVersion: 1,
+    files: [],
+    verifiedFiles: [],
+    mockedFiles: [],
+  });
   await json(root, 'tsconfig.json', {
     compilerOptions: {
       noLib: true,
@@ -152,6 +158,86 @@ afterEach(async () => {
 });
 
 describe('M1静的品質ゲートの接続', () => {
+  it('integrationのclaimを同じ台帳へ接続し、claim削除を拒否する', async () => {
+    const { root } = await createFixture();
+    const target = 'page:src/app/page.tsx';
+    const execution = {
+      profile: 'integration',
+      project: 'integration',
+      runtime: 'vitest-node',
+      variant: 'anonymous',
+      actorBindings: [{ role: 'operator', actor: 'anonymous' }],
+    };
+    await json(root, 'e2e/ledger/profiles.json', [
+      {
+        id: 'integration',
+        layer: 'integration',
+        executions: [{ project: 'integration', runtime: 'vitest-node' }],
+      },
+    ]);
+    await json(root, 'e2e/ledger/fixtures.json', [
+      { id: 'public', actors: ['anonymous'] },
+    ]);
+    await json(root, 'e2e/ledger/contracts/home.json', [
+      {
+        target,
+        classification: 'read',
+        requirements: [
+          {
+            aspect: 'render',
+            layers: ['integration'],
+            expectation: '実DBの読取を確認',
+            basis: ['src/app/page.tsx'],
+            executions: [execution],
+          },
+        ],
+        notApplicable: [],
+      },
+    ]);
+    await json(root, 'e2e/ledger/scenarios/home.json', [
+      {
+        scenarioId: 'home',
+        title: '読取',
+        cases: [
+          {
+            caseId: 'integration-read',
+            title: '読取',
+            status: 'implemented',
+            layer: 'integration',
+            fixture: 'public',
+            roles: ['operator'],
+            checks: [{ target, aspect: 'render', layer: 'integration' }],
+            executions: [execution],
+            testBindings: ['main'],
+          },
+        ],
+      },
+    ]);
+    await json(root, 'scripts/e2e/db-test-files.json', {
+      schemaVersion: 1,
+      files: [],
+      mockedFiles: [],
+      verifiedFiles: [
+        { path: 'src/main.integration.test.ts', reason: '登録照合' },
+      ],
+    });
+    await write(
+      root,
+      'src/main.integration.test.ts',
+      "import {test} from 'vitest'; test('read', {meta:{ledger:{caseId:'integration-read',variant:'anonymous',binding:'main'}}}, ()=>{throw Error('must not execute')});",
+    );
+    const state = await collectStaticState(root);
+    expect(state.registrations).toBe(1);
+    expect(state.baseline.items).toEqual([]);
+    expect(state.legacy.registered).toEqual([]);
+    await write(
+      root,
+      'src/main.integration.test.ts',
+      "import {test} from 'vitest'; test('read',()=>{});",
+    );
+    await expect(collectStaticState(root)).rejects.toThrow();
+  }, 60_000);
+
   it('isolatedのimplemented登録を検査しタグ欠落で未実装扱いへ戻せない', async () => {
     const { root } = await createFixture();
     const target = 'page:src/app/page.tsx';
