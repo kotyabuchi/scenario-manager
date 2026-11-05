@@ -3,8 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { captureInputs } from './fingerprint';
 import { verificationFixture } from './fixtures/verification';
 import { prepareVerification } from './prepareVerification';
-import { runVerification } from './run';
+import { runVerification, type VerificationRunOptions } from './run';
 import { runVerificationStages } from './runVerificationStages';
+import { digestVerificationPlan } from './verificationPlanDigest';
 
 import { createHash } from 'node:crypto';
 import {
@@ -18,6 +19,8 @@ import {
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve, sep } from 'node:path';
+
+import type { RunnerSelection } from './runnerSelection';
 
 vi.mock('./prepareVerification', () => ({ prepareVerification: vi.fn() }));
 vi.mock('./runVerificationStages', () => ({ runVerificationStages: vi.fn() }));
@@ -33,6 +36,28 @@ const prepare = vi.mocked(prepareVerification);
 const stages = vi.mocked(runVerificationStages);
 const seed = 'export const input = 1;\n';
 const base = verificationFixture();
+const preparedFor = async (target: string) => ({
+  plan: base.plan,
+  inputs: await captureInputs(target),
+  scheduleExpected: [],
+  integrationExpected: [],
+});
+const selection = (fullPlanDigest = digestVerificationPlan(base.plan)) => ({
+  snapshotDigest: 'a'.repeat(64),
+  fullPlanDigest,
+  decisionDigest: 'b'.repeat(64),
+});
+const filterFor = (profile: string): RunnerSelection => ({
+  kind: 'playwright',
+  rootDir: '.storybook/tests',
+  expected: {
+    schemaVersion: 1,
+    profile,
+    projects: [],
+    tests: base.plan.requirements.map(({ test }) => test),
+    errors: [],
+  },
+});
 type StageInput = Parameters<typeof runVerificationStages>[0];
 const stageResult = (input: StageInput, shouldUseOldContext = false) => {
   const context = { ...input.context, stageId: 'app-desktop' };
@@ -73,14 +98,32 @@ beforeEach(async () => {
   const actual =
     await vi.importActual<typeof import('./fingerprint')>('./fingerprint');
   capture.mockImplementation(actual.captureInputs);
-  prepare.mockImplementation(async (target) => ({
-    plan: base.plan,
-    inputs: await captureInputs(target),
-    scheduleExpected: [],
-    integrationExpected: [],
-  }));
+  prepare.mockImplementation(preparedFor);
   stages.mockImplementation(async (input) => stageResult(input));
 });
+
+const expectRejectedMode = async (options: VerificationRunOptions) => {
+  const state = await runVerification(root, options);
+  expect(state).toMatchObject({
+    status: 'failed',
+    phase: 'preparation',
+    failure: 'VERIFICATION_FAILED',
+    execution: null,
+  });
+  expect(stages).not.toHaveBeenCalled();
+  expect(prepare).not.toHaveBeenCalled();
+  expect(await readJson(latest())).toEqual(state);
+  expect(
+    await readJson(
+      join(
+        root,
+        'test-results/verification',
+        state.verificationId,
+        'receipt.json',
+      ),
+    ),
+  ).toEqual(state);
+};
 afterEach(async () => {
   vi.restoreAllMocks();
   for (const target of roots.splice(0)) {
@@ -97,6 +140,83 @@ afterEach(async () => {
 });
 
 describe('runVerification入口', () => {
+  it.each([
+    'prepared',
+    'selection',
+    'runnerSelections',
+  ] as const)('部分実行に%sが欠けていたらownerを起動しない', async (missing) => {
+    const complete = {
+      mode: 'partial',
+      prepared: await preparedFor(root),
+      selection: selection(),
+      runnerSelections: [],
+    } satisfies VerificationRunOptions;
+    const { [missing]: _missing, ...options } = complete;
+    await expectRejectedMode(options);
+  });
+
+  it.each([
+    { mode: 'full-required', runnerSelections: [] },
+    { runnerSelections: [filterFor('storybook')] },
+  ] satisfies VerificationRunOptions[])('全件実行にrunner選択を渡すと空配列や対象外profileでも拒否する %#', async (options) => {
+    await expectRejectedMode(options);
+  });
+
+  it('全件実行では選択由来の全件digestとplanが一致しなければ拒否する', async () => {
+    await expectRejectedMode({
+      prepared: await preparedFor(root),
+      selection: selection('0'.repeat(64)),
+    });
+  });
+
+  it('全件digestが一致する全件実行はfilterを持たずownerへ渡す', async () => {
+    const state = await runVerification(root, {
+      mode: 'full-required',
+      prepared: await preparedFor(root),
+      selection: selection(),
+    });
+    expect(state.status).toBe('passed');
+    expect(stages).toHaveBeenCalledOnce();
+    expect(stages.mock.calls[0]?.[0]).not.toHaveProperty('selections');
+  });
+
+  it('appだけの部分実行は空のrunner選択と異なる全件digestを許可する', async () => {
+    const state = await runVerification(root, {
+      mode: 'partial',
+      prepared: await preparedFor(root),
+      selection: selection('0'.repeat(64)),
+      runnerSelections: [],
+    });
+    expect(state.status).toBe('passed');
+    expect(stages).toHaveBeenCalledOnce();
+    expect(stages.mock.calls[0]?.[0].selections).toEqual([]);
+  });
+
+  it.each([
+    { fault: '空', profiles: [] },
+    { fault: '別profile', profiles: ['isolated'] },
+    { fault: '重複', profiles: ['storybook', 'storybook'] },
+  ])('app以外の部分実行でrunner選択が「$fault」ならownerを起動しない', async ({
+    profiles,
+  }) => {
+    const prepared = await preparedFor(root);
+    await expectRejectedMode({
+      mode: 'partial',
+      prepared: {
+        ...prepared,
+        plan: {
+          ...prepared.plan,
+          requirements: prepared.plan.requirements.map((entry) => ({
+            ...entry,
+            profile: 'storybook',
+          })),
+        },
+      },
+      selection: selection(),
+      runnerSelections: profiles.map(filterFor),
+    });
+  });
+
   it('旧latestをrunningへ更新し、開始前capture失敗ではrunnerを起動しない', async () => {
     await mkdir(dirname(latest()), { recursive: true });
     await writeFile(
