@@ -2,7 +2,7 @@
 
 ## 状態
 
-2026-11-05に再開し、Batch 8のStep 8-1/8-2を完了した。実local DBのAPI診断、Next本番buildを使うPC/mobileのPlaywright受入、build後のM1整合が成功した。旧25 specの4 project互換実行は未完了。業務caseのverified結果は作っていない。
+2026-11-05にBatch 8を完了した。独立actorのfixture受入と旧25 specの4 project互換実行、build後のM1整合が成功した。旧suiteの実行義務330件は319成功と既存例外11件で照合済み。日程業務caseのverified結果とM2全体の受入は後続Batchで行う。
 
 ## 所有単位と認証
 
@@ -86,6 +86,25 @@ Step 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper�
 上記の全fixture/stack cleanupはcomplete。誤ってui-cleanup失敗を追加するバグの修正後、実失敗段階はevidenceだけに記録された。diagnosticのskipは合格へ数えない。
 
 全件run初回の公開mobile `586f5f87e453`では、Google Fontsが返すextensionless URLの解析でNext16.1.6のTurbopack buildが失敗した。[既知のNext.js不具合](https://github.com/vercel/next.js/issues/99114)と一致する。同じHEAD/設定の別runで通過したが、失敗receiptは`batch8-legacy-all-first.json`へ保持している。フォント取得はbuild時の外部依存であり、この経路の完全offline再現は保証しない。
+
+## 最終互換受入
+
+保存HEAD `b229f12`のまま4 projectを順次fresh実行した。実行中のソース変更はない。
+
+| project | run ID | 成功 | 既存例外 |
+|---|---|---:|---:|
+| chromium | `25fd1ce3a0cd` | 57 | 0 |
+| mobile-chrome | `2f316dd6bcc8` | 48 | skip 9 |
+| chromium-auth | `bfd0fabb12a2` | 107 | fixme 1 |
+| mobile-chrome-auth | `8bdaf00e2b8d` | 107 | fixme 1 |
+
+計330件の結果と実行目録が一致し、aggregateはpassed。外部依存18件は理由付きdeferredのまま実行外とし、旧348行の行き先を保持した。新しいskip・retry・失敗を追加していない。
+
+直前の認証mobile診断 `fc149cc42d26`で、既存Axe検査が詳細内mainの重複・入れ子と横スクロール領域のキーボード到達性を検出した。外側mainを維持して内側をdivへ変更し、フェーズ一覧をフォーカス可能な名前付きsectionにした。テストとAxe除外は変更せず、全件受入で修正を確認した。
+
+全fixture/stack cleanup complete。独立したOS/Docker読取でも所有コンテナ・ネットワーク・ボリューム・listener・run process・秘密file・lock・固定旧auth stateの残留0。各app statusはfinished/passed。最終build後のM1は登録26、legacy330、不足473、issues/policy delta0でpassed、baseline digest不変。レビューの未解消指摘は0。
+
+証拠はignoredの `test-results/quality/batch8-legacy-final.json`、`batch8-static-final.json`、`batch8-final-residue-check.json`。認可は未検証のまま維持する。この受入を日程業務caseの個別verifiedやM2全体の完了へ転用しない。
 
 ## 本番buildの分離
 

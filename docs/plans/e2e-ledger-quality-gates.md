@@ -132,10 +132,10 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 7: 専用Supabase環境の再現性
 - [x] Step 7-1. schema/policy/grantを空DBから再現
 - [x] Step 7-2. 環境manifestと所有権
-- [ ] Batch 8: 権限別fixtureと認証状態の分離
+- [x] Batch 8: 権限別fixtureと認証状態の分離
 - [x] Step 8-1. actorと業務fixture
 - [x] Step 8-2. 新configとcleanup
-- [ ] Step 8-3. 既存suiteを実行するlocal互換経路
+- [x] Step 8-3. 既存suiteを実行するlocal互換経路
 - [ ] Batch 9: 日程確定のbrowser E2Eを導入
 - [ ] Step 9-1. UI操作と永続化
 - [ ] Step 9-2. UI失敗状態と境界
@@ -218,6 +218,10 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - 移行後の現集計: 旧9定義をcase化し、現在の未移行330＋app通常登録18から初期348を追跡。実行先はlocal301/replacement18/skip9/fixme2/deferred18、実行義務330を維持。M1はbase `01e24d8`に対してpassed、登録26（Storybook8/app18）、不足473、issues0。SessionActionsの契約に通常click後の到達URLを追加した理由をmigrations.jsonへ記録した（policy delta1、既存保証の削減なし）。型検査・Biome988 files・関連132 tests成功。4 project最終受入は未完了。
 - ビルドの既知制限: run `586f5f87e453`はGoogle Fontsの応答URLに依存するNext16.1.6の既知不具合でbrowser前に失敗した。同じHEAD/設定の別runでは通過。失敗receiptを保持し、test retryやskipには置き換えていない。フォントの完全なoffline再現は現経路の保証に含めない。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
+
+- Batch 8完了（2026-11-05）: 保存HEAD `b229f12`から全4projectをfresh実行し、公開PC `25fd1ce3a0cd`は57成功、公開mobile `2f316dd6bcc8`は48成功+既存skip9、認証PC `bfd0fabb12a2`と認証mobile `8bdaf00e2b8d`は各107成功+既存fixme1。合計319成功/既存例外11の330件を実行目録と照合し、旧348行の行き先を保持した。新しいskip・retry・失敗は0。
+- 最終受入前のa11y診断 `fc149cc42d26`は106成功/1失敗/既存fixme1。内側mainの重複と横スクロール領域のキーボード到達性を最小修正し、既存Axe検査を変更せず全件受入で解消を確認した。独立レビュー未解消0。
+- 最終build後のM1もpassed（登録26/legacy330/不足473、issues/policy delta0、baseline digest不変）。全fixture/stack cleanup complete、別途Docker資源・listener・run process・秘密file・lock・固定旧auth state残留0。receiptは `test-results/quality/batch8-legacy-final.json` / `batch8-static-final.json` / `batch8-final-residue-check.json`。次はBatch 9。M2全体・日程業務caseの実行証拠・認可検証は未完了。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
 
