@@ -83,7 +83,7 @@ export const test = base.extend<CaseFixtures>({
       await createSessionFixture(fixtureConnection, fixtureJournal, actors),
     );
   },
-  asActor: async ({ actors, browser, baseURL }, use, testInfo) => {
+  asActor: async ({ actors, browser, baseURL, timezoneId }, use, testInfo) => {
     if (isNil(baseURL)) throw new Error('専用baseURLがありません。');
     const contexts: BrowserContext[] = [];
     try {
@@ -95,6 +95,7 @@ export const test = base.extend<CaseFixtures>({
             : DESKTOP_DEVICE;
         const context = await browser.newContext({
           ...device,
+          ...(isNil(timezoneId) ? {} : { timezoneId }),
           baseURL,
           storageState: actor.storageState(baseURL),
         });
