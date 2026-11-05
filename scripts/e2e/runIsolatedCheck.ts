@@ -12,6 +12,7 @@ import {
 import { probeEnvironment } from './environmentProbe';
 import { APP_PORT, withIsolatedApp } from './isolatedApp';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
+import { playwrightSourceMapOptions } from './playwrightSourceMaps';
 
 import { existsSync } from 'node:fs';
 import {
@@ -134,14 +135,19 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
               const cli = createRequire(
                 join(worktreeRoot, 'package.json'),
               ).resolve('@playwright/test/cli');
+              const sourceMaps = await playwrightSourceMapOptions(cli);
               let browserFailed = false;
               try {
                 await runLocalCommand(
                   'node',
-                  [cli, 'test', '--config', options.config],
+                  [...sourceMaps.args, cli, 'test', '--config', options.config],
                   {
                     cwd: worktreeRoot,
-                    env: { ...context.env, SCENARIO_E2E_CREDENTIALS: file },
+                    env: {
+                      ...context.env,
+                      ...sourceMaps.env,
+                      SCENARIO_E2E_CREDENTIALS: file,
+                    },
                     signal: context.signal,
                     log: join(manifest.workdir, 'fixture-browser.private.log'),
                   },

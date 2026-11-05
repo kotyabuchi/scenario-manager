@@ -61,6 +61,12 @@ const setup = () => {
     '{"exports":{"./cli":"./cli.js"}}',
   );
   writeFileSync(join(packageRoot, 'cli.js'), '// 実行しないmock用module');
+  const playwrightRoot = join(fixture.root, 'node_modules', 'playwright');
+  mkdirSync(playwrightRoot);
+  writeFileSync(
+    join(playwrightRoot, 'package.json'),
+    '{"name":"playwright","version":"1.57.0"}',
+  );
   const receipt = (): unknown =>
     JSON.parse(
       readFileSync(
@@ -100,7 +106,7 @@ const setup = () => {
     expect(receipt()).toMatchObject({ status: 'running', phase: 'evidence' });
     return { issues: [], counts };
   });
-  vi.mocked(runLocalCommand).mockImplementation(async (tool) => {
+  vi.mocked(runLocalCommand).mockImplementation(async (tool, args, options) => {
     if (tool === 'supabase') {
       expect(receipt()).toMatchObject({
         status: 'running',
@@ -111,6 +117,14 @@ const setup = () => {
       return '{}';
     }
     expect(receipt()).toMatchObject({ status: 'running', phase: 'browser' });
+    expect(args.slice(0, 2)).toEqual(['--enable-source-maps', '--require']);
+    expect(args[2]).toMatch(/discoverySourceMaps\.cjs$/);
+    expect(args.some((argument) => argument.includes('discoveryGuard'))).toBe(
+      false,
+    );
+    expect(options.env?.E2E_DISCOVERY_PLAYWRIGHT_PACKAGE).toBe(
+      realpathSync(join(playwrightRoot, 'package.json')),
+    );
     started.browser.release();
     await pending.browser.promise;
     if (state.shouldWriteReport)

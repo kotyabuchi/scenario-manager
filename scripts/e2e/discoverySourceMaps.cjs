@@ -1,4 +1,4 @@
-// Playwright 1.57のESMキャッシュ配信前でも、登録位置を元のTSへ逆引きする。
+// Playwright 1.57の列挙・実行で、ESMキャッシュ配信前も登録位置を同じ元TSへ逆引きする。
 // 公開reporterに補正を加えず、runner自身のwrapCallSiteで一度だけ変換する。
 const { findSourceMap } = require('node:module');
 const { dirname, isAbsolute, join, relative, sep } = require('node:path');
