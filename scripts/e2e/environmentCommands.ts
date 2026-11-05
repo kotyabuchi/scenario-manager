@@ -27,15 +27,19 @@ const ENVIRONMENT_KEYS = new Set([
 /** cloud資格情報・DB URL・実験flagを子プロセスへ継承しない。 */
 export const localCommandEnvironment = (
   source: NodeJS.ProcessEnv,
-  dockerHost: string,
+  dockerHost?: string,
 ): NodeJS.ProcessEnv => {
-  if (!/^(unix:\/\/\/|npipe:\/\/\/\/\.\/pipe\/)[^\r\n]+$/.test(dockerHost))
+  if (
+    !isNil(dockerHost) &&
+    !/^(unix:\/\/\/|npipe:\/\/\/\/\.\/pipe\/)[^\r\n]+$/.test(dockerHost)
+  )
     throw new Error('local Docker socket以外は使用できません。');
   const env = { ...source };
   for (const key of Object.keys(env))
     if (!ENVIRONMENT_KEYS.has(key.toUpperCase()))
       Reflect.deleteProperty(env, key);
-  env.DOCKER_HOST = dockerHost;
+  Reflect.deleteProperty(env, 'DOCKER_HOST');
+  if (!isNil(dockerHost)) env.DOCKER_HOST = dockerHost;
   env.NO_COLOR = '1';
   return env;
 };
@@ -50,6 +54,9 @@ export const runLocalCommand = async (
     log?: string;
     signal?: AbortSignal;
     shouldAllowAbort?: boolean;
+    onClose?:
+      | ((result: { exitCode: number | null; signal: string | null }) => void)
+      | undefined;
   },
 ): Promise<string> => {
   let executable: string;
@@ -132,8 +139,13 @@ export const runLocalCommand = async (
     );
     options.signal?.addEventListener('abort', armForceStop, { once: true });
     if (options.signal?.aborted) armForceStop();
-    child.once('close', () => {
+    child.once('close', (exitCode, signal) => {
       hasClosed = true;
+      try {
+        options.onClose?.({ exitCode, signal });
+      } catch {
+        hasInputFailed = true;
+      }
       clearTimeout(deadlineTimer);
       if (!isNil(graceTimer)) clearTimeout(graceTimer);
       options.signal?.removeEventListener('abort', armForceStop);

@@ -95,6 +95,20 @@ beforeEach(() => {
 });
 
 describe('ローカルコマンドの環境変数境界', () => {
+  it('Docker不要の起動でも秘密・remote設定を除去し親envを変更しない', () => {
+    const source = environment({
+      PATH: '/bin',
+      DOCKER_HOST: 'tcp://remote:2376',
+      SUPABASE_SERVICE_ROLE_KEY: SECRET,
+      NODE_OPTIONS: SECRET,
+    });
+    const before = { ...source };
+    expect(localCommandEnvironment(source)).toEqual({
+      PATH: '/bin',
+      NO_COLOR: '1',
+    });
+    expect(source).toEqual(before);
+  });
   it('OSの起動に必要な値だけを残し、親プロセスの接続先と秘密値を除外する', () => {
     const source = environment({
       Path: 'C:\\Windows\\System32',
@@ -183,6 +197,48 @@ describe('ローカルコマンドの環境変数境界', () => {
 });
 
 describe('資格情報を公開しないコマンド実行', () => {
+  it.each([
+    [0, null],
+    [7, null],
+    [null, 'SIGTERM'],
+  ] as const)('実closeのexit=%s/signal=%sだけをcallbackへ伝える', async (exitCode, signal) => {
+    const child = fakeChild();
+    let callback: CommandCallback = () => {};
+    mocks.execFile.mockImplementation(
+      (
+        _tool: unknown,
+        _args: unknown,
+        _options: unknown,
+        finish: CommandCallback,
+      ) => {
+        callback = finish;
+        return child;
+      },
+    );
+    const onClose = vi.fn();
+    const command = runLocalCommand('node', [], {
+      ...commandOptions(),
+      onClose,
+    });
+    let settled = false;
+    const result = command.then(
+      () => {
+        settled = true;
+        return 'passed';
+      },
+      () => {
+        settled = true;
+        return 'failed';
+      },
+    );
+    callback(exitCode === 0 ? null : new Error(SECRET), '', '');
+    await Promise.resolve();
+    expect(settled).toBe(false);
+    expect(onClose).not.toHaveBeenCalled();
+    child.emit('close', exitCode, signal);
+    expect(await result).toBe(exitCode === 0 ? 'passed' : 'failed');
+    expect(onClose).toHaveBeenCalledExactlyOnceWith({ exitCode, signal });
+  });
   it('stdoutを呼出元に返し、shellを介さずstdinを直ちに閉じる', async () => {
     const options = commandOptions();
     const executable = 'C:\\owned-native\\git.exe';

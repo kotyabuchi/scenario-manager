@@ -143,8 +143,9 @@ type IntegrationTestResult = z.infer<typeof integrationTestResultSchema>;
 type IntegrationModuleResult = z.infer<typeof integrationModuleResultSchema>;
 type IntegrationReport = z.infer<typeof integrationReportSchema>;
 type IntegrationExpectation = z.infer<typeof integrationExpectationSchema>;
-// Vitest 3.2.4はruntimeでoptions.metaを転送するが、公開TestOptionsには宣言がない。
-declare module 'vitest' {
+// 公開vitestはrunnerの型を再exportするため、実体の宣言元へ追加する。
+// Vitest 3.2.4はruntimeでoptions.metaを転送するが、TestOptionsには宣言がない。
+declare module '@vitest/runner' {
   interface TestOptions {
     meta?: { ledger: IntegrationClaim };
   }
