@@ -109,6 +109,29 @@ export const environmentCleanupSchema = z
         message: '残留resourceまたは問題があるcleanupは完了扱いにできません。',
       });
   });
+const environmentRunPhaseSchema = z.enum([
+  'preflight',
+  'start',
+  'observe-resources',
+  'record-resources',
+  'check-connection',
+  'mark-running',
+  'verify',
+]);
+export const environmentSystemCodeSchema = z.enum([
+  'EPERM',
+  'EACCES',
+  'EBUSY',
+  'ENOENT',
+  'unknown',
+]);
+const environmentFailureSchema = z.strictObject({
+  code: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+  at: timestamp,
+  phase: environmentRunPhaseSchema.optional(),
+  systemCode: environmentSystemCodeSchema.optional(),
+});
+
 export const environmentManifestSchema = environmentPlanInputSchema
   .extend({
     schemaVersion: z.literal(1),
@@ -125,12 +148,7 @@ export const environmentManifestSchema = environmentPlanInputSchema
     preflightAt: timestamp.nullable(),
     updatedAt: timestamp,
     resources: environmentResourcesSchema,
-    failure: z
-      .strictObject({
-        code: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
-        at: timestamp,
-      })
-      .nullable(),
+    failure: environmentFailureSchema.nullable(),
     cleanup: environmentCleanupSchema.nullable(),
   })
   .superRefine((manifest, context) => {
@@ -231,11 +249,7 @@ export const environmentEventSchema = z.discriminatedUnion('type', [
   }),
   z.strictObject({ type: z.literal('running'), at: timestamp }),
   z.strictObject({ type: z.literal('stopping'), at: timestamp }),
-  z.strictObject({
-    type: z.literal('failed'),
-    at: timestamp,
-    code: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
-  }),
+  environmentFailureSchema.extend({ type: z.literal('failed') }),
   z.strictObject({
     type: z.literal('cleanup-recorded'),
     at: timestamp,
@@ -249,6 +263,7 @@ type EnvironmentLease = z.infer<typeof environmentLeaseSchema>;
 type EnvironmentResources = z.infer<typeof environmentResourcesSchema>;
 type EnvironmentObservation = z.infer<typeof environmentObservationSchema>;
 type EnvironmentEvent = z.infer<typeof environmentEventSchema>;
+type EnvironmentRunPhase = z.infer<typeof environmentRunPhaseSchema>;
 type EnvironmentIssue = z.infer<typeof environmentIssueSchema>;
 type EnvironmentCleanup = z.infer<typeof environmentCleanupSchema>;
 export type {
@@ -258,6 +273,7 @@ export type {
   EnvironmentResources,
   EnvironmentObservation,
   EnvironmentEvent,
+  EnvironmentRunPhase,
   EnvironmentIssue,
   EnvironmentCleanup,
 };

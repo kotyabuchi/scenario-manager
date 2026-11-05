@@ -249,7 +249,13 @@ export const transitionEnvironment = (
     manifest.state = 'stopping';
   } else if (event.type === 'failed') {
     manifest.state = 'failed';
-    manifest.failure = { code: event.code, at: event.at };
+    const { code, at, phase, systemCode } = event;
+    manifest.failure = {
+      code,
+      at,
+      ...(isNil(phase) ? {} : { phase }),
+      ...(isNil(systemCode) ? {} : { systemCode }),
+    };
   } else {
     if (manifest.state !== 'stopping' || event.cleanup.at !== event.at)
       throw new Error('停止処理の観測時刻とcleanup結果が一致しません。');

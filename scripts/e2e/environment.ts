@@ -5,7 +5,10 @@ import {
   planOwnedCleanup,
   transitionEnvironment,
 } from './environmentOwnership';
-import { environmentManifestSchema } from './environmentSchema';
+import {
+  environmentManifestSchema,
+  environmentSystemCodeSchema,
+} from './environmentSchema';
 
 import type { createDockerDriver } from './environmentDocker';
 import type {
@@ -13,6 +16,7 @@ import type {
   EnvironmentIssue,
   EnvironmentLease,
   EnvironmentManifest,
+  EnvironmentRunPhase,
 } from './environmentSchema';
 
 type EnvironmentOperations = {
@@ -22,6 +26,23 @@ type EnvironmentOperations = {
   start: () => Promise<void>;
   verify: (manifest: EnvironmentManifest) => Promise<void>;
   release: () => Promise<void>;
+};
+
+// 例外のgetterを呼ばず、許可したOSエラーコードだけを公開する。
+const readSystemCode = (error: unknown) => {
+  try {
+    if (error instanceof Error) {
+      const code: unknown = Object.getOwnPropertyDescriptor(
+        error,
+        'code',
+      )?.value;
+      const parsed = environmentSystemCodeSchema.safeParse(code);
+      if (parsed.success) return parsed.data;
+    }
+  } catch {
+    // 例外オブジェクト自体の検査失敗で、所有環境の後始末を妨げない。
+  }
+  return 'unknown';
 };
 
 /** 起動・検査と独立したfinallyで、journalに所有が証明されたresourceだけを停止する。 */
@@ -39,6 +60,7 @@ export const runEnvironment = async (
   let hasStarted = false;
   let didFail = false;
   const cleanupIssues: EnvironmentIssue[] = [];
+  let phase: EnvironmentRunPhase = 'preflight';
   try {
     await operations.save(manifest);
     await operations.docker.assertFreshProject(manifest.projectId);
@@ -47,23 +69,33 @@ export const runEnvironment = async (
       throw new Error('既存project resourceを再利用することはできません。');
     await update({ type: 'preflight', at: now(), existingResourceCount: 0 });
     hasStarted = true;
+    phase = 'start';
     await operations.start();
-    await update({
-      type: 'resources-recorded',
-      at: now(),
-      resources: await operations.docker.observe(manifest.projectId),
-    });
+    phase = 'observe-resources';
+    const observedAt = now();
+    const resources = await operations.docker.observe(manifest.projectId);
+    phase = 'record-resources';
+    await update({ type: 'resources-recorded', at: observedAt, resources });
+    phase = 'check-connection';
     assertOwnedConnection(manifest, {
       lease: await operations.readLease(),
       projectId: manifest.projectId,
       apiUrl: manifest.apiUrl,
       database: manifest.database,
     });
+    phase = 'mark-running';
     await update({ type: 'running', at: now() });
+    phase = 'verify';
     await operations.verify(manifest);
-  } catch {
+  } catch (error) {
     didFail = true;
-    await update({ type: 'failed', at: now(), code: 'ENVIRONMENT_RUN_FAILED' });
+    await update({
+      type: 'failed',
+      at: now(),
+      code: 'ENVIRONMENT_RUN_FAILED',
+      phase,
+      systemCode: readSystemCode(error),
+    });
   } finally {
     if (hasStarted) {
       try {

@@ -16,6 +16,7 @@ describe('環境の状態遷移', () => {
       at: at(4),
       code: 'START_FAILED',
     });
+    expect(failed.failure).toStrictEqual({ code: 'START_FAILED', at: at(4) });
     const stopping = transitionEnvironment(failed, {
       type: 'stopping',
       at: at(5),

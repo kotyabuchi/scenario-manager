@@ -201,10 +201,72 @@ describe('runEnvironmentの所有環境ライフサイクル', () => {
     operations.verify.mockRejectedValueOnce(error);
     const result = await runEnvironment(manifest, operations);
     expect(result.passed).toBe(false);
-    expect(result.manifest.failure?.code).toBe('ENVIRONMENT_RUN_FAILED');
+    expect(result.manifest.failure).toMatchObject({
+      code: 'ENVIRONMENT_RUN_FAILED',
+      phase: 'verify',
+      systemCode: 'unknown',
+    });
     expect(result.manifest.cleanup?.status).toBe('complete');
     expect(operations.docker.remove).toHaveBeenCalledWith(resources);
     expect(operations.release).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    {
+      phase: 'observe-resources',
+      code: 'SECRET_CODE',
+      systemCode: 'unknown',
+      reject: ({ operations }: ReturnType<typeof fixture>, error: Error) => {
+        operations.docker.observe
+          .mockResolvedValueOnce(empty())
+          .mockRejectedValueOnce(error);
+      },
+    },
+    {
+      phase: 'record-resources',
+      code: 'EPERM',
+      systemCode: 'EPERM',
+      reject: ({ operations }: ReturnType<typeof fixture>, error: Error) => {
+        operations.save
+          .mockResolvedValueOnce(undefined)
+          .mockResolvedValueOnce(undefined)
+          .mockRejectedValueOnce(error);
+      },
+    },
+    {
+      phase: 'check-connection',
+      code: 'SECRET_CODE',
+      systemCode: 'unknown',
+      reject: ({ operations }: ReturnType<typeof fixture>, error: Error) => {
+        operations.readLease.mockRejectedValueOnce(error);
+      },
+    },
+  ])('$phase の失敗は固定診断だけをjournalへ記録する', async (testCase) => {
+    const state = fixture();
+    const { manifest, operations, resources, saved } = state;
+    const secret = 'SECRET_VALUE';
+    const error = Object.assign(new Error(secret, { cause: secret }), {
+      name: secret,
+      stdout: secret,
+      stderr: secret,
+      code: testCase.code,
+    });
+    testCase.reject(state, error);
+
+    const result = await runEnvironment(manifest, operations);
+
+    expect(result.passed).toBe(false);
+    expect(result.manifest.failure).toEqual({
+      at: expect.any(String),
+      code: 'ENVIRONMENT_RUN_FAILED',
+      phase: testCase.phase,
+      systemCode: testCase.systemCode,
+    });
+    expect(saved.at(-1)).toEqual(result.manifest);
+    expect(JSON.stringify(saved)).not.toMatch(/SECRET_(?:VALUE|CODE)/);
+    expect(operations.verify).not.toHaveBeenCalled();
+    expect(operations.docker.remove).toHaveBeenCalledWith(resources);
+    expect(result.manifest.cleanup?.status).toBe('complete');
   });
 
   it('nonceが異なるleaseでは検証・削除せずlockを保持する', async () => {
@@ -308,6 +370,7 @@ describe('runEnvironmentの所有環境ライフサイクル', () => {
     });
     const result = await runEnvironment(manifest, operations);
     expect(result.passed).toBe(false);
+    expect(result.manifest.failure?.phase).toBe('mark-running');
     expect(operations.docker.remove).toHaveBeenCalledWith(resources);
     expect(operations.release).toHaveBeenCalledTimes(1);
   });
