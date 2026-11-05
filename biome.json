@@ -68,7 +68,11 @@
   },
   "overrides": [
     {
-      "includes": ["e2e/ledger/*.generated.json"],
+      "includes": [
+        "e2e/ledger/*.generated.json",
+        "e2e/ledger/surface-pending.json",
+        "e2e/ledger/surface-migration.json"
+      ],
       "formatter": {
         "enabled": false
       }

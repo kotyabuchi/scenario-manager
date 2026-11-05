@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 
+import { DESKTOP_DEVICE, MOBILE_DEVICE } from '../devices';
 import { test } from '../fixtures/test';
 import {
   buildScheduleBlocks,
@@ -48,7 +49,21 @@ for (const variant of ['creator-only', 'keeper-only'] as const) {
         [2, 3],
       );
       let previousIds: string[] = [];
-      for (const blocks of [first, replacement]) {
+      // 各登録が通常ボタンと固定バーの双方を操作し、片方だけの成功を防ぐ。
+      const steps = [
+        {
+          blocks: first,
+          viewport: DESKTOP_DEVICE.viewport,
+          placement: 'desktop',
+        },
+        {
+          blocks: replacement,
+          viewport: MOBILE_DEVICE.viewport,
+          placement: 'sticky',
+        },
+      ] as const;
+      for (const { blocks, viewport, placement } of steps) {
+        await operatorPage.setViewportSize(viewport);
         await confirm.goto(sessionId);
         await expect(confirm.pageTitle).toBeVisible();
         if (previousIds.length > 0) {
@@ -57,7 +72,7 @@ for (const variant of ['creator-only', 'keeper-only'] as const) {
         }
         for (const block of blocks) await confirm.addTimeBlock(block);
         await confirm.expectCandidates(blocks);
-        await confirm.confirm();
+        await confirm.confirm(placement);
         await expect(confirm.successMessage).toBeVisible();
         await operatorPage.reload();
         await confirm.expectCandidates(blocks);

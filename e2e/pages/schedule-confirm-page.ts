@@ -63,10 +63,41 @@ export class ScheduleConfirmPage extends BasePage {
   }
 
   /** 現在のviewportで利用できる確定ボタンを通常操作する。 */
-  async confirm() {
+  /** 指定した配置の表示・他方の非表示を確認し、実際のボタンで保存する。 */
+  async confirm(placement?: 'desktop' | 'sticky') {
     // モバイルの自動収納ナビを、上方向への通常スクロールで再表示する
     await this.pageTitle.scrollIntoViewIfNeeded();
-    await this.confirmButton.click();
+    if (!placement) {
+      await this.confirmButton.click();
+      return;
+    }
+    const desktop = this.page
+      .locator('section')
+      .filter({ has: this.editor })
+      .getByRole('button', {
+        name: '日程を確定',
+        exact: true,
+        includeHidden: true,
+      });
+    const sticky = this.page
+      .getByRole('navigation', {
+        name: 'モバイルナビゲーション',
+        exact: true,
+        includeHidden: true,
+      })
+      .locator('..')
+      .getByRole('button', {
+        name: '日程を確定',
+        exact: true,
+        includeHidden: true,
+      });
+    const selected = placement === 'desktop' ? desktop : sticky;
+    const hidden = placement === 'desktop' ? sticky : desktop;
+    await expect(selected).toHaveCount(1);
+    await expect(selected).toBeVisible();
+    await expect(selected).toBeEnabled();
+    await expect(hidden).toBeHidden();
+    await selected.click();
   }
 
   /** Asia/Tokyoの日時入力から、実際の追加ボタンで枠を追加する。 */

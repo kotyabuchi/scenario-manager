@@ -30,6 +30,16 @@
             "target": "page:src/app/(main)/sessions/[id]/page.tsx",
             "aspect": "render",
             "layer": "browser"
+          },
+          {
+            "target": "surface:72ea6bb31d6f6217115d0b0155f0f981cc1f65f107ccc506680006b1cf821be1",
+            "aspect": "render",
+            "layer": "browser"
+          },
+          {
+            "target": "surface:c95c305f994a06411b0ccbb6fa309364fd4b0cc9a85a285f9bde619fd093c94c",
+            "aspect": "render",
+            "layer": "browser"
           }
         ],
         "executions": [
