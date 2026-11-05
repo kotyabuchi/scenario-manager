@@ -142,9 +142,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Batch 10: Action/RPC認可とDBテストの証拠
 - [x] Step 10-1. UIの外側にある拒否と原子性
 - [x] Step 10-2. integration結果adapterと偽成功の解消
-- [ ] Batch 11: 実行結果の厳密な照合
-- [ ] Step 11-1. reporterと外部checker
-- [ ] Step 11-2. fingerprintと実行入口
+- [x] Batch 11: 実行結果の厳密な照合
+- [x] Step 11-1. reporterと外部checker
+- [x] Step 11-2. fingerprintと実行入口
 - [ ] Batch 12: 機能単位の保守的な変更選択
 - [ ] Step 12-1. Git差分を固定して選択
 - [ ] Step 12-2. executionGroupと選択結果の検証
@@ -237,6 +237,14 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 10完了: getCalendarSessionsの既存4件を独立した利用者JWT/cookie fixtureへ移管し、非存在・本人の確定日程・全表示項目・未確定日程を既知IDで無条件比較した。元fileの残17件とhooksは維持し、未移行11 DBファイルをlegacyへ残す。必要20条件、actor交換/service-role/未実行/早期終了/check欠落等を拒否する証跡検査を維持した。
 - 最終HEAD `4cdfb90` のfresh run `01cc518d201c` は20/20成功、必要20・実結果20・成功20・journal20でissues0。全fixture/stack cleanup complete、独立確認でもDocker資源・lock・process・listener・秘密fileの残留0。receiptは `test-results/quality/batch10-integration-final.json` / `batch10-final-residue-check.json`。
 - Batch 10最終検証: 全tools 76 files / 1326件中1325件成功後、Batch9由来の固定登録数26の古い期待だけを35へ整合し、app移行済18件の独立assertも保持して対象28件を再検証した。関連77件、isNil修正後evidence52件、全体型検査・Biome1032 files・各commit hook成功。3担当レビューの必須1件（isNil）を解消、追加小差分も再確認し最終A（review5/6）。保存後M1は55登録・legacy330・不足437、issues/policy delta0、baseline digest不変。次はBatch 11の結果照合共通化と全入力fingerprint。M2はまだ未完了。
+
+- Batch 11完了: 全binding/project/repeat/setupを必要集合へ展開し、Playwright/Vitest標準結果と既存actor/journal/cleanup証拠をAND照合する共通checkerを導入。plan本文SHA、run/stage/input context、実exit、全attempt、全入力fingerprintの開始/境界/終了照合を追加し、`e2e:verify` / `e2e:verify:all`を公開した。Batch 12前の両commandは全必須＋legacy-localの保守的実行。
+- Batch 11レビュー: 外側abort、Storybookの環境file読込、plan/digest取り違え、TaskMeta宣言元、実在しないCLI pathを修正。実受入でPandaの空cwdとTurbopackの仮想dirnameを検出し、唯一のPostCSS設定でStorybookにだけ実rootを渡す方式へ修正。テストassertや所有条件は緩和しない。3担当と追加Sol/medium調査・親レビューを集約し最終A（docs/reviews/diff-review-2026-11-05-7.md）。
+- Batch 11否定系: 実runner fixtureでrepeat片側失敗、未実行、skip/xfail/retry、onError、report欠損/衝突、Vitest module/hook失敗を確認。純fixtureで全binding、古いplan/context、途中入力変更、cleanup失敗を拒否。全tools88 files/1487件と、別検証のStorybook追加3 files/10件、後続診断変更の関連86件が成功（重複を単純合算しない）。Biome1066 files・型検査・21コードcommitの通常hook成功。
+- Batch 11失敗履歴: `82cfbad3f2e9`はStorybook4件失敗で後続停止、`8b19dd7065ad`はNext buildの仮想dirnameで停止。`bbc3ee73f020`はSupabase start成功後/catalog前に停止し、旧記録から原因は未確定。固定phaseと許可OS codeだけを残す診断を追加し、後続6環境起動では再発しなかった。いずれも失敗receiptを保持し、独立確認で資源残存0。原因未確定の1回を修正済みと説明しない。
+- Batch 11最終実受入: 保存HEAD `6a480e14a36c2058087ab9f8d363930411c4812c`、verification `0a45a0cffc24`で全7stage成功。必須55/55、追加legacy312、issues0。物理結果367＝成功356＋既存skip9/fixme2。app必須18はlegacy330の内数で二重計数しない。deferred-live18・未移行integration-legacy11 files・fixture診断4は今回の実行集合外。
+- Batch 11入力/後始末: 開始/終了digestは`bbbff02ffb690acb4bd0540aa930ad22acb2ae312d6689b62fb5e6bc4d0205c7`で一致、全28checkpointの差分0。integration `7289cb8cced6`、isolated `2de930d6e170`、legacy `a008b56d3646` / `45df9e452bb8` / `0130b08fb5fb` / `6cc3e1c5b9dd` の全32journal/stack cleanup complete。独立Docker/process/port/lock/秘密file検査も残存0、Storybook6007も解放。
+- M2達成: 同じ保存HEADの最終M1もpassed（登録55/legacy330/不足437、issues/policy delta0、baseline digest不変）。receiptは`test-results/quality/batch11-verification-final.json` / `batch11-static-final.json` / `batch11-final-residue-check.json`。次はBatch 12のGit snapshot・保守的選択・shadow比較。事前設計は`test-results/quality/batch12-design.md`と`batch12-panda-provenance.md`に保持し、実装は未着手。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
 
