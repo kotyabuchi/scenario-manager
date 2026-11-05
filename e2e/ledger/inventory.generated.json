@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "extractorVersion": "1",
   "source": {
-    "fingerprint": "6b47c3e924fa652d4766dedb0aa7b57fe6506acade03e3ea4d4dfff66ec2613b",
+    "fingerprint": "1c58839dd7cc64898f1e463e49c14270f4b976c7a06be8970acc09ef49df3526",
     "files": [
       {
         "path": "node_modules/.pnpm/@tsconfig+strictest@2.0.8/node_modules/@tsconfig/strictest/tsconfig.json",
@@ -14,7 +14,7 @@
       },
       {
         "path": "package.json",
-        "hash": "330a370c1012addec302f39e2ed013a9cb1e44412cbec82f3fa24671b3fa0987"
+        "hash": "ff274ec1cf93951b1d1c5c8bcfbc1fefcc46ce8c47630543bbab03211995c939"
       },
       {
         "path": "src/app/(auth)/auth/callback/route.ts",

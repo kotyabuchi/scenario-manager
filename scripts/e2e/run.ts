@@ -4,6 +4,7 @@ import { captureInputs, compareInputs } from './fingerprint';
 import { writeArtifact } from './ledgerArtifacts';
 import { prepareVerification } from './prepareVerification';
 import { runVerificationStages } from './runVerificationStages';
+import { parseVerificationArguments } from './verificationArguments';
 import { prepareVerificationDirectory } from './verificationContext';
 import {
   digestVerificationPlan,
@@ -17,11 +18,33 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import type { InputChanges, InputFingerprint } from './fingerprint';
+import type { RunnerSelection } from './runnerSelection';
 
 const LATEST_RECEIPT = 'test-results/quality/verification.json';
 
-/** 差分選択導入前は両commandとも全必須caseとlegacy-localを保守的に実行する。 */
-export const runVerification = async (root: string) => {
+export type VerificationRunOptions = {
+  prepared?: Pick<
+    Awaited<ReturnType<typeof prepareVerification>>,
+    'plan' | 'inputs' | 'scheduleExpected' | 'integrationExpected'
+  >;
+  /** 部分実行の非app profileごとに一つ。appのみなら空配列を渡す。 */
+  runnerSelections?: readonly RunnerSelection[];
+  continueAfterFailure?: boolean;
+  signal?: AbortSignal;
+  mode?: 'full-required' | 'partial';
+  selection?: {
+    snapshotDigest: string;
+    fullPlanDigest: string;
+    decisionDigest: string;
+  };
+  checkpoint?: (phase: string) => Promise<void>;
+};
+
+/** 固定planに対して所有runnerを起動し、全結果と入力不変性を照合する。 */
+export const runVerification = async (
+  root: string,
+  options: VerificationRunOptions = {},
+) => {
   const worktreeRoot = await realpath(root);
   const verificationId = randomBytes(6).toString('hex');
   const prefix = `test-results/verification/${verificationId}`;
@@ -30,7 +53,8 @@ export const runVerification = async (root: string) => {
   const state: {
     schemaVersion: 1;
     verificationId: string;
-    mode: 'full-required';
+    mode: 'full-required' | 'partial';
+    selection: VerificationRunOptions['selection'] | null;
     status: 'running' | 'passed' | 'failed';
     phase: string;
     selectionDigest: string | null;
@@ -40,12 +64,13 @@ export const runVerification = async (root: string) => {
     execution: Awaited<ReturnType<typeof runVerificationStages>> | null;
     verification: ReturnType<typeof verifyResults> | null;
     failure: string | null;
-    legacyLocalRequested: true;
+    legacyLocalRequested: boolean;
     integrationLegacyExecuted: false;
   } = {
     schemaVersion: 1,
     verificationId,
-    mode: 'full-required',
+    mode: options.mode ?? 'full-required',
+    selection: options.selection ?? null,
     status: 'running',
     phase: 'preparation',
     selectionDigest: null,
@@ -66,17 +91,55 @@ export const runVerification = async (root: string) => {
       writeArtifact(worktreeRoot, `${prefix}/receipt.json`, content);
     writeArtifact(worktreeRoot, LATEST_RECEIPT, content);
   };
+  options.signal?.addEventListener('abort', interrupt, { once: true });
+  if (options.signal?.aborted) interrupt();
   process.once('SIGINT', interrupt);
   process.once('SIGTERM', interrupt);
   try {
     save();
     prepareVerificationDirectory(worktreeRoot, verificationId);
     hasDirectory = true;
-    const prepared = await prepareVerification(worktreeRoot);
+    if (state.mode === 'partial') {
+      if (
+        isNil(options.prepared) ||
+        isNil(options.selection) ||
+        !Array.isArray(options.runnerSelections)
+      )
+        throw new Error(
+          '部分実行には固定plan・選択由来・runner選択が必要です。',
+        );
+      const filters: readonly RunnerSelection[] = options.runnerSelections;
+      const selectedProfiles = new Set(
+        filters.map(({ expected }) => expected.profile),
+      );
+      const requiredProfiles = new Set(
+        options.prepared.plan.requirements
+          .map(({ profile }) => profile)
+          .filter((profile) => profile !== 'app'),
+      );
+      if (
+        selectedProfiles.size !== filters.length ||
+        selectedProfiles.size !== requiredProfiles.size ||
+        [...selectedProfiles].some((profile) => !requiredProfiles.has(profile))
+      )
+        throw new Error('runner選択のprofileが部分実行planと一致しません。');
+    } else if (state.mode !== 'full-required' || 'runnerSelections' in options)
+      throw new Error('全件実行ではrunnerを絞り込めません。');
+    const prepared =
+      options.prepared ?? (await prepareVerification(worktreeRoot));
+    const selectionDigest = digestVerificationPlan(prepared.plan);
+    if (
+      state.mode === 'full-required' &&
+      !isNil(options.selection) &&
+      options.selection.fullPlanDigest !== selectionDigest
+    )
+      throw new Error('全件実行のplanが選択由来の全件digestと一致しません。');
+    state.legacyLocalRequested = prepared.plan.requirements.some(
+      ({ profile }) => profile === 'app',
+    );
     inputs = prepared.inputs;
     state.inputDigestBefore = inputs.digest;
     const planContent = serializeVerificationPlan(prepared.plan);
-    const selectionDigest = digestVerificationPlan(prepared.plan);
     state.selectionDigest = selectionDigest;
     writeArtifact(worktreeRoot, `${prefix}/plan.json`, planContent);
     writeArtifact(
@@ -93,17 +156,23 @@ export const runVerification = async (root: string) => {
       save();
       if (Object.values(changes).some((paths) => paths.length > 0))
         throw new Error('実行中に検証入力が変化しました。');
+      await options.checkpoint?.(phase);
       controller.signal.throwIfAborted();
     };
     await checkpoint('before-stages');
     state.execution = await runVerificationStages({
       root: worktreeRoot,
       prepared,
+      ...(options.runnerSelections
+        ? { selections: options.runnerSelections }
+        : {}),
       context: { verificationId, selectionDigest, inputDigest: inputs.digest },
       signal: controller.signal,
+      ...(options.continueAfterFailure ? { continueAfterFailure: true } : {}),
       checkpoint,
     });
     state.phase = 'final-input-check';
+    await options.checkpoint?.('final-input-check');
     const after = await captureInputs(worktreeRoot);
     state.inputDigestAfter = after.digest;
     writeArtifact(
@@ -129,6 +198,7 @@ export const runVerification = async (root: string) => {
         ? 'passed'
         : 'failed';
     state.phase = state.status === 'passed' ? 'complete' : 'verification';
+    if (controller.signal.aborted) state.failure = 'INTERRUPTED';
   } catch {
     state.status = 'failed';
     // SDK・runnerの生エラーは個別のprivate logに残し、公開receiptにはphaseだけを残す。
@@ -143,6 +213,7 @@ export const runVerification = async (root: string) => {
       }
     }
   } finally {
+    options.signal?.removeEventListener('abort', interrupt);
     process.removeListener('SIGINT', interrupt);
     process.removeListener('SIGTERM', interrupt);
   }
@@ -152,14 +223,22 @@ export const runVerification = async (root: string) => {
 
 const entry = process.argv[1];
 if (!isNil(entry) && import.meta.url === pathToFileURL(resolve(entry)).href) {
-  if (
-    process.argv.slice(2).some((value) => value !== '--all') ||
-    process.argv.slice(2).length > 1
-  )
-    throw new Error('使用法: run.ts [--all]');
-  const result = await runVerification(process.cwd());
-  process.stdout.write(
-    `${JSON.stringify({ status: result.status, phase: result.phase, verificationId: result.verificationId, counts: result.verification?.counts, issueCount: result.verification?.issues.length })}\n`,
-  );
-  if (result.status !== 'passed') process.exitCode = 1;
+  const args = parseVerificationArguments(process.argv.slice(2));
+  if (args.changed) {
+    const { runChangedVerification } = await import('./runChangedVerification');
+    const { selectionConsoleSummary } = await import(
+      './selectionConsoleSummary'
+    );
+    const result = await runChangedVerification(process.cwd(), args);
+    process.stdout.write(
+      `${JSON.stringify(selectionConsoleSummary(result))}\n`,
+    );
+    if (result.status !== 'passed') process.exitCode = 1;
+  } else {
+    const result = await runVerification(process.cwd());
+    process.stdout.write(
+      `${JSON.stringify({ status: result.status, phase: result.phase, verificationId: result.verificationId, counts: result.verification?.counts, issueCount: result.verification?.issues.length })}\n`,
+    );
+    if (result.status !== 'passed') process.exitCode = 1;
+  }
 }

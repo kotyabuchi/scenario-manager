@@ -29,6 +29,7 @@
     "e2e:ledger:check": "tsx scripts/e2e/ledgerCheck.ts",
     "e2e:verify": "tsx scripts/e2e/run.ts",
     "e2e:verify:all": "tsx scripts/e2e/run.ts --all",
+    "e2e:verify:changed": "tsx scripts/e2e/run.ts --changed",
     "e2e:ledger:bootstrap": "tsx scripts/e2e/ledgerRefresh.ts bootstrap",
     "e2e:ledger:update": "tsx scripts/e2e/ledgerRefresh.ts update",
     "e2e:environment:check": "tsx scripts/e2e/environmentReproduce.ts",
