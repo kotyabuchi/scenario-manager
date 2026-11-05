@@ -2,9 +2,11 @@ import { extractActions } from './extractors/actions';
 import { extractApis } from './extractors/apis';
 import { extractDependencies } from './extractors/dependencies';
 import { extractRoutes } from './extractors/routes';
-import { inventorySchema } from './inventorySchema';
+import { loadStorySurfaceContext } from './extractors/surfaceRoots';
+import { inventorySchema, inventoryV1Schema } from './inventorySchema';
 import { loadSource } from './source';
 import { createSourceIndex } from './sourceIndex';
+import { analyzeSurfaceInventory } from './surfaceInventory';
 
 import { randomUUID } from 'node:crypto';
 import {
@@ -19,7 +21,7 @@ import {
 import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { Inventory } from './inventorySchema';
+import type { Inventory, InventoryV1 } from './inventorySchema';
 import type { SourceContext } from './source';
 
 const DEFAULT_OUTPUT = 'e2e/ledger/inventory.generated.json';
@@ -36,11 +38,42 @@ export const serializeInventory = (input: Inventory) => {
   inventory.diagnostics.sort((a, b) =>
     compare(JSON.stringify(a), JSON.stringify(b)),
   );
+  inventory.surfaceAnalysis.sites.sort((a, b) => compare(a.id, b.id));
+  inventory.surfaceAnalysis.bindings.sort((a, b) => compare(a.id, b.id));
+  inventory.surfaceAnalysis.diagnostics.sort((a, b) =>
+    compare(JSON.stringify(a), JSON.stringify(b)),
+  );
+  inventory.surfaceAnalysis.storyReferences.sort((a, b) => compare(a.id, b.id));
+  return `${JSON.stringify(inventory, null, 2)}\n`;
+};
+
+/** 新しいUI観測を既存coreへ混ぜず、保存v1との厳格な比較に使う。 */
+export const projectInventoryV1 = (inventory: Inventory): InventoryV1 =>
+  inventoryV1Schema.parse({
+    schemaVersion: 1,
+    extractorVersion: '1',
+    source: inventory.source,
+    nodes: inventory.nodes,
+    edges: inventory.edges,
+    diagnostics: inventory.diagnostics,
+  });
+
+export const serializeInventoryV1 = (input: InventoryV1) => {
+  const inventory = inventoryV1Schema.parse(input);
+  inventory.source.files.sort((a, b) => compare(a.path, b.path));
+  inventory.nodes.sort((a, b) => compare(a.id, b.id));
+  inventory.edges.sort((a, b) => compare(JSON.stringify(a), JSON.stringify(b)));
+  inventory.diagnostics.sort((a, b) =>
+    compare(JSON.stringify(a), JSON.stringify(b)),
+  );
   return `${JSON.stringify(inventory, null, 2)}\n`;
 };
 
 /** 解析結果を台帳向けの入口一覧に組み立てる。 */
-export const buildInventory = (context: SourceContext): Inventory => {
+export const buildInventory = (
+  context: SourceContext,
+  storyContext?: SourceContext,
+): Inventory => {
   const index = createSourceIndex(context);
   const routes = extractRoutes(context.files.map((file) => file.path));
   const actions = extractActions(context, index);
@@ -53,8 +86,26 @@ export const buildInventory = (context: SourceContext): Inventory => {
     source: node.source,
   }));
   return inventorySchema.parse({
-    schemaVersion: 1,
-    extractorVersion: '1',
+    schemaVersion: 2,
+    extractorVersion: '2',
+    surfaceAnalysis: analyzeSurfaceInventory({
+      context,
+      index,
+      routes: routes.nodes,
+      nodes: [
+        ...routes.nodes,
+        ...actions.nodes,
+        ...apis.nodes,
+        ...dependencies.nodes,
+      ],
+      edges: [
+        ...routeModules,
+        ...actions.edges,
+        ...apis.edges,
+        ...dependencies.edges,
+      ],
+      ...(storyContext ? { storyContext } : {}),
+    }),
     source: context.manifest,
     nodes: [
       ...routes.nodes,
@@ -137,7 +188,10 @@ const main = () => {
       throw new Error('使用法: inventory.ts [--check] [--output 相対パス]');
   }
   const root = process.cwd();
-  const inventory = buildInventory(loadSource(root));
+  const inventory = buildInventory(
+    loadSource(root),
+    loadStorySurfaceContext(root),
+  );
   // 比較・保存に失敗しても、解析診断を確認できるよう先に出力する。
   // CLIの構造化結果。時刻や秘密情報は出力しない。
   process.stdout.write(

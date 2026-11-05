@@ -26,8 +26,14 @@ const temporaryRoot = () => {
 };
 const example = () =>
   inventorySchema.parse({
-    schemaVersion: 1,
-    extractorVersion: '1',
+    schemaVersion: 2,
+    extractorVersion: '2',
+    surfaceAnalysis: {
+      sites: [],
+      bindings: [],
+      diagnostics: [],
+      storyReferences: [],
+    },
     source: { fingerprint: 'a'.repeat(64), files: [] },
     nodes: ['z', 'A'].map((name) => ({
       id: `page:${name}`,

@@ -32,8 +32,14 @@ describe('extractDependencies', () => {
     );
     expect(() =>
       inventorySchema.parse({
-        schemaVersion: 1,
-        extractorVersion: '1',
+        schemaVersion: 2,
+        extractorVersion: '2',
+        surfaceAnalysis: {
+          sites: [],
+          bindings: [],
+          diagnostics: [],
+          storyReferences: [],
+        },
         source: context.manifest,
         ...result,
       }),
@@ -421,8 +427,14 @@ describe('依存抽出の実装由来と生成物境界', () => {
     ).toEqual(['UNRESOLVED_CALL', 'UNRESOLVED_IMPORT']);
     expect(() =>
       inventorySchema.parse({
-        schemaVersion: 1,
-        extractorVersion: '1',
+        schemaVersion: 2,
+        extractorVersion: '2',
+        surfaceAnalysis: {
+          sites: [],
+          bindings: [],
+          diagnostics: [],
+          storyReferences: [],
+        },
         source: context.manifest,
         ...result,
       }),

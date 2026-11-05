@@ -2,7 +2,7 @@ import ts from 'typescript';
 
 import { gitRead } from './gitObjects';
 import { gitTokens } from './gitRecords';
-import { isSourceEntry } from './sourceFiles';
+import { isSourceEntry, isStorySourceEntry } from './sourceFiles';
 import {
   createSnapshotSystem,
   type createStablePackageSystem,
@@ -212,6 +212,7 @@ export const loadSource = (
   snapshot?: SnapshotFiles & {
     packages: ReturnType<typeof createStablePackageSystem>['system'];
   },
+  options: { entryMode?: 'product' | 'storybook' } = {},
 ) => {
   const root = path.resolve(directory);
   const gitFiles = snapshot
@@ -238,6 +239,7 @@ export const loadSource = (
           access.isAllowed(file),
       )
     : physical;
+  const isStorybook = options.entryMode === 'storybook';
   const entries = gitFiles
     .filter((file) => file.startsWith('src/'))
     .filter((file) => {
@@ -246,7 +248,7 @@ export const loadSource = (
       return system.fileExists(absolute);
     })
     // Gitはdirectory symlink自体を返すため、範囲検査を入口判定より先に行う。
-    .filter(isSourceEntry);
+    .filter(isStorybook ? isStorySourceEntry : isSourceEntry);
   const config = readConfig(
     root,
     relative,
@@ -256,8 +258,8 @@ export const loadSource = (
     system,
   );
   // tsconfigで未許可でも、GitにあるJS入口を黙って落とさず解析する。
-  const options = { ...config?.options, allowJs: true };
-  const host = ts.createCompilerHost(options, true);
+  const compilerOptions = { ...config?.options, allowJs: true };
+  const host = ts.createCompilerHost(compilerOptions, true);
   host.getCurrentDirectory = () => root;
   host.readFile = (file) => {
     const text = system.readFile(file);
@@ -282,11 +284,22 @@ export const loadSource = (
       ...entries.map((file) => path.join(root, file)),
       ...declarations,
     ],
-    options,
+    options: compilerOptions,
     host,
   });
   const checker = program.getTypeChecker();
-  const files = entries.flatMap((file) => {
+  const indexedFiles = isStorybook
+    ? [
+        ...new Set([
+          ...entries,
+          ...program
+            .getSourceFiles()
+            .map(({ fileName }) => relative(fileName))
+            .filter((file) => gitFileSet.has(file) && isSourceEntry(file)),
+        ]),
+      ].sort(compare)
+    : entries;
+  const files = indexedFiles.flatMap((file) => {
     const sourceFile = program.getSourceFile(path.join(root, file));
     return sourceFile ? [{ path: file, sourceFile }] : [];
   });

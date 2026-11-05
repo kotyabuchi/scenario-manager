@@ -169,6 +169,32 @@ describe('loadSource', () => {
     );
   });
 
+  it('Storybook入口のProgramを分け、storyから到達した通常sourceだけを索引化する', () => {
+    const root = createProject();
+    const component = 'src/StoryComponent.tsx';
+    const story = 'src/StoryComponent.stories.tsx';
+    write(root, component, 'export const Component = () => null;');
+    const product = loadSource(root);
+    write(
+      root,
+      story,
+      "import {Component} from './StoryComponent'; export default {}; export const Example = {render: () => <Component/>};",
+    );
+    const storybook = loadSource(root, undefined, { entryMode: 'storybook' });
+    expect(storybook.program).not.toBe(product.program);
+    expect(
+      storybook.program
+        .getRootFileNames()
+        .some((file) => file.replaceAll('\\', '/').endsWith(story)),
+    ).toBe(true);
+    expect(storybook.files.map(({ path }) => path)).toEqual([
+      story,
+      component,
+      'src/lib/value.stories.tsx',
+    ]);
+    expect(loadSource(root).manifest).toEqual(product.manifest);
+  });
+
   it('trackedとuntrackedを列挙しtests・stories・生成物・ignoreを入口から除く', () => {
     const source = loadSource(createProject());
     expect(source.files.map((file) => file.path)).toEqual([

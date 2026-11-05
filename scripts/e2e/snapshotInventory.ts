@@ -1,3 +1,4 @@
+import { loadStorySurfaceContext } from './extractors/surfaceRoots';
 import { assertGitFilePaths } from './gitRecords';
 import {
   type GitSnapshotCapture,
@@ -50,15 +51,17 @@ export const buildSnapshotInventories = (
     input.preload?.();
     const files = new Set([...input.files, ...generated.keys()]);
     if (generated.size) assertGitFilePaths(files);
+    const snapshot = {
+      files,
+      packages: packages.system,
+      read: (path: string) => {
+        const bytes = input.read(path) ?? generated.get(path);
+        return bytes === undefined ? undefined : decodeSource(bytes);
+      },
+    };
     return buildInventory(
-      loadSource(input.root, {
-        files,
-        packages: packages.system,
-        read: (path) => {
-          const bytes = input.read(path) ?? generated.get(path);
-          return bytes === undefined ? undefined : decodeSource(bytes);
-        },
-      }),
+      loadSource(input.root, snapshot),
+      loadStorySurfaceContext(input.root, snapshot),
     );
   };
   const inventories = {
