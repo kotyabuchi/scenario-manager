@@ -586,7 +586,31 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
       "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニューを開くとメニュー項目が表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-open",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューボタンが表示される\"],0]",
@@ -596,7 +620,31 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
       "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニュー外クリックでメニューが閉じる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+          "profile": "app",
+          "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"お気に入りボタンが表示される\"],0]",
@@ -652,7 +700,31 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
       "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "作成後にセッション詳細ページが表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-created-detail",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"募集文が空で送信するとバリデーションエラー\"],0]",
@@ -662,7 +734,31 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
       "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "最小入力で作成するとリダイレクトされる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
+          "profile": "app",
+          "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-create-redirect",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"アクセシビリティ\",\"セッション詳細ページのa11y違反がない\"],0]",
@@ -707,7 +803,32 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
       "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "募集中フェーズでGM用アクションが表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-gm-actions",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"参加者セクションが表示される\"],0]",
@@ -1514,7 +1635,31 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
       "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニューを開くとメニュー項目が表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-open",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューボタンが表示される\"],0]",
@@ -1524,7 +1669,31 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
       "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニュー外クリックでメニューが閉じる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+          "profile": "app",
+          "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"お気に入りボタンが表示される\"],0]",
@@ -1580,7 +1749,31 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
       "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "作成後にセッション詳細ページが表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-created-detail",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"募集文が空で送信するとバリデーションエラー\"],0]",
@@ -1590,7 +1783,31 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
       "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "最小入力で作成するとリダイレクトされる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
+          "profile": "app",
+          "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-create-redirect",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"アクセシビリティ\",\"セッション詳細ページのa11y違反がない\"],0]",
@@ -1635,7 +1852,32 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
       "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "募集中フェーズでGM用アクションが表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-gm-actions",
+        "variant": "default",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"参加者セクションが表示される\"],0]",
