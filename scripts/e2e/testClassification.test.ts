@@ -25,6 +25,7 @@ const writeManifest = (
   root: string,
   files: string[],
   mockedFiles: string[] = [],
+  verifiedFiles: string[] = [],
 ) =>
   writeFile(
     root,
@@ -35,6 +36,10 @@ const writeManifest = (
         path: file,
         reason: '実DBを使うfixture',
         legacyRisks: [],
+      })),
+      verifiedFiles: verifiedFiles.map((file) => ({
+        path: file,
+        reason: 'case別の実DB検証',
       })),
       mockedFiles: mockedFiles.map((file) => ({
         path: file,
@@ -75,7 +80,32 @@ describe('getTestProjects', () => {
       'unit-dom': [unitDom],
       component: [component],
       integration: [integration],
+      'integration-verified': [],
     });
+  });
+
+  it('verifiedのSSOTをlegacy・unitと分離し、所属の重複を拒否する', () => {
+    const root = createFixture();
+    const legacy = 'src/legacy.test.ts';
+    const verified = 'src/verified.integration.test.ts';
+    writeFile(root, legacy);
+    writeFile(
+      root,
+      verified,
+      "import { createClient } from '@supabase/supabase-js';",
+    );
+    writeManifest(root, [legacy], [], [verified]);
+    expect(getTestProjects(root).integration).toEqual([legacy]);
+    expect(getTestProjects(root)['integration-verified']).toEqual([verified]);
+    expect(getTestProjects(root).unit).toEqual([]);
+    writeManifest(root, [verified], [], [verified]);
+    expect(() => getTestProjects(root)).toThrow('重複');
+    writeManifest(root, [], [verified], [verified]);
+    expect(() => getTestProjects(root)).toThrow('重複');
+    writeManifest(root, [], [], []);
+    expect(() => getTestProjects(root)).toThrow('未登録のDB依存');
+    writeManifest(root, [], [], ['src/missing.integration.test.ts']);
+    expect(() => getTestProjects(root)).toThrow('存在しません');
   });
 
   it('存在しない登録を拒否する', () => {

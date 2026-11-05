@@ -28,6 +28,14 @@ const manifestSchema = z
         })
         .strict(),
     ),
+    verifiedFiles: z
+      .array(
+        z.strictObject({
+          path: z.string().regex(/^src\/.*\.test\.tsx?$/),
+          reason: z.string().trim().min(1),
+        }),
+      )
+      .default([]),
     mockedFiles: z.array(
       z
         .object({
@@ -44,6 +52,7 @@ type TestProjects = {
   'unit-dom': string[];
   component: string[];
   integration: string[];
+  'integration-verified': string[];
 };
 
 const toPosix = (value: string) => value.replaceAll('\\', '/');
@@ -66,27 +75,24 @@ const readDbFiles = (root: string, tests: Set<string>) => {
       readFileSync(path.join(root, 'scripts/e2e/db-test-files.json'), 'utf8'),
     ),
   );
-  const registered = new Set<string>();
-  for (const entry of manifest.files) {
-    if (registered.has(entry.path)) {
-      throw new Error(`DBテストの登録が重複しています: ${entry.path}`);
+  const seen = new Set<string>();
+  const collect = (entries: { path: string }[]) => {
+    const files = new Set<string>();
+    for (const entry of entries) {
+      if (seen.has(entry.path))
+        throw new Error(`DBテストの所属が重複しています: ${entry.path}`);
+      if (!tests.has(entry.path))
+        throw new Error(`登録されたDBテストが存在しません: ${entry.path}`);
+      seen.add(entry.path);
+      files.add(entry.path);
     }
-    if (!tests.has(entry.path)) {
-      throw new Error(`登録されたDBテストが存在しません: ${entry.path}`);
-    }
-    registered.add(entry.path);
-  }
-  const mockedFiles = new Set<string>();
-  for (const entry of manifest.mockedFiles) {
-    if (mockedFiles.has(entry.path) || registered.has(entry.path)) {
-      throw new Error(`mock境界テストの登録が重複しています: ${entry.path}`);
-    }
-    if (!tests.has(entry.path)) {
-      throw new Error(`登録されたmock境界テストが存在しません: ${entry.path}`);
-    }
-    mockedFiles.add(entry.path);
-  }
-  return { dbFiles: registered, mockedFiles };
+    return files;
+  };
+  return {
+    dbFiles: collect(manifest.files),
+    verifiedFiles: collect(manifest.verifiedFiles),
+    mockedFiles: collect(manifest.mockedFiles),
+  };
 };
 
 const resolveTestImport = (root: string, file: string, specifier: string) => {
@@ -186,14 +192,22 @@ const findDbDependency = (
 /** 全srcテストを一意に分類し、未登録の実DB依存と登録の不整合を拒否する。 */
 export const getTestProjects = (root: string): TestProjects => {
   const tests = findTestFiles(root).sort();
-  const { dbFiles, mockedFiles } = readDbFiles(root, new Set(tests));
+  const { dbFiles, verifiedFiles, mockedFiles } = readDbFiles(
+    root,
+    new Set(tests),
+  );
   const projects: TestProjects = {
     unit: [],
     'unit-dom': [],
     component: [],
     integration: [],
+    'integration-verified': [],
   };
   for (const file of tests) {
+    if (verifiedFiles.has(file)) {
+      projects['integration-verified'].push(file);
+      continue;
+    }
     if (dbFiles.has(file)) {
       projects.integration.push(file);
       continue;
@@ -204,7 +218,7 @@ export const getTestProjects = (root: string): TestProjects => {
       : findDbDependency(root, file, new Set());
     if (dependency) {
       throw new Error(
-        `未登録のDB依存テストです: ${file} → ${dependency}。db-test-files.jsonのfiles（実DB）またはmockedFiles（mock境界）へ理由付きで登録してください。`,
+        `未登録のDB依存テストです: ${file} → ${dependency}。db-test-files.jsonのfiles（legacy実DB）、verifiedFiles（case別実DB）またはmockedFiles（mock境界）へ理由付きで登録してください。`,
       );
     }
     if (UNIT_DOM_PATTERN.test(file)) projects['unit-dom'].push(file);
