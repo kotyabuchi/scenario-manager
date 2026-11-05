@@ -40,7 +40,7 @@ const setup = async () => {
     runId: 'a'.repeat(12),
     evidence: {
       issues: [],
-      counts: { expected: 16, tests: 16, passed: 16, journals: 16 },
+      counts: { expected: 20, tests: 20, passed: 20, journals: 20 },
     },
   });
   return fixture;
@@ -48,7 +48,7 @@ const setup = async () => {
 beforeEach(() => vi.resetAllMocks());
 
 describe('integrationの実行入口', () => {
-  it('台帳と収集を照合して必要16登録を所有runnerへ渡す', async () => {
+  it('台帳と収集を照合して必要20登録を所有runnerへ渡す', async () => {
     const fixture = await setup();
     const expected = createIntegrationExpectations(
       fixture.ledger,
@@ -56,7 +56,7 @@ describe('integrationの実行入口', () => {
     );
     expect(await runIntegrationCheck('/repository')).toMatchObject({
       status: 'passed',
-      evidence: { counts: { passed: 16 } },
+      evidence: { counts: { passed: 20 } },
     });
     expect(runIntegrationEnvironment).toHaveBeenCalledWith(
       '/repository',
@@ -139,7 +139,7 @@ describe('integrationの実行入口', () => {
       runId: 'b'.repeat(12),
       evidence: {
         issues: [],
-        counts: { expected: 16, tests: 16, passed: 16, journals: 16 },
+        counts: { expected: 20, tests: 20, passed: 20, journals: 20 },
       },
     });
     expect(await runIntegrationCheck('/repository')).toMatchObject({

@@ -423,7 +423,10 @@ describe('保存した348登録の対応表', () => {
       deferredLive: 18,
     });
     expect(legacy.setups).toHaveLength(1);
-    expect(legacy.registered).toHaveLength(26);
+    expect(legacy.registered).toHaveLength(35);
+    expect(
+      legacy.registered.filter(({ profile }) => profile === 'app'),
+    ).toHaveLength(18);
     const byKey = new Map(legacy.tests.map((entry) => [entry.key, entry]));
     for (const entry of execution.entries) {
       const source =

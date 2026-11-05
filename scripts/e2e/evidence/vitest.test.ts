@@ -1,3 +1,4 @@
+import { isNil } from 'ramda';
 import { describe, expect, it } from 'vitest';
 
 import { integrationResultFixture } from '../fixtures/results/integration';
@@ -21,14 +22,32 @@ const codes = (input: Input) =>
   validateIntegrationEvidence(input).issues.map(({ code }) => code);
 
 describe('Vitest integration evidence', () => {
-  it('16登録の標準runner値と実actor/check/fixture証跡を照合し、入力を変更しない', () => {
+  it('20登録の標準runner値と実actor/check/fixture証跡を照合し、入力を変更しない', () => {
     const input = integrationResultFixture();
     const before = structuredClone(input);
     expect(validateIntegrationEvidence(input)).toEqual({
       issues: [],
-      counts: { expected: 16, tests: 16, passed: 16, journals: 16 },
+      counts: { expected: 20, tests: 20, passed: 20, journals: 20 },
     });
     expect(input).toEqual(before);
+  });
+
+  it.each([
+    'schedule-calendar-missing-user',
+    'schedule-calendar-user-sessions',
+    'schedule-calendar-summary',
+    'schedule-calendar-unconfirmed',
+  ])('%sのresponse check欠落・別check置換を拒否する', (caseId) => {
+    for (const fault of ['missing', 'replacement']) {
+      const input = integrationResultFixture();
+      const result = input.report.tests.find(
+        ({ claim }) => claim.caseId === caseId,
+      );
+      if (isNil(result?.meta)) throw new Error('calendar fixture不足');
+      if (fault === 'missing') result.meta.completedChecks = [];
+      else at(result.meta.completedChecks, 0).aspect = 'authorization';
+      expect(codes(input)).toContain('CHECKS_INCOMPLETE');
+    }
   });
 
   const failures: [string, string, (input: Input) => void][] = [

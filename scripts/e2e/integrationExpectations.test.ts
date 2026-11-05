@@ -7,10 +7,37 @@ import {
 } from './integrationExpectations';
 
 describe('integration必要集合', () => {
-  it('実台帳の16条件を一意照合し、actor申告と複数checkを保持する', async () => {
+  it('実台帳の20条件を一意照合し、actor申告と複数checkを保持する', async () => {
     const { ledger, collection } = await integrationLedgerFixture();
     const expected = createIntegrationExpectations(ledger, collection);
-    expect(expected).toHaveLength(16);
+    expect(expected).toHaveLength(20);
+    const calendar = expected.filter(({ claim }) =>
+      claim.caseId.startsWith('schedule-calendar-'),
+    );
+    expect(calendar.map(({ claim }) => claim.caseId).sort()).toEqual([
+      'schedule-calendar-missing-user',
+      'schedule-calendar-summary',
+      'schedule-calendar-unconfirmed',
+      'schedule-calendar-user-sessions',
+    ]);
+    for (const entry of calendar) {
+      expect(entry.claim).toMatchObject({
+        variant: 'creator-only',
+        binding: 'main',
+      });
+      expect(entry.fixture).toBe('schedule');
+      expect(entry.actorBindings).toEqual([
+        { role: 'operator', actor: 'creator-only' },
+      ]);
+      expect(entry.checks).toEqual([
+        {
+          target:
+            'function:src/app/(main)/sessions/adapter.ts#getCalendarSessions',
+          aspect: 'response',
+          layer: 'integration',
+        },
+      ]);
+    }
     expect(
       expected.find(
         ({ claim }) =>
@@ -81,9 +108,14 @@ describe('integration必要集合', () => {
     expect(() => createIntegrationExpectations(ledger, collection)).toThrow();
   });
 
-  it('caseと登録の両方を消しても初期必須条件の削減を拒否する', async () => {
+  it.each([
+    'schedule-rpc-atomic',
+    'schedule-calendar-missing-user',
+    'schedule-calendar-user-sessions',
+    'schedule-calendar-summary',
+    'schedule-calendar-unconfirmed',
+  ])('%sのcaseと登録の両方を消しても初期必須条件の削減を拒否する', async (id) => {
     const { ledger, collection } = await integrationLedgerFixture();
-    const id = 'schedule-rpc-atomic';
     for (const scenario of ledger.scenarios)
       scenario.cases = scenario.cases.filter(({ caseId }) => caseId !== id);
     const removed = new Set(

@@ -20,6 +20,10 @@ const REQUIRED_VARIANTS = {
   'schedule-rpc-allow': ['creator-only', 'keeper-only'],
   'schedule-rpc-deny': ['anonymous', 'outsider', 'actor-mismatch'],
   'schedule-rpc-atomic': ['creator-atomic-failure', 'keeper-atomic-failure'],
+  'schedule-calendar-missing-user': ['creator-only'],
+  'schedule-calendar-user-sessions': ['creator-only'],
+  'schedule-calendar-summary': ['creator-only'],
+  'schedule-calendar-unconfirmed': ['creator-only'],
 };
 
 /** 他runnerの不足を混ぜず、integrationの契約・case・例外を同じ条件で切り出す。 */

@@ -6,7 +6,7 @@ import {
 } from '../../integrationSchema';
 import { fixture as environment } from '../environment/ownership';
 
-/** 本文や資格情報を含まない16登録のadapter用結果fixture。 */
+/** 本文や資格情報を含まない20登録のadapter用結果fixture。 */
 export const integrationResultFixture = () => {
   const lease = environment().lease;
   const variants = [
@@ -26,13 +26,20 @@ export const integrationResultFixture = () => {
     ['schedule-rpc-deny', 'actor-mismatch'],
     ['schedule-rpc-atomic', 'creator-atomic-failure'],
     ['schedule-rpc-atomic', 'keeper-atomic-failure'],
+    ['schedule-calendar-missing-user', 'creator-only'],
+    ['schedule-calendar-user-sessions', 'creator-only'],
+    ['schedule-calendar-summary', 'creator-only'],
+    ['schedule-calendar-unconfirmed', 'creator-only'],
   ];
   const entries = variants.map(([caseId, variant], index) => {
     const claim = { caseId, variant, binding: 'main' };
     const id = `task-${index}`;
-    const file = caseId?.startsWith('schedule-action')
-      ? 'src/actions.integration.test.ts'
-      : 'src/rpc.integration.test.ts';
+    const isCalendar = caseId?.startsWith('schedule-calendar') ?? false;
+    const file = isCalendar
+      ? 'src/calendar.integration.test.ts'
+      : caseId?.startsWith('schedule-action')
+        ? 'src/actions.integration.test.ts'
+        : 'src/rpc.integration.test.ts';
     const options = {
       mode: 'run',
       fails: false,
@@ -59,11 +66,14 @@ export const integrationResultFixture = () => {
           ]
         : []),
     ];
-    const target = file.includes('/actions')
-      ? 'action:src/actions.ts#confirm'
-      : 'rpc:replace_confirmed_schedule_time_blocks';
-    const aspects =
-      caseId === 'schedule-rpc-allow'
+    const target = isCalendar
+      ? 'function:src/app/(main)/sessions/adapter.ts#getCalendarSessions'
+      : file.includes('/actions')
+        ? 'action:src/actions.ts#confirm'
+        : 'rpc:replace_confirmed_schedule_time_blocks';
+    const aspects = isCalendar
+      ? ['response']
+      : caseId === 'schedule-rpc-allow'
         ? ['persist', 'authorization']
         : caseId?.endsWith('atomic')
           ? ['atomicity']
