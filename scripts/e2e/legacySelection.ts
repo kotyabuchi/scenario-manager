@@ -13,13 +13,22 @@ type LegacySelectionInput = {
   project: string;
 };
 
-const state = (entry: LegacyManifest['tests'][number]) =>
+const state = (
+  entry: LegacyManifest['tests'][number] | LegacyManifest['registered'][number],
+) =>
   JSON.stringify([
     entry.fingerprint,
     entry.expectedStatus,
     entry.annotations.map((value) => JSON.stringify(value)).sort(),
     entry.serialGroup,
+    'caseId' in entry ? [entry.caseId, entry.variant, entry.binding] : null,
   ]);
+
+/** 同keyの通常case移行後も、既存app suiteの実行義務を列挙する。 */
+export const legacyAppEntries = (manifest: LegacyManifest) =>
+  [...manifest.tests, ...manifest.registered].filter(
+    (entry) => entry.profile === 'app',
+  );
 
 /**
  * currentLegacyはguard付きdiscover(profile=app, setupProjects=[])を
@@ -31,16 +40,17 @@ export const validateLegacyDiscovery = ({
 }: Pick<LegacySelectionInput, 'legacy' | 'currentLegacy'>) => {
   const legacy = legacyManifestSchema.parse(original);
   const currentLegacy = legacyManifestSchema.parse(discovered);
-  const previous = legacy.tests.filter((entry) => entry.profile === 'app');
+  const previous = legacyAppEntries(legacy);
   if (
     previous.length === 0 ||
     currentLegacy.setups.length > 0 ||
-    currentLegacy.registered.length > 0 ||
-    currentLegacy.tests.some((entry) => entry.profile !== 'app')
+    [...currentLegacy.tests, ...currentLegacy.registered].some(
+      (entry) => entry.profile !== 'app',
+    )
   )
     throw new Error('現在の列挙は旧app登録全体だけを含む必要があります。');
   const current = new Map(
-    currentLegacy.tests.map((entry) => [entry.key, entry]),
+    legacyAppEntries(currentLegacy).map((entry) => [entry.key, entry]),
   );
   if (current.size !== previous.length)
     throw new Error('現在の列挙と旧app登録の集合が一致しません。');
@@ -70,7 +80,7 @@ export const createLegacySelection = (input: LegacySelectionInput) => {
   const dispositions = new Map(
     execution.entries.map((entry) => [entry.key, entry]),
   );
-  const entries = currentLegacy.tests
+  const entries = legacyAppEntries(currentLegacy)
     .filter((entry) => entry.project === input.project)
     .filter(
       (entry) => dispositions.get(entry.key)?.disposition !== 'deferred-live',

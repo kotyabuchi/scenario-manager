@@ -10,8 +10,10 @@ import {
 } from './legacyExecutionSchema';
 import {
   createLegacySelection,
+  legacyAppEntries,
   validateLegacyDiscovery,
 } from './legacySelection';
+import { readTestTags } from './testTags';
 
 import type { LegacyExecutionResult } from './legacyExecutionSchema';
 import type { LegacySelectionInput } from './legacySelection';
@@ -53,6 +55,7 @@ const specSchema = z.object({
   title: z.string().min(1),
   file: z.string().min(1),
   ok: z.literal(true),
+  tags: z.array(z.string()).default([]),
   tests: z.array(testSchema).length(1),
 });
 const suiteSchema = z.object({
@@ -98,6 +101,7 @@ const checkProject = (
     legacy: {
       ...legacy,
       tests: legacy.tests.filter((entry) => keys.has(entry.key)),
+      registered: legacy.registered.filter((entry) => keys.has(entry.key)),
     },
     execution: {
       ...execution,
@@ -118,6 +122,10 @@ export const parseLegacyProjectResults = (
 ): LegacyExecutionResult[] => {
   const selection = createLegacySelection(input);
   const report = reportSchema.parse(input.report);
+  const execution = legacyExecutionSchema.parse(input.execution);
+  const dispositions = new Map(
+    execution.entries.map((entry) => [entry.key, entry]),
+  );
   const projects = report.config.projects.filter(
     (project) => project.name === input.project,
   );
@@ -168,8 +176,27 @@ export const parseLegacyProjectResults = (
         );
       if (test.status === 'expected') expected += 1;
       else skipped += 1;
+      const disposition = dispositions.get(key);
+      // Playwright 1.57の公式JSON reporterはタグ先頭の@を除去する。
+      const tags = readTestTags(spec.tags.map((tag) => `@${tag}`));
+      if (disposition?.disposition === 'replacement') {
+        if (
+          isNil(tags) ||
+          tags.caseId !== disposition.replacement.caseId ||
+          tags.variant !== disposition.replacement.variant ||
+          tags.binding !== disposition.replacement.binding
+        )
+          throw new Error(
+            'replacement結果のcase/variant/bindingが一致しません。',
+          );
+      } else if (!isNil(tags)) {
+        throw new Error('未移行legacyの結果に予約caseタグがあります。');
+      }
       results.push({
         key,
+        ...(disposition?.disposition === 'replacement'
+          ? { originFingerprint: disposition.fingerprint }
+          : {}),
         fingerprint: entry.fingerprint,
         status: attempt.status,
         expectedStatus: test.expectedStatus,
@@ -199,9 +226,7 @@ export const aggregateLegacyResults = (
   const { legacy } = validateLegacyDiscovery(input);
   const execution = legacyExecutionSchema.parse(input.execution);
   const expected = new Set(
-    legacy.tests
-      .filter((entry) => entry.profile === 'app')
-      .map((entry) => entry.project),
+    legacyAppEntries(legacy).map((entry) => entry.project),
   );
   const seen = new Set<string>();
   const results: LegacyExecutionResult[] = [];

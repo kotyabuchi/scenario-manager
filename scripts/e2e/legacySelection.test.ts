@@ -20,16 +20,44 @@ const input = () => ({
   execution: structuredClone(execution),
   currentLegacy: legacyManifestSchema.parse({
     ...structuredClone(legacy),
-    registered: [],
+    registered: structuredClone(
+      legacy.registered.filter((entry) => entry.profile === 'app'),
+    ),
     setups: [],
   }),
   project: 'chromium',
 });
 
 describe('旧testのexact選択', () => {
+  it('移行済み5caseをauth projectごとの実行対象へ保つ', () => {
+    for (const project of ['chromium-auth', 'mobile-chrome-auth']) {
+      const selection = createLegacySelection({ ...input(), project });
+      expect(
+        selection.entries.filter((entry) => 'caseId' in entry),
+      ).toHaveLength(5);
+      expect(selection.keys).toHaveLength(108);
+    }
+  });
+
+  it.each([
+    'missing',
+    'fingerprint',
+    'caseId',
+    'variant',
+    'binding',
+  ] as const)('現在の移行済み登録の%s改変を拒否する', (mode) => {
+    const value = input();
+    const first = value.currentLegacy.registered[0];
+    if (!first) throw new Error('replacement fixtureが空です。');
+    if (mode === 'missing') value.currentLegacy.registered.pop();
+    else if (mode === 'fingerprint') first.fingerprint = '0'.repeat(64);
+    else first[mode] = 'different';
+    expect(() => createLegacySelection(value)).toThrow();
+  });
   it('全348登録を照合したうえで4projectの非deferred330件だけを選択する', () => {
     const value = input();
-    expect(value.currentLegacy.tests).toHaveLength(348);
+    expect(value.currentLegacy.tests).toHaveLength(338);
+    expect(value.currentLegacy.registered).toHaveLength(10);
     const selections = [
       ...new Set(legacy.tests.map((entry) => entry.project)),
     ].map((project) => createLegacySelection({ ...value, project }));
