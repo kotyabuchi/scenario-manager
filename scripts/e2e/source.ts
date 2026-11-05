@@ -1,8 +1,15 @@
 import ts from 'typescript';
 
+import { gitRead } from './gitObjects';
+import { gitTokens } from './gitRecords';
 import { isSourceEntry } from './sourceFiles';
+import {
+  createSnapshotSystem,
+  type createStablePackageSystem,
+  isPackageInput,
+  type SnapshotFiles,
+} from './sourceSnapshotSystem';
 
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
@@ -28,18 +35,16 @@ const isInside = (root: string, file: string) => {
 const listGitFiles = (root: string) =>
   [
     ...new Set(
-      execFileSync(
-        'git',
-        ['ls-files', '-z', '--cached', '--others', '--exclude-standard'],
-        {
-          cwd: root,
-          encoding: 'utf8',
-          windowsHide: true,
-          maxBuffer: 16 * 1024 * 1024,
-        },
-      )
-        .split('\0')
-        .filter(Boolean),
+      gitTokens(
+        gitRead(root, [
+          'ls-files',
+          '-z',
+          '--cached',
+          '--others',
+          '--exclude-standard',
+          '--',
+        ]),
+      ),
     ),
   ].sort(compare);
 
@@ -157,17 +162,27 @@ const readConfig = (
   diagnostics: InventoryDiagnostic[],
   contents: Map<string, string>,
   access: ReturnType<typeof createFileAccess>,
+  system: Pick<
+    ts.System,
+    | 'readFile'
+    | 'fileExists'
+    | 'readDirectory'
+    | 'directoryExists'
+    | 'getDirectories'
+    | 'realpath'
+  >,
 ) => {
   const config = ts.getParsedCommandLineOfConfigFile(
     path.join(root, 'tsconfig.json'),
     {},
     {
       ...ts.sys,
+      ...system,
       getCurrentDirectory: () => root,
-      fileExists: (file) => access.isAllowed(file) && ts.sys.fileExists(file),
       readFile: (file) => {
-        const text = access.readFile(file);
-        if (text === undefined) return undefined;
+        const raw = system.readFile(file);
+        if (raw === undefined) return undefined;
+        const text = normalizeText(raw);
         contents.set(access.manifestPath(file), text);
         return text;
       },
@@ -192,36 +207,74 @@ const createManifest = (contents: Map<string, string>): SourceManifest => {
 };
 
 /** アプリを実行せず単一Programを構築し、安定したsource snapshotと診断を返す。 */
-export const loadSource = (directory: string) => {
+export const loadSource = (
+  directory: string,
+  snapshot?: SnapshotFiles & {
+    packages: ReturnType<typeof createStablePackageSystem>['system'];
+  },
+) => {
   const root = path.resolve(directory);
-  const gitFiles = listGitFiles(root);
+  const gitFiles = snapshot
+    ? [...snapshot.files].sort(compare)
+    : listGitFiles(root);
   const gitFileSet = new Set(gitFiles);
   const relative = createPaths(root, gitFiles);
   const diagnostics: InventoryDiagnostic[] = [];
   const contents = new Map<string, string>();
   const access = createFileAccess(root, relative, diagnostics);
+  const physical = {
+    ...ts.sys,
+    readFile: access.readFile,
+    fileExists: (file: string) =>
+      access.isAllowed(file) && ts.sys.fileExists(file),
+  };
+  const system = snapshot
+    ? createSnapshotSystem(
+        root,
+        { ...snapshot, files: gitFiles },
+        snapshot.packages,
+        (file) =>
+          isPackageInput(file, access.manifestPath(path.resolve(file))) &&
+          access.isAllowed(file),
+      )
+    : physical;
   const entries = gitFiles
     .filter((file) => file.startsWith('src/'))
     .filter((file) => {
       const absolute = path.join(root, file);
       // cached一覧には未stage削除も残るため、現在のsnapshotからは除く。
-      return existsSync(absolute) && access.isAllowed(absolute);
+      return system.fileExists(absolute);
     })
     // Gitはdirectory symlink自体を返すため、範囲検査を入口判定より先に行う。
     .filter(isSourceEntry);
-  const config = readConfig(root, relative, diagnostics, contents, access);
+  const config = readConfig(
+    root,
+    relative,
+    diagnostics,
+    contents,
+    access,
+    system,
+  );
   // tsconfigで未許可でも、GitにあるJS入口を黙って落とさず解析する。
   const options = { ...config?.options, allowJs: true };
   const host = ts.createCompilerHost(options, true);
   host.getCurrentDirectory = () => root;
-  host.readFile = access.readFile;
-  host.fileExists = (file) => access.isAllowed(file) && ts.sys.fileExists(file);
+  host.readFile = (file) => {
+    const text = system.readFile(file);
+    return text === undefined ? undefined : normalizeText(text);
+  };
+  host.fileExists = system.fileExists;
+  if (snapshot) {
+    host.directoryExists = system.directoryExists;
+    host.getDirectories = system.getDirectories;
+    if (system.realpath) host.realpath = system.realpath;
+  }
   // 補助型の入口もGitを正本にし、buildが作るambient型を自動追加しない。
   // 実装からimport/referenceで到達する型は、hostで除外せずsnapshotへ残す。
   const declarations = (config?.fileNames ?? []).filter(
     (file) =>
       file.endsWith('.d.ts') &&
-      access.isAllowed(file) &&
+      (snapshot ? system.fileExists(file) : access.isAllowed(file)) &&
       gitFileSet.has(relative(file)),
   );
   const program = ts.createProgram({
