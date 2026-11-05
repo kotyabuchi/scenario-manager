@@ -212,6 +212,8 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - 再開時の優先順: (1) FK名追補migrationの空DB再生とcatalog検証、(2) 旧specの本文修正が必要な5定義/認証2projectの10登録をcase ID付きへ通常移行し、legacy-execution/selection/resultsに明示replacementを接続、(3) 修正後の4 projectをすべて実行・照合、(4) M1とレビューを閉じてBatch 8完了後にBatch 9へ進む。5定義はscenario-detail-actionsのFAB2件、session-flowのGM action1件、session-createの作成URL2件。共通hook/suiteの変更は避け、他testのfingerprintを巻き込まない。
 - replacement設計の再開メモ: checkLegacyは同keyのregistered化に対応済みだが現legacy runnerは未対応。旧10行のkey/fingerprint/origin metadataを信頼する変更前Git版から固定し、移行先case/variant/bindingと一対一照合する。M1生成物はtests338/app登録10へ正常更新し、未移行338＋固定origin10から初期348を追跡する。実行義務は未移行320＋replacement10=330、既存skip9/fixme2/deferred18は増やさない。実結果には新fingerprintと旧originの対応を記録し、旧fingerprintの貼付けや全件rebaselineで通さない。
 - 一時停止（2026-11-05）: ユーザーの「キリのいいところで一旦作業停止して」に従い、Step 8-3の途中checkpointで停止。全tools65 files/1142 tests成功、SQL鏡テスト2件を除去後の対象1件成功（総登録1140）、Biome983 files・型検査成功。FK追補とUI修正の実受入は再開後。詳細はdocs/testing/e2e-fixtures.md、docs/reviews/diff-review-2026-11-05-2.md。クラウドDB変更・push・PR・デプロイは行っていない。
+- 再開（2026-11-05）: HEAD `933c689`からStep 8-3を継続。FK名追補を含む25 migrationとseed/catalogをfresh run `b293b8024507` / `e5fb24b57bc4`で再現し、両方cleanup complete・記録上の残留0を確認。認可は未検証のままBatch 10へ分離する。
+- 通常登録への移行: 旧5定義にcase IDを追加し、現UIのFAB/GM actionと厳密な作成後ULID URLに修正。元の10登録はcommit `933c689`のGit objectと照合して保持し、同じkeyの新登録へ一対一で対応させる。目録は348（local309/replacement10/既存skip9/fixme2/deferred18）、実行義務330を維持。M1はregistered18（Storybook8/app10）・legacy338・不足473、issues/policy delta0、baseline digest不変。実browser受入は別途検証中。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類

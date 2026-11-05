@@ -97,7 +97,9 @@ Supabase projectのSQL Editorと連携ツールの両方で`select 1 as connecti
 
 最後の既定値は旧`docs/plans/scenario-auto-import.md`と0003が指定する`manual`に対し、現行cloudではDEFAULTがないというdriftだった。今回は現行DBを再現してテストするため、追補でDROP DEFAULTを明示した。通常の作成処理は`input.sourceType ?? 'manual'`を明示挿入するため、その挙動は変わらない。localだけの既定値が、将来の明示代入漏れを隠すことも防ぐ。既存行の値は変更せず、運用DBにも適用していない。
 
-初期監査では7個のFK/PK名の差を定義が同じとして比較対象外にしたが、Batch 8-3の実browser検証で不十分と判明した。feedback adapterはPostgRESTの`!feedbacks_user_id_fkey`等を使うため、FK名もAPI契約である。追補`20261104162014_align_postgrest_foreign_key_names.sql`は確認済cloud証拠と同定義の6FKをrenameし、全29FKの名前もcatalog検査へ含める。PK名は引き続き比較対象外。制約をdrop/recreateせず、既にcloud名なら定義検証後に何もしない。単体検証は完了したが、この追補の空DB再生は2026-11-05の一時停止時点で未実施。
+初期監査では7個のFK/PK名の差を定義が同じとして比較対象外にしたが、Batch 8-3の実browser検証で不十分と判明した。feedback adapterはPostgRESTの`!feedbacks_user_id_fkey`等を使うため、FK名もAPI契約である。追補`20261104162014_align_postgrest_foreign_key_names.sql`は確認済cloud証拠と同定義の6FKをrenameし、全29FKの名前もcatalog検査へ含める。PK名は引き続き比較対象外。制約をdrop/recreateせず、既にcloud名なら定義検証後に何もしない。
+
+2026-11-05の再開後、HEAD `933c689`でfresh run `b293b8024507` / `e5fb24b57bc4`を実行した。両方で25 migration、seed、FK名を含むcatalogの再現が成功し、同じ5 service imageを確認した。migration hashは`7fd981083a38a5e2c97f05c92c814c963a5c5e0b2e8817594d3e230783c36c2c`、catalog fingerprintは`5550aab5b2f5785daa898d6da83c3059d8abd59a6c19851e0eff6bd0004db415`。両runのcleanupはcomplete、記録された残留資源は0。これはfresh DBでのrename経路の検証であり、適用済みcloud名のno-op経路や認可の受入とは区別する。
 
 初期catalog比較で出た9 CHECKと3 triggerの差は、cloud証拠のpretty=trueとruntime queryのpretty=falseという取得条件の違いだった。同じfalseでcloud metadataを再取得するとlocalと完全一致したため、確認済み12定義の期待値をfalse形式へそろえる。括弧やschema名を比較時に捨てる緩和は行わない。
 

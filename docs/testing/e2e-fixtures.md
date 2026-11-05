@@ -59,9 +59,21 @@ Step 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper�
 
 認証PCで検出した修正は、(1) ScenarioCardのClient境界、(2) PostgRESTで使うFK名、(3) timestamp without time zoneのUTC解釈、(4) 認証タブ・レスポンシブ重複のPOM指定。これらの修正後の実browser再検証は未実施。DB日時はマイクロ秒精度で比較し、削除条件へは取得した元の文字列を使う。
 
-旧spec本文の修正が必要な5定義はまだ変更していない。FAB2件、GM action1件、作成後URL検査2件を、M1の規約に従ってcase ID付きの通常登録へ移行する。初期348登録の行き先と330実行義務を保つためのreplacement対応が次の作業であり、fingerprintの一括更新や新skipで通さない。
+一時停止時点では旧spec本文の修正が必要な5定義が残った。再開後、FAB2件、GM action1件、作成後URL検査2件を、M1の規約に従ってcase ID付きの通常登録へ移行した。共通hookや他定義のfingerprintは変えず、初期348登録の行き先と330実行義務をreplacement契約で保持する。
 
 全toolsは65 files / 1142 tests成功。その後、SQL文字列だけをなぞる2テストを除き、原migrationと確認済cloud metadataの等価性テスト1件を再実行して成功（登録総数1140）。Biome 983 files成功、型検査成功。レビュー指摘の秘密file部分書込み残留とspec差替えを修正し、実reportのannotation位置情報にも対応した。4 project受入・Batch 8全体・M2は未完了。
+
+### 通常caseへの移行と再診断（2026-11-05）
+
+`legacy-execution.json`は348行を保ち、local309 / replacement10 / skip9 / fixme2 / deferred18とする。replacementは変更前commit `933c689`の旧登録をGit objectから検証し、現在のcase/variant/binding、project/repeat、本文fingerprintへ対応させる。元のfingerprintを新本文へ貼り付けない。外部GIT変数、replace refs、graftsによる履歴変更も除外する。通常登録はStorybook8/app10、未移行legacy338。不足473とbaseline digestは不変。
+
+認証PC run `647484800a75`は98成功・1失敗・9skip。前回のホーム画面、feedback参照、FAB、作成URLの失敗は解消した。GM操作の「申請管理」はヘッダーと参加者欄の両方に表示されるため、ヘッダー内SessionActionsへscopeする追加修正を行った。後続8件の依存skipを成功として扱わない。残る1skipは既存fixmeである。
+
+このrunのUI cleanup receipt5本は全passed/remaining0、fixture/stackもcompleteだった。receiptに余分なui-cleanup失敗が出た原因は、evidence失敗の再throwを最後のphaseで重複記録するバグであり、error identityとAggregateError包装の照合で修正した。別のcontext障害は保持する。
+
+3 run（上記認証PCとfresh DB再現2回）の終了後、Dockerのcontainer/network/volume、port43100のlistener、固定旧stateと当該run資格情報/context fileの残留0を独立した読取で確認した。
+
+独立レビューでは、Playwright 1.57 JSONがタグ先頭の@を除去する仕様との不一致も修正した。全tools67 files/1191 testsが成功し、その後の変更はresults35件、origin13件、project runner18件で再検証した。型検査・Biome988 filesとM1も成功。4 projectの最終受入は引き続き必要で、実装済みcaseの恒久verified化は行わない。
 
 ## 本番buildの分離
 
@@ -75,4 +87,4 @@ Next 16.1.6を検査し、子envはallowlistとlocal URL/anon keyで構成する
 
 旧25 specの348登録は`legacy-execution.json`でexact key / fingerprintを保持する。初期分類はlocal 319、既存mobile条件skip 9、既存fixme 2、deferred-live 18。setup 1と既にcase登録済みStorybook 8はこの集合に混ぜない。
 
-外部依存は環境変数を空にするだけでは止まらない。固定Booth URLを自動解析するTier 3と、バナーからimport画面へ遷移して解析が始まるcaseも個別に延期する。deferredや既存skipをpassに数えず、データ不足・認証不足・前段失敗による新しいskipは失敗として扱う。local互換runnerと合成seedは後続で接続する。
+外部依存は環境変数を空にするだけでは止まらない。固定Booth URLを自動解析するTier 3と、バナーからimport画面へ遷移して解析が始まるcaseも個別に延期する。deferredや既存skipをpassに数えず、データ不足・認証不足・前段失敗による新しいskipは失敗として扱う。local互換runnerと合成seedを接続済みで、上記の実診断から最終受入を進める。
