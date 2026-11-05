@@ -1,0 +1,51 @@
+{
+  "pull_request": {
+    "context": {
+      "sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "ref": "refs/pull/42/merge",
+      "repository": "example/project"
+    },
+    "payload": {
+      "number": 42,
+      "pull_request": {
+        "base": {
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "ref": "main",
+          "repo": { "full_name": "example/project" }
+        },
+        "head": { "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }
+      }
+    }
+  },
+  "push": {
+    "context": {
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ref": "refs/heads/develop",
+      "repository": "example/project"
+    },
+    "payload": {
+      "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "after": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ref": "refs/heads/develop",
+      "created": false,
+      "deleted": false,
+      "repository": { "full_name": "example/project" }
+    }
+  },
+  "schedule": {
+    "context": {
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ref": "refs/heads/main",
+      "repository": "example/project"
+    },
+    "payload": { "schedule": "30 18 * * 0" }
+  },
+  "workflow_dispatch": {
+    "context": {
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ref": "refs/tags/reviewed",
+      "repository": "example/project"
+    },
+    "payload": { "ref": "reviewed" }
+  }
+}

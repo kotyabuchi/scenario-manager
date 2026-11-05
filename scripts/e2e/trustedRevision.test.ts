@@ -60,10 +60,21 @@ const fixture = (format = 'sha1') => {
     CI: '1',
     GITHUB_EVENT_NAME: 'pull_request',
     GITHUB_EVENT_PATH: join(root, 'event.json'),
+    GITHUB_SHA: head,
+    GITHUB_REF: 'refs/pull/1/merge',
+    GITHUB_REPOSITORY: 'owner/repository',
   };
   const event = (
     payload: unknown = {
-      pull_request: { base: { sha: base }, head: { sha: head } },
+      number: 1,
+      pull_request: {
+        base: {
+          sha: base,
+          ref: 'main',
+          repo: { full_name: env.GITHUB_REPOSITORY },
+        },
+        head: { sha: head },
+      },
     },
   ) => {
     writeFileSync(env.GITHUB_EVENT_PATH, JSON.stringify(payload));
@@ -78,10 +89,15 @@ describe('比較元revisionの信頼境界', () => {
     'sha256',
   ])('%sのeventからbase/headを固定する', async (format) => {
     const { root, base, head, env } = fixture(format);
-    expect(await resolveRevisions({ root, env })).toEqual({
+    expect(await resolveRevisions({ root, env })).toMatchObject({
       base,
       head,
       mode: 'ci',
+      eventPolicy: {
+        event: 'pull_request',
+        staticBase: { kind: 'comparison', sha: base },
+        impactBase: base,
+      },
     });
   });
 
@@ -95,7 +111,7 @@ describe('比較元revisionの信頼境界', () => {
         root,
         env: { ...env, CI: 'false', E2E_BASE: 'HEAD' },
       }),
-    ).toEqual({ base, head, mode: 'ci' });
+    ).toMatchObject({ base, head, mode: 'ci' });
   });
 
   it.each([
@@ -121,7 +137,15 @@ describe('比較元revisionの信頼境界', () => {
       resolveRevisions({
         root,
         env: event({
-          pull_request: { base: { sha: 'a'.repeat(40) }, head: { sha: head } },
+          number: 1,
+          pull_request: {
+            base: {
+              sha: 'a'.repeat(40),
+              ref: 'main',
+              repo: { full_name: 'owner/repository' },
+            },
+            head: { sha: head },
+          },
         }),
       }),
     ).rejects.toThrow();
@@ -134,7 +158,7 @@ describe('比較元revisionの信頼境界', () => {
   });
 
   it.each([
-    'push',
+    'merge_group',
     'pull_request_target',
     '',
   ])('未対応event %sを拒否する', async (name) => {
@@ -161,7 +185,7 @@ describe('比較元revisionの信頼境界', () => {
 
   it('ローカルは明示refだけを解決し、暗黙HEADを使わない', async () => {
     const { root, env, base, head } = fixture();
-    const local = { ...env, CI: '' };
+    const local = { ...env, CI: '', GITHUB_ACTIONS: '' };
     expect(
       await resolveRevisions({ root, env: local, base: 'HEAD~1' }),
     ).toEqual({ base, head, mode: 'local' });
