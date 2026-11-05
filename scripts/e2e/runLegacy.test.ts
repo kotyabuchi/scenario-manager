@@ -6,6 +6,7 @@ import { appFixture } from './fixtures/isolatedApp';
 import { writeArtifact } from './ledgerArtifacts';
 import { buildLegacy, legacyManifestSchema } from './legacy';
 import { legacyExecutionSchema } from './legacyExecutionSchema';
+import { verifyLegacyOrigins } from './legacyOrigin';
 import { runLegacyProject } from './legacyProjectRun';
 import { aggregateLegacyResults } from './legacyResults';
 import {
@@ -28,6 +29,7 @@ import { join } from 'node:path';
 import type { LegacyExecutionResult } from './legacyExecutionSchema';
 
 vi.mock('./discover', () => ({ discover: vi.fn() }));
+vi.mock('./legacyOrigin', () => ({ verifyLegacyOrigins: vi.fn() }));
 vi.mock('./legacySourceGuard', () => ({
   captureLegacySources: vi.fn(),
   assertLegacySources: vi.fn(),
@@ -85,7 +87,9 @@ const setup = async () => {
   );
   const currentLegacy = legacyManifestSchema.parse({
     ...structuredClone(legacy),
-    registered: [],
+    registered: structuredClone(legacy.registered).filter(
+      (entry) => entry.profile === 'app',
+    ),
     setups: [],
   });
   const discovery = {
@@ -155,7 +159,10 @@ const setup = async () => {
       const dispositions = new Map(
         execution.entries.map((entry) => [entry.key, entry]),
       );
-      const results: LegacyExecutionResult[] = currentLegacy.tests
+      const results: LegacyExecutionResult[] = [
+        ...currentLegacy.tests,
+        ...currentLegacy.registered,
+      ]
         .filter(
           (entry) =>
             entry.project === input.project &&
@@ -164,10 +171,15 @@ const setup = async () => {
         .map((entry) => {
           const destination = dispositions.get(entry.key);
           if (!destination) throw new Error('実行先がありません。');
-          const shouldSkip = destination.disposition !== 'local';
+          const shouldSkip =
+            destination.disposition === 'existing-skip' ||
+            destination.disposition === 'existing-fixme';
           return {
             key: entry.key,
             fingerprint: entry.fingerprint,
+            ...(destination.disposition === 'replacement'
+              ? { originFingerprint: destination.fingerprint }
+              : {}),
             status: shouldSkip ? 'skipped' : 'passed',
             expectedStatus: shouldSkip ? 'skipped' : 'passed',
             annotations:
@@ -204,6 +216,7 @@ const setup = async () => {
 };
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(verifyLegacyOrigins).mockResolvedValue(undefined);
   vi.spyOn(process.stderr, 'write').mockReturnValue(true);
   vi.spyOn(process, 'once');
   for (const key of [
@@ -244,6 +257,25 @@ describe('legacy実行CLIの引数', () => {
 });
 
 describe('legacy実行の集約と中断', () => {
+  it('origin証明の失敗を保存し、列挙やprojectを起動しない', async () => {
+    const value = await setup();
+    vi.mocked(verifyLegacyOrigins).mockRejectedValue(
+      new Error('private-origin-error'),
+    );
+    const result = await runLegacy(value.root);
+    expect(result.status).toBe('failed');
+    expect(verifyLegacyOrigins).toHaveBeenCalledWith(value.root, execution);
+    expect(discover).not.toHaveBeenCalled();
+    expect(runLegacyProject).not.toHaveBeenCalled();
+    expect(aggregateLegacyResults).not.toHaveBeenCalled();
+    expect(value.receipt()).toMatchObject({
+      status: 'failed',
+      phase: 'origin-proof',
+    });
+    expect(JSON.stringify(value.receipt())).not.toContain(
+      'private-origin-error',
+    );
+  });
   it('guard列挙と全348登録を照合してから4projectを順に実行し330件を集約する', async () => {
     const value = await setup();
     const result = await runLegacy(value.root);

@@ -66,7 +66,7 @@ export const captureLegacySources = (
   const physicalRoot = realpathSync(root);
   const files = [
     ...new Set(
-      legacy.tests
+      [...legacy.tests, ...legacy.registered]
         .filter((entry) => entry.profile === 'app')
         .map((entry) => entry.file),
     ),

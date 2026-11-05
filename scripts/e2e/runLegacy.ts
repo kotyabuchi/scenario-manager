@@ -4,6 +4,7 @@ import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { discover } from './discover';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
 import { buildLegacy } from './legacy';
+import { verifyLegacyOrigins } from './legacyOrigin';
 import { runLegacyProject } from './legacyProjectRun';
 import { aggregateLegacyResults } from './legacyResults';
 import {
@@ -94,6 +95,9 @@ export const runLegacy = async (root: string, args: string[] = []) => {
     };
     const legacy = read('e2e/ledger/legacy-tests.generated.json');
     const execution = read('e2e/ledger/legacy-execution.json');
+    state.phase = 'origin-proof';
+    await verifyLegacyOrigins(worktreeRoot, execution);
+    state.phase = 'discovery';
     const sources = captureLegacySources(worktreeRoot, legacy);
     controller.signal.throwIfAborted();
     const currentLegacy = await buildLegacy(worktreeRoot, [

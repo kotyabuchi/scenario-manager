@@ -129,6 +129,7 @@ describe('旧app specの実bytes差替え検査', () => {
   it('旧app集合が空の台帳と不正schemaを拒否する', () => {
     const value = setup();
     value.manifest.tests = [];
+    value.manifest.registered = [];
     expect(() => captureLegacySources(value.root, value.manifest)).toThrow();
     expect(() => captureLegacySources(value.root, {})).toThrow();
   });
