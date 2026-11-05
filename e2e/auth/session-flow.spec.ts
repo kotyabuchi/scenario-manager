@@ -81,18 +81,75 @@ test.describe('セッションフロー', () => {
       await expect(detailPage.editButton).toBeVisible();
     });
 
-    test('募集中フェーズでGM用アクションが表示される', async ({ page }) => {
-      // 申請管理リンク
-      await expect(page.getByRole('link', { name: '申請管理' })).toBeVisible();
+    test(
+      '募集中フェーズでGM用アクションが表示される',
+      {
+        tag: [
+          '@case:legacy-session-gm-actions',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        // 詳細見出しを持つヘッダー内のSessionActionsに限定し、参加者欄の同名リンクを除く
+        const sessionHeader = page.locator('header').filter({
+          has: page.getByRole('heading', { level: 1 }),
+        });
+        await expect(sessionHeader).toBeVisible();
+        const applicationsLink = sessionHeader
+          .getByRole('link', { name: '申請管理', exact: true })
+          .filter({ visible: true });
+        const scheduleLink = sessionHeader
+          .getByRole('link', { name: 'スケジュールを提出', exact: true })
+          .filter({ visible: true });
+        const moreButton = sessionHeader
+          .getByRole('button', { name: 'その他の操作', exact: true })
+          .filter({ visible: true });
 
-      // 日程調整リンク
-      await expect(page.getByRole('link', { name: '日程調整' })).toBeVisible();
+        // レスポンシブな操作領域の表示を待ち、実際の配置に合わせて確認する
+        await expect(moreButton).toBeVisible();
+        const hasInlineActions = await applicationsLink.isVisible();
+        if (hasInlineActions) {
+          await expect(applicationsLink).toBeEnabled();
+          await expect(applicationsLink).toHaveAttribute(
+            'href',
+            /\/applications$/,
+          );
+          await expect(scheduleLink).toBeVisible();
+          await expect(scheduleLink).toBeEnabled();
+          await expect(scheduleLink).toHaveAttribute(
+            'href',
+            /\/schedule\/availability$/,
+          );
+        }
 
-      // キャンセルボタン
-      await expect(
-        page.getByRole('button', { name: 'キャンセル' }),
-      ).toBeVisible();
-    });
+        await moreButton.click();
+        const actionsMenu = sessionHeader
+          .getByRole('menu')
+          .filter({ visible: true });
+        await expect(actionsMenu).toBeVisible();
+        if (!hasInlineActions) {
+          const applicationsAction = actionsMenu.getByRole('menuitem', {
+            name: '申請管理',
+            exact: true,
+          });
+          const scheduleAction = actionsMenu.getByRole('menuitem', {
+            name: 'スケジュールを提出',
+            exact: true,
+          });
+          await expect(applicationsAction).toBeVisible();
+          await expect(applicationsAction).toBeEnabled();
+          await expect(scheduleAction).toBeVisible();
+          await expect(scheduleAction).toBeEnabled();
+        }
+        const cancelAction = actionsMenu.getByRole('menuitem', {
+          name: 'キャンセル',
+          exact: true,
+        });
+        await expect(cancelAction).toBeVisible();
+        await expect(cancelAction).toBeEnabled();
+      },
+    );
 
     test('基本情報セクションが表示される', async ({ page }) => {
       await expect(page.getByText('E2Eテスト用のセッション')).toBeVisible();

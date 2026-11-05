@@ -35,23 +35,47 @@ test.describe('セッション作成', () => {
     await expect(page.getByText('募集文を入力してください')).toBeVisible();
   });
 
-  test('最小入力で作成するとリダイレクトされる', async ({ page }) => {
-    const name = generateE2ESessionName('作成テスト');
-    await sessionNewPage.fillMinimum(name, 'E2Eテスト用の募集文です');
-    await sessionNewPage.submit();
-    await expect(page).toHaveURL(/\/sessions\//);
-    const id = page.url().match(/\/sessions\/([^/]+)/)?.[1];
-    if (id) createdSessionIds.push(id);
-  });
+  test(
+    '最小入力で作成するとリダイレクトされる',
+    {
+      tag: [
+        '@case:legacy-session-create-redirect',
+        '@variant:default',
+        '@binding:main',
+      ],
+    },
+    async ({ page }) => {
+      const name = generateE2ESessionName('作成テスト');
+      await sessionNewPage.fillMinimum(name, 'E2Eテスト用の募集文です');
+      await sessionNewPage.submit();
+      await expect(page).toHaveURL(/\/sessions\/[0-7][0-9A-HJKMNP-TV-Z]{25}$/);
+      const id = page
+        .url()
+        .match(/\/sessions\/([0-7][0-9A-HJKMNP-TV-Z]{25})$/)?.[1];
+      if (id) createdSessionIds.push(id);
+    },
+  );
 
-  test('作成後にセッション詳細ページが表示される', async ({ page }) => {
-    const name = generateE2ESessionName('詳細確認テスト');
-    await sessionNewPage.fillMinimum(name, 'E2Eテスト用の募集文（詳細確認）');
-    await sessionNewPage.submit();
-    await expect(page).toHaveURL(/\/sessions\//);
-    const id = page.url().match(/\/sessions\/([^/]+)/)?.[1];
-    if (id) createdSessionIds.push(id);
-    // 詳細ページの見出し（h1）は作成したセッション名になる
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(name);
-  });
+  test(
+    '作成後にセッション詳細ページが表示される',
+    {
+      tag: [
+        '@case:legacy-session-created-detail',
+        '@variant:default',
+        '@binding:main',
+      ],
+    },
+    async ({ page }) => {
+      const name = generateE2ESessionName('詳細確認テスト');
+      await sessionNewPage.fillMinimum(name, 'E2Eテスト用の募集文（詳細確認）');
+      await sessionNewPage.submit();
+      await expect(page).toHaveURL(/\/sessions\/[0-7][0-9A-HJKMNP-TV-Z]{25}$/);
+      const id = page
+        .url()
+        .match(/\/sessions\/([0-7][0-9A-HJKMNP-TV-Z]{25})$/)?.[1];
+      if (id) createdSessionIds.push(id);
+      // 詳細ページの見出し（h1）は作成したセッション名になる
+      await expect(page.getByRole('heading', { level: 1 })).toContainText(name);
+    },
+  );
 });
