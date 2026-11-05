@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "extractorVersion": "1",
   "source": {
-    "fingerprint": "1c05ffbb40759dd5f545abd95487f8ec4a57af9a51956425ed30d6df2e044510",
+    "fingerprint": "e2b8c8e4fda7d6a6b8a73bd8e91ed250b0b98221066aab4b4e79702a3439c445",
     "files": [
       {
         "path": "node_modules/.pnpm/@tsconfig+strictest@2.0.8/node_modules/@tsconfig/strictest/tsconfig.json",
@@ -634,7 +634,7 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "hash": "950fa761b3f1920b92da44a5c0ddc1d73eefc79a9968d17aab8e3d4636477dac"
+        "hash": "5538e8fd6c47b239ff9c9259aec3ccf8489af0d5bd082d737ae373865864135b"
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmSidebarContent.tsx",
@@ -690,7 +690,7 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "hash": "1b924fc094b877ae3f8a9150cc4e12c9ee448970c952c5e20b474d9ba02eb2b8"
+        "hash": "f9374af5c62718b4eeda50e3ed3335f8b47e8012654a47666391bb837e072134"
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/confirm/adapter.ts",
@@ -6290,7 +6290,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 175,
+        "line": 179,
         "column": 45
       },
       "symbol": "ConfirmAvailabilityWorkspace",
@@ -6301,7 +6301,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 212,
+        "line": 216,
         "column": 24
       },
       "symbol": "addTimeBlock",
@@ -6312,7 +6312,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 248,
+        "line": 252,
         "column": 25
       },
       "symbol": "handleConfirm",
@@ -6323,7 +6323,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 233,
+        "line": 237,
         "column": 38
       },
       "symbol": "handleToggleRecommendation",
@@ -6334,7 +6334,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 51,
+        "line": 55,
         "column": 31
       },
       "symbol": "buildConfirmDayBadges",
@@ -6345,7 +6345,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 61,
+        "line": 65,
         "column": 17
       },
       "symbol": "touch",
@@ -6356,7 +6356,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 45,
+        "line": 49,
         "column": 23
       },
       "symbol": "formatDateKey",
@@ -6367,7 +6367,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 46,
+        "line": 50,
         "column": 32
       },
       "symbol": "getLocalDateKeyFromIso",
@@ -6378,7 +6378,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 123,
+        "line": 127,
         "column": 29
       },
       "symbol": "normalizeTimeBlocks",
@@ -6389,7 +6389,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 48,
+        "line": 52,
         "column": 20
       },
       "symbol": "toBlockKey",
@@ -6400,7 +6400,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 133,
+        "line": 137,
         "column": 40
       },
       "symbol": "toggleRecommendationTimeBlocks",
@@ -25858,7 +25858,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 212,
+        "line": 216,
         "column": 24
       }
     },
@@ -25868,7 +25868,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 248,
+        "line": 252,
         "column": 25
       }
     },
@@ -25878,7 +25878,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 233,
+        "line": 237,
         "column": 38
       }
     },
@@ -25888,7 +25888,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 206,
+        "line": 210,
         "column": 21
       }
     },
@@ -25898,7 +25898,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 180,
+        "line": 184,
         "column": 28
       }
     },
@@ -25908,7 +25908,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 301,
+        "line": 305,
         "column": 25
       }
     },
@@ -25918,18 +25918,8 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 303,
+        "line": 307,
         "column": 5
-      }
-    },
-    {
-      "from": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
-      "to": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/timeBlockPresentation.ts#formatMinutesLabel",
-      "kind": "calls",
-      "source": {
-        "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 359,
-        "column": 26
       }
     },
     {
@@ -25939,6 +25929,16 @@
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
         "line": 363,
+        "column": 26
+      }
+    },
+    {
+      "from": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+      "to": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/timeBlockPresentation.ts#formatMinutesLabel",
+      "kind": "calls",
+      "source": {
+        "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
+        "line": 367,
         "column": 24
       }
     },
@@ -25948,7 +25948,7 @@
       "kind": "uses",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 328,
+        "line": 332,
         "column": 27
       }
     },
@@ -25958,7 +25958,7 @@
       "kind": "uses",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 333,
+        "line": 337,
         "column": 24
       }
     },
@@ -25968,7 +25968,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 225,
+        "line": 229,
         "column": 7
       }
     },
@@ -25978,7 +25978,7 @@
       "kind": "unresolved",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 227,
+        "line": 231,
         "column": 5
       }
     },
@@ -25988,7 +25988,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 234,
+        "line": 238,
         "column": 20
       }
     },
@@ -25998,7 +25998,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 100,
+        "line": 104,
         "column": 22
       }
     },
@@ -26008,7 +26008,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 107,
+        "line": 111,
         "column": 18
       }
     },
@@ -26018,7 +26018,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 89,
+        "line": 93,
         "column": 18
       }
     },
@@ -26028,7 +26028,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 61,
+        "line": 65,
         "column": 17
       }
     },
@@ -26038,7 +26038,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 100,
+        "line": 104,
         "column": 28
       }
     },
@@ -26048,7 +26048,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 107,
+        "line": 111,
         "column": 24
       }
     },
@@ -26058,7 +26058,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 89,
+        "line": 93,
         "column": 24
       }
     },
@@ -26068,7 +26068,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 126,
+        "line": 130,
         "column": 3
       }
     },
@@ -26078,7 +26078,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 171,
+        "line": 175,
         "column": 11
       }
     },
@@ -26088,7 +26088,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 163,
+        "line": 167,
         "column": 14
       }
     },
@@ -51308,7 +51308,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 175,
+        "line": 179,
         "column": 45
       }
     },
@@ -51318,7 +51318,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 212,
+        "line": 216,
         "column": 24
       }
     },
@@ -51328,7 +51328,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 248,
+        "line": 252,
         "column": 25
       }
     },
@@ -51338,7 +51338,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 233,
+        "line": 237,
         "column": 38
       }
     },
@@ -51348,7 +51348,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 51,
+        "line": 55,
         "column": 31
       }
     },
@@ -51358,7 +51358,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 61,
+        "line": 65,
         "column": 17
       }
     },
@@ -51368,7 +51368,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 276,
+        "line": 280,
         "column": 17
       }
     },
@@ -51378,7 +51378,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 45,
+        "line": 49,
         "column": 23
       }
     },
@@ -51388,7 +51388,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 275,
+        "line": 279,
         "column": 17
       }
     },
@@ -51398,7 +51398,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 46,
+        "line": 50,
         "column": 32
       }
     },
@@ -51408,7 +51408,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 123,
+        "line": 127,
         "column": 29
       }
     },
@@ -51418,7 +51418,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 227,
+        "line": 231,
         "column": 52
       }
     },
@@ -51428,7 +51428,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 296,
+        "line": 300,
         "column": 25
       }
     },
@@ -51438,7 +51438,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 299,
+        "line": 303,
         "column": 33
       }
     },
@@ -51448,7 +51448,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 346,
+        "line": 350,
         "column": 33
       }
     },
@@ -51458,7 +51458,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 48,
+        "line": 52,
         "column": 20
       }
     },
@@ -51468,7 +51468,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 133,
+        "line": 137,
         "column": 40
       }
     },
@@ -51478,7 +51478,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 160,
+        "line": 164,
         "column": 9
       }
     },
@@ -51488,7 +51488,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 218,
+        "line": 222,
         "column": 9
       }
     },
@@ -51498,7 +51498,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 138,
+        "line": 142,
         "column": 41
       }
     },
@@ -51508,7 +51508,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 146,
+        "line": 150,
         "column": 44
       }
     },
@@ -51518,7 +51518,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 153,
+        "line": 157,
         "column": 44
       }
     },
@@ -51528,7 +51528,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 159,
+        "line": 163,
         "column": 10
       }
     },
@@ -51538,7 +51538,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 217,
+        "line": 221,
         "column": 9
       }
     },
@@ -51578,7 +51578,7 @@
       "kind": "unresolved",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 259,
+        "line": 263,
         "column": 28
       }
     },
@@ -51588,7 +51588,7 @@
       "kind": "unresolved",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 344,
+        "line": 348,
         "column": 19
       }
     },
@@ -76475,7 +76475,7 @@
       "severity": "warning",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 227,
+        "line": 231,
         "column": 5
       },
       "anchor": {
@@ -76490,7 +76490,7 @@
       "severity": "warning",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 259,
+        "line": 263,
         "column": 28
       },
       "anchor": {
@@ -76505,7 +76505,7 @@
       "severity": "warning",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx",
-        "line": 344,
+        "line": 348,
         "column": 19
       },
       "anchor": {
