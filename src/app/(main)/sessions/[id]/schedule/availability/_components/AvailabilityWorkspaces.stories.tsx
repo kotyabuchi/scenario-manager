@@ -7,6 +7,7 @@ import {
   BottomNavSlotProvider,
   useBottomNavSlotTarget,
 } from '@/hooks/useBottomNavSlot';
+import { err } from '@/types/result';
 
 import type { Meta, StoryObj } from '@storybook/react';
 import type {
@@ -227,6 +228,39 @@ export const Submit: Story = {
   render: () => {
     const data = useMemo(() => workspaceDataBase, []);
     return <SubmitAvailabilityWorkspace workspaceData={data} />;
+  },
+};
+
+/** 保存拒否時も編集候補を保ち、同じ内容を再試行できるUI用モック。 */
+export const ConfirmSaveError: Story = {
+  render: () => {
+    const data = useMemo(
+      () => ({
+        ...workspaceDataBase,
+        currentUserIsHost: true,
+        currentUserParticipantType: 'SPECTATOR' as const,
+        otherUserAvailabilityTimeBlocks:
+          workspaceDataBase.otherUserAvailabilityTimeBlocks.map((block) => ({
+            ...block,
+            isHost: false,
+          })),
+      }),
+      [],
+    );
+    const onConfirmTimeBlocks = useMemo(() => {
+      let attempts = 0;
+      return async () => {
+        attempts += 1;
+        return err(new Error(`保存に失敗しました（${attempts}回目）`));
+      };
+    }, []);
+    return (
+      <ConfirmAvailabilityWorkspace
+        workspaceData={data}
+        recommendationGroups={[]}
+        onConfirmTimeBlocks={onConfirmTimeBlocks}
+      />
+    );
   },
 };
 

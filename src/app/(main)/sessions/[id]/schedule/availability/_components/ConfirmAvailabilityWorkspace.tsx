@@ -15,6 +15,7 @@ import {
   formatMinutesLabel,
 } from './timeBlockPresentation';
 
+import { Button } from '@/components/elements/button/button';
 import {
   isOverlappingTimeBlock,
   isSameTimeBlock,
@@ -22,11 +23,11 @@ import {
 } from '@/lib/availability/timeBlockUtils';
 import { err, type Result } from '@/types/result';
 
+import type { ConfirmScheduleTimeBlocksResult } from '../../confirm/actions';
 import type {
   AvailabilityTimeBlockInput,
   AvailabilityWorkspaceData,
   CalendarDayBadge,
-  ConfirmedScheduleTimeBlockRow,
   RecommendationGroup,
   RecommendationItem,
 } from '../interface';
@@ -37,8 +38,8 @@ type ConfirmAvailabilityWorkspaceProps = {
   onConfirmTimeBlocks?: (
     timeBlocks: AvailabilityTimeBlockInput[],
   ) =>
-    | Promise<Result<ConfirmedScheduleTimeBlockRow[]>>
-    | Result<ConfirmedScheduleTimeBlockRow[]>;
+    | Promise<ConfirmScheduleTimeBlocksResult>
+    | ConfirmScheduleTimeBlocksResult;
 };
 
 const formatDateKey = (date: Date): string => format(date, 'yyyy-MM-dd');
@@ -291,6 +292,16 @@ export const ConfirmAvailabilityWorkspace = ({
     />
   );
 
+  const manualBlocks = selectedTimeBlocks.filter((b) =>
+    manualBlockKeys.has(toBlockKey(b)),
+  );
+  const recommendedBlocks = selectedTimeBlocks.filter(
+    (b) => !manualBlockKeys.has(toBlockKey(b)),
+  );
+  const manualMinutes = calcSelectedTimeBlocksTotalMinutes(manualBlocks);
+  const recommendedMinutes =
+    calcSelectedTimeBlocksTotalMinutes(recommendedBlocks);
+
   return (
     <AvailabilityWorkspaceLayout
       mobileSidebarTitle="おすすめ候補"
@@ -305,69 +316,68 @@ export const ConfirmAvailabilityWorkspace = ({
           helperText="日単位で提出密度を見つつ、右側のおすすめ候補をクリックして確定日程を選びます。"
         />
       }
-      selectedTimeBlocksSection={(() => {
-        const manualBlocks = selectedTimeBlocks.filter((b) =>
-          manualBlockKeys.has(toBlockKey(b)),
-        );
-        const recommendedBlocks = selectedTimeBlocks.filter(
-          (b) => !manualBlockKeys.has(toBlockKey(b)),
-        );
-        const manualMinutes = calcSelectedTimeBlocksTotalMinutes(manualBlocks);
-        const recommendedMinutes =
-          calcSelectedTimeBlocksTotalMinutes(recommendedBlocks);
-
-        return (
-          <div className={styles.sectionStack}>
-            <AvailabilityTimeBlockEditor
-              selectedDate={selectedDate}
-              onAddTimeBlock={addTimeBlock}
-              disabled={isPending}
-              title="日程を追加"
+      selectedTimeBlocksSection={
+        <div className={styles.sectionStack}>
+          <AvailabilityTimeBlockEditor
+            selectedDate={selectedDate}
+            onAddTimeBlock={addTimeBlock}
+            disabled={isPending}
+            title="日程を追加"
+          />
+          {message ? (
+            <p className={styles.messageBox({ tone: message.tone })}>
+              {message.text}
+            </p>
+          ) : null}
+          <div
+            className={styles.pendingSection({ pending: isPending })}
+            aria-busy={isPending}
+          >
+            <SelectedTimeBlocksPanel
+              title="確定候補"
+              timeBlocks={selectedTimeBlocks}
+              minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
+              emptyMessage="おすすめ一覧から候補を選択するか、上のフォームで追加してください。"
+              onRemoveTimeBlock={(index) => {
+                const removed = selectedTimeBlocks[index];
+                if (removed) {
+                  setManualBlockKeys((prev) => {
+                    const next = new Set(prev);
+                    next.delete(toBlockKey(removed));
+                    return next;
+                  });
+                }
+                setSelectedTimeBlocks((prev) =>
+                  prev.filter((_, currentIndex) => currentIndex !== index),
+                );
+              }}
             />
-            {message ? (
-              <p className={styles.messageBox({ tone: message.tone })}>
-                {message.text}
-              </p>
-            ) : null}
-            <div
-              className={styles.pendingSection({ pending: isPending })}
-              aria-busy={isPending}
-            >
-              <SelectedTimeBlocksPanel
-                title="確定候補"
-                timeBlocks={selectedTimeBlocks}
-                minPlaytimeMinutes={workspaceData.minPlaytimeMinutes}
-                emptyMessage="おすすめ一覧から候補を選択するか、上のフォームで追加してください。"
-                onRemoveTimeBlock={(index) => {
-                  const removed = selectedTimeBlocks[index];
-                  if (removed) {
-                    setManualBlockKeys((prev) => {
-                      const next = new Set(prev);
-                      next.delete(toBlockKey(removed));
-                      return next;
-                    });
-                  }
-                  setSelectedTimeBlocks((prev) =>
-                    prev.filter((_, currentIndex) => currentIndex !== index),
-                  );
-                }}
-              />
-            </div>
-            {selectedTimeBlocks.length > 0 ? (
-              <div className={styles.sourceBreakdown}>
-                <span className={styles.sourceBreakdownItem}>
-                  おすすめから: {formatMinutesLabel(recommendedMinutes)} (
-                  {recommendedBlocks.length}件)
-                </span>
-                <span className={styles.sourceBreakdownItem}>
-                  自由追加: {formatMinutesLabel(manualMinutes)} (
-                  {manualBlocks.length}件)
-                </span>
-              </div>
-            ) : null}
           </div>
-        );
-      })()}
+          {selectedTimeBlocks.length > 0 ? (
+            <div className={styles.sourceBreakdown}>
+              <span className={styles.sourceBreakdownItem}>
+                おすすめから: {formatMinutesLabel(recommendedMinutes)} (
+                {recommendedBlocks.length}件)
+              </span>
+              <span className={styles.sourceBreakdownItem}>
+                自由追加: {formatMinutesLabel(manualMinutes)} (
+                {manualBlocks.length}件)
+              </span>
+            </div>
+          ) : null}
+          <div className={styles.desktopOnly}>
+            <Button
+              type="button"
+              status="primary"
+              onClick={handleConfirm}
+              disabled={isPending || selectedTimeBlocks.length === 0}
+              width="full"
+            >
+              {isPending ? '保存中...' : '日程を確定'}
+            </Button>
+          </div>
+        </div>
+      }
       desktopSidebarSection={sidebarContent}
       mobileSidebarSection={sidebarContent}
       stickyBar={

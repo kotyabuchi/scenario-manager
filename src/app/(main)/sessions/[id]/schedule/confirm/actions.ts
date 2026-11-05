@@ -26,16 +26,16 @@ import type { ConfirmScheduleTimeBlocksValues } from './schema';
 export const confirmScheduleTimeBlocksAction = async (
   sessionId: string,
   data: ConfirmScheduleTimeBlocksValues,
-): Promise<Result<ConfirmedScheduleTimeBlockRow[]>> => {
+): Promise<Result<ConfirmedScheduleTimeBlockRow[], Pick<Error, 'message'>>> => {
   try {
     const userId = await getCurrentUserId();
     if (isNil(userId)) {
-      return err(new Error('ログインが必要です'));
+      return err({ message: 'ログインが必要です' });
     }
 
     const hasPermission = await isSessionManager(sessionId, userId);
     if (!hasPermission) {
-      return err(new Error('この操作を行う権限がありません'));
+      return err({ message: 'この操作を行う権限がありません' });
     }
 
     const phasesResult = await getSchedulingPhases(sessionId);
@@ -43,14 +43,14 @@ export const confirmScheduleTimeBlocksAction = async (
       return err(phasesResult.error);
     }
     if (!canConfirmScheduleInCurrentPhase(phasesResult.data.sessionPhase)) {
-      return err(new Error('準備中フェーズでのみ日程を確定できます'));
+      return err({ message: '準備中フェーズでのみ日程を確定できます' });
     }
 
     const parsed = confirmScheduleTimeBlocksSchema.safeParse(data);
     if (!parsed.success) {
-      return err(
-        new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
-      );
+      return err({
+        message: parsed.error.issues[0]?.message ?? 'バリデーションエラー',
+      });
     }
 
     const result = await replaceConfirmedScheduleTimeBlocks(
@@ -98,3 +98,9 @@ export const getScheduleRecommendationsAction = async (
     return err(e instanceof Error ? e : new Error('Unknown error'));
   }
 };
+
+type ConfirmScheduleTimeBlocksResult = Awaited<
+  ReturnType<typeof confirmScheduleTimeBlocksAction>
+>;
+
+export type { ConfirmScheduleTimeBlocksResult };
