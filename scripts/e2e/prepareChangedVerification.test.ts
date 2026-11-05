@@ -6,6 +6,7 @@ import {
   scenariosFile,
   snapshotFixture,
 } from './fixtures/selection';
+import { githubEventPolicySchema } from './githubEventSchema';
 import { captureGitSnapshot, readSnapshotFile } from './gitSnapshot';
 import { writeArtifact } from './ledgerArtifacts';
 import { IMPACT_RULES_PATH } from './loadImpactRules';
@@ -61,7 +62,7 @@ const snapshot = snapshotFixture([
 const revisions = {
   base: snapshot.base,
   head: snapshot.head,
-  mode: snapshot.mode,
+  mode: 'local' as const,
 };
 const digest = (value: string) =>
   createHash('sha256').update(value).digest('hex');
@@ -338,6 +339,74 @@ describe('変更選択の準備境界', () => {
     expect(vi.mocked(provePandaOutputs)).not.toHaveBeenCalled();
     expect(vi.mocked(selectedPreparation)).not.toHaveBeenCalled();
     expect(receipt('generated-inputs')).toBeNull();
+  });
+
+  it.each([
+    'pull_request',
+    'push',
+    'schedule',
+    'workflow_dispatch',
+  ] as const)('%sの静的比較・Git採取・実行方針を分ける', async (event) => {
+    const isPullRequest = event === 'pull_request';
+    const isComparison = isPullRequest || event === 'push';
+    const staticSha = isComparison ? revisions.base : revisions.head;
+    const impactBase = isPullRequest ? 'd'.repeat(40) : null;
+    const eventPolicy = githubEventPolicySchema.parse({
+      schemaVersion: 1,
+      event,
+      repository: 'owner/repository',
+      eventRef: isPullRequest ? 'refs/pull/1/merge' : 'refs/heads/main',
+      head: revisions.head,
+      staticBase: {
+        kind: isComparison ? 'comparison' : 'self',
+        sha: staticSha,
+      },
+      impactBase,
+      execution: isPullRequest ? 'changed-plus-smoke' : 'full-required',
+    });
+    const ciRevisions = {
+      base: staticSha,
+      head: revisions.head,
+      mode: 'ci' as const,
+      eventPolicy,
+    };
+    vi.mocked(resolveRevisions).mockResolvedValue(ciRevisions);
+    const options = {
+      base: impactBase ?? revisions.head,
+      expectedHead: revisions.head,
+      mode: 'ci',
+      ...(isPullRequest ? { eventBase: staticSha } : {}),
+    };
+    vi.mocked(captureGitSnapshot).mockReturnValue({
+      snapshot: {
+        ...snapshot,
+        mode: 'ci',
+        base: options.base,
+        ...(isPullRequest ? { eventBase: staticSha } : {}),
+      },
+    });
+    const result = await prepareChangedVerification({ root, prefix, env });
+    expect(vi.mocked(checkStaticState)).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ revisions: ciRevisions }),
+    );
+    expect(
+      vi.mocked(captureGitSnapshot).mock.calls.map(([options]) => options),
+    ).toEqual(
+      Array.from({ length: 2 }, () => ({
+        ...options,
+        root,
+        runtimeInputPaths: [readme],
+      })),
+    );
+    expect(result.revisions).toEqual(ciRevisions);
+    expect(result.eventPolicy).toEqual(eventPolicy);
+    if (isPullRequest) {
+      expect(result.decision.mode).toBe('docs-only');
+      expect(vi.mocked(provePandaOutputs)).toHaveBeenCalledOnce();
+    } else {
+      expectFull(result, 'FORCED_FULL');
+      expect(vi.mocked(provePandaOutputs)).not.toHaveBeenCalled();
+    }
   });
 
   it('Playwrightの表現不能だけを全件に拡大し、元の全件planと理由を保存する', async () => {

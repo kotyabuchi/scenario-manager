@@ -71,6 +71,8 @@ export const discover = async ({
 }) => {
   if (!profile.trim() || !Number.isFinite(timeoutMs) || timeoutMs <= 0)
     throw new Error('profileと正のtimeoutMsが必要です');
+  if (selection?.unfiltered)
+    throw new Error('全件runnerは選択指定なしで列挙してください。');
   if (!isNil(selection) && selection.expected.profile !== profile)
     throw new Error('絞り込みのprofileが列挙先と一致しません。');
   const physicalRoot = await realpath(root);

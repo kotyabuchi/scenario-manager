@@ -1,5 +1,6 @@
 import { isNil } from 'ramda';
 
+import { ciSnapshotOptions } from './ciSnapshotOptions';
 import { captureInputs, compareInputs } from './fingerprint';
 import { captureGitSnapshot, readSnapshotFile } from './gitSnapshot';
 import { mergeImpactGraphs } from './impactGraph';
@@ -28,6 +29,8 @@ export const prepareChangedVerification = async (input: {
   base?: string;
   env?: NodeJS.ProcessEnv;
   forceFull?: boolean;
+  deferRunnerSelection?: boolean;
+  onPhase?: (phase: 'static-ledger' | 'collection' | 'selection') => void;
   signal?: AbortSignal;
 }) => {
   const { root, prefix } = input;
@@ -45,7 +48,12 @@ export const prepareChangedVerification = async (input: {
     env,
     ...(input.base ? { base: input.base } : {}),
   });
+  const eventPolicy =
+    revisions.mode === 'ci' ? revisions.eventPolicy : undefined;
+  const forceFull =
+    input.forceFull || eventPolicy?.execution === 'full-required';
   save('static', { status: 'running', ...revisions });
+  input.onPhase?.('static-ledger');
   const state = await collectStaticState(root);
   const result = await checkStaticState({
     root,
@@ -68,6 +76,7 @@ export const prepareChangedVerification = async (input: {
   if (result.issues.length > 0)
     throw new Error('変更選択前の全体静的検査に失敗しました。');
   input.signal?.throwIfAborted();
+  input.onPhase?.('collection');
   const prepared = await prepareVerificationDetails(root);
   if (
     Object.values(compareInputs(initial, prepared.inputs)).some(
@@ -75,11 +84,16 @@ export const prepareChangedVerification = async (input: {
     )
   )
     throw new Error('静的検査中に実行入力が変化しました。');
+  input.onPhase?.('selection');
   const captureOptions = {
     root,
-    base: revisions.base,
-    expectedHead: revisions.head,
-    mode: revisions.mode,
+    ...(isNil(eventPolicy)
+      ? {
+          base: revisions.base,
+          expectedHead: revisions.head,
+          mode: revisions.mode,
+        }
+      : ciSnapshotOptions(eventPolicy)),
     runtimeInputPaths: prepared.inputs.files.map(({ path }) => path),
   };
   const capture = captureGitSnapshot(captureOptions);
@@ -93,7 +107,7 @@ export const prepareChangedVerification = async (input: {
       null,
     ledger: prepared.ledger,
   });
-  const proof = input.forceFull
+  const proof = forceFull
     ? null
     : await provePandaOutputs({
         root,
@@ -130,7 +144,7 @@ export const prepareChangedVerification = async (input: {
     legacy: prepared.legacy,
     baseline: state.baseline,
     provenUnversionedPaths,
-    ...(input.forceFull ? { forceFull: true } : {}),
+    ...(forceFull ? { forceFull: true } : {}),
   };
   let decision = selectImpacts(selectionInput);
   let effective = projectSelection({
@@ -139,7 +153,11 @@ export const prepareChangedVerification = async (input: {
     ledger: prepared.ledger,
     legacy: prepared.legacy,
   });
-  if (decision.mode === 'partial' && !isNil(effective)) {
+  if (
+    !input.deferRunnerSelection &&
+    decision.mode === 'partial' &&
+    !isNil(effective)
+  ) {
     try {
       selectedPreparation(prepared, effective);
     } catch (error) {
@@ -179,6 +197,8 @@ export const prepareChangedVerification = async (input: {
   };
   await checkpoint('selection-ready');
   return {
+    revisions,
+    eventPolicy,
     prepared,
     capture,
     graph,

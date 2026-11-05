@@ -20,6 +20,7 @@ const playwrightSelectionSchema = z.strictObject({
   kind: z.literal('playwright'),
   expected: expectedSchema,
   rootDir: z.string().min(1),
+  unfiltered: z.literal(true).optional(),
 });
 const vitestSelectionSchema = z.strictObject({
   kind: z.literal('vitest'),
@@ -91,6 +92,10 @@ export const assertRunnerDiscovery = (
     !isDeepStrictEqual(projects(discovery), projects(expected))
   )
     throw new Error('絞り込み後のrunner登録集合が有効planと一致しません。');
+  indexTests(
+    expected.profile,
+    expected.tests.map((test) => ({ test })),
+  );
   assertExpectedTests(
     expected,
     discovery.tests.map((test) => ({ test })),
@@ -100,6 +105,8 @@ export const assertRunnerDiscovery = (
 export const emitPlaywrightTestList = (
   selection: PlaywrightRunnerSelection,
 ) => {
+  if (selection.unfiltered)
+    throw new Error('全件runnerにtest-listは使用できません。');
   const lines = selection.expected.tests.map((test) =>
     playwrightTestListLine(selection.rootDir, test),
   );
@@ -116,6 +123,7 @@ export const createRunnerSelection = (input: {
   discovery: Discovery;
   tests: DiscoveredTest[];
   playwrightRootDir?: string;
+  shouldAllowFullProfile?: boolean;
 }): RunnerSelection => {
   const full = discoverySchema.parse(input.discovery);
   const expected = expectedSchema.parse({ ...full, tests: input.tests });
@@ -151,6 +159,10 @@ export const createRunnerSelection = (input: {
     expected,
     rootDir,
   });
+  if (input.shouldAllowFullProfile && wanted.size === full.tests.length) {
+    assertRunnerDiscovery(selection, full);
+    return { ...selection, unfiltered: true };
+  }
   const projects = new Map(
     full.projects.map((project) => [project.name, project]),
   );

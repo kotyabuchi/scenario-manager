@@ -8,6 +8,7 @@ import {
   VERIFIED_INTEGRATION_FILES_ENV,
 } from './integrationVerifiedFiles';
 import { playwrightSourceMapOptions } from './playwrightSourceMaps';
+import { preflightPlaywrightSelection } from './preflightPlaywrightSelection';
 import {
   createRunnerSelection,
   emitPlaywrightTestList,
@@ -58,6 +59,73 @@ afterEach(async () => {
 });
 
 describe('無DBの絞り込み付き実runner', () => {
+  it('全profileは表現不能titleも列挙で照合し、全件指定を装った部分集合は拒否する', async () => {
+    const root = await fixture();
+    const config = 'playwright.config.ts';
+    const profile = 'storybook';
+    await put(
+      root,
+      config,
+      `import { defineConfig } from '@playwright/test';
+export default defineConfig({ testDir: './.storybook/tests' });`,
+    );
+    await put(
+      root,
+      '.storybook/tests/main.spec.ts',
+      `import { test } from '@playwright/test';
+test('unsafe › separator', () => {});
+test('ordinary', () => {});`,
+    );
+    const discovery = await discover({ root, config, profile });
+    const create = (tests: typeof discovery.tests) =>
+      createRunnerSelection({
+        discovery,
+        tests,
+        shouldAllowFullProfile: true,
+      });
+    const selection = create(discovery.tests);
+    if (selection.kind !== 'playwright')
+      throw new Error('Playwright fixtureが必要です。');
+    expect(selection.unfiltered).toBe(true);
+    expect(() =>
+      create(
+        discovery.tests.filter(({ titlePath }) =>
+          titlePath.includes('unsafe › separator'),
+        ),
+      ),
+    ).toThrow('表現できない');
+    const input = {
+      root,
+      config,
+      profile,
+      verification: {
+        signal: new AbortController().signal,
+        context: {
+          verificationId: '0'.repeat(12),
+          stageId: 'storybook',
+          selectionDigest: 'a'.repeat(64),
+          inputDigest: 'b'.repeat(64),
+        },
+        checkpoint: async () => {},
+        onExit: () => {},
+      },
+    };
+    await expect(
+      preflightPlaywrightSelection({ ...input, selection }),
+    ).resolves.toEqual([]);
+    await expect(
+      preflightPlaywrightSelection({
+        ...input,
+        selection: {
+          ...selection,
+          expected: {
+            ...selection.expected,
+            tests: discovery.tests.slice(0, 1),
+          },
+        },
+      }),
+    ).rejects.toThrow('有効planと一致しません');
+  }, 60_000);
   it('Playwright 1.57は同一行の別タイトル、repeat、兄弟directoryのsetupを正確に扱う', async () => {
     const root = await fixture();
     const config = 'playwright.config.ts';

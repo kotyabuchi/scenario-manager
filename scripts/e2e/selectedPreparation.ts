@@ -4,12 +4,13 @@ import {
 } from './runnerSelection';
 
 import type { prepareVerificationDetails } from './prepareVerification';
-import type { EffectiveSelection } from './projectSelection';
+import type { VerificationPlan } from './verificationSchema';
 
 /** 全件収集から選択済みplanとnative期待集合を同じ登録IDで射影する。 */
 export const selectedPreparation = (
   prepared: Awaited<ReturnType<typeof prepareVerificationDetails>>,
-  effective: NonNullable<EffectiveSelection>,
+  effective: { plan: VerificationPlan },
+  options: { shouldAllowFullProfile?: boolean } = {},
 ) => {
   const runnerSelections = prepared.discoveries.flatMap((discovery) => {
     if (discovery.profile === 'app') return [];
@@ -17,7 +18,7 @@ export const selectedPreparation = (
       .filter(({ profile }) => profile === discovery.profile)
       .map(({ test }) => test);
     if (tests.length === 0) return [];
-    return [createRunnerSelection({ discovery, tests })];
+    return [createRunnerSelection({ discovery, tests, ...options })];
   });
   const integration = runnerSelections.find(
     (selection) => selection.expected.profile === 'integration',
