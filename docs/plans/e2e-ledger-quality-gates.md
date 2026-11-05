@@ -583,6 +583,9 @@ testing-patternsを正本にしてquality:changed、実行不足/例外の扱い
 2026-11-05 再停止: callback独立レビューの6項目とoptional receiverの追加反例、移行writerの部分保存からの復旧を修正。日程確定の両配置を各executionで実際に操作するE2Eとsurface契約を追加した。実ソース観測ではButtonの括弧付きreturnを扱えず基準2surfaceが消える回帰を検出。実Buttonのbytesを使う回帰を追加して修正し、描画18件成功を区切りに停止した。修正後の全体再抽出・移行artifact・実ブラウザ受入・正式レビュー・commitはまだで、M4未達成。最終停止位置と再開順序は [作業再開記録](../testing/e2e-ledger-resume.md) を参照。Batch 14は専用worktreeに未コミットで保持する。
 
 2026-11-06 再開: 修正後の実ソース観測で384 sites・product99/story56 bindingsと基準2操作からRPCへの経路を確認。core投影は不変。初期UI移行は660不足から2契約を退役し658件を保存した。Windows tools1914件、Linux重点332件とfixture分割後19件が成功。共通qualityのlint/型/unit/toolsは成功し、選択準備で登録済み日程確定4実行のfingerprint未同期を検出して停止。初期writerを限定修正し、Windows/Linux各24件、型、独立レビュー、実移行再実行も成功。登録4fingerprintのみ同期しUI不足・移行史digestは不変。実runtime・shadow・最終review・commitを続ける。M4は未完了。
+
+2026-11-06 一時停止: Batch 14の実装・レビューを25小コミットで保存（code HEAD `3a40bfe`）。全件quality `22c6926a1f65` は共通4検査、M1、必須55/55、legacy extras301成功・既存例外11で成功。日程確定の4登録で両配置の実操作を確認し、6環境・32 journals・一時コメントの後始末まで完了した。ただし4ファイルのCRLF差からfull-requiredへ拡大したため、部分/全件shadowは未実行。改行差をHEAD bytesへ揃え、ユーザー指示に従いここで停止。Step 14-2 / M4は未完了で、再開時にspec1件だけのsnapshotを確認してshadow受入を行う。
+
 ### Step 14-1. 実在する書き方を追跡
 
 新規: scripts/e2e/extractors/surfaces.ts、callbacks.ts、各testとfixtures。

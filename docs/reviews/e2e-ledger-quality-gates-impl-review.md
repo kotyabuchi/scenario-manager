@@ -2,13 +2,13 @@
 
 - レビュー日: 2026-11-06
 - 計画: `docs/plans/e2e-ledger-quality-gates.md`
-- 判定時点: Batch 14実装後、最終runtime受入前。基準HEAD `8bbfed4` と作業差分を対象とする。
+- 判定時点: code HEAD `3a40bfe` の全件quality受入後、ユーザー指示による一時停止。部分/全件shadowは未受入。
 - 計画充足度: 96.7%（29/30 Steps）。Step 14-2の受入が未完了。
 - サービス品質: B。Part Aは親、Part BはSol/mediumの3担当で並列レビュー。
 
 ## サマリー
 
-Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合した。Batch 14は実ページの2操作からAction/RPCまで追跡でき、UI不足の移行と通常増加拒否を接続した。Windowsの共通品質前段4検査とLinux重点fixtureは成功している。最初の共通qualityは登録済み日程確定4実行のfingerprint未同期を検出して停止した。その後writerの限定修正とWindows/Linux各24件、型、Biome、独立レビュー、実移行再実行に成功。最終の共通qualityと実runtime受入を残す。全既存不足の解消、全legacyのcase化、live外部サービス、公開設定は計画の非目標として区別する。
+Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合した。Batch 14は実ページの2操作からAction/RPCまで追跡でき、UI不足の移行と通常増加拒否を接続した。Windowsの共通品質前段4検査とLinux重点fixtureは成功している。最初の共通qualityは登録済み日程確定4実行のfingerprint未同期を検出して停止した。その後writerの限定修正とWindows/Linux各24件、型、Biome、独立レビュー、実移行再実行に成功。その後の共通qualityと全件runtimeも成功した。raw改行差によりfull-requiredへ拡大したため、部分/全件shadowだけを残す。全既存不足の解消、全legacyのcase化、live外部サービス、公開設定は計画の非目標として区別する。
 
 ## Part A: 計画充足度
 
@@ -45,7 +45,7 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 | 13-2 | CI切替 | DONE | test.yml、ciContext/Partition/Aggregate。Windows CI相当55必須成功・legacy301成功11既存例外 |
 | 13-3 | 規約同期 | DONE | testing-patterns、exec-plan正本・export、AGENTS。M3同期検査済み |
 | 14-1 | UI/props追跡 | DONE | surface/callback抽出群、product/story別Program。384sites/155bindings、基準2操作からRPCへspot check |
-| 14-2 | UI移行と必須化 | PARTIAL | v1投影一致、UI不足660→658、再追加/改変拒否済み。登録metadata同期まで成功。実両配置/同一snapshot shadow受入待ち |
+| 14-2 | UI移行と必須化 | PARTIAL | v1投影一致、UI不足660→658、再追加/改変拒否済み。登録metadata同期まで成功。実両配置と全件quality成功。同一snapshotの部分/全件shadow受入待ち |
 
 計画段階のTerraレビューは `e2e-ledger-quality-gates-terra-review.md` と計画r2に対応を記録済み。実装では専用DB・既存suite維持・外部bootstrap承認・group選択・結果欠落検出を実際の入口へ接続している。
 
@@ -53,13 +53,13 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 
 | 観点 | 判定 | 根拠 |
 | --- | --- | --- |
-| B1 エラー処理 | WARN | stale artifactを失敗にする。初期writerの登録metadata同期修正は実再実行まで成功。最終quality待ち |
-| B2 エッジケース | WARN | 不明/0件/部分保存/欠落は拒否または診断。今回の両配置実runtimeが未受入 |
+| B1 エラー処理 | OK | 初期writerを修正し実再実行・最終qualityに成功。不一致の拒否条件は維持 |
+| B2 エッジケース | OK | 不明/0件/部分保存/欠落は拒否または診断。今回の両配置4実行と失敗系4実行も成功 |
 | B3 進捗表示 | WARN | running/terminal receiptあり。selection preparationの下位段階通知が接続されていない |
 | B4 セキュリティ | OK | local所有権、JWTとservice-role分離、公開artifact許可リスト、CI writer拒否 |
 | B5 性能 | WARN | 訪問深さ/数上限あり。同一snapshotのProgram/列挙/checkpoint再構築は改善余地あり |
-| B6 a11y | WARN | role/nameで両配置を操作、既存Axe検査維持。今回runtime完了前のため暫定 |
-| B7 テスト | WARN | Windows129 suites/1914件、Linux27/332と分割後3/19成功。最終quality/runtime未了 |
+| B6 a11y | OK | role/nameで両配置を実操作し、既存suiteも受入。新しい製品UIは追加していない |
+| B7 テスト | WARN | Windows129 suites/1919件、Linux27/332・3/19・writer2/24成功。全件quality必須55/55成功、部分/全件shadowだけ未了 |
 | B8 規約 | OK | TS/TSX各500行以内、Zod型導出、生成物分離、変更製品UIなし |
 
 ## 改善提案
@@ -68,8 +68,8 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 
 | # | 対象 | 内容 | 解消条件 |
 | --- | --- | --- | --- |
-| R1（修正済み） | ledgerRefresh/staticGate | 初期移行で登録済み4実行の本文fingerprintを同期できない | Windows/Linux各24件、独立レビュー、実移行再実行成功。最終qualityでM1を再照合する |
-| R2 | Batch14受入 | 新しい両配置とv2選択/shadowの実証が未了 | 実creator/keeper×PC/mobile・永続化・同一snapshot部分/全件・receipt・cleanup成功 |
+| R1（修正済み） | ledgerRefresh/staticGate | 初期移行で登録済み4実行の本文fingerprintを同期できない | Windows/Linux各24件、独立レビュー、実移行再実行、最終qualityのM1再照合も成功 |
+| R2 | Batch14受入 | 両配置・全件・cleanupは成功したが、v2の部分/全件shadow比較が未了 | raw入力の変更をspec1件だけと事前照合し、独立partial/fullの同一snapshot・欠落0を確認する |
 
 ### 推奨
 
@@ -89,4 +89,4 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 
 ## 総合所見
 
-実装の主な責務は揃っている。M4の完了と最終commitは、R1/R2を実証で閉じた後に確定する。GitHub hosted workflow、push/PR、運用DB適用、branch protection変更は今回実行していない。
+実装の主な責務は揃っている。実装系列25コミットと全件受入は完了した。M4はR2のshadow実証を閉じてから確定する。ユーザーの一時停止指示により追加実行はしていない。GitHub hosted workflow、push/PR、運用DB適用、branch protection変更は今回実行していない。

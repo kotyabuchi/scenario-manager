@@ -79,3 +79,11 @@ code HEAD `fe7a8cd0bb8f6864052e7077fe32e8e78d4d3018` で次を確認した。ロ
 初回のローカル実行は、品質コマンド追加後の保存inventoryが古く、M1の `STALE_ARTIFACT` で停止した。`test-results/verification/<selectionId>/static.json` で指摘を確認できる。inventoryのpackage.json hashとsource fingerprintのみ同期して再受入し、nodes、edges、diagnostics、不足baselineは変更していない。
 
 Linuxでは18 suites / 275 fixturesが成功した。実DB・ブラウザを使ったCI相当受入はWindowsで行った。GitHub hosted workflowの実行、push、PR作成、branch protection変更は行っていない。
+
+## Batch 14途中の全件受入（2026-11-06、停止時点）
+
+code HEAD `3a40bfebe797f91e64d6ca9c728aedbf962133a8` のquality `22c6926a1f65` が成功。lint・型・unit1090成功（既存8skip）・tools1919成功、M1指摘0、verification `2c006b74031e` は必須55/55成功。legacy extras312登録は301成功・既存例外11件で、合計367登録中356成功だった。日程確定4登録では各実行で通常位置と固定バーの両操作から保存・全置換・再表示を確認した。
+
+28 checkpointの入力が一致し、6 DB環境の資源・認証ファイル残留0、32 journals完了、所有Node/Storybook listener残留0。一時コメントも完全復元した。証跡索引は `test-results/quality/batch14-stop-acceptance.json`。
+
+この選択はfull-requiredへのfallbackで、部分・全件shadowの比較ではない。Git statusでcleanでも、4ファイルのCRLFとHEADのLFとの差をraw入力の変更として検出したためである。終了後に改行以外の一致を確認してHEAD bytesへ戻した。部分選択はchangedPathsが検証用spec1件だけであることを事前に確認してから再受入する。ユーザーの一時停止指示により、ここを区切りにM4未完了で停止した。
