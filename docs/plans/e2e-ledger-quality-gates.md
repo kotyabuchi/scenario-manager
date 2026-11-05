@@ -153,7 +153,7 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Step 13-2. 専用環境とCIを一体で切替
 - [x] Step 13-3. 規約と移行運用
 - [ ] Batch 14: UI surfaceとprops依存の抽出を拡張
-- [ ] Step 14-1. 実在する書き方を追跡
+- [x] Step 14-1. 実在する書き方を追跡
 - [ ] Step 14-2. 観測から必須化へ移行
 
 ### 実行ログ
@@ -580,6 +580,9 @@ testing-patternsを正本にしてquality:changed、実行不足/例外の扱い
 
 ## Batch 14: UI surfaceとprops依存の抽出を拡張
 
+2026-11-05 再停止: callback独立レビューの6項目とoptional receiverの追加反例、移行writerの部分保存からの復旧を修正。日程確定の両配置を各executionで実際に操作するE2Eとsurface契約を追加した。実ソース観測ではButtonの括弧付きreturnを扱えず基準2surfaceが消える回帰を検出。実Buttonのbytesを使う回帰を追加して修正し、描画18件成功を区切りに停止した。修正後の全体再抽出・移行artifact・実ブラウザ受入・正式レビュー・commitはまだで、M4未達成。最終停止位置と再開順序は [作業再開記録](../testing/e2e-ledger-resume.md) を参照。Batch 14は専用worktreeに未コミットで保持する。
+
+2026-11-06 再開: 修正後の実ソース観測で384 sites・product99/story56 bindingsと基準2操作からRPCへの経路を確認。core投影は不変。初期UI移行は660不足から2契約を退役し658件を保存した。Windows tools1914件、Linux重点332件とfixture分割後19件が成功。共通qualityのlint/型/unit/toolsは成功し、選択準備で登録済み日程確定4実行のfingerprint未同期を検出して停止。初期writerを限定修正し、Windows/Linux各24件、型、独立レビュー、実移行再実行も成功。登録4fingerprintのみ同期しUI不足・移行史digestは不変。実runtime・shadow・最終review・commitを続ける。M4は未完了。
 ### Step 14-1. 実在する書き方を追跡
 
 新規: scripts/e2e/extractors/surfaces.ts、callbacks.ts、各testとfixtures。
