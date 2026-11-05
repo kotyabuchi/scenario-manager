@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "extractorVersion": "1",
   "source": {
-    "fingerprint": "a1e6165c9b9088169f43f7ad033b4e9ab86070544c9edc364b93b89b3a799aa2",
+    "fingerprint": "330b0935919f9f0b5c1a9aaf64d4dc6f4d84ee4ac82bbb8ae68ab996026d3573",
     "files": [
       {
         "path": "node_modules/.pnpm/@tsconfig+strictest@2.0.8/node_modules/@tsconfig/strictest/tsconfig.json",
@@ -530,11 +530,11 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/_components/SessionDetailContent.tsx",
-        "hash": "223e08384f0768dc6faaf071e3234e94d59e5431c3969b9b193153b96e4dea22"
+        "hash": "494f43b46fd95659729812821b47680de1cb139c784c8cc00886b2d1a2a4a2c0"
       },
       {
         "path": "src/app/(main)/sessions/[id]/_components/SessionPhaseStepper.tsx",
-        "hash": "1b56a521ed0fde0e8111d731bbb895656203cbaa855ec3aefe8ebbb20e8247f5"
+        "hash": "7c4839a1cb5820afcc2ce0a979904badbb131ed0524c828b41d40efdcc011986"
       },
       {
         "path": "src/app/(main)/sessions/[id]/_components/TimelineSection.tsx",
@@ -48018,7 +48018,7 @@
       "kind": "uses",
       "source": {
         "file": "src/app/(main)/sessions/[id]/_components/SessionPhaseStepper.tsx",
-        "line": 141,
+        "line": 146,
         "column": 32
       }
     },
@@ -48028,7 +48028,7 @@
       "kind": "uses",
       "source": {
         "file": "src/app/(main)/sessions/[id]/_components/SessionPhaseStepper.tsx",
-        "line": 149,
+        "line": 154,
         "column": 32
       }
     },
@@ -48038,7 +48038,7 @@
       "kind": "uses",
       "source": {
         "file": "src/app/(main)/sessions/[id]/_components/SessionPhaseStepper.tsx",
-        "line": 164,
+        "line": 169,
         "column": 34
       }
     },
