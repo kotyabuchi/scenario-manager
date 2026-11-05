@@ -214,6 +214,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - 一時停止（2026-11-05）: ユーザーの「キリのいいところで一旦作業停止して」に従い、Step 8-3の途中checkpointで停止。全tools65 files/1142 tests成功、SQL鏡テスト2件を除去後の対象1件成功（総登録1140）、Biome983 files・型検査成功。FK追補とUI修正の実受入は再開後。詳細はdocs/testing/e2e-fixtures.md、docs/reviews/diff-review-2026-11-05-2.md。クラウドDB変更・push・PR・デプロイは行っていない。
 - 再開（2026-11-05）: HEAD `933c689`からStep 8-3を継続。FK名追補を含む25 migrationとseed/catalogをfresh run `b293b8024507` / `e5fb24b57bc4`で再現し、両方cleanup complete・記録上の残留0を確認。認可は未検証のままBatch 10へ分離する。
 - 通常登録への移行: 旧5定義にcase IDを追加し、現UIのFAB/GM actionと厳密な作成後ULID URLに修正。元の10登録はcommit `933c689`のGit objectと照合して保持し、同じkeyの新登録へ一対一で対応させる。目録は348（local309/replacement10/既存skip9/fixme2/deferred18）、実行義務330を維持。M1はregistered18（Storybook8/app10）・legacy338・不足473、issues/policy delta0、baseline digest不変。実browser受入は別途検証中。
+- 互換受入の継続: 保存点`01e24d8`の全件runで公開PC57成功・公開mobile48成功+既存skip9を照合。認証PCは99成功まで進んだが、後続の基本情報で非表示DOM重複を検出した。基本情報・日程遷移・取消dialog dismissを追加移行後、認証mobile `da1511d489e2`は96成功/3失敗/9skip。home/availabilityのPOMとtimelineの本文を追加修正し、未実行を成功へ丸めない。全runのfixture/stack cleanupはcomplete。
+- 移行後の現集計: 旧9定義をcase化し、現在の未移行330＋app通常登録18から初期348を追跡。実行先はlocal301/replacement18/skip9/fixme2/deferred18、実行義務330を維持。M1はbase `01e24d8`に対してpassed、登録26（Storybook8/app18）、不足473、issues0。SessionActionsの契約に通常click後の到達URLを追加した理由をmigrations.jsonへ記録した（policy delta1、既存保証の削減なし）。型検査・Biome988 files・関連132 tests成功。4 project最終受入は未完了。
+- ビルドの既知制限: run `586f5f87e453`はGoogle Fontsの応答URLに依存するNext16.1.6の既知不具合でbrowser前に失敗した。同じHEAD/設定の別runでは通過。失敗receiptを保持し、test retryやskipには置き換えていない。フォントの完全なoffline再現は現経路の保証に含めない。
 - Batch 1コミット: 9a75a99（前提修正）、6af39ab（分類、data JSONを除く手書き466行）、35472b1（実行境界）。各commit hookのlint/typecheck成功。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類

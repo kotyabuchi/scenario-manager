@@ -75,6 +75,18 @@ Step 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper�
 
 独立レビューでは、Playwright 1.57 JSONがタグ先頭の@を除去する仕様との不一致も修正した。全tools67 files/1191 testsが成功し、その後の変更はresults35件、origin13件、project runner18件で再検証した。型検査・Biome988 filesとM1も成功。4 projectの最終受入は引き続き必要で、実装済みcaseの恒久verified化は行わない。
 
+### 続く互換診断と追加移行
+
+保存点`01e24d8`の全件runは公開PC `548b5d247e75`の57成功、公開mobile `ee018195eafe`の48成功+既存skip9を照合した。認証PC `0e7fa7a98902`はGM修正が通り99成功となったが、基本情報のtext locatorが非表示の別DOMにも一致して失敗し、後続7件が未実行となった（既存fixme1と合わせ8skip）。
+
+基本情報・日程遷移・取消dialog dismissを追加caseへ移し、POMを実UIの責務領域へ限定した後、認証mobile `da1511d489e2`は96成功/3失敗/9skip。home welcome、timeline、availability空状態が同じ非表示DOM重複で失敗した。home/availabilityはPOMだけを修正し、timelineはcase ID付きへ移行した。原specの未変更本文を維持し、取消のdismissは取消実行buttonではなく「継続する」を通常clickする。
+
+現在は9case/18app登録を置換し、legacy330＋固定origin18で旧348を保持する。実行先はlocal301/replacement18/skip9/fixme2/deferred18、実行義務330のまま。M1は登録26（Storybook8/app18）、不足473、issues0。SessionActionsの表示契約へ通常click後の遷移URLを加えた理由とcase参照を、比較base `01e24d8`のpolicy migrationとして記録した。型検査・Biome988 files・関連132 tests成功、独立レビューに未解消指摘なし。これらの修正後の実browser受入は別途行う。
+
+上記の全fixture/stack cleanupはcomplete。誤ってui-cleanup失敗を追加するバグの修正後、実失敗段階はevidenceだけに記録された。diagnosticのskipは合格へ数えない。
+
+全件run初回の公開mobile `586f5f87e453`では、Google Fontsが返すextensionless URLの解析でNext16.1.6のTurbopack buildが失敗した。[既知のNext.js不具合](https://github.com/vercel/next.js/issues/99114)と一致する。同じHEAD/設定の別runで通過したが、失敗receiptは`batch8-legacy-all-first.json`へ保持している。フォント取得はbuild時の外部依存であり、この経路の完全offline再現は保証しない。
+
 ## 本番buildの分離
 
 新経路は固定app port **43100**。最初に検討した57300はOSの動的ポート範囲内で既存clientにBoundされており、起動前に拒否した。既存プロセスを停止せず、動的範囲外の固定値へ設計を変更した。実行ごとに空きportを自動選択する方式ではない。
