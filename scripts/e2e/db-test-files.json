@@ -66,5 +66,15 @@
       ]
     }
   ],
+  "verifiedFiles": [
+    {
+      "path": "src/app/(main)/sessions/[id]/schedule/confirm/__tests__/actions.integration.test.ts",
+      "reason": "所有fixtureと実利用者JWTで日程確定Actionの許可・拒否・入力検証を行う。"
+    },
+    {
+      "path": "src/app/(main)/sessions/[id]/schedule/confirm/__tests__/rpc.integration.test.ts",
+      "reason": "所有fixtureと実利用者JWTで日程確定RPCの認可と原子性を検証する。"
+    }
+  ],
   "mockedFiles": []
 }
