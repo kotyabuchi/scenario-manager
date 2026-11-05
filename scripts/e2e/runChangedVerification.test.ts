@@ -7,6 +7,7 @@ import {
   impactFixture,
   snapshotFixture,
 } from './fixtures/selection';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { integrationCollectionSchema } from './integrationSchema';
 import { writeArtifact } from './ledgerArtifacts';
 import { prepareChangedVerification } from './prepareChangedVerification';
@@ -147,6 +148,7 @@ const prepare = (path: string, forceFull = false) => {
     proof: null,
     provenUnversionedPaths: [],
     staticReport: {
+      ...surfaceLedgerFixture().receipt,
       status: 'passed',
       base: snapshot.base,
       head: snapshot.head,

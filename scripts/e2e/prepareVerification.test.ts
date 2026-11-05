@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { ledgerSchema } from '../../e2e/ledger/schema';
 import { discoverySchema } from './discoverySchema';
+import { inventoryFixture } from './fixtures/selection';
 import { legacyKey } from './legacy';
 import { prepareVerification } from './prepareVerification';
 
@@ -33,7 +34,9 @@ vi.mock('./discoverIntegration', () => ({
 }));
 vi.mock('./discoveryBindings', () => ({ bindDiscovery: mocks.bind }));
 vi.mock('./requirements', () => ({ validateLedger: mocks.validate }));
-vi.mock('./inventory', () => ({ buildInventory: vi.fn(() => ({})) }));
+vi.mock('./inventory', () => ({
+  buildInventory: vi.fn(() => inventoryFixture()),
+}));
 vi.mock('./source', () => ({ loadSource: vi.fn(() => ({})) }));
 vi.mock('./scheduleCheckExpectations', () => ({
   createScheduleExpectations: mocks.schedule,

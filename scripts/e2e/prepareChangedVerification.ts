@@ -18,6 +18,7 @@ import {
   checkStaticState,
   collectStaticState,
 } from './staticGate';
+import { surfaceSelectionBaseline } from './surfacePending';
 import { resolveRevisions } from './trustedRevision';
 
 import { join } from 'node:path';
@@ -142,7 +143,7 @@ export const prepareChangedVerification = async (input: {
     fullPlan: prepared.plan,
     ledger: prepared.ledger,
     legacy: prepared.legacy,
-    baseline: state.baseline,
+    baseline: surfaceSelectionBaseline(state.baseline, state.surfacePending),
     provenUnversionedPaths,
     ...(forceFull ? { forceFull: true } : {}),
   };

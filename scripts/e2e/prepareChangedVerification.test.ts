@@ -6,6 +6,7 @@ import {
   scenariosFile,
   snapshotFixture,
 } from './fixtures/selection';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { githubEventPolicySchema } from './githubEventSchema';
 import { captureGitSnapshot, readSnapshotFile } from './gitSnapshot';
 import { writeArtifact } from './ledgerArtifacts';
@@ -196,8 +197,10 @@ beforeEach(() => {
     baseline: selection.baseline,
     legacy: selection.legacy,
     registrations: selection.fullPlan.requirements.length,
+    surfacePending: surfaceLedgerFixture().pending,
   });
   vi.mocked(checkStaticState).mockResolvedValue({
+    ...surfaceLedgerFixture().receipt,
     issues: [],
     policyDeltas: [],
     isBootstrap: false,
@@ -218,7 +221,12 @@ describe('変更選択の準備境界', () => {
     ];
     vi.mocked(checkStaticState).mockImplementationOnce(async () => {
       expect(receipt('static')).toEqual({ status: 'running', ...revisions });
-      return { issues, policyDeltas: [], isBootstrap: false };
+      return {
+        ...surfaceLedgerFixture().receipt,
+        issues,
+        policyDeltas: [],
+        isBootstrap: false,
+      };
     });
     await expect(prepare()).rejects.toThrow('全体静的検査');
     expect(receipt('static')).toMatchObject({
@@ -455,11 +463,10 @@ describe('変更選択の準備境界', () => {
     });
     await expect(result.checkpoint('before-run')).resolves.toEqual(snapshot);
     expect(receipt('git-end')).toEqual({ phase: 'before-run', ...snapshot });
-    expect(
-      vi
-        .mocked(captureGitSnapshot)
-        .mock.calls.map(([options]) => options.runtimeInputPaths),
-    ).toEqual([[readme], [readme], [readme]]);
+    const paths = vi
+      .mocked(captureGitSnapshot)
+      .mock.calls.map(([options]) => options.runtimeInputPaths);
+    expect(paths).toEqual([[readme], [readme], [readme]]);
   });
 
   it('Git digestだけの変化でも実行前のcheckpointを拒否する', async () => {

@@ -4,6 +4,7 @@ import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { discover } from './discover';
 import { discoverIntegration } from './discoverIntegration';
 import { bindDiscovery } from './discoveryBindings';
+import { loadStorySurfaceContext } from './extractors/surfaceRoots';
 import { captureInputs, compareInputs } from './fingerprint';
 import { createIntegrationExpectations } from './integrationExpectations';
 import { buildInventory } from './inventory';
@@ -16,6 +17,7 @@ import { createLegacySelection } from './legacySelection';
 import { validateLedger } from './requirements';
 import { createScheduleExpectations } from './scheduleCheckExpectations';
 import { loadSource } from './source';
+import { withSurfaceNodes } from './surfaceProjection';
 import { createVerificationPlan } from './verificationPlan';
 
 import type { Ledger } from '../../e2e/ledger/schema';
@@ -88,7 +90,9 @@ export const prepareVerificationDetails = async (root: string) => {
   const discoveries = [app, isolated, storybook, integration.discovery];
   const bindings = bindDiscovery(ledger, discoveries);
   const validation = validateLedger({
-    inventory: buildInventory(loadSource(root)),
+    inventory: withSurfaceNodes(
+      buildInventory(loadSource(root), loadStorySurfaceContext(root)),
+    ),
     ledger,
     registrations: bindings.registrations,
   });
