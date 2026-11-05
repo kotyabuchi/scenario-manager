@@ -1,0 +1,25 @@
+// DB・Next request設定を読み込まず、登録だけを専用workerで収集する固定設定。
+export default {
+  test: {
+    name: 'integration',
+    pool: 'threads',
+    maxWorkers: 1,
+    minWorkers: 1,
+    fileParallelism: false,
+    isolate: true,
+    environment: 'node',
+    includeTaskLocation: true,
+    setupFiles: [],
+    globalSetup: [],
+    reporters: [],
+    retry: 0,
+    allowOnly: false,
+    passWithNoTests: false,
+    watch: false,
+    api: false,
+    css: false,
+    coverage: { enabled: false },
+    typecheck: { enabled: false },
+    deps: { optimizer: { web: { enabled: false }, ssr: { enabled: false } } },
+  },
+};
