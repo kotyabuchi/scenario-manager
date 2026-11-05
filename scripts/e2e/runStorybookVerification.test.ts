@@ -236,7 +236,9 @@ describe('Storybook verification lifecycle', () => {
     );
     expect(result.processCleanup).toEqual({
       exited: fault !== 'missing-close',
-      errorCount: ['cleanup', 'missing-close'].includes(fault) ? 1 : 0,
+      errorCount: ['checkpoint', 'cleanup', 'missing-close'].includes(fault)
+        ? 1
+        : 0,
     });
   });
 
@@ -272,9 +274,11 @@ describe('Storybook verification lifecycle', () => {
         return '';
       },
     );
-    expect(
-      (await runStorybookVerification(fixture.root, fixture.hooks)).status,
-    ).toBe('failed');
+    const result = await runStorybookVerification(fixture.root, fixture.hooks);
+    expect(result.status).toBe('failed');
+    expect(result.processCleanup.errorCount).toBe(
+      fault === 'after-cleanup' ? 1 : 0,
+    );
     if (fault !== 'after-cleanup')
       expect(runLocalCommand).not.toHaveBeenCalled();
   });

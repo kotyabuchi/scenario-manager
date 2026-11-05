@@ -5,6 +5,7 @@ import {
   runLocalCommand,
 } from './environmentCommands';
 import { playwrightSourceMapOptions } from './playwrightSourceMaps';
+import { preflightPlaywrightSelection } from './preflightPlaywrightSelection';
 import {
   verificationEnvironment,
   verificationStagePath,
@@ -17,9 +18,11 @@ import { createServer } from 'node:net';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 
+import type { PlaywrightRunnerSelection } from './runnerSelection';
 import type { VerificationStageHooks } from './verificationContext';
 
 const STORYBOOK_PORT = 6007;
+const STORYBOOK_CONFIG = '.storybook/playwright.config.ts';
 
 const assertFreePort = async () => {
   const server = createServer();
@@ -39,6 +42,7 @@ const assertFreePort = async () => {
 export const runStorybookVerification = async (
   root: string,
   verification: VerificationStageHooks,
+  selection?: PlaywrightRunnerSelection,
 ) => {
   let status: 'passed' | 'failed' = 'failed';
   let exitCode: number | null = null;
@@ -48,6 +52,13 @@ export const runStorybookVerification = async (
   let cleanupErrors = 0;
   try {
     verification.signal.throwIfAborted();
+    const filterArgs = await preflightPlaywrightSelection({
+      root,
+      config: STORYBOOK_CONFIG,
+      profile: 'storybook',
+      selection,
+      verification,
+    });
     await verification.checkpoint('before-tests');
     await assertFreePort();
     const cli = createRequire(join(root, 'package.json')).resolve(
@@ -72,7 +83,8 @@ export const runStorybookVerification = async (
         cli,
         'test',
         '--config',
-        '.storybook/playwright.config.ts',
+        STORYBOOK_CONFIG,
+        ...filterArgs,
       ],
       {
         cwd: root,
@@ -116,6 +128,7 @@ export const runStorybookVerification = async (
         await verification.checkpoint('after-tests');
       } catch {
         status = 'failed';
+        cleanupErrors++;
       }
       if (!hasClosed) {
         cleanupErrors++;
@@ -131,6 +144,7 @@ export const runStorybookVerification = async (
       await verification.checkpoint('after-cleanup');
     } catch {
       status = 'failed';
+      cleanupErrors++;
     }
   }
   if (cleanupErrors > 0 || verification.signal.aborted) status = 'failed';

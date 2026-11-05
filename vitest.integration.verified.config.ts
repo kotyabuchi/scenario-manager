@@ -1,9 +1,7 @@
 import { defineConfig } from 'vitest/config';
 
-import {
-  escapeTestPathForGlob,
-  getTestProjects,
-} from './scripts/e2e/testClassification';
+import { integrationRuntimeFiles } from './scripts/e2e/integrationVerifiedFiles';
+import { escapeTestPathForGlob } from './scripts/e2e/testClassification';
 
 import { fileURLToPath } from 'node:url';
 
@@ -15,7 +13,7 @@ export default defineConfig({
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   test: {
     name: 'integration',
-    include: getTestProjects(root)['integration-verified'].map(
+    include: integrationRuntimeFiles(root, process.env).map(
       escapeTestPathForGlob,
     ),
     environment: 'node',

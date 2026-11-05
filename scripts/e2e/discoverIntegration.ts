@@ -6,7 +6,9 @@ import {
   integrationRegistrationSchema,
   integrationRunnerSchema,
 } from './integrationSchema';
-import { escapeTestPathForGlob, getTestProjects } from './testClassification';
+import { integrationVerifiedFiles } from './integrationVerifiedFiles';
+import { assertRunnerDiscovery } from './runnerSelection';
+import { escapeTestPathForGlob } from './testClassification';
 
 import { execFile } from 'node:child_process';
 import {
@@ -19,6 +21,8 @@ import {
 } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import type { VitestRunnerSelection } from './runnerSelection';
 
 const TIMEOUT_MS = 30_000;
 const ENV_NAMES = new Set([
@@ -36,15 +40,19 @@ const collectedSchema = z.strictObject({
 /** 新verified一覧だけをDB・test bodyなしで収集し、runner optionsも保持する。 */
 export const discoverIntegration = async ({
   root,
+  selection,
   timeoutMs = TIMEOUT_MS,
 }: {
   root: string;
+  selection?: VitestRunnerSelection;
   timeoutMs?: number;
 }) => {
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0)
     throw new Error('正のtimeoutMsが必要です');
   const physicalRoot = await realpath(root);
-  const files = getTestProjects(physicalRoot)['integration-verified'];
+  if (!isNil(selection) && selection.expected.profile !== 'integration')
+    throw new Error('絞り込みのprofileがintegrationと一致しません。');
+  const files = integrationVerifiedFiles(physicalRoot, selection?.files);
   if (files.length === 0)
     return integrationCollectionSchema.parse({
       schemaVersion: 1,
@@ -166,7 +174,7 @@ export const discoverIntegration = async ({
   for (const file of files)
     if (!collected.tests.some((test) => test.file === file))
       throw new Error('verified fileの登録が欠落しています');
-  return integrationCollectionSchema.parse({
+  const collection = integrationCollectionSchema.parse({
     schemaVersion: 1,
     runner: collected.runner,
     config: 'vitest.integration.collect.config.ts',
@@ -202,4 +210,6 @@ export const discoverIntegration = async ({
       })),
     },
   });
+  if (!isNil(selection)) assertRunnerDiscovery(selection, collection.discovery);
+  return collection;
 };

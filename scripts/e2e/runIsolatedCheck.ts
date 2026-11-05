@@ -13,6 +13,7 @@ import { probeEnvironment } from './environmentProbe';
 import { APP_PORT, withIsolatedApp } from './isolatedApp';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
 import { playwrightSourceMapOptions } from './playwrightSourceMaps';
+import { preflightPlaywrightSelection } from './preflightPlaywrightSelection';
 import {
   type VerificationStageHooks,
   verificationEnvironment,
@@ -33,6 +34,7 @@ import { join, relative } from 'node:path';
 import type { EnvironmentProbeProgress } from './environmentProbe';
 import type { EnvironmentLease } from './environmentSchema';
 import type { AppProgress } from './isolatedApp';
+import type { PlaywrightRunnerSelection } from './runnerSelection';
 
 type IsolatedCheckOptions<Evidence> = {
   stage: string;
@@ -40,6 +42,7 @@ type IsolatedCheckOptions<Evidence> = {
   label: string;
   config: string;
   verification?: VerificationStageHooks;
+  selection?: PlaywrightRunnerSelection;
   validate: (input: {
     report: unknown;
     journals: unknown[];
@@ -96,6 +99,13 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
   };
   save();
   try {
+    const filterArgs = await preflightPlaywrightSelection({
+      root: worktreeRoot,
+      config: options.config,
+      profile: 'isolated',
+      selection: options.selection,
+      verification,
+    });
     await verification?.checkpoint('before-environment');
     environment = await probeEnvironment(
       worktreeRoot,
@@ -148,7 +158,14 @@ export const runIsolatedCheck = async <Evidence extends { issues: unknown[] }>(
               try {
                 await runLocalCommand(
                   'node',
-                  [...sourceMaps.args, cli, 'test', '--config', options.config],
+                  [
+                    ...sourceMaps.args,
+                    cli,
+                    'test',
+                    '--config',
+                    options.config,
+                    ...filterArgs,
+                  ],
                   {
                     cwd: worktreeRoot,
                     env: {

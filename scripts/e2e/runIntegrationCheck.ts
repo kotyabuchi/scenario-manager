@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 import { z } from 'zod';
 
+import { discoverIntegration } from './discoverIntegration';
 import {
   localCommandEnvironment,
   runLocalCommand,
@@ -11,7 +12,9 @@ import {
 } from './environmentCredentials';
 import { probeEnvironment } from './environmentProbe';
 import { validateIntegrationEvidence } from './evidence/vitest';
+import { VERIFIED_INTEGRATION_FILES_ENV } from './integrationVerifiedFiles';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
+import { projectRunnerExpectations } from './runnerSelection';
 import {
   type VerificationStageHooks,
   verificationEnvironment,
@@ -31,6 +34,7 @@ import { join, relative } from 'node:path';
 
 import type { EnvironmentProbeProgress } from './environmentProbe';
 import type { IntegrationExpectation } from './integrationSchema';
+import type { VitestRunnerSelection } from './runnerSelection';
 
 export const INTEGRATION_RECEIPT =
   'test-results/quality/integration-check.json';
@@ -41,8 +45,10 @@ export const runIntegrationEnvironment = async (
   root: string,
   expected: IntegrationExpectation[],
   verification?: VerificationStageHooks,
+  selection?: VitestRunnerSelection,
 ) => {
   const worktreeRoot = await realpath(root);
+  let effectiveExpected = expected;
   let phase = 'environment';
   let environment: Awaited<ReturnType<typeof probeEnvironment>> | null = null;
   const state: {
@@ -72,6 +78,20 @@ export const runIntegrationEnvironment = async (
   };
   save();
   try {
+    if (!isNil(selection)) {
+      if (isNil(verification))
+        throw new Error(
+          'runnerの絞り込みには所有verification stageが必要です。',
+        );
+      begin('filtered-discovery');
+      verification.signal.throwIfAborted();
+      await verification.checkpoint('before-filtered-discovery');
+      await discoverIntegration({ root: worktreeRoot, selection });
+      effectiveExpected = projectRunnerExpectations(selection, expected);
+      await verification.checkpoint('after-filtered-discovery');
+      verification.signal.throwIfAborted();
+      begin('environment');
+    }
     await verification?.checkpoint('before-environment');
     environment = await probeEnvironment(
       worktreeRoot,
@@ -121,6 +141,13 @@ export const runIntegrationEnvironment = async (
                   ...env,
                   SCENARIO_E2E_RUN_ID: manifest.runId,
                   SCENARIO_E2E_CREDENTIALS: file,
+                  ...(isNil(selection)
+                    ? {}
+                    : {
+                        [VERIFIED_INTEGRATION_FILES_ENV]: JSON.stringify(
+                          selection.files,
+                        ),
+                      }),
                   ...(isNil(verification)
                     ? {}
                     : verificationEnvironment(verification.context)),
@@ -158,7 +185,7 @@ export const runIntegrationEnvironment = async (
             journals.push(JSON.parse(contents));
           }
           state.evidence = validateIntegrationEvidence({
-            expected,
+            expected: effectiveExpected,
             report: JSON.parse(output),
             journals,
             lease: connection.lease,

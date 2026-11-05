@@ -1,4 +1,10 @@
+import { isNil } from 'ramda';
+
 import { discoverySchema } from './discoverySchema';
+import {
+  assertRunnerDiscovery,
+  emitPlaywrightTestList,
+} from './runnerSelection';
 
 import { spawn } from 'node:child_process';
 import { closeSync, openSync } from 'node:fs';
@@ -12,6 +18,8 @@ import {
 import { createRequire } from 'node:module';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import type { PlaywrightRunnerSelection } from './runnerSelection';
 
 const DEFAULT_TIMEOUT_MS = 60_000;
 const ENVIRONMENT_NAMES = new Set([
@@ -40,17 +48,31 @@ export const discover = async ({
   root,
   profile,
   config,
-  setupProjects = profile === 'app' ? ['auth-setup'] : [],
+  selection,
+  setupProjects = isNil(selection)
+    ? profile === 'app'
+      ? ['auth-setup']
+      : []
+    : [
+        ...new Set(
+          selection.expected.tests
+            .filter(({ isSetup }) => isSetup)
+            .map(({ project }) => project),
+        ),
+      ],
   timeoutMs = DEFAULT_TIMEOUT_MS,
 }: {
   root: string;
   profile: string;
   config: string;
   setupProjects?: string[];
+  selection?: PlaywrightRunnerSelection;
   timeoutMs?: number;
 }) => {
   if (!profile.trim() || !Number.isFinite(timeoutMs) || timeoutMs <= 0)
     throw new Error('profileと正のtimeoutMsが必要です');
+  if (!isNil(selection) && selection.expected.profile !== profile)
+    throw new Error('絞り込みのprofileが列挙先と一致しません。');
   const physicalRoot = await realpath(root);
   const configuration = contained(
     physicalRoot,
@@ -108,6 +130,11 @@ export const discover = async ({
     '--reporter',
     join(toolDirectory, 'reporters/discovery.ts'),
   ];
+  if (!isNil(selection)) {
+    const list = join(directory, 'runner-test-list.log');
+    await writeFile(list, emitPlaywrightTestList(selection), { flag: 'wx' });
+    args.push('--test-list', list);
+  }
   const stdout = openSync(join(directory, 'stdout.log'), 'wx');
   const stderr = openSync(join(directory, 'stderr.log'), 'wx');
   let didTimeout = false;
@@ -167,6 +194,7 @@ export const discover = async ({
       throw new Error(
         `列挙reportが失敗を記録しています: ${JSON.stringify(discovery.errors)}; logs=${directory}`,
       );
+    if (!isNil(selection)) assertRunnerDiscovery(selection, discovery);
     return discovery;
   } finally {
     closeSync(stdout);
