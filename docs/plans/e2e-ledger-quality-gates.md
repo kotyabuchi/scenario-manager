@@ -250,6 +250,12 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 12実受入完了: HEAD `a4c80d2`のclean状態でNoOp `ba2b0918aa37`がpassed。日程保存エラーStorybook spec末尾に一時コメントだけを加えたsnapshotでは選択 `58e69a72438e`が`TEST_FILE`理由で`schedule-save-error` 1件を選択し、部分 `7c372bdf43f0`が1/1成功。同じsnapshotの全件 `07dc26381159`は必須55/55・追加legacy312・7 stagesでpassed、独立比較は`matched`（未選択失敗・結果差異0）。全件内訳はintegration20、Storybook9、isolated8、Chromium57、mobile48+既存skip9、認証付き各107+既存fixme1。全367登録の356成功・既存例外11を区別し、旧DB legacy/deferred-liveは未実行のまま。
 - Batch 12証跡・後始末: 部分6回・全件28回の入力checkpointがすべて一致し、共通checker issues0。6 DB環境のcontainer/network/volume/lock/process/listener/認証ファイル残留0、32 journals完了。2 Storybook runの所有Node/6007 listenerも0。一時コメントを削除して元のSHA-256と完全一致を確認し、clean HEADの最終M1もpassed（55/330/437、issues/policy delta0、baseline digest不変）。公開手順は`docs/testing/e2e-selection.md`、receiptは`test-results/quality/batch12-{noop,selection,verification}-final.json` / `batch12-static-restored.json`。実測receipt期間はNoOp248.6秒、部分120.4秒、全件1223.1秒、準備・比較込み1586.9秒。M3は次のBatch 13、M4はBatch 14で継続。
 
+- Batch 13実装・再レビュー: 共通quality CLI、index台帳hook、イベント別CI planner・required/legacy-local分割・独立集約、安全な失敗診断を実装。3担当Sol/mediumの再レビューで必須0、推奨2・検討3を残してB（`docs/reviews/diff-review-2026-11-05-10.md`）。全件profileの表現不能fallback、push専用承認、必須checkpoint完全性、static証跡のattempt/input結合、worker公開前照合を修正した。
+- Batch 13 hook移行: 自動承認レビューで旧lint/型hook削除に個別承認が要求されたため確認し、ユーザーの「hook移行を承認する」を受けて適用。staged台帳検査とAGENTS同期を残し、lint/型/unit/toolsは共通quality前段で実行する。通常hookを省略しない。
+- Batch 13統合検査: ソース固定後のWindows toolsは117 files / 1812件成功（379.13秒）、非書換Biome 1149 files・型検査・AGENTS同期・actionlint成功。以前の実部分/full receipt（6/28 checkpoints）も新しい共通validatorで再照合した。Linux追加検証では263件中262件が成功し、Vitest worker初期化のTinypool CPU probeが副作用guardを発火するOS差を発見したため、CI受入前に修正する。
+- Batch 13 Linux是正: 固定installed Tinypoolだけをworkerのtest import前に初期化し、CPU probeのshell起動を抑止。既存guard/Worker拒否は維持し、ESM execSyncの追加負例も含めLinux 18 files / 275件、Windows対象2 files / 16件成功。再lint・型検査成功、追加securityレビュー必須0、検証container/一時fixture残留0。公開CIのplanner/workerと同じ収集経路のOS差を解消した。
+- Batch 13受入準備: 品質前段用unitは89 files / 1090成功・既存8skip。既存の日程確定UIに通常位置とsticky位置の2ボタンがあるため、失敗保存と再試行のテストを両導線へ合わせた。実装CLIのclean HEAD実行とCI相当のDB/browser受入はこの後に記録し、現時点でM3完了とはしない。
+
 ## Batch 1: DB不要の品質検査とDBテストの分類
 
 ### Step 1-1. 非書込み検査とツール用テストproject
@@ -555,7 +561,7 @@ hookはstaged snapshotを対象にできる軽量schema/ID検査だけにする�
 
 初回push等でbeforeが存在しない場合はbootstrap規約を適用し、自動で不足増加を承認しない。定期実行の初期案はcron「30 18 * * 0」（日曜18:30 UTC、月曜03:30 JST）。scheduleはdefault branch上で動くため、developの全件確認はpushで行う。定期実行は実装時にworkflowへ設定するもので、この計画作成では登録しない。[GitHub公式の起動イベント](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 
-WindowsとLinuxで抽出/選択fixtureを確認し、実DB/browserの主実行はLinux、ローカルWindowsでも同じmanifest契約を確認する。fork PRにも本番secretを渡さない。reportとtraceを期限付きartifactへ保存する。
+WindowsとLinuxで抽出/選択fixtureを確認し、実DB/browserの主実行はLinux、ローカルWindowsでも同じmanifest契約を確認する。fork PRにも本番secretを渡さない。公開artifactは成功証跡と秘密を含まない固定schemaの失敗診断JSONに限定し、7日保存する。raw trace・private log・認証stateは所有runのローカル成果物として扱い、公開しない。
 
 ### Step 13-3. 規約と移行運用
 
