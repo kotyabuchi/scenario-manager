@@ -1,0 +1,32 @@
+[
+  {
+    "target": "function:src/app/(main)/sessions/adapter.ts#getCalendarSessions",
+    "classification": "read",
+    "requirements": [
+      {
+        "aspect": "response",
+        "layers": ["integration"],
+        "expectation": "利用者JWTとNext cookie境界を通した実アダプターで、非存在利用者の空結果、本人の確定済み日程、各表示情報、未確定日程の分類を4つの独立fixtureで確認する。既知のsession IDと全返却項目を無条件で照合し、DBエラーや空配列による偽成功を認めない。",
+        "basis": [
+          "docs/plans/e2e-ledger-quality-gates.md#step-10-2-integration結果adapterと偽成功の解消",
+          "src/app/(main)/sessions/adapter.ts#getCalendarSessions"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  }
+]
