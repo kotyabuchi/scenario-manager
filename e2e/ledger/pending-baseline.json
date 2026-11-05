@@ -4306,24 +4306,6 @@
       "category": "source-diagnostic",
       "code": "UNRESOLVED_CALL",
       "anchor": {
-        "ownerId": "module:src/app/(main)/sessions/[id]/schedule/availability/schema.ts",
-        "syntaxHash": "f12fcc3c24324ed6e4ce1a002c1b599cde2c706a74b1042287d7c6d2860e050b",
-        "occurrence": 0
-      }
-    },
-    {
-      "category": "source-diagnostic",
-      "code": "UNRESOLVED_CALL",
-      "anchor": {
-        "ownerId": "module:src/app/(main)/sessions/[id]/schedule/confirm/schema.ts",
-        "syntaxHash": "202c8095e2e0a0e46af8e752de86d51bf66265dd10bc994bb648d61b970b8dfb",
-        "occurrence": 0
-      }
-    },
-    {
-      "category": "source-diagnostic",
-      "code": "UNRESOLVED_CALL",
-      "anchor": {
         "ownerId": "module:src/app/(main)/sessions/[id]/schema.ts",
         "syntaxHash": "071e08a9b4b367e1909f648d9e98fc28a4d72cf5107962a07a546f6d6945e4a0",
         "occurrence": 0
