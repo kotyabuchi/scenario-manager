@@ -5332,6 +5332,142 @@
       "binding": "main"
     },
     {
+      "file": "e2e/isolated/schedule-confirmation-errors.spec.ts",
+      "titlePath": [
+        "21枠の確定を実Actionが拒否し、編集候補と旧確定枠の全値を保つ"
+      ],
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"chromium\",\"e2e/isolated/schedule-confirmation-errors.spec.ts\",[\"21枠の確定を実Actionが拒否し、編集候補と旧確定枠の全値を保つ\"],0]",
+      "profile": "isolated",
+      "fingerprint": "664e07566e34a449a3707cbb487ea0c6ff5364372764b4a7029b9ab7603b6982",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-rejected-preserves",
+      "variant": "creator-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation-errors.spec.ts",
+      "titlePath": [
+        "空欄・終了が開始以前・重複の追加を拒否し、候補と保存前の状態を保つ"
+      ],
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"chromium\",\"e2e/isolated/schedule-confirmation-errors.spec.ts\",[\"空欄・終了が開始以前・重複の追加を拒否し、候補と保存前の状態を保つ\"],0]",
+      "profile": "isolated",
+      "fingerprint": "b0f4be0d166ffd77035dcbdc99c83fa7a88d612de4c9e5113076a61bf4a4cf6b",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-invalid-input",
+      "variant": "creator-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation.spec.ts",
+      "titlePath": [
+        "creator-onlyが複数枠を確定して全置換し、別参加者が再表示する"
+      ],
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"chromium\",\"e2e/isolated/schedule-confirmation.spec.ts\",[\"creator-onlyが複数枠を確定して全置換し、別参加者が再表示する\"],0]",
+      "profile": "isolated",
+      "fingerprint": "e8f8ecd2492f2fb2c5fb4612ae956406620574db8c0be4977f4952cf04dedf36",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-persist",
+      "variant": "creator-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation.spec.ts",
+      "titlePath": [
+        "keeper-onlyが複数枠を確定して全置換し、別参加者が再表示する"
+      ],
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"chromium\",\"e2e/isolated/schedule-confirmation.spec.ts\",[\"keeper-onlyが複数枠を確定して全置換し、別参加者が再表示する\"],0]",
+      "profile": "isolated",
+      "fingerprint": "e8f8ecd2492f2fb2c5fb4612ae956406620574db8c0be4977f4952cf04dedf36",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-persist",
+      "variant": "keeper-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation-errors.spec.ts",
+      "titlePath": [
+        "21枠の確定を実Actionが拒否し、編集候補と旧確定枠の全値を保つ"
+      ],
+      "project": "mobile-chrome",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"mobile-chrome\",\"e2e/isolated/schedule-confirmation-errors.spec.ts\",[\"21枠の確定を実Actionが拒否し、編集候補と旧確定枠の全値を保つ\"],0]",
+      "profile": "isolated",
+      "fingerprint": "664e07566e34a449a3707cbb487ea0c6ff5364372764b4a7029b9ab7603b6982",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-rejected-preserves",
+      "variant": "creator-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation-errors.spec.ts",
+      "titlePath": [
+        "空欄・終了が開始以前・重複の追加を拒否し、候補と保存前の状態を保つ"
+      ],
+      "project": "mobile-chrome",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"mobile-chrome\",\"e2e/isolated/schedule-confirmation-errors.spec.ts\",[\"空欄・終了が開始以前・重複の追加を拒否し、候補と保存前の状態を保つ\"],0]",
+      "profile": "isolated",
+      "fingerprint": "b0f4be0d166ffd77035dcbdc99c83fa7a88d612de4c9e5113076a61bf4a4cf6b",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-invalid-input",
+      "variant": "creator-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation.spec.ts",
+      "titlePath": [
+        "creator-onlyが複数枠を確定して全置換し、別参加者が再表示する"
+      ],
+      "project": "mobile-chrome",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"mobile-chrome\",\"e2e/isolated/schedule-confirmation.spec.ts\",[\"creator-onlyが複数枠を確定して全置換し、別参加者が再表示する\"],0]",
+      "profile": "isolated",
+      "fingerprint": "e8f8ecd2492f2fb2c5fb4612ae956406620574db8c0be4977f4952cf04dedf36",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-persist",
+      "variant": "creator-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/schedule-confirmation.spec.ts",
+      "titlePath": [
+        "keeper-onlyが複数枠を確定して全置換し、別参加者が再表示する"
+      ],
+      "project": "mobile-chrome",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"mobile-chrome\",\"e2e/isolated/schedule-confirmation.spec.ts\",[\"keeper-onlyが複数枠を確定して全置換し、別参加者が再表示する\"],0]",
+      "profile": "isolated",
+      "fingerprint": "e8f8ecd2492f2fb2c5fb4612ae956406620574db8c0be4977f4952cf04dedf36",
+      "serialGroup": null,
+      "caseId": "schedule-confirm-persist",
+      "variant": "keeper-only",
+      "binding": "main"
+    },
+    {
       "file": ".storybook/tests/scenario-panels.spec.ts",
       "titlePath": [
         "2ペインの下限幅で左右1:1と検索結果行を保つ"
@@ -5465,6 +5601,23 @@
       "serialGroup": null,
       "caseId": "scenario-detail-responsive",
       "variant": "width-600",
+      "binding": "main"
+    },
+    {
+      "file": ".storybook/tests/schedule-confirmation.spec.ts",
+      "titlePath": [
+        "確定日程の保存失敗を通知し、旧枠と追加候補を保持して再試行できる"
+      ],
+      "project": "",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"storybook\",\"\",\".storybook/tests/schedule-confirmation.spec.ts\",[\"確定日程の保存失敗を通知し、旧枠と追加候補を保持して再試行できる\"],0]",
+      "profile": "storybook",
+      "fingerprint": "e8586f78435286cb6f3cbfa8f6b0d37cdcabf8dbc7519d551262340f392ce491",
+      "serialGroup": null,
+      "caseId": "schedule-save-error",
+      "variant": "save-error",
       "binding": "main"
     }
   ],
