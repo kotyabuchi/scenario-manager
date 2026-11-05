@@ -1,5 +1,7 @@
 import { isNil } from 'ramda';
 
+import { projectSurfaceGraph } from './surfaceProjection';
+
 import { createHash } from 'node:crypto';
 
 import type {
@@ -33,15 +35,18 @@ export const mergeImpactGraphs = (inventories: Inventories | null) => {
     if (isNil(inventory)) continue;
     hash.update(`${JSON.stringify([revision, inventory])}\n`);
     for (const { path } of inventory.source.files) sourcePaths.add(path);
-    for (const node of inventory.nodes) {
+    const surfaces = projectSurfaceGraph(inventory);
+    for (const node of [...inventory.nodes, ...surfaces.nodes]) {
       append(byId, node.id, node);
       append(byPath, node.source.file, node);
     }
-    for (const edge of inventory.edges) {
+    for (const edge of [...inventory.edges, ...surfaces.edges]) {
       append(incoming, edge.to, edge);
       append(outgoing, edge.from, edge);
       if (edge.kind === 'unresolved') unresolvedPaths.add(edge.source.file);
     }
+    for (const diagnostic of inventory.surfaceAnalysis.diagnostics)
+      unresolvedPaths.add(diagnostic.source.file);
     for (const diagnostic of inventory.diagnostics) {
       if (diagnostic.severity === 'error') hasErrors = true;
       if (isNil(diagnostic.source) || isNil(diagnostic.anchor))
