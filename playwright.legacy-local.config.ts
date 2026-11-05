@@ -7,6 +7,7 @@ import {
   legacyProjectSchema,
 } from './e2e/fixtures/legacySchema';
 import { ISOLATED_BASE_URL } from './e2e/isolatedRuntime';
+import { playwrightVerificationReporter } from './scripts/e2e/verificationContext';
 
 const runId = process.env.SCENARIO_E2E_RUN_ID ?? 'unconfigured';
 if (runId !== 'unconfigured' && !/^[a-f0-9]{12}$/.test(runId))
@@ -28,6 +29,10 @@ export default defineConfig({
   outputDir: `test-results/legacy/${runId}/artifacts`,
   reporter: [
     ['list'],
+    ...playwrightVerificationReporter(
+      './scripts/e2e/reporters/results.ts',
+      'app',
+    ),
     ['json', { outputFile: `test-results/legacy/${runId}/playwright.json` }],
   ],
   use: {

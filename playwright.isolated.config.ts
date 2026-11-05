@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 import { DESKTOP_DEVICE, MOBILE_DEVICE } from './e2e/devices';
 import { ISOLATED_BASE_URL } from './e2e/isolatedRuntime';
+import { playwrightVerificationReporter } from './scripts/e2e/verificationContext';
 
 // --listはDB不要。実行時のfixtureが専用設定の欠落・所有不一致を拒否する。
 const runId = process.env.SCENARIO_E2E_RUN_ID ?? 'unconfigured';
@@ -18,6 +19,10 @@ export default defineConfig({
   outputDir: `test-results/isolated/${runId}/artifacts`,
   reporter: [
     ['list'],
+    ...playwrightVerificationReporter(
+      './scripts/e2e/reporters/results.ts',
+      'isolated',
+    ),
     ['json', { outputFile: `test-results/isolated/${runId}/playwright.json` }],
   ],
   use: {
