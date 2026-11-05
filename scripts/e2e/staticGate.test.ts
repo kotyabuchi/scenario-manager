@@ -95,6 +95,16 @@ const createFixture = async () => {
     '.storybook/tests/main.spec.ts',
     `import { test } from '@playwright/test';\ntest('story', () => {});`,
   );
+  await write(
+    root,
+    'playwright.isolated.config.ts',
+    `export default { testDir: './isolated-specs', projects: [{ name: 'chromium' }] };`,
+  );
+  await write(
+    root,
+    'isolated-specs/main.spec.ts',
+    `import { test } from '@playwright/test'; test('isolated', () => { throw new Error('must not execute'); });`,
+  );
   for (const file of [
     'profiles',
     'fixtures',
@@ -142,12 +152,97 @@ afterEach(async () => {
 });
 
 describe('M1静的品質ゲートの接続', () => {
+  it('isolatedのimplemented登録を検査しタグ欠落で未実装扱いへ戻せない', async () => {
+    const { root } = await createFixture();
+    const target = 'page:src/app/page.tsx';
+    const execution = {
+      profile: 'isolated',
+      project: 'chromium',
+      runtime: 'next-production',
+      variant: 'anonymous',
+      actorBindings: [{ role: 'operator', actor: 'anonymous' }],
+    };
+    await json(root, 'e2e/ledger/profiles.json', [
+      {
+        id: 'isolated',
+        layer: 'browser',
+        executions: [{ project: 'chromium', runtime: 'next-production' }],
+      },
+    ]);
+    await json(root, 'e2e/ledger/fixtures.json', [
+      {
+        id: 'public',
+        actors: ['anonymous'],
+      },
+    ]);
+    await json(root, 'e2e/ledger/contracts/home.json', [
+      {
+        target,
+        classification: 'read',
+        requirements: [
+          {
+            aspect: 'render',
+            layers: ['browser'],
+            expectation: '公開ページを表示する',
+            basis: ['src/app/page.tsx'],
+            executions: [execution],
+          },
+        ],
+        notApplicable: [],
+      },
+    ]);
+    await json(root, 'e2e/ledger/scenarios/home.json', [
+      {
+        scenarioId: 'home',
+        title: '公開ページ',
+        cases: [
+          {
+            caseId: 'isolated-render',
+            title: '公開表示',
+            status: 'implemented',
+            layer: 'browser',
+            fixture: 'public',
+            roles: ['operator'],
+            checks: [{ target, aspect: 'render', layer: 'browser' }],
+            executions: [execution],
+            testBindings: ['main'],
+          },
+        ],
+      },
+    ]);
+    await write(
+      root,
+      'isolated-specs/main.spec.ts',
+      "import { test } from '@playwright/test'; test('isolated', { tag: ['@case:isolated-render', '@variant:anonymous', '@binding:main'] }, () => { throw new Error('must not execute'); });",
+    );
+    const state = await collectStaticState(root);
+    expect(state.registrations).toBe(1);
+    expect(state.baseline.items).toHaveLength(0);
+    expect(state.legacy.registered).toEqual([
+      expect.objectContaining({
+        profile: 'isolated',
+        caseId: 'isolated-render',
+      }),
+    ]);
+    await write(
+      root,
+      'isolated-specs/main.spec.ts',
+      "import { test } from '@playwright/test'; test('isolated', () => {});",
+    );
+    await expect(collectStaticState(root)).rejects.toThrow(
+      '静的台帳の整合エラー',
+    );
+  }, 30_000);
+
   it('実登録からbootstrapした台帳をreadonlyで検査し二度目のbootstrapは拒否する', async () => {
     const { root, base, state, check } = await createFixture();
     const before = Object.values(ARTIFACTS).map((file) =>
       readArtifact(root, file),
     );
-    expect(state.legacy.tests).toHaveLength(3);
+    expect(state.legacy.tests).toHaveLength(4);
+    expect(
+      state.legacy.tests.some((entry) => entry.profile === 'isolated'),
+    ).toBe(true);
     expect(state.baseline.items).toHaveLength(1);
     expect((await check()).issues).toEqual([]);
     vi.spyOn(process.stdout, 'write').mockReturnValue(true);

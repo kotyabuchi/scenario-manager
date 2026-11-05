@@ -57,21 +57,32 @@ const serialize = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 /** M1の固定runnerを列挙する。ブラウザ・DB・test bodyは実行しない。 */
 export const collectStaticState = async (root: string) => {
   const inventory = buildInventory(loadSource(root));
-  const [ledgerResult, appResult, storybookResult] = await Promise.allSettled([
-    loadLedger(root),
-    discover({ root, profile: 'app', config: 'playwright.config.ts' }),
-    discover({
-      root,
-      profile: 'storybook',
-      config: '.storybook/playwright.config.ts',
-    }),
-  ]);
+  const [ledgerResult, appResult, storybookResult, isolatedResult] =
+    await Promise.allSettled([
+      loadLedger(root),
+      discover({ root, profile: 'app', config: 'playwright.config.ts' }),
+      discover({
+        root,
+        profile: 'storybook',
+        config: '.storybook/playwright.config.ts',
+      }),
+      discover({
+        root,
+        profile: 'isolated',
+        config: 'playwright.isolated.config.ts',
+      }),
+    ]);
   // 失敗時も他の列挙子を残さず、すべての終了を待ってから返す。
   if (ledgerResult.status === 'rejected') throw ledgerResult.reason;
   if (appResult.status === 'rejected') throw appResult.reason;
   if (storybookResult.status === 'rejected') throw storybookResult.reason;
+  if (isolatedResult.status === 'rejected') throw isolatedResult.reason;
   const ledger = ledgerResult.value;
-  const reports = [appResult.value, storybookResult.value];
+  const reports = [
+    appResult.value,
+    storybookResult.value,
+    isolatedResult.value,
+  ];
   const bindings = bindDiscovery(ledger, reports);
   const validation = validateLedger({
     inventory,
