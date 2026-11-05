@@ -10,6 +10,7 @@ import {
 import { discover } from './discover';
 import { discoverIntegration } from './discoverIntegration';
 import { bindDiscovery } from './discoveryBindings';
+import { loadStorySurfaceContext } from './extractors/surfaceRoots';
 import { verifyGithubPushBootstrapApproval } from './githubEvent';
 import {
   type GithubEventPolicy,
@@ -31,6 +32,9 @@ import {
 } from './policy';
 import { validateLedger } from './requirements';
 import { loadSource } from './source';
+import { checkSurfaceState } from './surfaceGate';
+import { buildSurfacePending } from './surfacePending';
+import { withSurfaceNodes } from './surfaceProjection';
 import {
   readRevisionFile,
   readRevisionLedger,
@@ -62,7 +66,10 @@ const serialize = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 
 /** M1の固定runnerを列挙する。ブラウザ・DB・test bodyは実行しない。 */
 export const collectStaticState = async (root: string) => {
-  const inventory = buildInventory(loadSource(root));
+  const inventory = buildInventory(
+    loadSource(root),
+    loadStorySurfaceContext(root),
+  );
   const [
     ledgerResult,
     appResult,
@@ -101,7 +108,7 @@ export const collectStaticState = async (root: string) => {
     integrationResult.value.discovery,
   ]);
   const validation = validateLedger({
-    inventory,
+    inventory: withSurfaceNodes(inventory),
     ledger,
     registrations: bindings.registrations,
   });
@@ -110,7 +117,12 @@ export const collectStaticState = async (root: string) => {
     throw new Error(`静的台帳の整合エラー: ${JSON.stringify(issues)}`);
   const baseline = baselineSchema.parse({
     schemaVersion: 1,
-    items: buildPendingItems(validation.deficiencies, inventory.diagnostics),
+    items: buildPendingItems(
+      validation.deficiencies.filter(
+        ({ target }) => !target.startsWith('surface:'),
+      ),
+      inventory.diagnostics,
+    ),
   });
   const legacy = await buildLegacy(root, reports);
   return {
@@ -119,6 +131,10 @@ export const collectStaticState = async (root: string) => {
     baseline,
     legacy,
     registrations: bindings.registrations.length,
+    surfacePending: buildSurfacePending(inventory, [
+      ...validation.deficiencies,
+      ...validation.excepted,
+    ]),
   };
 };
 
@@ -295,7 +311,15 @@ export const checkStaticState = async ({
       }),
     );
   }
+  const surface = await checkSurfaceState({
+    root,
+    state,
+    revisions,
+    artifacts: ARTIFACTS,
+    ...(bootstrapApproval ? { bootstrapApproval } : {}),
+  });
   return {
+    ...surface,
     issues,
     policyDeltas,
     isBootstrap,

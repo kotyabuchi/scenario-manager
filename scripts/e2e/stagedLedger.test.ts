@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createLedgerFixture } from './fixtures/ledger';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import * as gitRecords from './gitRecords';
 import { checkStagedLedger } from './stagedLedger';
 
@@ -75,6 +76,25 @@ afterEach(() => {
 });
 
 describe('ステージ済み台帳の軽量検査', () => {
+  it('UI移行の片方欠落とindexだけの壊れた移行schemaを拒否する', () => {
+    const { root, git, writeJson } = createRepository();
+    const fixture = surfaceLedgerFixture();
+    const pending = `${LEDGER}/surface-pending.json`;
+    const migration = `${LEDGER}/surface-migration.json`;
+    writeJson(pending, fixture.pending);
+    git(['add', '--', pending]);
+    expect(checkStagedLedger(root).status).toBe('failed');
+    writeJson(migration, fixture.migration);
+    git(['add', '--', migration]);
+    expect(checkStagedLedger(root).status).toBe('passed');
+    writeJson(migration, { ...fixture.migration, toVersion: 999 });
+    git(['add', '--', migration]);
+    writeJson(migration, fixture.migration);
+    expect(checkStagedLedger(root)).toMatchObject({
+      status: 'failed',
+      failure: 'LEDGER_CONTENT_INVALID',
+    });
+  });
   it('indexの壊れたJSONを作業ツリーで修復しても拒否する', () => {
     const { root, git, ledger, write, writeJson } = createRepository();
     write(FIXTURES, '{ secret=fixture-token');

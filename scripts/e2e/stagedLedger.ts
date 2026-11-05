@@ -3,12 +3,20 @@ import { isNil } from 'ramda';
 import { gitObjectFormat, gitRead, readGitBlobs } from './gitObjects';
 import { readGitIndex } from './gitRecords';
 import { parseLedger } from './ledger';
+import {
+  surfaceMigrationSchema,
+  surfacePendingSchema,
+} from './surfaceMigrationSchema';
 
 import { join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
 
 const LEDGER_ROOT = 'e2e/ledger';
+const SURFACE_FILES = new Set([
+  'surface-pending.json',
+  'surface-migration.json',
+]);
 const EXCLUDED_FILES = new Set([
   'README.md',
   'schema.ts',
@@ -77,7 +85,8 @@ export const checkStagedLedger = (root: string) => {
         !/^(?:profiles|fixtures|execution-groups|exceptions)\.json$/u.test(
           name,
         ) &&
-        !/^(?:contracts|scenarios)\/[^/]+\.json$/u.test(name)
+        !/^(?:contracts|scenarios)\/[^/]+\.json$/u.test(name) &&
+        !SURFACE_FILES.has(name)
       )
         return failed('LEDGER_PATH_UNSUPPORTED');
       entries.set(name, oid);
@@ -108,6 +117,10 @@ export const checkStagedLedger = (root: string) => {
           const values: unknown[] = records;
           return values;
         });
+    if ([...SURFACE_FILES].some((name) => entries.has(name))) {
+      surfacePendingSchema.parse(read('surface-pending.json'));
+      surfaceMigrationSchema.parse(read('surface-migration.json'));
+    }
     parseLedger({
       schemaVersion: 1,
       profiles: read('profiles.json'),

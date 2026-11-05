@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { serializeBaseline } from './baseline';
+import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { serializeInventory } from './inventory';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
 import { runLedgerCheck } from './ledgerCheck';
@@ -17,6 +18,12 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 
 import type { StaticState } from './staticGate';
+
+// 旧coreゲートを独立検査。UI移行の実境界はsurfaceGate.test.tsとledgerSurfaceRefresh.test.tsで検査する。
+vi.mock('./surfaceGate', async (original) => ({
+  ...(await original<typeof import('./surfaceGate')>()),
+  checkSurfaceState: async () => surfaceLedgerFixture().receipt,
+}));
 
 // Windowsの高負荷時も、複数のguard付きcollectorと後始末の完了を待つ。
 const STATIC_GATE_TIMEOUT_MS = 90_000;
@@ -124,7 +131,9 @@ const createFixture = async () => {
     await json(root, `e2e/ledger/${file}.json`, []);
   git(root, 'init', '--quiet');
   const before = commit(root);
-  await refreshLedger(root, 'bootstrap');
+  // このfixtureの旧core成果物を作る。廃止済みv1 writerやUI初期化は実行しない。
+  save(root, await collectStaticState(root));
+  await json(root, ARTIFACTS.migrations, { schemaVersion: 1, entries: [] });
   const base = commit(root);
   const state = await collectStaticState(root);
   const check = (
