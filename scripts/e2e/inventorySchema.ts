@@ -1,12 +1,16 @@
 import { z } from 'zod';
 
-export const sourceLocationSchema = z
-  .object({
-    file: z.string().min(1),
-    line: z.number().int().positive(),
-    column: z.number().int().positive(),
-  })
-  .strict();
+import {
+  diagnosticAnchorSchema,
+  sourceLocationSchema,
+} from './inventoryPrimitives';
+import { validateSurfaceReferences } from './surfaceReferences';
+import { surfaceAnalysisSchema } from './surfaceSchema';
+
+export {
+  diagnosticAnchorSchema,
+  sourceLocationSchema,
+} from './inventoryPrimitives';
 
 export const inventoryNodeSchema = z
   .object({
@@ -57,13 +61,6 @@ export const inventoryEdgeSchema = z
   })
   .strict();
 
-export const diagnosticAnchorSchema = z
-  .object({
-    ownerId: z.string().min(1),
-    syntaxHash: z.string().regex(/^[a-f0-9]{64}$/),
-    occurrence: z.number().int().nonnegative(),
-  })
-  .strict();
 export const inventoryDiagnosticSchema = z
   .object({
     code: z.string().min(1),
@@ -88,7 +85,7 @@ export const sourceManifestSchema = z
   })
   .strict();
 
-export const inventorySchema = z
+export const inventoryV1Schema = z
   .object({
     schemaVersion: z.literal(1),
     extractorVersion: z.literal('1'),
@@ -121,6 +118,39 @@ export const inventorySchema = z
     });
   });
 
+/** v1の正本は履歴照合用に保持し、空の観測を補って移行済みにしない。 */
+export const inventorySchema = z
+  .object({
+    schemaVersion: z.literal(2),
+    extractorVersion: z.literal('2'),
+    source: sourceManifestSchema,
+    nodes: z.array(inventoryNodeSchema),
+    edges: z.array(inventoryEdgeSchema),
+    diagnostics: z.array(inventoryDiagnosticSchema),
+    surfaceAnalysis: surfaceAnalysisSchema,
+  })
+  .strict()
+  .superRefine((inventory, context) => {
+    const result = inventoryV1Schema.safeParse({
+      schemaVersion: 1,
+      extractorVersion: '1',
+      source: inventory.source,
+      nodes: inventory.nodes,
+      edges: inventory.edges,
+      diagnostics: inventory.diagnostics,
+    });
+    if (!result.success)
+      for (const issue of result.error.issues)
+        context.addIssue({
+          code: 'custom',
+          path: issue.path,
+          message: issue.message,
+        });
+    for (const issue of validateSurfaceReferences(inventory))
+      context.addIssue({ code: 'custom', ...issue });
+  });
+
+export type InventoryV1 = z.infer<typeof inventoryV1Schema>;
 export type SourceLocation = z.infer<typeof sourceLocationSchema>;
 export type InventoryNode = z.infer<typeof inventoryNodeSchema>;
 export type InventoryEdge = z.infer<typeof inventoryEdgeSchema>;
