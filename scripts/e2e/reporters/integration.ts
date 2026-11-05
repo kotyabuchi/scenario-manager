@@ -8,8 +8,14 @@ import {
   integrationReportSchema,
   integrationTestResultSchema,
 } from '../integrationSchema';
+import { createIntegrationVerificationReport } from '../integrationVerificationReport';
 import { writeArtifact } from '../ledgerArtifacts';
+import {
+  readVerificationContext,
+  verificationStagePath,
+} from '../verificationContext';
 
+import { writeFileSync } from 'node:fs';
 import { relative, sep } from 'node:path';
 
 import type {
@@ -147,10 +153,27 @@ export default class IntegrationReporter implements Reporter {
       unhandledErrorCount: unhandledErrors.length,
       reporterErrorCount: this.reporterErrorCount,
     });
+    const verificationContext = readVerificationContext();
     writeArtifact(
       context.config.root,
       `test-results/integration/${report.runId}/vitest.json`,
       `${JSON.stringify(report, null, 2)}\n`,
     );
+    if (!isNil(verificationContext)) {
+      const standard = createIntegrationVerificationReport(
+        verificationContext,
+        report,
+      );
+      // stageは親lifecycleが準備する。既存証拠の上書きやdirectoryの自動補完はしない。
+      writeFileSync(
+        verificationStagePath(
+          context.config.root,
+          verificationContext,
+          'vitest.json',
+        ),
+        `${JSON.stringify(standard, null, 2)}\n`,
+        { flag: 'wx' },
+      );
+    }
   }
 }
