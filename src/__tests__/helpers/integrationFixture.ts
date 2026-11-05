@@ -238,7 +238,8 @@ export const withIntegrationFixture = async (
     context.task.meta.integration =
       integrationAttemptMetaSchema.parse(evidence);
   }
-  if (failures.length > 0)
+  if (failures.length === 1) throw failures[0];
+  if (failures.length > 1)
     throw new AggregateError(
       failures,
       'integration試験またはcleanupに失敗しました',

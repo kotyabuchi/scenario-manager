@@ -104,12 +104,10 @@ describe.sequential('確定日程RPCの利用者JWTと原子性', () => {
               ),
             );
             expect(result.data).toBeNull();
-            expect(result.error?.code).toBe(
-              variant === 'anonymous' ? '42501' : 'P0001',
-            );
+            expect(result.error?.code).toBe('P0001');
             expect(result.error?.message).toBe(
               variant === 'anonymous'
-                ? 'permission denied for function replace_confirmed_schedule_time_blocks'
+                ? 'Not authenticated'
                 : variant === 'outsider'
                   ? 'Not authorized to modify this session schedule'
                   : 'User ID mismatch',
