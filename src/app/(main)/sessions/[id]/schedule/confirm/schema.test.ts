@@ -44,9 +44,73 @@ describe.each([
       ]);
     }
   });
+  it.each([
+    ['同時刻', '2026-11-15T09:00:00Z'],
+    ['逆転', '2026-11-15T11:00:00Z'],
+  ])('%sの開始・終了を従来のpathで拒否する', (_name, startAt) => {
+    const result = schema.safeParse({
+      timeBlocks: [{ startAt, endAt: '2026-11-15T09:00:00Z' }],
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues).toEqual([
+        expect.objectContaining({
+          path: ['timeBlocks', 0, 'endAt'],
+          message: '開始日時は終了日時より前である必要があります',
+        }),
+      ]);
+    }
+  });
+
+  it('逆転かつ30分境界外なら、両エラーのpathと実行順を維持する', () => {
+    const result = schema.safeParse({
+      timeBlocks: [
+        {
+          startAt: '2026-11-15T11:15:00+00:00',
+          endAt: '2026-11-15T09:15:00+00:00',
+        },
+      ],
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(
+        result.error.issues.map(({ path, message }) => ({ path, message })),
+      ).toEqual([
+        {
+          path: ['timeBlocks', 0, 'endAt'],
+          message: '開始日時は終了日時より前である必要があります',
+        },
+        {
+          path: ['timeBlocks', 0],
+          message: '日時は30分単位で指定してください',
+        },
+      ]);
+    }
+  });
 });
 
 describe('日程確定の件数上限', () => {
+  it('offset表記が異なっても同一瞬間の枠の重複を拒否する', () => {
+    const result = confirmScheduleTimeBlocksSchema.safeParse({
+      timeBlocks: [
+        { startAt: '2026-11-15T09:00:00Z', endAt: '2026-11-15T11:00:00Z' },
+        {
+          startAt: '2026-11-15T18:00:00+09:00',
+          endAt: '2026-11-15T20:00:00+09:00',
+        },
+      ],
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues).toEqual([
+        expect.objectContaining({
+          path: ['timeBlocks'],
+          message: '確定日程同士が重複しています',
+        }),
+      ]);
+    }
+  });
+
   it('再取得した2枠に19枠を追加したとき、日時の誤判定をせず21件上限で拒否する', () => {
     const DAY_MS = 24 * 60 * 60_000;
     const DURATION_MS = 2 * 60 * 60_000;
