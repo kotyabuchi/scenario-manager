@@ -1,4 +1,5 @@
 // test import前に先行ロードする。通常のtestから新しい実行主体を作らせない。
+const childProcess = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const threads = require('node:worker_threads');
@@ -12,6 +13,21 @@ const directory = path.join(
 );
 fs.mkdirSync(directory, { recursive: true });
 process.env.E2E_DISCOVERY_DIRECTORY = directory;
+
+// 固定VitestのTinypoolだけを先に初期化し、CPU数の取得はshellを使わずに代替させる。
+const requireFromVitest = moduleApi.createRequire(
+  require.resolve('vitest/package.json'),
+);
+const execSync = childProcess.execSync;
+childProcess.execSync = () => {
+  throw new Error('collect bootstrapではshellを起動しません');
+};
+moduleApi.syncBuiltinESMExports();
+try {
+  requireFromVitest('tinypool');
+} finally {
+  childProcess.execSync = execSync;
+}
 require('./discoveryGuard.cjs');
 threads.Worker = class {
   constructor() {

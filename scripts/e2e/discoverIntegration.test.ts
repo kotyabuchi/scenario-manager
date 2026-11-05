@@ -65,6 +65,7 @@ for(const row of rows) test(row.name,${claim},()=>{throw Error('body ran')});`);
 
   it.each([
     "import {spawnSync} from 'node:child_process';try{spawnSync(process.execPath,['-e','process.exit(0)'])}catch{};",
+    "import {execSync} from 'node:child_process';try{execSync('echo blocked')}catch{};",
     "import {Worker} from 'node:worker_threads';try{new Worker('process.exit(0)',{eval:true})}catch{};",
     "try{await fetch('http://127.0.0.1:9')}catch{};",
     "import {writeFileSync} from 'node:fs';try{writeFileSync('outside.txt','forbidden')}catch{};",
