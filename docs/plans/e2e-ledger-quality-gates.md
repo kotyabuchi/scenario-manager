@@ -136,9 +136,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Step 8-1. actorと業務fixture
 - [x] Step 8-2. 新configとcleanup
 - [x] Step 8-3. 既存suiteを実行するlocal互換経路
-- [ ] Batch 9: 日程確定のbrowser E2Eを導入
-- [ ] Step 9-1. UI操作と永続化
-- [ ] Step 9-2. UI失敗状態と境界
+- [x] Batch 9: 日程確定のbrowser E2Eを導入
+- [x] Step 9-1. UI操作と永続化
+- [x] Step 9-2. UI失敗状態と境界
 - [ ] Batch 10: Action/RPC認可とDBテストの証拠
 - [ ] Step 10-1. UIの外側にある拒否と原子性
 - [ ] Step 10-2. integration結果adapterと偽成功の解消
@@ -222,6 +222,13 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - Batch 8完了（2026-11-05）: 保存HEAD `b229f12`から全4projectをfresh実行し、公開PC `25fd1ce3a0cd`は57成功、公開mobile `2f316dd6bcc8`は48成功+既存skip9、認証PC `bfd0fabb12a2`と認証mobile `8bdaf00e2b8d`は各107成功+既存fixme1。合計319成功/既存例外11の330件を実行目録と照合し、旧348行の行き先を保持した。新しいskip・retry・失敗は0。
 - 最終受入前のa11y診断 `fc149cc42d26`は106成功/1失敗/既存fixme1。内側mainの重複と横スクロール領域のキーボード到達性を最小修正し、既存Axe検査を変更せず全件受入で解消を確認した。独立レビュー未解消0。
 - 最終build後のM1もpassed（登録26/legacy330/不足473、issues/policy delta0、baseline digest不変）。全fixture/stack cleanup complete、別途Docker資源・listener・run process・秘密file・lock・固定旧auth state残留0。receiptは `test-results/quality/batch8-legacy-final.json` / `batch8-static-final.json` / `batch8-final-residue-check.json`。次はBatch 9。M2全体・日程業務caseの実行証拠・認可検証は未完了。
+
+- Batch 9完了（2026-11-05）: 保存HEAD `0f1d877`のfresh run `312e26447f78`で日程browser 8/8成功。creator-only/keeper-only各PC/mobileの確定・全置換・再読込・別参加者表示4条件と、入力拒否/実Actionの21件拒否・候補保持・旧DB全値保持の各PC/mobile4条件を検証した。ID/原TS位置/actor/lease/journalを全8件照合しissues0、skip/retry/flakyなし。
+- Batch 9のUI失敗証拠: Storybookの既存8件と追加した保存失敗1件の9/9成功。UI mockは失敗通知・選択保持・再操作だけを証明し、DB保存や認可、RPC原子性の証拠とは分離した。実RPC拒否と原子性はBatch 10で検証する。
+- Batch 9で発見した製品不具合: PCに確定CTAがない状態を既存styleで修正。想定内Actionエラーをplain messageへ変更し、本番RSCでの秘匿による汎用表示を解消した。予期せぬDB/RPC/catch Errorは維持。保存済みoffset付き日時の再保存拒否を両schemaで修正し、同値なcheck構成に整理して未解決診断2件も解消した。28入力の前後比較とunit12件で制約・エラー順を維持した。
+- Batch 9の証跡修正: 実Playwright JSONのcompiled座標と列挙の原TS座標の差を、既存の1.57限定source map adapterを実workerにも適用して解消。座標一致の条件は維持した。無DB/無browserの2project×同位置loop回帰で、列挙・report・実workerのID/位置が一致することを確認した。
+- Batch 9検証・レビュー: staticGate7、schedule tools28、既存fixture evidence/progress31、source map実回帰1、日時schema12件が成功。全体Biome1004 filesと型検査成功。Sol/mediumの3担当と親のレビューで未解消0。記録は `docs/reviews/diff-review-2026-11-05-4.md`。通常登録35（app18/isolated8/Storybook9）、legacy330、不足453、baseline digest `fd3507e0f6fa04d244874cdce650128d7be6071465bf1641be60cf63e3908b1d`。新規不足・例外追加なし。
+- Batch 9後始末: 最終8 journal/stackのcleanup completeを確認し、Docker資源・lock・process・listener・秘密接続fileの残留0を独立確認した。ビルド前後のM1もpassed、issues/policy delta0。失敗run3件も保持し、後始末済みを確認。最終receiptは `test-results/quality/batch9-schedule-final.json`、残留確認は `batch9-final-residue-check.json`。Batch 10から続行し、M2全体は未完了。
 
 ## Batch 1: DB不要の品質検査とDBテストの分類
 
