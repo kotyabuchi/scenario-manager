@@ -1,5 +1,9 @@
 [
   {
+    "id": "legacy-seed",
+    "actors": ["creator-only"]
+  },
+  {
     "id": "schedule",
     "actors": [
       "anonymous",

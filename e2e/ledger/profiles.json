@@ -1,5 +1,13 @@
 [
   {
+    "id": "app",
+    "layer": "browser",
+    "executions": [
+      { "project": "chromium-auth", "runtime": "next-production" },
+      { "project": "mobile-chrome-auth", "runtime": "next-production" }
+    ]
+  },
+  {
     "id": "isolated",
     "layer": "browser",
     "executions": [

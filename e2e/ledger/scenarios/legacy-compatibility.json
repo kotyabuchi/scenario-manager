@@ -1,0 +1,218 @@
+[
+  {
+    "scenarioId": "legacy-compatibility",
+    "title": "既存認証済みUIテストのcase ID移行",
+    "cases": [
+      {
+        "caseId": "legacy-fab-open",
+        "title": "FABメニューを開くとメニュー項目が表示される",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/components/blocks/SpeedDialFAB/SpeedDialPanel.tsx#SpeedDialPanel",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-fab-dismiss",
+        "title": "FABメニュー外クリックでメニューが閉じる",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/components/blocks/SpeedDialFAB/SpeedDialPanel.tsx#SpeedDialPanel",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-session-gm-actions",
+        "title": "募集中フェーズでGM用アクションが表示される",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/_components/SessionActions.tsx#SessionActions",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-session-create-redirect",
+        "title": "最小入力で作成するとリダイレクトされる",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/new/_components/SessionFormContainer.tsx#SessionFormContainer",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-session-created-detail",
+        "title": "作成後にセッション詳細ページが表示される",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/_components/SessionDetailContent.tsx#SessionDetailContent",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "default",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      }
+    ]
+  }
+]
