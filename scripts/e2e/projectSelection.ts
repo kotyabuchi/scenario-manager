@@ -21,8 +21,9 @@ export const projectSelection = (input: {
   fullPlan: VerificationPlan;
   ledger: Ledger;
   legacy: LegacyManifest;
+  additions?: { mandatoryCaseIds: readonly string[]; runLegacyLocal: boolean };
 }) => {
-  const { fullPlan, ledger, legacy } = input;
+  const { fullPlan, ledger, legacy, additions } = input;
   const decision = selectionDecisionSchema.parse(input.decision);
   const requested = new Set(decision.requestedRequiredKeys);
   const byKey = new Map(fullPlan.requirements.map((row) => [row.key, row]));
@@ -44,7 +45,8 @@ export const projectSelection = (input: {
       )
     )
       throw new Error('0件選択の根拠が不正です。');
-    return null;
+    if (!additions?.runLegacyLocal && !additions?.mandatoryCaseIds.length)
+      return null;
   }
 
   const selected = new Set(requested);
@@ -96,7 +98,14 @@ export const projectSelection = (input: {
     for (const dependency of group.dependsOn) addGroup(dependency);
   };
 
-  if (decision.legacyPolicy === 'legacy-local') addLegacy();
+  const mandatoryCaseIds = additions?.mandatoryCaseIds ?? [];
+  for (const caseId of mandatoryCaseIds) addCase(caseId);
+  if (mandatoryCaseIds.length > 0)
+    reasons.push(
+      selectionReason('CI_FIXED_SMOKE', { caseIds: [...mandatoryCaseIds] }),
+    );
+  if (decision.legacyPolicy === 'legacy-local' || additions?.runLegacyLocal)
+    addLegacy();
   // runner拡張で増えた登録もgroup/依存/fileの起点になる。
   for (const key of selected) {
     const row = byKey.get(key);

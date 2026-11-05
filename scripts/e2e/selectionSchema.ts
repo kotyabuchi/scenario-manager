@@ -37,6 +37,7 @@ export const selectionReasonSchema = z.strictObject({
     'RUNNER_DEPENDENCY',
     'VITEST_FILE_CLOSURE',
     'LEGACY_REGRESSION_EXECUTION',
+    'CI_FIXED_SMOKE',
   ]),
   changedPaths: z.array(gitPathSchema),
   viaNodes: strings,
