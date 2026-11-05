@@ -6,7 +6,7 @@
       {
         "caseId": "schedule-confirm-persist",
         "title": "兼任しない主催者とGM/KPが複数枠を確定・全置換し、別参加者が再表示する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "browser",
         "fixture": "schedule",
         "roles": ["operator", "observer"],
@@ -378,7 +378,7 @@
       {
         "caseId": "schedule-save-error",
         "title": "保存モック失敗を通知してロールバック後の選択状態を保持する",
-        "status": "planned",
+        "status": "implemented",
         "layer": "storybook",
         "fixture": "schedule",
         "roles": ["operator"],

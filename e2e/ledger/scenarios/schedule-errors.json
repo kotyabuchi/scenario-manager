@@ -1,0 +1,92 @@
+[
+  {
+    "scenarioId": "schedule-browser-errors",
+    "title": "日程確定の入力拒否と保存失敗状態",
+    "cases": [
+      {
+        "caseId": "schedule-confirm-invalid-input",
+        "title": "空欄・逆転・重複の候補追加を拒否し既存候補を保持する",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/AvailabilityTimeBlockEditor.tsx#AvailabilityTimeBlockEditor/handleAdd",
+            "aspect": "validation",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-confirm-rejected-preserves",
+        "title": "実Actionの件数上限拒否で編集候補と旧保存値を保持する",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace/handleConfirm",
+            "aspect": "error-feedback",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      }
+    ]
+  }
+]

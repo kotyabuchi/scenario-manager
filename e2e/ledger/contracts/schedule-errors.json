@@ -1,0 +1,84 @@
+[
+  {
+    "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/AvailabilityTimeBlockEditor.tsx#AvailabilityTimeBlockEditor/handleAdd",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "validation",
+        "layers": ["browser"],
+        "expectation": "creator-onlyで空欄・終了が開始以前・既存候補と重複する日時の追加を通常UIから試み、各エラー表示と既存候補の保持を確認する。確定操作前のDB状態が変わらないことを利用者JWTで確認する。",
+        "basis": [
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-2-ui失敗状態と境界"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace/handleConfirm",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "error-feedback",
+        "layers": ["browser"],
+        "expectation": "creator-onlyが通常UIで旧2枠を確定し、さらに19枠を追加した21枠の確定を試みる。実Actionの入力上限拒否後は失敗通知・21候補保持・再操作可能を確認する。再読込後は旧2枠だけを表示し、利用者JWTで親のphase/date/更新日時と子行ID/日時/順序/作成者が拒否前と一致する。DB制約失敗やRPC原子性の証拠には転用しない。",
+        "basis": [
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-2-ui失敗状態と境界"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  }
+]
