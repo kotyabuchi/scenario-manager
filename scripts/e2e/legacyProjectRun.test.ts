@@ -120,7 +120,7 @@ describe('legacy projectの障害伝播と後始末', () => {
       new AbortController().signal,
     );
     expect(output.status).toBe('failed');
-    expect(output.failurePhases).toContain('evidence');
+    expect(output.failurePhases).toEqual(['evidence']);
     expect(output.results).toEqual(fault === 'browser' ? value.results : null);
     expect(value.events.slice(-5)).toEqual([
       'app-close',
@@ -170,12 +170,81 @@ describe('legacy projectの障害伝播と後始末', () => {
     );
     expect(output.status).toBe('failed');
     expect(output.environment.passed).toBe(false);
+    if (fault === 'ui') expect(output.failurePhases).toEqual(['ui-cleanup']);
     expect(value.events.slice(-4)).toEqual([
       'ui-cleanup',
       'context-close',
       'fixture-cleanup',
       'environment-close',
     ]);
+    expect(existsSync(value.credentials)).toBe(false);
+  });
+
+  it('実contextと同じAggregateError包装でも記録済み失敗を重複しない', async () => {
+    const value = await setup();
+    value.control.report = 'invalid';
+    const operation = vi.mocked(withLegacyContext).getMockImplementation();
+    if (!operation) throw new Error('context mockがありません。');
+    vi.mocked(withLegacyContext).mockImplementation(async (...args) => {
+      try {
+        return await operation(...args);
+      } catch (error) {
+        throw new AggregateError([error], 'context wrapper');
+      }
+    });
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      new AbortController().signal,
+    );
+    expect(output.failurePhases).toEqual(['evidence']);
+    expect(output.status).toBe('failed');
+  });
+
+  it('evidenceとUI cleanupの両方の失敗を一度ずつ記録する', async () => {
+    const value = await setup();
+    value.control.report = 'invalid';
+    value.control.uiFailure = true;
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      new AbortController().signal,
+    );
+    expect(output.status).toBe('failed');
+    expect(output.failurePhases).toEqual(['evidence', 'ui-cleanup']);
+  });
+
+  it.each([
+    'start',
+    'close',
+  ] as const)('contextの%sで発生した別の失敗を省略しない', async (phase) => {
+    const value = await setup();
+    const operation = vi.mocked(withLegacyContext).getMockImplementation();
+    if (!operation) throw new Error('context mockがありません。');
+    if (phase === 'close') value.control.report = 'invalid';
+    vi.mocked(withLegacyContext).mockImplementation(async (...args) => {
+      if (phase === 'close') {
+        // context後始末が、既知のoperation失敗とは別のerrorを返すケース。
+        const operationError = await operation(...args).catch(
+          (error: unknown) => error,
+        );
+        throw new AggregateError(
+          [operationError, new Error('private-context-error')],
+          'context cleanup',
+        );
+      }
+      throw new Error('private-context-error');
+    });
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      new AbortController().signal,
+    );
+    expect(output.status).toBe('failed');
+    expect(output.failurePhases).toEqual(
+      phase === 'start' ? ['seed'] : ['evidence', 'ui-cleanup'],
+    );
+    expect(value.events).toContain('fixture-cleanup');
     expect(existsSync(value.credentials)).toBe(false);
   });
 

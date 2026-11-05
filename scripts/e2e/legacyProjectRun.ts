@@ -52,6 +52,15 @@ export const runLegacyProject = async (
   onProgress?: (value: LegacyProgress) => void,
 ) => {
   const selection = createLegacySelection(input);
+  // 内側で記録済みの再throwだけを識別し、context自身の別の失敗は残す。
+  const recordedOperationFailures = new Set<unknown>();
+  const isRecordedOperationFailure = (error: unknown): boolean =>
+    recordedOperationFailures.has(error) ||
+    (error instanceof AggregateError &&
+      error.errors.length > 0 &&
+      error.errors.every((cause: unknown) =>
+        isRecordedOperationFailure(cause),
+      ));
   const state: {
     phase: string;
     runId?: string;
@@ -203,15 +212,19 @@ export const runLegacyProject = async (
                   operationFailures.push(error);
                 }
               }
-              if (operationFailures.length > 0)
-                throw new AggregateError(
+              if (operationFailures.length > 0) {
+                const failure = new AggregateError(
                   operationFailures,
                   'legacy app実行またはUI行の後始末に失敗しました。',
                 );
+                recordedOperationFailures.add(failure);
+                throw failure;
+              }
             },
           );
         } catch (error) {
-          state.failurePhases.push(state.phase);
+          if (!isRecordedOperationFailure(error))
+            state.failurePhases.push(state.phase);
           failures.push(error);
         } finally {
           if (!isNil(journal)) {
