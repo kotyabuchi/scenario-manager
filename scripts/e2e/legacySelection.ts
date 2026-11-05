@@ -3,6 +3,7 @@ import { isNil } from 'ramda';
 import { legacyManifestSchema } from './legacy';
 import { validateLegacyExecution } from './legacyExecution';
 import { legacyExecutionSchema } from './legacyExecutionSchema';
+import { playwrightTestListLine } from './playwrightTestList';
 
 import type { LegacyManifest } from './legacy';
 
@@ -64,12 +65,6 @@ export const validateLegacyDiscovery = ({
   return { legacy, currentLegacy };
 };
 
-const token = (value: string) => {
-  if (!value || value.trim() !== value || /[›\p{Cc}\u2028\u2029]/u.test(value))
-    throw new Error('test-listに正確に表現できない登録identityです。');
-  return value;
-};
-
 /** rootDir=e2eのPlaywright --test-list用。行番号や正規表現で近似しない。 */
 export const createLegacySelection = (input: LegacySelectionInput) => {
   const { legacy, currentLegacy } = validateLegacyDiscovery(input);
@@ -90,23 +85,13 @@ export const createLegacySelection = (input: LegacySelectionInput) => {
     );
   if (entries.length === 0) throw new Error('選択対象のprojectがありません。');
   const lines = entries.map((entry) => {
-    const project = token(entry.project);
-    const file = token(entry.file);
     if (
-      /[[\]]/u.test(project) ||
-      !file.startsWith('e2e/') ||
-      /[\\:]/u.test(file) ||
-      file.split('/').some((part) => part === '..' || part === '.' || !part) ||
+      !entry.project ||
+      !entry.file.startsWith('e2e/') ||
       entry.repeatEachIndex !== 0
     )
-      throw new Error(
-        'test-listのproject/file/repeatEachを正確に表現できません。',
-      );
-    return [
-      `[${project}]`,
-      file.slice('e2e/'.length),
-      ...entry.titlePath.map(token),
-    ].join(' › ');
+      throw new Error('旧testのproject/repeatEachを正確に表現できません。');
+    return playwrightTestListLine('e2e', entry);
   });
   if (new Set(lines).size !== lines.length)
     throw new Error('test-listの選択行が重複しています。');
