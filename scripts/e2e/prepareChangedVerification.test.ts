@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { captureInputs, type InputFingerprint } from './fingerprint';
 import {
@@ -22,6 +22,7 @@ import {
   checkStaticState,
   collectStaticState,
 } from './staticGate';
+import { SurfacePendingSubsetError } from './surfacePendingDiagnostic';
 import { resolveRevisions } from './trustedRevision';
 
 import { createHash } from 'node:crypto';
@@ -214,7 +215,126 @@ beforeEach(() => {
   vi.mocked(buildSnapshotInventories).mockReturnValue(selection.inventories);
 });
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe('変更選択の準備境界', () => {
+  it('新規UI不足の全件を静的証跡に保存し、CLIの要約を10件に制限する', async () => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    const onPhase = vi.fn();
+    const error = new SurfacePendingSubsetError(
+      Array.from({ length: 12 }, (_, index) => ({
+        category: 'render-diagnostic',
+        entry: { kind: 'product', id: `entry-${index}` },
+        siteId: `site-${index}`,
+        mountSiteIds: [],
+        code: 'private-diagnostic-code',
+        anchor: {
+          ownerId: 'private-anchor',
+          syntaxHash: digest('anchor'),
+          occurrence: 0,
+        },
+      })),
+    );
+    error.message = 'private-error-message';
+    vi.mocked(checkStaticState).mockRejectedValueOnce(error);
+
+    await expect(
+      prepareChangedVerification({ root, prefix, env, onPhase }),
+    ).rejects.toThrow('UI_SURFACE_PENDING_ADDED');
+
+    const details = Array.from({ length: 12 }, (_, index) => ({
+      entry: `entry-${index}`,
+      site: `site-${index}`,
+      code: 'UI_SURFACE_RENDER_DIAGNOSTIC',
+    }));
+    expect(receipt('static')).toEqual({
+      status: 'failed',
+      ...revisions,
+      failure: 'UI_SURFACE_PENDING_ADDED',
+      details,
+    });
+    expect(stderr).toHaveBeenCalledExactlyOnceWith(
+      `[e2e-static] ${JSON.stringify({
+        failure: 'UI_SURFACE_PENDING_ADDED',
+        artifactPath: `${prefix}/static.json`,
+        total: 12,
+        omitted: 2,
+        items: details.slice(0, 10),
+      })}\n`,
+    );
+    expect(onPhase.mock.calls).toEqual([['static-ledger']]);
+    expect(prepareVerificationDetails).not.toHaveBeenCalled();
+    expect(captureGitSnapshot).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['収集', collectStaticState],
+    ['検査', checkStaticState],
+  ] as const)('%sの未知例外を固定コードで保存する', async (_, operation) => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    vi.mocked(operation).mockRejectedValueOnce(
+      new Error('private exception with credentials'),
+    );
+
+    await expect(prepare()).rejects.toThrow('STATIC_LEDGER_CHECK_FAILED');
+    expect(receipt('static')).toEqual({
+      status: 'failed',
+      ...revisions,
+      failure: 'STATIC_LEDGER_CHECK_FAILED',
+    });
+    expect(stderr).toHaveBeenCalledExactlyOnceWith(
+      `[e2e-static] ${JSON.stringify({
+        failure: 'STATIC_LEDGER_CHECK_FAILED',
+        artifactPath: `${prefix}/static.json`,
+      })}\n`,
+    );
+    expect(prepareVerificationDetails).not.toHaveBeenCalled();
+  });
+
+  it('開始通知の書き込みが失敗しても静的検査をfailedとして保存する', async () => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    const onPhase = vi.fn(() => {
+      expect(receipt('static')).toEqual({ status: 'running', ...revisions });
+      throw new Error('private progress write error');
+    });
+
+    await expect(
+      prepareChangedVerification({ root, prefix, env, onPhase }),
+    ).rejects.toThrow('STATIC_LEDGER_CHECK_FAILED');
+    expect(onPhase).toHaveBeenCalledExactlyOnceWith('static-ledger');
+    expect(receipt('static')).toEqual({
+      status: 'failed',
+      ...revisions,
+      failure: 'STATIC_LEDGER_CHECK_FAILED',
+    });
+    expect(stderr).toHaveBeenCalledExactlyOnceWith(
+      `[e2e-static] ${JSON.stringify({
+        failure: 'STATIC_LEDGER_CHECK_FAILED',
+        artifactPath: `${prefix}/static.json`,
+      })}\n`,
+    );
+    expect(collectStaticState).not.toHaveBeenCalled();
+    expect(checkStaticState).not.toHaveBeenCalled();
+    expect(prepareVerificationDetails).not.toHaveBeenCalled();
+  });
+
+  it('失敗証跡の書き込みが失敗したら、表示せず書き込みエラーを伝播する', async () => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    const ioError = new Error('write failed');
+    vi.mocked(collectStaticState).mockRejectedValueOnce(new Error('private'));
+    vi.mocked(writeArtifact)
+      .mockImplementationOnce(() => {})
+      .mockImplementationOnce(() => {
+        throw ioError;
+      });
+
+    await expect(prepare()).rejects.toBe(ioError);
+    expect(stderr).not.toHaveBeenCalled();
+    expect(prepareVerificationDetails).not.toHaveBeenCalled();
+  });
+
   it('M1の失敗を保存し、docs-only候補でも全登録収集と選択へ進まない', async () => {
     const issues = [
       { code: 'STALE_ARTIFACT', subject: 'inventory', message: '保存物が古い' },
