@@ -34,7 +34,7 @@ mainに未公開の前提UI等232コミットが含まれるため、ユーザ�
 - [x] Batch 3: 必須チェック設定
 - [x] Batch 4: 進捗・診断の改善
 - [x] Batch 5: 同一入力の解析再利用
-- [ ] Batch 6: 参加申請・取消の検証拡張
+- [x] Batch 6: 参加申請・取消の検証拡張
 
 ## Batch 1: フォント安定化
 
@@ -212,3 +212,13 @@ Batch 5は呼び出し内だけで、全実効path・raw bytes・物理rootが�
 初回品質 `2a3cdbab496f` は実Gitの8 MiB超blob・symlink fixtureが既定5秒を超えて停止した。対象1件だけ30秒に設定し、拒否assertionとproductionの制限は維持した。再検証の品質 `524495c4959c`、selection `b0e4f28d9a39`、verification `b3c49c66e312` は成功。固定base/headは `aebd052`、unit1097成功＋既存skip8、tools143 files/2051成功、必須55成功・旧E2E312登録・全7 stagesを照合した。
 
 入力digest `6de789e030f9e795a7437ddb28ec7987f75b6a6be4c9032c4cda931d1d028210` は前後一致、28 checkpointsの差分0。独立受入で6環境のDocker資源・11 locks・専用5ポートと識別可能な子プロセスの残留0を確認した。core437/UI658とdeferred-live18は維持。レビューと測定の詳細は [Batch 5レビュー](../reviews/diff-review-2026-11-06-4.md) に記録した。
+
+## Batch 6 完了（2026-11-06）
+
+参加申請・取消の2 Actionを、単一の公開募集中セッションと所有actorを使って検証した。利用者JWTのintegration 10条件と、Chromium／mobile-chromeで申請者・主催者が別contextを使うブラウザ2条件を登録した。正規writerで両Actionの契約不足2件だけを退役し、core 435・UI 658・deferred-live 18を維持した。未解決呼出や管理画面の独立不足は残る。
+
+先行の型検査でブラウザfixtureのactor存在確認を修正した。初回の台帳writerはVitest収集で失敗し、再実行で成功した。先行toolsの2失敗は旧登録件数・検証済みDBファイル数のassertionを新規追加分に合わせて解消した。最終の品質 `1f43a7c0543e`、selection `56904e39b167`、verification `26c8e7ed4c81` は成功。固定base/headは `35920f0cbb9bd2bcfd96deb0088cb9ffd6dafafd` で、そのHEAD時点の未コミット差分を検査した。unit 1097成功＋既存skip 8、tools 145ファイル2087成功、必須67成功（app 18、integration 30、isolated 10、Storybook 9）、旧E2E追加登録312、全7ステージを照合した。
+
+前後の入力digest `5c44d021b0a727bc871c72059121cd583a221f9a212b7d70fe5a8d764b28e1f4` は一致し、28 checkpointsの差分は0。独立受入で追加12条件の登録・actor・チェック・journalを照合し、6環境のDocker資源、11個のlock、実行IDで識別可能なホストプロセスの残留0を確認した。専用5ポートのlistenerとactive-or-boundは0（TIME_WAITを除外）。固定catalogでRLS無効の `session_participants` に対する直接DB書込の拒否、別卓の同一利用者行の保持、承認と取消の競合時の原子性、主催者の独立認可は証明範囲に含めない。
+
+検証済み差分と検証範囲文書は `a996566` から `b168000` の11コミット。Batch 5・6追加後のPR #8最終headに対するHosted CIは未実行で、今回のローカル成功とは別に確認する。指摘と証跡は [Batch 6レビュー](../reviews/diff-review-2026-11-06-5.md) に記録した。
