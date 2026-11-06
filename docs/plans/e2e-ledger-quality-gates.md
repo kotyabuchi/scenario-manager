@@ -152,9 +152,9 @@ Checkpointは各Batchで「関連検査→未コミット差分のreview-diff→
 - [x] Step 13-1. 共通qualityコマンド
 - [x] Step 13-2. 専用環境とCIを一体で切替
 - [x] Step 13-3. 規約と移行運用
-- [ ] Batch 14: UI surfaceとprops依存の抽出を拡張
+- [x] Batch 14: UI surfaceとprops依存の抽出を拡張
 - [x] Step 14-1. 実在する書き方を追跡
-- [ ] Step 14-2. 観測から必須化へ移行
+- [x] Step 14-2. 観測から必須化へ移行
 
 ### 実行ログ
 
@@ -579,6 +579,10 @@ testing-patternsを正本にしてquality:changed、実行不足/例外の扱い
 一度成功後に必須testをskipし、ローカル/CI両方が失敗することを確認。共有cloud credentialsなしでPR相当が完走し、選択集合と結果が一致する。旧suiteの任意1件を実行目録から外すと失敗すること、PR/push/schedule/dispatchが指定した集合を選ぶことを確認。M3達成を記録する。
 
 ## Batch 14: UI surfaceとprops依存の抽出を拡張
+
+2026-11-06 最終受入: Batch 14 / M4完了、全14 Batches・30 Steps完了。code HEAD `3a40bfe` とruntime HEAD `efb5a37` の差は停止記録の文書4件だけと確認した。selection `5c9f6ed9984d` はspecの一時変更1件をpartialへ選択し、独立partial `7f598182e3f2` の4/4、full `b3400e416abd` の55/55必須とlegacy extras301成功・既存例外11を照合してshadow matched、欠落・不一致0。部分7 / 全件28 checkpoint一致、各日程確定4登録で両surfaceを検査。一時コメント完全復元、今回7環境・36 journalsの回収を独立確認し、正式レビューのR2を解消した。詳細は [完了・検証記録](../testing/e2e-ledger-resume.md)。以下は途中経過の履歴。
+
+再開後の初回selection `f83629524284` は、最後の本番buildでGoogle Fontsの拡張子なしURLに対するNext.jsの既知不具合が発生し、shadow inconclusiveで終了した。失敗証跡を保存して7環境・36 journalsを回収後、コード・snapshot・plan・入力digestを変えずに上記の再試行を通した。ビルドの外部依存は推奨改善として残し、成功した再試行で不具合自体が解消したとは扱わない。
 
 2026-11-05 再停止: callback独立レビューの6項目とoptional receiverの追加反例、移行writerの部分保存からの復旧を修正。日程確定の両配置を各executionで実際に操作するE2Eとsurface契約を追加した。実ソース観測ではButtonの括弧付きreturnを扱えず基準2surfaceが消える回帰を検出。実Buttonのbytesを使う回帰を追加して修正し、描画18件成功を区切りに停止した。修正後の全体再抽出・移行artifact・実ブラウザ受入・正式レビュー・commitはまだで、M4未達成。最終停止位置と再開順序は [作業再開記録](../testing/e2e-ledger-resume.md) を参照。Batch 14は専用worktreeに未コミットで保持する。
 

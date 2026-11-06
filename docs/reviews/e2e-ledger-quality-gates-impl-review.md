@@ -2,13 +2,13 @@
 
 - レビュー日: 2026-11-06
 - 計画: `docs/plans/e2e-ledger-quality-gates.md`
-- 判定時点: code HEAD `3a40bfe` の全件quality受入後、ユーザー指示による一時停止。部分/全件shadowは未受入。
-- 計画充足度: 96.7%（29/30 Steps）。Step 14-2の受入が未完了。
+- 判定時点: code HEAD `3a40bfe` の全件qualityと、文書4件だけを追加したruntime HEAD `efb5a37` の独立部分/全件shadowを受入済み。
+- 計画充足度: 100%（30/30 Steps）。全14 Batches / M4完了。
 - サービス品質: B。Part Aは親、Part BはSol/mediumの3担当で並列レビュー。
 
 ## サマリー
 
-Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合した。Batch 14は実ページの2操作からAction/RPCまで追跡でき、UI不足の移行と通常増加拒否を接続した。Windowsの共通品質前段4検査とLinux重点fixtureは成功している。最初の共通qualityは登録済み日程確定4実行のfingerprint未同期を検出して停止した。その後writerの限定修正とWindows/Linux各24件、型、Biome、独立レビュー、実移行再実行に成功。その後の共通qualityと全件runtimeも成功した。raw改行差によりfull-requiredへ拡大したため、部分/全件shadowだけを残す。全既存不足の解消、全legacyのcase化、live外部サービス、公開設定は計画の非目標として区別する。
+Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合した。Batch 14は実ページの2操作からAction/RPCまで追跡でき、UI不足の移行と通常増加拒否を接続した。登録fingerprintの初期同期を修正し、Windowsの共通品質前段4検査、Linux重点fixture、全件runtimeに成功。改行差を解消後、spec1件の変更から部分4/4と独立全件55/55を実行し、shadow matched・欠落/不一致0を確認した。途中のGoogle Fonts由来build失敗は証跡を保持して回収し、入力を変えずに再試行した。全既存不足の解消、全legacyのcase化、live外部サービス、公開設定は計画の非目標として区別する。
 
 ## Part A: 計画充足度
 
@@ -40,12 +40,12 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 | 11-1 | 結果照合 | DONE | verifyResults、reporters/results。skip/retry/欠落/cleanup失敗の否定fixture |
 | 11-2 | 入力/実行入口 | DONE | fingerprint/run、verificationReceipt/verificationRun。固定入力・個別receipt・owner後始末 |
 | 12-1 | 差分選択 | DONE | gitSnapshot/select/snapshotInventory/impact-rules。base/head/dirty/rename/unknown |
-| 12-2 | group/shadow | DONE | runChangedVerification/selectionShadow/selectionObservation、Batch12実部分と全件比較。今回v2再受入は14-2に残す |
+| 12-2 | group/shadow | DONE | runChangedVerification/selectionShadow/selectionObservation、Batch12実部分と全件比較。v2も14-2で独立partial/fullの一致を受入 |
 | 13-1 | 共通quality/hook | DONE | qualityChanged、stagedLedger、lefthook。index構造検査と重い共通gateの分離 |
 | 13-2 | CI切替 | DONE | test.yml、ciContext/Partition/Aggregate。Windows CI相当55必須成功・legacy301成功11既存例外 |
 | 13-3 | 規約同期 | DONE | testing-patterns、exec-plan正本・export、AGENTS。M3同期検査済み |
 | 14-1 | UI/props追跡 | DONE | surface/callback抽出群、product/story別Program。384sites/155bindings、基準2操作からRPCへspot check |
-| 14-2 | UI移行と必須化 | PARTIAL | v1投影一致、UI不足660→658、再追加/改変拒否済み。登録metadata同期まで成功。実両配置と全件quality成功。同一snapshotの部分/全件shadow受入待ち |
+| 14-2 | UI移行と必須化 | DONE | v1投影一致、UI不足660→658、再追加/改変拒否済み。登録metadata同期、実両配置、全件quality成功。selection 5c9f6ed9984dで同一入力の独立部分4/4・全件55/55、shadow matched、欠落/不一致0 |
 
 計画段階のTerraレビューは `e2e-ledger-quality-gates-terra-review.md` と計画r2に対応を記録済み。実装では専用DB・既存suite維持・外部bootstrap承認・group選択・結果欠落検出を実際の入口へ接続している。
 
@@ -59,7 +59,7 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 | B4 セキュリティ | OK | local所有権、JWTとservice-role分離、公開artifact許可リスト、CI writer拒否 |
 | B5 性能 | WARN | 訪問深さ/数上限あり。同一snapshotのProgram/列挙/checkpoint再構築は改善余地あり |
 | B6 a11y | OK | role/nameで両配置を実操作し、既存suiteも受入。新しい製品UIは追加していない |
-| B7 テスト | WARN | Windows129 suites/1919件、Linux27/332・3/19・writer2/24成功。全件quality必須55/55成功、部分/全件shadowだけ未了 |
+| B7 テスト | WARN | Windows129 suites/1919件、Linux27/332・3/19・writer2/24成功。全件qualityと部分/全件shadowを受入。Google Fonts応答形状に依存するbuild失敗が1回発生し、同一入力の再試行は成功したが再発要因は残る |
 | B8 規約 | OK | TS/TSX各500行以内、Zod型導出、生成物分離、変更製品UIなし |
 
 ## 改善提案
@@ -69,7 +69,7 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 | # | 対象 | 内容 | 解消条件 |
 | --- | --- | --- | --- |
 | R1（修正済み） | ledgerRefresh/staticGate | 初期移行で登録済み4実行の本文fingerprintを同期できない | Windows/Linux各24件、独立レビュー、実移行再実行、最終qualityのM1再照合も成功 |
-| R2 | Batch14受入 | 両配置・全件・cleanupは成功したが、v2の部分/全件shadow比較が未了 | raw入力の変更をspec1件だけと事前照合し、独立partial/fullの同一snapshot・欠落0を確認する |
+| R2（解消済み） | Batch14受入 | v2の部分/全件shadow比較 | raw変更がspec1件のみと事前照合。partial 7f598182e3f2・full b3400e416abdは同一入力/別ID、shadow matched・欠落/不一致0。各plan4行×2surface、7/28 checkpoints一致と資源回収を独立確認 |
 
 ### 推奨
 
@@ -79,6 +79,7 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 | C2 | prepareChangedVerification.ts、snapshotInventory.ts | 内容一致を証明したsnapshotのinventory/列挙を再利用し、checkpoint重複を減らす。固定入力の独立照合を維持する |
 | C3 | extractors/surfaces.ts | 定数false等の描画されないJSX枝の過剰抽出を抑える。未解決の保守的扱いを維持する |
 | C4 | surfaceMigration.ts | UI不足増加エラーに追加キーの安全な抜粋を示し、修正対象を探しやすくする |
+| C5 | 本番buildのフォント依存 | Google Fontsが返す拡張子なしURLをNext.js 16.1.6が処理できない場合がある。[公式Issue #99114](https://github.com/vercel/next.js/issues/99114)と今回のエラーが一致。Next更新またはフォントのローカル固定を別変更で検証し、単なる再実行を恒久対策としない |
 
 ## 良い点
 
@@ -89,4 +90,4 @@ Batch 1–13は過去の固定HEADでの実受入と現在の実装を照合し�
 
 ## 総合所見
 
-実装の主な責務は揃っている。実装系列25コミットと全件受入は完了した。M4はR2のshadow実証を閉じてから確定する。ユーザーの一時停止指示により追加実行はしていない。GitHub hosted workflow、push/PR、運用DB適用、branch protection変更は今回実行していない。
+全30 Stepsの実装・受入が完了し、必須指摘は0件、推奨改善は5件。実装系列25コミットと共通quality、v2の独立partial/full shadowを確認してM4達成とした。共通qualityと最終runtimeの13環境・68 journalsを独立照合し残留0、初回失敗試行の7環境・36 journalsも別に回収済み。一時コメントは完全復元した。GitHub hosted workflow、push/PR、運用DB適用、branch protection変更は今回実行していない。

@@ -87,3 +87,17 @@ code HEAD `3a40bfebe797f91e64d6ca9c728aedbf962133a8` のquality `22c6926a1f65` �
 28 checkpointの入力が一致し、6 DB環境の資源・認証ファイル残留0、32 journals完了、所有Node/Storybook listener残留0。一時コメントも完全復元した。証跡索引は `test-results/quality/batch14-stop-acceptance.json`。
 
 この選択はfull-requiredへのfallbackで、部分・全件shadowの比較ではない。Git statusでcleanでも、4ファイルのCRLFとHEADのLFとの差をraw入力の変更として検出したためである。終了後に改行以外の一致を確認してHEAD bytesへ戻した。部分選択はchangedPathsが検証用spec1件だけであることを事前に確認してから再受入する。ユーザーの一時停止指示により、ここを区切りにM4未完了で停止した。
+
+## M4の最終受入（2026-11-06）
+
+再開後、runtime HEAD `efb5a374568dc6b926dc845a310e4a63d4c21386` と受入済みcode HEAD `3a40bfe` の差分が文書4件だけであることを確認した。実装変更がないため共通品質前段は上記の成功記録を使い、`pnpm e2e:verify:changed --base HEAD` で独立した部分/全件shadowを受入した。
+
+- selection `5c9f6ed9984d`: 検証用spec1件だけのraw変更からpartialを選択。既知coverage gaps0、shadow matched、選択漏れ・結果不一致0。
+- partial `7f598182e3f2`: 日程確定4/4成功、7 checkpoints一致。
+- full `b3400e416abd`: 必須55/55成功、legacy extras301成功・既存例外11件。計367登録中356成功、28 checkpoints一致。
+- partial/fullは異なるIDで同一input/snapshot。各planの日程確定4行に通常位置と固定バーの2surface検査を含み、実ブラウザ結果とも一致した。
+- 今回の7 DB環境・36 journalsは回収済み。既存quality分を含む13環境・68 journalsを独立照合し、資源・認証ファイル・所有Node・Storybook listener残留0。一時コメント完全復元、audit時のGit cleanも確認した。
+
+最初の試行 `f83629524284` は部分4件成功後、全件側の最後の本番buildでGoogle Fonts由来のエラーになり、shadowはinconclusiveだった。拡張子なしURLのqueryをNext.js 16.1.6が処理できない[既知不具合](https://github.com/vercel/next.js/issues/99114)と一致する。失敗証跡を保存し7環境・36 journalsの回収後、同一コード・snapshot・plan・入力digestで再実行して上記の成功を確認した。この外部依存の再発可能性は残るため、恒久対策としてNext更新またはフォントのローカル固定を別途検証する。
+
+最終証跡は `test-results/quality/batch14-runtime-acceptance.json` と `batch14-verified-artifacts.json`、初回失敗の回収記録は `batch14-shadow-first-residue.json`。正式実装レビューの必須指摘を解消し、全14 Batches・30 Steps / M4完了とした。既存不足や実受入外の範囲は [完了・検証記録](e2e-ledger-resume.md)に記載している。
