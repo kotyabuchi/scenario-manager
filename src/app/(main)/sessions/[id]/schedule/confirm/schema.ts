@@ -7,25 +7,26 @@ const isThirtyMinuteBoundary = (iso: string): boolean => {
   return Number.isFinite(time) && time % THIRTY_MINUTES_MS === 0;
 };
 
-const confirmTimeBlockSchema = z
-  .object({
-    startAt: z.string().datetime({ message: '開始日時が不正です' }),
-    endAt: z.string().datetime({ message: '終了日時が不正です' }),
-  })
-  .refine(
+const timeBlockObjectSchema = z.object({
+  startAt: z.string().datetime({ offset: true, message: '開始日時が不正です' }),
+  endAt: z.string().datetime({ offset: true, message: '終了日時が不正です' }),
+});
+const confirmTimeBlockSchema = timeBlockObjectSchema.check(
+  z.refine<z.infer<typeof timeBlockObjectSchema>>(
     (block) =>
       new Date(block.startAt).getTime() < new Date(block.endAt).getTime(),
     {
       message: '開始日時は終了日時より前である必要があります',
       path: ['endAt'],
     },
-  )
-  .refine(
+  ),
+  z.refine<z.infer<typeof timeBlockObjectSchema>>(
     (block) =>
       isThirtyMinuteBoundary(block.startAt) &&
       isThirtyMinuteBoundary(block.endAt),
     { message: '日時は30分単位で指定してください' },
-  );
+  ),
+);
 
 const hasNoOverlap = (
   timeBlocks: { startAt: string; endAt: string }[],

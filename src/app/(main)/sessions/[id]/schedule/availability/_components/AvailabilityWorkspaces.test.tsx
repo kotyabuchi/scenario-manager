@@ -1,10 +1,11 @@
 import { composeStories } from '@storybook/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
 import * as stories from './AvailabilityWorkspaces.stories';
 
-const { Submit, Confirm } = composeStories(stories);
+const { Submit, Confirm, ConfirmSaveError } = composeStories(stories);
 
 describe('SubmitAvailabilityWorkspace', () => {
   it('カレンダーとパネルが表示される', () => {
@@ -62,12 +63,23 @@ describe('ConfirmAvailabilityWorkspace', () => {
     expect(screen.getByText('1件')).toBeInTheDocument();
   });
 
-  it('確定ボタンが表示される', () => {
-    render(<Confirm />);
+  it('通常位置と固定バーの両方から確定保存を試せる', async () => {
+    const user = userEvent.setup();
+    render(<ConfirmSaveError />);
 
-    expect(
-      screen.getByRole('button', { name: /日程を確定/ }),
-    ).toBeInTheDocument();
+    // 保存遷移後の再描画を待ち、現在のボタンをクリックする。
+    for (const index of [0, 1]) {
+      const button = await waitFor(() => {
+        const buttons = screen.getAllByRole('button', { name: '日程を確定' });
+        expect(buttons).toHaveLength(2);
+        const current = buttons[index];
+        if (!current) throw new Error('確定ボタンがありません');
+        expect(current).toBeEnabled();
+        return current;
+      });
+      await user.click(button);
+      await screen.findAllByText(`保存に失敗しました（${index + 1}回目）`);
+    }
   });
 
   it('見学者注記が表示される', () => {

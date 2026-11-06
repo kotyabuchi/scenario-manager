@@ -33,9 +33,15 @@ export class AvailabilityPage extends BasePage {
     });
 
     // スケジュール入力
-    this.startInput = page.getByLabel('開始');
-    this.endInput = page.getByLabel('終了');
-    this.addButton = page.getByRole('button', { name: '追加' });
+    this.startInput = page
+      .getByLabel('開始', { exact: true })
+      .filter({ visible: true });
+    this.endInput = page
+      .getByLabel('終了', { exact: true })
+      .filter({ visible: true });
+    this.addButton = page
+      .getByRole('button', { name: '追加', exact: true })
+      .filter({ visible: true });
     this.editorErrorAlert = page.getByRole('alert');
 
     // 保存
@@ -43,7 +49,13 @@ export class AvailabilityPage extends BasePage {
     this.successMessage = page.getByText('スケジュールを保存しました。');
 
     // 状態表示
-    this.emptyScheduleMessage = page.getByText('まだスケジュールがありません');
+    this.emptyScheduleMessage = page
+      .getByRole('main')
+      .getByText(
+        'まだスケジュールがありません。右側からコピーするか、上のフォームで追加してください。',
+        { exact: true },
+      )
+      .filter({ visible: true });
     // aria-live="polite" 内のスケジュール件数に限定し strict mode violation を回避
     this.scheduleCountText = page
       .locator('[aria-live="polite"]')

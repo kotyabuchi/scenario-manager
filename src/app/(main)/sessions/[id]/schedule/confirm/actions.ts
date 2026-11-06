@@ -26,31 +26,36 @@ import type { ConfirmScheduleTimeBlocksValues } from './schema';
 export const confirmScheduleTimeBlocksAction = async (
   sessionId: string,
   data: ConfirmScheduleTimeBlocksValues,
-): Promise<Result<ConfirmedScheduleTimeBlockRow[]>> => {
+): Promise<Result<ConfirmedScheduleTimeBlockRow[], Pick<Error, 'message'>>> => {
   try {
     const userId = await getCurrentUserId();
     if (isNil(userId)) {
-      return err(new Error('ログインが必要です'));
+      return err({ message: 'ログインが必要です' });
     }
 
     const hasPermission = await isSessionManager(sessionId, userId);
     if (!hasPermission) {
-      return err(new Error('この操作を行う権限がありません'));
+      return err({ message: 'この操作を行う権限がありません' });
     }
 
     const phasesResult = await getSchedulingPhases(sessionId);
     if (!phasesResult.success) {
-      return err(phasesResult.error);
+      return err({
+        message:
+          phasesResult.error.message === 'セッションが見つかりません'
+            ? 'セッションが見つかりません'
+            : '日程の状態を確認できませんでした。時間を置いて再試行してください',
+      });
     }
     if (!canConfirmScheduleInCurrentPhase(phasesResult.data.sessionPhase)) {
-      return err(new Error('準備中フェーズでのみ日程を確定できます'));
+      return err({ message: '準備中フェーズでのみ日程を確定できます' });
     }
 
     const parsed = confirmScheduleTimeBlocksSchema.safeParse(data);
     if (!parsed.success) {
-      return err(
-        new Error(parsed.error.issues[0]?.message ?? 'バリデーションエラー'),
-      );
+      return err({
+        message: parsed.error.issues[0]?.message ?? 'バリデーションエラー',
+      });
     }
 
     const result = await replaceConfirmedScheduleTimeBlocks(
@@ -59,15 +64,19 @@ export const confirmScheduleTimeBlocksAction = async (
       parsed.data.timeBlocks,
     );
     if (!result.success) {
-      return err(result.error);
+      return err({
+        message: '日程を保存できませんでした。時間を置いて再試行してください',
+      });
     }
 
     revalidatePath(`/sessions/${sessionId}`);
     revalidatePath(`/sessions/${sessionId}/schedule/confirm`);
 
     return ok(result.data);
-  } catch (e) {
-    return err(e instanceof Error ? e : new Error('Unknown error'));
+  } catch {
+    return err({
+      message: '日程を保存できませんでした。時間を置いて再試行してください',
+    });
   }
 };
 

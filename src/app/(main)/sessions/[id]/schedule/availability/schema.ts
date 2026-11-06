@@ -7,12 +7,12 @@ const isThirtyMinuteBoundary = (iso: string): boolean => {
   return Number.isFinite(time) && time % THIRTY_MINUTES_MS === 0;
 };
 
-const availabilityTimeBlockInputSchema = z
-  .object({
-    startAt: z.string().datetime({ message: '開始日時が不正です' }),
-    endAt: z.string().datetime({ message: '終了日時が不正です' }),
-  })
-  .refine(
+const timeBlockObjectSchema = z.object({
+  startAt: z.string().datetime({ offset: true, message: '開始日時が不正です' }),
+  endAt: z.string().datetime({ offset: true, message: '終了日時が不正です' }),
+});
+const availabilityTimeBlockInputSchema = timeBlockObjectSchema.check(
+  z.refine<z.infer<typeof timeBlockObjectSchema>>(
     (timeBlock) =>
       new Date(timeBlock.startAt).getTime() <
       new Date(timeBlock.endAt).getTime(),
@@ -20,13 +20,14 @@ const availabilityTimeBlockInputSchema = z
       message: '開始日時は終了日時より前である必要があります',
       path: ['endAt'],
     },
-  )
-  .refine(
+  ),
+  z.refine<z.infer<typeof timeBlockObjectSchema>>(
     (timeBlock) =>
       isThirtyMinuteBoundary(timeBlock.startAt) &&
       isThirtyMinuteBoundary(timeBlock.endAt),
     { message: '日時は30分単位で指定してください' },
-  );
+  ),
+);
 
 export const saveAvailabilityTimeBlocksSchema = z.object({
   timeBlocks: z
