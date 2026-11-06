@@ -1,3 +1,5 @@
+import { isNil } from 'ramda';
+
 import { loadStorySurfaceContext } from './extractors/surfaceRoots';
 import { assertGitFilePaths } from './gitRecords';
 import {
@@ -10,6 +12,8 @@ import { loadSource } from './source';
 import { isGeneratedLibraryPath } from './sourceFiles';
 import { createStablePackageSystem } from './sourceSnapshotSystem';
 
+import { createHash } from 'node:crypto';
+
 const decodeSource = (bytes: Buffer) => {
   if (bytes[0] === 0xff && bytes[1] === 0xfe)
     return bytes.toString('utf16le', 2);
@@ -18,7 +22,31 @@ const decodeSource = (bytes: Buffer) => {
   return bytes.toString('utf8').replace(/^\uFEFF/, '');
 };
 
-/** 各時点の既存extractorを動かし、旧aliasや削除された依存を別々に保つ。 */
+const snapshotInputDigest = (
+  root: string,
+  files: ReadonlySet<string>,
+  read: (path: string) => Buffer | undefined,
+) => {
+  const hash = createHash('sha256');
+  const length = Buffer.alloc(4);
+  const append = (bytes: Buffer) => {
+    length.writeUInt32BE(bytes.length);
+    hash.update(length).update(bytes);
+  };
+  append(Buffer.from(root));
+  for (const path of [...files].sort()) {
+    const bytes = read(path);
+    if (isNil(bytes)) return undefined;
+    append(Buffer.from(path));
+    append(bytes);
+  }
+  return hash.digest('hex');
+};
+
+/**
+ * 各時点の既存extractorを動かし、旧aliasや削除された依存を別々に保つ。
+ * 同一入力の結果は共有されるため、返却Inventoryは読み取り専用として扱う。
+ */
 export const buildSnapshotInventories = (
   capture: GitSnapshotCapture,
   provenRuntimeInputPaths: readonly string[] = [],
@@ -46,23 +74,36 @@ export const buildSnapshotInventories = (
     generated.set(path, bytes);
   }
   const packages = createStablePackageSystem();
+  const inventoriesByInput = new Map<
+    string,
+    ReturnType<typeof buildInventory>
+  >();
   const build = (revision: GitSnapshotRevision) => {
     const input = getSnapshotFiles(capture, revision);
     input.preload?.();
     const files = new Set([...input.files, ...generated.keys()]);
     if (generated.size) assertGitFilePaths(files);
+    const readBytes = (path: string) => input.read(path) ?? generated.get(path);
+    const digest = snapshotInputDigest(input.root, files, readBytes);
+    // 参照先の欠落を空ファイルと同一視せず、従来の解析に委ねる。
+    if (!isNil(digest)) {
+      const cached = inventoriesByInput.get(digest);
+      if (!isNil(cached)) return cached;
+    }
     const snapshot = {
       files,
       packages: packages.system,
       read: (path: string) => {
-        const bytes = input.read(path) ?? generated.get(path);
+        const bytes = readBytes(path);
         return bytes === undefined ? undefined : decodeSource(bytes);
       },
     };
-    return buildInventory(
+    const inventory = buildInventory(
       loadSource(input.root, snapshot),
       loadStorySurfaceContext(input.root, snapshot),
     );
+    if (!isNil(digest)) inventoriesByInput.set(digest, inventory);
+    return inventory;
   };
   const inventories = {
     base: build('base'),

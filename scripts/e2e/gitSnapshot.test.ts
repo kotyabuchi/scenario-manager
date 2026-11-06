@@ -295,6 +295,21 @@ describe('Git snapshot', { timeout: 30_000 }, () => {
     expect(() => gitTokens(Buffer.from([0xff, 0]))).toThrow();
   });
 
+  it('異なるcommitでも同じtree・index・作業内容から同じInventoryを使う', () => {
+    const { root, write, commit } = fixture();
+    write('tsconfig.json', '{"compilerOptions":{"noLib":true,"types":[]}}');
+    write('src/app/page.ts', 'export default function Page() { return null; }');
+    const base = commit();
+    const head = commit();
+    expect(head).not.toBe(base);
+    const inventories = buildSnapshotInventories(
+      captureGitSnapshot({ root, base, mode: 'local' }),
+    );
+    expect(inventories.head).toBe(inventories.base);
+    expect(inventories.index).toBe(inventories.base);
+    expect(inventories.working).toBe(inventories.base);
+  });
+
   it('削除済みのalias・extendsを復元し、各時点で異なる依存を解決する', () => {
     const { root, write, commit, git } = fixture();
     const config = (adapter: string) =>
