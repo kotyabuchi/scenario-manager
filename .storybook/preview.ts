@@ -1,31 +1,19 @@
 import '../src/app/globals.css';
 
 import { createElement } from 'react';
-import { Noto_Sans_JP } from 'next/font/google';
 import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
 import { AgentationCanvas } from './AgentationCanvas';
 
 import type { Preview } from '@storybook/react';
 
-// Storybook は layout.tsx を通らないため、next/font の CSS 変数が注入されない。
-// アプリと同じ設定でフォントを読み込み、変数を全ストーリーに当てる。
-// （@storybook/nextjs-vite が next/font を変換して実フォントをロードする）
-const notoSansJP = Noto_Sans_JP({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-noto-sans-jp',
-  preload: false,
-});
-
+// globals.css でアプリと同じフォントと CSS 変数を読み込む。
 const preview: Preview = {
   decorators: [
     (Story, context) =>
       createElement(
         'div',
         {
-          className: notoSansJP.variable,
           style: { fontFamily: 'var(--font-noto-sans-jp), sans-serif' },
         },
         createElement(Story),
