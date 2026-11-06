@@ -39,7 +39,7 @@ const manifestDigest = (files: { path: string; sha256: string }[]) =>
 
 // この閉包は静的なPanda設定・プリセットのみ。設定変更時は全件へ戻し、再レビュー後に更新する。
 const REVIEWED_CONFIG_DIGEST =
-  '03f73032e430c11ce22433b55fe27b1c8da08ccac1f0d9ce55b39d3ccc4e042e';
+  'aac1c4bee4f1ec16e7c5d3fdf0112d3d410203ae0b618caf4ac6b52766bd433f';
 const GENERATOR_ROOTS = [
   'panda.config.ts',
   'tsconfig.json',

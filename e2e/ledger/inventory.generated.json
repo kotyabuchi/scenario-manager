@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "extractorVersion": "2",
   "source": {
-    "fingerprint": "185885f251b563b35c2098eb5b4e0a86841ae8c308b4a9ef83d3ea5c3bc181cf",
+    "fingerprint": "18ec5e96518f5cf04c7c64a954899089402d904c8467f95a76d0f6e7d4b11a22",
     "files": [
       {
         "path": "node_modules/.pnpm/@tsconfig+strictest@2.0.8/node_modules/@tsconfig/strictest/tsconfig.json",
@@ -14,7 +14,7 @@
       },
       {
         "path": "package.json",
-        "hash": "bba38e56d19b64d60bd44fc51a9f7b0b682141421922c730058e0c2da2ba46e7"
+        "hash": "5df7064d9191fc67827d88ddb90e90f0651f9985a91814a4b7f6155ac32b12de"
       },
       {
         "path": "src/app/(auth)/auth/callback/route.ts",
@@ -1014,7 +1014,7 @@
       },
       {
         "path": "src/app/layout.tsx",
-        "hash": "90fc5800238f0c9c7192780a8ea53a1941ad91810d4c0c19b1a7701407fb4113"
+        "hash": "889ed2395aa8cd2034cdcc39b53a597a8ac598da5184a5bb9374dcd76b0f4adc"
       },
       {
         "path": "src/app/page.tsx",
@@ -1942,7 +1942,7 @@
       },
       {
         "path": "src/styles/tokens/fonts.ts",
-        "hash": "a340fb1e216558f6740befa53459a5ffdb8460fbf26059f7a467d612e09d69f3"
+        "hash": "522595308c4d13217ade839fde0c0797a5443761a1136691f975ee93537406c7"
       },
       {
         "path": "src/styles/tokens/index.ts",
@@ -8028,7 +8028,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 30,
+        "line": 18,
         "column": 1
       },
       "symbol": "RootLayout",
@@ -61258,7 +61258,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 30,
+        "line": 18,
         "column": 1
       }
     },
@@ -61268,7 +61268,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 4,
+        "line": 3,
         "column": 1
       }
     },
@@ -61278,7 +61278,7 @@
       "kind": "unresolved",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 10,
+        "line": 9,
         "column": 1
       }
     },
@@ -61288,7 +61288,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 12,
+        "line": 11,
         "column": 1
       }
     },
@@ -61298,7 +61298,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 6,
+        "line": 5,
         "column": 1
       }
     },
@@ -61308,7 +61308,7 @@
       "kind": "imports",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 7,
+        "line": 6,
         "column": 1
       }
     },
@@ -79935,7 +79935,7 @@
       "severity": "warning",
       "source": {
         "file": "src/app/layout.tsx",
-        "line": 10,
+        "line": 9,
         "column": 1
       },
       "anchor": {
@@ -83581,7 +83581,7 @@
         "tag": "function:src/components/providers/JotaiProvider.tsx#JotaiProvider",
         "source": {
           "file": "src/app/layout.tsx",
-          "line": 38,
+          "line": 26,
           "column": 9
         },
         "locator": [
@@ -86197,7 +86197,7 @@
         "tag": "function:src/app/_components/DevTools.tsx#DevTools",
         "source": {
           "file": "src/app/layout.tsx",
-          "line": 44,
+          "line": 32,
           "column": 9
         },
         "locator": [

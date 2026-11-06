@@ -1,6 +1,9 @@
+@import "@fontsource-variable/noto-sans-jp/wght.css";
+
 @layer reset, base, tokens, recipes, utilities;
 
 html {
+  --font-noto-sans-jp: "Noto Sans JP Variable";
   scroll-behavior: smooth;
 }
 
