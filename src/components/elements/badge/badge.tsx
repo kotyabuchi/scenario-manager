@@ -1,6 +1,11 @@
-import * as styles from './styles';
+import { Pill, type PillTone } from '../Pill';
 
-export type BadgeVariant = 'success' | 'warning' | 'error' | 'neutral';
+export type BadgeVariant =
+  | 'success'
+  | 'recruiting'
+  | 'warning'
+  | 'error'
+  | 'neutral';
 
 export type BadgeProps = {
   /**
@@ -26,10 +31,19 @@ export type BadgeProps = {
   className?: string;
 };
 
+const toneByVariant: Record<BadgeVariant, PillTone> = {
+  success: 'green',
+  recruiting: 'pink',
+  warning: 'orange',
+  error: 'red',
+  neutral: 'gray',
+};
+
 /**
  * バッジコンポーネント
  *
- * ステータスを視覚的に表示する。
+ * ステータスを視覚的に表示する静的ラベル。共有基盤の {@link Pill} を
+ * 「静的・rounded・ドット付き」プリセットで使う薄いラッパー。
  *
  * @example
  * // 成功ステータス
@@ -46,15 +60,16 @@ export const Badge = ({
   className,
 }: BadgeProps) => {
   return (
-    <div
+    <Pill
+      tone={toneByVariant[variant]}
+      variant="subtle"
+      shape="pill"
+      size="sm"
+      dot={showDot}
+      className={className}
       data-testid="badge"
-      data-variant={variant}
-      className={`${styles.badge({ variant })} ${className ?? ''}`}
     >
-      {showDot && (
-        <div data-testid="badge-dot" className={styles.badgeDot({ variant })} />
-      )}
-      <span className={styles.badgeText({ variant })}>{children}</span>
-    </div>
+      {children}
+    </Pill>
   );
 };

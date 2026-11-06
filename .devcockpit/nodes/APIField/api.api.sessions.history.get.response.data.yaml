@@ -1,0 +1,12 @@
+id: api.api.sessions.history.get.response.data
+kind: APIField
+name: response
+description: 検索結果、件数、またはエラーを返す。
+parentId: api.api.sessions.history.get
+properties:
+  location: response
+  implementation:
+    - file: src/app/api/sessions/history/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

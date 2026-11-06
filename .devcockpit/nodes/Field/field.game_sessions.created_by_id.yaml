@@ -1,0 +1,13 @@
+id: field.game_sessions.created_by_id
+kind: Field
+name: created_by_id
+description: public.game_sessions.created_by_id
+parentId: entity.game_sessions
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GM参加申請承認画面 - シナプレ管理くん</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059568",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                    },
+                    fontFamily: {
+                        "display": ["Noto Serif JP", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        
+        /* Smooth transitions */
+        .card-transition {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-transition:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+<!-- Navigation Bar -->
+<nav class="bg-white dark:bg-[#163028] border-b border-gray-100 dark:border-gray-800 shadow-sm sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center">
+<span class="material-icons-round text-primary text-3xl mr-2">auto_stories</span>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white tracking-tight">シナプレ管理くん</h1>
+</div>
+<div class="flex items-center space-x-4">
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-300">
+<span class="material-icons-round">notifications</span>
+</button>
+<div class="flex items-center space-x-2">
+<img alt="GM Avatar" class="h-8 w-8 rounded-full border border-gray-200" data-alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_Z5I3JeowN5pGhpYc05lDd-ZM02vcCEgJrQIw21KHOVtWl4JV62OkEgQA6ho9U-0TegOqjqLQKkhaUgyxzZpYpgFIVRh7C4vaFeP_fx5jLG-bXC3CxFrh7HrYGFdr7Mpq_LgNFBmaO15rnkSjltLVpaF9TLRMabkqAv21gD9v47ZPv2XmG5DGDyPjs4IVtYWm-mFCQFyz6gbQvEmI0l5WwDEEfljSvLCjuDnCkxJKbFZiAeEJ-qUHa-YY26tTFmeS5YWeq_ks84k"/>
+<span class="text-sm font-medium hidden sm:block">GM Tanaka</span>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+<!-- Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="flex mb-6 text-sm text-gray-500 dark:text-gray-400">
+<ol class="inline-flex items-center space-x-1 md:space-x-3">
+<li class="inline-flex items-center">
+<a class="inline-flex items-center hover:text-primary transition-colors" href="#">
+<span class="material-icons-round text-lg mr-1">home</span>
+                        ホーム
+                    </a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-icons-round text-lg text-gray-300">chevron_right</span>
+<a class="ml-1 md:ml-2 hover:text-primary transition-colors" href="#">マイセッション</a>
+</div>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-icons-round text-lg text-gray-300">chevron_right</span>
+<a class="ml-1 md:ml-2 hover:text-primary transition-colors" href="#">古代遺跡の呼び声</a>
+</div>
+</li>
+<li aria-current="page">
+<div class="flex items-center">
+<span class="material-icons-round text-lg text-gray-300">chevron_right</span>
+<span class="ml-1 md:ml-2 font-medium text-primary">参加申請一覧</span>
+</div>
+</li>
+</ol>
+</nav>
+<!-- Header Section -->
+<div class="md:flex md:items-end md:justify-between mb-8">
+<div>
+<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">参加申請承認</h2>
+<div class="flex items-center text-gray-600 dark:text-gray-300">
+<span class="material-icons-round text-primary mr-1 text-sm">event_note</span>
+<span class="mr-4">セッション: <strong>古代遺跡の呼び声</strong></span>
+<span class="bg-primary/10 text-primary px-3 py-0.5 rounded-full text-sm font-medium">募集中</span>
+</div>
+</div>
+<div class="mt-4 md:mt-0 flex flex-col items-end">
+<div class="text-sm text-gray-500 dark:text-gray-400 mb-1">現在の参加予定者数</div>
+<div class="flex items-center">
+<span class="text-3xl font-bold text-primary mr-1">2</span>
+<span class="text-lg text-gray-400">/ 4名</span>
+</div>
+<div class="w-32 h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 50%"></div>
+</div>
+</div>
+</div>
+<!-- Filter/Search Bar (Optional enhancement) -->
+<div class="bg-white dark:bg-[#163028] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+<div class="relative w-full sm:w-64">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons-round text-gray-400">search</span>
+</span>
+<input class="pl-10 block w-full rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-background-dark text-sm focus:border-primary focus:ring-primary dark:text-white" placeholder="名前やIDで検索..." type="text"/>
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<select class="block w-full sm:w-auto rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-background-dark text-sm focus:border-primary focus:ring-primary dark:text-white py-2 pl-3 pr-8">
+<option>全ての申請</option>
+<option>未確認のみ</option>
+<option>保留中のみ</option>
+</select>
+<button class="flex items-center justify-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-icons-round text-sm mr-1">filter_list</span>
+                    フィルター
+                </button>
+</div>
+</div>
+<!-- Cards Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Card 1: Main Example -->
+<div class="bg-white dark:bg-[#163028] rounded-xl shadow-md border border-gray-100 dark:border-gray-800 p-6 card-transition relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary/30 group-hover:bg-primary transition-colors"></div>
+<div class="flex flex-col h-full">
+<!-- Card Header -->
+<div class="flex items-start justify-between mb-4 pl-3">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="h-12 w-12 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm" data-alt="Suzuki Hanako Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABCiXne3l41PGta-t6PK5YbvTnzpyvDnT_xA7Jzna_zwbj5hleuKQKG3plWEk06TwG7S6C3tNJ9xM4hBb_AYhV-QxVUaD_hEoqE9V0uDOxIQPgAXX_Q-xb21H18EowpA0e1lrBC5chJ3bfadv_LHYENRtB2LomUWbZSuozs8feexVDUUdMJkGYbivGlqqx5vqpkfgydHxhCLseVOEIeyMdN6keuXnft-awbYrEmCJI_iB5BsBX3d0oiDabCHEGuOR-KRpezZAyzHc"/>
+<span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-[#163028] bg-green-400"></span>
+</div>
+<div>
+<div class="flex items-baseline gap-2 flex-wrap">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">鈴木 花子</h3>
+<span class="text-sm text-gray-500 dark:text-gray-400 font-mono">@suzuki_hanako</span>
+</div>
+<div class="mt-1">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#D1F5E3] text-[#074A33] dark:bg-primary/20 dark:text-primary-100">
+<span class="material-icons-round text-[10px] mr-1">person</span>
+                                        プレイヤーとして参加希望
+                                    </span>
+</div>
+</div>
+</div>
+<span class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">2時間前</span>
+</div>
+<!-- Stats Row -->
+<div class="flex items-center gap-4 mb-5 pl-3 text-sm text-gray-600 dark:text-gray-300 border-t border-b border-gray-50 dark:border-gray-800 py-3">
+<div class="flex items-center">
+<span class="material-icons-round text-gray-400 text-base mr-1">history_edu</span>
+<span>セッション参加: <span class="font-semibold text-gray-900 dark:text-white">3</span> 回</span>
+</div>
+<div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
+<div class="flex items-center">
+<span class="material-icons-round text-gray-400 text-base mr-1">school</span>
+<span>GM経験: <span class="font-semibold text-gray-900 dark:text-white">0</span> 回</span>
+</div>
+</div>
+<!-- Quote Box -->
+<div class="pl-3 mb-6 flex-grow">
+<div class="bg-[#F6F7F7] dark:bg-background-dark/50 border-l-4 border-primary rounded-r-lg p-4 relative">
+<span class="material-icons-round absolute top-2 right-2 text-gray-300 dark:text-gray-600 text-xl">format_quote</span>
+<p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">
+                                よろしくお願いします！CoC7版は初心者です。<br/>
+                                ルルブは所持していますが、どどんとふの使い方がまだ少し不安です。ご指導いただければ幸いです。精一杯楽しみます！
+                            </p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="pl-3 flex justify-end gap-3 mt-auto">
+<button class="px-4 py-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-900/20 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            拒否する
+                        </button>
+<button class="px-4 py-2 rounded-lg bg-primary hover:bg-[#048059] text-white shadow-sm hover:shadow text-sm font-medium transition-all flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+<span class="material-icons-round text-sm mr-1">check</span>
+                            承認する
+                        </button>
+</div>
+</div>
+</div>
+<!-- Card 2: Experienced Player -->
+<div class="bg-white dark:bg-[#163028] rounded-xl shadow-md border border-gray-100 dark:border-gray-800 p-6 card-transition relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary/30 group-hover:bg-primary transition-colors"></div>
+<div class="flex flex-col h-full">
+<div class="flex items-start justify-between mb-4 pl-3">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="h-12 w-12 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm" data-alt="Sato Kenji Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjzOx2TgzfWGvjsFyyjaB5M7LbfYj_WxaMHd16LGgzmgGyJLLLwEzpW2iG1GqqrnGOo5QcWR946MCMJ4-PLj2hYQ9fqBbDI_oFSeWTCg64jaS3cNUYTwa-KgkBotqQWTJRMivs0qX3PsO7SmN9iEKS30DthBlIP7oYiJ_fmGhgP9srynhKDizxnLe62dRbhkohQoGBmkQCBW0Nspb6PCMj7k6XWCo0XJtGhy2fKtI0aB2zpo-WRVeRuo9kF3_4tVtF-JzqT5vaR_E"/>
+<span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-[#163028] bg-gray-400"></span>
+</div>
+<div>
+<div class="flex items-baseline gap-2 flex-wrap">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">佐藤 健二</h3>
+<span class="text-sm text-gray-500 dark:text-gray-400 font-mono">@satoken_trpg</span>
+</div>
+<div class="mt-1">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#D1F5E3] text-[#074A33] dark:bg-primary/20 dark:text-primary-100">
+<span class="material-icons-round text-[10px] mr-1">person</span>
+                                        プレイヤーとして参加希望
+                                    </span>
+</div>
+</div>
+</div>
+<span class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">昨日</span>
+</div>
+<div class="flex items-center gap-4 mb-5 pl-3 text-sm text-gray-600 dark:text-gray-300 border-t border-b border-gray-50 dark:border-gray-800 py-3">
+<div class="flex items-center">
+<span class="material-icons-round text-gray-400 text-base mr-1">history_edu</span>
+<span>セッション参加: <span class="font-semibold text-gray-900 dark:text-white">42</span> 回</span>
+</div>
+<div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
+<div class="flex items-center">
+<span class="material-icons-round text-gray-400 text-base mr-1">school</span>
+<span>GM経験: <span class="font-semibold text-gray-900 dark:text-white">15</span> 回</span>
+</div>
+</div>
+<div class="pl-3 mb-6 flex-grow">
+<div class="bg-[#F6F7F7] dark:bg-background-dark/50 border-l-4 border-primary rounded-r-lg p-4 relative">
+<span class="material-icons-round absolute top-2 right-2 text-gray-300 dark:text-gray-600 text-xl">format_quote</span>
+<p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">
+                                今回のシナリオはずっと回ってみたいと思っていました！<br/>
+                                ハンドアウト2希望です。探索重視のRPでいきたいと考えています。よろしくお願いします。
+                            </p>
+</div>
+</div>
+<div class="pl-3 flex justify-end gap-3 mt-auto">
+<button class="px-4 py-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-900/20 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            拒否する
+                        </button>
+<button class="px-4 py-2 rounded-lg bg-primary hover:bg-[#048059] text-white shadow-sm hover:shadow text-sm font-medium transition-all flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+<span class="material-icons-round text-sm mr-1">check</span>
+                            承認する
+                        </button>
+</div>
+</div>
+</div>
+<!-- Card 3: New Applicant -->
+<div class="bg-white dark:bg-[#163028] rounded-xl shadow-md border border-gray-100 dark:border-gray-800 p-6 card-transition relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary/30 group-hover:bg-primary transition-colors"></div>
+<div class="flex flex-col h-full">
+<div class="flex items-start justify-between mb-4 pl-3">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="h-12 w-12 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm" data-alt="Yamada Emi Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzIsCH2-sM5SshIoNjkCjuYMfgieHw9BoEkddy6n90-uIJgZS2UrfDS7_3RJEILl34SgW7LBgRmOZ5fqnbVRo9aZMCrf1mimU0Do4LPtXKu8BceekgyQplggCYUiRomJTysxpc7EYw_80g4pdsdTWGALR4JRAsrIkWMuHmWVz4JujaDIXoAH9yBqUr-y7fH__9_ciQQqOF57Fx7HJ1xhEOpBT01mpAaLq5jF2AGYKBPuRiJkX3r7vY892UJ2-B8FCM43F26_NneUg"/>
+<span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-[#163028] bg-green-400"></span>
+</div>
+<div>
+<div class="flex items-baseline gap-2 flex-wrap">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">山田 エミ</h3>
+<span class="text-sm text-gray-500 dark:text-gray-400 font-mono">@emi_yamada</span>
+</div>
+<div class="mt-1">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#D1F5E3] text-[#074A33] dark:bg-primary/20 dark:text-primary-100">
+<span class="material-icons-round text-[10px] mr-1">person</span>
+                                        プレイヤーとして参加希望
+                                    </span>
+</div>
+</div>
+</div>
+<span class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">3日前</span>
+</div>
+<div class="flex items-center gap-4 mb-5 pl-3 text-sm text-gray-600 dark:text-gray-300 border-t border-b border-gray-50 dark:border-gray-800 py-3">
+<div class="flex items-center">
+<span class="material-icons-round text-gray-400 text-base mr-1">history_edu</span>
+<span>セッション参加: <span class="font-semibold text-gray-900 dark:text-white">12</span> 回</span>
+</div>
+<div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
+<div class="flex items-center">
+<span class="material-icons-round text-gray-400 text-base mr-1">school</span>
+<span>GM経験: <span class="font-semibold text-gray-900 dark:text-white">2</span> 回</span>
+</div>
+</div>
+<div class="pl-3 mb-6 flex-grow">
+<div class="bg-[#F6F7F7] dark:bg-background-dark/50 border-l-4 border-primary rounded-r-lg p-4 relative">
+<span class="material-icons-round absolute top-2 right-2 text-gray-300 dark:text-gray-600 text-xl">format_quote</span>
+<p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">
+                                初めまして！Twitterの募集を見て参りました。<br/>
+                                シリアスな展開が好きです。日程は基本的に合わせられます。
+                            </p>
+</div>
+</div>
+<div class="pl-3 flex justify-end gap-3 mt-auto">
+<button class="px-4 py-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-900/20 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            拒否する
+                        </button>
+<button class="px-4 py-2 rounded-lg bg-primary hover:bg-[#048059] text-white shadow-sm hover:shadow text-sm font-medium transition-all flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+<span class="material-icons-round text-sm mr-1">check</span>
+                            承認する
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-8 flex justify-center">
+<nav aria-label="Pagination" class="inline-flex rounded-md shadow-sm isolate">
+<a class="relative inline-flex items-center rounded-l-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#163028] px-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20" href="#">
+<span class="sr-only">Previous</span>
+<span class="material-icons-round text-lg">chevron_left</span>
+</a>
+<a aria-current="page" class="relative z-10 inline-flex items-center border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary focus:z-20" href="#">1</a>
+<a class="relative inline-flex items-center border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#163028] px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20" href="#">2</a>
+<a class="relative inline-flex items-center border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#163028] px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20" href="#">3</a>
+<a class="relative inline-flex items-center rounded-r-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#163028] px-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20" href="#">
+<span class="sr-only">Next</span>
+<span class="material-icons-round text-lg">chevron_right</span>
+</a>
+</nav>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-[#163028] border-t border-gray-100 dark:border-gray-800 mt-auto">
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+<p class="text-sm text-gray-400 dark:text-gray-500">© 2023 Shinapre Kanri-kun. All rights reserved.</p>
+<div class="flex space-x-4">
+<a class="text-gray-400 hover:text-primary transition-colors" href="#">利用規約</a>
+<a class="text-gray-400 hover:text-primary transition-colors" href="#">プライバシー</a>
+</div>
+</div>
+</footer>
+</body></html>

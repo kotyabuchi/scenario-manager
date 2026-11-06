@@ -1,0 +1,11 @@
+id: entity.feedback_comments
+kind: Entity
+name: feedback_comments
+description: Supabase public.feedback_comments テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

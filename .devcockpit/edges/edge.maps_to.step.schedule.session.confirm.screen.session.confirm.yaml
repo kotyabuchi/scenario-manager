@@ -1,0 +1,6 @@
+id: edge.maps_to.step.schedule.session.confirm.screen.session.confirm
+kind: maps_to
+source: step.schedule.session.confirm
+target: screen.session.confirm
+label: ""
+properties: {}

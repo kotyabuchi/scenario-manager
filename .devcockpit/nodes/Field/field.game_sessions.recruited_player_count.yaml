@@ -1,0 +1,13 @@
+id: field.game_sessions.recruited_player_count
+kind: Field
+name: recruited_player_count
+description: public.game_sessions.recruited_player_count
+parentId: entity.game_sessions
+properties:
+  dataType: number | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

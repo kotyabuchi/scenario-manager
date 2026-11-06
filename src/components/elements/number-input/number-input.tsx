@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, type WheelEvent } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   NumberInput as ArkNumberInput,
   type NumberInputRootProps,
@@ -17,9 +17,10 @@ import * as styles from './styles';
  */
 const NumberInputControl = () => {
   const context = useNumberInputContext();
+  const controlRef = useRef<HTMLDivElement | null>(null);
 
   const handleWheel = useCallback(
-    (e: WheelEvent<HTMLDivElement>) => {
+    (e: WheelEvent) => {
       e.preventDefault();
       if (e.deltaY < 0) {
         context.increment();
@@ -30,10 +31,19 @@ const NumberInputControl = () => {
     [context],
   );
 
+  useEffect(() => {
+    const node = controlRef.current;
+    if (!node) return;
+    node.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      node.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
+
   return (
     <ArkNumberInput.Control
+      ref={controlRef}
       className={styles.numberInput_control}
-      onWheel={handleWheel}
     >
       <ArkNumberInput.IncrementTrigger
         className={`${styles.numberInput_button} ${styles.numberInput_incrementButton}`}
@@ -70,6 +80,8 @@ type NumberInputProps = {
   id?: string;
   /** 入力要素の名前 */
   name?: string;
+  /** 入力要素のアクセシブル名（可視ラベルが無い場合に指定） */
+  'aria-label'?: string;
 } & Omit<NumberInputRootProps, 'value' | 'onValueChange'>;
 
 /**
@@ -97,6 +109,7 @@ export const NumberInput = ({
   disabled,
   id,
   name,
+  'aria-label': ariaLabel,
   ...rest
 }: NumberInputProps) => {
   return (
@@ -119,6 +132,7 @@ export const NumberInput = ({
         <ArkNumberInput.Input
           id={id}
           name={name}
+          aria-label={ariaLabel}
           placeholder={placeholder}
           className={styles.numberInput_input}
         />

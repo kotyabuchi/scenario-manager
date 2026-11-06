@@ -1,0 +1,12 @@
+id: relation.game_schedule_time_blocks.created_by
+kind: Relation
+name: created_by → users.user_id
+description: public.game_schedule_time_blocks.created_by は public.users.user_id を参照する。
+parentId: entity.game_schedule_time_blocks
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

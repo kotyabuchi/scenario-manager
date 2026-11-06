@@ -1,0 +1,6 @@
+id: edge.uses.entity.session.availability.time.blocks.entity.users
+kind: uses
+source: entity.session_availability_time_blocks
+target: entity.users
+label: user_id
+properties: {}

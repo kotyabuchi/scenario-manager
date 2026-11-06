@@ -1,0 +1,13 @@
+id: field.session_availability_time_blocks.end_at
+kind: Field
+name: end_at
+description: public.session_availability_time_blocks.end_at
+parentId: entity.session_availability_time_blocks
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

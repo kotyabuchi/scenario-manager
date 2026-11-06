@@ -1,0 +1,6 @@
+id: edge.maps_to.step.create.scenario.choose.screen.scenario.new
+kind: maps_to
+source: step.create.scenario.choose
+target: screen.scenario.new
+label: ""
+properties: {}

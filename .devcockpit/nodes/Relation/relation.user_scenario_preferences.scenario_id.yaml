@@ -1,0 +1,13 @@
+id: relation.user_scenario_preferences.scenario_id
+kind: Relation
+name: scenario_id → scenarios.scenario_id
+description: public.user_scenario_preferences.scenario_id は
+  public.scenarios.scenario_id を参照する。
+parentId: entity.user_scenario_preferences
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

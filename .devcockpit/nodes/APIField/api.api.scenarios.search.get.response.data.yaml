@@ -1,0 +1,12 @@
+id: api.api.scenarios.search.get.response.data
+kind: APIField
+name: response
+description: 検索結果、件数、またはエラーを返す。
+parentId: api.api.scenarios.search.get
+properties:
+  location: response
+  implementation:
+    - file: src/app/api/scenarios/search/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

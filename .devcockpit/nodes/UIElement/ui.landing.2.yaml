@@ -1,0 +1,11 @@
+id: ui.landing.2
+kind: UIElement
+name: Discord ログイン
+description: ランディングの構成要素。
+parentId: screen.landing
+properties:
+  implementation:
+    - file: src/app/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.profile.screen.user.detail
+kind: maps_to
+source: requirement.profile
+target: screen.user.detail
+label: ""
+properties: {}

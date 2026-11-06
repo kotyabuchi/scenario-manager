@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="" lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>日程回答画面 - シナプレ管理くん</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059568",
+                        "primary-hover": "#047a55",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#0f231d",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a332d",
+                        "neutral-bg": "#EAEBED",
+                        "neutral-bg-dark": "#1e3a32",
+                    },
+                    fontFamily: {
+                        "display": ["Noto Serif JP", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.radio-custom:checked + div {
+            border-color: currentColor;
+            background-color: currentColor;
+            color: white;
+        }
+        .radio-custom:focus + div {
+            ring: 2px;
+            ring-offset: 2px;
+            ring-color: #059568;
+        }.row-selectable {
+            transition: background-color 0.2s ease;
+        }
+        .row-selectable:hover {
+            background-color: rgba(5, 149, 104, 0.05);
+        }
+        body {
+            font-family: 'Noto Serif JP', serif;
+        }.avatar-group {
+            display: flex;
+            align-items: center;
+        }
+        .avatar-group .avatar {
+            margin-left: -0.5rem;
+            border: 2px solid white;
+            transition: transform 0.1s;
+        }
+        .dark .avatar-group .avatar {
+            border-color: #1a332d;}
+        .avatar-group .avatar:first-child {
+            margin-left: 0;
+        }
+        .avatar-group .avatar:hover {
+            z-index: 10;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-4 text-slate-800 dark:text-slate-100 font-display bg-[url('https://images.unsplash.com/photo-1629814498774-4b53112d6274?q=80&amp;w=2574&amp;auto=format&amp;fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed relative">
+<div class="absolute inset-0 bg-background-light/90 dark:bg-background-dark/95 backdrop-blur-sm z-0"></div>
+<main class="relative z-10 w-full max-w-[800px] bg-surface-light dark:bg-surface-dark rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-primary/20">
+<header class="p-8 pb-6 text-center border-b border-slate-100 dark:border-primary/10">
+<div class="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-primary/10 text-primary">
+<span class="material-icons-round text-2xl">event_available</span>
+</div>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">日程調整に回答してください</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs mr-2 align-middle">シナリオ</span>
+                狂気山脈 - <span class="opacity-75">GM: 田中太郎</span>
+</p>
+</header>
+<form class="p-6 sm:p-8 space-y-8" onsubmit="event.preventDefault();">
+<div class="space-y-4">
+<div class="hidden sm:flex items-center justify-between px-4 pb-2 text-sm font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+<div class="w-1/4">候補日時</div>
+<div class="flex-1 px-4">みんなの回答状況</div>
+<div class="w-[200px] flex justify-between text-center">
+<span class="w-12 text-primary">○</span>
+<span class="w-12 text-amber-500">△</span>
+<span class="w-12 text-slate-400">×</span>
+</div>
+</div>
+<div class="group row-selectable rounded-lg p-3 -mx-3 flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-primary/5 gap-4 sm:gap-0">
+<div class="w-full sm:w-1/4 pr-2 flex justify-between sm:block items-center">
+<div>
+<div class="font-bold text-slate-800 dark:text-slate-200 text-lg">1/11 <span class="text-sm font-normal text-slate-500">(土)</span></div>
+<div class="text-xs text-slate-400">21:00 ~ 24:00</div>
+</div>
+<div class="sm:hidden text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">他3人が回答済</div>
+</div>
+<div class="w-full sm:flex-1 sm:px-4 flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-primary text-sm">circle</span>
+<div class="avatar-group">
+<div class="avatar w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold" title="鈴木">鈴</div>
+<div class="avatar w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-xs font-bold" title="佐藤">佐</div>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-icons-round text-amber-500 text-sm">change_history</span>
+<span class="text-xs text-slate-400">-</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-slate-400 text-sm">close</span>
+<div class="avatar-group">
+<div class="avatar w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold" title="高橋">高</div>
+</div>
+</div>
+</div>
+<div class="w-full sm:w-[200px] flex justify-between mx-auto relative z-10 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-1" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-primary peer-checked:bg-primary/10 peer-checked:font-bold border border-transparent peer-checked:border-primary/20 hover:bg-primary/5">
+<span class="material-icons-round text-xl">circle</span>
+</div>
+</label>
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-1" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-amber-500 peer-checked:bg-amber-500/10 peer-checked:font-bold border border-transparent peer-checked:border-amber-500/20 hover:bg-amber-500/5">
+<span class="material-icons-round text-xl">change_history</span>
+</div>
+</label>
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-1" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-rose-500 peer-checked:bg-rose-500/10 peer-checked:font-bold border border-transparent peer-checked:border-rose-500/20 hover:bg-rose-500/5">
+<span class="material-icons-round text-xl">close</span>
+</div>
+</label>
+</div>
+</div>
+<div class="group row-selectable bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-lg p-3 -mx-3 flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer gap-4 sm:gap-0">
+<div class="w-full sm:w-1/4 pr-2 flex justify-between sm:block items-center">
+<div>
+<div class="font-bold text-slate-800 dark:text-slate-200 text-lg">1/18 <span class="text-sm font-normal text-slate-500">(土)</span></div>
+<div class="text-xs text-slate-400">21:00 ~ 24:00</div>
+</div>
+<div class="sm:hidden text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">全員OK!</div>
+</div>
+<div class="w-full sm:flex-1 sm:px-4 flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-primary text-sm">circle</span>
+<div class="avatar-group">
+<div class="avatar w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold" title="鈴木">鈴</div>
+<div class="avatar w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-xs font-bold" title="佐藤">佐</div>
+<div class="avatar w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold" title="高橋">高</div>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-30">
+<span class="material-icons-round text-amber-500 text-sm">change_history</span>
+</div>
+<div class="flex items-center gap-2 opacity-30">
+<span class="material-icons-round text-slate-400 text-sm">close</span>
+</div>
+</div>
+<div class="w-full sm:w-[200px] flex justify-between mx-auto relative z-10 pt-2 sm:pt-0 border-t sm:border-t-0 border-primary/10">
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input checked="" class="peer sr-only" name="date-2" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-primary peer-checked:bg-primary/10 peer-checked:font-bold border border-transparent peer-checked:border-primary/20 hover:bg-primary/5">
+<span class="material-icons-round text-xl">circle</span>
+</div>
+</label>
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-2" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-amber-500 peer-checked:bg-amber-500/10 peer-checked:font-bold border border-transparent peer-checked:border-amber-500/20 hover:bg-amber-500/5">
+<span class="material-icons-round text-xl">change_history</span>
+</div>
+</label>
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-2" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-rose-500 peer-checked:bg-rose-500/10 peer-checked:font-bold border border-transparent peer-checked:border-rose-500/20 hover:bg-rose-500/5">
+<span class="material-icons-round text-xl">close</span>
+</div>
+</label>
+</div>
+</div>
+<div class="group row-selectable rounded-lg p-3 -mx-3 flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-primary/5 gap-4 sm:gap-0">
+<div class="w-full sm:w-1/4 pr-2 flex justify-between sm:block items-center">
+<div>
+<div class="font-bold text-slate-800 dark:text-slate-200 text-lg">1/25 <span class="text-sm font-normal text-slate-500">(土)</span></div>
+<div class="text-xs text-slate-400">21:00 ~ 24:00</div>
+</div>
+<div class="sm:hidden text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">2人NG</div>
+</div>
+<div class="w-full sm:flex-1 sm:px-4 flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-primary text-sm">circle</span>
+<div class="avatar-group">
+<div class="avatar w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold" title="鈴木">鈴</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-amber-500 text-sm">change_history</span>
+<div class="avatar-group">
+<span class="text-xs text-slate-400 ml-1">-</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-slate-400 text-sm">close</span>
+<div class="avatar-group">
+<div class="avatar w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-xs font-bold" title="佐藤">佐</div>
+<div class="avatar w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold" title="高橋">高</div>
+</div>
+</div>
+</div>
+<div class="w-full sm:w-[200px] flex justify-between mx-auto relative z-10 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-3" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-primary peer-checked:bg-primary/10 peer-checked:font-bold border border-transparent peer-checked:border-primary/20 hover:bg-primary/5">
+<span class="material-icons-round text-xl">circle</span>
+</div>
+</label>
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-3" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-amber-500 peer-checked:bg-amber-500/10 peer-checked:font-bold border border-transparent peer-checked:border-amber-500/20 hover:bg-amber-500/5">
+<span class="material-icons-round text-xl">change_history</span>
+</div>
+</label>
+<label class="cursor-pointer relative group/opt flex-1 flex justify-center">
+<input class="peer sr-only" name="date-3" type="radio"/>
+<div class="w-12 h-10 flex items-center justify-center rounded transition-all duration-200 text-slate-300 peer-checked:text-rose-500 peer-checked:bg-rose-500/10 peer-checked:font-bold border border-transparent peer-checked:border-rose-500/20 hover:bg-rose-500/5">
+<span class="material-icons-round text-xl">close</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<div class="pt-2">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2" for="comment">
+                    コメント <span class="text-xs font-normal text-slate-400 ml-1">(任意)</span>
+</label>
+<textarea class="w-full bg-neutral-bg dark:bg-neutral-bg-dark text-slate-800 dark:text-slate-200 border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none resize-none placeholder-slate-400" id="comment" name="comment" placeholder="何か伝えたいことがあれば入力してください..." rows="2"></textarea>
+</div>
+<div class="pt-4 border-t border-slate-100 dark:border-primary/10">
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-4 rounded-lg shadow-md shadow-primary/20 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2" type="submit">
+<span class="material-icons-round text-sm">send</span>
+                    回答を送信
+                </button>
+<p class="text-xs text-center text-slate-400 mt-4">
+                    後から回答を変更することも可能です。
+                </p>
+</div>
+</form>
+</main>
+<div class="fixed top-10 left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl z-0 pointer-events-none mix-blend-multiply dark:mix-blend-screen opacity-50"></div>
+<div class="fixed bottom-10 right-10 w-80 h-80 bg-emerald-300/20 dark:bg-emerald-800/20 rounded-full blur-3xl z-0 pointer-events-none mix-blend-multiply dark:mix-blend-screen opacity-50"></div>
+
+</body></html>

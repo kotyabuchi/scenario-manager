@@ -1,0 +1,11 @@
+id: step.schedule.session.open
+kind: FlowStep
+name: セッションから日程調整を開く
+description: セッションから日程調整を開く
+parentId: flow.schedule.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

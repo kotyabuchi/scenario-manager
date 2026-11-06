@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { isNil } from 'ramda';
 
-import { getUserByDiscordId, updateUserProfile } from './adapter';
+import { getUserByAuthUserId, updateUserProfile } from './adapter';
 
 import { profileFormSchema } from '@/components/blocks/Profile';
 import { createClient } from '@/lib/supabase/server';
@@ -29,7 +29,7 @@ export const updateProfile = async (
   }
 
   // ユーザーを取得
-  const userResult = await getUserByDiscordId(authUser.id);
+  const userResult = await getUserByAuthUserId(authUser.id);
   if (!userResult.success) {
     return err(userResult.error);
   }

@@ -1,0 +1,6 @@
+id: edge.calls.screen.sessions.api.api.sessions.history.get
+kind: calls
+source: screen.sessions
+target: api.api.sessions.history.get
+label: ""
+properties: {}

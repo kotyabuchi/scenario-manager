@@ -1,0 +1,12 @@
+id: api.auth.callback.get.query.code
+kind: APIField
+name: code
+description: code クエリパラメータ。
+parentId: api.auth.callback.get
+properties:
+  location: query
+  implementation:
+    - file: src/app/(auth)/auth/callback/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

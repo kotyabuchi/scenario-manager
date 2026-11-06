@@ -4,6 +4,7 @@ export const content = css({
   bg: 'dialog.bg',
   borderRadius: 'xl',
   boxShadow: 'dialog.default',
+  outline: 'none',
   maxW: '[400px]',
   w: 'full',
   _open: {
@@ -27,23 +28,6 @@ export const title = css({
   fontSize: 'md',
   fontWeight: 'bold',
   color: 'dialog.title',
-});
-
-export const closeButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  w: '8',
-  h: '8',
-  borderRadius: 'md',
-  color: 'dialog.close',
-  cursor: 'pointer',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    bg: 'gray.100',
-    color: 'text.title',
-  },
 });
 
 export const nav = css({

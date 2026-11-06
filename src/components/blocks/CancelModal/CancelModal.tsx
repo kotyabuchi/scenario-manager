@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { WarningCircle } from '@phosphor-icons/react/ssr';
 
+import { type CancelReasonValues, cancelReasonSchema } from './schema';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 
 type CancelType =
   | 'cancel_session'
@@ -38,7 +41,7 @@ const getTitle = (type?: CancelType): string => {
 const getConfirmButtonText = (type?: CancelType): string => {
   switch (type) {
     case 'cancel_session':
-      return 'キャンセルする';
+      return 'セッションをキャンセルする';
     case 'withdraw_application':
       return '辞退する';
     case 'kick_participant':
@@ -70,29 +73,31 @@ export const CancelModal = ({
   participantName,
   isSubmitting = false,
 }: CancelModalProps) => {
-  const [reason, setReason] = useState('');
+  const { register, handleSubmit, reset } = useForm<CancelReasonValues>({
+    resolver: zodResolver(cancelReasonSchema),
+    defaultValues: { reason: '' },
+  });
 
   const handleClose = () => {
-    setReason('');
     onClose?.();
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = handleSubmit(({ reason }) => {
     onConfirm?.({ reason });
-  };
+  });
 
   const footer = (
     <>
-      <Button type="button" variant="ghost" onClick={handleClose}>
-        戻る
-      </Button>
+      <ModalDismissButton onClick={handleClose}>
+        {type === 'cancel_session' ? '継続する' : '戻る'}
+      </ModalDismissButton>
       <Button
-        type="button"
+        type="submit"
         status="danger"
         disabled={isSubmitting}
         loading={isSubmitting}
         loadingText="処理中..."
-        onClick={handleConfirm}
+        form="cancel-modal-form"
       >
         {getConfirmButtonText(type)}
       </Button>
@@ -105,10 +110,16 @@ export const CancelModal = ({
       onOpenChange={(details) => {
         if (!details.open) handleClose();
       }}
+      onExitComplete={() => reset()}
       title={getTitle(type)}
       footer={footer}
+      mobileSheet
     >
-      <div className={styles.content}>
+      <form
+        id="cancel-modal-form"
+        className={styles.content}
+        onSubmit={handleConfirm}
+      >
         {/* 対象情報 */}
         <div className={styles.targetInfo}>
           {type === 'kick_participant' ? (
@@ -124,6 +135,7 @@ export const CancelModal = ({
 
         {/* 警告メッセージ */}
         <div className={styles.warningBox}>
+          <WarningCircle size={20} weight="fill" aria-hidden="true" />
           <p className={styles.warningText}>{getWarningMessage(type)}</p>
         </div>
 
@@ -140,12 +152,11 @@ export const CancelModal = ({
                 ? 'キャンセルの理由を参加者に伝えます'
                 : '理由があればご記入ください'
             }
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            {...register('reason')}
             maxLength={500}
           />
         </div>
-      </div>
+      </form>
     </Modal>
   );
 };

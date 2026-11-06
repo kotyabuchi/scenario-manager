@@ -1,0 +1,14 @@
+id: field.session_links.link_id
+kind: Field
+name: link_id
+description: public.session_links.link_id
+parentId: entity.session_links
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,11 @@
+id: decision.auth
+kind: Decision
+name: Discord 認証と会員限定機能
+description: 未認証時は一部ページからランディングへ戻し、認証後は Supabase セッションを使う。
+properties:
+  implementation:
+    - file: src/app/(auth)/auth/callback/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

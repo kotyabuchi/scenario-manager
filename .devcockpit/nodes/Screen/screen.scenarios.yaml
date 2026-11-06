@@ -1,0 +1,12 @@
+id: screen.scenarios
+kind: Screen
+name: シナリオ検索
+description: システム・タグ・人数・時間などでシナリオを探す。
+properties:
+  route: /scenarios
+  implementation:
+    - file: src/app/(main)/scenarios/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

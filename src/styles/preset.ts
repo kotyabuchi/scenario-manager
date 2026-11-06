@@ -6,6 +6,26 @@ import { tokens } from './tokens';
 
 export default definePreset({
   name: 'custom-preset',
+  conditions: {
+    extend: {
+      focusVisibleWithin: '&:has(:focus-visible)',
+    },
+  },
+  utilities: {
+    extend: {
+      // ハーフレディングを刈り取り、グリフ実寸（cap〜baseline）でボックスをフィットさせる。
+      // アイコン横の単行ラベルの光学的な上下中央揃えに使う。
+      // text-box 未対応ブラウザ（Firefox等）では無視され従来表示になる
+      textTrim: {
+        className: 'text-trim',
+        values: { type: 'boolean' },
+        transform(value: boolean) {
+          if (!value) return {};
+          return { textBox: 'trim-both cap alphabetic' };
+        },
+      },
+    },
+  },
   theme: {
     extend: {
       tokens,
@@ -20,6 +40,14 @@ export default definePreset({
           '100%': {
             opacity: '1',
             transform: 'translateY(0)',
+          },
+        },
+        slideInFromRight: {
+          '0%': {
+            transform: 'translateX(100%)',
+          },
+          '100%': {
+            transform: 'translateX(0)',
           },
         },
         slideInUp: {

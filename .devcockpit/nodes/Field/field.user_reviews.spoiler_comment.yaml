@@ -1,0 +1,13 @@
+id: field.user_reviews.spoiler_comment
+kind: Field
+name: spoiler_comment
+description: public.user_reviews.spoiler_comment
+parentId: entity.user_reviews
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

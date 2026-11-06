@@ -1,0 +1,12 @@
+id: relation.feedback_comments.user_id
+kind: Relation
+name: user_id → users.user_id
+description: public.feedback_comments.user_id は public.users.user_id を参照する。
+parentId: entity.feedback_comments
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

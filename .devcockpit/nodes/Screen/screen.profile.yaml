@@ -1,0 +1,12 @@
+id: screen.profile
+kind: Screen
+name: プロフィール設定
+description: ログインユーザーが自身のプロフィールを編集する。
+properties:
+  route: /profile
+  implementation:
+    - file: src/app/(main)/profile/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

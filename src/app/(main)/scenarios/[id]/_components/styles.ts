@@ -221,10 +221,10 @@ export const section = css({
 });
 
 export const section_title = css({
-  fontSize: 'xl',
+  fontSize: 'lg',
   fontWeight: 'bold',
-  color: 'gray.800',
-  mb: 'lg',
+  color: 'text.body',
+  mb: 'md',
 });
 
 export const section_header = css({
@@ -232,6 +232,8 @@ export const section_header = css({
   alignItems: 'center',
   justifyContent: 'space-between',
   mb: 'lg',
+  // タイトル(h2)自身の下マージンを打ち消して上下中央揃えを成立させる
+  '& h2': { mb: '0' },
 });
 
 export const section_headerActions = css({
@@ -242,7 +244,7 @@ export const section_headerActions = css({
 
 export const section_count = css({
   fontSize: 'sm',
-  color: 'gray.400',
+  color: 'gray.600',
   ml: 'sm',
 });
 
@@ -253,7 +255,7 @@ export const section_empty = css({
   gap: '4',
   py: '8',
   textAlign: 'center',
-  color: 'gray.400',
+  color: 'gray.600',
   fontSize: 'sm',
 });
 
@@ -371,82 +373,114 @@ export const horizontalScroll_thumb = css({
 });
 
 // ========================================
-// セッションカード（Pencil準拠）
+// セッション行（モック準拠: バッジ＋卓名＋詳細を見る＋メタ行）
 // ========================================
-export const sessionCard = css({
+export const sessionList = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4',
-  p: '4',
-  w: '[280px]',
-  bg: 'white',
-  borderRadius: 'xl',
-  shadow: 'card.default',
-  flexShrink: '0',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
-  _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-2px)',
-  },
+  gap: '3',
 });
 
-export const sessionCard_date = css({
-  fontSize: 'xs',
-  color: 'gray.500',
+export const sessionRow = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
 });
 
-export const sessionCard_name = css({
-  fontSize: 'md',
-  fontWeight: 'semibold',
-  color: 'gray.800',
+// リスト内アイテムの区切り線（セクション区切りの divider より軽量）
+export const listDivider = css({
+  border: 'none',
+  h: '[1px]',
+  w: 'full',
+  bg: 'paperBorder.100',
+  m: '0',
 });
 
-export const sessionCard_meta = css({
+export const sessionRow_top = css({
   display: 'flex',
   alignItems: 'center',
   gap: '2',
-  color: 'gray.400',
-  fontSize: 'xs',
 });
 
-export const sessionList = css({
-  display: 'flex',
-  gap: '4',
-  overflowX: 'auto',
-  pb: 'md',
-});
-
-// ========================================
-// 動画カード（Pencil準拠）
-// ========================================
-export const videoCard = css({
-  display: 'flex',
-  flexDirection: 'column',
-  w: '[280px]',
-  bg: 'white',
-  borderRadius: 'xl',
-  shadow: 'card.default',
+// 卓名（セッション詳細へのリンク。当たり判定は文字列幅のみ）
+export const sessionRow_name = css({
+  minWidth: '0',
+  fontSize: 'sm',
+  fontWeight: 'semibold',
+  color: 'text.body',
   overflow: 'hidden',
-  flexShrink: '0',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
   textDecoration: 'none',
-  transitionProperty: 'common',
-  transitionDuration: 'fast',
   _hover: {
-    shadow: 'card.hover',
-    transform: 'translateY(-2px)',
+    textDecoration: 'underline',
   },
 });
 
-export const videoCard_thumbnail = css({
-  position: 'relative',
-  w: 'full',
-  h: '[160px]',
-  bg: 'gray.800',
-  overflow: 'hidden',
+// ユーザーページへのリンク（メタ行内の名前用・動画/セッション共用）
+export const userLink = css({
+  color: '[inherit]',
+  textDecoration: 'none',
+  _hover: {
+    color: 'text.body',
+    textDecoration: 'underline',
+  },
 });
 
-export const videoCard_playIcon = css({
+export const sessionRow_meta = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  columnGap: '4',
+  rowGap: '1',
+  fontSize: 'xs',
+  color: 'text.secondary',
+});
+
+export const sessionRow_metaItem = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '1',
+});
+
+// ========================================
+// 動画行（モック準拠: 小サムネ左＋タイトル・投稿者のコンパクトリスト）
+// ========================================
+export const videoList = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
+});
+
+export const videoRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '3',
+});
+
+// サムネイル全面のリンク（ネタバレ解除後のみ表示）
+export const videoRow_thumbnailLink = css({
+  position: 'relative',
+  display: 'block',
+  width: 'full',
+  height: 'full',
+});
+
+// スクリーンリーダー専用テキスト
+export const srOnly = css({
+  srOnly: true,
+});
+
+export const videoRow_thumbnail = css({
+  position: 'relative',
+  width: '[120px]',
+  aspectRatio: '[16/9]',
+  borderRadius: 'md',
+  overflow: 'hidden',
+  bg: 'gray.800',
+  flexShrink: '0',
+});
+
+export const videoRow_playIcon = css({
   position: 'absolute',
   top: '[50%]',
   left: '[50%]',
@@ -454,17 +488,18 @@ export const videoCard_playIcon = css({
   color: '[white/50]',
 });
 
-export const videoCard_spoilerOverlay = css({
+export const videoRow_spoilerOverlay = css({
   position: 'absolute',
   inset: '0',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '2',
+  gap: '1',
   bg: 'overlay.dark',
   backdropFilter: '[blur(8px)]',
   color: 'white',
+  fontSize: '[10px]',
   cursor: 'pointer',
   transitionProperty: '[opacity]',
   transitionDuration: 'fast',
@@ -476,7 +511,7 @@ export const videoCard_spoilerOverlay = css({
   },
 });
 
-export const videoCard_placeholder = css({
+export const videoRow_placeholder = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -486,23 +521,34 @@ export const videoCard_placeholder = css({
   color: '[white/50]',
 });
 
-export const videoCard_info = css({
-  p: '4',
+export const videoRow_info = css({
+  flex: '1',
+  minWidth: '0',
 });
 
-export const videoCard_title = css({
+export const videoRow_title = css({
+  // 当たり判定を文字列幅に一致させる（blockだと行幅いっぱいになる）
+  display: 'inline-block',
+  maxWidth: 'full',
   fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'gray.800',
-  lineHeight: 'tight',
+  color: 'text.body',
+  lineHeight: 'snug',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  textDecoration: 'none',
+  _hover: {
+    textDecoration: 'underline',
+  },
 });
 
-export const videoCard_meta = css({
+export const videoRow_meta = css({
   display: 'flex',
   alignItems: 'center',
-  gap: '2',
-  mt: 'sm',
-  color: 'gray.400',
+  gap: '1.5',
+  mt: '1',
+  color: 'text.secondary',
   fontSize: 'xs',
 });
 
@@ -510,63 +556,35 @@ export const video_thumbnailImage = css({
   objectFit: 'cover',
 });
 
-export const video_spoilerHint = css({
-  fontSize: '[12px]',
-});
-
-export const videoGrid = css({
-  display: 'flex',
-  gap: '4',
-  overflowX: 'auto',
-  pb: 'md',
-});
-
-export const spoilerToggle = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-  fontSize: 'sm',
-  color: 'gray.500',
-});
-
 // ========================================
 // レビューセクション（Pencil準拠）
 // ========================================
 export const reviewsHeader = css({
   display: 'flex',
+  flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
+  columnGap: '4',
+  rowGap: '2',
   mb: 'md',
+  // タイトル(h2)自身の下マージンを打ち消して上下中央揃えを成立させる
+  '& h2': { mb: '0' },
 });
 
 export const reviewsControls = css({
   display: 'flex',
+  flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '4',
+  columnGap: '4',
+  rowGap: '2',
+  mb: 'md',
+  // ラベル内では折り返さず、コントロール単位で折り返す
+  whiteSpace: 'nowrap',
 });
 
+// 並び順Selectの幅を内容に合わせて絞るラッパー
 export const reviewsSort = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-  px: '4',
-  py: '2',
-  bg: 'white',
-  borderRadius: 'lg',
-  shadow: 'sm',
-  color: 'gray.600',
-  fontSize: 'sm',
-  cursor: 'pointer',
-  border: 'none',
-});
-
-export const reviewsHiddenToggle = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-  color: 'gray.500',
-  fontSize: 'sm',
-  cursor: 'pointer',
+  w: '36',
 });
 
 export const reviewFilter = css({
@@ -641,10 +659,7 @@ export const reviewList = css({
 // レビューカード（Pencil準拠）
 // ========================================
 export const reviewCard = css({
-  p: '6',
-  bg: 'white',
-  borderRadius: 'xl',
-  shadow: 'card.default',
+  w: 'full',
 });
 
 export const reviewCard_hidden = css({
@@ -678,7 +693,7 @@ export const reviewCard_starEmpty = css({
 export const reviewCard_ratingValue = css({
   fontSize: 'md',
   fontWeight: 'semibold',
-  color: 'gray.800',
+  color: 'gray.900',
 });
 
 export const reviewCard_actions = css({
@@ -689,10 +704,10 @@ export const reviewCard_actions = css({
 
 export const reviewCard_actionText = css({
   fontSize: 'xs',
-  color: 'gray.500',
+  color: 'gray.700',
   cursor: 'pointer',
   _hover: {
-    color: 'gray.700',
+    color: 'gray.800',
   },
 });
 
@@ -701,6 +716,20 @@ export const reviewCard_userInfo = css({
   alignItems: 'center',
   gap: '2',
   mt: 'md',
+});
+
+// 名前＋@ハンドルのグループ（全体がユーザーページへのリンク）。
+// インライン整列で自然にベースラインが揃う。下線は内側の単一インラインspanに
+// 引くことで、名前と@ハンドルの間隔も含めて1本に連続させる
+export const reviewCard_nameGroup = css({
+  // ハーフレディングを刈り取り、アバターに対して光学中央揃え
+  textTrim: true,
+  textDecoration: 'none',
+  _hover: {
+    '& > span': {
+      textDecoration: 'underline',
+    },
+  },
 });
 
 export const reviewCard_avatar = css({
@@ -726,17 +755,21 @@ export const reviewCard_avatarPlaceholder = css({
 export const reviewCard_userName = css({
   fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'gray.800',
+  color: 'gray.900',
 });
 
 export const reviewCard_handle = css({
   fontSize: 'xs',
-  color: 'gray.400',
+  color: 'gray.600',
+  // 名前との間隔4px（inlineのためgapではなくmarginで確保）
+  ml: '1',
 });
 
 export const reviewCard_date = css({
   fontSize: 'xs',
-  color: 'gray.400',
+  color: 'gray.600',
+  // モック準拠: ユーザー情報行の右端に寄せる
+  ml: 'auto',
 });
 
 export const reviewCard_content = css({
@@ -746,15 +779,9 @@ export const reviewCard_content = css({
   mt: 'md',
 });
 
-export const reviewCard_commentLabel = css({
-  fontSize: 'xs',
-  fontWeight: 'semibold',
-  color: 'gray.500',
-});
-
 export const reviewCard_commentText = css({
   fontSize: 'sm',
-  color: 'gray.600',
+  color: 'gray.700',
   lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
@@ -770,12 +797,23 @@ export const reviewCard_spoilerToggle = css({
   _hover: {
     textDecoration: 'underline',
   },
+  // 開閉状態でキャレットを回転（data-expanded はコンポーネント側で付与）。
+  // 小さな機能フィードバックのため、Selectのインジケーターと同様に
+  // prefers-reduced-motion でも回転させる
+  '& svg': {
+    transitionProperty: '[transform]',
+    transitionDuration: 'fast',
+    transitionTimingFunction: 'ease-out',
+  },
+  '&[data-expanded] svg': {
+    transform: 'rotate(180deg)',
+  },
 });
 
 export const reviewCard_spoilerContent = css({
   mt: 'sm',
   fontSize: 'sm',
-  color: 'gray.600',
+  color: 'gray.700',
   lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
@@ -794,12 +832,12 @@ export const reviewCard_userInfo_text = css({
 export const reviewCard_nickname = css({
   fontSize: 'sm',
   fontWeight: 'medium',
-  color: 'gray.800',
+  color: 'gray.900',
 });
 
 export const reviewCard_username = css({
   fontSize: 'xs',
-  color: 'gray.400',
+  color: 'gray.500',
 });
 
 export const reviewCard_rating = css({
@@ -811,7 +849,7 @@ export const reviewCard_rating = css({
 
 export const reviewCard_openComment = css({
   fontSize: 'sm',
-  color: 'gray.600',
+  color: 'gray.700',
   lineHeight: '[1.6]',
   whiteSpace: 'pre-wrap',
 });
@@ -822,20 +860,20 @@ export const reviewCard_spoiler = css({
 
 export const reviewCard_hiddenMessage = css({
   fontSize: 'sm',
-  color: 'gray.400',
+  color: 'gray.600',
   fontStyle: 'italic',
 });
 
 export const reviewCard_actionButton = css({
   p: 'xs',
-  color: 'gray.400',
+  color: 'gray.500',
   borderRadius: 'md',
   cursor: 'pointer',
   transitionProperty: 'common',
   transitionDuration: 'fast',
   _hover: {
     bg: 'gray.100',
-    color: 'gray.600',
+    color: 'gray.700',
   },
 });
 

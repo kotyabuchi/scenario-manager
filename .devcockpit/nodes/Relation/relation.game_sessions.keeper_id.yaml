@@ -1,0 +1,12 @@
+id: relation.game_sessions.keeper_id
+kind: Relation
+name: keeper_id → users.user_id
+description: public.game_sessions.keeper_id は public.users.user_id を参照する。
+parentId: entity.game_sessions
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

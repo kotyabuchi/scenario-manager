@@ -1,0 +1,24 @@
+{
+  "_description": "Codexハーネスの役割→モデルID対応表（単一ソース）。ルール本文やスクリプトにモデルIDを直書きせず、常にこのファイルを参照する。モデル世代交代時はこのファイルのみ更新すればよい。",
+  "orchestrator": {
+    "model": "claude-opus-4-8",
+    "role": "メインのClaude。タスク統括・計画・最終判断・コミット"
+  },
+  "codexDriver": {
+    "model": "claude-sonnet-5",
+    "role": "Codexセッションの起動・指示・自動ゲート実行・レビュー結果の差し戻し・ループ運行管理"
+  },
+  "reviewer": {
+    "model": "claude-sonnet-5",
+    "role": "/review-diff の並列レビューエージェント。各 .claude/agents/*.md の frontmatter model: sonnet に対応"
+  },
+  "implementer": {
+    "default": "gpt-5.6-sol",
+    "light": "gpt-5.6-terra",
+    "maxCoding": "gpt-5.5",
+    "role": "Codex CLI の実装モデル。default=複雑・高難度の実装, light=軽量な定型実装, maxCoding=純コーディングベンチ最強",
+    "cli": "codex --model <id>  または  ~/.codex/config.toml の model=",
+    "reasoningEffort": "high"
+  },
+  "_updated": "2026-07-20"
+}

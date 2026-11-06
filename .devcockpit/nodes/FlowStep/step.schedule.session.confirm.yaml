@@ -1,0 +1,11 @@
+id: step.schedule.session.confirm
+kind: FlowStep
+name: 開催日時を確定する
+description: 開催日時を確定する
+parentId: flow.schedule.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

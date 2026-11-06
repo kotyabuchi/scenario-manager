@@ -1,0 +1,12 @@
+id: relation.notifications.user_id
+kind: Relation
+name: user_id → users.user_id
+description: public.notifications.user_id は public.users.user_id を参照する。
+parentId: entity.notifications
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

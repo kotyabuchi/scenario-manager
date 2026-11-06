@@ -15,7 +15,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * 認証済みユーザー: 5項目（シナリオ登録、セッション募集、シナリオ検索、シェア、フィードバック）
+ * 認証済みユーザー: 7項目（作成・検索・シェア・フィードバック・サービス情報）
  */
 export const Authenticated: Story = {
   args: {
@@ -24,7 +24,7 @@ export const Authenticated: Story = {
 };
 
 /**
- * 未認証ユーザー: 3項目（シナリオ検索、シェア、ログイン）
+ * 未認証ユーザー: 4項目（シナリオ検索、シェア、ログイン、サービス情報）
  */
 export const Unauthenticated: Story = {
   args: {

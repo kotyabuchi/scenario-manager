@@ -1,0 +1,11 @@
+id: entity.user_reviews
+kind: Entity
+name: user_reviews
+description: Supabase public.user_reviews テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

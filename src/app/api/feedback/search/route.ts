@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
   const { data: user } = await supabase
     .from('users')
     .select('user_id')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
   userId = user?.user_id;
 

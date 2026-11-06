@@ -54,11 +54,15 @@ type CreateScenarioInput = {
 // Props型
 type ScenarioCardProps = {
   scenario: ScenarioWithRelations;
+  returnTo?: string;
+  onOpen?: (scenarioId: string) => void;
 };
 
 type ScenarioListProps = {
   scenarios: ScenarioWithRelations[];
   isLoading?: boolean;
+  returnTo?: string;
+  onScenarioOpen?: (scenarioId: string) => void;
 };
 
 export type {

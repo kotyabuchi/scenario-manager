@@ -1,0 +1,11 @@
+id: entity.session_participants
+kind: Entity
+name: session_participants
+description: Supabase public.session_participants テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

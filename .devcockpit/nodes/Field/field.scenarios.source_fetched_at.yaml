@@ -1,0 +1,13 @@
+id: field.scenarios.source_fetched_at
+kind: Field
+name: source_fetched_at
+description: public.scenarios.source_fetched_at
+parentId: entity.scenarios
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

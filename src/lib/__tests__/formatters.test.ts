@@ -1,6 +1,32 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { formatRelativeTime } from '../formatters';
+import { formatPlaytime, formatRelativeTime } from '../formatters';
+
+describe('formatPlaytime', () => {
+  it('min/max両方は「5〜6時間」（単位は末尾のみ）', () => {
+    expect(formatPlaytime(300, 360)).toBe('5〜6時間');
+  });
+
+  it('min===maxは「5時間」', () => {
+    expect(formatPlaytime(300, 300)).toBe('5時間');
+  });
+
+  it('端数は時間単位に切り上げる', () => {
+    expect(formatPlaytime(150, 330)).toBe('3〜6時間'); // 2.5h→3, 5.5h→6
+  });
+
+  it('minのみは「3時間〜」', () => {
+    expect(formatPlaytime(180, null)).toBe('3時間〜');
+  });
+
+  it('maxのみは「〜7時間」', () => {
+    expect(formatPlaytime(null, 420)).toBe('〜7時間');
+  });
+
+  it('どちらもなしは「-」', () => {
+    expect(formatPlaytime(null, null)).toBe('-');
+  });
+});
 
 describe('formatRelativeTime', () => {
   it('1分未満は「たった今」', () => {

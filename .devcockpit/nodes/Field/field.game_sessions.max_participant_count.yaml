@@ -1,0 +1,13 @@
+id: field.game_sessions.max_participant_count
+kind: Field
+name: max_participant_count
+description: public.game_sessions.max_participant_count
+parentId: entity.game_sessions
+properties:
+  dataType: number
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

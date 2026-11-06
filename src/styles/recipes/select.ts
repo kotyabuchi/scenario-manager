@@ -26,7 +26,7 @@ export const select = defineSlotRecipe({
       borderRadius: '8px',
       color: 'input.text',
       fontSize: '14px',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: 'body',
       cursor: 'pointer',
       transition: 'all {durations.fast} ease-out',
       _focusVisible: {
@@ -37,9 +37,26 @@ export const select = defineSlotRecipe({
         opacity: 'disabled',
         cursor: 'not-allowed',
       },
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
       '& [data-placeholder]': {
         color: 'input.placeholder',
       },
+      // 先頭アイコン（prefix）
+      '& [data-prefix]': {
+        display: 'inline-flex',
+        flexShrink: 0,
+        color: 'icon.muted',
+      },
+    },
+    valueText: {
+      // prefix があっても値を左詰めで indicator を右端に保つ
+      flex: '1 1 auto',
+      textAlign: 'left',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      minW: '0',
     },
     indicator: {
       color: 'icon.muted',
@@ -50,11 +67,14 @@ export const select = defineSlotRecipe({
     },
     positioner: {},
     content: {
+      display: 'flex',
+      flexDirection: 'column',
       zIndex: 'dropdown',
       bg: 'white',
       borderRadius: '8px',
       boxShadow: 'menu.default',
-      p: '4px',
+      p: '1',
+      gap: '0',
       outline: 'none',
       maxH: '300px',
       overflowY: 'auto',
@@ -65,23 +85,23 @@ export const select = defineSlotRecipe({
     item: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
       px: '12px',
       py: '8px',
+      gap: '8px',
       fontSize: '14px',
       color: 'menu.itemText',
       cursor: 'pointer',
       borderRadius: '4px',
       transition: 'background-color {durations.faster} ease-out',
       _hover: {
-        bg: 'oklch(0.975 0.025 163)',
+        bg: 'primary.subtleHover',
       },
       _highlighted: {
-        bg: 'oklch(0.975 0.025 163)',
+        bg: 'primary.subtleHover',
       },
       _selected: {
-        bg: 'oklch(0.94 0.045 163)',
-        color: 'oklch(0.43 0.09 163)',
+        bg: 'primary.subtle',
+        color: 'primary.text',
         fontWeight: '500',
       },
       _disabled: {
@@ -91,9 +111,33 @@ export const select = defineSlotRecipe({
           bg: 'transparent',
         },
       },
+      // マルチセレクト: チェックアイコン表示切替
+      '& [data-icon=unchecked]': {
+        display: 'inline-flex',
+        color: 'menu.itemText',
+      },
+      '& [data-icon=checked]': {
+        display: 'none',
+      },
+      '&[data-state=checked] [data-icon=unchecked]': {
+        display: 'none',
+      },
+      '&[data-state=checked] [data-icon=checked]': {
+        display: 'inline-flex',
+        color: 'primary.text',
+      },
+      // マルチセレクト: 連続選択グルーピング（角丸除去）
+      '[data-multiple] &[data-state=checked]:has(+ [data-state=checked])': {
+        borderBottomLeftRadius: '0',
+        borderBottomRightRadius: '0',
+      },
+      '[data-multiple] [data-state=checked] + &[data-state=checked]': {
+        borderTopLeftRadius: '0',
+        borderTopRightRadius: '0',
+      },
     },
     itemIndicator: {
-      color: 'oklch(0.43 0.09 163)',
+      color: 'primary.text',
     },
     itemGroup: {
       py: '4px',
@@ -130,6 +174,18 @@ export const select = defineSlotRecipe({
           },
           _disabled: {
             bg: 'gray.100',
+          },
+        },
+      },
+      // 背景なし。ラベル的に馴染ませたい箇所（並び替え等）向け
+      ghost: {
+        trigger: {
+          bg: 'transparent',
+          _hover: {
+            bg: 'gray.100',
+          },
+          _disabled: {
+            bg: 'transparent',
           },
         },
       },

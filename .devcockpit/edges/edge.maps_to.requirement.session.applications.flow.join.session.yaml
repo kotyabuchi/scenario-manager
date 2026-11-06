@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.session.applications.flow.join.session
+kind: maps_to
+source: requirement.session.applications
+target: flow.join.session
+label: ""
+properties: {}

@@ -52,7 +52,6 @@ test.describe('フィードバック一覧', () => {
     const results = await new AxeBuilder({ page })
       .include('header')
       .include('main')
-      .include('footer')
       .disableRules(['color-contrast'])
       .analyze();
     expect(results.violations).toEqual([]);

@@ -1,0 +1,12 @@
+id: screen.schedules
+kind: Screen
+name: スケジュール一覧（計画中）
+description: 見出しのみ実装済み。全体スケジュールの本体は未実装。
+properties:
+  route: /schedules
+  implementation:
+    - file: src/app/(main)/schedules/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: planned

@@ -1,0 +1,13 @@
+id: field.users.lastlogin_at
+kind: Field
+name: lastlogin_at
+description: public.users.lastlogin_at
+parentId: entity.users
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

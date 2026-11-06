@@ -1,0 +1,13 @@
+id: field.session_availability_time_blocks.user_id
+kind: Field
+name: user_id
+description: public.session_availability_time_blocks.user_id
+parentId: entity.session_availability_time_blocks
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

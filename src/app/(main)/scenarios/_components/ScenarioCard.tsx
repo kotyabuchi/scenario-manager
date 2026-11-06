@@ -1,12 +1,16 @@
-import { Clock, ImageBroken, Star, Users } from '@phosphor-icons/react/ssr';
+'use client';
+
+import { Clock, ImageSquare, Star, Users } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
 
+import { Tag } from '@/components/elements/Tag';
 import { formatPlayerCount, formatPlaytime } from '@/lib/formatters';
 
+import type { Route } from 'next';
 import type { ScenarioCardProps } from '../interface';
 
 // システムバリアントを決定
@@ -21,7 +25,11 @@ const getSystemVariant = (
   return 'default';
 };
 
-export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
+export const ScenarioCard = ({
+  scenario,
+  returnTo,
+  onOpen,
+}: ScenarioCardProps) => {
   const tags = scenario.tags
     ? scenario.tags.slice(0, 3)
     : scenario.scenarioTags
@@ -29,12 +37,18 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
       : [];
 
   const systemVariant = getSystemVariant(scenario.system.name);
+  const detailParams = new URLSearchParams(returnTo?.split('?')[1] ?? '');
+  if (returnTo) detailParams.set('returnTo', returnTo);
+  const detailQuery = detailParams.toString();
+  const detailHref = `/scenarios/${scenario.scenarioId}${detailQuery ? `?${detailQuery}` : ''}`;
 
   return (
     <Link
-      href={`/scenarios/${scenario.scenarioId}`}
+      href={detailHref as Route}
       className={`group ${styles.scenarioCard}`}
       prefetch={false}
+      data-scenario-id={scenario.scenarioId}
+      onClick={() => onOpen?.(scenario.scenarioId)}
     >
       {/* サムネイル */}
       <div className={styles.cardThumbnail}>
@@ -48,7 +62,7 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
           />
         ) : (
           <div className={styles.cardThumbnailPlaceholder}>
-            <ImageBroken className={styles.cardThumbnailPlaceholderIcon} />
+            <ImageSquare className={styles.cardThumbnailPlaceholderIcon} />
             <span className={styles.cardThumbnailPlaceholderText}>
               No Image
             </span>
@@ -95,9 +109,12 @@ export const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
         {tags.length > 0 && (
           <div className={styles.cardTags}>
             {tags.map((tag) => (
-              <span key={tag.tagId} className={styles.cardTag}>
-                {tag.name}
-              </span>
+              <Tag
+                key={tag.tagId}
+                label={tag.name}
+                color={tag.color}
+                size="sm"
+              />
             ))}
           </div>
         )}

@@ -26,7 +26,7 @@ export const getDashboardUser = cache(
       const { data, error } = await supabase
         .from('users')
         .select('user_id, nickname, image')
-        .eq('discord_id', authId)
+        .eq('auth_user_id', authId)
         .single();
 
       if (error) {
@@ -81,8 +81,7 @@ export const getUpcomingSessions = async (
         participants:session_participants(
           *,
           user:users(*)
-        ),
-        schedule:game_schedules(*)
+        )
       `,
       )
       .in('game_session_id', sessionIds)
@@ -159,7 +158,7 @@ export const getRecentActivity = async (
         supabase
           .from('game_sessions')
           .select('game_session_id, session_name')
-          .eq('keeper_id', userId),
+          .or(`keeper_id.eq.${userId},created_by_id.eq.${userId}`),
         supabase
           .from('scenarios')
           .select('scenario_id, name')
@@ -205,7 +204,7 @@ export const getRecentActivity = async (
           ? supabase
               .from('game_sessions')
               .select('game_session_id, session_name, updated_at')
-              .eq('keeper_id', userId)
+              .or(`keeper_id.eq.${userId},created_by_id.eq.${userId}`)
               .eq('session_phase', 'COMPLETED')
               .order('updated_at', { ascending: false })
               .limit(5)
@@ -319,7 +318,7 @@ export const getSessionDatesForRange = async (
       supabase
         .from('game_sessions')
         .select('game_session_id')
-        .eq('keeper_id', userId),
+        .or(`keeper_id.eq.${userId},created_by_id.eq.${userId}`),
     ]);
 
     const sessionIds = new Set([
@@ -332,9 +331,10 @@ export const getSessionDatesForRange = async (
     }
 
     const { data, error } = await supabase
-      .from('game_schedules')
-      .select('schedule_date, session_id, session:game_sessions(session_name)')
-      .in('session_id', [...sessionIds])
+      .from('game_sessions')
+      .select('schedule_date, game_session_id, session_name')
+      .in('game_session_id', [...sessionIds])
+      .not('schedule_date', 'is', null)
       .gte('schedule_date', startDate)
       .lte('schedule_date', endDate);
 
@@ -343,14 +343,11 @@ export const getSessionDatesForRange = async (
     }
 
     return ok(
-      (data ?? []).map((d) => {
-        const session = d.session as { session_name: string } | null;
-        return {
-          scheduleDate: d.schedule_date,
-          sessionId: d.session_id,
-          sessionName: session?.session_name ?? '',
-        };
-      }),
+      (data ?? []).map((d) => ({
+        scheduleDate: d.schedule_date as string,
+        sessionId: d.game_session_id,
+        sessionName: d.session_name,
+      })),
     );
   } catch (e) {
     return err(e instanceof Error ? e : new Error('Unknown error'));

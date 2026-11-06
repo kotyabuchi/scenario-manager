@@ -60,7 +60,7 @@ describe('ToggleGroup', () => {
       await user.click(screen.getByRole('radio', { name: 'リスト表示' }));
 
       expect(handleValueChange).toHaveBeenCalledWith(
-        expect.objectContaining({ value: ['list'] }),
+        expect.objectContaining({ value: 'list' }),
       );
     });
 
@@ -93,7 +93,7 @@ describe('ToggleGroup', () => {
 
       // listのみが選択される（配列に1つだけ）
       expect(handleValueChange).toHaveBeenCalledWith(
-        expect.objectContaining({ value: ['list'] }),
+        expect.objectContaining({ value: 'list' }),
       );
     });
   });
@@ -215,7 +215,7 @@ describe('ToggleGroup', () => {
       await user.click(screen.getByRole('radio', { name: 'リスト表示' }));
 
       expect(handleValueChange).toHaveBeenCalledWith(
-        expect.objectContaining({ value: ['list'] }),
+        expect.objectContaining({ value: 'list' }),
       );
     });
   });

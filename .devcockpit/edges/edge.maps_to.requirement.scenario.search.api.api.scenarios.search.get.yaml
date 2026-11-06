@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.scenario.search.api.api.scenarios.search.get
+kind: maps_to
+source: requirement.scenario.search
+target: api.api.scenarios.search.get
+label: ""
+properties: {}

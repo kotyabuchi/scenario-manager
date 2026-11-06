@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.create.scenario.input.step.create.scenario.save
+kind: transitions_to
+source: step.create.scenario.input
+target: step.create.scenario.save
+label: ""
+properties: {}

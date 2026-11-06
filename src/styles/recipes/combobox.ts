@@ -35,7 +35,7 @@ export const combobox = defineSlotRecipe({
       bg: 'transparent',
       color: 'input.text',
       fontSize: '14px',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: 'body',
       outline: 'none',
       _placeholder: {
         color: 'input.placeholder',

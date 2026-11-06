@@ -21,6 +21,8 @@ export const ScenarioList = ({
   scenarios,
   isLoading,
   onReset,
+  returnTo,
+  onScenarioOpen,
 }: ScenarioListWithActionsProps) => {
   if (isLoading) {
     return <ScenarioCardSkeletonGrid />;
@@ -64,7 +66,12 @@ export const ScenarioList = ({
   return (
     <div className={styles.scenarioListContainer}>
       {scenarios.map((scenario) => (
-        <ScenarioCard key={scenario.scenarioId} scenario={scenario} />
+        <ScenarioCard
+          key={scenario.scenarioId}
+          scenario={scenario}
+          {...(returnTo ? { returnTo } : {})}
+          {...(onScenarioOpen ? { onOpen: onScenarioOpen } : {})}
+        />
       ))}
     </div>
   );

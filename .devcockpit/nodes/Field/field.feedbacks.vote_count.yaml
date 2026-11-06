@@ -1,0 +1,13 @@
+id: field.feedbacks.vote_count
+kind: Field
+name: vote_count
+description: public.feedbacks.vote_count
+parentId: entity.feedbacks
+properties:
+  dataType: number
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -26,9 +26,8 @@ export class FeedbackDetailPage extends BasePage {
     this.categoryBadge = page.locator('[class*="categoryBadge"]').first();
     this.statusBadge = page.locator('[class*="statusBadge"]').first();
     this.voteButton = page.getByRole('button', { name: /投票/ });
-    this.voteCount = page
-      .locator('[class*="voteSection"]')
-      .locator('[aria-live="polite"]');
+    // 投票数は投票ボタン内の aria-live span（PandaCSSアトミッククラスのため class 一致は使わない）
+    this.voteCount = this.voteButton.locator('[aria-live="polite"]');
     this.description = page.locator('[class*="detailBody"]');
     this.commentSection = page
       .getByRole('region')

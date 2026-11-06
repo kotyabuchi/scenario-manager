@@ -1,0 +1,13 @@
+id: field.user_reviews.rating
+kind: Field
+name: rating
+description: public.user_reviews.rating
+parentId: entity.user_reviews
+properties:
+  dataType: number | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

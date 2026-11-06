@@ -1,24 +1,44 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { getUserByDiscordId, updateUserProfile } from '../adapter';
+import { getUserByAuthUserId, updateUserProfile } from '../adapter';
+
+import { randomUUID } from 'node:crypto';
+import { cleanupUsers, createTestUser } from '@/__tests__/helpers/fixtures';
 
 /**
  * プロフィールアダプター関数のテスト
  * 要件: requirements-profile.md 4.2 getUserById, 4.3 updateUserProfile
  *
- * 注意: これらはデータベースに接続する統合テストです。
- * テストデータベースにテストユーザーが存在する必要があります。
- *
- * テスト実行前にテストデータを準備するか、
- * it.skip を it に変更して実行してください。
+ * テストフィクスチャで2名のユーザーを作成し、テスト後にクリーンアップする。
  */
 describe('profile adapter', () => {
-  describe('getUserByDiscordId', () => {
-    // T-GU-002: 存在しないユーザーIDでnullを返す
-    it('存在しないDiscordIDでnullを返す', async () => {
-      const nonExistentDiscordId = 'non-existent-discord-id-12345';
+  let mainUserId: string;
+  let mainUserAuthUserId: string;
+  let mainUserName: string;
+  let otherUserId: string;
+  let otherUserName: string;
 
-      const result = await getUserByDiscordId(nonExistentDiscordId);
+  beforeAll(async () => {
+    const mainUser = await createTestUser();
+    mainUserId = mainUser.user_id;
+    mainUserAuthUserId = mainUser.auth_user_id;
+    mainUserName = mainUser.user_name;
+
+    const otherUser = await createTestUser();
+    otherUserId = otherUser.user_id;
+    otherUserName = otherUser.user_name;
+  });
+
+  afterAll(async () => {
+    await cleanupUsers([mainUserId, otherUserId]);
+  });
+
+  describe('getUserByAuthUserId', () => {
+    // T-GU-002: 存在しない認証UIDでnullを返す
+    it('存在しない認証UIDでnullを返す', async () => {
+      const nonExistentAuthUserId = randomUUID();
+
+      const result = await getUserByAuthUserId(nonExistentAuthUserId);
 
       // DBエラーでない限り、success=trueでdata=nullが返される
       if (result.success) {
@@ -30,17 +50,13 @@ describe('profile adapter', () => {
       }
     });
 
-    // T-GU-001: 存在するユーザーIDで情報を取得できる
-    // このテストはテストデータが必要なためスキップ
-    it.skip('存在するDiscordIDでユーザー情報を取得できる', async () => {
-      // テスト用のDiscordID（実際のテストデータに応じて変更）
-      const discordId = 'test-discord-id';
-
-      const result = await getUserByDiscordId(discordId);
+    // T-GU-001: 存在する認証UIDで情報を取得できる
+    it('存在する認証UIDでユーザー情報を取得できる', async () => {
+      const result = await getUserByAuthUserId(mainUserAuthUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
-        expect(result.data.discordId).toBe(discordId);
+        expect(result.data.authUserId).toBe(mainUserAuthUserId);
         expect(result.data).toHaveProperty('userId');
         expect(result.data).toHaveProperty('userName');
         expect(result.data).toHaveProperty('nickname');
@@ -49,10 +65,6 @@ describe('profile adapter', () => {
   });
 
   describe('updateUserProfile', () => {
-    // 注意: これらのテストは実際にDBを更新します。
-    // テスト環境では別のユーザーを使用するか、
-    // トランザクションでロールバックする必要があります。
-
     // T-UP-101: 存在しないユーザーIDでエラー
     it('存在しないユーザーIDでエラー', async () => {
       const nonExistentUserId = 'non-existent-user-id-12345';
@@ -73,15 +85,10 @@ describe('profile adapter', () => {
       }
     });
 
-    // 以下のテストはテストデータが必要なためスキップ
-
     // T-UP-001: nickname更新が成功する
-    it.skip('nickname更新が成功する', async () => {
-      const userId = 'test-user-id';
-      const originalUserName = 'test_user_original';
-
-      const result = await updateUserProfile(userId, {
-        userName: originalUserName,
+    it('nickname更新が成功する', async () => {
+      const result = await updateUserProfile(mainUserId, {
+        userName: mainUserName,
         nickname: `更新後のニックネーム_${Date.now()}`,
         bio: undefined,
       });
@@ -93,13 +100,11 @@ describe('profile adapter', () => {
     });
 
     // T-UP-002: bio更新が成功する
-    it.skip('bio更新が成功する', async () => {
-      const userId = 'test-user-id';
-      const originalUserName = 'test_user_original';
+    it('bio更新が成功する', async () => {
       const newBio = `更新後のプロフィール_${Date.now()}`;
 
-      const result = await updateUserProfile(userId, {
-        userName: originalUserName,
+      const result = await updateUserProfile(mainUserId, {
+        userName: mainUserName,
         nickname: 'テストユーザー',
         bio: newBio,
       });
@@ -111,11 +116,10 @@ describe('profile adapter', () => {
     });
 
     // T-UP-003: userName更新が成功する
-    it.skip('userName更新が成功する', async () => {
-      const userId = 'test-user-id';
+    it('userName更新が成功する', async () => {
       const newUserName = `test_user_${Date.now()}`;
 
-      const result = await updateUserProfile(userId, {
+      const result = await updateUserProfile(mainUserId, {
         userName: newUserName,
         nickname: 'テストユーザー',
         bio: undefined,
@@ -124,15 +128,16 @@ describe('profile adapter', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.userName).toBe(newUserName);
+        // 後続テスト用にuserNameを更新
+        mainUserName = newUserName;
       }
     });
 
     // T-UP-004: 全項目同時更新が成功する
-    it.skip('全項目同時更新が成功する', async () => {
-      const userId = 'test-user-id';
+    it('全項目同時更新が成功する', async () => {
       const timestamp = Date.now();
 
-      const result = await updateUserProfile(userId, {
+      const result = await updateUserProfile(mainUserId, {
         userName: `user_${timestamp}`,
         nickname: `ニックネーム_${timestamp}`,
         bio: `プロフィール_${timestamp}`,
@@ -143,15 +148,15 @@ describe('profile adapter', () => {
         expect(result.data.userName).toBe(`user_${timestamp}`);
         expect(result.data.nickname).toBe(`ニックネーム_${timestamp}`);
         expect(result.data.bio).toBe(`プロフィール_${timestamp}`);
+        // 後続テスト用にuserNameを更新
+        mainUserName = `user_${timestamp}`;
       }
     });
 
     // T-UP-005: bioをnullに更新できる
-    it.skip('bioをnullに更新できる', async () => {
-      const userId = 'test-user-id';
-
-      const result = await updateUserProfile(userId, {
-        userName: 'test_user_original',
+    it('bioをnullに更新できる', async () => {
+      const result = await updateUserProfile(mainUserId, {
+        userName: mainUserName,
         nickname: 'テストユーザー',
         bio: undefined,
       });
@@ -163,13 +168,9 @@ describe('profile adapter', () => {
     });
 
     // T-UP-102: userNameが重複している場合エラー
-    it.skip('userNameが重複している場合エラー', async () => {
-      const userId = 'test-user-id';
-      // 既存の別ユーザーのuserNameを使用
-      const existingUserName = 'existing_other_user';
-
-      const result = await updateUserProfile(userId, {
-        userName: existingUserName,
+    it('userNameが重複している場合エラー', async () => {
+      const result = await updateUserProfile(mainUserId, {
+        userName: otherUserName,
         nickname: 'テスト',
         bio: undefined,
       });

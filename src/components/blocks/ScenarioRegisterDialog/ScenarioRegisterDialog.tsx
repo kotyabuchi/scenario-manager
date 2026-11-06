@@ -1,12 +1,14 @@
 'use client';
 
+import { useRef } from 'react';
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
-import { Link, PencilLine, X } from '@phosphor-icons/react/ssr';
+import { Link, PencilLine } from '@phosphor-icons/react/ssr';
 import NextLink from 'next/link';
 
 import * as styles from './styles';
 
+import { ModalCloseButton } from '@/components/elements/modal';
 import * as modalStyles from '@/components/elements/modal/styles';
 
 import type { PropsWithChildren } from 'react';
@@ -21,8 +23,8 @@ const DialogContent = () => (
   <>
     <header className={styles.header}>
       <Dialog.Title className={styles.title}>シナリオを登録</Dialog.Title>
-      <Dialog.CloseTrigger className={styles.closeButton} aria-label="閉じる">
-        <X size={20} />
+      <Dialog.CloseTrigger asChild>
+        <ModalCloseButton />
       </Dialog.CloseTrigger>
     </header>
     <nav className={styles.nav}>
@@ -47,20 +49,23 @@ export const ScenarioRegisterDialog = ({
   open,
   onOpenChange,
 }: ScenarioRegisterDialogProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
   // 制御モード: open/onOpenChange で外部から管理
   if (open !== undefined) {
-    if (!open) return null;
-
     return (
       <Dialog.Root
-        open={true}
+        open={open}
         onOpenChange={onOpenChange}
         closeOnInteractOutside
+        lazyMount
+        unmountOnExit
+        initialFocusEl={() => contentRef.current}
       >
         <Portal>
           <Dialog.Backdrop className={modalStyles.backdrop} />
-          <Dialog.Positioner className={modalStyles.positioner}>
-            <Dialog.Content className={styles.content}>
+          <Dialog.Positioner className={modalStyles.positioner()}>
+            <Dialog.Content ref={contentRef} className={styles.content}>
               <DialogContent />
             </Dialog.Content>
           </Dialog.Positioner>
@@ -71,12 +76,17 @@ export const ScenarioRegisterDialog = ({
 
   // 非制御モード: Dialog.Trigger で自己管理
   return (
-    <Dialog.Root closeOnInteractOutside lazyMount unmountOnExit>
+    <Dialog.Root
+      closeOnInteractOutside
+      lazyMount
+      unmountOnExit
+      initialFocusEl={() => contentRef.current}
+    >
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop className={modalStyles.backdrop} />
-        <Dialog.Positioner className={modalStyles.positioner}>
-          <Dialog.Content className={styles.content}>
+        <Dialog.Positioner className={modalStyles.positioner()}>
+          <Dialog.Content ref={contentRef} className={styles.content}>
             <DialogContent />
           </Dialog.Content>
         </Dialog.Positioner>

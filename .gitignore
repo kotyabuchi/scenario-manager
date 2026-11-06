@@ -12,9 +12,11 @@
 
 # testing
 /coverage
+/docs/reviews/
 
 # next.js
 /.next/
+/.next-e2e/
 /out/
 
 # production

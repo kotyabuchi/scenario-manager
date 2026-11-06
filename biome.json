@@ -67,6 +67,16 @@
   },
   "overrides": [
     {
+      "includes": ["e2e/legacy/*.generated.json"],
+      "formatter": { "enabled": false }
+    },
+    {
+      "includes": ["docs/designs/mocks/**"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["**/*.tsx", "!**/*.stories.tsx"],
       "linter": {
         "rules": {

@@ -1,14 +1,32 @@
-import { DiceFive, Users } from '@phosphor-icons/react/ssr';
+import { Fragment } from 'react';
+import { DiceFive } from '@phosphor-icons/react/ssr';
 import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
+
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
+import { Badge, type BadgeVariant } from '@/components/elements/badge';
+import { SessionPhases } from '@/db/enum';
 
 import type { SessionWithKeeper } from '../interface';
 
 type SessionSectionProps = {
   scenarioId: string;
   sessions: SessionWithKeeper[];
+  isLoggedIn?: boolean;
+};
+
+// セッションフェーズ → バッジ色（募集中=ピンク / 進行系=緑 / 完了=グレー / 中止=赤）
+const phaseBadgeVariant: Record<
+  SessionWithKeeper['sessionPhase'],
+  BadgeVariant
+> = {
+  RECRUITING: 'recruiting',
+  PREPARATION: 'success',
+  IN_PROGRESS: 'success',
+  COMPLETED: 'neutral',
+  CANCELLED: 'error',
 };
 
 /**
@@ -25,24 +43,42 @@ const formatDate = (date: string | null): string => {
 };
 
 /**
- * セッションカード
- * TODO: セッション詳細ページ実装後にLink化する
+ * セッション行（バッジ＋卓名＋メタ行。卓名がセッション詳細、GM名がユーザーページへのリンク）
  */
-const SessionCard = ({ session }: { session: SessionWithKeeper }) => {
-  // セッション名はKMの卓名またはデフォルト
-  const sessionName = !isNil(session.keeper)
-    ? `${session.keeper.nickname}の卓`
-    : 'セッション';
-
+const SessionRow = ({ session }: { session: SessionWithKeeper }) => {
   return (
-    <div className={styles.sessionCard}>
-      <div className={styles.sessionCard_date}>
-        {formatDate(session.scheduleDate)}
+    <div className={styles.sessionRow}>
+      <div className={styles.sessionRow_top}>
+        <Badge variant={phaseBadgeVariant[session.sessionPhase]}>
+          {SessionPhases[session.sessionPhase].label}
+        </Badge>
+        <Link
+          href={`/sessions/${session.gameSessionId}`}
+          className={styles.sessionRow_name}
+        >
+          {session.sessionName}
+        </Link>
       </div>
-      <div className={styles.sessionCard_name}>{sessionName}</div>
-      <div className={styles.sessionCard_meta}>
-        <Users size={14} />
-        <span>{session.participantCount}人参加</span>
+      <div className={styles.sessionRow_meta}>
+        <span className={styles.sessionRow_metaItem}>
+          GM：
+          {!isNil(session.keeper) ? (
+            <Link
+              href={`/users/${session.keeper.userId}`}
+              className={styles.userLink}
+            >
+              {session.keeper.nickname}
+            </Link>
+          ) : (
+            '未定'
+          )}
+        </span>
+        <span className={styles.sessionRow_metaItem}>
+          参加人数：{session.participantCount}人
+        </span>
+        <span className={styles.sessionRow_metaItem}>
+          プレイ予定：{formatDate(session.scheduleDate)}
+        </span>
       </div>
     </div>
   );
@@ -51,10 +87,16 @@ const SessionCard = ({ session }: { session: SessionWithKeeper }) => {
 export const SessionSection = ({
   scenarioId,
   sessions,
+  isLoggedIn = false,
 }: SessionSectionProps) => {
+  const openAuthPrompt = useAuthPrompt();
+
   return (
     <section className={styles.section}>
-      <h2 className={styles.section_title}>関連セッション</h2>
+      <h2 className={styles.section_title}>
+        関連セッション
+        <span className={styles.section_count}>（{sessions.length}件）</span>
+      </h2>
 
       {sessions.length === 0 ? (
         <div className={styles.section_empty}>
@@ -65,14 +107,25 @@ export const SessionSection = ({
           <Link
             href={`/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'}
             className={styles.section_ctaButton}
+            onClick={(event) => {
+              if (isLoggedIn) return;
+              event.preventDefault();
+              openAuthPrompt({
+                message: 'セッションを作成するにはログインが必要です。',
+                returnTo: `/sessions/new?scenarioId=${scenarioId}`,
+              });
+            }}
           >
             セッションを作成する
           </Link>
         </div>
       ) : (
         <div className={styles.sessionList}>
-          {sessions.map((session) => (
-            <SessionCard key={session.gameSessionId} session={session} />
+          {sessions.map((session, index) => (
+            <Fragment key={session.gameSessionId}>
+              {index > 0 && <hr className={styles.listDivider} />}
+              <SessionRow session={session} />
+            </Fragment>
           ))}
         </div>
       )}

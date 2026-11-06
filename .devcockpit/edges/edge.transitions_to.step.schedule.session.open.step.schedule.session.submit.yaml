@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.schedule.session.open.step.schedule.session.submit
+kind: transitions_to
+source: step.schedule.session.open
+target: step.schedule.session.submit
+label: ""
+properties: {}

@@ -1,0 +1,13 @@
+id: field.tags.name
+kind: Field
+name: name
+description: public.tags.name
+parentId: entity.tags
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

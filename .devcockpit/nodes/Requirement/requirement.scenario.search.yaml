@@ -1,0 +1,11 @@
+id: requirement.scenario.search
+kind: Requirement
+name: 条件付きシナリオ検索
+description: システム、タグ、人数、時間、キーワードで検索し、並び替え・ページングできる。
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

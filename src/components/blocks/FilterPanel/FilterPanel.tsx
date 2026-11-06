@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X } from '@phosphor-icons/react/ssr';
 
 import { FilterSection } from './FilterSection';
@@ -29,6 +29,7 @@ export const FilterPanel = ({
   tags,
   filterState,
   showSystems = true,
+  showClear = true,
 }: FilterPanelProps) => {
   const {
     params,
@@ -44,17 +45,31 @@ export const FilterPanel = ({
   const [expandedSystems, setExpandedSystems] = useState(false);
   const [expandedTags, setExpandedTags] = useState(false);
 
-  // プレイ人数のローカル状態（スライダー操作中のUI更新用）
+  // 即時適用モードのdebounce中もスライダーの操作を表示に反映する。
   const [playerRange, setPlayerRangeLocal] = useState<number[]>([
     params.minPlayer ?? PLAYER_MIN,
     params.maxPlayer ?? PLAYER_MAX,
   ]);
 
-  // プレイ時間のローカル状態（スライダー操作中のUI更新用）
   const [playtimeRange, setPlaytimeRangeLocal] = useState<number[]>([
     params.minPlaytime ?? PLAYTIME_MIN,
     params.maxPlaytime ?? PLAYTIME_MAX,
   ]);
+
+  // 外部から確定条件が変わったときは、クリアや履歴移動の結果を表示する。
+  useEffect(() => {
+    setPlayerRangeLocal([
+      params.minPlayer ?? PLAYER_MIN,
+      params.maxPlayer ?? PLAYER_MAX,
+    ]);
+  }, [params.minPlayer, params.maxPlayer]);
+
+  useEffect(() => {
+    setPlaytimeRangeLocal([
+      params.minPlaytime ?? PLAYTIME_MIN,
+      params.maxPlaytime ?? PLAYTIME_MAX,
+    ]);
+  }, [params.minPlaytime, params.maxPlaytime]);
 
   // 表示するシステム
   const visibleSystems = expandedSystems
@@ -86,6 +101,13 @@ export const FilterPanel = ({
     );
   };
 
+  const handleClearAll = () => {
+    // debounce前はURLの範囲が変わらないため、操作中の表示も明示的に戻す。
+    setPlayerRangeLocal([PLAYER_MIN, PLAYER_MAX]);
+    setPlaytimeRangeLocal([PLAYTIME_MIN, PLAYTIME_MAX]);
+    clearAll();
+  };
+
   return (
     <div className={styles.filterPanel({ variant })}>
       {/* システム選択 */}
@@ -98,6 +120,7 @@ export const FilterPanel = ({
                 <button
                   key={system.systemId}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => toggleSystem(system.systemId)}
                   className={styles.selectableChip({ selected: isSelected })}
                 >
@@ -132,6 +155,7 @@ export const FilterPanel = ({
               <button
                 key={tag.tagId}
                 type="button"
+                aria-pressed={isSelected}
                 onClick={() => toggleTag(tag.tagId)}
                 className={styles.selectableChip({ selected: isSelected })}
               >
@@ -154,49 +178,58 @@ export const FilterPanel = ({
         </div>
       </FilterSection>
 
-      {/* プレイ人数 */}
-      <FilterSection label="プレイ人数">
-        <div className={styles.sliderContainer}>
-          <Slider
-            aria-label="プレイ人数"
-            value={playerRange}
-            onValueChange={(details) => handlePlayerRangeChange(details.value)}
-            min={PLAYER_MIN}
-            max={PLAYER_MAX}
-            step={1}
-            range
-            showValue
-            formatValue={(v) => (v === PLAYER_MAX ? `${v}人+` : `${v}人`)}
-            minLabel={`${PLAYER_MIN}人`}
-            maxLabel={`${PLAYER_MAX}人+`}
-          />
-        </div>
-      </FilterSection>
+      {/* プレイ人数 / プレイ時間（広い時だけ横並び） */}
+      <div className={styles.rangeContainer}>
+        <div className={styles.rangeGrid}>
+          <FilterSection label="プレイ人数">
+            <div className={styles.sliderContainer}>
+              <Slider
+                aria-label="プレイ人数"
+                value={playerRange}
+                onValueChange={(details) =>
+                  handlePlayerRangeChange(details.value)
+                }
+                min={PLAYER_MIN}
+                max={PLAYER_MAX}
+                step={1}
+                range
+                showValue
+                formatValue={(v) => (v === PLAYER_MAX ? `${v}人+` : `${v}人`)}
+                minLabel={`${PLAYER_MIN}人`}
+                maxLabel={`${PLAYER_MAX}人+`}
+              />
+            </div>
+          </FilterSection>
 
-      {/* プレイ時間 */}
-      <FilterSection label="プレイ時間">
-        <div className={styles.sliderContainer}>
-          <Slider
-            aria-label="プレイ時間"
-            value={playtimeRange}
-            onValueChange={(details) =>
-              handlePlaytimeRangeChange(details.value)
-            }
-            min={PLAYTIME_MIN}
-            max={PLAYTIME_MAX}
-            step={1}
-            range
-            showValue
-            formatValue={(v) => (v === PLAYTIME_MAX ? `${v}h+` : `${v}h`)}
-            minLabel={`${PLAYTIME_MIN}h`}
-            maxLabel={`${PLAYTIME_MAX}h+`}
-          />
+          <FilterSection label="プレイ時間">
+            <div className={styles.sliderContainer}>
+              <Slider
+                aria-label="プレイ時間"
+                value={playtimeRange}
+                onValueChange={(details) =>
+                  handlePlaytimeRangeChange(details.value)
+                }
+                min={PLAYTIME_MIN}
+                max={PLAYTIME_MAX}
+                step={1}
+                range
+                showValue
+                formatValue={(v) => (v === PLAYTIME_MAX ? `${v}h+` : `${v}h`)}
+                minLabel={`${PLAYTIME_MIN}h`}
+                maxLabel={`${PLAYTIME_MAX}h+`}
+              />
+            </div>
+          </FilterSection>
         </div>
-      </FilterSection>
+      </div>
 
       {/* クリアボタン（bottomsheetは3ボタンフッターと重複するため非表示） */}
-      {variant !== 'bottomsheet' && activeFilterCount > 0 && (
-        <button type="button" onClick={clearAll} className={styles.clearButton}>
+      {showClear && variant !== 'bottomsheet' && activeFilterCount > 0 && (
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className={styles.clearButton}
+        >
           フィルターをクリア
         </button>
       )}

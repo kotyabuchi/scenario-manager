@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   EyeSlash,
   FilmSlate,
@@ -8,8 +8,11 @@ import {
   Plus,
 } from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import * as styles from './styles';
+
+import { Switch } from '@/components/elements/switch';
 
 import type { VideoLinkWithSession } from '../interface';
 
@@ -74,9 +77,9 @@ const getVideoTitle = (video: VideoLinkWithSession): string => {
 };
 
 /**
- * 動画カード
+ * 動画行（モック準拠: 小サムネ左＋タイトル・投稿者）
  */
-const VideoCard = ({
+const VideoRow = ({
   video,
   isRevealed,
   onReveal,
@@ -87,55 +90,69 @@ const VideoCard = ({
 }) => {
   const thumbnailUrl = getThumbnailUrl(video.videoUrl);
 
-  // spoiler=false または 表示済みの場合はサムネイルを表示
-  const shouldShowThumbnail = !video.spoiler || isRevealed;
-
   return (
-    <a
-      href={video.videoUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={styles.videoCard}
-    >
-      <div className={styles.videoCard_thumbnail}>
-        {shouldShowThumbnail && thumbnailUrl ? (
-          <>
-            <Image
-              src={thumbnailUrl}
-              alt="動画サムネイル"
-              fill
-              sizes="280px"
-              className={styles.video_thumbnailImage}
-            />
-            <PlayCircle size={48} className={styles.videoCard_playIcon} />
-          </>
-        ) : video.spoiler && !isRevealed ? (
+    <div className={styles.videoRow}>
+      <div className={styles.videoRow_thumbnail}>
+        {video.spoiler && !isRevealed ? (
+          // ネタバレ未解除時はリンクにせず、解除ボタンのみ
           <button
             type="button"
-            className={styles.videoCard_spoilerOverlay}
-            onClick={(e) => {
-              e.preventDefault();
-              onReveal();
-            }}
+            className={styles.videoRow_spoilerOverlay}
+            onClick={onReveal}
           >
-            <EyeSlash size={24} />
-            <span>ネタバレを含む可能性があります</span>
-            <span className={styles.video_spoilerHint}>クリックで表示</span>
+            <EyeSlash size={16} />
+            <span>ネタバレ表示</span>
           </button>
         ) : (
-          <div className={styles.videoCard_placeholder}>
-            <PlayCircle size={48} />
-          </div>
+          <a
+            href={video.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.videoRow_thumbnailLink}
+          >
+            {thumbnailUrl ? (
+              <>
+                <Image
+                  src={thumbnailUrl}
+                  alt=""
+                  fill
+                  sizes="120px"
+                  className={styles.video_thumbnailImage}
+                />
+                <PlayCircle size={24} className={styles.videoRow_playIcon} />
+              </>
+            ) : (
+              <div className={styles.videoRow_placeholder}>
+                <PlayCircle size={24} />
+              </div>
+            )}
+            <span className={styles.srOnly}>{getVideoTitle(video)}を開く</span>
+          </a>
         )}
       </div>
-      <div className={styles.videoCard_info}>
-        <div className={styles.videoCard_title}>{getVideoTitle(video)}</div>
-        <div className={styles.videoCard_meta}>
+      <div className={styles.videoRow_info}>
+        <a
+          href={video.videoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.videoRow_title}
+        >
+          {getVideoTitle(video)}
+        </a>
+        <div className={styles.videoRow_meta}>
           <FilmSlate size={12} />
-          <span>投稿者: {video.user.nickname}</span>
+          <span>
+            投稿者:{' '}
+            <Link
+              href={`/users/${video.user.userId}`}
+              className={styles.userLink}
+            >
+              {video.user.nickname}
+            </Link>
+          </span>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
@@ -168,17 +185,18 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
   return (
     <section className={styles.section}>
       <div className={styles.section_header}>
-        <h2 className={styles.section_title}>プレイ動画</h2>
+        <h2 className={styles.section_title}>
+          プレイ動画
+          <span className={styles.section_count}>（{videos.length}件）</span>
+        </h2>
         <div className={styles.section_headerActions}>
           {hasSpoilerVideos && (
-            <label className={styles.spoilerToggle}>
-              <input
-                type="checkbox"
-                checked={allSpoilersRevealed}
-                onChange={handleToggleSpoiler}
-              />
-              <span>ネタバレ表示</span>
-            </label>
+            <Switch
+              checked={allSpoilersRevealed}
+              onCheckedChange={handleToggleSpoiler}
+            >
+              ネタバレ表示
+            </Switch>
           )}
           {isPlayed && videos.length > 0 && (
             <button type="button" className={styles.section_actionButton}>
@@ -206,14 +224,16 @@ export const VideoSection = ({ videos, isPlayed }: VideoSectionProps) => {
           )}
         </div>
       ) : (
-        <div className={styles.videoGrid}>
-          {videos.map((video) => (
-            <VideoCard
-              key={video.videoLinkId}
-              video={video}
-              isRevealed={revealedVideos.has(video.videoLinkId)}
-              onReveal={() => handleRevealVideo(video.videoLinkId)}
-            />
+        <div className={styles.videoList}>
+          {videos.map((video, index) => (
+            <Fragment key={video.videoLinkId}>
+              {index > 0 && <hr className={styles.listDivider} />}
+              <VideoRow
+                video={video}
+                isRevealed={revealedVideos.has(video.videoLinkId)}
+                onReveal={() => handleRevealVideo(video.videoLinkId)}
+              />
+            </Fragment>
           ))}
         </div>
       )}

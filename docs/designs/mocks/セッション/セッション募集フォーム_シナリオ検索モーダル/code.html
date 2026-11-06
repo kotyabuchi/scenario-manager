@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>シナリオ検索モーダル - シナプレ管理くん</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#059568",
+          "primary-hover": "#047854",
+          "background-light": "#f5f8f7",
+          "background-dark": "#0f231d",
+          "input-bg": "#EAEBED",
+          "input-bg-dark": "#1a332b",
+        },
+        fontFamily: {
+          "display": ["Inter"]
+        },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+<style>textarea::-webkit-scrollbar {
+        width: 8px;
+    }
+    textarea::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    textarea::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 20px;
+    }input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }.scenario-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scenario-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .scenario-list::-webkit-scrollbar-thumb {
+        background-color: #e2e8f0;
+        border-radius: 20px;
+    }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-display min-h-screen flex flex-col relative overflow-hidden">
+<header class="sticky top-0 z-40 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 dark:border-primary/20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex-shrink-0 flex items-center gap-2">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-xl">
+                    シ
+                </div>
+<span class="font-bold text-lg tracking-tight text-primary dark:text-primary">シナプレ管理くん</span>
+</div>
+<nav class="hidden md:flex space-x-8">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3 py-2 text-sm font-medium transition-colors" href="#">ホーム</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3 py-2 text-sm font-medium transition-colors" href="#">シナリオ</a>
+<a class="text-primary dark:text-primary px-3 py-2 text-sm font-bold border-b-2 border-primary" href="#">セッション</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3 py-2 text-sm font-medium transition-colors" href="#">スケジュール</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-1 rounded-full text-slate-500 hover:text-primary focus:outline-none">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+<div class="flex items-center gap-2 cursor-pointer group">
+<img alt="User Avatar" class="h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-primary transition-colors" data-alt="Young woman smiling portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgaqXt2DI44gQyN2hTTBCUgsUW8UzGNNIsjpiCoZIg40DQf9njB2RGip-URxg_zA-Kfxqpe84m0EjtSLZLjQnT2kbexR-cW2NbPJdlfgIkKxjB7Ia1wfUE-Cgy6-AzmRvQUh0kKe-0Kc_FO5uRbeBDbweBy1yb00aESzKHz-bXP3i5QzifPxyJYFOZUHVgSfLtpeX0Nl51hp8fnHGfq5ITVIZ-NQWM1BmEHzKTskUIAwkv19j8Sr7er4ILyUJ64BS-h1-o_Vix3mQ"/>
+<span class="hidden lg:block text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary">ユーザー</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow py-12 px-4 sm:px-6 filter blur-[2px] opacity-50 pointer-events-none select-none">
+<div class="max-w-2xl mx-auto">
+<div class="mb-8 text-center">
+<h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">新しいセッションを募集</h1>
+<p class="text-slate-500 dark:text-slate-400">冒険の仲間を集めましょう。詳細は後からでも編集可能です。</p>
+</div>
+<form class="bg-white dark:bg-[#152e26] rounded-xl shadow-lg shadow-primary/5 p-8 border border-primary/5 dark:border-primary/20">
+<div class="mb-8 group">
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
+                    セッション名 <span class="text-red-500 text-xs ml-1 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded">必須</span>
+</label>
+<input class="w-full bg-input-bg dark:bg-input-bg-dark border-transparent rounded-lg py-3 px-4" placeholder="例: 週末CoC7版セッション" type="text"/>
+</div>
+<div class="bg-primary/5 h-64 rounded-lg"></div>
+</form>
+</div>
+</main>
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+<div aria-hidden="true" class="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+<div class="relative bg-white dark:bg-[#152e26] w-full max-w-[640px] rounded-[16px] shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex flex-col max-h-[90vh] overflow-hidden transform transition-all">
+<div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-white/5">
+<h2 class="text-lg font-bold text-slate-800 dark:text-white">シナリオを選ぶ</h2>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+<div class="bg-[#F6F7F7] dark:bg-[#0f231d]/50 px-6 py-4 border-b border-slate-100 dark:border-white/5 space-y-4">
+<div class="flex gap-3">
+<div class="relative flex-grow">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="w-full bg-white dark:bg-[#1a332b] border-none rounded-lg pl-10 pr-4 py-2 text-sm text-slate-700 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary shadow-sm" placeholder="シナリオ名で検索" type="text"/>
+</div>
+<div class="relative w-48 flex-shrink-0">
+<select class="w-full bg-white dark:bg-[#1a332b] border-none rounded-lg pl-3 pr-8 py-2 text-sm text-slate-700 dark:text-slate-100 cursor-pointer focus:ring-2 focus:ring-primary shadow-sm appearance-none">
+<option>すべてのシステム</option>
+<option>Call of Cthulhu (6th)</option>
+<option>Call of Cthulhu (7th)</option>
+<option>inSANe</option>
+</select>
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap mr-1">スマートフィルタ:</span>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:text-primary-300">
+<span class="material-symbols-outlined text-[16px]">check</span>
+                    PLが未プレイ
+                </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-white dark:bg-[#1a332b] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">
+                    GMが回せる
+                </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-white dark:bg-[#1a332b] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">
+                    メンバーが保有
+                </button>
+</div>
+</div>
+<div class="flex-grow overflow-y-auto scenario-list bg-white dark:bg-[#152e26]">
+<div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer group transition-colors">
+<div class="flex-grow min-w-0 pr-4">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-base font-bold text-slate-800 dark:text-white truncate">狂気山脈 〜邪神の山嶺〜</h3>
+<span class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">CoC7版</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">group</span> 3〜5人</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 約6時間</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2">
+<img alt="User A" class="w-6 h-6 rounded-full border-2 border-white dark:border-[#152e26]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsAB7g4cH6Jgd0d48M7rZMvqChgkVZbskQ_1Dms8EYNys9NAxFZDGgIu1eKIyWpxdkydxblV7BQgd1aFdZPFvPehNnaxBgwpxE3iFf_PC2WkUvDJdbkjrtn9gWSK2iPIK-7u5qRFh6fiuIa6WJZ0T3TXct5Jfsnc4uSqkzYHebGD9_Mu3a5GeKe2OhOvXSUB0qV-PklgwfiQ5qtWYoMfMJixus5lOZ0onPKywFDo4D1isRYzwlwsxF8ZWrHnpWtqCZMjS164Bzvck"/>
+<img alt="User B" class="w-6 h-6 rounded-full border-2 border-white dark:border-[#152e26]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO2tOMX00CIUw9iViCvKQw0AOoyT_kbGz5KAhPyFfODVMW-_Mu33z6VdZWJtY0bVKYOGDWEusmhT_Mwe-nOjJD1QfEt8lA6pcgcvxVmfBZKd7WTvjs8cAizVYKMNCv5wh6mzRhN9aUacKiH2R7k81_8MvelXz_89LR1uYkusCmTFdaj2XdggY2uoZT_MHU3XxmzE4SYUDIhZTa_JLGVbhBZ-sXijvM3_ymrf9mdQ1Ah1eU1NOLgsnbElphF6U2HXmkin6UZecNCqg"/>
+</div>
+<div class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 group-hover:border-primary group-hover:bg-primary dark:group-hover:bg-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-[14px] text-white opacity-0 group-hover:opacity-100">check</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-white/5 bg-primary/5 dark:bg-primary/10 cursor-pointer">
+<div class="flex-grow min-w-0 pr-4">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-base font-bold text-primary dark:text-primary-300 truncate">毒入りスープ</h3>
+<span class="text-xs px-1.5 py-0.5 rounded bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300">CoC7版</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">group</span> 3〜4人</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 約4時間</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full border border-primary bg-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-[14px] text-white">check</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer group transition-colors">
+<div class="flex-grow min-w-0 pr-4">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-base font-bold text-slate-800 dark:text-white truncate">るるいえはいすくーる</h3>
+<span class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">CoC7版</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">group</span> 4〜6人</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 約5時間</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 group-hover:border-primary group-hover:bg-primary dark:group-hover:bg-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-[14px] text-white opacity-0 group-hover:opacity-100">check</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer group transition-colors">
+<div class="flex-grow min-w-0 pr-4">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-base font-bold text-slate-800 dark:text-white truncate">水底よりの使者</h3>
+<span class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">CoC7版</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">group</span> 2〜4人</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 約3時間</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 group-hover:border-primary group-hover:bg-primary dark:group-hover:bg-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-[14px] text-white opacity-0 group-hover:opacity-100">check</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer group transition-colors">
+<div class="flex-grow min-w-0 pr-4">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-base font-bold text-slate-800 dark:text-white truncate">星辰の檻</h3>
+<span class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">インセイン</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">group</span> 3〜4人</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 約4時間</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 group-hover:border-primary group-hover:bg-primary dark:group-hover:bg-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-[14px] text-white opacity-0 group-hover:opacity-100">check</span>
+</div>
+</div>
+</div>
+<div class="p-8 text-center text-slate-400 text-sm">
+                検索結果の終わり
+            </div>
+</div>
+<div class="p-6 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-[#152e26] flex items-center justify-end gap-3 rounded-b-[16px]">
+<button class="px-5 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                キャンセル
+            </button>
+<button class="px-6 py-2.5 rounded-lg text-sm font-bold text-white bg-primary hover:bg-primary-hover shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all transform hover:-translate-y-0.5">
+                選択 (1)
+            </button>
+</div>
+</div>
+</div>
+
+</body></html>

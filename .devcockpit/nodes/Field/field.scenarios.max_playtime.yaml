@@ -1,0 +1,13 @@
+id: field.scenarios.max_playtime
+kind: Field
+name: max_playtime
+description: public.scenarios.max_playtime
+parentId: entity.scenarios
+properties:
+  dataType: number | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

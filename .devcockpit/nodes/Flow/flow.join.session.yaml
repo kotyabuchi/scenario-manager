@@ -1,0 +1,11 @@
+id: flow.join.session
+kind: Flow
+name: 参加申請を承認する
+description: 参加申請を承認するユーザーフロー。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/applications/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

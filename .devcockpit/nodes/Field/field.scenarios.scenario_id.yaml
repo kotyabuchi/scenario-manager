@@ -1,0 +1,14 @@
+id: field.scenarios.scenario_id
+kind: Field
+name: scenario_id
+description: public.scenarios.scenario_id
+parentId: entity.scenarios
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,12 @@
+id: relation.video_links.created_by_id
+kind: Relation
+name: created_by_id → users.user_id
+description: public.video_links.created_by_id は public.users.user_id を参照する。
+parentId: entity.video_links
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one

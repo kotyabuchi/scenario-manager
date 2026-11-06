@@ -109,6 +109,11 @@ export const useFilterState = () => {
 
   // 全フィルタークリア
   const clearAll = useCallback(() => {
+    // クリア後に保留中の検索が古い条件を再適用しないよう取り消す。
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
     setParams({
       systems: [],
       tags: [],

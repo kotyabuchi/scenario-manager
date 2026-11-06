@@ -1,0 +1,11 @@
+{
+  "ignore": {
+    "rules": [
+      "knip/files",
+      "knip/exports",
+      "knip/types",
+      "react-hooks/rules-of-hooks"
+    ],
+    "files": ["**/*.stories.tsx", "**/*.test.tsx", "e2e/**", "scripts/**"]
+  }
+}

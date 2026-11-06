@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "src/app/(main)/feedback/__tests__/adapter.test.ts",
+      "reason": "実アダプターを呼び、Supabaseからフィードバック・投票・レート制限を取得・更新する。",
+      "legacyRisks": [
+        "DBエラー時の早期returnが成功として扱われる",
+        "未実装ケースにit.skipが残る"
+      ]
+    },
+    {
+      "path": "src/app/(main)/profile/__tests__/adapter.test.ts",
+      "reason": "DB fixtureで利用者を作成し、プロフィールの取得・更新を実DBで検証する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/scenarios/[id]/__tests__/adapter.test.ts",
+      "reason": "DB fixtureでシナリオ・レビュー・参加予定を作成し、実アダプターを検証する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/scenarios/__tests__/masterData.test.ts",
+      "reason": "getAllSystemsとgetAllTagsが実DBのマスタデータを取得する。",
+      "legacyRisks": [
+        "DBエラーやデータ不足をexpect(true)で成功として扱う",
+        "既存マスタデータの件数に依存する"
+      ]
+    },
+    {
+      "path": "src/app/(main)/scenarios/__tests__/searchScenarios.test.ts",
+      "reason": "DB fixtureでシステム・タグ・シナリオを登録し、検索クエリーを実行する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/scenarios/new/__tests__/adapter.test.ts",
+      "reason": "DB fixtureを使い、シナリオの作成と関連データの保存を検証する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/scenarios/new/__tests__/duplicateCheck.test.ts",
+      "reason": "createDbClientを直接呼び、重複判定用の行を実DBへ挿入・削除する。",
+      "legacyRisks": ["fixture準備とcleanupに直接のDB書込みがある"]
+    },
+    {
+      "path": "src/app/(main)/sessions/[id]/__tests__/adapter.test.ts",
+      "reason": "DB fixtureでセッション・参加者・リンクを作成し、詳細の取得・更新を検証する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/sessions/__tests__/adapter.test.ts",
+      "reason": "DB fixtureとgetTestClientでセッション一覧の検索・履歴・予定を検証する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/sessions/__tests__/participantAdapter.test.ts",
+      "reason": "DB fixtureで利用者とセッションを作成し、参加申請・承認・離脱を検証する。",
+      "legacyRisks": ["既存testClientはservice-roleがあればRLSを迂回する"]
+    },
+    {
+      "path": "src/app/(main)/sessions/new/__tests__/adapter.test.ts",
+      "reason": "getTestClientを使う独自モックとDB fixtureでセッション作成・取得を検証する。",
+      "legacyRisks": [
+        "service-roleの有無によりit.skipまたはdescribe.skipへ切り替わる",
+        "既存testClientはservice-roleがあればRLSを迂回する"
+      ]
+    }
+  ],
+  "verifiedFiles": [],
+  "mockedFiles": []
+}

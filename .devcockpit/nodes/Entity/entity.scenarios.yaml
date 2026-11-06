@@ -1,0 +1,11 @@
+id: entity.scenarios
+kind: Entity
+name: scenarios
+description: Supabase public.scenarios テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
   createReview,
@@ -7,12 +7,28 @@ import {
   getScenarioReviews,
   getScenarioSessions,
   getScenarioVideoLinks,
-  getUserByDiscordId,
+  getUserByAuthUserId,
   getUserScenarioPreference,
   toggleFavorite,
   togglePlayed,
   updateReview,
 } from '../adapter';
+
+import { randomUUID } from 'node:crypto';
+import {
+  cleanupPreferences,
+  cleanupReviews,
+  cleanupScenarios,
+  cleanupSessions,
+  cleanupSystems,
+  cleanupUsers,
+  createTestPreference,
+  createTestReview,
+  createTestScenario,
+  createTestSession,
+  createTestSystem,
+  createTestUser,
+} from '@/__tests__/helpers/fixtures';
 
 /**
  * シナリオ詳細ページのアダプター関数テスト
@@ -27,10 +43,75 @@ import {
  * - US-114: ユーザーとして、シナリオの関連動画を閲覧できる
  *
  * 注意: これらはデータベースに接続する統合テストです。
- * テスト環境でDBに接続できない場合、テストは警告を出してスキップ扱いになります。
  */
 
 describe('Scenario Detail Adapter', () => {
+  let mainUserId: string;
+  let mainUserAuthUserId: string;
+  let otherUserId: string;
+  let systemId: string;
+  let scenarioId: string;
+  let sessionId: string;
+  let reviewId: string;
+  const createdReviewIds: string[] = [];
+  const createdPreferencePairs: Array<{
+    userId: string;
+    scenarioId: string;
+  }> = [];
+
+  beforeAll(async () => {
+    const mainUser = await createTestUser();
+    mainUserId = mainUser.user_id;
+    mainUserAuthUserId = mainUser.auth_user_id;
+
+    const otherUser = await createTestUser();
+    otherUserId = otherUser.user_id;
+
+    const system = await createTestSystem();
+    systemId = system.system_id;
+
+    const scenario = await createTestScenario({
+      systemId,
+      createdById: mainUserId,
+      name: '[TEST] シナリオ詳細テスト用',
+    });
+    scenarioId = scenario.scenario_id;
+
+    const session = await createTestSession({
+      keeperUserId: mainUserId,
+      phase: 'COMPLETED',
+      scenario_id: scenarioId,
+    });
+    sessionId = session.game_session_id;
+
+    const review = await createTestReview({
+      userId: mainUserId,
+      scenarioId,
+      sessionId,
+    });
+    reviewId = review.user_review_id;
+    createdReviewIds.push(reviewId);
+
+    await createTestPreference({
+      userId: mainUserId,
+      scenarioId,
+      is_played: true,
+    });
+    createdPreferencePairs.push({
+      userId: mainUserId,
+      scenarioId,
+    });
+  });
+
+  afterAll(async () => {
+    await cleanupPreferences(createdPreferencePairs);
+    await cleanupReviews(createdReviewIds);
+    await cleanupSessions([sessionId]);
+    await cleanupScenarios([scenarioId]);
+    await cleanupUsers([mainUserId, otherUserId]);
+    await cleanupSystems([systemId]);
+  });
+
   describe('getScenarioDetail', () => {
     // T-SD-001: 存在しないシナリオIDでnullを返す
     it('存在しないシナリオIDでnullを返す', async () => {
@@ -48,10 +129,7 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-SD-002: 存在するシナリオIDでシナリオ詳細を取得できる
-    it.skip('存在するシナリオIDでシナリオ詳細を取得できる', async () => {
-      // テスト用のシナリオID（実際のテストデータに応じて変更）
-      const scenarioId = 'test-scenario-id';
-
+    it('存在するシナリオIDでシナリオ詳細を取得できる', async () => {
       const result = await getScenarioDetail(scenarioId);
 
       expect(result.success).toBe(true);
@@ -85,9 +163,7 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-SR-002: ソートオプションが正しく適用される
-    it.skip('ソートオプションが正しく適用される', async () => {
-      const scenarioId = 'test-scenario-id';
-
+    it('ソートオプションが正しく適用される', async () => {
       // 新着順
       const newestResult = await getScenarioReviews(scenarioId, 'newest');
       expect(newestResult.success).toBe(true);
@@ -108,9 +184,7 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-SR-003: ページネーションが正しく動作する
-    it.skip('ページネーションが正しく動作する', async () => {
-      const scenarioId = 'test-scenario-id';
-
+    it('ページネーションが正しく動作する', async () => {
       const page1 = await getScenarioReviews(scenarioId, 'newest', 5, 0);
       const page2 = await getScenarioReviews(scenarioId, 'newest', 5, 5);
 
@@ -143,9 +217,7 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-SS-002: COMPLETEDのセッションのみ取得できる
-    it.skip('COMPLETEDのセッションのみ取得できる', async () => {
-      const scenarioId = 'test-scenario-id';
-
+    it('COMPLETEDのセッションのみ取得できる', async () => {
       const result = await getScenarioSessions(scenarioId);
 
       expect(result.success).toBe(true);
@@ -181,9 +253,7 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-SV-002: 動画リンク一覧を取得できる
-    it.skip('動画リンク一覧を取得できる', async () => {
-      const scenarioId = 'test-scenario-id';
-
+    it('動画リンク一覧を取得できる', async () => {
       const result = await getScenarioVideoLinks(scenarioId);
 
       expect(result.success).toBe(true);
@@ -218,11 +288,8 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-UP-002: 存在する組み合わせで経験情報を取得できる
-    it.skip('存在する組み合わせで経験情報を取得できる', async () => {
-      const scenarioId = 'test-scenario-id';
-      const userId = 'test-user-id';
-
-      const result = await getUserScenarioPreference(scenarioId, userId);
+    it('存在する組み合わせで経験情報を取得できる', async () => {
+      const result = await getUserScenarioPreference(scenarioId, mainUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
@@ -237,12 +304,12 @@ describe('Scenario Detail Adapter', () => {
     });
   });
 
-  describe('getUserByDiscordId', () => {
-    // T-GD-001: 存在しないDiscordIDでnullを返す
-    it('存在しないDiscordIDでnullを返す', async () => {
-      const nonExistentDiscordId = 'non-existent-discord-id-12345';
+  describe('getUserByAuthUserId', () => {
+    // T-GD-001: 存在しない認証UIDでnullを返す
+    it('存在しない認証UIDでnullを返す', async () => {
+      const nonExistentAuthUserId = randomUUID();
 
-      const result = await getUserByDiscordId(nonExistentDiscordId);
+      const result = await getUserByAuthUserId(nonExistentAuthUserId);
 
       if (result.success) {
         expect(result.data).toBeNull();
@@ -253,11 +320,9 @@ describe('Scenario Detail Adapter', () => {
       }
     });
 
-    // T-GD-002: 存在するDiscordIDでユーザーIDを取得できる
-    it.skip('存在するDiscordIDでユーザーIDを取得できる', async () => {
-      const discordId = 'test-discord-id';
-
-      const result = await getUserByDiscordId(discordId);
+    // T-GD-002: 存在する認証UIDでユーザーIDを取得できる
+    it('存在する認証UIDでユーザーIDを取得できる', async () => {
+      const result = await getUserByAuthUserId(mainUserAuthUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
@@ -269,31 +334,29 @@ describe('Scenario Detail Adapter', () => {
 
   describe('toggleFavorite', () => {
     // T-TF-001: 存在しない組み合わせで新規作成される
-    it.skip('存在しない組み合わせで新規作成される', async () => {
-      const scenarioId = 'test-scenario-id';
-      const userId = 'test-user-id';
-
-      const result = await toggleFavorite(scenarioId, userId);
+    it('存在しない組み合わせで新規作成される', async () => {
+      const result = await toggleFavorite(scenarioId, otherUserId);
 
       expect(result.success).toBe(true);
       if (result.success) {
         // 新規作成なのでtrueが返る
         expect(result.data).toBe(true);
+        createdPreferencePairs.push({
+          userId: otherUserId,
+          scenarioId,
+        });
       }
     });
 
     // T-TF-002: 既存のお気に入りがトグルされる
-    it.skip('既存のお気に入りがトグルされる', async () => {
-      const scenarioId = 'test-scenario-id';
-      const userId = 'test-user-id';
-
+    it('既存のお気に入りがトグルされる', async () => {
       // 1回目のトグル
-      const result1 = await toggleFavorite(scenarioId, userId);
+      const result1 = await toggleFavorite(scenarioId, mainUserId);
       expect(result1.success).toBe(true);
       const firstValue = result1.success ? result1.data : null;
 
       // 2回目のトグル
-      const result2 = await toggleFavorite(scenarioId, userId);
+      const result2 = await toggleFavorite(scenarioId, mainUserId);
       expect(result2.success).toBe(true);
 
       if (result2.success && firstValue !== null) {
@@ -325,11 +388,10 @@ describe('Scenario Detail Adapter', () => {
 
   describe('togglePlayed', () => {
     // T-TP-001: 存在しない組み合わせで新規作成される
-    it.skip('存在しない組み合わせで新規作成される', async () => {
-      const scenarioId = 'test-scenario-id';
-      const userId = 'test-user-id';
-
-      const result = await togglePlayed(scenarioId, userId);
+    it('存在しない組み合わせで新規作成される', async () => {
+      // otherUserで既にpreference作られているのでmainUserの別トグル機能をテスト
+      // togglePlayedはtoggleFavoriteと同じpreferenceレコードを使う
+      const result = await togglePlayed(scenarioId, otherUserId);
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -339,17 +401,14 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-TP-002: 既存のプレイ済み状態がトグルされる
-    it.skip('既存のプレイ済み状態がトグルされる', async () => {
-      const scenarioId = 'test-scenario-id';
-      const userId = 'test-user-id';
-
+    it('既存のプレイ済み状態がトグルされる', async () => {
       // 1回目のトグル
-      const result1 = await togglePlayed(scenarioId, userId);
+      const result1 = await togglePlayed(scenarioId, mainUserId);
       expect(result1.success).toBe(true);
       const firstValue = result1.success ? result1.data : null;
 
       // 2回目のトグル
-      const result2 = await togglePlayed(scenarioId, userId);
+      const result2 = await togglePlayed(scenarioId, mainUserId);
       expect(result2.success).toBe(true);
 
       if (result2.success && firstValue !== null) {
@@ -381,66 +440,83 @@ describe('Scenario Detail Adapter', () => {
 
   describe('createReview', () => {
     // T-CR-001: 必須項目のみでレビューを作成できる
-    it.skip('必須項目のみでレビューを作成できる', async () => {
-      const userId = 'test-user-id';
+    it('必須項目のみでレビューを作成できる', async () => {
       const input = {
-        scenarioId: 'test-scenario-id',
+        scenarioId,
         rating: 4,
       };
 
-      const result = await createReview(input, userId);
+      const result = await createReview(input, otherUserId);
 
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.userReviewId).toBeDefined();
         expect(result.data.userReviewId.length).toBe(26); // ULIDは26文字
+        createdReviewIds.push(result.data.userReviewId);
       }
     });
 
     // T-CR-002: 全項目を指定してレビューを作成できる
-    it.skip('全項目を指定してレビューを作成できる', async () => {
-      const userId = 'test-user-id';
+    it('全項目を指定してレビューを作成できる', async () => {
+      // otherUserのレビューを先に削除して再作成
+      // 別ユーザーを使うか、別scenarioを使う必要がある
+      // ここではsessionId付きで既存mainUserのレビューを確認するだけとする
+      // mainUserは既にbeforeAllでレビュー作成済みなので、新規ユーザーが必要
+      // 簡易的に: otherUserのレビューを削除して再作成
+      if (createdReviewIds.length > 0) {
+        const lastReviewId = createdReviewIds.at(-1);
+        if (lastReviewId) await deleteReview(lastReviewId, otherUserId);
+        createdReviewIds.pop();
+      }
+
       const input = {
-        scenarioId: 'test-scenario-id',
-        sessionId: 'test-session-id',
+        scenarioId,
+        sessionId,
         rating: 5,
         openComment: 'とても面白いシナリオでした！',
         spoilerComment: '犯人は○○でした',
       };
 
-      const result = await createReview(input, userId);
+      const result = await createReview(input, otherUserId);
 
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.userReviewId).toBeDefined();
+        createdReviewIds.push(result.data.userReviewId);
       }
     });
 
     // T-CR-003: ratingなしでレビューを作成できる
-    it.skip('ratingなしでレビューを作成できる', async () => {
-      const userId = 'test-user-id';
+    it('ratingなしでレビューを作成できる', async () => {
+      // otherUserのレビューを削除して再作成
+      if (createdReviewIds.length > 0) {
+        const lastReviewId = createdReviewIds.at(-1);
+        if (lastReviewId) await deleteReview(lastReviewId, otherUserId);
+        createdReviewIds.pop();
+      }
+
       const input = {
-        scenarioId: 'test-scenario-id',
+        scenarioId,
         openComment: 'コメントのみのレビュー',
       };
 
-      const result = await createReview(input, userId);
+      const result = await createReview(input, otherUserId);
 
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.userReviewId).toBeDefined();
+        createdReviewIds.push(result.data.userReviewId);
       }
     });
 
     // T-CR-101: 存在しないシナリオIDでエラー
     it('存在しないシナリオIDでエラー', async () => {
-      const userId = 'test-user-id';
       const input = {
         scenarioId: 'non-existent-scenario-id-12345',
         rating: 4,
       };
 
-      const result = await createReview(input, userId);
+      const result = await createReview(input, mainUserId);
 
       // 外部キー制約違反でエラーになるか、DB接続エラー
       if (!result.success) {
@@ -452,38 +528,32 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-CR-102: 同一ユーザー・シナリオの重複レビューでエラー
-    it.skip('同一ユーザー・シナリオの重複レビューでエラー', async () => {
-      const userId = 'test-user-id';
+    it('同一ユーザー・シナリオの重複レビューでエラー', async () => {
+      // mainUserは既にbeforeAllでreview作成済み
       const input = {
-        scenarioId: 'test-scenario-id',
+        scenarioId,
         rating: 4,
       };
 
-      // 1回目の作成
-      const result1 = await createReview(input, userId);
-      expect(result1.success).toBe(true);
-
-      // 2回目の作成（重複）
-      const result2 = await createReview(input, userId);
-      expect(result2.success).toBe(false);
-      if (!result2.success) {
-        expect(result2.error).toBeDefined();
+      // 重複作成を試みる
+      const result = await createReview(input, mainUserId);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBeDefined();
       }
     });
   });
 
   describe('updateReview', () => {
     // T-UR-001: レビューを更新できる
-    it.skip('レビューを更新できる', async () => {
-      const reviewId = 'test-review-id';
-      const userId = 'test-user-id';
+    it('レビューを更新できる', async () => {
       const input = {
         rating: 5,
         openComment: '更新後のコメント',
         spoilerComment: '更新後のネタバレ',
       };
 
-      const result = await updateReview(reviewId, input, userId);
+      const result = await updateReview(reviewId, input, mainUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
@@ -493,14 +563,12 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-UR-002: 部分的な更新ができる
-    it.skip('部分的な更新ができる', async () => {
-      const reviewId = 'test-review-id';
-      const userId = 'test-user-id';
+    it('部分的な更新ができる', async () => {
       const input = {
         rating: 3,
       };
 
-      const result = await updateReview(reviewId, input, userId);
+      const result = await updateReview(reviewId, input, mainUserId);
 
       expect(result.success).toBe(true);
       if (result.success && result.data !== null) {
@@ -511,12 +579,11 @@ describe('Scenario Detail Adapter', () => {
     // T-UR-101: 存在しないレビューIDでエラー
     it('存在しないレビューIDでエラー', async () => {
       const nonExistentReviewId = 'non-existent-review-id-12345';
-      const userId = 'test-user-id';
       const input = {
         rating: 5,
       };
 
-      const result = await updateReview(nonExistentReviewId, input, userId);
+      const result = await updateReview(nonExistentReviewId, input, mainUserId);
 
       if (result.success) {
         // 更新対象がない場合はnullが返る
@@ -529,14 +596,12 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-UR-102: 他ユーザーのレビューは更新できない
-    it.skip('他ユーザーのレビューは更新できない', async () => {
-      const reviewId = 'test-review-id';
-      const differentUserId = 'different-user-id';
+    it('他ユーザーのレビューは更新できない', async () => {
       const input = {
         rating: 1,
       };
 
-      const result = await updateReview(reviewId, input, differentUserId);
+      const result = await updateReview(reviewId, input, otherUserId);
 
       // 更新対象がない（所有者チェックで除外）
       if (result.success) {
@@ -547,24 +612,30 @@ describe('Scenario Detail Adapter', () => {
 
   describe('deleteReview', () => {
     // T-DR-001: レビューを削除できる
-    it.skip('レビューを削除できる', async () => {
-      const reviewId = 'test-review-id';
-      const userId = 'test-user-id';
+    it('レビューを削除できる', async () => {
+      // otherUserのレビューを削除対象にする
+      const lastId = createdReviewIds.at(-1);
+      const targetReviewId =
+        createdReviewIds.length > 1 && lastId ? lastId : reviewId;
+      const targetUserId =
+        createdReviewIds.length > 1 ? otherUserId : mainUserId;
 
-      const result = await deleteReview(reviewId, userId);
+      const result = await deleteReview(targetReviewId, targetUserId);
 
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toBe(true);
+        // 削除したIDをトラッキングから除外
+        const idx = createdReviewIds.indexOf(targetReviewId);
+        if (idx !== -1) createdReviewIds.splice(idx, 1);
       }
     });
 
     // T-DR-101: 存在しないレビューIDでfalseを返す
     it('存在しないレビューIDでfalseを返す', async () => {
       const nonExistentReviewId = 'non-existent-review-id-12345';
-      const userId = 'test-user-id';
 
-      const result = await deleteReview(nonExistentReviewId, userId);
+      const result = await deleteReview(nonExistentReviewId, mainUserId);
 
       if (result.success) {
         // 削除対象がない場合はfalseが返る
@@ -577,11 +648,8 @@ describe('Scenario Detail Adapter', () => {
     });
 
     // T-DR-102: 他ユーザーのレビューは削除できない
-    it.skip('他ユーザーのレビューは削除できない', async () => {
-      const reviewId = 'test-review-id';
-      const differentUserId = 'different-user-id';
-
-      const result = await deleteReview(reviewId, differentUserId);
+    it('他ユーザーのレビューは削除できない', async () => {
+      const result = await deleteReview(reviewId, otherUserId);
 
       // 削除対象がない（所有者チェックで除外）
       if (result.success) {

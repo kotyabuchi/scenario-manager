@@ -4,13 +4,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import {
   ArrowCounterClockwise,
   MagnifyingGlass,
-  X,
 } from '@phosphor-icons/react/ssr';
 
 import * as styles from './styles';
 
 import { FilterPanel } from '@/components/blocks/FilterPanel';
 import { Button } from '@/components/elements/button/button';
+import { ModalCloseButton } from '@/components/elements/modal';
 
 import type {
   FilterStateBase,
@@ -168,14 +168,7 @@ export const FilterBottomSheet = ({
         {/* ヘッダー */}
         <div className={styles.header}>
           <h2 className={styles.title}>フィルター</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className={styles.closeButton}
-            aria-label="閉じる"
-          >
-            <X size={20} />
-          </button>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         {/* コンテンツ */}

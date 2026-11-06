@@ -66,6 +66,42 @@ src/app/(auth)/login/
     └── DiscordIcon.tsx   # アイコンコンポーネント
 ```
 
+## Storybook（必須）
+
+**すべてのUIコンポーネントにStorybookを用意する。**
+
+データやアカウントを用意しなくても各状態を確認できるようにするため、コンポーネント作成・リファクタリング時にStoriesファイルも必ず作成する。
+
+### 対象
+- `src/components/elements/` 配下の基本コンポーネント
+- `src/components/blocks/` 配下の複合コンポーネント
+- `src/app/*/_components/` 配下のページ固有コンポーネント（ダイアログ、モーダル、フォーム等）
+
+### 対象外
+- `page.tsx`, `layout.tsx` 等のNext.js固有ファイル
+- `styles.ts`, `schema.ts`, `adapter.ts` 等の非UIファイル
+
+### Stories に含めるべき状態
+- デフォルト状態
+- 主要なバリエーション（Props違い）
+- インタラクション状態（入力中、送信中、エラー等）
+- エッジケース（データなし、長文テキスト等）
+
+### Server Actionsのモック
+Server Actionsを受け取るコンポーネントでは、Storybookの`args`でモック関数を渡す:
+
+```typescript
+export const Default: Story = {
+  args: {
+    onSubmit: async (data) => {
+      console.log('Mock submit:', data)
+    },
+  },
+}
+```
+
+---
+
 ## Server Components / Client Components
 
 - デフォルトはServer Component

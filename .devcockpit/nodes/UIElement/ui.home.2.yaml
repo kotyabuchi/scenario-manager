@@ -1,0 +1,11 @@
+id: ui.home.2
+kind: UIElement
+name: UpcomingSessions
+description: ホームの構成要素。
+parentId: screen.home
+properties:
+  implementation:
+    - file: src/app/(main)/home/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

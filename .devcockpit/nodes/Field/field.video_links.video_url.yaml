@@ -1,0 +1,13 @@
+id: field.video_links.video_url
+kind: Field
+name: video_url
+description: public.video_links.video_url
+parentId: entity.video_links
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

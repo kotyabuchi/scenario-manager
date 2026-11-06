@@ -1,0 +1,13 @@
+id: field.game_sessions.remaining_seat_count
+kind: Field
+name: remaining_seat_count
+description: public.game_sessions.remaining_seat_count
+parentId: entity.game_sessions
+properties:
+  dataType: number
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

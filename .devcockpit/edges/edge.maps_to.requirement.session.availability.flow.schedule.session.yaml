@@ -1,0 +1,6 @@
+id: edge.maps_to.requirement.session.availability.flow.schedule.session
+kind: maps_to
+source: requirement.session.availability
+target: flow.schedule.session
+label: ""
+properties: {}

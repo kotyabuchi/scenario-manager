@@ -1,0 +1,12 @@
+id: screen.session.detail
+kind: Screen
+name: セッション詳細
+description: 参加申請、参加者、日程、ツールリンク、進行状態を扱う。
+properties:
+  route: /sessions/[id]
+  implementation:
+    - file: src/app/(main)/sessions/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

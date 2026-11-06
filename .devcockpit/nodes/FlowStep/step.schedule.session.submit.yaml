@@ -1,0 +1,11 @@
+id: step.schedule.session.submit
+kind: FlowStep
+name: 参加可能日時を提出する
+description: 参加可能日時を提出する
+parentId: flow.schedule.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

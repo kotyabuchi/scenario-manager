@@ -14,12 +14,15 @@ export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    this.welcomeMessage = page.getByText(/ようこそ/);
+    this.welcomeMessage = page.getByRole('heading', {
+      level: 1,
+      name: /^ようこそ、.+さん$/,
+    });
     this.upcomingSessionsHeading = page.getByRole('heading', {
-      name: '参加予定のセッション',
+      name: '予定されているセッション',
     });
     this.newScenariosHeading = page.getByRole('heading', {
-      name: '新着シナリオ',
+      name: '新着おすすめシナリオ',
     });
     this.viewAllSessionsLink = page.getByRole('link', {
       name: 'すべて見る',

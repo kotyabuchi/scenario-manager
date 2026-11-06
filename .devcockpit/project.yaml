@@ -1,0 +1,10 @@
+schemaVersion: 1
+id: project.f37663bc-2d83-4f69-9c4b-e9aa5158d469
+name: scenario-manager
+runtime:
+  type: web
+  framework: Next.js
+  command: pnpm run dev
+  url: http://localhost:3000
+worktree:
+  copyIgnored: []

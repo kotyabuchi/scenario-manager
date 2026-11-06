@@ -1,0 +1,13 @@
+id: field.feedbacks.browser_info
+kind: Field
+name: browser_info
+description: public.feedbacks.browser_info
+parentId: entity.feedbacks
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

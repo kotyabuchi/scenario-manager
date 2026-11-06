@@ -18,7 +18,7 @@ export const DiscordLoginButton = ({
   const { login } = useDiscordAuth();
 
   return (
-    <button type="button" onClick={login} className={className}>
+    <button type="button" onClick={() => login()} className={className}>
       <SignIn size={20} className={iconClassName} />
       <span className={textClassName}>Discordではじめる</span>
     </button>

@@ -1,0 +1,13 @@
+id: field.feedbacks.comment_count
+kind: Field
+name: comment_count
+description: public.feedbacks.comment_count
+parentId: entity.feedbacks
+properties:
+  dataType: number
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

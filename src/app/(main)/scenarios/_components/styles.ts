@@ -9,16 +9,20 @@ export const scenarioCard = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '3',
-  bg: 'white',
+  // レイヤードカード: paper面 + 緑の薄ボーダー(lightGreen.border) + 影（styling-rules.md）
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'lightGreen.border',
   borderRadius: '2xl',
   p: '3',
   cursor: 'pointer',
   transitionProperty: 'common',
   transitionDuration: 'normal',
   transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
-  boxShadow: '[0 4px 16px rgba(0, 0, 0, 0.06)]',
+  shadow: 'card.default',
   _hover: {
-    boxShadow: '[0 8px 24px rgba(0, 0, 0, 0.10)]',
+    shadow: 'card.hover',
     transform: 'translateY(-4px)',
   },
 });
@@ -51,24 +55,24 @@ export const cardThumbnailPlaceholder = css({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 'xs',
-  background:
-    '[linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)]',
-  color: 'gray.500',
+  gap: '1.5',
+  // 淡色テーマに合わせたソフトなグラデ（緑みのある淡グレー）
+  bgGradient: 'to-br',
+  gradientFrom: 'gray.50',
+  gradientTo: 'gray.200',
+  color: 'icon.muted',
 });
 
 export const cardThumbnailPlaceholderIcon = css({
-  w: '8',
-  h: '8',
-  opacity: 'disabled',
-  color: 'white',
+  w: '7',
+  h: '7',
+  color: 'icon.muted',
 });
 
 export const cardThumbnailPlaceholderText = css({
   fontSize: 'xs',
   fontWeight: 'medium',
-  opacity: 'disabled',
-  color: 'white',
+  color: 'text.placeholder',
 });
 
 // システム名ラベル（CSS mask による逆角丸カットアウト）
@@ -83,7 +87,8 @@ export const cardSystemLabel = css({
   pr: '1',
   display: 'flex',
   alignItems: 'center',
-  bg: 'white',
+  // カード面（paper）と同色にしてカード角の切り欠きとして見せる
+  bg: 'card.bg',
   borderBottomRightRadius: '2xl',
   _before: {
     content: '""',
@@ -142,32 +147,33 @@ export const cardFavoriteButton = css({
   w: '[28px]',
   h: '[28px]',
   borderRadius: '[14px]',
-  bg: '[rgba(0, 0, 0, 0.25)]',
+  // 画像上のスクリム（生rgba→overlayトークン。値は同値: 0.25 / 0.40）
+  bg: 'overlay.25',
   transitionProperty: 'common',
   transitionDuration: 'fast',
   zIndex: '[1]',
   _hover: {
-    bg: '[rgba(0, 0, 0, 0.4)]',
+    bg: 'overlay.40',
   },
 });
 
 export const cardFavoriteIcon = css({
   w: '4',
   h: '4',
-  color: 'white',
+  color: 'icon.white',
 });
 
 export const cardFavoriteIconActive = css({
   w: '4',
   h: '4',
-  color: 'orange.500',
-  fill: 'orange.500',
+  color: 'favorite.active',
+  fill: 'favorite.active',
 });
 
 export const cardFavoriteCount = css({
   fontSize: 'xs',
   fontWeight: 'semibold',
-  color: 'white',
+  color: 'text.white',
 });
 
 export const cardContent = css({
@@ -180,7 +186,7 @@ export const cardContent = css({
 export const cardTitle = css({
   fontSize: '[16px]',
   fontWeight: 'semibold',
-  color: 'gray.800',
+  color: 'text.body',
   lineClamp: 2,
   lineHeight: 'tight',
   textWrap: 'balance',
@@ -191,7 +197,7 @@ export const cardMeta = css({
   alignItems: 'center',
   gap: '4',
   fontSize: '[13px]',
-  color: 'gray.500',
+  color: 'text.secondary',
 });
 
 export const cardMetaItem = css({
@@ -203,7 +209,7 @@ export const cardMetaItem = css({
 export const cardMetaIcon = css({
   w: '3.5',
   h: '3.5',
-  color: 'gray.500',
+  color: 'icon.default',
 });
 
 export const cardTags = css({
@@ -212,30 +218,103 @@ export const cardTags = css({
   gap: '1.5',
 });
 
-export const cardTag = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  h: '6',
-  px: '2',
-  fontSize: '[11px]',
-  fontWeight: 'medium',
-  bg: 'gray.100',
-  borderRadius: 'sm',
-  color: 'gray.600',
-});
-
 export const cardDescription = css({
   fontSize: 'xs',
-  color: 'gray.500',
+  color: 'text.secondary',
   lineClamp: 3,
   lineHeight: 'relaxed',
+});
+
+// ===== ScenarioCardAlt（モック準拠の比較用バリアント） =====
+// ノッチ無し / 左上バッジ / 画像フルブリード / 概要なし
+export const cardAlt = css({
+  display: 'flex',
+  flexDirection: 'column',
+  // レイヤードカード: paper面 + 緑の薄ボーダー(lightGreen.border) + 影（styling-rules.md）
+  bg: 'card.bg',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'lightGreen.border',
+  borderRadius: '2xl',
+  overflow: 'hidden',
+  cursor: 'pointer',
+  boxShadow: 'card.default',
+  transitionProperty: 'common',
+  transitionDuration: 'normal',
+  transitionTimingFunction: '[cubic-bezier(0.4, 0, 0.2, 1)]',
+  _hover: {
+    boxShadow: 'card.hover',
+    transform: 'translateY(-4px)',
+  },
+});
+
+export const cardAlt_thumb = css({
+  position: 'relative',
+  width: 'full',
+  aspectRatio: '[3/2]',
+  bg: 'gray.100',
+  overflow: 'hidden',
+});
+
+export const cardAlt_image = css({
+  objectFit: 'cover',
+  transitionProperty: 'common',
+  transitionDuration: 'normal',
+  _groupHover: {
+    transform: 'scale(1.05)',
+  },
+});
+
+export const cardAlt_badge = css({
+  position: 'absolute',
+  top: '2.5',
+  left: '2.5',
+  zIndex: '[1]',
+  boxShadow: 'sm',
+  borderRadius: 'full',
+});
+
+export const cardAlt_content = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
+  p: '3',
+});
+
+export const cardAlt_title = css({
+  fontSize: '[15px]',
+  fontWeight: 'semibold',
+  color: 'text.body',
+  lineHeight: 'tight',
+  lineClamp: 2,
+  textWrap: 'balance',
+});
+
+export const cardAlt_system = css({
+  fontSize: '[13px]',
+  color: 'text.secondary',
+});
+
+export const cardAlt_tags = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '1.5',
+});
+
+export const cardAlt_meta = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4',
+  fontSize: '[13px]',
+  color: 'text.secondary',
 });
 
 // ScenarioList スタイル
 export const scenarioListContainer = css({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-  gap: '8', // より広めの間隔
+  // カードは250px以上を確保し、画面がそれより狭い場合だけ幅に収める。
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))',
+  gap: '4',
 });
 
 // 空状態コンテナ（Pencilデザイン準拠）

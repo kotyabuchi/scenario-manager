@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { isNil } from 'ramda';
 
-import { getUserByDiscordId, getUserById } from './adapter';
+import { getUserByAuthUserId, getUserById } from './adapter';
 import * as styles from './styles';
 
 import { ProfileCard } from '@/components/blocks/Profile';
@@ -49,7 +49,7 @@ export default async function UserProfilePage({
 
   let isOwnProfile = false;
   if (authUser) {
-    const currentUserResult = await getUserByDiscordId(authUser.id);
+    const currentUserResult = await getUserByAuthUserId(authUser.id);
     if (currentUserResult.success && currentUserResult.data) {
       isOwnProfile = currentUserResult.data.userId === user.userId;
     }

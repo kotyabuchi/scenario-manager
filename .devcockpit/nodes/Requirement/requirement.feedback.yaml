@@ -1,0 +1,11 @@
+id: requirement.feedback
+kind: Requirement
+name: フィードバック
+description: 投稿、検索、投票、コメント、管理者による対応状況管理を提供する。
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

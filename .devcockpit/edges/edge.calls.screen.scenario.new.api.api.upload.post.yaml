@@ -1,0 +1,6 @@
+id: edge.calls.screen.scenario.new.api.api.upload.post
+kind: calls
+source: screen.scenario.new
+target: api.api.upload.post
+label: ""
+properties: {}

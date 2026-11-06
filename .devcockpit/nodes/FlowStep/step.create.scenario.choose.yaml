@@ -1,0 +1,11 @@
+id: step.create.scenario.choose
+kind: FlowStep
+name: 手動入力または URL 取り込みを選ぶ
+description: 手動入力または URL 取り込みを選ぶ
+parentId: flow.create.scenario
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

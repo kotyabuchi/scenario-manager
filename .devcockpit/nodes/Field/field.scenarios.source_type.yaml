@@ -1,0 +1,13 @@
+id: field.scenarios.source_type
+kind: Field
+name: source_type
+description: "public.scenarios.source_type。値: manual, booth, talto"
+parentId: entity.scenarios
+properties:
+  dataType: "| Database['public']['Enums']['scenario_source_type'] | null"
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

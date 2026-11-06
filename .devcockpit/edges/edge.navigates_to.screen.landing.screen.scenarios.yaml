@@ -1,0 +1,6 @@
+id: edge.navigates_to.screen.landing.screen.scenarios
+kind: navigates_to
+source: screen.landing
+target: screen.scenarios
+label: ""
+properties: {}

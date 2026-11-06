@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import { HistoryTab } from './_components/HistoryTab';
 import { LoginPrompt } from './_components/LoginPrompt';
 import { PublicTab } from './_components/PublicTab';
+import { SessionTabs } from './_components/SessionTabs';
 import * as styles from './_components/styles';
 import { UpcomingTab } from './_components/UpcomingTab';
 import {
@@ -121,41 +121,12 @@ export default async function SessionsPage({ searchParams }: PageProps) {
   return (
     <div className={styles.pageContainer}>
       <div className={styles.pageLayout}>
-        {/* Pencil準拠: 白bg、h56、center、padding 0 32 のタブバー */}
-        <div className={styles.tabBar}>
-          <div className={styles.tabContainer}>
-            <Link href="/sessions?tab=upcoming">
-              <button
-                type="button"
-                className={styles.tabButton({ active: tab === 'upcoming' })}
-                disabled={!isLoggedIn}
-              >
-                参加予定
-              </button>
-            </Link>
-            <Link href="/sessions?tab=history">
-              <button
-                type="button"
-                className={styles.tabButton({ active: tab === 'history' })}
-                disabled={!isLoggedIn}
-              >
-                参加履歴
-              </button>
-            </Link>
-            <Link href="/sessions?tab=public">
-              <button
-                type="button"
-                className={styles.tabButton({ active: tab === 'public' })}
-              >
-                公開卓を探す
-              </button>
-            </Link>
-          </div>
-        </div>
+        <SessionTabs activeTab={tab} isLoggedIn={isLoggedIn} />
 
         <Suspense fallback={<SessionsLoading />}>
           {tab === 'public' && (
             <PublicTab
+              isLoggedIn={isLoggedIn}
               systems={systemsResult.data}
               initialResult={publicInitialResult}
               initialParams={publicInitialParams}

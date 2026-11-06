@@ -1,28 +1,39 @@
 import { css, cva } from '@/styled-system/css';
 
-export const nav = css({
-  position: 'fixed',
-  bottom: '0',
-  left: '0',
-  right: '0',
-  zIndex: 'fixed',
-  bg: 'white',
-  borderTopWidth: '1px',
-  borderColor: 'gray.100',
-  shadow: '[0_-4px_20px_-2px_rgba(0,0,0,0.05)]',
-  display: 'grid',
-  gridTemplateColumns: '[repeat(5,1fr)]',
-  height: '16',
-  alignItems: 'center',
-  transition: 'transform',
-  transitionDuration: 'normal',
-  transitionTimingFunction: 'ease-out',
-  willChange: 'transform',
-  // env(safe-area-inset-bottom) でノッチ付き端末に対応
-  pb: '[env(safe-area-inset-bottom)]',
-  md: {
-    display: 'none',
+export const navWrapper = cva({
+  base: {
+    position: 'fixed',
+    bottom: '0',
+    left: '0',
+    right: '0',
+    zIndex: 'modal',
+    transitionProperty: '[transform]',
+    transitionDuration: 'normal',
+    transitionTimingFunction: 'ease-out',
+    md: { display: 'none' },
   },
+  variants: {
+    visible: {
+      true: { transform: 'translateY(0)' },
+      false: { transform: '[translateY(calc(100% + 16px))]' },
+    },
+  },
+  defaultVariants: { visible: true },
+});
+
+export const nav = css({
+  display: 'grid',
+  gridTemplateColumns: '[repeat(5,minmax(0,1fr))]',
+  alignItems: 'center',
+  height: '[calc(104px + env(safe-area-inset-bottom))]',
+  pb: '[calc(20px + env(safe-area-inset-bottom))]',
+  bg: 'bg.card',
+  borderTopLeftRadius: '2xl',
+  borderTopRightRadius: '2xl',
+  borderTopWidth: '1px',
+  borderTopStyle: 'solid',
+  borderColor: 'border.paper',
+  boxShadow: 'card.default',
 });
 
 export const navItem = cva({
@@ -33,107 +44,154 @@ export const navItem = cva({
     justifyContent: 'center',
     width: 'full',
     height: 'full',
+    minW: '0',
     gap: '0.5',
+    pt: '1',
+    color: 'text.secondary',
     cursor: 'pointer',
     textDecoration: 'none',
-    transition: 'colors',
+    transitionProperty: '[color]',
     transitionDuration: 'fast',
+    _focusVisible: { outline: 'focusRing', outlineOffset: '[-2px]' },
   },
   variants: {
     active: {
-      true: {
-        color: 'primary.default',
-      },
-      false: {
-        color: 'gray.400',
-      },
+      true: { color: 'primary.default', fontWeight: 'semibold' },
+      false: {},
+    },
+  },
+});
+
+export const navIcon = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '16',
+    height: '11',
+    borderRadius: 'full',
+  },
+  variants: {
+    active: {
+      true: { bg: 'primary.subtleHover' },
+      false: { bg: 'transparent' },
     },
   },
 });
 
 export const navLabel = css({
-  fontSize: '[10px]',
-  fontWeight: 'medium',
+  fontSize: 'sm',
+  lineHeight: 'tight',
+  whiteSpace: 'nowrap',
+  '@media (max-width: 359px)': { fontSize: 'xs' },
 });
 
 export const fabWrapper = css({
   position: 'relative',
   width: 'full',
   height: 'full',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
 });
 
 export const fab = css({
+  position: 'relative',
+  zIndex: '[3]',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  width: 'full',
+  height: 'full',
+  pb: '2',
+  border: 'none',
+  bg: 'transparent',
+  cursor: 'pointer',
+  _focusVisible: { outline: 'focusRing', outlineOffset: '[-2px]' },
+});
+
+export const fabCircle = css({
   position: 'absolute',
-  top: '-3',
-  width: '14',
-  height: '14',
-  borderRadius: 'full',
-  bg: 'primary.default',
-  color: 'white',
+  top: '-2',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  shadow: 'lg',
-  cursor: 'pointer',
-  border: 'none',
-  transition: 'transform',
+  width: '12',
+  height: '12',
+  borderRadius: 'full',
+  bg: 'primary.default',
+  color: 'primary.textOnPrimary',
+  boxShadow: 'button.primary',
+  transitionProperty: '[transform,box-shadow]',
   transitionDuration: 'fast',
-  _hover: {
-    transform: 'scale(1.05)',
-  },
-  _active: {
-    transform: 'scale(0.95)',
-  },
+  _hover: { transform: 'scale(1.05)', boxShadow: 'button.primaryHover' },
+  _active: { transform: 'scale(0.95)' },
 });
 
-export const fabIcon = cva({
+export const fabLabel = css({
+  color: 'primary.default',
+  fontSize: 'sm',
+  fontWeight: 'semibold',
+  lineHeight: 'tight',
+});
+
+export const speedDial_overlay = cva({
   base: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'transform',
+    position: 'fixed',
+    inset: '0',
+    zIndex: 'overlay',
+    bg: 'overlay.backdrop',
+    border: 'none',
+    appearance: 'none',
+    cursor: 'default',
+    p: '0',
+    opacity: '[0]',
+    pointerEvents: 'none',
+    transitionProperty: '[opacity]',
     transitionDuration: 'normal',
-    transitionTimingFunction: 'ease-in-out',
   },
   variants: {
-    open: {
-      true: {
-        transform: 'rotate(45deg)',
-      },
-      false: {
-        transform: 'rotate(0deg)',
-      },
+    visible: {
+      true: { opacity: '[1]', pointerEvents: 'auto' },
+      false: {},
     },
   },
-  defaultVariants: {
-    open: false,
+  defaultVariants: { visible: false },
+});
+
+export const speedDial_menu = cva({
+  base: {
+    position: 'absolute',
+    bottom: '[calc(100% + 8px)]',
+    left: '[50%]',
+    zIndex: '[1]',
+    width: '[min(300px,calc(100vw - 32px))]',
+    maxH: '[60dvh]',
+    overflowY: 'auto',
+    px: '2',
+    py: '1',
+    bg: 'bg.card',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'border.paper',
+    borderRadius: 'xl',
+    boxShadow: 'card.default',
+    opacity: '[0]',
+    visibility: 'hidden',
+    pointerEvents: 'none',
+    transform: '[translate(-50%, 8px)]',
+    transitionProperty: '[opacity,transform,visibility]',
+    transitionDuration: 'normal',
+    transitionTimingFunction: 'ease-out',
   },
-});
-
-export const speedDial_overlay = css({
-  position: 'fixed',
-  inset: '0',
-  zIndex: '[1]',
-  bg: 'transparent',
-  border: 'none',
-  appearance: 'none',
-  cursor: 'default',
-  padding: '0',
-});
-
-export const speedDial_menu = css({
-  position: 'absolute',
-  bottom: '[calc(100%+token(spacing.5))]',
-  left: '[50%]',
-  transform: '[translateX(-50%)]',
-  bg: 'white',
-  borderRadius: 'xl',
-  shadow: 'card.default',
-  minWidth: 'xs',
-  px: '2',
-  py: '2',
-  zIndex: '[2]',
+  variants: {
+    visible: {
+      true: {
+        opacity: '[1]',
+        visibility: 'visible',
+        pointerEvents: 'auto',
+        transform: '[translate(-50%, 0)]',
+      },
+      false: {},
+    },
+  },
+  defaultVariants: { visible: false },
 });

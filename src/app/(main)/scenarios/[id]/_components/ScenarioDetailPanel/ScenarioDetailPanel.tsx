@@ -1,0 +1,263 @@
+'use client';
+
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
+import { CaretLeft, NotePencil, Star, X } from '@phosphor-icons/react/ssr';
+import Link from 'next/link';
+import { isNil } from 'ramda';
+
+import { SCENARIO_DETAIL_SECTION_IDS } from '../../sections';
+import { ReviewSection } from '../ReviewSection';
+import { SessionSection } from '../SessionSection';
+import { VideoSection } from '../VideoSection';
+import { ScenarioDetailHead } from './ScenarioDetailHead';
+import * as styles from './styles';
+
+import { useAuthPrompt } from '@/components/blocks/AuthPrompt';
+import { Alert } from '@/components/elements/alert/alert';
+import { Button } from '@/components/elements/button/button';
+import { buttonLabel } from '@/components/elements/button/styles';
+
+import type { Route } from 'next';
+import type { MouseEvent } from 'react';
+import type {
+  ReviewWithUser,
+  ScenarioDetail,
+  SessionWithKeeper,
+  VideoLinkWithSession,
+} from '../../interface';
+
+export type ScenarioDetailPanelProps = {
+  scenario: ScenarioDetail;
+  sessions: SessionWithKeeper[];
+  videos: VideoLinkWithSession[];
+  reviews: ReviewWithUser[];
+  reviewTotalCount: number;
+  currentUserId?: string;
+  isFavorite?: boolean;
+  isPlayed?: boolean;
+  isLoggedIn?: boolean;
+  /** 成功時は確定したisFavoriteを更新し、失敗時はrejectする。 */
+  onToggleFavorite?: () => Promise<void>;
+  /**
+   * 表示コンテキスト。
+   * - `pane`: 一覧の隣に表示する2ペインの右パネル。一覧へのリンクは「閉じる」
+   * - `page`: 直URL・リロード・狭い画面での単独ページ。リンクは「シナリオ一覧に戻る」
+   * @default 'pane'
+   */
+  variant?: 'pane' | 'page';
+  /** 検索条件と並び順を保持した、検証済みの一覧内URL。 */
+  backHref?: string;
+};
+
+/**
+ * ScenarioDetailPanel - シナリオ詳細ペイン（2ペイン右側）
+ *
+ * セクション縦並び（ScenarioDetailHead / SessionSection / VideoSection /
+ * ReviewSection）を束ねる。**タブは使わない**（全セクション常時表示）。
+ * 目次（SectionToc）は単独ページだけに配置し、パネル内には置かない。
+ * ヘッダーバーに一覧への導線とお気に入り・セッション作成を配置する。
+ */
+export const ScenarioDetailPanel = ({
+  scenario,
+  sessions,
+  videos,
+  reviews,
+  reviewTotalCount,
+  currentUserId,
+  isFavorite = false,
+  isPlayed = false,
+  isLoggedIn = false,
+  onToggleFavorite,
+  variant = 'pane',
+  backHref = '/scenarios',
+}: ScenarioDetailPanelProps) => {
+  const scenarioId = scenario.scenarioId;
+  const listHref = backHref as Route;
+
+  const [isPending, startTransition] = useTransition();
+  const [hasFavoriteError, setHasFavoriteError] = useState(false);
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
+  const openAuthPrompt = useAuthPrompt();
+  const wideBackRef = useRef<HTMLAnchorElement>(null);
+  const narrowBackRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (variant !== 'pane') return;
+    const frame = requestAnimationFrame(() => {
+      const target =
+        wideBackRef.current &&
+        getComputedStyle(wideBackRef.current).display !== 'none'
+          ? wideBackRef.current
+          : narrowBackRef.current;
+      target?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [variant]);
+
+  const handleToggleFavorite = () => {
+    if (!isLoggedIn) {
+      openAuthPrompt({
+        message: 'お気に入りに追加するにはログインが必要です。',
+      });
+      return;
+    }
+    if (isPending || isNil(onToggleFavorite)) return;
+    setHasFavoriteError(false);
+    startTransition(async () => {
+      setOptimisticFavorite(!optimisticFavorite);
+      try {
+        await onToggleFavorite();
+      } catch {
+        setHasFavoriteError(true);
+      }
+    });
+  };
+
+  const handleCreateSession = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (isLoggedIn) return;
+    event.preventDefault();
+    openAuthPrompt({
+      message: 'セッションを作成するにはログインが必要です。',
+      returnTo: `/sessions/new?scenarioId=${scenarioId}`,
+    });
+  };
+
+  return (
+    <div className={styles.panel}>
+      <div className={styles.main}>
+        <div className={styles.mainCard}>
+          {/* ヘッダーバー: 戻るリンク＋主要アクション（主カード内・モック準拠） */}
+          <div className={styles.headerBar}>
+            {variant === 'pane' ? (
+              // 2ペイン: 広い画面では隣に一覧が見えるので「閉じる」、
+              // lg未満は一覧が隠れて単独表示になるため「戻る」をCSSで出し分け
+              <>
+                <Link
+                  href={listHref}
+                  ref={wideBackRef}
+                  className={`${styles.headerBar_back} ${styles.headerBar_backWide}`}
+                >
+                  <X size={16} />
+                  <span>閉じる</span>
+                </Link>
+                <Link
+                  href={listHref}
+                  ref={narrowBackRef}
+                  className={`${styles.headerBar_back} ${styles.headerBar_backNarrow}`}
+                >
+                  <CaretLeft size={16} />
+                  <span>シナリオ一覧に戻る</span>
+                </Link>
+              </>
+            ) : (
+              // 単独ページ: 一覧は画面にないので常に「戻る」
+              <Link href={listHref} className={styles.headerBar_back}>
+                <CaretLeft size={16} />
+                <span>シナリオ一覧に戻る</span>
+              </Link>
+            )}
+            <div className={styles.headerBar_actions}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleToggleFavorite}
+                disabled={isLoggedIn && (isNil(onToggleFavorite) || isPending)}
+                loading={isPending}
+                aria-pressed={optimisticFavorite}
+                aria-busy={isPending}
+                prefix={
+                  <Star
+                    size={16}
+                    weight={optimisticFavorite ? 'fill' : 'regular'}
+                    className={
+                      optimisticFavorite
+                        ? styles.headerBar_starActive
+                        : undefined
+                    }
+                  />
+                }
+              >
+                お気に入り
+              </Button>
+              <Button variant="solid" status="primary" size="sm" asChild>
+                <Link
+                  href={
+                    `/sessions/new?scenarioId=${scenarioId}` as '/sessions/new'
+                  }
+                  onClick={handleCreateSession}
+                >
+                  {/* asChild は Button の自動ラベルラップが効かないため、ラベルスタイルを直接適用 */}
+                  <NotePencil size={16} />
+                  <span className={buttonLabel}>セッションを作成</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {hasFavoriteError && (
+            <Alert
+              status="danger"
+              description="お気に入りの更新に失敗しました。もう一度お試しください。"
+            />
+          )}
+
+          <section
+            id={SCENARIO_DETAIL_SECTION_IDS.info}
+            className={styles.sectionAnchor}
+          >
+            <ScenarioDetailHead scenario={scenario} />
+          </section>
+
+          {!isNil(scenario.description) && (
+            <section
+              id={SCENARIO_DETAIL_SECTION_IDS.overview}
+              className={styles.sectionAnchor}
+            >
+              <h2 className={styles.overview_title}>シナリオ概要</h2>
+              <p className={styles.overview_text}>{scenario.description}</p>
+            </section>
+          )}
+        </div>
+
+        <div className={styles.sectionsGrid}>
+          <section
+            id={SCENARIO_DETAIL_SECTION_IDS.sessions}
+            className={`${styles.sectionAnchor} ${styles.sectionCard}`}
+          >
+            <SessionSection
+              scenarioId={scenarioId}
+              sessions={sessions}
+              isLoggedIn={isLoggedIn}
+            />
+          </section>
+
+          <section
+            id={SCENARIO_DETAIL_SECTION_IDS.videos}
+            className={`${styles.sectionAnchor} ${styles.sectionCard}`}
+          >
+            <VideoSection videos={videos} isPlayed={isPlayed} />
+          </section>
+
+          <section
+            id={SCENARIO_DETAIL_SECTION_IDS.comments}
+            className={`${styles.sectionAnchor} ${styles.sectionCard}`}
+          >
+            <ReviewSection
+              reviews={reviews}
+              totalCount={reviewTotalCount}
+              {...(currentUserId ? { currentUserId } : {})}
+              scenarioId={scenarioId}
+              isPlayed={isPlayed}
+            />
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};

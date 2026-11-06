@@ -1,0 +1,11 @@
+id: ui.user.detail.1
+kind: UIElement
+name: ProfileCard
+description: ユーザープロフィールの構成要素。
+parentId: screen.user.detail
+properties:
+  implementation:
+    - file: src/app/(main)/users/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

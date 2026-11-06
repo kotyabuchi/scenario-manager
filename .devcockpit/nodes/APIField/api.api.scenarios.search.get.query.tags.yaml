@@ -1,0 +1,12 @@
+id: api.api.scenarios.search.get.query.tags
+kind: APIField
+name: tags
+description: tags クエリパラメータ。
+parentId: api.api.scenarios.search.get
+properties:
+  location: query
+  implementation:
+    - file: src/app/api/scenarios/search/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

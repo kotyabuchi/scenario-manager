@@ -28,7 +28,7 @@ export const Step1Default: Story = {
     isOpen: true,
     defaultUserName: 'taro_trpg',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
   },
 };
 
@@ -40,7 +40,7 @@ export const Step1WithErrors: Story = {
     isOpen: true,
     defaultUserName: '',
     defaultNickname: '',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
@@ -57,7 +57,7 @@ export const Step1Checking: Story = {
     isOpen: true,
     defaultUserName: 'checking_name',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
     isCheckingUserName: true,
   },
 };
@@ -70,7 +70,7 @@ export const Step1Available: Story = {
     isOpen: true,
     defaultUserName: 'unique_name',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
     userNameAvailable: true,
   },
 };
@@ -83,7 +83,7 @@ export const Step1Taken: Story = {
     isOpen: true,
     defaultUserName: 'existing_user',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
     userNameAvailable: false,
   },
 };
@@ -97,7 +97,7 @@ export const Step2Default: Story = {
     initialStep: 2,
     defaultUserName: 'taro_trpg',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
   },
 };
 
@@ -110,7 +110,7 @@ export const Step2Filled: Story = {
     initialStep: 2,
     defaultUserName: 'taro_trpg',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
     defaultBio: 'TRPGが大好きです。CoC7版をメインに遊んでいます。',
     defaultFavoriteSystems: ['coc7', 'dnd5e'],
     defaultFavoriteScenarios: '狂気山脈、悪霊の家',
@@ -126,7 +126,7 @@ export const Submitting: Story = {
     initialStep: 2,
     defaultUserName: 'taro_trpg',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
     isSubmitting: true,
   },
 };
@@ -140,7 +140,7 @@ export const Completion: Story = {
     initialStep: 3,
     defaultUserName: 'taro_trpg',
     defaultNickname: '太郎',
-    avatarUrl: 'https://cdn.discordapp.com/avatars/123/abc.png',
+    avatarUrl: '/storybook/avatar-ren.jpg',
   },
 };
 

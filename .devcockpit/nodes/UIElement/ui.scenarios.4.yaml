@@ -1,0 +1,11 @@
+id: ui.scenarios.4
+kind: UIElement
+name: ScenarioFilters
+description: シナリオ検索の構成要素。
+parentId: screen.scenarios
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -7,7 +7,7 @@ import {
   type SelectRootProps,
   type SelectValueChangeDetails,
 } from '@ark-ui/react/select';
-import { CaretDown, Check } from '@phosphor-icons/react/ssr';
+import { CaretDown, Check, Square } from '@phosphor-icons/react/ssr';
 
 import { createStyleContext } from '@/lib/create-style-context';
 import { type SelectVariantProps, select } from '@/styled-system/recipes';
@@ -26,6 +26,11 @@ const Trigger = withContext<
   HTMLButtonElement,
   ComponentPropsWithoutRef<typeof ArkSelect.Trigger>
 >(ArkSelect.Trigger, 'trigger');
+
+const ValueText = withContext<
+  HTMLSpanElement,
+  ComponentPropsWithoutRef<typeof ArkSelect.ValueText>
+>(ArkSelect.ValueText, 'valueText');
 
 const Indicator = withContext<
   HTMLDivElement,
@@ -52,18 +57,13 @@ const ItemText = withContext<
   ComponentPropsWithoutRef<typeof ArkSelect.ItemText>
 >(ArkSelect.ItemText, 'itemText');
 
-const ItemIndicator = withContext<
-  HTMLSpanElement,
-  ComponentPropsWithoutRef<typeof ArkSelect.ItemIndicator>
->(ArkSelect.ItemIndicator, 'itemIndicator');
-
 type SelectItem = {
   label: string;
   value: string;
   disabled?: boolean;
 };
 
-type SelectVariant = 'form' | 'minimal';
+type SelectVariant = 'form' | 'minimal' | 'ghost';
 
 type SelectProps = {
   /** 選択肢リスト */
@@ -80,13 +80,16 @@ type SelectProps = {
   name?: string;
   /** 複数選択を許可 */
   multiple?: boolean;
-  /** スタイルバリアント: form（灰色背景）/ minimal（白背景） */
+  /** スタイルバリアント: form（灰色背景）/ minimal（白背景）/ ghost（背景なし） */
   variant?: SelectVariant;
+  /** トリガー先頭に表示するアイコン等 */
+  prefix?: React.ReactNode;
   /** トリガーボタンのアクセシブル名 */
   'aria-label'?: string;
 } & Omit<
   SelectRootProps<SelectItem>,
-  'collection' | 'value' | 'onValueChange' | 'multiple'
+  // prefix はHTML標準属性(string)と衝突するため除外して独自定義を優先する
+  'collection' | 'value' | 'onValueChange' | 'multiple' | 'prefix'
 >;
 
 /**
@@ -116,6 +119,7 @@ export const Select = ({
   name,
   multiple = false,
   variant = 'form',
+  prefix,
   'aria-label': ariaLabel,
   ...rest
 }: SelectProps) => {
@@ -132,10 +136,16 @@ export const Select = ({
       variant={variant}
       {...rest}
     >
-      <ArkSelect.HiddenSelect />
+      {/* フォーム送信用の隠しネイティブ<select>にもラベルを付与（axe select-name違反対策） */}
+      <ArkSelect.HiddenSelect aria-label={ariaLabel} />
       <ArkSelect.Control>
-        <Trigger aria-label={ariaLabel}>
-          <ArkSelect.ValueText placeholder={placeholder} />
+        <Trigger aria-label={ariaLabel} data-multiple={multiple || undefined}>
+          {prefix && (
+            <span data-prefix aria-hidden="true">
+              {prefix}
+            </span>
+          )}
+          <ValueText placeholder={placeholder} />
           <Indicator>
             <CaretDown size={16} />
           </Indicator>
@@ -143,13 +153,16 @@ export const Select = ({
       </ArkSelect.Control>
       <Portal>
         <Positioner>
-          <Content>
+          <Content data-multiple={multiple || undefined}>
             {collection.items.map((item) => (
               <Item key={item.value} item={item}>
+                {multiple && (
+                  <span aria-hidden="true">
+                    <Square size={16} data-icon="unchecked" />
+                    <Check size={16} data-icon="checked" />
+                  </span>
+                )}
                 <ItemText>{item.label}</ItemText>
-                <ItemIndicator>
-                  <Check size={16} />
-                </ItemIndicator>
               </Item>
             ))}
           </Content>

@@ -1,0 +1,13 @@
+id: field.user_scenario_preferences.had_scenario
+kind: Field
+name: had_scenario
+description: public.user_scenario_preferences.had_scenario
+parentId: entity.user_scenario_preferences
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

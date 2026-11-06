@@ -1,0 +1,6 @@
+id: edge.navigates_to.screen.profile.screen.user.detail
+kind: navigates_to
+source: screen.profile
+target: screen.user.detail
+label: ""
+properties: {}

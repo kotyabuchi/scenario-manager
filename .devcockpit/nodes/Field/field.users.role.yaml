@@ -1,0 +1,13 @@
+id: field.users.role
+kind: Field
+name: role
+description: "public.users.role。値: MODERATOR, MEMBER"
+parentId: entity.users
+properties:
+  dataType: Database['public']['Enums']['role']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

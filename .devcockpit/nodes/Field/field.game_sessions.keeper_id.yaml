@@ -1,0 +1,13 @@
+id: field.game_sessions.keeper_id
+kind: Field
+name: keeper_id
+description: public.game_sessions.keeper_id
+parentId: entity.game_sessions
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

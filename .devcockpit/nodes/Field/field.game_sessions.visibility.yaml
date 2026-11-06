@@ -1,0 +1,13 @@
+id: field.game_sessions.visibility
+kind: Field
+name: visibility
+description: "public.game_sessions.visibility。値: PUBLIC, FOLLOWERS_ONLY"
+parentId: entity.game_sessions
+properties:
+  dataType: Database['public']['Enums']['session_visibility']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

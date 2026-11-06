@@ -1,0 +1,14 @@
+id: field.tags.tag_id
+kind: Field
+name: tag_id
+description: public.tags.tag_id
+parentId: entity.tags
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,14 @@
+id: field.user_scenario_preferences.user_id
+kind: Field
+name: user_id
+description: public.user_scenario_preferences.user_id
+parentId: entity.user_scenario_preferences
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

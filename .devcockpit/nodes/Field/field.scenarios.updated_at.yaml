@@ -1,0 +1,13 @@
+id: field.scenarios.updated_at
+kind: Field
+name: updated_at
+description: public.scenarios.updated_at
+parentId: entity.scenarios
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

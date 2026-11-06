@@ -1,0 +1,13 @@
+id: field.feedbacks.updated_at
+kind: Field
+name: updated_at
+description: public.feedbacks.updated_at
+parentId: entity.feedbacks
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

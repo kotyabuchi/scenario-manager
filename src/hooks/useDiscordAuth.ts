@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { useSystemMessageActions } from './useSystemMessage';
 
+import { AUTH_RETURN_TO_KEY, normalizeAuthReturnTo } from '@/lib/authReturnTo';
 import { createClient } from '@/lib/supabase/client';
 
 import type { Route } from 'next';
@@ -39,6 +40,9 @@ export const useDiscordAuth = () => {
     channel.onmessage = (event: MessageEvent<AuthMessage>) => {
       const data = event.data;
       if (data.type === 'success') {
+        const returnTo = normalizeAuthReturnTo(
+          window.sessionStorage.getItem(AUTH_RETURN_TO_KEY) ?? data.redirectTo,
+        );
         if (data.isNewUser) {
           setIsNewUser(true);
         } else {
@@ -50,7 +54,7 @@ export const useDiscordAuth = () => {
           );
         }
         router.refresh();
-        router.push(data.redirectTo);
+        router.push(returnTo as Route);
       } else if (data.type === 'error') {
         addMessage('danger', data.message);
       }
@@ -61,51 +65,58 @@ export const useDiscordAuth = () => {
     };
   }, [router, addMessage]);
 
-  const login = useCallback(async () => {
-    const isMobile = window.innerWidth < 768;
-    const supabase = createClient();
+  const login = useCallback(
+    async (returnTo?: string) => {
+      const isMobile = window.innerWidth < 768;
+      const supabase = createClient();
+      window.sessionStorage.setItem(
+        AUTH_RETURN_TO_KEY,
+        normalizeAuthReturnTo(returnTo),
+      );
 
-    if (isMobile) {
-      // SP: リダイレクト方式（ポップアップはブロックされるため）
-      await supabase.auth.signInWithOAuth({
+      if (isMobile) {
+        // SP: リダイレクト方式（ポップアップはブロックされるため）
+        await supabase.auth.signInWithOAuth({
+          provider: 'discord',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+        return;
+      }
+
+      // PC: ポップアップ方式
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: true,
         },
       });
-      return;
-    }
 
-    // PC: ポップアップ方式
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        skipBrowserRedirect: true,
-      },
-    });
+      if (error || !data.url) {
+        addMessage(
+          'danger',
+          '認証の開始に失敗しました。もう一度お試しください。',
+        );
+        return;
+      }
 
-    if (error || !data.url) {
-      addMessage(
-        'danger',
-        '認証の開始に失敗しました。もう一度お試しください。',
+      const left = Math.round(
+        window.screenX + (window.outerWidth - POPUP_WIDTH) / 2,
       );
-      return;
-    }
+      const top = Math.round(
+        window.screenY + (window.outerHeight - POPUP_HEIGHT) / 2,
+      );
 
-    const left = Math.round(
-      window.screenX + (window.outerWidth - POPUP_WIDTH) / 2,
-    );
-    const top = Math.round(
-      window.screenY + (window.outerHeight - POPUP_HEIGHT) / 2,
-    );
-
-    window.open(
-      data.url,
-      'discord-auth',
-      `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top}`,
-    );
-  }, [addMessage]);
+      window.open(
+        data.url,
+        'discord-auth',
+        `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top}`,
+      );
+    },
+    [addMessage],
+  );
 
   return { login, isNewUser, clearNewUser };
 };

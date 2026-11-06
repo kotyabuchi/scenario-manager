@@ -175,20 +175,10 @@ export default function Home() {
           iconClassName={styles.ctaBtnIcon}
           textClassName={styles.ctaBtnText}
         />
+        <Link href="/about" className={styles.aboutLink}>
+          サービスについて
+        </Link>
       </section>
-
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerLogo}>
-          <div className={styles.footerLogoIcon}>
-            <BookOpen size={18} className={styles.iconColor_primary} />
-          </div>
-          <span className={styles.footerLogoText}>シナプレ管理くん</span>
-        </div>
-        <p className={styles.footerCopy}>
-          © 2026 シナプレ管理くん. All rights reserved.
-        </p>
-      </footer>
     </main>
   );
 }

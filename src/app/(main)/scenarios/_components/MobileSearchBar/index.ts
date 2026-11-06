@@ -1,1 +1,0 @@
-export { MobileSearchBar } from './MobileSearchBar';

@@ -1,0 +1,6 @@
+id: edge.uses.entity.feedback.votes.entity.users
+kind: uses
+source: entity.feedback_votes
+target: entity.users
+label: user_id
+properties: {}

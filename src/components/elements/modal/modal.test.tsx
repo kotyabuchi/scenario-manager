@@ -107,8 +107,9 @@ describe('Modal (Dialog)', () => {
 
       await user.click(screen.getByRole('button', { name: /モーダルを開く/i }));
 
+      const dialog = await screen.findByRole('dialog');
       await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(dialog).toHaveFocus();
       });
 
       await user.keyboard('{Escape}');

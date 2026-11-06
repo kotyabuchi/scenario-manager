@@ -1,0 +1,6 @@
+id: edge.calls.screen.scenarios.api.api.scenarios.search.get
+kind: calls
+source: screen.scenarios
+target: api.api.scenarios.search.get
+label: ""
+properties: {}

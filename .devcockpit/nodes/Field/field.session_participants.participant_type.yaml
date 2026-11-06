@@ -1,0 +1,13 @@
+id: field.session_participants.participant_type
+kind: Field
+name: participant_type
+description: "public.session_participants.participant_type。値: KEEPER, PLAYER, SPECTATOR"
+parentId: entity.session_participants
+properties:
+  dataType: Database['public']['Enums']['participant_type']
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 TRPG（テーブルトークRPG）のシナリオとセッションを管理するWebアプリケーション。
 
+## Communication Style
+
+- ユーザーの提案や意見に対して、技術的に問題がある場合は明確に反論すること
+- 「その通りです」「良いアイデアですね」等の同調から入らない。まず技術的な評価を述べる
+- 間違いを指摘する際は遠慮せず、根拠とともに代替案を提示する
+- ユーザーが間違っている場合、同意してから修正するのではなく、最初から正しい方向を示す
+- コードレビューでは「問題なし」より「問題の発見」を優先する姿勢で臨む
+
 ## Commands
 
 | コマンド | 用途 |
@@ -13,7 +21,7 @@ TRPG（テーブルトークRPG）のシナリオとセッションを管理す�
 | `pnpm dev` | 開発サーバー起動（Turbopack） |
 | `pnpm build` | ビルド |
 | `pnpm check` | lint + format 一括実行 |
-| `pnpm vitest` | テスト実行 |
+| `pnpm vitest` | テスト実行（`vitest run` のエイリアス。`run` を重ねて付けない） |
 | `pnpm storybook` | Storybook（port 6006） |
 | `pnpm prepare` | PandaCSS コード生成 |
 
@@ -79,7 +87,10 @@ src/
 | `plan-mode.md` | Planエージェント使用ガイド |
 | `agent-strategy.md` | サブエージェント活用、プロセス管理 |
 | `tdd-workflow.md` | TDD開発フロー、スキル一覧 |
+| `testing-patterns.md` | テスト安定化（E2Eポート運用、セレクタ鉄則、共有DBフレーク対策、a11y/コンポーネント落とし穴） |
 | `bash-rules.md` | Bashコマンド実行ルール |
+| `terminology.md` | UI用語の使い分け（スケジュール/日程） |
+| `codex-harness.md` | Codex CLI 経由の実装フロー（計画→指示→自動ゲート→レビュー→差し戻し） |
 
 すべてのルールファイルは `.claude/rules/` に配置。
 
@@ -99,8 +110,11 @@ src/
 | `/apply-review` | レビュー反映 | コードレビュー指摘をコードに反映 |
 | `/apply-plan-review` | レビュー反映 | 計画レビュー指摘を計画に反映 |
 | `/exec-plan` | 実装 | 計画をTodoList化して順次実装 |
+| `/codex-implement` | 実装 | Codex CLIに実装させるハーネスを起動（`codex-harness.md`） |
+| `/find-duplicates` | 保守 | 重複コード検出・リファクタリング提案 |
 | `/serena` | 汎用 | 調査・設計・実装 |
 | `/vibe` | Worktree | git worktree管理 |
+| `/supabase-migrate` | DB | マイグレーション適用 & 型再生成 |
 
 ## Memory Files Reference
 
@@ -113,11 +127,12 @@ Serenaメモリ（`.serena/memories/`）:
 
 **進捗管理ファイル**: `.claude/PROGRESS.md`
 
-| 状態 | マーク |
-|------|--------|
-| 未着手 | `[ ]` |
-| 作業中 | `[→]` |
-| 完了 | `[x]` |
+| 状態 | マーク | 用途 |
+|------|--------|------|
+| 未着手 | `[ ]` | タスク未開始、テスト不在 |
+| 作業中 | `[→]` | タスク着手中 |
+| 一部完了 | `[-]` | テストskip/偽陽性（コードは存在） |
+| 完了 | `[x]` | タスク完了、テスト通過 |
 
 ## Database Schema
 

@@ -10,7 +10,10 @@ test.describe('シナリオ詳細', () => {
   let scenariosPage: ScenariosPage;
   let detailPage: ScenarioDetailPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    if (testInfo.project.name !== 'mobile-chrome') {
+      await page.setViewportSize({ width: 1360, height: 900 });
+    }
     scenariosPage = new ScenariosPage(page);
     detailPage = new ScenarioDetailPage(page);
     await scenariosPage.goto();
@@ -18,7 +21,7 @@ test.describe('シナリオ詳細', () => {
   });
 
   test('一覧からシナリオ詳細に遷移して情報が表示される', async ({ page }) => {
-    await expect(page).toHaveURL(/\/scenarios\/[A-Za-z0-9]+$/);
+    await expect(page).toHaveURL(/\/scenarios\/[A-Za-z0-9]+(?:\?.*)?$/);
     await expect(detailPage.title).toBeVisible();
   });
 
@@ -31,9 +34,14 @@ test.describe('シナリオ詳細', () => {
     await expect(detailPage.playTime).toBeVisible();
   });
 
-  test('戻るリンクをクリックすると一覧に戻る', async ({ page }) => {
-    await detailPage.backLink.click();
-    await expect(page).toHaveURL(/\/scenarios$/);
+  test('閉じる・戻るで一覧に戻る', async ({ page }, testInfo) => {
+    if (testInfo.project.name === 'mobile-chrome') {
+      await detailPage.backControl.click();
+    } else {
+      await detailPage.closeControl.click();
+    }
+    await expect(page).toHaveURL(/\/scenarios(?:\?.*)?$/);
+    await expect(scenariosPage.listPane).toBeVisible();
   });
 
   test('関連セッションセクションが表示される', async () => {
@@ -46,5 +54,16 @@ test.describe('シナリオ詳細', () => {
 
   test('レビューセクションが表示される', async () => {
     await expect(detailPage.reviewHeading).toBeVisible();
+  });
+
+  test('目次は単独ページだけに表示する', async ({ page }, testInfo) => {
+    const toc = page.getByRole('navigation', { name: '目次' });
+    if (testInfo.project.name === 'mobile-chrome') {
+      await expect(detailPage.tocTrigger).toBeVisible();
+      await detailPage.tocTrigger.click();
+      await expect(toc).toBeVisible();
+    } else {
+      await expect(toc).toHaveCount(0);
+    }
   });
 });

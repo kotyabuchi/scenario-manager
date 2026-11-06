@@ -1,0 +1,6 @@
+id: edge.navigates_to.screen.feedback.screen.feedback.detail
+kind: navigates_to
+source: screen.feedback
+target: screen.feedback.detail
+label: ""
+properties: {}

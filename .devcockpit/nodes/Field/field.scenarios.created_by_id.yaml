@@ -1,0 +1,13 @@
+id: field.scenarios.created_by_id
+kind: Field
+name: created_by_id
+description: public.scenarios.created_by_id
+parentId: entity.scenarios
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,13 @@
+id: field.feedback_votes.created_at
+kind: Field
+name: created_at
+description: public.feedback_votes.created_at
+parentId: entity.feedback_votes
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

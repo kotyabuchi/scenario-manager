@@ -1,0 +1,11 @@
+id: requirement.users.list
+kind: Requirement
+name: ユーザー一覧（計画中）
+description: 一覧画面の本体は未実装。現在は見出しのみ。
+properties:
+  implementation:
+    - file: src/app/(main)/users/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: planned

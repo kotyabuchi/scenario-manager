@@ -6,6 +6,7 @@ import { css } from '@/styled-system/css';
 
 export const bodyStyle = css({
   minH: '[100vh]',
+  fontFamily: 'body',
   bg: '[linear-gradient(180deg, {colors.bg.subtle}, {colors.bg.base})]',
 });
 
@@ -549,47 +550,14 @@ export const ctaBtnText = css({
   color: 'primary.default',
 });
 
-// ========================================
-// Footer
-// ========================================
-export const footer = css({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '6',
-  px: '6',
-  py: '10',
-  bg: 'gray.800',
-  md: {
-    px: '[120px]',
-    py: '12',
+export const aboutLink = css({
+  color: 'primary.textOnPrimary',
+  fontSize: 'sm',
+  textDecoration: 'underline',
+  textUnderlineOffset: '[3px]',
+  _focusVisible: {
+    outline: '[2px solid]',
+    outlineColor: 'primary.textOnPrimary',
+    outlineOffset: '[3px]',
   },
-});
-
-export const footerLogo = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2',
-});
-
-export const footerLogoIcon = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '8',
-  height: '8',
-  borderRadius: 'xl',
-  bg: 'gray.700',
-});
-
-export const footerLogoText = css({
-  fontSize: '[16px]',
-  fontWeight: 'semibold',
-  color: 'white',
-});
-
-export const footerCopy = css({
-  fontSize: '[12px]',
-  fontWeight: 'normal',
-  color: 'gray.400',
 });

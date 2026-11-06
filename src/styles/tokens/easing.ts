@@ -8,4 +8,5 @@ export const easings = defineTokens.easings({
   'ease-out': { value: 'cubic-bezier(0.0, 0.0, 0.2, 1.0)' },
   'ease-in': { value: 'cubic-bezier(0.4, 0.0, 1.0, 1.0)' },
   'ease-in-out': { value: 'cubic-bezier(0.4, 0.0, 0.2, 1.0)' },
+  'ease-in-out-cubic': { value: 'cubic-bezier(0.645, 0.045, 0.355, 1)' },
 });

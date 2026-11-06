@@ -1,0 +1,11 @@
+id: step.create.session.recruit
+kind: FlowStep
+name: 詳細から募集を管理する
+description: 詳細から募集を管理する
+parentId: flow.create.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,11 @@
+id: ui.scenario.detail.4
+kind: UIElement
+name: VideoSection
+description: シナリオ詳細の構成要素。
+parentId: screen.scenario.detail
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

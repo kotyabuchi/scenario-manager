@@ -1,0 +1,6 @@
+id: edge.uses.entity.notifications.entity.users
+kind: uses
+source: entity.notifications
+target: entity.users
+label: user_id
+properties: {}

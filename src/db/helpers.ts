@@ -1,3 +1,6 @@
+import { err, ok, type Result } from '@/types/result';
+
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CamelCaseKeys } from '@/lib/supabase/transform';
 import type { Database } from './types';
 
@@ -15,9 +18,14 @@ export type ScenarioSystemRow = CamelCaseKeys<
 export type TagRow = CamelCaseKeys<Tables['tags']['Row']>;
 export type ScenarioTagRow = CamelCaseKeys<Tables['scenario_tags']['Row']>;
 export type GameSessionRow = CamelCaseKeys<Tables['game_sessions']['Row']>;
-export type GameScheduleRow = CamelCaseKeys<Tables['game_schedules']['Row']>;
+export type GameScheduleTimeBlockRow = CamelCaseKeys<
+  Tables['game_schedule_time_blocks']['Row']
+>;
 export type SessionParticipantRow = CamelCaseKeys<
   Tables['session_participants']['Row']
+>;
+export type SessionAvailabilityTimeBlockRow = CamelCaseKeys<
+  Tables['session_availability_time_blocks']['Row']
 >;
 export type UserReviewRow = CamelCaseKeys<Tables['user_reviews']['Row']>;
 export type UserScenarioPreferenceRow = CamelCaseKeys<
@@ -30,9 +38,6 @@ export type FeedbackCommentRow = CamelCaseKeys<
   Tables['feedback_comments']['Row']
 >;
 export type NotificationRow = CamelCaseKeys<Tables['notifications']['Row']>;
-export type ScheduleResponseRow = CamelCaseKeys<
-  Tables['schedule_responses']['Row']
->;
 export type SessionLinkRow = CamelCaseKeys<Tables['session_links']['Row']>;
 
 // Insert型（キャメルケース変換済み）
@@ -52,3 +57,40 @@ export type UserReviewInsert = CamelCaseKeys<Tables['user_reviews']['Insert']>;
 export type UserScenarioPreferenceInsert = CamelCaseKeys<
   Tables['user_scenario_preferences']['Insert']
 >;
+export type GameScheduleTimeBlockInsert = CamelCaseKeys<
+  Tables['game_schedule_time_blocks']['Insert']
+>;
+export type SessionAvailabilityTimeBlockInsert = CamelCaseKeys<
+  Tables['session_availability_time_blocks']['Insert']
+>;
+
+type DbClientLike = Pick<SupabaseClient<Database>, 'from'>;
+
+/**
+ * Supabase Auth UID からアプリ内部 user_id（ULID）を解決する。
+ * auth_user_id のみを参照する（後方互換 fallback は持たない）。
+ */
+export const resolveCurrentAppUserIdByAuthUid = async (
+  supabase: DbClientLike,
+  authUserId: string,
+): Promise<Result<string>> => {
+  if (!authUserId) {
+    return err(new Error('authUserId is required'));
+  }
+
+  const byAuthUserId = await supabase
+    .from('users')
+    .select('user_id')
+    .eq('auth_user_id', authUserId)
+    .maybeSingle();
+
+  if (byAuthUserId.error) {
+    return err(new Error(byAuthUserId.error.message));
+  }
+
+  if (byAuthUserId.data?.user_id) {
+    return ok(byAuthUserId.data.user_id);
+  }
+
+  return err(new Error('User not found'));
+};

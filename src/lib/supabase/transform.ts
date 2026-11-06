@@ -69,4 +69,22 @@ export const camelCaseRows = <T extends Record<string, unknown>>(
   rows: T[],
 ): CamelCaseKeys<T>[] => rows.map((row) => camelCaseKeys(row));
 
+/**
+ * unknown をランタイム型ガード付きで Record<string, unknown> に変換する
+ * Supabase のリレーション結果など型が不確定な値に使用し、
+ * 呼び出し元での `as Record<string, unknown>` キャストを排除する
+ */
+export const toRecord = (value: unknown): Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+    ? (value as Record<string, unknown>)
+    : {};
+
+/**
+ * unknown をランタイム型ガード付きで Array<Record<string, unknown>> に変換する
+ */
+export const toRecordArray = (
+  value: unknown,
+): Array<Record<string, unknown>> =>
+  Array.isArray(value) ? value.map(toRecord) : [];
+
 export type { CamelCaseKeys };

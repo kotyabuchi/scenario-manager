@@ -1,0 +1,11 @@
+id: step.create.session.select
+kind: FlowStep
+name: シナリオを選択する
+description: シナリオを選択する
+parentId: flow.create.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,6 @@
+id: edge.maps_to.step.schedule.session.open.screen.session.detail
+kind: maps_to
+source: step.schedule.session.open
+target: screen.session.detail
+label: ""
+properties: {}

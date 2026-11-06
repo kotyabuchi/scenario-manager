@@ -1,0 +1,13 @@
+id: field.feedback_comments.is_official
+kind: Field
+name: is_official
+description: public.feedback_comments.is_official
+parentId: entity.feedback_comments
+properties:
+  dataType: boolean
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

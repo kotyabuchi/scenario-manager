@@ -5,7 +5,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowRight,
+  Bug,
   Camera,
+  ChatCircleDots,
+  CursorClick,
   Info,
   Lightbulb,
   PaperPlaneTilt,
@@ -24,7 +27,7 @@ import * as styles from './styles';
 import { Button } from '@/components/elements/button/button';
 import { FieldError } from '@/components/elements/field-error/field-error';
 import { Input } from '@/components/elements/input';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 import { Radio } from '@/components/elements/radio';
 import { Textarea } from '@/components/elements/textarea';
 import { FeedbackCategories } from '@/db/enum';
@@ -50,6 +53,20 @@ const SHOW_SCREENSHOT: Record<string, boolean> = {
   [FeedbackCategories.FEATURE.value]: false,
   [FeedbackCategories.UI_UX.value]: true,
   [FeedbackCategories.OTHER.value]: false,
+};
+
+const CATEGORY_ICONS = {
+  [FeedbackCategories.BUG.value]: Bug,
+  [FeedbackCategories.FEATURE.value]: Lightbulb,
+  [FeedbackCategories.UI_UX.value]: CursorClick,
+  [FeedbackCategories.OTHER.value]: ChatCircleDots,
+};
+
+const CATEGORY_LABELS: Record<FeedbackFormValues['category'], string> = {
+  [FeedbackCategories.BUG.value]: '不具合',
+  [FeedbackCategories.FEATURE.value]: '機能要望',
+  [FeedbackCategories.UI_UX.value]: '画面・操作性',
+  [FeedbackCategories.OTHER.value]: 'その他',
 };
 
 type EditTarget = {
@@ -140,7 +157,6 @@ export const FeedbackModal = ({
     reset();
     if (successTimerRef.current) clearTimeout(successTimerRef.current);
     successTimerRef.current = setTimeout(() => {
-      setIsSubmitted(false);
       onOpenChange({ open: false });
     }, 2000);
   };
@@ -182,23 +198,29 @@ export const FeedbackModal = ({
 
   const handleClose = () => {
     if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    onOpenChange({ open: false });
+  };
+
+  const handleExitComplete = () => {
     reset();
     setServerError(null);
     setIsSubmitted(false);
-    onOpenChange({ open: false });
+  };
+
+  const handleModalOpenChange = (details: { open: boolean }) => {
+    if (!details.open) {
+      handleClose();
+      return;
+    }
+    onOpenChange(details);
   };
 
   const footer =
     isSubmitted || isRateLimited ? null : (
       <>
-        <Button
-          type="button"
-          variant="outline"
-          status="primary"
-          onClick={handleClose}
-        >
+        <ModalDismissButton onClick={handleClose}>
           キャンセル
-        </Button>
+        </ModalDismissButton>
         <Button
           type="submit"
           status="primary"
@@ -216,9 +238,11 @@ export const FeedbackModal = ({
   return (
     <Modal
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleModalOpenChange}
+      onExitComplete={handleExitComplete}
       title={isEditMode ? 'フィードバックを編集' : 'フィードバックを送る'}
       footer={footer}
+      mobileSheet
     >
       {isRateLimited ? (
         <output className={styles.successMessage}>
@@ -262,11 +286,29 @@ export const FeedbackModal = ({
               name="category"
               className={styles.radioGroup}
             >
-              {Object.values(FeedbackCategories).map((category) => (
-                <Radio.Item key={category.value} value={category.value}>
-                  {category.label}
-                </Radio.Item>
-              ))}
+              {Object.values(FeedbackCategories).map((category) => {
+                const CategoryIcon = CATEGORY_ICONS[category.value];
+                return (
+                  <Radio.Item
+                    key={category.value}
+                    value={category.value}
+                    className={styles.categoryItem}
+                  >
+                    <span className={styles.categoryOption}>
+                      <CategoryIcon
+                        size={18}
+                        weight={
+                          selectedCategory === category.value
+                            ? 'fill'
+                            : 'regular'
+                        }
+                        aria-hidden="true"
+                      />
+                      {CATEGORY_LABELS[category.value]}
+                    </span>
+                  </Radio.Item>
+                );
+              })}
             </Radio>
             <FieldError error={errors.category} />
           </div>

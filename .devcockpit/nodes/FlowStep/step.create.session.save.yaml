@@ -1,0 +1,11 @@
+id: step.create.session.save
+kind: FlowStep
+name: セッションを作成する
+description: セッションを作成する
+parentId: flow.create.session
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

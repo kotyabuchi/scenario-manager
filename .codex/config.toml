@@ -1,0 +1,6 @@
+# Storybook の Agentation 注釈を Codex から読む。
+# 開発中のブラウザー側は http://127.0.0.1:4747 に接続する。
+[mcp_servers.agentation]
+command = "cmd"
+args = ["/c", "npx", "-y", "agentation-mcp@1.2.0", "server"]
+startup_timeout_sec = 30

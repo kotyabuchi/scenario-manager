@@ -55,7 +55,7 @@ export const numberInput_input = css({
   bg: 'transparent',
   color: 'gray.800',
   fontSize: '[14px]',
-  fontFamily: '[Inter, sans-serif]',
+  fontFamily: 'body',
   outline: 'none',
   _placeholder: {
     color: 'gray.400',

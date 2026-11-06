@@ -1,0 +1,6 @@
+id: edge.navigates_to.screen.session.applications.screen.session.detail
+kind: navigates_to
+source: screen.session.applications
+target: screen.session.detail
+label: ""
+properties: {}

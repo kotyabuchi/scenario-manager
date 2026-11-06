@@ -1,0 +1,12 @@
+id: screen.session.availability
+kind: Screen
+name: 参加可能日提出
+description: 参加者または管理者が候補日時への参加可否を提出する。
+properties:
+  route: /sessions/[id]/schedule/availability
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -13,7 +13,7 @@ export const textarea = cva({
     bg: 'input.bg',
     color: 'input.text',
     fontSize: '[14px]',
-    fontFamily: '[Inter, sans-serif]',
+    fontFamily: 'body',
     outline: 'none',
     resize: 'vertical',
     minH: '[120px]',

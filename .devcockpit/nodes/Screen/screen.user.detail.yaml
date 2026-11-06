@@ -1,0 +1,12 @@
+id: screen.user.detail
+kind: Screen
+name: ユーザープロフィール
+description: ユーザーの公開プロフィールを表示する。
+properties:
+  route: /users/[id]
+  implementation:
+    - file: src/app/(main)/users/[id]/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

@@ -1,0 +1,6 @@
+id: edge.uses.entity.video.links.entity.scenarios
+kind: uses
+source: entity.video_links
+target: entity.scenarios
+label: scenario_id
+properties: {}

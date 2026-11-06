@@ -1,0 +1,11 @@
+id: ui.logout.1
+kind: UIElement
+name: ログアウト処理
+description: ログアウトの構成要素。
+parentId: screen.logout
+properties:
+  implementation:
+    - file: src/app/(auth)/logout/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

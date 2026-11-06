@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { ModalDismissButton } from './ModalDismissButton';
 import { Modal } from './modal';
 
 import { Button } from '@/components/elements/button/button';
@@ -68,9 +69,9 @@ export const WithFooter: Story = {
                 justifyContent: 'flex-end',
               }}
             >
-              <Button variant="outline" onClick={() => setOpen(false)}>
+              <ModalDismissButton onClick={() => setOpen(false)}>
                 キャンセル
-              </Button>
+              </ModalDismissButton>
               <Button status="danger" onClick={() => setOpen(false)}>
                 削除する
               </Button>

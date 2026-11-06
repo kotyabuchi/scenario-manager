@@ -1,0 +1,11 @@
+id: step.create.scenario.detail
+kind: FlowStep
+name: 登録したシナリオを見る
+description: 登録したシナリオを見る
+parentId: flow.create.scenario
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

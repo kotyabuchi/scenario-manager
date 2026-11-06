@@ -6,7 +6,7 @@ import { isNil } from 'ramda';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 
 type SessionInfo = {
   sessionName: string;
@@ -49,7 +49,6 @@ export const ApplicationModal = ({
   const [message, setMessage] = useState('');
 
   const handleClose = () => {
-    setMessage('');
     onClose?.();
   };
 
@@ -59,9 +58,7 @@ export const ApplicationModal = ({
 
   const footer = (
     <>
-      <Button type="button" variant="ghost" onClick={handleClose}>
-        キャンセル
-      </Button>
+      <ModalDismissButton onClick={handleClose}>キャンセル</ModalDismissButton>
       <Button
         type="button"
         status="primary"
@@ -81,6 +78,7 @@ export const ApplicationModal = ({
       onOpenChange={(details) => {
         if (!details.open) handleClose();
       }}
+      onExitComplete={() => setMessage('')}
       title="セッションに参加申請"
       footer={footer}
     >

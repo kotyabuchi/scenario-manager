@@ -1,0 +1,99 @@
+name: Code Duplication Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  detect-duplicates:
+    name: Detect Code Duplicates
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache similarity-ts binary
+        id: cache-bin
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/similarity-ts
+          key: ${{ runner.os }}-similarity-ts-v1
+
+      - name: Install similarity-ts
+        if: steps.cache-bin.outputs.cache-hit != 'true'
+        run: cargo install similarity-ts
+
+      - name: Run similarity-ts
+        id: similarity
+        run: |
+          set +e
+          OUTPUT=$(~/.cargo/bin/similarity-ts 2>/tmp/similarity-stderr.txt)
+          EXIT_CODE=$?
+          set -e
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "::warning::similarity-ts failed with exit code $EXIT_CODE"
+            echo "status=error" >> "$GITHUB_OUTPUT"
+            echo "count=0" >> "$GITHUB_OUTPUT"
+          else
+            COUNT=$(echo "$OUTPUT" | grep "^Similarity:" | awk -F'Score: ' '{print $2}' | awk '{if ($1+0 >= 5.0) print}' | wc -l || true)
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+            echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "$OUTPUT" > /tmp/similarity-output.txt
+
+      - name: Post or update PR comment
+        if: steps.similarity.outputs.status == 'ok' && steps.similarity.outputs.count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- similarity-ts-report -->';
+            const count = '${{ steps.similarity.outputs.count }}';
+            const body = marker + `\n### 重複コード検出\n\nsimilarity-ts が **${count} 件**の類似コードブロックを検出しました（Score >= 5.0）。\n\n詳細はアーティファクト \`similarity-report\` またはローカルで \`/find-duplicates\` を実行してください。`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const existing = comments.find(c => c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
+
+      - name: Add Job Summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [ "${{ steps.similarity.outputs.status }}" = "error" ]; then
+            echo "### similarity-ts 実行エラー" >> "$GITHUB_STEP_SUMMARY"
+            echo "stderr:" >> "$GITHUB_STEP_SUMMARY"
+            cat /tmp/similarity-stderr.txt >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.similarity.outputs.count }}" != "0" ]; then
+            echo "### 重複コード検出: ${{ steps.similarity.outputs.count }} 件" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### 重複コード: 検出なし" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: similarity-report
+          path: /tmp/similarity-output.txt
+          retention-days: 14

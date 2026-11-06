@@ -6,7 +6,7 @@ import { isNil } from 'ramda';
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
-import { Modal } from '@/components/elements/modal';
+import { Modal, ModalDismissButton } from '@/components/elements/modal';
 
 type Applicant = {
   userId: string;
@@ -51,7 +51,6 @@ export const ApprovalModal = ({
   const [message, setMessage] = useState('');
 
   const handleClose = () => {
-    setMessage('');
     onClose?.();
   };
 
@@ -65,9 +64,7 @@ export const ApprovalModal = ({
 
   const footer = (
     <>
-      <Button type="button" variant="ghost" onClick={handleClose}>
-        閉じる
-      </Button>
+      <ModalDismissButton onClick={handleClose}>閉じる</ModalDismissButton>
       <Button
         type="button"
         variant="subtle"
@@ -96,6 +93,7 @@ export const ApprovalModal = ({
       onOpenChange={(details) => {
         if (!details.open) handleClose();
       }}
+      onExitComplete={() => setMessage('')}
       title="参加申請の確認"
       footer={footer}
     >

@@ -1,0 +1,11 @@
+id: decision.upload
+kind: Decision
+name: 画像アップロードの制約
+description: JPEG/PNG/WebP/GIF を 5MB 以下で受け付ける。
+properties:
+  implementation:
+    - file: src/app/api/upload/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

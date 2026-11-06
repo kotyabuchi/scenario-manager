@@ -1,0 +1,11 @@
+id: step.create.scenario.input
+kind: FlowStep
+name: 情報を入力・確認する
+description: 情報を入力・確認する
+parentId: flow.create.scenario
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

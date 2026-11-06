@@ -1,0 +1,13 @@
+id: field.video_links.updated_at
+kind: Field
+name: updated_at
+description: public.video_links.updated_at
+parentId: entity.video_links
+properties:
+  dataType: string
+  required: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

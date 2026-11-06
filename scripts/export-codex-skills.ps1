@@ -1,0 +1,257 @@
+param(
+  [string]$SourceDir = ".claude/skills",
+  [string]$OutputDir = ".codex/skills",
+  [string]$Prefix,
+  [switch]$Clean
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+function Write-FileUtf8NoBom {
+  param(
+    [string]$LiteralPath,
+    [string]$Content
+  )
+
+  $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+  [System.IO.File]::WriteAllText($LiteralPath, $Content, $utf8NoBom)
+}
+
+function Get-RepoRoot {
+  return (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+}
+
+function Resolve-ProjectPath {
+  param(
+    [string]$RepoRoot,
+    [string]$PathValue
+  )
+
+  if ([System.IO.Path]::IsPathRooted($PathValue)) {
+    if (Test-Path $PathValue) {
+      return (Resolve-Path $PathValue).Path
+    }
+
+    return [System.IO.Path]::GetFullPath($PathValue)
+  }
+
+  $candidate = Join-Path $RepoRoot $PathValue
+  if (Test-Path $candidate) {
+    return (Resolve-Path $candidate).Path
+  }
+
+  return [System.IO.Path]::GetFullPath($candidate)
+}
+
+function Get-RelativePathSafe {
+  param(
+    [string]$BasePath,
+    [string]$TargetPath
+  )
+
+  $baseFull = [System.IO.Path]::GetFullPath($BasePath)
+  $targetFull = [System.IO.Path]::GetFullPath($TargetPath)
+
+  if (-not $baseFull.EndsWith([System.IO.Path]::DirectorySeparatorChar)) {
+    $baseFull += [System.IO.Path]::DirectorySeparatorChar
+  }
+
+  $baseUri = [System.Uri]$baseFull
+  $targetUri = [System.Uri]$targetFull
+  $relative = $baseUri.MakeRelativeUri($targetUri).ToString()
+  return [System.Uri]::UnescapeDataString($relative).Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+}
+
+function Get-DefaultPrefix {
+  param([string]$RepoRoot)
+
+  $packageJsonPath = Join-Path $RepoRoot "package.json"
+  if (Test-Path $packageJsonPath) {
+    try {
+      $packageJson = Get-Content -Raw -LiteralPath $packageJsonPath -Encoding utf8 | ConvertFrom-Json
+      if ($null -ne $packageJson.name -and [string]::IsNullOrWhiteSpace([string]$packageJson.name) -eq $false) {
+        return [string]$packageJson.name
+      }
+    } catch {
+      Write-Warning "Failed to read package.json. Falling back to repo folder name for prefix: $($_.Exception.Message)"
+    }
+  }
+
+  return Split-Path $RepoRoot -Leaf
+}
+
+function Normalize-SkillName {
+  param([string]$Value)
+
+  $normalized = $Value.ToLowerInvariant()
+  $normalized = [regex]::Replace($normalized, "[^a-z0-9\-]+", "-")
+  $normalized = [regex]::Replace($normalized, "-{2,}", "-")
+  $normalized = $normalized.Trim("-")
+  if ([string]::IsNullOrWhiteSpace($normalized)) {
+    throw "Skill name/prefix became empty after normalization: '$Value'"
+  }
+  return $normalized
+}
+
+function Copy-SkillDirectory {
+  param(
+    [string]$SourcePath,
+    [string]$DestinationPath
+  )
+
+  Copy-Item -LiteralPath $SourcePath -Destination $DestinationPath -Recurse -Force
+
+  Get-ChildItem -LiteralPath $DestinationPath -Recurse -File |
+    Where-Object { $_.Name -in @("AGENTS.md", "CLAUDE.md") } |
+    Remove-Item -Force
+}
+
+function Get-GeneratedPreamble {
+  param(
+    [string]$SourceSkillName,
+    [string]$ExportedSkillName
+  )
+
+  return @"
+<!-- Generated for Codex from .claude/skills/$SourceSkillName. Edit the source skill and re-run scripts/export-codex-skills.ps1. -->
+
+> Codex adaptation note
+>
+> - This is a generated Codex-oriented copy of the original skill `"$SourceSkillName"`.
+> - Claude-specific tool names may appear in the text; interpret them with Codex equivalents (for example, task list updates => `update_plan`, user prompts => direct user questions / `request_user_input` when available).
+> - Linked/exported skill name: `"$ExportedSkillName"`.
+
+"@
+}
+
+function Convert-SkillMarkdown {
+  param(
+    [string]$RawContent,
+    [string]$SourceSkillName,
+    [string]$ExportedSkillName
+  )
+
+  $content = $RawContent
+
+  # Lightweight wording replacements for common Claude-only tool labels.
+  $content = $content -replace "\bAskUserQuestion\b", "user confirmation (Codex: ask directly / request_user_input when available)"
+  $content = $content -replace "\bTaskCreate\b", "update_plan (task add/update)"
+  $content = $content -replace "\bTaskUpdate\b", "update_plan (task add/update)"
+
+  $preamble = Get-GeneratedPreamble -SourceSkillName $SourceSkillName -ExportedSkillName $ExportedSkillName
+
+  if ($content -match '^(---\r?\n)([\s\S]*?)(\r?\n---\r?\n?)') {
+    $frontMatterStart = $matches[1]
+    $frontMatterBody = $matches[2]
+    $frontMatterEnd = $matches[3]
+    $rest = $content.Substring($matches[0].Length)
+
+    $updatedFrontMatter = $frontMatterBody -replace '(?m)^name:\s*.+$', "name: $ExportedSkillName"
+
+    return ($frontMatterStart + $updatedFrontMatter + $frontMatterEnd + $preamble + $rest)
+  }
+
+  return ($preamble + $content)
+}
+
+function Write-ExportReadme {
+  param(
+    [string]$OutputPath,
+    [string]$Prefix,
+    [int]$SkillCount
+  )
+
+  $readmePath = Join-Path $OutputPath "README.md"
+  $readme = @"
+# Codex Skills (Project Local)
+
+This directory contains Codex-oriented generated skills exported from `.claude/skills`.
+
+- Source of truth: `.claude/skills`
+- Generated by: `scripts/export-codex-skills.ps1`
+- Naming prefix: `$Prefix`
+- Skill count: $SkillCount
+
+## Usage
+
+1. Regenerate: `powershell -ExecutionPolicy Bypass -File scripts/export-codex-skills.ps1`
+2. Create global links: `powershell -ExecutionPolicy Bypass -File scripts/link-codex-skills.ps1`
+
+Do not edit generated `SKILL.md` files directly. Edit `.claude/skills` and rerun the export script.
+"@
+
+  Write-FileUtf8NoBom -LiteralPath $readmePath -Content $readme
+}
+
+$repoRoot = Get-RepoRoot
+$sourcePath = Resolve-ProjectPath -RepoRoot $repoRoot -PathValue $SourceDir
+$outputPath = Resolve-ProjectPath -RepoRoot $repoRoot -PathValue $OutputDir
+
+if (-not (Test-Path $sourcePath)) {
+  throw "SourceDir not found: $sourcePath"
+}
+
+$resolvedPrefix = if ([string]::IsNullOrWhiteSpace($Prefix)) {
+  Get-DefaultPrefix -RepoRoot $repoRoot
+} else {
+  $Prefix
+}
+$resolvedPrefix = Normalize-SkillName -Value $resolvedPrefix
+
+if ($Clean -and (Test-Path $outputPath)) {
+  Remove-Item -LiteralPath $outputPath -Recurse -Force
+}
+
+New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
+
+$sourceSkillDirs = Get-ChildItem -LiteralPath $sourcePath -Directory |
+  Where-Object { Test-Path (Join-Path $_.FullName "SKILL.md") } |
+  Sort-Object Name
+
+$manifest = [ordered]@{
+  generatedAt = (Get-Date).ToString("o")
+  sourceDir = Get-RelativePathSafe -BasePath $repoRoot -TargetPath $sourcePath
+  outputDir = Get-RelativePathSafe -BasePath $repoRoot -TargetPath $outputPath
+  prefix = $resolvedPrefix
+  skillCount = 0
+  skills = @()
+}
+
+$copiedCount = 0
+foreach ($skillDir in $sourceSkillDirs) {
+  $sourceName = $skillDir.Name
+  $exportName = Normalize-SkillName -Value "$resolvedPrefix-$sourceName"
+  $destDir = Join-Path $outputPath $exportName
+
+  if (Test-Path $destDir) {
+    Remove-Item -LiteralPath $destDir -Recurse -Force
+  }
+
+  Copy-SkillDirectory -SourcePath $skillDir.FullName -DestinationPath $destDir
+
+  $skillMdPath = Join-Path $destDir "SKILL.md"
+  $raw = Get-Content -Raw -LiteralPath $skillMdPath -Encoding utf8
+  $converted = Convert-SkillMarkdown -RawContent $raw -SourceSkillName $sourceName -ExportedSkillName $exportName
+  Write-FileUtf8NoBom -LiteralPath $skillMdPath -Content $converted
+
+  $fileCount = (Get-ChildItem -LiteralPath $destDir -Recurse -File | Measure-Object).Count
+  $manifest.skills += [ordered]@{
+    sourceName = $sourceName
+    exportedName = $exportName
+    sourcePath = Get-RelativePathSafe -BasePath $repoRoot -TargetPath $skillDir.FullName
+    outputPath = Get-RelativePathSafe -BasePath $repoRoot -TargetPath $destDir
+    fileCount = $fileCount
+  }
+
+  $copiedCount += 1
+}
+
+$manifest.skillCount = $copiedCount
+$manifestPath = Join-Path $outputPath "manifest.json"
+$manifestJson = $manifest | ConvertTo-Json -Depth 6
+Write-FileUtf8NoBom -LiteralPath $manifestPath -Content $manifestJson
+
+Write-ExportReadme -OutputPath $outputPath -Prefix $resolvedPrefix -SkillCount $copiedCount
+
+Write-Host "Exported $copiedCount skill(s) to $outputPath with prefix '$resolvedPrefix'."

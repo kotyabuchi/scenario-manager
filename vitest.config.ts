@@ -1,60 +1,48 @@
-import { config } from 'dotenv';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
-// Load .env file
-config();
+import {
+  escapeTestPathForGlob,
+  getTestProjects,
+} from './scripts/e2e/testClassification';
 
+import { fileURLToPath } from 'node:url';
+
+const root = fileURLToPath(new URL('.', import.meta.url));
+const projects = getTestProjects(root);
+
+// DBテストは専用configへ分離する。.envを自動読込しない。
 export default defineConfig({
+  root,
   plugins: [tsconfigPaths()],
-  esbuild: {
-    jsx: 'automatic',
-  },
+  esbuild: { jsx: 'automatic' },
   test: {
-    // Vitest 3では workspace は非推奨、projects を使用
     projects: [
-      // ユニットテスト用（ロジック、ユーティリティ）
       {
         extends: true,
         test: {
           name: 'unit',
-          include: [
-            'src/**/__tests__/**/*.test.ts',
-            'src/**/__tests__/**/*.test.tsx',
-          ],
-          exclude: [
-            'node_modules',
-            '.next',
-            'e2e',
-            // DOM APIが必要なテストは除外（後続のプロジェクトで処理）
-            'src/components/blocks/SpeedDialFAB/__tests__/*.test.ts',
-          ],
+          include: projects.unit.map(escapeTestPathForGlob),
           environment: 'node',
+          setupFiles: ['vitest.setup.ts'],
         },
       },
-      // SpeedDialFAB のユニットテスト用（DOM APIが必要）
       {
         extends: true,
         test: {
           name: 'unit-dom',
-          include: ['src/components/blocks/SpeedDialFAB/__tests__/*.test.ts'],
+          include: projects['unit-dom'].map(escapeTestPathForGlob),
           environment: 'jsdom',
+          setupFiles: ['vitest.setup.ts'],
         },
       },
-      // コンポーネントテスト用（composeStoriesを使用）
       {
         extends: true,
         test: {
           name: 'component',
-          include: ['src/**/*.test.tsx'],
-          exclude: [
-            'node_modules',
-            '.next',
-            'e2e',
-            'src/**/__tests__/**', // unit testsは除外
-          ],
+          include: projects.component.map(escapeTestPathForGlob),
           environment: 'jsdom',
-          setupFiles: ['.storybook/vitest.setup.ts'],
+          setupFiles: ['vitest.setup.ts', '.storybook/vitest.setup.ts'],
         },
       },
     ],

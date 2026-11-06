@@ -1,13 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { CaretDown, FileText, Sparkle, Star } from '@phosphor-icons/react/ssr';
+import { Fragment, useEffect, useState } from 'react';
+import {
+  ArrowsDownUp,
+  CaretDown,
+  FileText,
+  Sparkle,
+  Star,
+} from '@phosphor-icons/react/ssr';
 import Image from 'next/image';
+import Link from 'next/link';
 import { isNil } from 'ramda';
 
 import * as styles from './styles';
 
 import { Button } from '@/components/elements/button/button';
+import { Select } from '@/components/elements/select';
+import { Switch } from '@/components/elements/switch';
 
 import type { ReviewSortOption, ReviewWithUser } from '../interface';
 
@@ -20,6 +29,16 @@ type ReviewSectionProps = {
 };
 
 const STORAGE_KEY_PREFIX = 'hiddenReviews_';
+
+// 並び順の選択肢（Select用）
+const REVIEW_SORT_ITEMS: { label: string; value: ReviewSortOption }[] = [
+  { label: '新着順', value: 'newest' },
+  { label: '高評価順', value: 'rating_high' },
+  { label: '低評価順', value: 'rating_low' },
+];
+
+const isReviewSortOption = (value: string): value is ReviewSortOption =>
+  REVIEW_SORT_ITEMS.some((item) => item.value === value);
 
 /**
  * 日付をフォーマットする
@@ -60,6 +79,8 @@ const ReviewCard = ({
   isOwner,
   isHidden,
   showHidden,
+  isSpoilerExpanded,
+  onToggleSpoiler,
   onHide,
   onShow,
 }: {
@@ -67,11 +88,11 @@ const ReviewCard = ({
   isOwner: boolean;
   isHidden: boolean;
   showHidden: boolean;
+  isSpoilerExpanded: boolean;
+  onToggleSpoiler: () => void;
   onHide: () => void;
   onShow: () => void;
 }) => {
-  const [isSpoilerExpanded, setIsSpoilerExpanded] = useState(false);
-
   // 非表示状態で、非表示コメント表示がOFFの場合は表示しない
   if (isHidden && !showHidden) {
     return null;
@@ -140,12 +161,19 @@ const ReviewCard = ({
                 {review.user.nickname.charAt(0)}
               </div>
             )}
-            <span className={styles.reviewCard_userName}>
-              {review.user.nickname}
-            </span>
-            <span className={styles.reviewCard_handle}>
-              @{review.user.userName}
-            </span>
+            <Link
+              href={`/users/${review.user.userId}`}
+              className={styles.reviewCard_nameGroup}
+            >
+              <span>
+                <span className={styles.reviewCard_userName}>
+                  {review.user.nickname}
+                </span>
+                <span className={styles.reviewCard_handle}>
+                  @{review.user.userName}
+                </span>
+              </span>
+            </Link>
             <span className={styles.reviewCard_date}>
               {formatDate(review.createdAt)}
             </span>
@@ -155,26 +183,19 @@ const ReviewCard = ({
           <div className={styles.reviewCard_content}>
             {/* 公開コメント */}
             {!isNil(review.openComment) && (
-              <>
-                <span className={styles.reviewCard_commentLabel}>
-                  【公開コメント】
-                </span>
-                <p className={styles.reviewCard_commentText}>
-                  {review.openComment}
-                </p>
-              </>
+              <p className={styles.reviewCard_commentText}>
+                {review.openComment}
+              </p>
             )}
 
             {/* ネタバレコメント */}
             {!isNil(review.spoilerComment) && (
               <>
-                <span className={styles.reviewCard_commentLabel}>
-                  【ネタバレコメント】
-                </span>
                 <button
                   type="button"
                   className={styles.reviewCard_spoilerToggle}
-                  onClick={() => setIsSpoilerExpanded(!isSpoilerExpanded)}
+                  data-expanded={isSpoilerExpanded ? '' : undefined}
+                  onClick={onToggleSpoiler}
                 >
                   <CaretDown size={14} />
                   <span>
@@ -209,6 +230,21 @@ export const ReviewSection = ({
   const [hiddenReviewIds, setHiddenReviewIds] = useState<Set<string>>(
     new Set(),
   );
+  const [expandedSpoilerIds, setExpandedSpoilerIds] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const handleToggleSpoiler = (reviewId: string) => {
+    setExpandedSpoilerIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(reviewId)) {
+        next.delete(reviewId);
+      } else {
+        next.add(reviewId);
+      }
+      return next;
+    });
+  };
 
   // localStorageから非表示レビューを読み込む
   useEffect(() => {
@@ -244,7 +280,7 @@ export const ReviewSection = ({
     saveHiddenReviews(newIds);
   };
 
-  // ソート済みレビュー
+  // ソート済み・表示対象のレビュー（非表示中を先に除外し、区切り線の重複を防ぐ）
   const sortedReviews = [...reviews].sort((a, b) => {
     switch (sortOption) {
       case 'newest':
@@ -262,44 +298,36 @@ export const ReviewSection = ({
 
   return (
     <section id="reviews" className={styles.section}>
-      {/* ヘッダー */}
+      {/* ヘッダー: タイトルと同じ行に非表示コメントSwitch */}
       <div className={styles.reviewsHeader}>
-        <h2 className={styles.section_title}>レビュー（{totalCount}件）</h2>
-        <div className={styles.reviewsControls}>
-          <button
-            type="button"
-            className={styles.reviewsSort}
-            onClick={() => {
-              // 簡易トグル（本来はドロップダウン）
-              const options: ReviewSortOption[] = [
-                'newest',
-                'rating_high',
-                'rating_low',
-              ];
-              const currentIndex = options.indexOf(sortOption);
-              const nextIndex = (currentIndex + 1) % options.length;
-              const nextOption = options[nextIndex];
-              if (nextOption) {
-                setSortOption(nextOption);
+        <h2 className={styles.section_title}>
+          コメント
+          <span className={styles.section_count}>（{totalCount}件）</span>
+        </h2>
+        <Switch
+          checked={showHidden}
+          onCheckedChange={(details) => setShowHidden(details.checked)}
+        >
+          非表示コメントを表示
+        </Switch>
+      </div>
+
+      {/* ソート行 */}
+      <div className={styles.reviewsControls}>
+        <div className={styles.reviewsSort}>
+          <Select
+            items={REVIEW_SORT_ITEMS}
+            value={[sortOption]}
+            onValueChange={(details) => {
+              const next = details.value[0];
+              if (next && isReviewSortOption(next)) {
+                setSortOption(next);
               }
             }}
-          >
-            <span>
-              {sortOption === 'newest' && '新着順'}
-              {sortOption === 'rating_high' && '高評価順'}
-              {sortOption === 'rating_low' && '低評価順'}
-            </span>
-            <CaretDown size={16} />
-          </button>
-
-          <label className={styles.reviewsHiddenToggle}>
-            <input
-              type="checkbox"
-              checked={showHidden}
-              onChange={(e) => setShowHidden(e.target.checked)}
-            />
-            <span>非表示コメントを表示</span>
-          </label>
+            variant="ghost"
+            prefix={<ArrowsDownUp size={16} />}
+            aria-label="コメントの並び順"
+          />
         </div>
       </div>
 
@@ -325,17 +353,30 @@ export const ReviewSection = ({
         </div>
       ) : (
         <div className={styles.reviewList}>
-          {sortedReviews.map((review) => (
-            <ReviewCard
-              key={review.userReviewId}
-              review={review}
-              isOwner={currentUserId === review.userId}
-              isHidden={hiddenReviewIds.has(review.userReviewId)}
-              showHidden={showHidden}
-              onHide={() => handleHideReview(review.userReviewId)}
-              onShow={() => handleShowReview(review.userReviewId)}
-            />
-          ))}
+          {sortedReviews
+            .filter(
+              (review) =>
+                showHidden || !hiddenReviewIds.has(review.userReviewId),
+            )
+            .map((review, index) => (
+              <Fragment key={review.userReviewId}>
+                {index > 0 && <hr className={styles.listDivider} />}
+                <ReviewCard
+                  review={review}
+                  isOwner={currentUserId === review.userId}
+                  isHidden={hiddenReviewIds.has(review.userReviewId)}
+                  showHidden={showHidden}
+                  isSpoilerExpanded={expandedSpoilerIds.has(
+                    review.userReviewId,
+                  )}
+                  onToggleSpoiler={() =>
+                    handleToggleSpoiler(review.userReviewId)
+                  }
+                  onHide={() => handleHideReview(review.userReviewId)}
+                  onShow={() => handleShowReview(review.userReviewId)}
+                />
+              </Fragment>
+            ))}
         </div>
       )}
 

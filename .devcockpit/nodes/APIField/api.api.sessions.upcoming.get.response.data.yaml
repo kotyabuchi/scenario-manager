@@ -1,0 +1,12 @@
+id: api.api.sessions.upcoming.get.response.data
+kind: APIField
+name: response
+description: 検索結果、件数、またはエラーを返す。
+parentId: api.api.sessions.upcoming.get
+properties:
+  location: response
+  implementation:
+    - file: src/app/api/sessions/upcoming/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

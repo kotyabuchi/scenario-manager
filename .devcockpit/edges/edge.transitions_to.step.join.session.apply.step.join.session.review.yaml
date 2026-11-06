@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.join.session.apply.step.join.session.review
+kind: transitions_to
+source: step.join.session.apply
+target: step.join.session.review
+label: ""
+properties: {}

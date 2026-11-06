@@ -1,0 +1,13 @@
+id: field.users.bio
+kind: Field
+name: bio
+description: public.users.bio
+parentId: entity.users
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

@@ -1,0 +1,11 @@
+id: ui.scenario.new.1
+kind: UIElement
+name: ScenarioForm
+description: シナリオ登録の構成要素。
+parentId: screen.scenario.new
+properties:
+  implementation:
+    - file: src/app/(main)/scenarios/new/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

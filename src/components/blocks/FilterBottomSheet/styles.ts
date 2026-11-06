@@ -101,20 +101,6 @@ export const title = css({
   color: 'gray.800',
 });
 
-export const closeButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '8', // 32px
-  height: '8', // 32px
-  borderRadius: 'md',
-  color: 'gray.500',
-  cursor: 'pointer',
-  _hover: {
-    bg: 'gray.100',
-  },
-});
-
 // コンテンツエリア
 export const content = css({
   flex: '1',

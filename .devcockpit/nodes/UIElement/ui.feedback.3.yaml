@@ -1,0 +1,11 @@
+id: ui.feedback.3
+kind: UIElement
+name: FeedbackList
+description: フィードバック一覧の構成要素。
+parentId: screen.feedback
+properties:
+  implementation:
+    - file: src/app/(main)/feedback/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

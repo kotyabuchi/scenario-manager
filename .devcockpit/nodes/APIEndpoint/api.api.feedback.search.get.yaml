@@ -1,0 +1,13 @@
+id: api.api.feedback.search.get
+kind: APIEndpoint
+name: GET /api/feedback/search
+description: 認証後にフィードバックを検索する。
+properties:
+  route: /api/feedback/search
+  method: GET
+  implementation:
+    - file: src/app/api/feedback/search/route.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

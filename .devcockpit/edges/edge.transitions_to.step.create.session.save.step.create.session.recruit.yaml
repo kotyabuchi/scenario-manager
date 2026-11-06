@@ -1,0 +1,6 @@
+id: edge.transitions_to.step.create.session.save.step.create.session.recruit
+kind: transitions_to
+source: step.create.session.save
+target: step.create.session.recruit
+label: ""
+properties: {}

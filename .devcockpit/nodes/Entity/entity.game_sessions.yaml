@@ -1,0 +1,11 @@
+id: entity.game_sessions
+kind: Entity
+name: game_sessions
+description: Supabase public.game_sessions テーブル。
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

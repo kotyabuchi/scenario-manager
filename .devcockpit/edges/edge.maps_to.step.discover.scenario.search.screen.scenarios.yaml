@@ -1,0 +1,6 @@
+id: edge.maps_to.step.discover.scenario.search.screen.scenarios
+kind: maps_to
+source: step.discover.scenario.search
+target: screen.scenarios
+label: ""
+properties: {}

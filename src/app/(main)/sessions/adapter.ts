@@ -1,6 +1,11 @@
 import { isNil } from 'ramda';
 
-import { ParticipantTypes, SessionPhases } from '@/db/enum';
+import {
+  ParticipantStatuses,
+  ParticipantTypes,
+  SessionPhases,
+} from '@/db/enum';
+import { resolveCurrentAppUserIdByAuthUid } from '@/db/helpers';
 import { createClient, createDbClient } from '@/lib/supabase/server';
 import { camelCaseKeys } from '@/lib/supabase/transform';
 import { err, ok, type Result } from '@/types/result';
@@ -33,13 +38,8 @@ export const getCurrentUserId = async (): Promise<string | null> => {
       return null;
     }
 
-    const { data: dbUser } = await supabase
-      .from('users')
-      .select('user_id')
-      .eq('discord_id', user.id)
-      .maybeSingle();
-
-    return dbUser?.user_id ?? null;
+    const result = await resolveCurrentAppUserIdByAuthUid(supabase, user.id);
+    return result.success ? result.data : null;
   } catch {
     return null;
   }
@@ -68,12 +68,12 @@ export const searchPublicSessions = async (
       .select(
         `
         game_session_id, session_name, session_phase, scenario_id, created_at,
+        schedule_date, schedule_phase,
         scenario:scenarios!inner(
           scenario_id, name, max_player, min_playtime, max_playtime,
           scenario_system_id,
           system:scenario_systems!inner(name)
-        ),
-        schedule:game_schedules(schedule_date, schedule_phase)
+        )
       `,
         { count: 'exact' },
       )
@@ -87,12 +87,12 @@ export const searchPublicSessions = async (
       );
     }
 
-    // シナリオ名検索
+    // シナリオ名検索（SQL ワイルドカードをエスケープ）
     if (!isNil(params.scenarioName) && params.scenarioName.trim() !== '') {
-      query = query.ilike(
-        'scenario.name' as string,
-        `%${params.scenarioName}%`,
-      );
+      const escaped = params.scenarioName
+        .replace(/%/g, '\\%')
+        .replace(/_/g, '\\_');
+      query = query.ilike('scenario.name' as string, `%${escaped}%`);
     }
 
     // ソート
@@ -103,7 +103,7 @@ export const searchPublicSessions = async (
       case 'created_desc':
         query = query.order('created_at', { ascending: false });
         break;
-      case 'slots_desc':
+      case 'seats_desc':
         query = query.order('created_at', { ascending: false });
         break;
     }
@@ -140,11 +140,12 @@ export const searchPublicSessions = async (
       ]),
     );
 
-    // 参加者数を一括取得
+    // 参加者数を一括取得（辞退者を除外）
     const { data: participants } = await supabase
       .from('session_participants')
       .select('session_id')
-      .in('session_id', sessionIds);
+      .in('session_id', sessionIds)
+      .neq('participant_status', ParticipantStatuses.WITHDRAWN.value);
 
     const countMap = new Map<string, number>();
     for (const p of participants ?? []) {
@@ -154,7 +155,6 @@ export const searchPublicSessions = async (
     const sessions: PublicSession[] = (result ?? []).map((session) => {
       const scenario = session.scenario as Record<string, unknown>;
       const system = (scenario?.system ?? {}) as Record<string, unknown>;
-      const schedule = session.schedule as Record<string, unknown> | null;
       const keeper = keeperMap.get(session.game_session_id);
 
       return {
@@ -164,8 +164,8 @@ export const searchPublicSessions = async (
         scenarioId: session.scenario_id ?? '',
         scenarioName: (scenario?.name as string) ?? '',
         systemName: (system?.name as string) ?? '',
-        scheduleDate: (schedule?.schedule_date as string) ?? null,
-        schedulePhase: (schedule?.schedule_phase as string) ?? null,
+        scheduleDate: session.schedule_date ?? null,
+        schedulePhase: session.schedule_phase ?? null,
         keeperName: keeper?.keeperName ?? null,
         keeperUserId: keeper?.keeperUserId ?? null,
         participantCount: countMap.get(session.game_session_id) ?? 0,
@@ -200,11 +200,16 @@ export const getUpcomingSessions = async (
       SessionPhases.IN_PROGRESS.value,
     ];
 
-    // ユーザーが参加しているセッションIDを取得
-    const { data: userSessions } = await supabase
+    // ユーザーが参加しているセッションIDを取得（辞退者を除外）
+    const { data: userSessions, error: participantError } = await supabase
       .from('session_participants')
       .select('session_id, participant_type')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .neq('participant_status', ParticipantStatuses.WITHDRAWN.value);
+
+    if (participantError) {
+      return err(new Error(participantError.message));
+    }
 
     if (!userSessions || userSessions.length === 0) {
       return ok({ sessions: [], totalCount: 0 });
@@ -216,11 +221,15 @@ export const getUpcomingSessions = async (
     );
 
     // 件数取得
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from('game_sessions')
       .select('game_session_id', { count: 'exact', head: true })
       .in('game_session_id', sessionIds)
       .in('session_phase', targetPhases);
+
+    if (countError) {
+      return err(new Error(countError.message));
+    }
 
     const totalCount = count ?? 0;
 
@@ -233,7 +242,6 @@ export const getUpcomingSessions = async (
           *,
           system:scenario_systems(*)
         ),
-        schedule:game_schedules(*),
         participants:session_participants(
           *,
           user:users(*)
@@ -297,11 +305,12 @@ export const getHistorySessions = async (
               : SessionPhases.CANCELLED.value,
           );
 
-    // ユーザーが参加しているセッション取得（役割フィルタ付き）
+    // ユーザーが参加しているセッション取得（役割フィルタ付き、辞退者を除外）
     let participantQuery = supabase
       .from('session_participants')
       .select('session_id, participant_type')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .neq('participant_status', ParticipantStatuses.WITHDRAWN.value);
 
     if (roles.length > 0) {
       const roleValues = roles.map((r) =>
@@ -314,7 +323,12 @@ export const getHistorySessions = async (
       participantQuery = participantQuery.in('participant_type', roleValues);
     }
 
-    const { data: userSessions } = await participantQuery;
+    const { data: userSessions, error: participantError } =
+      await participantQuery;
+
+    if (participantError) {
+      return err(new Error(participantError.message));
+    }
 
     if (!userSessions || userSessions.length === 0) {
       return ok({ sessions: [], totalCount: 0 });
@@ -351,11 +365,15 @@ export const getHistorySessions = async (
     }
 
     // 件数取得
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from('game_sessions')
       .select('game_session_id', { count: 'exact', head: true })
       .in('game_session_id', sessionIds)
       .in('session_phase', targetPhases);
+
+    if (countError) {
+      return err(new Error(countError.message));
+    }
 
     const totalCount = count ?? 0;
 
@@ -368,7 +386,6 @@ export const getHistorySessions = async (
           *,
           system:scenario_systems(*)
         ),
-        schedule:game_schedules(*),
         participants:session_participants(
           *,
           user:users(*)
@@ -459,11 +476,16 @@ export const getCalendarSessions = async (
       SessionPhases.IN_PROGRESS.value,
     ];
 
-    // ユーザーが参加しているセッションを取得
-    const { data: userSessions } = await supabase
+    // ユーザーが参加しているセッションを取得（辞退者を除外）
+    const { data: userSessions, error: participantError } = await supabase
       .from('session_participants')
       .select('session_id, participant_type')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .neq('participant_status', ParticipantStatuses.WITHDRAWN.value);
+
+    if (participantError) {
+      return err(new Error(participantError.message));
+    }
 
     if (!userSessions || userSessions.length === 0) {
       return ok({ sessions: [], unscheduledSessions: [] });
@@ -476,35 +498,31 @@ export const getCalendarSessions = async (
 
     // 月の開始日と終了日
     const startDate = new Date(year, month - 1, 1).toISOString();
-    const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999).toISOString();
 
-    // スケジュール確定済みセッション
+    // 日程確定済みセッション
     const { data: scheduledSessions } = await supabase
       .from('game_sessions')
       .select(`
-        game_session_id, session_name, session_phase,
-        scenario:scenarios!inner(name),
-        schedule:game_schedules!inner(schedule_date)
+        game_session_id, session_name, session_phase, schedule_date,
+        scenario:scenarios!inner(name)
       `)
       .in('game_session_id', sessionIds)
       .in('session_phase', targetPhases)
-      .gte('game_schedules.schedule_date', startDate)
-      .lte('game_schedules.schedule_date', endDate);
+      .not('schedule_date', 'is', null)
+      .gte('schedule_date', startDate)
+      .lte('schedule_date', endDate);
 
     // 日程未確定セッション
     const { data: allSessionsForPhase } = await supabase
       .from('game_sessions')
       .select(`
-        game_session_id, session_name, session_phase,
-        scenario:scenarios!inner(name),
-        schedule:game_schedules(schedule_date)
+        game_session_id, session_name, session_phase, schedule_date,
+        scenario:scenarios!inner(name)
       `)
       .in('game_session_id', sessionIds)
-      .in('session_phase', targetPhases);
-
-    const unscheduledResult = (allSessionsForPhase ?? []).filter((s) =>
-      isNil(s.schedule),
-    );
+      .in('session_phase', targetPhases)
+      .is('schedule_date', null);
 
     return ok({
       sessions: (scheduledSessions ?? []).map((s) => ({
@@ -512,19 +530,18 @@ export const getCalendarSessions = async (
         sessionName: s.session_name,
         sessionPhase: s.session_phase,
         scenarioName: (s.scenario as Record<string, unknown>)?.name as string,
-        scheduleDate: (s.schedule as Record<string, unknown>)
-          ?.schedule_date as string,
+        scheduleDate: s.schedule_date as string,
         myRole: roleMap.get(s.game_session_id) as
           | 'KEEPER'
           | 'PLAYER'
           | 'SPECTATOR',
       })),
-      unscheduledSessions: unscheduledResult.map((s) => ({
+      unscheduledSessions: (allSessionsForPhase ?? []).map((s) => ({
         gameSessionId: s.game_session_id,
         sessionName: s.session_name,
         sessionPhase: s.session_phase,
         scenarioName: (s.scenario as Record<string, unknown>)?.name as string,
-        scheduleDate: new Date().toISOString(),
+        scheduleDate: null,
         myRole: roleMap.get(s.game_session_id) as
           | 'KEEPER'
           | 'PLAYER'

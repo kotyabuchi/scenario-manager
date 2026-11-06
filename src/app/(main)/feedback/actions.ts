@@ -40,7 +40,7 @@ const getAuthUser = async () => {
   const { data: user } = await supabase
     .from('users')
     .select('user_id, role')
-    .eq('discord_id', authUser.id)
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   return user;

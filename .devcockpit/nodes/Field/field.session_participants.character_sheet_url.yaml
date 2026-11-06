@@ -1,0 +1,13 @@
+id: field.session_participants.character_sheet_url
+kind: Field
+name: character_sheet_url
+description: public.session_participants.character_sheet_url
+parentId: entity.session_participants
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

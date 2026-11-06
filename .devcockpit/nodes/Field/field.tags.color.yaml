@@ -1,0 +1,13 @@
+id: field.tags.color
+kind: Field
+name: color
+description: public.tags.color
+parentId: entity.tags
+properties:
+  dataType: string | null
+  required: false
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

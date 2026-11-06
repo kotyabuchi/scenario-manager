@@ -1,0 +1,11 @@
+id: ui.profile.1
+kind: UIElement
+name: ProfileEditFormWrapper
+description: プロフィール設定の構成要素。
+parentId: screen.profile
+properties:
+  implementation:
+    - file: src/app/(main)/profile/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata: {}

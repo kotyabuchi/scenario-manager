@@ -1,0 +1,14 @@
+id: field.notifications.notification_id
+kind: Field
+name: notification_id
+description: public.notifications.notification_id
+parentId: entity.notifications
+properties:
+  dataType: string
+  required: true
+  primaryKey: true
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata: {}

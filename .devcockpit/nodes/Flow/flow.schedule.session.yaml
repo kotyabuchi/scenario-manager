@@ -1,0 +1,11 @@
+id: flow.schedule.session
+kind: Flow
+name: 参加可能日を集めて確定する
+description: 参加可能日を集めて確定するユーザーフロー。
+properties:
+  implementation:
+    - file: src/app/(main)/sessions/[id]/schedule/availability/page.tsx
+      confidence: 1
+      provenance: explicit
+  metadata:
+    status: implemented

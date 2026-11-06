@@ -1,0 +1,12 @@
+id: relation.user_reviews.user_id
+kind: Relation
+name: user_id → users.user_id
+description: public.user_reviews.user_id は public.users.user_id を参照する。
+parentId: entity.user_reviews
+properties:
+  implementation:
+    - file: src/db/types.ts
+      confidence: 1
+      provenance: explicit
+  metadata:
+    cardinality: many-to-one
