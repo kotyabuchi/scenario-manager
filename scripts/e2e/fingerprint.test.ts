@@ -10,6 +10,7 @@ import { createHash } from 'node:crypto';
 import {
   mkdirSync,
   mkdtempSync,
+  realpathSync,
   renameSync,
   rmSync,
   symlinkSync,
@@ -17,7 +18,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 
 const hooks = vi.hoisted(() => ({
   beforeOpen: undefined as (() => void) | undefined,
@@ -35,9 +36,10 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   };
 });
 
+const temp = realpathSync.native(tmpdir());
 const roots: string[] = [];
 const fixture = () => {
-  const root = mkdtempSync(join(tmpdir(), 'e2e-fingerprint-'));
+  const root = mkdtempSync(join(temp, 'e2e-fingerprint-'));
   roots.push(root);
   const write = (path: string, contents: string | Buffer = 'fixture\n') => {
     const absolute = join(root, path);
@@ -53,8 +55,8 @@ afterEach(() => {
   hooks.beforeOpen = undefined;
   vi.unstubAllEnvs();
   for (const root of roots.splice(0)) {
-    const target = resolve(root);
-    const child = relative(resolve(tmpdir()), target);
+    const target = realpathSync.native(root);
+    const child = relative(temp, target);
     if (
       !child ||
       child.startsWith(`..${sep}`) ||
@@ -62,7 +64,7 @@ afterEach(() => {
       !child.startsWith('e2e-fingerprint-')
     )
       throw new Error('fixture cleanupのpathが不正です');
-    rmSync(target, { recursive: true, force: true });
+    rmSync(root, { recursive: true, force: true });
   }
 });
 

@@ -9,18 +9,28 @@ import {
 } from './trustedRevision';
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+const temp = realpathSync.native(tmpdir());
 const roots: string[] = [];
 afterEach(() => {
-  for (const root of roots.splice(0))
+  for (const root of roots.splice(0)) {
+    if (dirname(realpathSync.native(root)) !== temp)
+      throw new Error('trusted revision fixtureの削除先が不正です');
     rmSync(root, { recursive: true, force: true });
+  }
 });
 
 const fixture = (format = 'sha1') => {
-  const root = mkdtempSync(join(tmpdir(), 'e2e-trusted-revision-'));
+  const root = mkdtempSync(join(temp, 'e2e-trusted-revision-'));
   roots.push(root);
   const git = (args: string[], input?: string) =>
     execFileSync('git', ['-C', root, ...args], {

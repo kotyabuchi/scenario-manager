@@ -11,6 +11,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -18,6 +19,7 @@ import {
 import os from 'node:os';
 import path from 'node:path';
 
+const temp = realpathSync.native(os.tmpdir());
 const roots: string[] = [];
 const git = (root: string, ...args: string[]) =>
   execFileSync('git', args, {
@@ -31,7 +33,7 @@ const write = (root: string, file: string, content: string) => {
   writeFileSync(path.join(root, file), content);
 };
 const createProject = (crlf = false) => {
-  const root = mkdtempSync(path.join(os.tmpdir(), 'inventory-source-'));
+  const root = mkdtempSync(path.join(temp, 'inventory-source-'));
   roots.push(root);
   for (const [file, content] of Object.entries(fixture)) {
     write(root, file, crlf ? content.replaceAll('\n', '\r\n') : content);
@@ -44,7 +46,7 @@ const createProject = (crlf = false) => {
 afterEach(() => {
   vi.unstubAllEnvs();
   for (const root of roots.splice(0)) {
-    if (path.dirname(root) !== path.resolve(os.tmpdir()))
+    if (path.dirname(realpathSync.native(root)) !== temp)
       throw new Error('fixtureの削除範囲が不正です');
     rmSync(root, { recursive: true, force: true });
   }

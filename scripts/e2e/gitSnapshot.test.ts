@@ -13,6 +13,7 @@ import { execFileSync } from 'node:child_process';
 import {
   mkdirSync,
   mkdtempSync,
+  realpathSync,
   renameSync,
   rmSync,
   writeFileSync,
@@ -25,6 +26,7 @@ vi.mock('./gitWorkingFiles', async (importOriginal) => {
   return { ...original, readWorkingFiles: vi.fn(original.readWorkingFiles) };
 });
 
+const temp = realpathSync.native(tmpdir());
 const roots: string[] = [];
 const renamePayload = Array.from(
   { length: 40 },
@@ -33,12 +35,15 @@ const renamePayload = Array.from(
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.mocked(readWorkingFiles).mockReset();
-  for (const root of roots.splice(0))
+  for (const root of roots.splice(0)) {
+    if (dirname(realpathSync.native(root)) !== temp)
+      throw new Error('Git snapshot fixtureの削除先が不正です');
     rmSync(root, { recursive: true, force: true });
+  }
 });
 
 const fixture = (format = 'sha1') => {
-  const root = mkdtempSync(join(tmpdir(), 'e2e-git-snapshot-'));
+  const root = mkdtempSync(join(temp, 'e2e-git-snapshot-'));
   roots.push(root);
   const git = (args: string[], input?: string) =>
     execFileSync('git', ['-C', root, ...args], {

@@ -13,6 +13,7 @@ import {
   mkdtempSync,
   readdirSync,
   readFileSync,
+  realpathSync,
   renameSync,
   rmSync,
   symlinkSync,
@@ -20,7 +21,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { basename, dirname, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, join, relative, sep } from 'node:path';
 
 const OPTIONS = {
   runId: '012345abcdef',
@@ -31,10 +32,11 @@ const MIGRATIONS = [
   { name: '20260102000000_second.sql', contents: Buffer.from('select 2;\r\n') },
   { name: '20260101000000_first.sql', contents: Buffer.from('select 1;\n') },
 ];
+const temp = realpathSync.native(tmpdir());
 const roots: string[] = [];
 
 const temporaryRoot = () => {
-  const root = mkdtempSync(join(tmpdir(), 'e2e-environment-inputs-'));
+  const root = mkdtempSync(join(temp, 'e2e-environment-inputs-'));
   roots.push(root);
   return root;
 };
@@ -70,9 +72,10 @@ afterEach(() => {
   vi.unstubAllEnvs();
   for (const root of roots.splice(0)) {
     // テスト自身が確保した直下directoryだけを削除する。
+    const target = realpathSync.native(root);
     if (
-      dirname(resolve(root)) !== resolve(tmpdir()) ||
-      !basename(root).startsWith('e2e-environment-inputs-')
+      dirname(target) !== temp ||
+      !basename(target).startsWith('e2e-environment-inputs-')
     )
       throw new Error('fixture cleanupの範囲外です。');
     rmSync(root, { recursive: true, force: true });

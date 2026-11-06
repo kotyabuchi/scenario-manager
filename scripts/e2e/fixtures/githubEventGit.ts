@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 
 /** イベント比較に必要なGit objectだけを持つ一時repoを作る。 */
 export const createGithubEventGit = () => {
-  const temp = realpathSync(tmpdir());
+  const temp = realpathSync.native(tmpdir());
   const root = mkdtempSync(join(temp, 'e2e-github-event-'));
   const git = (...args: string[]) =>
     execFileSync('git', ['-C', root, ...args], {
@@ -25,7 +25,7 @@ export const createGithubEventGit = () => {
     writeFileSync(file, contents);
   };
   const cleanup = () => {
-    if (dirname(realpathSync(root)) !== temp)
+    if (dirname(realpathSync.native(root)) !== temp)
       throw new Error('GitHubイベントfixtureの削除先が不正です');
     rmSync(root, { recursive: true, force: true });
   };
