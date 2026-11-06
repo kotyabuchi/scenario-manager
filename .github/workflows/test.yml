@@ -2,7 +2,7 @@ name: Test
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, feat/ui-local-test-prerequisite]
   push:
     branches: [main, develop]
   schedule:

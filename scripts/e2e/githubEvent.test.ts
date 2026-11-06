@@ -18,14 +18,24 @@ afterEach(() => {
   for (const repo of roots.splice(0)) repo.cleanup();
 });
 
-const pullRequest = (base: string, head: string) =>
+const prerequisiteBranch = 'feat/ui-local-test-prerequisite';
+
+const pullRequest = (
+  base: string,
+  head: string,
+  baseRef = events.pull_request.payload.pull_request.base.ref,
+) =>
   parseGithubEvent({
     name: 'pull_request',
     ...events.pull_request,
     payload: {
       ...events.pull_request.payload,
       pull_request: {
-        base: { ...events.pull_request.payload.pull_request.base, sha: base },
+        base: {
+          ...events.pull_request.payload.pull_request.base,
+          sha: base,
+          ref: baseRef,
+        },
         head: { sha: head },
       },
     },
@@ -49,6 +59,33 @@ describe('GitHubイベントのJSON契約', () => {
       repository: fixture.context.repository,
       eventRef: fixture.context.ref,
     });
+  });
+
+  it('前提ブランチを比較元とするPRを受理する', () => {
+    const { base, head } = events.pull_request.payload.pull_request;
+    expect(pullRequest(base.sha, head.sha, prerequisiteBranch)).toMatchObject({
+      event: 'pull_request',
+      base: base.sha,
+      head: head.sha,
+    });
+  });
+
+  it('前提ブランチに似た別のfeatureブランチを比較元とするPRを拒否する', () => {
+    const { base, head } = events.pull_request.payload.pull_request;
+    expect(() =>
+      pullRequest(base.sha, head.sha, `${prerequisiteBranch}-other`),
+    ).toThrow();
+  });
+
+  it('前提ブランチへのpushを拒否する', () => {
+    const ref = `refs/heads/${prerequisiteBranch}`;
+    expect(() =>
+      parseGithubEvent({
+        name: 'push',
+        context: { ...events.push.context, ref },
+        payload: { ...events.push.payload, ref },
+      }),
+    ).toThrow();
   });
 
   it.each([
