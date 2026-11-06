@@ -80,12 +80,26 @@ jobs:
           scripts/e2e/surfaceMigrationObservation.test.ts
           scripts/e2e/surfaceMigrationReplay.test.ts
           scripts/e2e/surfaceMigrationReplayProcess.test.ts
+          scripts/e2e/surfaceHistoryCheck.test.ts
           scripts/e2e/surfaceGate.test.ts
           scripts/e2e/ledgerSurfaceRefresh.test.ts
           scripts/e2e/ledgerSurfaceRecovery.test.ts
           scripts/e2e/surfaceReceipt.test.ts
           scripts/e2e/ciPartition.test.ts
           scripts/e2e/ciPartitionAggregate.test.ts
+      # 固定履歴の再生をイベントの初回承認とは独立に検査する。
+      - name: Verify fixed surface migration history natively
+        id: surface_history
+        if: runner.os == 'Linux'
+        run: pnpm exec tsx scripts/e2e/surfaceHistoryCheck.ts
+      - name: Upload safe surface history result
+        if: ${{ always() && runner.os == 'Linux' && steps.surface_history.outputs.history_written == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-surface-history-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/quality/surface-history-check.json
+          if-no-files-found: error
+          retention-days: 7
 
   e2e-required:
     name: E2E required
