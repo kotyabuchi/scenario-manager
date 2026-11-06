@@ -3,18 +3,16 @@ import { isNil } from 'ramda';
 import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { discover } from './discover';
 import { summarizeEnvironmentFailure } from './environmentDiagnostic';
-import { writeArtifact } from './ledgerArtifacts';
+import { readArtifact, writeArtifact } from './ledgerArtifacts';
 import { buildLegacy } from './legacy';
-import {
-  readVerifiedLegacyBaselines,
-  readVerifiedLegacyUiCompatibility,
-} from './legacyBaseline';
-import { legacyExecutionSchema } from './legacyExecutionSchema';
+import { verifyLegacyOrigins } from './legacyOrigin';
 import { runLegacyProject } from './legacyProjectRun';
 import { aggregateLegacyResults } from './legacyResults';
-import { createLegacySelection } from './legacySelection';
+import {
+  createLegacySelection,
+  validateLegacyDiscovery,
+} from './legacySelection';
 import { assertLegacySources, captureLegacySources } from './legacySourceGuard';
-import { applyLegacyUiCompatibility } from './legacyUiCompatibility';
 
 import { realpath } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -23,10 +21,10 @@ import { pathToFileURL } from 'node:url';
 import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
 import type { LegacyExecutionResult } from './legacyExecutionSchema';
 import type { LegacyProgress } from './legacyProjectRun';
-import type { LegacyUiCompatibility } from './legacyUiCompatibility';
+import type { VerificationStageHooks } from './verificationContext';
 
-const RECEIPT = 'test-results/legacy/summary.json';
-const DISCOVERY = 'test-results/legacy/discovery.json';
+const RECEIPT = 'test-results/quality/legacy-run.json';
+const DISCOVERY = 'test-results/quality/legacy-run-discovery.json';
 const LOCAL_VARIABLES = [
   'SCENARIO_E2E_RUN_ID',
   'SCENARIO_E2E_CREDENTIALS',
@@ -43,7 +41,11 @@ export const parseLegacyArguments = (args: string[]): LegacyProject[] => {
 };
 
 /** 現在の登録を照合した上で、4 projectを別の所有環境で順に実行する。 */
-export const runLegacy = async (root: string, args: string[] = []) => {
+export const runLegacy = async (
+  root: string,
+  args: string[] = [],
+  verification?: (project: LegacyProject) => VerificationStageHooks,
+) => {
   const projects = parseLegacyArguments(args);
   const worktreeRoot = await realpath(root);
   const controller = new AbortController();
@@ -54,7 +56,6 @@ export const runLegacy = async (root: string, args: string[] = []) => {
     progress: LegacyProgress | null;
     projects: Awaited<ReturnType<typeof runLegacyProject>>[];
     results: LegacyExecutionResult[] | null;
-    uiCompatibility: LegacyUiCompatibility | null;
     failure: ReturnType<typeof summarizeEnvironmentFailure>;
   } = {
     status: 'running',
@@ -62,7 +63,6 @@ export const runLegacy = async (root: string, args: string[] = []) => {
     progress: null,
     projects: [],
     results: null,
-    uiCompatibility: null,
     failure: null,
   };
   const save = () =>
@@ -96,12 +96,15 @@ export const runLegacy = async (root: string, args: string[] = []) => {
     save();
     if (LOCAL_VARIABLES.some((key) => !isNil(process.env[key])))
       throw new Error('既存runの環境変数を引き継いだ起動はできません。');
-    const baselines = readVerifiedLegacyBaselines(worktreeRoot);
-    const compatibility = readVerifiedLegacyUiCompatibility(worktreeRoot);
-    const legacy = baselines.legacy;
-    const execution = legacyExecutionSchema.parse(baselines.execution);
-    if (execution.entries.some((entry) => entry.disposition === 'replacement'))
-      throw new Error('前提local suiteにreplacement登録は指定できません。');
+    const read = (file: string): unknown => {
+      const content = readArtifact(worktreeRoot, file);
+      if (isNil(content)) throw new Error('旧suiteの移行台帳がありません。');
+      return JSON.parse(content);
+    };
+    const legacy = read('e2e/ledger/legacy-tests.generated.json');
+    const execution = read('e2e/ledger/legacy-execution.json');
+    state.phase = 'origin-proof';
+    await verifyLegacyOrigins(worktreeRoot, execution);
     state.phase = 'discovery';
     const sources = captureLegacySources(worktreeRoot, legacy);
     controller.signal.throwIfAborted();
@@ -114,17 +117,11 @@ export const runLegacy = async (root: string, args: string[] = []) => {
       }),
     ]);
     assertLegacySources(worktreeRoot, sources);
-    state.phase = 'ui-compatibility';
-    const input = applyLegacyUiCompatibility({
-      legacy,
-      execution,
-      currentLegacy,
-      compatibility,
-    });
+    const input = { legacy, execution, currentLegacy };
+    validateLegacyDiscovery(input);
     // 一部projectの診断でも移行台帳と全projectの登録対応を先に確認する。
     for (const project of legacyProjectSchema.options)
       createLegacySelection({ ...input, project });
-    state.uiCompatibility = input.compatibility;
     writeArtifact(
       worktreeRoot,
       DISCOVERY,
@@ -139,6 +136,7 @@ export const runLegacy = async (root: string, args: string[] = []) => {
         { ...input, project },
         controller.signal,
         announce,
+        verification?.(project),
       );
       state.projects.push(result);
       state.phase = 'source-check';

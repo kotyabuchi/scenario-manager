@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "base": "01e24d8075ac05ca10f2e881159d7a5998598b71",
+      "policy": [
+        {
+          "deltaId": "e17cef90cf778bf3c26b953445ea8b6cfd2b58b5647c0abaf285d9557dcb56a2",
+          "reason": "既存のGM操作表示の保証を維持したまま、旧日程遷移テストをcase ID付きへ移行して通常クリック後の到達URLも確認する。実画面の導線が/schedule/availabilityであることを確認したため、旧/schedule期待を修正し、保存・認可の保証は追加しない。",
+          "reference": "e2e/ledger/scenarios/legacy-compatibility.json#legacy-session-schedule-navigation"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "base": "3f23906ef12bfe7f6cf33d2bad1830f7973b39df",
+      "policy": [
+        {
+          "deltaId": "782bd44336c55283b4bf0ec64408dbbf3a3e1a614fd3a29005485c150eb30fd7",
+          "reason": "既存のbrowser許可とintegration拒否の全条件を保持し、利用者JWTをNext cookie境界へ渡す正常Actionの主催者・GM2条件を追加する。認証接続の不備を正しい拒否と取り違えないための保証追加であり、service-roleによる成功は認めない。",
+          "reference": "e2e/ledger/scenarios/schedule.json#schedule-action-allow"
+        },
+        {
+          "deltaId": "afeb1d84ce2d01f740f7bc377414929575432f36fc1fbdde993b152f19be825d",
+          "reason": "既存のUI確定・再編集・別参加者表示を維持し、正常Actionを直接呼ぶintegrationでも実保存・利用者JWTでの再取得・再検証要求を確認する。browser必要4条件は削減せず、実Next cookie認証の正例を独立して追加する。",
+          "reference": "e2e/ledger/scenarios/schedule.json#schedule-action-allow"
+        }
+      ],
+      "legacy": []
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+import { fixtureOwnerTag } from '../../../e2e/fixtures/fixtureManifest';
+import { fixtureManifestSchema } from '../../../e2e/fixtures/fixtureSchema';
+import { ledgerSchema } from '../../../e2e/ledger/schema';
+import { discoverySchema } from '../discoverySchema';
+import { createScheduleExpectations } from '../scheduleCheckExpectations';
+import { fixture as environment } from './environment/ownership';
+
+const at = <T>(values: T[], index: number): T => {
+  const value = values[index];
+  if (value === undefined) throw new Error('fixture不足');
+  return value;
+};
+const attachment = (name: string, value: unknown) => ({
+  name,
+  contentType: 'application/json',
+  body: Buffer.from(JSON.stringify(value)).toString('base64'),
+});
+export const scheduleEvidenceFixture = () => {
+  const projects = ['chromium', 'mobile-chrome'];
+  const variants = ['creator-only', 'keeper-only'];
+  const executions = variants.flatMap((variant) =>
+    projects.map((project) => ({
+      profile: 'isolated',
+      project,
+      runtime: 'next-production',
+      variant,
+      actorBindings: [
+        { role: 'operator', actor: variant },
+        { role: 'observer', actor: 'confirmed-player' },
+      ],
+    })),
+  );
+  const ledger = ledgerSchema.parse({
+    schemaVersion: 1,
+    profiles: [],
+    fixtures: [],
+    contracts: [],
+    executionGroups: [],
+    exceptions: [],
+    scenarios: [
+      {
+        scenarioId: 'schedule',
+        title: '日程',
+        cases: [
+          {
+            caseId: 'schedule-confirm-persist',
+            title: '保存',
+            status: 'implemented',
+            layer: 'browser',
+            fixture: 'schedule',
+            roles: ['operator', 'observer'],
+            checks: [
+              { target: 'page:sample', aspect: 'persist', layer: 'browser' },
+            ],
+            executions,
+            testBindings: ['main'],
+          },
+        ],
+      },
+    ],
+  });
+  const discovery = discoverySchema.parse({
+    schemaVersion: 1,
+    profile: 'isolated',
+    errors: [],
+    projects: projects.map((name) => ({
+      name,
+      testDir: 'e2e/isolated',
+      dependencies: [],
+      repeatEach: 1,
+    })),
+    tests: executions.map((execution, index) => ({
+      testId: `test-${index}`,
+      file: 'e2e/isolated/schedule.spec.ts',
+      line: execution.variant === 'creator-only' ? 10 : 20,
+      column: 3,
+      titlePath: ['日程', execution.variant],
+      project: execution.project,
+      repeatEachIndex: 0,
+      tags: [
+        '@case:schedule-confirm-persist',
+        `@variant:${execution.variant}`,
+        '@binding:main',
+      ],
+      expectedStatus: 'passed',
+      annotations: [],
+      isSetup: false,
+    })),
+  });
+  const expected = createScheduleExpectations(ledger, discovery);
+  const lease = environment().lease;
+  const data = expected.map((entry, index) => {
+    const actors = [
+      'creator-only',
+      'keeper-only',
+      'confirmed-player',
+      'outsider',
+    ].map((kind, actor) => ({
+      kind,
+      authUserId: `00000000-0000-4000-8000-${String(index * 4 + actor + 1).padStart(12, '0')}`,
+      appUserId: `01J${String(index * 4 + actor + 1).padStart(23, '0')}`,
+    }));
+    const owner = {
+      lease,
+      project: entry.test.project,
+      workerIndex: index,
+      retry: 0,
+      caseId: entry.test.testId,
+    };
+    const journal = fixtureManifestSchema.parse({
+      schemaVersion: 1,
+      owner,
+      ownerTag: fixtureOwnerTag(owner),
+      resources: [
+        ...actors.flatMap((actor) => [
+          {
+            resource: { kind: 'auth-user', id: actor.authUserId },
+            status: 'removed',
+          },
+          {
+            resource: {
+              kind: 'users',
+              id: actor.appUserId,
+              authUserId: actor.authUserId,
+            },
+            status: 'removed',
+          },
+        ]),
+        {
+          resource: {
+            kind: 'game_sessions',
+            id: `01K${String(index + 1).padStart(23, '0')}`,
+            createdBy: at(actors, 0).appUserId,
+          },
+          status: 'removed',
+        },
+      ],
+      cleanup: { status: 'complete', remaining: [], issues: [] },
+    });
+    const result = {
+      projectName: entry.test.project,
+      projectId: entry.test.project,
+      expectedStatus: 'passed',
+      status: 'expected',
+      annotations: [] as { type: string }[],
+      results: [
+        {
+          status: 'passed',
+          workerIndex: index,
+          parallelIndex: index % 2,
+          retry: 0,
+          errors: [] as unknown[],
+          annotations: [] as { type: string }[],
+          attachments: [
+            attachment('fixture-actors', {
+              owner,
+              actors: [...actors, { kind: 'anonymous' }],
+            }),
+            attachment('fixture-cleanup', { owner, result: journal.cleanup }),
+            attachment(
+              'fixture-used-actor',
+              actors.find(({ kind }) => kind === entry.operator),
+            ),
+            attachment(
+              'fixture-used-actor',
+              actors.find(({ kind }) => kind === entry.observer),
+            ),
+          ],
+        },
+      ],
+    };
+    return { entry, journal, result, actors };
+  });
+  const specs = variants.map((variant) => {
+    const entries = data.filter(({ entry }) => entry.variant === variant);
+    const first = at(entries, 0).entry.test;
+    return {
+      id: first.testId,
+      title: variant,
+      file: 'schedule.spec.ts',
+      line: first.line,
+      column: first.column,
+      tags: [
+        'case:schedule-confirm-persist',
+        `variant:${variant}`,
+        'binding:main',
+      ],
+      ok: true,
+      tests: entries.map(({ result }) => result),
+    };
+  });
+  const report = {
+    config: {
+      version: '1.57.0',
+      projects: projects.map((name) => ({
+        name,
+        id: name,
+        retries: 0,
+        repeatEach: 1,
+      })),
+    },
+    suites: [
+      {
+        title: 'schedule.spec.ts',
+        file: 'schedule.spec.ts',
+        specs: [],
+        suites: [{ title: '日程', file: 'schedule.spec.ts', specs }],
+      },
+    ],
+    errors: [] as unknown[],
+    stats: { expected: 4, unexpected: 0, flaky: 0, skipped: 0 },
+  };
+  const input = {
+    expected,
+    report,
+    journals: data.map(({ journal }) => journal),
+    lease,
+  };
+  return { input, data, specs, ledger, discovery };
+};

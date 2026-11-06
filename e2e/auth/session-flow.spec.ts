@@ -81,35 +81,94 @@ test.describe('セッションフロー', () => {
       await expect(detailPage.editButton).toBeVisible();
     });
 
-    test('募集中フェーズでGM用アクションが表示される', async ({
-      page,
-      isMobile,
-    }) => {
-      const detailPage = new SessionDetailPage(page);
-      const { sessionHeader } = detailPage;
+    test(
+      '募集中フェーズでGM用アクションが表示される',
+      {
+        tag: [
+          '@case:legacy-session-gm-actions',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        // 詳細見出しを持つヘッダー内のSessionActionsに限定し、参加者欄の同名リンクを除く
+        const sessionHeader = page.locator('header').filter({
+          has: page.getByRole('heading', { level: 1 }),
+        });
+        await expect(sessionHeader).toBeVisible();
+        const applicationsLink = sessionHeader
+          .getByRole('link', { name: '申請管理', exact: true })
+          .filter({ visible: true });
+        const scheduleLink = sessionHeader
+          .getByRole('link', { name: 'スケジュールを提出', exact: true })
+          .filter({ visible: true });
+        const moreButton = sessionHeader
+          .getByRole('button', { name: 'その他の操作', exact: true })
+          .filter({ visible: true });
 
-      if (isMobile) await detailPage.clickMoreActionsMenu();
-      for (const name of ['申請管理', 'スケジュールを提出']) {
-        await expect(
-          sessionHeader.getByRole(isMobile ? 'menuitem' : 'link', {
-            name,
+        // レスポンシブな操作領域の表示を待ち、実際の配置に合わせて確認する
+        await expect(moreButton).toBeVisible();
+        const hasInlineActions = await applicationsLink.isVisible();
+        if (hasInlineActions) {
+          await expect(applicationsLink).toBeEnabled();
+          await expect(applicationsLink).toHaveAttribute(
+            'href',
+            /\/applications$/,
+          );
+          await expect(scheduleLink).toBeVisible();
+          await expect(scheduleLink).toBeEnabled();
+          await expect(scheduleLink).toHaveAttribute(
+            'href',
+            /\/schedule\/availability$/,
+          );
+        }
+
+        await moreButton.click();
+        const actionsMenu = sessionHeader
+          .getByRole('menu')
+          .filter({ visible: true });
+        await expect(actionsMenu).toBeVisible();
+        if (!hasInlineActions) {
+          const applicationsAction = actionsMenu.getByRole('menuitem', {
+            name: '申請管理',
             exact: true,
-          }),
-        ).toBeVisible();
-      }
-
-      if (!isMobile) await detailPage.clickMoreActionsMenu();
-      await expect(
-        sessionHeader.getByRole('menuitem', {
+          });
+          const scheduleAction = actionsMenu.getByRole('menuitem', {
+            name: 'スケジュールを提出',
+            exact: true,
+          });
+          await expect(applicationsAction).toBeVisible();
+          await expect(applicationsAction).toBeEnabled();
+          await expect(scheduleAction).toBeVisible();
+          await expect(scheduleAction).toBeEnabled();
+        }
+        const cancelAction = actionsMenu.getByRole('menuitem', {
           name: 'キャンセル',
           exact: true,
-        }),
-      ).toBeVisible();
-    });
+        });
+        await expect(cancelAction).toBeVisible();
+        await expect(cancelAction).toBeEnabled();
+      },
+    );
 
-    test('基本情報セクションが表示される', async ({ page }) => {
-      await expect(page.getByText('E2Eテスト用のセッション')).toBeVisible();
-    });
+    test(
+      '基本情報セクションが表示される',
+      {
+        tag: [
+          '@case:legacy-session-basic-info',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await expect(
+          detailPage.basicInfoSection
+            .getByRole('paragraph')
+            .filter({ hasText: 'E2Eテスト用のセッション' }),
+        ).toBeVisible();
+      },
+    );
 
     test('参加者セクションが表示される', async ({ page }) => {
       // 作成者が参加者として表示される
@@ -122,9 +181,24 @@ test.describe('セッションフロー', () => {
       await expect(detailPage.gmNotesSection).toBeVisible();
     });
 
-    test('タイムラインにセッション作成イベントがある', async ({ page }) => {
-      await expect(page.getByText('セッション作成')).toBeVisible();
-    });
+    test(
+      'タイムラインにセッション作成イベントがある',
+      {
+        tag: [
+          '@case:legacy-session-timeline-created',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await expect(
+          detailPage.timelineSection
+            .getByRole('paragraph')
+            .filter({ hasText: /^セッション作成$/ }),
+        ).toBeVisible();
+      },
+    );
   });
 
   test.describe('サブページへの遷移', () => {
@@ -142,12 +216,22 @@ test.describe('セッションフロー', () => {
       await expect(page).toHaveURL(/\/applications$/);
     });
 
-    test('日程調整ページに遷移できる', async ({ page }) => {
-      const detailPage = new SessionDetailPage(page);
-      await detailPage.goto(createdSessionId ?? '');
-      await detailPage.clickScheduleLink();
-      await expect(page).toHaveURL(/\/schedule\/availability$/);
-    });
+    test(
+      '日程調整ページに遷移できる',
+      {
+        tag: [
+          '@case:legacy-session-schedule-navigation',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await detailPage.goto(createdSessionId ?? '');
+        await detailPage.clickScheduleLink();
+        await expect(page).toHaveURL(/\/schedule\/availability$/);
+      },
+    );
   });
 
   test.describe('ダイアログ操作', () => {
@@ -160,17 +244,27 @@ test.describe('セッションフロー', () => {
       await detailPage.goto(createdSessionId ?? '');
     });
 
-    test('キャンセルダイアログが開閉できる', async ({ page }) => {
-      const detailPage = new SessionDetailPage(page);
-      await detailPage.clickCancelSessionButton();
-      await expect(detailPage.cancelSessionDialog).toBeVisible();
+    test(
+      'キャンセルダイアログが開閉できる',
+      {
+        tag: [
+          '@case:legacy-session-cancel-dismiss',
+          '@variant:default',
+          '@binding:main',
+        ],
+      },
+      async ({ page }) => {
+        const detailPage = new SessionDetailPage(page);
+        await detailPage.clickCancelSessionButton();
+        await expect(detailPage.cancelSessionDialog).toBeVisible();
 
-      // セッションを取り消さず、継続する操作でダイアログだけを閉じる
-      await detailPage.cancelSessionDialog
-        .getByRole('button', { name: '継続する', exact: true })
-        .click();
-      await expect(detailPage.cancelSessionDialog).not.toBeVisible();
-    });
+        // セッションを取り消さず、継続する操作でダイアログだけを閉じる
+        await detailPage.cancelSessionDialog
+          .getByRole('button', { name: '継続する', exact: true })
+          .click();
+        await expect(detailPage.cancelSessionDialog).not.toBeVisible();
+      },
+    );
   });
 
   test.describe('アクセシビリティ', () => {

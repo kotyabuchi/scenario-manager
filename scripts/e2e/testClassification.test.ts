@@ -244,11 +244,11 @@ describe('getTestProjects', () => {
     expect(() => getTestProjects(root)).toThrow();
   });
 
-  it('基準リポジトリのDB11件とpureの例外を分類できる', () => {
+  it('基準リポジトリの旧DB11件、検証済みDB3件とpureの例外を分類できる', () => {
     const root = fileURLToPath(new URL('../..', import.meta.url));
     const projects = getTestProjects(root);
     expect(projects.integration).toHaveLength(11);
-    expect(projects['integration-verified']).toHaveLength(0);
+    expect(projects['integration-verified']).toHaveLength(3);
     expect(projects.unit).toContain(
       'src/app/(main)/home/__tests__/adapter.test.ts',
     );

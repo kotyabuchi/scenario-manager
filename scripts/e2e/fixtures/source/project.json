@@ -1,0 +1,21 @@
+{
+  ".gitignore": "src/ignored.ts\n",
+  "tsconfig.json": "{\"extends\":\"./tsconfig.base.json\",\"include\":[\"src/**/*\"]}\n",
+  "tsconfig.base.json": "{\"compilerOptions\":{\"noLib\":true,\"types\":[],\"allowJs\":true,\"jsx\":\"preserve\",\"target\":\"ESNext\",\"module\":\"ESNext\",\"moduleResolution\":\"Bundler\",\"baseUrl\":\".\",\"paths\":{\"@/*\":[\"src/*\"]}}}\n",
+  "src/app/page.tsx": "import { value } from '@/lib/value';\nexport default function Page() { return value; }\n",
+  "src/lib/value.ts": "import type { Row } from '@/db/types';\nexport const value: Row['title'] = 'fixture';\n",
+  "src/db/types.ts": "export type Row = { title: string };\n",
+  "src/lib/CamelCase.ts": "export const named = 1;\n",
+  "src/lib/space name.js": "export const spaced = 1;\n",
+  "src/components/Widget.jsx": "export function Widget() { return 'widget'; }\n",
+  "src/global.d.ts": "declare const fixtureGlobal: string;\n",
+  "src/lib/value.test.ts": "throw new Error('test must not execute');\n",
+  "src/lib/value.stories.tsx": "throw new Error('story must not execute');\n",
+  "src/__tests__/helper.ts": "throw new Error('helper must not execute');\n",
+  "src/tests/helper.ts": "throw new Error('helper must not execute');\n",
+  "src/stories/helper.ts": "throw new Error('story must not execute');\n",
+  "src/styled-system/styles.ts": "export const generated = true;\n",
+  "src/generated/code.ts": "export const generated = true;\n",
+  "src/lib/result.generated.ts": "export const generated = true;\n",
+  "src/ignored.ts": "throw new Error('ignored must not execute');\n"
+}

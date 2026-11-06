@@ -20,6 +20,10 @@ import { readArtifact } from './ledgerArtifacts';
 import { parseLegacyProjectResults } from './legacyResults';
 import { createLegacySelection } from './legacySelection';
 import { playwrightSourceMapOptions } from './playwrightSourceMaps';
+import {
+  type VerificationStageHooks,
+  verificationEnvironment,
+} from './verificationContext';
 
 import {
   lstat,
@@ -51,6 +55,7 @@ export const runLegacyProject = async (
   input: LegacySelectionInput & { project: LegacyProject },
   signal: AbortSignal,
   onProgress?: (value: LegacyProgress) => void,
+  verification?: VerificationStageHooks,
 ) => {
   const selection = createLegacySelection(input);
   // 内側で記録済みの再throwだけを識別し、context自身の別の失敗は残す。
@@ -88,9 +93,12 @@ export const runLegacyProject = async (
       // 表示失敗で所有stackの後始末を中断しない。
     }
   };
+  await verification?.checkpoint('before-environment');
   const environment = await probeEnvironment(
     root,
-    signal,
+    isNil(verification)
+      ? signal
+      : AbortSignal.any([signal, verification.signal]),
     (value) => {
       if (!isNil(value.runId)) state.runId = value.runId;
       progress(value.phase);
@@ -151,6 +159,7 @@ export const runLegacyProject = async (
                       flag: 'wx',
                       mode: 0o600,
                     });
+                    await verification?.checkpoint('before-tests');
                     progress('browser');
                     const cli = createRequire(
                       join(root, 'package.json'),
@@ -174,11 +183,15 @@ export const runLegacyProject = async (
                           env: {
                             ...app.env,
                             ...sourceMaps.env,
+                            ...(isNil(verification)
+                              ? {}
+                              : verificationEnvironment(verification.context)),
                             SCENARIO_E2E_CREDENTIALS: credentialsFile,
                             SCENARIO_E2E_LEGACY_CONTEXT: contextFile,
                             SCENARIO_E2E_LEGACY_PROJECT: input.project,
                           },
                           signal: app.signal,
+                          onClose: verification?.onExit,
                           log: join(
                             manifest.workdir,
                             'legacy-browser.private.log',
@@ -188,6 +201,7 @@ export const runLegacyProject = async (
                     } catch {
                       browserFailed = true;
                     }
+                    await verification?.checkpoint('after-tests');
                     progress('evidence');
                     const report = readArtifact(
                       root,
@@ -262,6 +276,11 @@ export const runLegacyProject = async (
     },
     [APP_PORT],
   );
+  try {
+    await verification?.checkpoint('after-cleanup');
+  } catch {
+    state.failurePhases.push('input-check');
+  }
   const passed =
     state.failurePhases.length === 0 &&
     environment.passed &&

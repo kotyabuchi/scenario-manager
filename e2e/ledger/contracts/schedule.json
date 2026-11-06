@@ -1,0 +1,677 @@
+[
+  {
+    "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+    "classification": "write",
+    "requirements": [
+      {
+        "aspect": "persist",
+        "layers": ["browser"],
+        "expectation": "PREPARATIONのセッションで、creator-only（keeperではない主催者）またはkeeper-only（主催者ではないGM/KP）が通常のUI操作で複数枠を確定する。再読込後も同じ枠が残り、再編集では旧枠が新しい複数枠へ全置換される。schedule_phaseはCONFIRMED、session_phaseはPREPARATIONを維持する。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:58-63",
+          "docs/plans/session-availability-confirmation-redesign.md:417-441",
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-1-ui操作と永続化"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": [
+      {
+        "aspect": "authorization",
+        "reason": "inline関数はsession IDを束縛してexport Actionへ委譲する。認証・権限・phaseの許可拒否は委譲先Actionのauthorization契約で別々の実行条件を検証する。",
+        "reference": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction"
+      },
+      {
+        "aspect": "validation",
+        "reason": "inline関数はtimeBlocksをexport Actionへ渡す。入力検証は委譲先Actionのvalidation契約で空枠・逆転・30分境界外・重複を検証する。",
+        "reference": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction"
+      }
+    ]
+  },
+  {
+    "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+    "classification": "write",
+    "requirements": [
+      {
+        "aspect": "persist",
+        "layers": ["browser", "integration"],
+        "expectation": "inline Action経由のUI保存からexport Actionを通り、複数枠の確定と再編集による全置換が永続化される。再読込と別参加者の表示で同じ枠を確認し、session_phaseは変えない。 専用integrationでもcreator-only/keeper-onlyの利用者JWTをNext cookie境界から実認証し、Action正常保存と利用者の再取得、再検証要求を確認する。service-roleを実行主体には使わない。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:417-441",
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-1-ui操作と永続化"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "authorization",
+        "layers": ["browser", "integration"],
+        "expectation": "creator-onlyとkeeper-onlyのPREPARATIONでの保存を個別に許可する。匿名・非参加outsider・RECRUITINGのcreator-onlyによるAction呼出を拒否し、確定枠とセッション状態を変更しない。phase制約はこのActionの要件であり、RPC直接呼出のphase保証を意味しない。 専用integrationでもcreator-only/keeper-onlyの利用者JWTをNext cookie境界から実認証し、Action正常保存と利用者の再取得、再検証要求を確認する。service-roleを実行主体には使わない。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:16-17",
+          "docs/plans/session-availability-confirmation-redesign.md:425-426",
+          "docs/plans/e2e-ledger-quality-gates.md#step-10-1-uiの外側にある拒否と原子性"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "phase-recruiting",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "validation",
+        "layers": ["integration"],
+        "expectation": "PREPARATIONのcreator-onlyでも、空の枠配列、開始が終了以後の枠、30分境界外、重複・交差する枠をそれぞれ拒否し、既存の確定枠とセッション状態を保持する。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:428-433",
+          "docs/plans/session-availability-confirmation-redesign.md:756-762",
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-2-ui失敗状態と境界"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "empty",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "reversed",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "off-grid",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "overlap",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "rpc:replace_confirmed_schedule_time_blocks",
+    "classification": "write",
+    "requirements": [
+      {
+        "aspect": "persist",
+        "layers": ["integration"],
+        "expectation": "creator-onlyとkeeper-onlyの利用者JWTでRPCを直接呼ぶ。正常な複数枠で既存枠を全置換し、schedule_phaseをCONFIRMEDにする。各利用者が他方の権限を兼ねないfixtureで独立に確認する。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:417-441",
+          "docs/plans/e2e-ledger-quality-gates.md#step-10-1-uiの外側にある拒否と原子性"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "authorization",
+        "layers": ["integration"],
+        "expectation": "利用者JWTのcreator-only/keeper-onlyは許可する。匿名、outsider、認可されたkeeper-onlyがcreator-onlyのactor IDを申告する不一致をそれぞれ拒否し、旧枠とセッション状態を保持する。SECURITY DEFINER関数内の明示認可とEXECUTE権限を対象とし、service-roleの成功を利用者の権限証拠にしない。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:425-426",
+          "docs/plans/e2e-ledger-quality-gates.md#step-10-1-uiの外側にある拒否と原子性",
+          "supabase/migrations/0022_fix_schedule_rpc_auth_and_type.sql:26-48"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              },
+              {
+                "role": "claimed-actor",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              },
+              {
+                "role": "claimed-actor",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "actor-mismatch",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "claimed-actor",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "atomicity",
+        "layers": ["integration"],
+        "expectation": "creator-only/keeper-onlyを独立に、正常枠とDB制約違反の不正枠を混在させてRPC全置換を試みる。RPC失敗後も旧確定枠・schedule_date・schedule_phaseがすべて元のままで、途中の削除やセッション更新が残らない。",
+        "basis": [
+          "docs/plans/e2e-ledger-quality-gates.md#step-10-1-uiの外側にある拒否と原子性"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-atomic-failure",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-atomic-failure",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": [
+      {
+        "aspect": "rls",
+        "reason": "このRPCはSECURITY DEFINERであり、利用者のテーブルRLSを直接評価する経路ではない。利用者JWTによるcaller/actor一致とcreator/keeperの関数内認可、および匿名のEXECUTE拒否をauthorization観点で検証する。成功をRLSポリシー検証の証拠へ転用しない。",
+        "reference": "supabase/migrations/0022_fix_schedule_rpc_auth_and_type.sql:13-48,88-91"
+      }
+    ]
+  },
+  {
+    "target": "page:src/app/(main)/sessions/[id]/page.tsx",
+    "classification": "read",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["browser"],
+        "expectation": "確定操作後と再編集後、operatorの再読込と別のconfirmed-player（承認済みPLAYER）のブラウザcontextで、保存した同じ複数の確定枠をセッション詳細に表示する。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:789",
+          "docs/plans/session-availability-confirmation-redesign.md:1245",
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-1-ui操作と永続化"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "error-feedback",
+        "layers": ["storybook"],
+        "expectation": "onConfirmTimeBlocksの失敗を明示したStorybookモックで再現し、失敗通知とロールバック後の選択状態保持を確認する。この結果はUI状態のみの証拠であり、実DB保存・永続化・認可の証拠へ算入しない。",
+        "basis": [
+          "docs/plans/session-availability-confirmation-redesign.md:1082-1083",
+          "docs/plans/e2e-ledger-quality-gates.md#step-9-2-ui失敗状態と境界"
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "save-error",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  }
+]

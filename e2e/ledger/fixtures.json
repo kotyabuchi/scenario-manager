@@ -1,0 +1,20 @@
+[
+  {
+    "id": "legacy-seed",
+    "actors": ["creator-only"]
+  },
+  {
+    "id": "schedule",
+    "actors": [
+      "anonymous",
+      "creator-only",
+      "keeper-only",
+      "outsider",
+      "confirmed-player"
+    ]
+  },
+  {
+    "id": "scenario-stories",
+    "actors": []
+  }
+]

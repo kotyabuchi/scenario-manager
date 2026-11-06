@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "features": [
+    {
+      "id": "scenarios",
+      "reason": "一覧、詳細、登録・検索は画面経由で結び付き、importだけでは関連を列挙できない。",
+      "paths": [
+        { "kind": "directory", "path": "src/app/(main)/scenarios" },
+        { "kind": "directory", "path": "src/app/api/scenarios" },
+        {
+          "kind": "directory",
+          "path": "src/components/blocks/ScenarioRegisterDialog"
+        },
+        { "kind": "directory", "path": "src/lib/scenario-fetcher" }
+      ],
+      "targets": [
+        "function:src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.tsx#ScenarioDetailPanel",
+        "function:src/app/(main)/scenarios/_components/ScenarioListPanel/ScenarioListPanel.tsx#ScenarioListPanel"
+      ],
+      "caseIds": [],
+      "legacyPaths": [
+        { "kind": "directory", "path": "e2e/scenarios" },
+        { "kind": "file", "path": "e2e/auth/import.spec.ts" },
+        { "kind": "file", "path": "e2e/auth/scenario-detail-actions.spec.ts" },
+        { "kind": "file", "path": "e2e/auth/scenario-new-banner.spec.ts" }
+      ]
+    },
+    {
+      "id": "schedule",
+      "reason": "日程調整の画面から確定・再読込・保存拒否までの契約を一緒に確認する。",
+      "paths": [
+        { "kind": "directory", "path": "src/app/(main)/sessions/[id]/schedule" }
+      ],
+      "targets": [
+        "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+        "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+        "rpc:replace_confirmed_schedule_time_blocks",
+        "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+        "function:src/app/(main)/sessions/[id]/schedule/availability/_components/AvailabilityTimeBlockEditor.tsx#AvailabilityTimeBlockEditor/handleAdd",
+        "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace/handleConfirm"
+      ],
+      "caseIds": [],
+      "legacyPaths": [
+        { "kind": "file", "path": "e2e/auth/session-flow.spec.ts" },
+        { "kind": "file", "path": "e2e/auth/session-subpages.spec.ts" }
+      ]
+    },
+    {
+      "id": "calendar",
+      "reason": "カレンダー表示は画面とセッション集計の契約にまたがる。",
+      "paths": [
+        { "kind": "directory", "path": "src/app/(main)/schedules" },
+        {
+          "kind": "directory",
+          "path": "src/components/blocks/ScheduleCalendar"
+        },
+        {
+          "kind": "file",
+          "path": "src/app/(main)/home/_components/MiniCalendar.tsx"
+        },
+        { "kind": "file", "path": "src/app/(main)/sessions/adapter.ts" }
+      ],
+      "targets": [
+        "function:src/app/(main)/sessions/adapter.ts#getCalendarSessions"
+      ],
+      "caseIds": [],
+      "legacyPaths": [{ "kind": "file", "path": "e2e/auth/home.spec.ts" }]
+    },
+    {
+      "id": "sessions",
+      "reason": "セッション一覧・詳細・作成は画面遷移を介するため、登録済の画面ケースと旧testの両方に関連する。",
+      "paths": [{ "kind": "directory", "path": "src/app/(main)/sessions" }],
+      "targets": ["page:src/app/(main)/sessions/[id]/page.tsx"],
+      "caseIds": [
+        "legacy-session-timeline-created",
+        "legacy-session-basic-info",
+        "legacy-session-schedule-navigation",
+        "legacy-session-cancel-dismiss",
+        "legacy-session-gm-actions",
+        "legacy-session-create-redirect",
+        "legacy-session-created-detail"
+      ],
+      "legacyPaths": [
+        { "kind": "directory", "path": "e2e/sessions" },
+        { "kind": "file", "path": "e2e/auth/sessions.spec.ts" },
+        { "kind": "file", "path": "e2e/auth/session-create.spec.ts" },
+        { "kind": "file", "path": "e2e/auth/session-lifecycle.spec.ts" }
+      ]
+    }
+  ],
+  "alwaysFull": [
+    {
+      "id": "auth-and-shell",
+      "reason": "認証、共通レイアウト、ナビゲーションは複数のactorと画面に共通する。",
+      "paths": [
+        { "kind": "directory", "path": "src/app/(auth)" },
+        { "kind": "directory", "path": "src/components/blocks/AuthPrompt" },
+        { "kind": "directory", "path": "src/components/blocks/GlobalHeader" },
+        { "kind": "directory", "path": "src/components/blocks/BottomNav" },
+        { "kind": "directory", "path": "src/components/blocks/SideMenu" },
+        { "kind": "directory", "path": "src/context" },
+        { "kind": "file", "path": "src/lib/authReturnTo.ts" },
+        { "kind": "file", "path": "src/hooks/useDiscordAuth.ts" },
+        { "kind": "file", "path": "src/app/layout.tsx" },
+        { "kind": "file", "path": "src/app/(main)/layout.tsx" },
+        { "kind": "file", "path": "src/middleware.ts" },
+        { "kind": "file", "path": "src/proxy.ts" }
+      ]
+    },
+    {
+      "id": "shared-ui",
+      "reason": "共通操作部品、トークン、生成スタイルの変更は全画面へ波及し得る。",
+      "paths": [
+        { "kind": "directory", "path": "src/components/elements" },
+        { "kind": "directory", "path": "src/styles" },
+        { "kind": "directory", "path": "src/styled-system" },
+        { "kind": "file", "path": "src/app/globals.css" },
+        { "kind": "file", "path": "panda.config.ts" },
+        { "kind": "file", "path": "postcss.config.cjs" }
+      ]
+    },
+    {
+      "id": "test-infrastructure",
+      "reason": "収集・環境・fixture・台帳・依存解決の共通入力は全profileに影響する。",
+      "paths": [
+        { "kind": "directory", "path": ".github" },
+        { "kind": "file", "path": ".storybook/main.ts" },
+        { "kind": "file", "path": ".storybook/preview.ts" },
+        { "kind": "file", "path": ".storybook/playwright.config.ts" },
+        { "kind": "file", "path": ".storybook/vitest.setup.ts" },
+        { "kind": "file", "path": ".storybook/AgentationCanvas.tsx" },
+        { "kind": "file", "path": ".storybook/storybookAgentationPaths.ts" },
+        { "kind": "directory", "path": "scripts" },
+        { "kind": "directory", "path": "e2e/ledger" },
+        { "kind": "directory", "path": "e2e/fixtures" },
+        { "kind": "directory", "path": "e2e/helpers" },
+        { "kind": "directory", "path": "e2e/pages" },
+        { "kind": "directory", "path": "src/__tests__/helpers" },
+        { "kind": "file", "path": "e2e/auth.setup.ts" },
+        { "kind": "file", "path": "e2e/devices.ts" },
+        { "kind": "file", "path": "e2e/isolatedRuntime.ts" },
+        { "kind": "file", "path": "package.json" },
+        { "kind": "file", "path": "pnpm-lock.yaml" },
+        { "kind": "file", "path": "tsconfig.json" },
+        { "kind": "file", "path": "next.config.ts" },
+        { "kind": "file", "path": "playwright.config.ts" },
+        { "kind": "file", "path": "playwright.fixture-check.config.ts" },
+        { "kind": "file", "path": "playwright.isolated.config.ts" },
+        { "kind": "file", "path": "playwright.legacy-local.config.ts" },
+        { "kind": "file", "path": "vitest.config.ts" },
+        { "kind": "file", "path": "vitest.integration.collect.config.ts" },
+        { "kind": "file", "path": "vitest.integration.config.ts" },
+        { "kind": "file", "path": "vitest.integration.setup.ts" },
+        { "kind": "file", "path": "vitest.integration.verified.config.ts" },
+        { "kind": "file", "path": "vitest.integration.verified.setup.ts" },
+        { "kind": "file", "path": "vitest.setup.ts" }
+      ]
+    }
+  ],
+  "databaseWide": [
+    {
+      "id": "database-runtime",
+      "reason": "migration、seed、型、共通clientはRPC・RLSとDBを使う画面の共通境界である。",
+      "paths": [
+        { "kind": "directory", "path": "supabase" },
+        { "kind": "directory", "path": "src/db" },
+        { "kind": "directory", "path": "src/lib/supabase" },
+        { "kind": "directory", "path": "src/lib/seeds-data" }
+      ]
+    }
+  ],
+  "docsOnly": [
+    {
+      "id": "repository-readme",
+      "reason": "リポジトリ案内は実行設定・台帳・テストデータから独立している。",
+      "paths": [{ "kind": "file", "path": "README.md" }]
+    }
+  ]
+}

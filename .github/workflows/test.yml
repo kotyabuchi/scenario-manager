@@ -2,65 +2,227 @@ name: Test
 
 on:
   pull_request:
+    branches: [main, develop, feat/ui-local-test-prerequisite]
+  push:
     branches: [main, develop]
+  schedule:
+    - cron: '30 18 * * 0'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  quality:
-    name: Static and unit checks
+  planner:
+    name: Quality and E2E plan
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - &checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - &setup
+        id: setup
         uses: ./.github/actions/setup
-      - name: Check formatting and lint
-        run: pnpm check:ci
-      - name: Check types
-        run: pnpm typecheck
-      - name: Run unit tests
-        run: pnpm test:unit
-      - name: Run legacy tool tests
-        run: pnpm test:legacy-tools
+      - name: Quality, static ledger and E2E plan
+        id: verify
+        run: pnpm e2e:ci plan
+        env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/ci/plan/manifest.json
+            test-results/ci/plan/static.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload safe planner failure
+        if: ${{ always() && steps.verify.outputs.diagnostic_written == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-plan-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/plan/failure.json
+          if-no-files-found: warn
+          retention-days: 7
 
-  e2e:
-    name: Local E2E (Ubuntu)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 90
+  fixtures:
+    name: E2E policy fixtures (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - *checkout
       - *setup
-      - uses: supabase/setup-cli@v3
+      - name: Check events, extraction and selection without runtime owners
+        run: >-
+          pnpm test:e2e-tools
+          scripts/e2e/githubEvent.test.ts
+          scripts/e2e/githubEventStatic.test.ts
+          scripts/e2e/gitSnapshot.test.ts
+          scripts/e2e/inventory.test.ts
+          scripts/e2e/inventoryGraph.test.ts
+          scripts/e2e/source.test.ts
+          scripts/e2e/sourceIndex.test.ts
+          scripts/e2e/extractors/
+          scripts/e2e/selection.test.ts
+          scripts/e2e/ciBootstrap.test.ts
+          scripts/e2e/surfaceInventory.test.ts
+          scripts/e2e/surfacePolicy.test.ts
+          scripts/e2e/surfaceSelection.test.ts
+          scripts/e2e/surfaceMigration.test.ts
+          scripts/e2e/surfaceMigrationObservation.test.ts
+          scripts/e2e/surfaceMigrationReplay.test.ts
+          scripts/e2e/surfaceMigrationReplayProcess.test.ts
+          scripts/e2e/surfaceGate.test.ts
+          scripts/e2e/ledgerSurfaceRefresh.test.ts
+          scripts/e2e/ledgerSurfaceRecovery.test.ts
+          scripts/e2e/surfaceReceipt.test.ts
+          scripts/e2e/ciPartition.test.ts
+          scripts/e2e/ciPartitionAggregate.test.ts
+
+  e2e-required:
+    name: E2E required
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    needs: planner
+    steps:
+      - *checkout
+      - *setup
+      - &download-plan
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/plan
+      - &setup-supabase
+        uses: supabase/setup-cli@v3
         with:
           version: '2.75.0'
-      - name: Verify native Supabase CLI
+      - &verify-supabase
+        name: Verify native Supabase CLI
         run: |
           binary="$(command -v supabase)"
           test "$(head -c 4 "$binary" | od -An -tx1 | tr -d '[:space:]')" = 7f454c46
           test "$(supabase --version)" = 2.75.0
-      - name: Install Playwright Chromium
+      - &install-chromium
         run: pnpm exec playwright install --with-deps chromium
-      - name: Run local E2E
-        run: pnpm e2e:legacy
-
-  aggregate:
-    name: Local E2E verification
-    if: ${{ always() }}
-    needs: [quality, e2e]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Verify every required job succeeded
+      - id: verify
+        run: pnpm e2e:ci shard required
         env:
-          QUALITY_RESULT: ${{ needs.quality.result }}
-          E2E_RESULT: ${{ needs.e2e.result }}
-        run: |
-          test "$QUALITY_RESULT" = success
-          test "$E2E_RESULT" = success
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-required-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/ci/required/envelope.json
+            test-results/ci/required/plan.json
+            test-results/ci/required/receipt.json
+            test-results/ci/required/inputs-start.json
+            test-results/ci/required/inputs-end.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload safe required failure
+        if: ${{ always() && steps.verify.outputs.diagnostic_written == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-required-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/required/failure.json
+          if-no-files-found: warn
+          retention-days: 7
+      - &rerun-guidance
+        name: Explain artifact requirements for retries
+        if: ${{ failure() && github.run_attempt > 1 }}
+        run: echo '::notice::Artifacts must come from the same attempt. If you retried only failed jobs, choose Re-run all jobs.'
+
+  e2e-legacy-local:
+    name: E2E legacy-local
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    needs: planner
+    steps:
+      - *checkout
+      - *setup
+      - *download-plan
+      - *setup-supabase
+      - *verify-supabase
+      - *install-chromium
+      - id: verify
+        run: pnpm e2e:ci shard legacy-local
+        env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-legacy-local-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/ci/legacy-local/envelope.json
+            test-results/ci/legacy-local/plan.json
+            test-results/ci/legacy-local/receipt.json
+            test-results/ci/legacy-local/inputs-start.json
+            test-results/ci/legacy-local/inputs-end.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload safe legacy-local failure
+        if: ${{ always() && steps.verify.outputs.diagnostic_written == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-legacy-local-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/legacy-local/failure.json
+          if-no-files-found: warn
+          retention-days: 7
+      - *rerun-guidance
+
+  e2e-aggregate:
+    name: E2E verification gate
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [planner, fixtures, e2e-required, e2e-legacy-local]
+    steps:
+      - *checkout
+      - *setup
+      - if: needs.planner.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/plan
+      - if: needs.e2e-required.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-required-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/required
+      - if: needs.e2e-legacy-local.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-legacy-local-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/legacy-local
+      - name: Verify job outcomes and shard artifacts
+        id: verify
+        if: ${{ always() && steps.setup.outcome == 'success' }}
+        run: pnpm e2e:ci aggregate
+        env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+          CI_PLANNER_RESULT: ${{ needs.planner.result }}
+          CI_REQUIRED_RESULT: ${{ needs.e2e-required.result }}
+          CI_LEGACY_RESULT: ${{ needs.e2e-legacy-local.result }}
+          CI_FIXTURES_RESULT: ${{ needs.fixtures.result }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-aggregate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/aggregate/receipt.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload safe aggregate failure
+        if: ${{ always() && steps.verify.outputs.diagnostic_written == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-aggregate-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/aggregate/failure.json
+          if-no-files-found: warn
+          retention-days: 7
+      - *rerun-guidance

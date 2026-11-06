@@ -19,4 +19,4 @@
 
 Next.js 16.1.6のnext/font/googleでは、Googleが時折返す拡張子なしURLをTurbopackが処理できず、本番buildが失敗した。[公式Issue #99114](https://github.com/vercel/next.js/issues/99114)の症状と一致する。Nextのinterception patchは別件なので維持し、フォントの取得経路だけを変更した。
 
-依存更新時はfrozen install、本番build、Storybook build、両環境の日本語表示と400/700、同originのwoff2取得、Googleへの通信がないことを確認する。検証中に外部取得を無視・再試行して成功へ丸めない。最新の受入結果は [導入計画](./prerequisite-rollout-status.md) と検証receiptに記録する。
+依存更新時はfrozen install、本番build、Storybook build、両環境の日本語表示と400/700、同originのwoff2取得、Googleへの通信がないことを確認する。検証中に外部取得を無視・再試行して成功へ丸めない。最新の受入結果は [導入計画](../plans/e2e-ledger-rollout.md) と検証receiptに記録する。

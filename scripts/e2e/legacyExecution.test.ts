@@ -398,11 +398,11 @@ describe('runtimeのskipと失敗', () => {
 });
 
 describe('保存した348登録の対応表', () => {
-  it('旧348登録を319/0/9/2/18へ分類し、setupとStorybookを別に保つ', () => {
+  it('旧348登録を301/18/9/2/18へ分類し、setupとStorybookを別に保つ', () => {
     const read = (name: string): unknown =>
       JSON.parse(
         readFileSync(
-          new URL(`../../e2e/legacy/${name}`, import.meta.url),
+          new URL(`../../e2e/ledger/${name}`, import.meta.url),
           'utf8',
         ),
       );
@@ -416,17 +416,17 @@ describe('保存した348登録の対応表', () => {
     expect(report.issues).toEqual([]);
     expect(report.counts).toEqual({
       total: 348,
-      local: 319,
-      replacement: 0,
+      local: 301,
+      replacement: 18,
       existingSkip: 9,
       existingFixme: 2,
       deferredLive: 18,
     });
     expect(legacy.setups).toHaveLength(1);
-    expect(legacy.registered).toHaveLength(8);
+    expect(legacy.registered).toHaveLength(35);
     expect(
       legacy.registered.filter(({ profile }) => profile === 'app'),
-    ).toHaveLength(0);
+    ).toHaveLength(18);
     const byKey = new Map(legacy.tests.map((entry) => [entry.key, entry]));
     for (const entry of execution.entries) {
       const source =

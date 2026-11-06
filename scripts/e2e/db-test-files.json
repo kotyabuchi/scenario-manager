@@ -66,6 +66,19 @@
       ]
     }
   ],
-  "verifiedFiles": [],
+  "verifiedFiles": [
+    {
+      "path": "src/app/(main)/sessions/__tests__/calendar.integration.test.ts",
+      "reason": "既存カレンダー4条件を独立fixtureと利用者JWTで検証し、空結果による偽成功を防ぐ。"
+    },
+    {
+      "path": "src/app/(main)/sessions/[id]/schedule/confirm/__tests__/actions.integration.test.ts",
+      "reason": "所有fixtureと実利用者JWTで日程確定Actionの許可・拒否・入力検証を行う。"
+    },
+    {
+      "path": "src/app/(main)/sessions/[id]/schedule/confirm/__tests__/rpc.integration.test.ts",
+      "reason": "所有fixtureと実利用者JWTで日程確定RPCの認可と原子性を検証する。"
+    }
+  ],
   "mockedFiles": []
 }

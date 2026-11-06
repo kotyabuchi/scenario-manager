@@ -47,7 +47,7 @@
   ↓
 [Codex] 実装（in-place。コミットはしない）
   ↓
-[自動ゲート] pnpm check → pnpm vitest → (構造変更なら pnpm build)
+[自動ゲート] pnpm quality:changed --base <開始時に固定した比較元>
   │  ├─ NG → 失敗内容を Codex に差し戻し（同一セッション継続）※LLMレビューは回さない
   │  └─ OK ↓
 [レビュー] /review-diff（未コミット差分を6観点。small=シリアル/large=並列を自動判定）
@@ -76,7 +76,7 @@ Codex に渡すプロンプトのテンプレート（Codex は `AGENTS.md` を�
 
 ## 受け入れ基準（必須）
 - <通すべきテスト。既にあるなら パス、無ければ TDD で先に書く>
-- pnpm check / pnpm vitest / (必要なら pnpm build) が通ること（ゲートはドライバーが実行）
+- pnpm quality:changed --base <固定比較元> が通ること（ゲートはドライバーが実行し、unique receiptを確認）
 
 ## 特に注意する規約（AGENTS.md 参照。該当分を強調）
 - <例: Result型・isNil / 楽観的更新 / styles.ts分離 / @phosphor-icons/react/ssr / LogTape / トークンは semantic 参照>
@@ -98,8 +98,8 @@ Codex に渡すプロンプトのテンプレート（Codex は `AGENTS.md` を�
 - **Codex はコミットしない**。差分は未コミットで残す（後段の `/review-diff` が HEAD からの未コミット差分を見るため）。
 
 ### Step 5. 自動ゲート（ドライバー、決定論）
-- 順に `pnpm check`（Biome）→ `pnpm vitest`（関連テスト）→ 構造変更があれば `pnpm build`。
-- **ゲートはドライバーが実行する**（Codex のサンドボックス下では Biome 実行が `EPERM` で失敗するため、Codex の自己検証には依存しない）。`pnpm check` は `--write` で Biome の自動整形も適用される（セミコロン付与等）。
+- `pnpm quality:changed --base <開始時に固定した比較元>` を実行する。readonly lint → 型 → pure/unit/tools → 全体台帳 → 関連runner → unique receipt照合を共通コマンドに任せ、ハーネス独自の合否を追加しない。
+- **ゲートはドライバーが実行する**。整形は検査前に `pnpm check` で行い、検査中は入力を書き換えない。品質範囲・required/例外・assertionレビューの正本は `testing-patterns.md`。サンドボックスによる実行失敗は実装不具合と区別して扱う。
 - **1つでも失敗 → LLM レビューを回さず、失敗ログを Codex に差し戻す**（lint/型/テストが拾う問題に高価なレビュー往復を使わない）。
 - 全通過 → Step 6。
 

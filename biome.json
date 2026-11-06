@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "maxSize": 8388608
   },
   "formatter": {
     "enabled": true,
@@ -67,8 +68,15 @@
   },
   "overrides": [
     {
-      "includes": ["e2e/legacy/*.generated.json"],
-      "formatter": { "enabled": false }
+      "includes": [
+        "e2e/ledger/*.generated.json",
+        "e2e/ledger/surface-pending.json",
+        "e2e/ledger/surface-migration.json",
+        "e2e/legacy/*.generated.json"
+      ],
+      "formatter": {
+        "enabled": false
+      }
     },
     {
       "includes": ["docs/designs/mocks/**"],

@@ -1,0 +1,2258 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/guest-prompt.spec.ts\",[\"未ログイン操作の認証案内\",\"ホームを押すと空白ページへ移動せず認証案内を表示する\"],0]",
+      "fingerprint": "258e832c20c587b9dc4b1ed088c21614585b3f343250e2628578bc5f2c3421e3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/guest-prompt.spec.ts\",[\"未ログイン操作の認証案内\",\"参加予定を押すとページを離れずに認証案内を表示する\"],0]",
+      "fingerprint": "4c84dcab0f4d08e2860e10236c5066ea39faf308e500d33143de74a8b011be9c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"「シナリオ」ナビリンクが /scenarios に遷移する\"],0]",
+      "fingerprint": "25a31c431673111b99e4033547e5b4fd2b28775801b526221daa941024a6d785",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"「セッション」ナビリンクが /sessions に遷移する\"],0]",
+      "fingerprint": "4aff73f8929bbf148b7edc8665ff6611f9aea774f94ea1046dffe54136b4285e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"アクティブなナビリンクが aria-current を持つ\"],0]",
+      "fingerprint": "09ededdd42441a506f583e037545924b90fab6efb36dbd4a899d11df1bfcda9c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"ヘッダーロゴがリンクとして存在する\"],0]",
+      "fingerprint": "e5d51b4dd937e15b34e0efcea3d0046f64d184f52280870a412393adcae64c6f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"未認証時にログインボタンが表示される\"],0]",
+      "fingerprint": "4724a1972e6503f7aec0338f0f2212e39c6e9dbcb3762f3e332a8c79255a5331",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/redirect.spec.ts\",[\"認証リダイレクト\",\"未認証ユーザーは /profile からトップにリダイレクトされる\"],0]",
+      "fingerprint": "973e9709a03ad3c0e0bf82a26362abacb01f38a4448405b34201528d095d3a14",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/redirect.spec.ts\",[\"認証リダイレクト\",\"未認証ユーザーは /scenarios/new からトップにリダイレクトされる\"],0]",
+      "fingerprint": "2e26a34aa4220177d47df13ef26f1ece418c251b92660ad189a5946ab96c4939",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/redirect.spec.ts\",[\"認証リダイレクト\",\"未認証ユーザーは /sessions/new からトップにリダイレクトされる\"],0]",
+      "fingerprint": "06df21efa177000ad41bf2f488bf734f95e59712deebe519a5ab73e2f55289b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"シナリオの基本情報が表示される\"],0]",
+      "fingerprint": "0b110a66fdf61c01d90a560d97b6aabad6eee15e14cc83eb3781bd2be997685d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"プレイ動画セクションが表示される\"],0]",
+      "fingerprint": "1cb9242915b7a1ae8b91610382606354fcdd63da8250c159f3bbfb6807aef38c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"プレイ時間が表示される\"],0]",
+      "fingerprint": "5b1b56f4399444e25518c3367d9418052763cf5de80980ad9a3fe4f812c45400",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"レビューセクションが表示される\"],0]",
+      "fingerprint": "7f45d4a08eb9f5285fd24397550a5d2440a12432c2004c2e8f727d4cec126540",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"一覧からシナリオ詳細に遷移して情報が表示される\"],0]",
+      "fingerprint": "98236b1953d23a793f747da1a26dd17f00c1939ae8067a629c6d834ebf8fe7ca",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"目次は単独ページだけに表示する\"],0]",
+      "fingerprint": "6150f118b5436b120edd9fba54bfc32ea59a490d1409f470b27a1ccd0643788e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"閉じる・戻るで一覧に戻る\"],0]",
+      "fingerprint": "7d296e590cb402444e5a09a06f56566c29881d07b94c8a3733aa576a0205114c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"関連セッションセクションが表示される\"],0]",
+      "fingerprint": "8ef3df4656769a7522ed058898652dadb0e8180f366fedbc463979839cf22e85",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/filter.spec.ts\",[\"シナリオの検索条件\",\"入力したキーワードをクリアできる\"],0]",
+      "fingerprint": "00f59e00fc5e0f1aa6258aba5804e641f40aa1f78b0b9d3f20a651343621daf4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/filter.spec.ts\",[\"シナリオの検索条件\",\"検索入力と確定ボタンを表示する\"],0]",
+      "fingerprint": "6853a338baa459b072d721ab401ade3bd7916071d78091787e583d2656e36fb4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/filter.spec.ts\",[\"シナリオの検索条件\",\"詳細フィルターを開閉できる\"],0]",
+      "fingerprint": "7356b8f8b86fb27c18656599c50aded7be45fc961a50032a30ee581f38409cb1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/import-redirect.spec.ts\",[\"未認証リダイレクト\",\"未認証ユーザーはインポートページからトップにリダイレクトされる\"],0]",
+      "fingerprint": "685158c9f175ae758b3cce807f778cc8883e354373bd2a36ef318f2bb7707e7f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"2ペイン合計1000pxを境に切り替わり、サイドメニューを畳むと再び2ペインになる\"],0]",
+      "fingerprint": "37b8cfe1c2e4761005a38372d60556f6a250912fbb2cb663722079cd78d10280",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"ブラウザの戻る・進むで検索条件と2ペイン表示を復元する\"],0]",
+      "fingerprint": "a0bc6c0c6a5b454b41b2f9561e64a4b6b8cd3da54bdf4d8387878eac7e631a99",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"一覧単独表示ではスクロールバーを右端に置き、余白はペイン内側に保つ\"],0]",
+      "fingerprint": "73b52cc477a59ccf4be1cd498c121c2a48d2afded37dab3803cff5dde64b0c75",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"動きを抑える設定では詳細ペインをスライドさせない\"],0]",
+      "fingerprint": "43d64956c1d708025f445b004aa496d1626d69399a16c7496f5e4c2f30eada3f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"広い画面では左右1:1の2ペインで開き、閉じると一覧へ戻る\"],0]",
+      "fingerprint": "90a9b65c57dd39fa5e1469869a47f425cc5e612e04310e409847bcd13b5e3d29",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"条件付き詳細URLをリロードしても戻り先の検索条件を保つ\"],0]",
+      "fingerprint": "6649da24d8fc8dc907c46b1727aafa3409b72b9ff736a5e7c820cc457e728bc5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"狭い画面では詳細を単独表示し、戻ると一覧を表示する\"],0]",
+      "fingerprint": "22b82fb3b9643d7717b3bc2b8e99f36bb132fc69c8000beb7ac894f538288b0f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"直URLとリロードでは単独ページを表示する\"],0]",
+      "fingerprint": "908dfbe17537b96fba5307ff2d102fdc7bb7576a021bb71820a5307ca5653dbc",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"閉じた後も検索、追加読込、スクロール、発火元フォーカスを保持する\"],0]",
+      "fingerprint": "52ea62197258f70809929e14ad9db7079685fbd437521a36ca1b2f2343dbd9de",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"URLパラメータの復元\",\"ソートパラメータが復元される\"],0]",
+      "fingerprint": "e3500b3fdfedf6a4cf82c2055918e846ed04cf677f29a2aff85a7d491b1daf82",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"URLパラメータの復元\",\"検索キーワードが復元される\"],0]",
+      "fingerprint": "c168f7b582911c2e41811cbe9dd33cee95ae73e041e0e4f53e171960d4b07976",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"もっと見るボタンで追加のシナリオが読み込まれる\"],0]",
+      "fingerprint": "5da52b48e9c230bb612290509eed182e72dbd8059993d7c5fda59fcd3469a572",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオカードが表示される\"],0]",
+      "fingerprint": "f7a74bc32cdf3d03feb487ebc223618ce12c1d81b6cd29ec6999e1711be813d4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオカードをクリックすると詳細ページに遷移する\"],0]",
+      "fingerprint": "b769971098f92e6ba6b01c21c6b1b106b41b4148a1f77c15a6c5ea5909cd2b4d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオ一覧ページが表示される\"],0]",
+      "fingerprint": "ef75d34a1cf7211517ef351068ca9affbd895b261d4bf20d18f3a64d095af0c2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオ名で検索できる\"],0]",
+      "fingerprint": "b6eef414eed1aa41b435295bd2b97585b1b7df1dee0ae31c36f75291450e685d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"ソートを変更するとURLに反映される\"],0]",
+      "fingerprint": "eb7efd9c23830420cd703afb5033eae064fba41ed7ffab747a3e946c9ba62db9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"検索結果が0件の場合、空メッセージが表示される\"],0]",
+      "fingerprint": "79eff36385a6cecaeeed483dc226fc8188ced4b150f807fe86e2233e7db16188",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"検索結果の件数が表示される\"],0]",
+      "fingerprint": "4f3f99e4f4c9b679d4bf4d25ede6fdcbe1b6acc8bbb485a59abc2e06fccb3119",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"セッションカードまたは空メッセージが表示される\"],0]",
+      "fingerprint": "98c97f4611b6b1ceadb3059234d42645c350a6fda8e2478d691ceb00512c9f20",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"セッション一覧ページが表示される\"],0]",
+      "fingerprint": "1120b3e951b6cdb8abeabe4df9e37c21cdbfbc3f5d6465eae00e1cdab196131c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"ソートを変更するとURLに反映される\"],0]",
+      "fingerprint": "1dda6f75707e43d6b596a4298a832ee4e2adae19063628d07bc53da4fed5fa64",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"デフォルトで「公開卓を探す」タブがアクティブ\"],0]",
+      "fingerprint": "cf896b69d762f48b8b8176b059f1ddd2b608495f201849b74dc720bb0e2a4824",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"検索結果の件数が表示される\"],0]",
+      "fingerprint": "bdf84dc0a1b87c46a5469a2453d94aef08d97f24d7d79d47d09296d31e81de2c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"URLパラメータ ?tab=public でタブが復元される\"],0]",
+      "fingerprint": "c20f0b54d1d229d8a47d5e78ede43dd086577c9614f476ae393c5ac8d3afef93",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"「公開卓を探す」タブでURLにtab=publicが含まれる\"],0]",
+      "fingerprint": "654a693ab7ff59727fe8aae503cec25df380114ee4b5c796027fba0b88756ec5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"未認証時「参加予定」タブでLoginPromptが表示される\"],0]",
+      "fingerprint": "1ca693e52db7ace320a2129adcee531d094807dc74ba9bc3da3632149d7c90b5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"未認証時「参加履歴」タブでLoginPromptが表示される\"],0]",
+      "fingerprint": "21a5064c8eca206f5be4e1ad4f69a490d2de225fd5ab82706de61c34f95f0afd",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"シナリオ一覧ページにa11y違反がない\"],0]",
+      "fingerprint": "187d47afc25611936ec69e56be7bedd6ecc8af80eac7a2ff78e4300bbee8eae8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"シナリオ詳細ページにa11y違反がない\"],0]",
+      "fingerprint": "7ad255d99905e759cd5c1c239c9426492f41f28845cd2369b89fd76ffcb3b0e3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"セッション一覧ページにa11y違反がない\"],0]",
+      "fingerprint": "b67aaa9c8648ab4d415ffdfe4e6dd0c8dcdec34fa22c9df2da735b387fab886e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"ランディングページにa11y違反がない\"],0]",
+      "fingerprint": "1fe87bb3f0e9ea7760e876ac129cba8a36233837af22ba0fc065f870171d341d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"スモークテスト\",\"サービスについてのページに権利表記を表示する\"],0]",
+      "fingerprint": "1d7f31bc764579374d6ba944b427b62916c4c9b158db86cdbaeb67f2df01acf1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"スモークテスト\",\"シナリオ一覧ページが表示される\"],0]",
+      "fingerprint": "ed9ba7061d537a7b2becd63074af1d1e84fbd605c804517900ef889fa5836acc",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium\",\"e2e/smoke.spec.ts\",[\"スモークテスト\",\"ランディングページが表示される\"],0]",
+      "fingerprint": "a13268e2f980f88790901311507796d519a014bcf78e38b05ff3bdf0c2bbb42a",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック一覧の投票\",\"一覧で投票→取り消ししてもカウントが負にならない\"],0]",
+      "fingerprint": "c808bad1bcd432f567f48b08a3d6021e9da1fa3b985c8ed841733ce974d7a420",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック一覧の投票\",\"一覧カードに投票ボタンが表示される\"],0]",
+      "fingerprint": "0b925a5c3fbe8cf11dd8cd73344e4f020c68b3eedc8630a740315cd6015001a0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票→取り消しで元の数に戻る\"],0]",
+      "fingerprint": "5e5015e8a68c36908d3b05a12a0981c849e9a018ea9c1238c394967bbf238720",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票するとaria-pressedが切り替わる\"],0]",
+      "fingerprint": "d63ec54270364202b92139d81e2232dc91bc04e9639f2409b40655e038a017d4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票後にページリロードしても状態が保持される\"],0]",
+      "fingerprint": "4bba52041db93c84db59e1dc3d4e8cf7b50d7f029b08ee5ce822459fe6b4f5fc",
+      "disposition": "existing-fixme",
+      "reason": "既存test.fixme。共有フィードバックの投票状態競合により保留中。隔離fixtureでのcase移行と検証後に解除する。",
+      "expectedAnnotation": {
+        "type": "fixme"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票数が負にならない\"],0]",
+      "fingerprint": "7265cb9fa65073f959e82593305619544caefcb7ab376515b2bd96d4b02a29b0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "31f7fde94a053c1d3f09d8b7efa7610108b87bf63b50183e6dac0fca0a531b48",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"コメント入力フォームが表示される\"],0]",
+      "fingerprint": "d81803a2b522c1cc2729d307b1a9d71c41c6309322b1ccb87c97d9434cce9aea",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"タイトルが表示される\"],0]",
+      "fingerprint": "6a735fd0168e1e087bcf3b757fd6a6a6d57e25f06d2eec37e14e46b4dff21461",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"戻るボタンが表示される\"],0]",
+      "fingerprint": "ddab51e95a47b1faec37e4497d95cde3b337f1f86737f55d01efe51f679f825d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"戻るボタンで一覧に戻れる\"],0]",
+      "fingerprint": "cb370e0c07adbf132bcd94e444bbbf8733568916034e6d02cb9bf830fbd203c0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"投票ボタンが表示される\"],0]",
+      "fingerprint": "30e4af9a1cefb9fb3495e66cdaf855f95d1fd6ee95ba60710397f42f532d2da5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"投票数が0以上の数値で表示される\"],0]",
+      "fingerprint": "b17b1b54b27565d0f14963bda25e90aa451d9be898aa3e4bd814908a5926328a",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "f7e94732644239e1f71421e08192335d1aabb63fd74015ca07c2eb062785bb50",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"カードをクリックすると詳細ページに遷移する\"],0]",
+      "fingerprint": "6cf44ddf5a83b0a93218670d33aa43562ba52d8da4bc7ba7a124dcaa981b66c9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"フィードバックカードが表示される\"],0]",
+      "fingerprint": "02291364d412bed6d2ef443a32a7aab0e22b516a976a8dabe02b9cd3970ee99f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"フィードバック件数が表示される\"],0]",
+      "fingerprint": "2c7af6c809bb4e31ae6d987f2b0adb11ecd2feaadfcc0ba6ca6266ac3fb12e32",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"ページヘッダーが表示される\"],0]",
+      "fingerprint": "f77b7cccd6485e06c9987695927676e21e1f5ca23bfe071800d1d261762a4e91",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"新規投稿ボタンが表示される\"],0]",
+      "fingerprint": "a91cf013a020fdc0f674910d971a685b627fb9f26d2ab61aefbfe93b4de591a4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"検索入力が表示される\"],0]",
+      "fingerprint": "1962109e254afee13217113e79801eb986e4e2c51a0373d9eaa164529a8c00d1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"「すべて見る」リンクがセッション一覧に遷移する\"],0]",
+      "fingerprint": "a536346e44cd3250630d21a4801d8295cb69d4a1903296f8d5061539fc8594b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"「参加予定のセッション」セクションが表示される\"],0]",
+      "fingerprint": "bb9cc7cef3ff3463654e45b74a288cd8c8fc2e7cc6860995055014302f6ab38d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"「新着シナリオ」セクションが表示される\"],0]",
+      "fingerprint": "0500dc0f0a20714c2faec7d556dc53960355a56aa2c98e68bd5a24a657ccfcd4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "f2c3171fcf58190d102e938fb0c9272ebc65843ea6163638230a93bc718d9682",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"ウェルカムメッセージが表示される\"],0]",
+      "fingerprint": "8655360c24bd89e6438f72722cb64aada98f082936f4068fed226b2101250563",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"ページが表示される\"],0]",
+      "fingerprint": "36827f8ea85fbe841059e43b80d3955b14c206f96014315a062909f3bf275c79",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"URL入力フィールドが表示される\"],0]",
+      "fingerprint": "4bd09ffab386c0b3719d43bc664fafaf0649f1c464c3b2df4a38ed27446fdce8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "cd99803c9f0ed3a30c3a7b3fefead3e51df8f75d9721c6598991af83edd793f9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"ページタイトルが正しい\"],0]",
+      "fingerprint": "a7d0b257f39f97a16684d5a47858c049bafd1fbb344d691c5f3ecef17a2dd4a9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"ページヘッダーが表示される\"],0]",
+      "fingerprint": "93f42c5895789700dc356a3f4f28c729f000ca97afbf3874941cdb8b6f24b245",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"不正なURL形式の場合、ブラウザバリデーションが発火する\"],0]",
+      "fingerprint": "2afe94a22b92f1f6edd43793e201fb158834a6d0c23d51ddcfe69bff9282b0fb",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"取り込むボタンが表示される\"],0]",
+      "fingerprint": "839c9290d4c3a56f21796ced7f74d8970dcc9a20b34418c61c772b852f6cbf85",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"対応サイト情報が表示される\"],0]",
+      "fingerprint": "de17cb7a9c74eca1fc5b1192adc84bc81cc47184598249adcaca3779dbbbeba8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"手動入力リンクが表示される\"],0]",
+      "fingerprint": "dd384e4f9c488a50e8987400459a0aad913bce6131dd3b9c12607a5dfa362f4e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"手動入力リンクをクリックすると /scenarios/new に遷移する\"],0]",
+      "fingerprint": "00c0f39853b1806beae5f453d0d8e8437ab39d0debe4774e11b3179726438432",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"空URLを送信するとエラーが表示される\"],0]",
+      "fingerprint": "4143135434b7d8347c93098db85cb16251188667193e73a116ed7debe084fada",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"Booth URL解析後にフォームが表示される\"],0]",
+      "fingerprint": "d22f5b088c211ce93bc39116a995a39205f495124467ba9aac08ed1a8a3ea4f6",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"TALTO URL解析後にフォームが表示される\"],0]",
+      "fingerprint": "1d555fc66548c8b0a944419b3c0364557b5903d743c24bbeb3b6888a0d113cda",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"TALTO解析後にプレイ人数・時間が表示される\"],0]",
+      "fingerprint": "8d9c5c8dbbc8a32abf7bda73d64fbbd6409a51285bc7e01b0427e9196a0776b4",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"戻るボタンでURL入力ステップに戻れる\"],0]",
+      "fingerprint": "3383e3f6515282b149e4b9f84cf56ce4183feb9ce1d93930a531e0fee27b123a",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"登録済みURLを送信するとエラーが表示される\"],0]",
+      "fingerprint": "663d60b5fafc61871d898eccd8a6debf2d4d8e065066aab6a2295c3bc5982a6c",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"高信頼度フィールドにreadOnly属性が付与されている\"],0]",
+      "fingerprint": "c4762672b3c7d29f9af687403e5ecba5491c542f69b0a5d7449e6448809d6063",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"クエリなしでアクセスすると通常のURL入力フローが表示される\"],0]",
+      "fingerprint": "a484977420d62639484fe3bb56f2f26a31a3573715dafdaec678161eb36cb3da",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"対応外ドメインのURLクエリでエラーが表示される\"],0]",
+      "fingerprint": "2a9c2509f7d3365c2cc92fb034f366a2a6e7dedd1728d5b01ba90332d972d30c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"有効なBooth URLクエリで自動解析→フォーム表示される\"],0]",
+      "fingerprint": "4e85c9659a054b6a2e34a8b746688f466b80ba6e49462e786ef8f60804a78324",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 3はE2E_TEST_BOOTH_URLだけで外部Booth自動解析を開始する。E2E_LIVE_IMPORT未設定でも通信するためlocal互換では実行しない。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"無効なURLクエリで自動解析→エラーバナー + URL入力済み\"],0]",
+      "fingerprint": "bccd9c2a3961f42e29c86aac2cf7938e3c65139e5c487280a180faf19cea775c",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 3が環境変数なしで固定Booth URL（items/99999999999）をServer Actionで解析するため、local互換では実行しない。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/navigation.spec.ts\",[\"認証済みナビゲーション\",\"アバタークリックでプロフィールに遷移する\"],0]",
+      "fingerprint": "6ea76a33c28feaaba4900daa4782931035d5000945755148fd752cc1f80e6bb2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/navigation.spec.ts\",[\"認証済みナビゲーション\",\"プロフィールアバターが表示される\"],0]",
+      "fingerprint": "a974755a1a64cacd8625f0203c18e2281a11050cea773b9574c2359740e0c430",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/navigation.spec.ts\",[\"認証済みナビゲーション\",\"ログインボタンの代わりにアバターが表示される\"],0]",
+      "fingerprint": "ce50dd7f62eb0cd6132dedf1c07109c91296b87602a80856034e06ce8d31b6b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile-edit.spec.ts\",[\"プロフィール編集\",\"空のユーザーIDで送信するとバリデーションエラー\"],0]",
+      "fingerprint": "7da18e06c3f0147dcdc5044616e06cf7f3314256a6d995ecc6d9f368b5044895",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile-edit.spec.ts\",[\"プロフィール編集\",\"表示名を変更して送信すると成功メッセージが表示される\"],0]",
+      "fingerprint": "2d3a44a8d03548d6b4d47cbd790633676602e30912fb70a9c924bcdd13d9618e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"「公開プロフィールを見る」リンクが存在する\"],0]",
+      "fingerprint": "573421291c7ebbb0f3312a134b0221feffc8c14d0b383656f37acd44c08ce6e7",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "d2308c77e032818bf88b4fcb535d28f75920a5e015f849da5daae75d05bd45be",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"フォームフィールドが表示される\"],0]",
+      "fingerprint": "f2905bf533d9a2f1a5b22f8219fc32e69b76f589f809f87f42af9b48802fb9fe",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"プロフィール設定ページが表示される\"],0]",
+      "fingerprint": "992ee887e494669869e8d5c43c48f87fc06075c209a085199f33124e8e66b7fd",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"公開プロフィールに遷移できる\"],0]",
+      "fingerprint": "694305d35f3b1e94f25abba2e2cfe93e8ddb8ed0ff741566cd1d91f24eea3a6e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"現在のプロフィール情報がプリセットされている\"],0]",
+      "fingerprint": "307ba5d17c12484434af533de5273845ca82237f1d711d7b994cad92410395f0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+      "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニューを開くとメニュー項目が表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-open",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューボタンが表示される\"],0]",
+      "fingerprint": "9245dcd8d5c53bd29d0df19dd49c46547a226eb626101857da9f1d233b6d48d0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+      "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニュー外クリックでメニューが閉じる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+          "profile": "app",
+          "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"お気に入りボタンが表示される\"],0]",
+      "fingerprint": "e4e4cfa959866c84f89e511ce4cd5fb645d05302673c7a309027872bcce044c5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "c2d4f02e4504dbc8b60cf41bbe1b4f7e97fa9a7ab8eed5b5802fca6300e2a556",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"現在のシナリオでセッションを作成できる導線がある\"],0]",
+      "fingerprint": "2b7588c81cbedc5fa9258d81c350fba320348e240f77d4438cf1511f5f7d09c3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力するとインポート誘導バナーが表示される\"],0]",
+      "fingerprint": "5fe60b6e689b33574dcdc1dc71c38950c5da1e1f70ef9b03d58e8b3026c71d0d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
+      "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"TALTO URLを入力するとインポート誘導バナーが表示される\"],0]",
+      "fingerprint": "552865bf8c0e62e817c21d41d0d406366de0d8673a63201d92c211ba1a9f0d0e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"バナーの「インポートへ移動」リンクが正しいURLに遷移する\"],0]",
+      "fingerprint": "4eb73fc872f258d8bb02cacd0da09a9d00dcbaeeeb49837344879e0ea312dc91",
+      "disposition": "deferred-live",
+      "reason": "固定Booth URL（items/12345）付きimport画面への遷移により、URL確認中でもmount時のServer Action自動解析が始まり得るためlocal互換では実行しない。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"空の状態ではバナーは表示されない\"],0]",
+      "fingerprint": "101b88dcea23002b6f3a66b6d9dc9b8ecb7647473eb720f2e01f7d892184adad",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"非対応URLを入力してもバナーは表示されない\"],0]",
+      "fingerprint": "784619a3660c549ed7089738e4b18bc6385b59951639a442a4b5d378e00d6c5f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"セッション名が空で送信するとバリデーションエラー\"],0]",
+      "fingerprint": "332acf4840c7242b8d5616f6d6771a81026299a970d80fa5b73026c9305b3119",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
+      "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "作成後にセッション詳細ページが表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-created-detail",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"募集文が空で送信するとバリデーションエラー\"],0]",
+      "fingerprint": "0f6dc3214ce67f0adb9369b89416793a70f1840a55b430ba72de0f255851613b",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
+      "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "最小入力で作成するとリダイレクトされる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
+          "profile": "app",
+          "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-create-redirect",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"アクセシビリティ\",\"セッション詳細ページのa11y違反がない\"],0]",
+      "fingerprint": "1a9f689fe7764d08619619adc8eb123221e820411db790c082cb820ad699c836",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+      "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "サブページへの遷移",
+            "日程調整ページに遷移できる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+          "profile": "app",
+          "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-schedule-navigation",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"申請管理ページに遷移できる\"],0]",
+      "fingerprint": "f43b4c796a2df288927ced4911ee0021675ced6547df4b0bd6c11fedb468b2fe",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション作成 → 詳細ページ\",\"セッションを作成して詳細ページに遷移する\"],0]",
+      "fingerprint": "9c8d555a46318bba800abe0ff322870f2160ab0c48666a78fab265cb9f3b81c6",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"GMメモセクションが表示される\"],0]",
+      "fingerprint": "a8e4629a36a16f79ae23c378c08ef95a9ecfd53bfd2ed919a475bf733a9125f4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"GM用の編集ボタンが表示される\"],0]",
+      "fingerprint": "5d3cf10eb49942884c14f149c7de9ed648782b65e9713c55d799b473865dc41a",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"セッション名がタイトルに表示される\"],0]",
+      "fingerprint": "9c03400ba0ce582c9e423d1e705bc1df6972a1c04f9c973e9b7a5f80fc5a1ca2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+      "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "タイムラインにセッション作成イベントがある"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+          "profile": "app",
+          "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-timeline-created",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+      "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "募集中フェーズでGM用アクションが表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-gm-actions",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"参加者セクションが表示される\"],0]",
+      "fingerprint": "3fc9bacdf312a68ee2a20331df1a80cbea442431acae6c1bb7381593bee50677",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+      "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "基本情報セクションが表示される"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-basic-info",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"戻るリンクが機能する\"],0]",
+      "fingerprint": "377510b062ff397629f3f282af3158c91227e75419eb0e9bb06a6af89268f65b",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+      "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "ダイアログ操作",
+            "キャンセルダイアログが開閉できる"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+          "profile": "app",
+          "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-cancel-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「キャンセル」がメニュー内に表示される\"],0]",
+      "fingerprint": "49f6cbba20ff4923454b62aedae5a0879aa79823ae7c78b2902d839b1220e445",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「募集を締める」ボタンが表示される\"],0]",
+      "fingerprint": "2c418d56557fa78da1c245509e482eeba8c065e3a955a223e02a1043a88aef42",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「申請管理」「スケジュールを提出」が利用可能\"],0]",
+      "fingerprint": "173792858ebf3cccd128f3c8bb775b80c2e7e38adc755582c7b9997a220afc21",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"フェーズステッパーに「募集中」が表示される\"],0]",
+      "fingerprint": "0e34b3d9f00186a2425fdfc971b02cd3d3581af5e865cc6d1cd5c3886d3ecfac",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"キャンセル操作\",\"セッションをキャンセルできる\"],0]",
+      "fingerprint": "53e847b6c3f196c3d10125d24007aff5e384b8cee3a42dec0e721bb8546bd58e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"スケジュール提出\",\"スケジュールを追加して保存できる\"],0]",
+      "fingerprint": "6dc2c5e0b26b8084dc9f2dd357808cfbc35a6f79cc3c12852a5c1517367328d8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"募集締切（RECRUITING → PREPARATION）\",\"募集を締めるとPREPARATIONフェーズに遷移する\"],0]",
+      "fingerprint": "a109bdb43a0f2acceb86090246cbcb14f5efd1d9c67c934c38e64ea669e9cfcd",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"日程確定（PREPARATION フェーズ）\",\"おすすめ候補を選択して日程を確定できる\"],0]",
+      "fingerprint": "3f548e1d9ec53b06457a97841c3999d12ed4ff35ed4819849c0270c5b11da98f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"日程確定（PREPARATION フェーズ）\",\"日程確定ページにアクセスできる\"],0]",
+      "fingerprint": "bd5d55d58d9143a75d60816c4a9fb0313c69f2f703994c9237d0cdd39cbc2d8e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"日程確定（PREPARATION フェーズ）\",\"日程確定ページの構造が正しい\"],0]",
+      "fingerprint": "a5af24e795f63ec1e9d894c2fb0b17d1df15104302de29fbb28dec96718a0d33",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"a11y違反がない\"],0]",
+      "fingerprint": "c745629d1eb22a4f83426d4e548f08e9d0a32262706c271067a0bf398b56e070",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"ページタイトルが表示される\"],0]",
+      "fingerprint": "44022ade2f28dc8c131d26c1d8f5efb3529e2802bf5ab72e7e47fe0c5e069764",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"保存すると成功メッセージが表示される\"],0]",
+      "fingerprint": "575efc3a31b62151d87f3cfec8af955105241198ecad47f663c482d213ae1f7e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"保存後リロードするとスケジュールが表示されている\"],0]",
+      "fingerprint": "fbb2cac44409d87591a6a15a35ce7961ef178cce7c731d63b9599b5610b6540f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"時間帯を追加すると件数が更新される\"],0]",
+      "fingerprint": "201cf6cafc29aa8bdebfdbdfaf77cf26584c323683c0a514e9300d12055fb182",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"空状態メッセージが表示される\"],0]",
+      "fingerprint": "833d08962c305017d2aceb3f293e8ed36221474c0e13e055f55658b9a4273ef2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"追加フォームが表示される\"],0]",
+      "fingerprint": "be928fb19b4999fbb39c27747d6ebacd2591a8ffa1f1eb7fa3fc60de34cb8a20",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"日程確定ページ\",\"RECRUITINGフェーズでアクセスするとリダイレクトされる\"],0]",
+      "fingerprint": "212017d8865c23782430875304c46395a7cb0129439c9c7b0d89131b99ca9696",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"GM（セッション作成者）が自動参加者として表示される\"],0]",
+      "fingerprint": "cc50cb8634f7edea9a89d54a8ec8eee712884a643063ef08e90f647080ea12e0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"a11y違反がない\"],0]",
+      "fingerprint": "e303ace3468cde1342fa38573dd4c9154ff40d75366ad24cbd9d98ad2ab6b41e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"ステータスフィルターに3つの選択肢がある\"],0]",
+      "fingerprint": "5bc6d6dcd3df24712445bef5fcb6cb17fefab4264715a5caabd8a98dc8e2f019",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"フィルターは初期状態で「すべて」\"],0]",
+      "fingerprint": "65ca963ebddd4b20796f8b590a0f82332d3b6b59fe511307396c94a60a5cfc29",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"フィルター切り替えが動作する\"],0]",
+      "fingerprint": "7a0fba96e2cc010b1fbbb5ce5ac4830bf65cffcf87741b411ead93d17304a3b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"ページタイトルが表示される\"],0]",
+      "fingerprint": "8098a33bb3c05039673b6d41532d016bfa27cfb43298c99fcfdbfe829133faf4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加予定」タブがクリック可能\"],0]",
+      "fingerprint": "befbc7aca730fe31dfcebacffeb5e3b8b00819028deef4ceff52872f7edb32f3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加予定」タブでソートが変更可能\"],0]",
+      "fingerprint": "3406b8b641cc66473832f951c092ebfcc3b5f895f8c89ee9f6c2b417ee1ca2ad",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加予定」タブ切替でコンテンツが表示される\"],0]",
+      "fingerprint": "26cecb473feafa7d4c055e31cda732e6b330db2be7b7fd159e1a5eacd766ab60",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加履歴」タブ切替でコンテンツが表示される\"],0]",
+      "fingerprint": "07624acb281bb51b24cc665127749f98d35f612c1fc6b1fe812cfc65a3069f7f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"セッション作成に必須フィールドが存在する\"],0]",
+      "fingerprint": "555660533163a00bfd5717ea62251930a61a5d4d8988d9d0f73eae28d94f4d89",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"セッション作成ページが表示される\"],0]",
+      "fingerprint": "ee865e70571d2075f57e86526584262aeed49dbce3a8588a4edb20c58f3154a8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"セッション作成ページのa11y違反がない\"],0]",
+      "fingerprint": "b2bea2ba6c70ca268895c86d099e5d7160e1de87acf4101148d598f235f494f7",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/guest-prompt.spec.ts\",[\"未ログイン操作の認証案内\",\"ホームを押すと空白ページへ移動せず認証案内を表示する\"],0]",
+      "fingerprint": "258e832c20c587b9dc4b1ed088c21614585b3f343250e2628578bc5f2c3421e3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/guest-prompt.spec.ts\",[\"未ログイン操作の認証案内\",\"参加予定を押すとページを離れずに認証案内を表示する\"],0]",
+      "fingerprint": "4c84dcab0f4d08e2860e10236c5066ea39faf308e500d33143de74a8b011be9c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"「シナリオ」ナビリンクが /scenarios に遷移する\"],0]",
+      "fingerprint": "25a31c431673111b99e4033547e5b4fd2b28775801b526221daa941024a6d785",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"「セッション」ナビリンクが /sessions に遷移する\"],0]",
+      "fingerprint": "4aff73f8929bbf148b7edc8665ff6611f9aea774f94ea1046dffe54136b4285e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"アクティブなナビリンクが aria-current を持つ\"],0]",
+      "fingerprint": "09ededdd42441a506f583e037545924b90fab6efb36dbd4a899d11df1bfcda9c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"ヘッダーロゴがリンクとして存在する\"],0]",
+      "fingerprint": "e5d51b4dd937e15b34e0efcea3d0046f64d184f52280870a412393adcae64c6f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/navigation.spec.ts\",[\"グローバルナビゲーション\",\"未認証時にログインボタンが表示される\"],0]",
+      "fingerprint": "4724a1972e6503f7aec0338f0f2212e39c6e9dbcb3762f3e332a8c79255a5331",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/redirect.spec.ts\",[\"認証リダイレクト\",\"未認証ユーザーは /profile からトップにリダイレクトされる\"],0]",
+      "fingerprint": "973e9709a03ad3c0e0bf82a26362abacb01f38a4448405b34201528d095d3a14",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/redirect.spec.ts\",[\"認証リダイレクト\",\"未認証ユーザーは /scenarios/new からトップにリダイレクトされる\"],0]",
+      "fingerprint": "2e26a34aa4220177d47df13ef26f1ece418c251b92660ad189a5946ab96c4939",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/redirect.spec.ts\",[\"認証リダイレクト\",\"未認証ユーザーは /sessions/new からトップにリダイレクトされる\"],0]",
+      "fingerprint": "06df21efa177000ad41bf2f488bf734f95e59712deebe519a5ab73e2f55289b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"シナリオの基本情報が表示される\"],0]",
+      "fingerprint": "0b110a66fdf61c01d90a560d97b6aabad6eee15e14cc83eb3781bd2be997685d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"プレイ動画セクションが表示される\"],0]",
+      "fingerprint": "1cb9242915b7a1ae8b91610382606354fcdd63da8250c159f3bbfb6807aef38c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"プレイ時間が表示される\"],0]",
+      "fingerprint": "5b1b56f4399444e25518c3367d9418052763cf5de80980ad9a3fe4f812c45400",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"レビューセクションが表示される\"],0]",
+      "fingerprint": "7f45d4a08eb9f5285fd24397550a5d2440a12432c2004c2e8f727d4cec126540",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"一覧からシナリオ詳細に遷移して情報が表示される\"],0]",
+      "fingerprint": "98236b1953d23a793f747da1a26dd17f00c1939ae8067a629c6d834ebf8fe7ca",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"目次は単独ページだけに表示する\"],0]",
+      "fingerprint": "6150f118b5436b120edd9fba54bfc32ea59a490d1409f470b27a1ccd0643788e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"閉じる・戻るで一覧に戻る\"],0]",
+      "fingerprint": "7d296e590cb402444e5a09a06f56566c29881d07b94c8a3733aa576a0205114c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/detail.spec.ts\",[\"シナリオ詳細\",\"関連セッションセクションが表示される\"],0]",
+      "fingerprint": "8ef3df4656769a7522ed058898652dadb0e8180f366fedbc463979839cf22e85",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/filter.spec.ts\",[\"シナリオの検索条件\",\"入力したキーワードをクリアできる\"],0]",
+      "fingerprint": "00f59e00fc5e0f1aa6258aba5804e641f40aa1f78b0b9d3f20a651343621daf4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/filter.spec.ts\",[\"シナリオの検索条件\",\"検索入力と確定ボタンを表示する\"],0]",
+      "fingerprint": "6853a338baa459b072d721ab401ade3bd7916071d78091787e583d2656e36fb4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/filter.spec.ts\",[\"シナリオの検索条件\",\"詳細フィルターを開閉できる\"],0]",
+      "fingerprint": "7356b8f8b86fb27c18656599c50aded7be45fc961a50032a30ee581f38409cb1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/import-redirect.spec.ts\",[\"未認証リダイレクト\",\"未認証ユーザーはインポートページからトップにリダイレクトされる\"],0]",
+      "fingerprint": "685158c9f175ae758b3cce807f778cc8883e354373bd2a36ef318f2bb7707e7f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"2ペイン合計1000pxを境に切り替わり、サイドメニューを畳むと再び2ペインになる\"],0]",
+      "fingerprint": "37b8cfe1c2e4761005a38372d60556f6a250912fbb2cb663722079cd78d10280",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"ブラウザの戻る・進むで検索条件と2ペイン表示を復元する\"],0]",
+      "fingerprint": "a0bc6c0c6a5b454b41b2f9561e64a4b6b8cd3da54bdf4d8387878eac7e631a99",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"一覧単独表示ではスクロールバーを右端に置き、余白はペイン内側に保つ\"],0]",
+      "fingerprint": "73b52cc477a59ccf4be1cd498c121c2a48d2afded37dab3803cff5dde64b0c75",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"動きを抑える設定では詳細ペインをスライドさせない\"],0]",
+      "fingerprint": "43d64956c1d708025f445b004aa496d1626d69399a16c7496f5e4c2f30eada3f",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"広い画面では左右1:1の2ペインで開き、閉じると一覧へ戻る\"],0]",
+      "fingerprint": "90a9b65c57dd39fa5e1469869a47f425cc5e612e04310e409847bcd13b5e3d29",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"条件付き詳細URLをリロードしても戻り先の検索条件を保つ\"],0]",
+      "fingerprint": "6649da24d8fc8dc907c46b1727aafa3409b72b9ff736a5e7c820cc457e728bc5",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"狭い画面では詳細を単独表示し、戻ると一覧を表示する\"],0]",
+      "fingerprint": "22b82fb3b9643d7717b3bc2b8e99f36bb132fc69c8000beb7ac894f538288b0f",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"直URLとリロードでは単独ページを表示する\"],0]",
+      "fingerprint": "908dfbe17537b96fba5307ff2d102fdc7bb7576a021bb71820a5307ca5653dbc",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/routing.spec.ts\",[\"シナリオ一覧と詳細のルーティング\",\"閉じた後も検索、追加読込、スクロール、発火元フォーカスを保持する\"],0]",
+      "fingerprint": "52ea62197258f70809929e14ad9db7079685fbd437521a36ca1b2f2343dbd9de",
+      "disposition": "existing-skip",
+      "reason": "既存beforeEachがmobile-chromeを除外する、ビューポート幅を明示したPC専用検証。chromium側はlocal実行する。",
+      "expectedAnnotation": {
+        "type": "skip",
+        "description": "ビューポート幅を明示したPC検証"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"URLパラメータの復元\",\"ソートパラメータが復元される\"],0]",
+      "fingerprint": "e3500b3fdfedf6a4cf82c2055918e846ed04cf677f29a2aff85a7d491b1daf82",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"URLパラメータの復元\",\"検索キーワードが復元される\"],0]",
+      "fingerprint": "c168f7b582911c2e41811cbe9dd33cee95ae73e041e0e4f53e171960d4b07976",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"もっと見るボタンで追加のシナリオが読み込まれる\"],0]",
+      "fingerprint": "5da52b48e9c230bb612290509eed182e72dbd8059993d7c5fda59fcd3469a572",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオカードが表示される\"],0]",
+      "fingerprint": "f7a74bc32cdf3d03feb487ebc223618ce12c1d81b6cd29ec6999e1711be813d4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオカードをクリックすると詳細ページに遷移する\"],0]",
+      "fingerprint": "b769971098f92e6ba6b01c21c6b1b106b41b4148a1f77c15a6c5ea5909cd2b4d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオ一覧ページが表示される\"],0]",
+      "fingerprint": "ef75d34a1cf7211517ef351068ca9affbd895b261d4bf20d18f3a64d095af0c2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"シナリオ名で検索できる\"],0]",
+      "fingerprint": "b6eef414eed1aa41b435295bd2b97585b1b7df1dee0ae31c36f75291450e685d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"ソートを変更するとURLに反映される\"],0]",
+      "fingerprint": "eb7efd9c23830420cd703afb5033eae064fba41ed7ffab747a3e946c9ba62db9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"検索結果が0件の場合、空メッセージが表示される\"],0]",
+      "fingerprint": "79eff36385a6cecaeeed483dc226fc8188ced4b150f807fe86e2233e7db16188",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/scenarios/search.spec.ts\",[\"シナリオ検索\",\"検索結果の件数が表示される\"],0]",
+      "fingerprint": "4f3f99e4f4c9b679d4bf4d25ede6fdcbe1b6acc8bbb485a59abc2e06fccb3119",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"セッションカードまたは空メッセージが表示される\"],0]",
+      "fingerprint": "98c97f4611b6b1ceadb3059234d42645c350a6fda8e2478d691ceb00512c9f20",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"セッション一覧ページが表示される\"],0]",
+      "fingerprint": "1120b3e951b6cdb8abeabe4df9e37c21cdbfbc3f5d6465eae00e1cdab196131c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"ソートを変更するとURLに反映される\"],0]",
+      "fingerprint": "1dda6f75707e43d6b596a4298a832ee4e2adae19063628d07bc53da4fed5fa64",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"デフォルトで「公開卓を探す」タブがアクティブ\"],0]",
+      "fingerprint": "cf896b69d762f48b8b8176b059f1ddd2b608495f201849b74dc720bb0e2a4824",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/public.spec.ts\",[\"セッション公開卓\",\"検索結果の件数が表示される\"],0]",
+      "fingerprint": "bdf84dc0a1b87c46a5469a2453d94aef08d97f24d7d79d47d09296d31e81de2c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"URLパラメータ ?tab=public でタブが復元される\"],0]",
+      "fingerprint": "c20f0b54d1d229d8a47d5e78ede43dd086577c9614f476ae393c5ac8d3afef93",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"「公開卓を探す」タブでURLにtab=publicが含まれる\"],0]",
+      "fingerprint": "654a693ab7ff59727fe8aae503cec25df380114ee4b5c796027fba0b88756ec5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"未認証時「参加予定」タブでLoginPromptが表示される\"],0]",
+      "fingerprint": "1ca693e52db7ace320a2129adcee531d094807dc74ba9bc3da3632149d7c90b5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/sessions/tabs.spec.ts\",[\"セッション タブナビゲーション\",\"未認証時「参加履歴」タブでLoginPromptが表示される\"],0]",
+      "fingerprint": "21a5064c8eca206f5be4e1ad4f69a490d2de225fd5ab82706de61c34f95f0afd",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"シナリオ一覧ページにa11y違反がない\"],0]",
+      "fingerprint": "187d47afc25611936ec69e56be7bedd6ecc8af80eac7a2ff78e4300bbee8eae8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"シナリオ詳細ページにa11y違反がない\"],0]",
+      "fingerprint": "7ad255d99905e759cd5c1c239c9426492f41f28845cd2369b89fd76ffcb3b0e3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"セッション一覧ページにa11y違反がない\"],0]",
+      "fingerprint": "b67aaa9c8648ab4d415ffdfe4e6dd0c8dcdec34fa22c9df2da735b387fab886e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"アクセシビリティ\",\"ランディングページにa11y違反がない\"],0]",
+      "fingerprint": "1fe87bb3f0e9ea7760e876ac129cba8a36233837af22ba0fc065f870171d341d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"スモークテスト\",\"サービスについてのページに権利表記を表示する\"],0]",
+      "fingerprint": "1d7f31bc764579374d6ba944b427b62916c4c9b158db86cdbaeb67f2df01acf1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"スモークテスト\",\"シナリオ一覧ページが表示される\"],0]",
+      "fingerprint": "ed9ba7061d537a7b2becd63074af1d1e84fbd605c804517900ef889fa5836acc",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome\",\"e2e/smoke.spec.ts\",[\"スモークテスト\",\"ランディングページが表示される\"],0]",
+      "fingerprint": "a13268e2f980f88790901311507796d519a014bcf78e38b05ff3bdf0c2bbb42a",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック一覧の投票\",\"一覧で投票→取り消ししてもカウントが負にならない\"],0]",
+      "fingerprint": "c808bad1bcd432f567f48b08a3d6021e9da1fa3b985c8ed841733ce974d7a420",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック一覧の投票\",\"一覧カードに投票ボタンが表示される\"],0]",
+      "fingerprint": "0b925a5c3fbe8cf11dd8cd73344e4f020c68b3eedc8630a740315cd6015001a0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票→取り消しで元の数に戻る\"],0]",
+      "fingerprint": "5e5015e8a68c36908d3b05a12a0981c849e9a018ea9c1238c394967bbf238720",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票するとaria-pressedが切り替わる\"],0]",
+      "fingerprint": "d63ec54270364202b92139d81e2232dc91bc04e9639f2409b40655e038a017d4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票後にページリロードしても状態が保持される\"],0]",
+      "fingerprint": "4bba52041db93c84db59e1dc3d4e8cf7b50d7f029b08ee5ce822459fe6b4f5fc",
+      "disposition": "existing-fixme",
+      "reason": "既存test.fixme。共有フィードバックの投票状態競合により保留中。隔離fixtureでのcase移行と検証後に解除する。",
+      "expectedAnnotation": {
+        "type": "fixme"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック投票\",\"投票数が負にならない\"],0]",
+      "fingerprint": "7265cb9fa65073f959e82593305619544caefcb7ab376515b2bd96d4b02a29b0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "31f7fde94a053c1d3f09d8b7efa7610108b87bf63b50183e6dac0fca0a531b48",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"コメント入力フォームが表示される\"],0]",
+      "fingerprint": "d81803a2b522c1cc2729d307b1a9d71c41c6309322b1ccb87c97d9434cce9aea",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"タイトルが表示される\"],0]",
+      "fingerprint": "6a735fd0168e1e087bcf3b757fd6a6a6d57e25f06d2eec37e14e46b4dff21461",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"戻るボタンが表示される\"],0]",
+      "fingerprint": "ddab51e95a47b1faec37e4497d95cde3b337f1f86737f55d01efe51f679f825d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"戻るボタンで一覧に戻れる\"],0]",
+      "fingerprint": "cb370e0c07adbf132bcd94e444bbbf8733568916034e6d02cb9bf830fbd203c0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"投票ボタンが表示される\"],0]",
+      "fingerprint": "30e4af9a1cefb9fb3495e66cdaf855f95d1fd6ee95ba60710397f42f532d2da5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback-detail.spec.ts\",[\"フィードバック詳細\",\"投票数が0以上の数値で表示される\"],0]",
+      "fingerprint": "b17b1b54b27565d0f14963bda25e90aa451d9be898aa3e4bd814908a5926328a",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "f7e94732644239e1f71421e08192335d1aabb63fd74015ca07c2eb062785bb50",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"カードをクリックすると詳細ページに遷移する\"],0]",
+      "fingerprint": "6cf44ddf5a83b0a93218670d33aa43562ba52d8da4bc7ba7a124dcaa981b66c9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"フィードバックカードが表示される\"],0]",
+      "fingerprint": "02291364d412bed6d2ef443a32a7aab0e22b516a976a8dabe02b9cd3970ee99f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"フィードバック件数が表示される\"],0]",
+      "fingerprint": "2c7af6c809bb4e31ae6d987f2b0adb11ecd2feaadfcc0ba6ca6266ac3fb12e32",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"ページヘッダーが表示される\"],0]",
+      "fingerprint": "f77b7cccd6485e06c9987695927676e21e1f5ca23bfe071800d1d261762a4e91",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"新規投稿ボタンが表示される\"],0]",
+      "fingerprint": "a91cf013a020fdc0f674910d971a685b627fb9f26d2ab61aefbfe93b4de591a4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/feedback.spec.ts\",[\"フィードバック一覧\",\"検索入力が表示される\"],0]",
+      "fingerprint": "1962109e254afee13217113e79801eb986e4e2c51a0373d9eaa164529a8c00d1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"「すべて見る」リンクがセッション一覧に遷移する\"],0]",
+      "fingerprint": "a536346e44cd3250630d21a4801d8295cb69d4a1903296f8d5061539fc8594b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"「参加予定のセッション」セクションが表示される\"],0]",
+      "fingerprint": "bb9cc7cef3ff3463654e45b74a288cd8c8fc2e7cc6860995055014302f6ab38d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"「新着シナリオ」セクションが表示される\"],0]",
+      "fingerprint": "0500dc0f0a20714c2faec7d556dc53960355a56aa2c98e68bd5a24a657ccfcd4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "f2c3171fcf58190d102e938fb0c9272ebc65843ea6163638230a93bc718d9682",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"ウェルカムメッセージが表示される\"],0]",
+      "fingerprint": "8655360c24bd89e6438f72722cb64aada98f082936f4068fed226b2101250563",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/home.spec.ts\",[\"ホームダッシュボード\",\"ページが表示される\"],0]",
+      "fingerprint": "36827f8ea85fbe841059e43b80d3955b14c206f96014315a062909f3bf275c79",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"URL入力フィールドが表示される\"],0]",
+      "fingerprint": "4bd09ffab386c0b3719d43bc664fafaf0649f1c464c3b2df4a38ed27446fdce8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "cd99803c9f0ed3a30c3a7b3fefead3e51df8f75d9721c6598991af83edd793f9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"ページタイトルが正しい\"],0]",
+      "fingerprint": "a7d0b257f39f97a16684d5a47858c049bafd1fbb344d691c5f3ecef17a2dd4a9",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"ページヘッダーが表示される\"],0]",
+      "fingerprint": "93f42c5895789700dc356a3f4f28c729f000ca97afbf3874941cdb8b6f24b245",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"不正なURL形式の場合、ブラウザバリデーションが発火する\"],0]",
+      "fingerprint": "2afe94a22b92f1f6edd43793e201fb158834a6d0c23d51ddcfe69bff9282b0fb",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"取り込むボタンが表示される\"],0]",
+      "fingerprint": "839c9290d4c3a56f21796ced7f74d8970dcc9a20b34418c61c772b852f6cbf85",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"対応サイト情報が表示される\"],0]",
+      "fingerprint": "de17cb7a9c74eca1fc5b1192adc84bc81cc47184598249adcaca3779dbbbeba8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"手動入力リンクが表示される\"],0]",
+      "fingerprint": "dd384e4f9c488a50e8987400459a0aad913bce6131dd3b9c12607a5dfa362f4e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"手動入力リンクをクリックすると /scenarios/new に遷移する\"],0]",
+      "fingerprint": "00c0f39853b1806beae5f453d0d8e8437ab39d0debe4774e11b3179726438432",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 1: ページ構造・バリデーション\",\"空URLを送信するとエラーが表示される\"],0]",
+      "fingerprint": "4143135434b7d8347c93098db85cb16251188667193e73a116ed7debe084fada",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"Booth URL解析後にフォームが表示される\"],0]",
+      "fingerprint": "d22f5b088c211ce93bc39116a995a39205f495124467ba9aac08ed1a8a3ea4f6",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"TALTO URL解析後にフォームが表示される\"],0]",
+      "fingerprint": "1d555fc66548c8b0a944419b3c0364557b5903d743c24bbeb3b6888a0d113cda",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"TALTO解析後にプレイ人数・時間が表示される\"],0]",
+      "fingerprint": "8d9c5c8dbbc8a32abf7bda73d64fbbd6409a51285bc7e01b0427e9196a0776b4",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"戻るボタンでURL入力ステップに戻れる\"],0]",
+      "fingerprint": "3383e3f6515282b149e4b9f84cf56ce4183feb9ce1d93930a531e0fee27b123a",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"登録済みURLを送信するとエラーが表示される\"],0]",
+      "fingerprint": "663d60b5fafc61871d898eccd8a6debf2d4d8e065066aab6a2295c3bc5982a6c",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 2: URL解析フロー\",\"高信頼度フィールドにreadOnly属性が付与されている\"],0]",
+      "fingerprint": "c4762672b3c7d29f9af687403e5ecba5491c542f69b0a5d7449e6448809d6063",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 2のlive import経路。E2E_LIVE_IMPORTと外部URLを必要とするためlocal互換では実行しない。登録済みURLの重複検査も、local fixtureへの明示移行まではこの経路として保留する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"クエリなしでアクセスすると通常のURL入力フローが表示される\"],0]",
+      "fingerprint": "a484977420d62639484fe3bb56f2f26a31a3573715dafdaec678161eb36cb3da",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"対応外ドメインのURLクエリでエラーが表示される\"],0]",
+      "fingerprint": "2a9c2509f7d3365c2cc92fb034f366a2a6e7dedd1728d5b01ba90332d972d30c",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"有効なBooth URLクエリで自動解析→フォーム表示される\"],0]",
+      "fingerprint": "4e85c9659a054b6a2e34a8b746688f466b80ba6e49462e786ef8f60804a78324",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 3はE2E_TEST_BOOTH_URLだけで外部Booth自動解析を開始する。E2E_LIVE_IMPORT未設定でも通信するためlocal互換では実行しない。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/import.spec.ts\",[\"インポートページ - Tier 3: URLクエリパラメータ自動解析\",\"無効なURLクエリで自動解析→エラーバナー + URL入力済み\"],0]",
+      "fingerprint": "bccd9c2a3961f42e29c86aac2cf7938e3c65139e5c487280a180faf19cea775c",
+      "disposition": "deferred-live",
+      "reason": "既存Tier 3が環境変数なしで固定Booth URL（items/99999999999）をServer Actionで解析するため、local互換では実行しない。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/navigation.spec.ts\",[\"認証済みナビゲーション\",\"アバタークリックでプロフィールに遷移する\"],0]",
+      "fingerprint": "6ea76a33c28feaaba4900daa4782931035d5000945755148fd752cc1f80e6bb2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/navigation.spec.ts\",[\"認証済みナビゲーション\",\"プロフィールアバターが表示される\"],0]",
+      "fingerprint": "a974755a1a64cacd8625f0203c18e2281a11050cea773b9574c2359740e0c430",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/navigation.spec.ts\",[\"認証済みナビゲーション\",\"ログインボタンの代わりにアバターが表示される\"],0]",
+      "fingerprint": "ce50dd7f62eb0cd6132dedf1c07109c91296b87602a80856034e06ce8d31b6b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile-edit.spec.ts\",[\"プロフィール編集\",\"空のユーザーIDで送信するとバリデーションエラー\"],0]",
+      "fingerprint": "7da18e06c3f0147dcdc5044616e06cf7f3314256a6d995ecc6d9f368b5044895",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile-edit.spec.ts\",[\"プロフィール編集\",\"表示名を変更して送信すると成功メッセージが表示される\"],0]",
+      "fingerprint": "2d3a44a8d03548d6b4d47cbd790633676602e30912fb70a9c924bcdd13d9618e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"「公開プロフィールを見る」リンクが存在する\"],0]",
+      "fingerprint": "573421291c7ebbb0f3312a134b0221feffc8c14d0b383656f37acd44c08ce6e7",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "d2308c77e032818bf88b4fcb535d28f75920a5e015f849da5daae75d05bd45be",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"フォームフィールドが表示される\"],0]",
+      "fingerprint": "f2905bf533d9a2f1a5b22f8219fc32e69b76f589f809f87f42af9b48802fb9fe",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"プロフィール設定ページが表示される\"],0]",
+      "fingerprint": "992ee887e494669869e8d5c43c48f87fc06075c209a085199f33124e8e66b7fd",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"公開プロフィールに遷移できる\"],0]",
+      "fingerprint": "694305d35f3b1e94f25abba2e2cfe93e8ddb8ed0ff741566cd1d91f24eea3a6e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/profile.spec.ts\",[\"プロフィール設定\",\"現在のプロフィール情報がプリセットされている\"],0]",
+      "fingerprint": "307ba5d17c12484434af533de5273845ca82237f1d711d7b994cad92410395f0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+      "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニューを開くとメニュー項目が表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-open",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューボタンが表示される\"],0]",
+      "fingerprint": "9245dcd8d5c53bd29d0df19dd49c46547a226eb626101857da9f1d233b6d48d0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+      "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/scenario-detail-actions.spec.ts",
+          "titlePath": [
+            "シナリオ詳細 認証済みアクション",
+            "FABメニュー外クリックでメニューが閉じる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+          "profile": "app",
+          "fingerprint": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-fab-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"お気に入りボタンが表示される\"],0]",
+      "fingerprint": "e4e4cfa959866c84f89e511ce4cd5fb645d05302673c7a309027872bcce044c5",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"アクセシビリティ違反がない\"],0]",
+      "fingerprint": "c2d4f02e4504dbc8b60cf41bbe1b4f7e97fa9a7ab8eed5b5802fca6300e2a556",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"現在のシナリオでセッションを作成できる導線がある\"],0]",
+      "fingerprint": "2b7588c81cbedc5fa9258d81c350fba320348e240f77d4438cf1511f5f7d09c3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力するとインポート誘導バナーが表示される\"],0]",
+      "fingerprint": "5fe60b6e689b33574dcdc1dc71c38950c5da1e1f70ef9b03d58e8b3026c71d0d",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
+      "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"TALTO URLを入力するとインポート誘導バナーが表示される\"],0]",
+      "fingerprint": "552865bf8c0e62e817c21d41d0d406366de0d8673a63201d92c211ba1a9f0d0e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"バナーの「インポートへ移動」リンクが正しいURLに遷移する\"],0]",
+      "fingerprint": "4eb73fc872f258d8bb02cacd0da09a9d00dcbaeeeb49837344879e0ea312dc91",
+      "disposition": "deferred-live",
+      "reason": "固定Booth URL（items/12345）付きimport画面への遷移により、URL確認中でもmount時のServer Action自動解析が始まり得るためlocal互換では実行しない。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"空の状態ではバナーは表示されない\"],0]",
+      "fingerprint": "101b88dcea23002b6f3a66b6d9dc9b8ecb7647473eb720f2e01f7d892184adad",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"非対応URLを入力してもバナーは表示されない\"],0]",
+      "fingerprint": "784619a3660c549ed7089738e4b18bc6385b59951639a442a4b5d378e00d6c5f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"セッション名が空で送信するとバリデーションエラー\"],0]",
+      "fingerprint": "332acf4840c7242b8d5616f6d6771a81026299a970d80fa5b73026c9305b3119",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
+      "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "作成後にセッション詳細ページが表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"作成後にセッション詳細ページが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "3a5b2c9d4158b0fd8c7877da1236c801f71701c1fe244fd5c104d22b5edb20b6",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-created-detail",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"募集文が空で送信するとバリデーションエラー\"],0]",
+      "fingerprint": "0f6dc3214ce67f0adb9369b89416793a70f1840a55b430ba72de0f255851613b",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
+      "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-create.spec.ts",
+          "titlePath": [
+            "セッション作成",
+            "最小入力で作成するとリダイレクトされる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-create.spec.ts\",[\"セッション作成\",\"最小入力で作成するとリダイレクトされる\"],0]",
+          "profile": "app",
+          "fingerprint": "39badcbc420edb1980c6efc7e206ca3d022b31ac4c48a20dd124f4d8c5facb2a",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-create-redirect",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"アクセシビリティ\",\"セッション詳細ページのa11y違反がない\"],0]",
+      "fingerprint": "1a9f689fe7764d08619619adc8eb123221e820411db790c082cb820ad699c836",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+      "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "サブページへの遷移",
+            "日程調整ページに遷移できる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+          "profile": "app",
+          "fingerprint": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-schedule-navigation",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"申請管理ページに遷移できる\"],0]",
+      "fingerprint": "f43b4c796a2df288927ced4911ee0021675ced6547df4b0bd6c11fedb468b2fe",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション作成 → 詳細ページ\",\"セッションを作成して詳細ページに遷移する\"],0]",
+      "fingerprint": "9c8d555a46318bba800abe0ff322870f2160ab0c48666a78fab265cb9f3b81c6",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"GMメモセクションが表示される\"],0]",
+      "fingerprint": "a8e4629a36a16f79ae23c378c08ef95a9ecfd53bfd2ed919a475bf733a9125f4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"GM用の編集ボタンが表示される\"],0]",
+      "fingerprint": "5d3cf10eb49942884c14f149c7de9ed648782b65e9713c55d799b473865dc41a",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"セッション名がタイトルに表示される\"],0]",
+      "fingerprint": "9c03400ba0ce582c9e423d1e705bc1df6972a1c04f9c973e9b7a5f80fc5a1ca2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+      "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "タイムラインにセッション作成イベントがある"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"タイムラインにセッション作成イベントがある\"],0]",
+          "profile": "app",
+          "fingerprint": "ebc97cd30068f08f7679ed95db55d76a618aee14a761972a4a85e75865e79a0d",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-timeline-created",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+      "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "募集中フェーズでGM用アクションが表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-gm-actions",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"参加者セクションが表示される\"],0]",
+      "fingerprint": "3fc9bacdf312a68ee2a20331df1a80cbea442431acae6c1bb7381593bee50677",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+      "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "セッション詳細ページ（GMビュー）",
+            "基本情報セクションが表示される"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"基本情報セクションが表示される\"],0]",
+          "profile": "app",
+          "fingerprint": "330e4a12f0264044d0b832741b3d69d7d5c611654e02605ca040b883af2f96ed",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-basic-info",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"戻るリンクが機能する\"],0]",
+      "fingerprint": "377510b062ff397629f3f282af3158c91227e75419eb0e9bb06a6af89268f65b",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+      "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+      "disposition": "replacement",
+      "reason": "現行UIに合わせて要素指定または作成後URL検査を修正し、case ID付きの通常登録へ移行する。実行義務と元の確認対象を維持する。",
+      "origin": {
+        "revision": "933c68933c82578e54019f5ca924fbaafcd8c08b",
+        "registration": {
+          "file": "e2e/auth/session-flow.spec.ts",
+          "titlePath": [
+            "セッションフロー",
+            "ダイアログ操作",
+            "キャンセルダイアログが開閉できる"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+          "profile": "app",
+          "fingerprint": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-session-cancel-dismiss",
+        "variant": "default",
+        "binding": "main"
+      }
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「キャンセル」がメニュー内に表示される\"],0]",
+      "fingerprint": "49f6cbba20ff4923454b62aedae5a0879aa79823ae7c78b2902d839b1220e445",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「募集を締める」ボタンが表示される\"],0]",
+      "fingerprint": "2c418d56557fa78da1c245509e482eeba8c065e3a955a223e02a1043a88aef42",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"「申請管理」「スケジュールを提出」が利用可能\"],0]",
+      "fingerprint": "173792858ebf3cccd128f3c8bb775b80c2e7e38adc755582c7b9997a220afc21",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"RECRUITING フェーズ\",\"フェーズステッパーに「募集中」が表示される\"],0]",
+      "fingerprint": "0e34b3d9f00186a2425fdfc971b02cd3d3581af5e865cc6d1cd5c3886d3ecfac",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"キャンセル操作\",\"セッションをキャンセルできる\"],0]",
+      "fingerprint": "53e847b6c3f196c3d10125d24007aff5e384b8cee3a42dec0e721bb8546bd58e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"スケジュール提出\",\"スケジュールを追加して保存できる\"],0]",
+      "fingerprint": "6dc2c5e0b26b8084dc9f2dd357808cfbc35a6f79cc3c12852a5c1517367328d8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"募集締切（RECRUITING → PREPARATION）\",\"募集を締めるとPREPARATIONフェーズに遷移する\"],0]",
+      "fingerprint": "a109bdb43a0f2acceb86090246cbcb14f5efd1d9c67c934c38e64ea669e9cfcd",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"日程確定（PREPARATION フェーズ）\",\"おすすめ候補を選択して日程を確定できる\"],0]",
+      "fingerprint": "3f548e1d9ec53b06457a97841c3999d12ed4ff35ed4819849c0270c5b11da98f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"日程確定（PREPARATION フェーズ）\",\"日程確定ページにアクセスできる\"],0]",
+      "fingerprint": "bd5d55d58d9143a75d60816c4a9fb0313c69f2f703994c9237d0cdd39cbc2d8e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-lifecycle.spec.ts\",[\"セッションライフサイクル\",\"日程確定（PREPARATION フェーズ）\",\"日程確定ページの構造が正しい\"],0]",
+      "fingerprint": "a5af24e795f63ec1e9d894c2fb0b17d1df15104302de29fbb28dec96718a0d33",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"a11y違反がない\"],0]",
+      "fingerprint": "c745629d1eb22a4f83426d4e548f08e9d0a32262706c271067a0bf398b56e070",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"ページタイトルが表示される\"],0]",
+      "fingerprint": "44022ade2f28dc8c131d26c1d8f5efb3529e2802bf5ab72e7e47fe0c5e069764",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"保存すると成功メッセージが表示される\"],0]",
+      "fingerprint": "575efc3a31b62151d87f3cfec8af955105241198ecad47f663c482d213ae1f7e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"保存後リロードするとスケジュールが表示されている\"],0]",
+      "fingerprint": "fbb2cac44409d87591a6a15a35ce7961ef178cce7c731d63b9599b5610b6540f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"時間帯を追加すると件数が更新される\"],0]",
+      "fingerprint": "201cf6cafc29aa8bdebfdbdfaf77cf26584c323683c0a514e9300d12055fb182",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"空状態メッセージが表示される\"],0]",
+      "fingerprint": "833d08962c305017d2aceb3f293e8ed36221474c0e13e055f55658b9a4273ef2",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"スケジュール提出ページ\",\"追加フォームが表示される\"],0]",
+      "fingerprint": "be928fb19b4999fbb39c27747d6ebacd2591a8ffa1f1eb7fa3fc60de34cb8a20",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"日程確定ページ\",\"RECRUITINGフェーズでアクセスするとリダイレクトされる\"],0]",
+      "fingerprint": "212017d8865c23782430875304c46395a7cb0129439c9c7b0d89131b99ca9696",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"GM（セッション作成者）が自動参加者として表示される\"],0]",
+      "fingerprint": "cc50cb8634f7edea9a89d54a8ec8eee712884a643063ef08e90f647080ea12e0",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"a11y違反がない\"],0]",
+      "fingerprint": "e303ace3468cde1342fa38573dd4c9154ff40d75366ad24cbd9d98ad2ab6b41e",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"ステータスフィルターに3つの選択肢がある\"],0]",
+      "fingerprint": "5bc6d6dcd3df24712445bef5fcb6cb17fefab4264715a5caabd8a98dc8e2f019",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"フィルターは初期状態で「すべて」\"],0]",
+      "fingerprint": "65ca963ebddd4b20796f8b590a0f82332d3b6b59fe511307396c94a60a5cfc29",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"フィルター切り替えが動作する\"],0]",
+      "fingerprint": "7a0fba96e2cc010b1fbbb5ce5ac4830bf65cffcf87741b411ead93d17304a3b1",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-subpages.spec.ts\",[\"申請管理ページ\",\"ページタイトルが表示される\"],0]",
+      "fingerprint": "8098a33bb3c05039673b6d41532d016bfa27cfb43298c99fcfdbfe829133faf4",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加予定」タブがクリック可能\"],0]",
+      "fingerprint": "befbc7aca730fe31dfcebacffeb5e3b8b00819028deef4ceff52872f7edb32f3",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加予定」タブでソートが変更可能\"],0]",
+      "fingerprint": "3406b8b641cc66473832f951c092ebfcc3b5f895f8c89ee9f6c2b417ee1ca2ad",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加予定」タブ切替でコンテンツが表示される\"],0]",
+      "fingerprint": "26cecb473feafa7d4c055e31cda732e6b330db2be7b7fd159e1a5eacd766ab60",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"「参加履歴」タブ切替でコンテンツが表示される\"],0]",
+      "fingerprint": "07624acb281bb51b24cc665127749f98d35f612c1fc6b1fe812cfc65a3069f7f",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"セッション作成に必須フィールドが存在する\"],0]",
+      "fingerprint": "555660533163a00bfd5717ea62251930a61a5d4d8988d9d0f73eae28d94f4d89",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"セッション作成ページが表示される\"],0]",
+      "fingerprint": "ee865e70571d2075f57e86526584262aeed49dbce3a8588a4edb20c58f3154a8",
+      "disposition": "local"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/sessions.spec.ts\",[\"セッション認証済み機能\",\"セッション作成ページのa11y違反がない\"],0]",
+      "fingerprint": "b2bea2ba6c70ca268895c86d099e5d7160e1de87acf4101148d598f235f494f7",
+      "disposition": "local"
+    }
+  ]
+}

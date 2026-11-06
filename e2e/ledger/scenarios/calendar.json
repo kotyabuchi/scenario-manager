@@ -1,0 +1,128 @@
+[
+  {
+    "scenarioId": "schedule-calendar",
+    "title": "カレンダー取得の既存DBテストを独立した実証へ移行",
+    "cases": [
+      {
+        "caseId": "schedule-calendar-missing-user",
+        "title": "存在しない利用者の確定・未確定日程が空である",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/adapter.ts#getCalendarSessions",
+            "aspect": "response",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-calendar-user-sessions",
+        "title": "本人の確定済み日程だけが既知IDで返る",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/adapter.ts#getCalendarSessions",
+            "aspect": "response",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-calendar-summary",
+        "title": "確定済み日程の表示情報と参加役割が一致する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/adapter.ts#getCalendarSessions",
+            "aspect": "response",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-calendar-unconfirmed",
+        "title": "未確定日程が既知IDと表示情報で返る",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/adapter.ts#getCalendarSessions",
+            "aspect": "response",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      }
+    ]
+  }
+]

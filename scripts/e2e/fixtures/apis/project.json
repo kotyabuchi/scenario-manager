@@ -1,0 +1,8 @@
+{
+  "src/lib/handlers.ts": "export async function read() {}\nexport function write() {}\n",
+  "src/lib/httpStar.ts": "export const PATCH = async () => true;\nexport const dynamic = 'force-dynamic';\n",
+  "src/app/(auth)/auth/callback/route.ts": "export { read as GET } from '@/lib/handlers';\nexport const runtime = 'nodejs';\nexport const dynamic = 'force-dynamic';\nexport interface ResponseType { value: string }\n",
+  "src/app/api/examples/[id]/route.ts": "import { write } from '@/lib/handlers';\nconst local = write;\nexport { local as POST };\nexport async function GET() {}\nexport * from '@/lib/httpStar';\nexport type { read as DELETE } from '@/lib/handlers';\n",
+  "src/lib/notARoute.ts": "export async function GET() {}\n",
+  "src/app/_private/route.ts": "export async function GET() {}\n"
+}

@@ -1,0 +1,467 @@
+[
+  {
+    "scenarioId": "schedule-confirmation",
+    "title": "日程確定・再編集と権限境界",
+    "cases": [
+      {
+        "caseId": "schedule-confirm-persist",
+        "title": "兼任しない主催者とGM/KPが複数枠を確定・全置換し、別参加者が再表示する",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "schedule",
+        "roles": ["operator", "observer"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/page.tsx#ScheduleConfirmPage/confirmTimeBlocksServerAction",
+            "aspect": "persist",
+            "layer": "browser"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "persist",
+            "layer": "browser"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "authorization",
+            "layer": "browser"
+          },
+          {
+            "target": "page:src/app/(main)/sessions/[id]/page.tsx",
+            "aspect": "render",
+            "layer": "browser"
+          },
+          {
+            "target": "surface:72ea6bb31d6f6217115d0b0155f0f981cc1f65f107ccc506680006b1cf821be1",
+            "aspect": "render",
+            "layer": "browser"
+          },
+          {
+            "target": "surface:c95c305f994a06411b0ccbb6fa309364fd4b0cc9a85a285f9bde619fd093c94c",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "observer",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-action-allow",
+        "title": "独立した主催者とGMの実JWTをNext cookie境界で認証し、Actionから複数枠を保存する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "persist",
+            "layer": "integration"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-action-deny",
+        "title": "匿名・部外者・準備中以外のAction呼出を拒否して旧状態を保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "phase-recruiting",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-action-invalid",
+        "title": "空枠・逆転・30分境界外・重複を拒否して旧状態を保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+            "aspect": "validation",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "empty",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "reversed",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "off-grid",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "overlap",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-rpc-allow",
+        "title": "主催者とGM/KPの利用者JWTでRPC全置換を独立に許可する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "rpc:replace_confirmed_schedule_time_blocks",
+            "aspect": "persist",
+            "layer": "integration"
+          },
+          {
+            "target": "rpc:replace_confirmed_schedule_time_blocks",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-only",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-rpc-deny",
+        "title": "RPC直接呼出の匿名・部外者・actor申告不一致を拒否する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator", "claimed-actor"],
+        "checks": [
+          {
+            "target": "rpc:replace_confirmed_schedule_time_blocks",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              },
+              {
+                "role": "claimed-actor",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              },
+              {
+                "role": "claimed-actor",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "actor-mismatch",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              },
+              {
+                "role": "claimed-actor",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-rpc-atomic",
+        "title": "RPCの途中失敗で旧枠とセッション状態の両方を保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "rpc:replace_confirmed_schedule_time_blocks",
+            "aspect": "atomicity",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "creator-atomic-failure",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "keeper-atomic-failure",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "keeper-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "schedule-save-error",
+        "title": "保存モック失敗を通知してロールバック後の選択状態を保持する",
+        "status": "implemented",
+        "layer": "storybook",
+        "fixture": "schedule",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/sessions/[id]/schedule/availability/_components/ConfirmAvailabilityWorkspace.tsx#ConfirmAvailabilityWorkspace",
+            "aspect": "error-feedback",
+            "layer": "storybook"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "storybook",
+            "project": "",
+            "runtime": "storybook",
+            "variant": "save-error",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      }
+    ]
+  }
+]

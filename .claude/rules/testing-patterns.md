@@ -7,19 +7,26 @@ E2E（Playwright）と UT（Vitest）を**グリーンに保つ**ための、こ
 
 ---
 
-## 1. E2E 実行・ポート運用
+## 1. 共通品質ゲートと実行範囲
 
-| コマンド | 用途 | サーバー |
-|---------|------|---------|
-| `pnpm test:e2e` | 正規・決定論的（CI相当） | `next build && next start -p 3100`（本番ビルド） |
-| `pnpm test:e2e:dev` | 高速反復・デバッグ | 既存 `pnpm dev`(3000) を再利用（`E2E_REUSE=1`） |
-| `pnpm test:e2e:ui` / `:headed` | 対話デバッグ | dev 再利用 |
+PR前の標準入口は `pnpm quality:changed --base <比較元ref>`。readonly lint → 型 → pure/unit/tools → 全体の静的台帳検査 → 関連runner → 保存receipt再照合の順で実行する。比較元・HEAD・index・working bytesを固定し、途中変更は失敗にする。検査前の整形には `pnpm check`、検査自体には変更しない `check:ci` を使う。
 
-- **E2E 専用ポートは 3100**（dev の 3000 と分離）。`pnpm dev` を立てたまま `pnpm test:e2e` を回せる。
-- **`pnpm dev` は 3000 固定**。使用中なら `predev`（`scripts/check-port.mjs`）が**即失敗**する（3001 へ勝手にフォールバックさせない）。ポートが詰まったら `netstat -ano | findstr :3000` → `taskkill /PID <PID> /F`。
-- 起動前に `kill-port 3100 9323`（`pretest:e2e`）。HTMLレポーターは `open: 'never'`（9323 自動起動でハングさせない。閲覧は `pnpm exec playwright show-report`）。
-- **CI とローカルは同じ本番ビルド起動**に統一済み。「ローカルで通れば CI でも通る」。dev サーバー流用はコンパイル遅延・HMR で**フレークの温床**なのでデバッグ時のみ。
-- 検証後は残留プロセス（next-server / chromium）が無いか確認。詳細は `agent-strategy.md`。
+| コマンド | 用途 |
+|---------|------|
+| `pnpm quality:changed --base HEAD` | 作業中の変更を検査。既定は部分実行と全件shadowの比較も行う |
+| `pnpm quality:changed --base <ref> --all` | 共通品質前段と全required・全legacy-local |
+| `pnpm quality:changed --base <ref> --no-shadow` | 関連実行のみ。全件比較なしと記録し、全体保証と扱わない |
+| `pnpm e2e:ledger:check --base <ref>` | 抽出・台帳・全登録・不足baselineの静的整合 |
+| `pnpm e2e:verify:all` | runtime単独の全件検証。lint/型/静的M1の代替ではない |
+| `pnpm test:unit` / `pnpm test:e2e-tools` | DB不要のunit / 抽出・台帳・runner基盤の回帰 |
+| `pnpm e2e:ledger:staged` | index上の台帳schema・ID・参照だけを検査 |
+
+- ownerが専用local SupabaseとNext productionを起動する。Next 23100、Supabase 27321/27322（shadow 27320）、Storybook 6007（`e2e/isolatedRuntime.ts`で一元管理）を使い、既存プロセスを流用・killしない。終了後は所有runのprocess/container/network/volume/lockと認証情報を回収する。復旧は `docs/testing/e2e-environment.md` を参照。
+- `test:e2e` / `test:e2e:dev` / `:ui` / `:headed` は旧設定の個別調査用であり、品質ゲートの成功証拠にしない。共通ゲートに共有cloud key/email/passwordを渡さない。
+- `test-results/quality/changed.json` は最新品質サマリー。照合にはunique ID配下のplan/receipt/inputs-start/inputs-endを使い、latestの成功を流用しない。
+- skip/fixme/xfail/retry後成功/中断/登録不足/cleanup不足は必須caseの成功にしない。legacyの既存例外は明示目録の一致だけを確認し、requiredの成功件数に混ぜない。deferred-liveと旧integrationは未実行として残す。
+- docs-onlyは独立NoOp証明が成立した場合だけ許す。unknownな変更や未解決の依存は全requiredへ戻し、未検証領域の存在を表示する。
+- hookの台帳検査はindexのJSONだけが対象。未stageのtestやTS型検査をcommit内容の証明にしない。通常の `git add` → `git commit` を使う。別indexを使うpath限定commitは明示的に拒否する。PR前とCIの全体ゲートは省略しない。
 
 ---
 
@@ -39,15 +46,14 @@ UIリデザインで**最も壊れるのがセレクタ**。次を守ると stal
 
 ---
 
-## 3. 共有DB起因のフレーク対策
+## 3. 専用DB・fixtureと検証の責務
 
-E2E は現状**共有のクラウド Supabase** に対して実行され、並列実行（4 workers）と相まってフレークが出やすい。
+品質ゲートはrun専用local Supabaseを空DBからmigration/seedで復元し、ULID・actor・対象行をfixtureのjournalで管理する。共有cloudの既存データを前提にしない。
 
-- **グローバルな集計値を厳密比較しない**: 投票数・件数などは他データ/並列実行で変動する。`toBe(initialCount + 1)` のような絶対値アサートは脆い。
-- **per-user な状態でアサートする**: 投票なら「自分が投票したか」= `aria-pressed`。ユーザー単位で決定論的。
-- **状態を変異させるテストは自己クリーンアップ**: 既存 `e2e/helpers/cleanup.ts`（`cleanupE2ESession`）+ `afterAll` を使い、変異を必ず元に戻す。クリーンアップ漏れは後続テストを汚染する。
-- **固定 `waitForTimeout` を避ける**: `await expect(locator).toHaveText(期待値)` 等で「サーバー反映（aria-live 更新）」を明示的に待つ。固定待ち→reload はコミット前リロードでフレークになる。
-- **真にデータ分離が要る場合のみ** Docker+seed（`supabase db reset`）を検討。現状 `feedback-detail` の「投票後リロード保持」のみ `test.fixme`（共有投票状態の競合）。将来タスクは PROGRESS 参照。
+- 更新テストは所有fixtureだけを操作し、失敗してもjournalとowner cleanupを実行する。他ユーザーや別runのデータを掃除しない。
+- 拒否・権限・原子性はintegration/DB側、画面の操作・エラー表示・再試行はStorybook/browser側で検証する。layerを増やしただけで業務assertionを実証したことにしない。
+- 固定 `waitForTimeout` を避け、期待するUI/DB状態を待つ。既存skipを減らす際は失敗原因と解消の根拠を記録し、例外目録を正規のmigrationで更新する。
+- 新caseはstable case/variant/binding IDと対象contractに結び、独立した反例で失敗するassertionをレビューする。成功件数、操作数、fingerprintの変化だけでは検証の質を判断しない。
 
 ---
 
@@ -73,6 +79,6 @@ E2E は現状**共有のクラウド Supabase** に対して実行され、並�
 
 ## 6. 進め方の原則
 
-- **インフラを作る前に実測する**: 「seed が要る」等の仮説は、まず `pnpm test:e2e` フル実行＋ `error-context.md` 精査でスコープを確定してから。今回「B=seedデータ依存」は誤診で、実体は staleセレクタだった（重い Docker+seed 構築を回避）。
+- **失敗を分類してから変更する**: 共通receiptのphase・required key・safe reportを確認し、実行不足、fixture不備、selectorのずれ、実装不具合を分ける。旧共有DBの成功で代替しない。
 - **失敗は `test-results/<test名>/error-context.md`（ARIAスナップショット）で原因分類**: 「データが無い」のか「セレクタがズレた」のか「実バグ」かを、スナップショット内の実要素で判別する。
 - **dev/prod 両モードで再現するか確認**: prod ビルド固有か切り分けるなら `pnpm test:e2e:dev` で同テストを回して比較する。

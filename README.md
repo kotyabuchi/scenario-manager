@@ -20,6 +20,34 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## テストと品質検査
+
+固定lockfileで `pnpm install --frozen-lockfile` を実行し、`pnpm prepare` でPandaCSSを生成する。
+
+| コマンド | 対象 |
+|---|---|
+| `pnpm check:ci` | 書き換えを行わないBiome検査 |
+| `pnpm typecheck` | TypeScript型検査 |
+| `pnpm test:unit` | DB不要のunit・DOM・componentテスト |
+| `pnpm test:e2e-tools` | 自動抽出・台帳など検査ツール自身のテスト |
+| `pnpm test:integration` | 専用ローカルDBを使う既存integrationテスト |
+
+`pnpm vitest` は `test:unit` と同じDB不要の設定を使う。従来混在していた11ファイルは
+`scripts/e2e/db-test-files.json` に列挙してintegrationへ移した。新しいDB依存テストもこの一覧へ登録する。
+テストファイルは設定読込時に全件分類し、通常の検査から実DBクライアントを使用すると明示的に失敗する。
+DBモジュールを完全にモックするpureテストは、同じ一覧の `mockedFiles` にパスと理由を記録する。
+この登録でも実SDKのclient生成は禁止されるため、テスト側に必要なモックを用意する。
+
+integrationは `.env` を自動読込せず、専用の `E2E_SUPABASE_URL`、`E2E_SUPABASE_ANON_KEY`、
+`E2E_SUPABASE_SERVICE_ROLE_KEY` が必要。接続先はloopbackのみを許可する。
+既存クラウドのキーや開発DBを流用せず、廃棄可能なテスト用環境を用意する。
+環境構築とfixture移行は実装計画のBatch 7以降で行い、それまでは未設定時の事前失敗が期待結果となる。
+既存integrationの早期return・環境依存skip等は一覧の `legacyRisks` に記録し、
+単なるrunner成功を台帳の検証済み証拠には使用しない。
+
+開発時は変更を整形してから `check:ci` → `typecheck` → `test:unit` → `test:e2e-tools` を実行する。
+DBに関係する変更では、専用環境を確認したうえで `test:integration` も実行する。
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

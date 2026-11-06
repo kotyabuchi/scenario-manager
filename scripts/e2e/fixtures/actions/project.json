@@ -1,0 +1,8 @@
+{
+  "src/lib/implementation.ts": "export async function base() { return true; }\nexport interface Data { value: string }\n",
+  "src/lib/star.ts": "export const starAction = async () => true;\nexport default async function omittedDefault() {}\n",
+  "src/lib/typeOnly.ts": "export async function typeOnlyFunction() {}\nexport type TypeOnly = string;\n",
+  "src/components/blocks/Shared/actions.ts": "'use server';\nimport { base as imported } from '@/lib/implementation';\nexport async function declared() {}\nexport const arrow = async () => true;\nconst alias = imported;\nexport { alias as renamed };\nexport { base as forwarded } from '@/lib/implementation';\nexport * from '@/lib/star';\nexport type { base as TypeAlias } from '@/lib/implementation';\nexport type * from '@/lib/typeOnly';\nexport { type Data } from '@/lib/implementation';\nexport interface LocalType { value: string }\nexport const both = async () => { 'use server'; };\n",
+  "src/app/inline/page.tsx": "import { declared } from '@/components/blocks/Shared/actions';\nexport default async function Page() {\n  async function confirm() { 'use strict'; 'use server'; return declared(); }\n  const arrow = async () => { 'use server'; };\n  function ordinary() { const text = 'use server'; }\n  if (true) { 'use server'; }\n  return null;\n}\n",
+  "src/lib/nonDirective.ts": "const text = 'use server';\n'use server';\nexport async function declared() {}\nexport const expression = async () => 'use server';\nexport async function late() { const value = 1; 'use server'; }\nexport async function template() { `use server`; }\n"
+}

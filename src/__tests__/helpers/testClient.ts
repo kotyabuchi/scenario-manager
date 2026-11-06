@@ -1,25 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
+import { assertIntegrationEnvironment } from '../../../scripts/e2e/integrationEnvironment';
+
 import type { Database } from '@/db/types';
 
 /**
- * テスト用Supabaseクライアント
+ * 専用ローカルDBのlegacy fixture用Supabaseクライアント。
  *
- * SUPABASE_SERVICE_ROLE_KEY があればRLSバイパス、なければ anon key を使用。
- * next/headers に依存しないため、Vitest環境で直接使用可能。
+ * service-roleによるRLSバイパスを維持する互換経路であり、認可の検証には使用しない。
+ * 既存アプリの認証情報やanon keyへはフォールバックしない。
  */
 export const getTestClient = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  const key = serviceRoleKey ?? anonKey;
-
-  if (!url || !key) {
-    throw new Error(
-      'テスト用Supabase接続情報が不足しています。.envを確認してください。',
-    );
-  }
-
-  return createClient<Database>(url, key);
+  const { url, serviceRoleKey } = assertIntegrationEnvironment(process.env);
+  return createClient<Database>(url, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 };

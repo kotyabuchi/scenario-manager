@@ -1,0 +1,44 @@
+[
+  {
+    "id": "app",
+    "layer": "browser",
+    "executions": [
+      { "project": "chromium-auth", "runtime": "next-production" },
+      { "project": "mobile-chrome-auth", "runtime": "next-production" }
+    ]
+  },
+  {
+    "id": "isolated",
+    "layer": "browser",
+    "executions": [
+      {
+        "project": "chromium",
+        "runtime": "next-production"
+      },
+      {
+        "project": "mobile-chrome",
+        "runtime": "next-production"
+      }
+    ]
+  },
+  {
+    "id": "storybook",
+    "layer": "storybook",
+    "executions": [
+      {
+        "project": "",
+        "runtime": "storybook"
+      }
+    ]
+  },
+  {
+    "id": "integration",
+    "layer": "integration",
+    "executions": [
+      {
+        "project": "integration",
+        "runtime": "vitest-node"
+      }
+    ]
+  }
+]

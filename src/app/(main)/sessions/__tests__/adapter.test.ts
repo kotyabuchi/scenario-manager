@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
   getAllSystems,
-  getCalendarSessions,
   getHistorySessions,
   getUpcomingSessions,
   searchPublicSessions,
@@ -384,77 +383,6 @@ describe('Session List Adapter', () => {
         'date_asc',
       );
       expect(ascResult.success).toBe(true);
-    });
-  });
-
-  describe('getCalendarSessions', () => {
-    // T-CS-001: 存在しないユーザーIDで空配列を返す
-    it('存在しないユーザーIDで空配列を返す', async () => {
-      const nonExistentUserId = 'non-existent-user-id-12345';
-      const year = 2026;
-      const month = 1;
-
-      const result = await getCalendarSessions(nonExistentUserId, year, month);
-
-      if (result.success) {
-        expect(result.data.sessions).toEqual([]);
-        expect(result.data.unscheduledSessions).toEqual([]);
-      } else {
-        // DB接続エラーの場合はテストをスキップ扱い
-        console.warn('DB接続エラー: テストをスキップ', result.error.message);
-        expect(true).toBe(true);
-      }
-    });
-
-    // T-CS-002: 存在するユーザーでカレンダーデータを取得できる
-    it('存在するユーザーでカレンダーデータを取得できる', async () => {
-      const year = 2026;
-      const month = 3; // スケジュールは3月に設定済み
-
-      const result = await getCalendarSessions(userId, year, month);
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data).toHaveProperty('sessions');
-        expect(result.data).toHaveProperty('unscheduledSessions');
-        expect(Array.isArray(result.data.sessions)).toBe(true);
-        expect(Array.isArray(result.data.unscheduledSessions)).toBe(true);
-      }
-    });
-
-    // T-CS-003: カレンダーセッションに必要な情報が含まれる
-    it('カレンダーセッションに必要な情報が含まれる', async () => {
-      const year = 2026;
-      const month = 3;
-
-      const result = await getCalendarSessions(userId, year, month);
-
-      expect(result.success).toBe(true);
-      if (result.success && result.data.sessions.length > 0) {
-        const session = result.data.sessions[0];
-        expect(session).toHaveProperty('gameSessionId');
-        expect(session).toHaveProperty('sessionName');
-        expect(session).toHaveProperty('scenarioName');
-        expect(session).toHaveProperty('scheduleDate');
-        expect(session).toHaveProperty('myRole');
-      }
-    });
-
-    // T-CS-004: 日程未確定セッションが別配列で返される
-    it('日程未確定セッションが別配列で返される', async () => {
-      const year = 2026;
-      const month = 3;
-
-      const result = await getCalendarSessions(userId, year, month);
-
-      expect(result.success).toBe(true);
-      if (result.success && result.data.unscheduledSessions.length > 0) {
-        const session = result.data.unscheduledSessions[0];
-        expect(session).toHaveProperty('gameSessionId');
-        expect(session).toHaveProperty('sessionName');
-        expect(session).toHaveProperty('scenarioName');
-        expect(session).toHaveProperty('myRole');
-      }
     });
   });
 });

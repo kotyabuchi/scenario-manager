@@ -1,13 +1,11 @@
 pre-commit:
   jobs:
-    - name: lint
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
-      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
-      stage_fixed: true
-      
-    - name: type-check
-      run: npx tsc --noEmit
-      fail_text: "TypeScriptの型チェックに失敗しました"
+    - name: staged-ledger
+      run: pnpm e2e:ledger:staged
+      fail_text: "ステージ済み台帳のスキーマ・ID・参照検査に失敗しました"
+
+    # lint・型・全体テストはquality:changedとCI plannerの共通ゲートで実行する。
+    # hookはindex上の台帳だけを検査し、working treeをcommit内容の保証にしない。
 
     - name: agents-md-sync
       glob:
