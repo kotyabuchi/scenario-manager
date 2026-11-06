@@ -2,6 +2,7 @@ import { isNil } from 'ramda';
 
 import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { discover } from './discover';
+import { summarizeEnvironmentFailure } from './environmentDiagnostic';
 import { writeArtifact } from './ledgerArtifacts';
 import { buildLegacy } from './legacy';
 import {
@@ -54,6 +55,7 @@ export const runLegacy = async (root: string, args: string[] = []) => {
     projects: Awaited<ReturnType<typeof runLegacyProject>>[];
     results: LegacyExecutionResult[] | null;
     uiCompatibility: LegacyUiCompatibility | null;
+    failure: ReturnType<typeof summarizeEnvironmentFailure>;
   } = {
     status: 'running',
     phase: 'discovery',
@@ -61,6 +63,7 @@ export const runLegacy = async (root: string, args: string[] = []) => {
     projects: [],
     results: null,
     uiCompatibility: null,
+    failure: null,
   };
   const save = () =>
     writeArtifact(
@@ -154,8 +157,12 @@ export const runLegacy = async (root: string, args: string[] = []) => {
       });
       state.status = 'passed';
     } else state.status = 'partial-passed';
-  } catch {
+  } catch (error) {
     // 生のSDKエラーや認証情報を公開receiptへ持ち込まない。
+    state.failure = summarizeEnvironmentFailure(
+      error,
+      state.phase === 'locking',
+    );
     state.status = 'failed';
   } finally {
     process.removeListener('SIGINT', interrupt);
@@ -175,6 +182,7 @@ if (
         `${JSON.stringify({
           status: result.status,
           phase: result.phase,
+          failure: result.failure,
           projects: result.projects.map((value) => ({
             project: value.project,
             status: value.status,

@@ -1,6 +1,8 @@
 import { isNil } from 'ramda';
 import { z } from 'zod';
 
+import { EnvironmentLockError } from './environmentDiagnostic';
+
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { lstat, mkdir, open, realpath, unlink } from 'node:fs/promises';
@@ -60,6 +62,24 @@ const closeServer = (server: Server) =>
     server.close((error) => (isNil(error) ? fulfill() : reject(error)));
   });
 
+/** 全interfaceを検査し、IPv6のスコープはlibuvがOSごとに受け取る形式で渡す。 */
+export const environmentLockHosts = (
+  interfaces: ReturnType<typeof networkInterfaces>,
+  platform: NodeJS.Platform,
+) => {
+  const hosts = new Set(['0.0.0.0', '127.0.0.1', '::', '::1']);
+  for (const [name, addresses] of Object.entries(interfaces))
+    for (const address of addresses ?? [])
+      hosts.add(
+        address.family === 'IPv6' &&
+          address.scopeid &&
+          !address.address.includes('%')
+          ? `${address.address}%${platform === 'win32' ? address.scopeid : name}`
+          : address.address,
+      );
+  return hosts;
+};
+
 /** wildcardへ実bindし、loopbackだけで使用中のportも検出する。 */
 const bindPort = async (port: number, host: string) => {
   const server = createServer((socket) => socket.destroy());
@@ -83,7 +103,10 @@ const bindPort = async (port: number, host: string) => {
       )
     )
       return undefined;
-    throw new Error(`環境portを予約できません: ${host}:${port}`, { cause });
+    throw new EnvironmentLockError(
+      'port-bind',
+      new Error(`環境portを予約できません: ${host}:${port}`, { cause }),
+    );
   }
 };
 
@@ -106,8 +129,16 @@ export const acquireEnvironmentLock = async (
   const options = optionsSchema.parse(input);
   if (new Set(options.ports).size !== options.ports.length)
     throw new Error('環境lockに同一portを重複指定できません');
-  const worktreeRoot = await plainDirectory(options.worktreeRoot, false);
-  const registryRoot = await plainDirectory(options.registryRoot, true);
+  const worktreeRoot = await plainDirectory(options.worktreeRoot, false).catch(
+    (cause: unknown) => {
+      throw new EnvironmentLockError('worktree-directory', cause);
+    },
+  );
+  const registryRoot = await plainDirectory(options.registryRoot, true).catch(
+    (cause: unknown) => {
+      throw new EnvironmentLockError('registry-directory', cause);
+    },
+  );
   const registryIdentity = await lstat(registryRoot, { bigint: true });
   const ports = [...options.ports].sort((left, right) => left - right);
   const metadata = { ...options, registryRoot, worktreeRoot, ports };
@@ -176,9 +207,12 @@ export const acquireEnvironmentLock = async (
       const path = join(registryRoot, `${key}.lock`);
       const contents = `${JSON.stringify({ schemaVersion: 1, ...metadata, reservation: key })}\n`;
       const handle = await open(path, 'wx', 0o600).catch((cause: unknown) => {
-        throw new Error(
-          `環境lockを取得できません。既存lockは削除しません: ${path}`,
-          { cause },
+        throw new EnvironmentLockError(
+          'lock-file',
+          new Error(
+            `環境lockを取得できません。既存lockは削除しません: ${path}`,
+            { cause },
+          ),
         );
       });
       try {
@@ -194,16 +228,7 @@ export const acquireEnvironmentLock = async (
     }
     // Windowsではwildcardと特定addressのbindが共存するため両方を検査する。
     // 自分のwildcardと衝突しないようprobeごとに閉じ、file予約は最後まで保持する。
-    const hosts = new Set(['0.0.0.0', '127.0.0.1', '::', '::1']);
-    for (const addresses of Object.values(networkInterfaces()))
-      for (const address of addresses ?? [])
-        hosts.add(
-          address.family === 'IPv6' &&
-            address.scopeid &&
-            !address.address.includes('%')
-            ? `${address.address}%${address.scopeid}`
-            : address.address,
-        );
+    const hosts = environmentLockHosts(networkInterfaces(), process.platform);
     for (const port of ports)
       for (const host of hosts) {
         const server = await bindPort(port, host);
