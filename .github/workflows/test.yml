@@ -4,52 +4,63 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+
 jobs:
-  lint-and-unit:
-    name: Lint & Unit Tests
+  quality:
+    name: Static and unit checks
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: ./.github/actions/setup
-      - run: pnpm check
-      - run: pnpm vitest
+      - &checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - &setup
+        uses: ./.github/actions/setup
+      - name: Check formatting and lint
+        run: pnpm check:ci
+      - name: Check types
+        run: pnpm typecheck
+      - name: Run unit tests
+        run: pnpm test:unit
+      - name: Run legacy tool tests
+        run: pnpm test:legacy-tools
 
   e2e:
-    name: E2E Tests
+    name: Local E2E (Ubuntu)
     runs-on: ubuntu-latest
-    needs: lint-and-unit
+    timeout-minutes: 90
     steps:
-      - uses: ./.github/actions/setup
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
+      - *checkout
+      - *setup
+      - uses: supabase/setup-cli@v3
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: playwright-
-      - run: pnpm exec playwright install --with-deps chromium
-      - name: Check required environment variables
+          version: '2.75.0'
+      - name: Verify native Supabase CLI
         run: |
-          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
-            echo "::error::Required Supabase secrets are not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub Secrets."
-            exit 1
-          fi
+          binary="$(command -v supabase)"
+          test "$(head -c 4 "$binary" | od -An -tx1 | tr -d '[:space:]')" = 7f454c46
+          test "$(supabase --version)" = 2.75.0
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run local E2E
+        run: pnpm e2e:legacy
+
+  aggregate:
+    name: Local E2E verification
+    if: ${{ always() }}
+    needs: [quality, e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify every required job succeeded
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      - run: pnpm test:e2e
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
-          E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 7
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          E2E_RESULT: ${{ needs.e2e.result }}
+        run: |
+          test "$QUALITY_RESULT" = success
+          test "$E2E_RESULT" = success
