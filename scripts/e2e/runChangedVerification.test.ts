@@ -23,6 +23,7 @@ import {
 } from './verificationRun';
 
 import type { Discovery } from './discoverySchema';
+import type { SelectionProgress } from './selectionProgress';
 
 vi.mock('./prepareChangedVerification', () => ({
   prepareChangedVerification: vi.fn(),
@@ -175,6 +176,16 @@ const latestReceipt = () =>
     )
     .at(-1)?.[2];
 
+const expectLatestReceipt = ({
+  runReceiptPath,
+  ...receipt
+}: Awaited<ReturnType<typeof runChangedVerification>>) => {
+  expect(runReceiptPath).toBe(
+    `test-results/verification/${receipt.selectionId}/selection-receipt.json`,
+  );
+  expect(JSON.parse(latestReceipt() ?? '{}')).toEqual(receipt);
+};
+
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(prepareVerificationDirectory).mockReturnValue(
@@ -213,7 +224,7 @@ describe('差分検証のroot入口', () => {
     });
     expect(prepareChangedVerification).not.toHaveBeenCalled();
     expect(runVerification).not.toHaveBeenCalled();
-    expect(JSON.parse(latestReceipt() ?? '{}')).toEqual(result);
+    expectLatestReceipt(result);
   });
 
   it('部分と全件を順に実行し、同じ固定入力・全列挙から別の実行contextを作る', async () => {
@@ -256,7 +267,7 @@ describe('差分検証のroot入口', () => {
       ['before-shadow'],
       ['final-snapshot-check'],
     ]);
-    expect(JSON.parse(latestReceipt() ?? '{}')).toEqual(result);
+    expectLatestReceipt(result);
     expect(writeArtifact).toHaveBeenCalledWith(
       expect.any(String),
       expect.stringMatching(/\/shadow-observations\.json$/u),
@@ -349,13 +360,16 @@ describe('差分検証のroot入口', () => {
   });
 
   it('全体静的検査に失敗した場合は0件選択へ進まず、生の例外を保存しない', async () => {
-    vi.mocked(prepareChangedVerification).mockRejectedValueOnce(
-      new Error(privateError),
+    vi.mocked(prepareChangedVerification).mockImplementationOnce(
+      async ({ onPhase }) => {
+        onPhase?.('static-ledger');
+        throw new Error(privateError);
+      },
     );
     const result = await runChangedVerification(repository, { shadow: false });
     expect(result).toMatchObject({
       status: 'failed',
-      phase: 'preparation',
+      phase: 'static-ledger',
       noOp: false,
       decision: null,
       failure: 'SELECTION_VERIFICATION_FAILED',
@@ -366,7 +380,75 @@ describe('差分検証のroot入口', () => {
         .mocked(writeArtifact)
         .mock.calls.every(([, , contents]) => !contents.includes(privateError)),
     ).toBe(true);
-    expect(JSON.parse(latestReceipt() ?? '{}')).toEqual(result);
+    expectLatestReceipt(result);
+  });
+
+  it('run別と最新のreceiptを保存してから準備の各段階を公開する', async () => {
+    const selection = prepare('README.md');
+    vi.mocked(prepareChangedVerification).mockImplementationOnce(
+      async ({ onPhase }) => {
+        expect(JSON.parse(latestReceipt() ?? '{}')).toMatchObject({
+          phase: 'preparation',
+        });
+        onPhase?.('static-ledger');
+        onPhase?.('collection');
+        onPhase?.('selection');
+        return selection;
+      },
+    );
+    const onProgress = vi.fn(
+      ({ phase, selectionId, receiptPath }: SelectionProgress) => {
+        const owned = vi
+          .mocked(writeArtifact)
+          .mock.calls.findLast(([, file]) => file === receiptPath);
+        expect(JSON.parse(owned?.[2] ?? '{}')).toMatchObject({
+          phase,
+          selectionId,
+          status: 'running',
+        });
+        expect(latestReceipt()).toBe(owned?.[2]);
+      },
+    );
+    const result = await runChangedVerification(repository, {
+      shadow: false,
+      onProgress,
+    });
+    expect(onProgress.mock.calls.map(([{ phase }]) => phase)).toEqual([
+      'preparation',
+      'static-ledger',
+      'collection',
+      'selection',
+      'no-op',
+    ]);
+    expect(onProgress.mock.results.map(({ type }) => type)).toEqual(
+      Array(5).fill('return'),
+    );
+    expect(result).toMatchObject({ status: 'passed', noOp: true });
+  });
+
+  it('親receiptの保存に失敗した段階を成功扱いせず、任意表示も呼ばない', async () => {
+    const selection = prepare('README.md');
+    vi.mocked(prepareChangedVerification).mockImplementationOnce(
+      async ({ onPhase }) => {
+        onPhase?.('collection');
+        return selection;
+      },
+    );
+    const onProgress = vi.fn();
+    const result = await runChangedVerification(repository, {
+      onReceipt: ({ phase }) => {
+        if (phase === 'collection') throw new Error(privateError);
+      },
+      onProgress,
+    });
+    expect(result).toMatchObject({
+      status: 'failed',
+      phase: 'collection',
+      noOp: false,
+    });
+    expect(onProgress).toHaveBeenCalledOnce();
+    expect(runVerification).not.toHaveBeenCalled();
+    expect(latestReceipt()).not.toContain(privateError);
   });
 
   it.each([
@@ -439,7 +521,7 @@ describe('差分検証のroot入口', () => {
     expect(runVerification).toHaveBeenCalledOnce();
   });
 
-  it('SIGINT時はownerのcleanupを待って中断を保存し、shadowを起動しない', async () => {
+  it('表示に失敗してもSIGINT後はownerのcleanupを待ち、shadowを起動しない', async () => {
     prepare(calendarFile);
     const entered = Promise.withResolvers<VerificationRunOptions | undefined>();
     const cleanup = Promise.withResolvers<void>();
@@ -455,7 +537,12 @@ describe('差分検証のroot入口', () => {
       });
     const before = new Set(process.rawListeners('SIGINT'));
     let settled = false;
-    const resultPromise = runChangedVerification(repository).then((result) => {
+    const resultPromise = runChangedVerification(repository, {
+      onProgress: ({ phase }) => {
+        if (phase === 'preparation') throw new Error(privateError);
+        return Promise.reject(new Error(privateError));
+      },
+    }).then((result) => {
       settled = true;
       return result;
     });

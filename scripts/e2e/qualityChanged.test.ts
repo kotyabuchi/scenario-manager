@@ -9,6 +9,7 @@ import { writeArtifact } from './ledgerArtifacts';
 import { runQualityChanged } from './qualityChanged';
 import { runQualityChecks } from './qualityChecks';
 import { runChangedVerification } from './runChangedVerification';
+import { writeSelectionProgress } from './selectionProgress';
 import { resolveRevisions } from './trustedRevision';
 import { prepareVerificationDirectory } from './verificationContext';
 import { digestVerificationPlan } from './verificationPlanDigest';
@@ -114,6 +115,7 @@ const mockSelection = (
   };
   const partialId = '1'.repeat(12);
   const fullId = '2'.repeat(12);
+  const selectionId = '3'.repeat(12);
   const full = { verificationId: fullId, status: 'passed' as const, counts };
   const partial = {
     verificationId: partialId,
@@ -122,7 +124,8 @@ const mockSelection = (
   };
   vi.mocked(runChangedVerification).mockResolvedValue({
     schemaVersion: 1,
-    selectionId: '3'.repeat(12),
+    selectionId,
+    runReceiptPath: `test-results/verification/${selectionId}/selection-receipt.json`,
     status: 'passed',
     phase: 'complete',
     decision,
@@ -244,6 +247,98 @@ it('readonly lint、型、unit、toolsの順で実行し、部分・全件receip
     'test-results/quality/changed.json',
     expect.stringContaining(result.qualityId),
   );
+});
+
+it('差分準備の各段階と子receiptを親へ保存し、安全な内容だけをstderrへ出す', async () => {
+  mockSelection('docs-only');
+  const selection = vi.mocked(runChangedVerification).getMockImplementation();
+  if (selection === undefined) throw new Error('差分fixtureがありません');
+  const selectionId = '3'.repeat(12);
+  const receiptPath = `test-results/verification/${selectionId}/selection-receipt.json`;
+  const phases = [
+    'preparation',
+    'static-ledger',
+    'collection',
+    'selection',
+    'no-op',
+  ] as const;
+  vi.mocked(runChangedVerification).mockImplementationOnce(
+    async (root, options) => {
+      for (const phase of phases) {
+        const progress = { phase, selectionId, receiptPath };
+        options?.onReceipt?.(progress);
+        const contents = vi.mocked(writeArtifact).mock.calls.at(-1)?.[2];
+        expect(JSON.parse(contents ?? '{}')).toMatchObject({
+          status: 'running',
+          phase,
+          selectionReceiptPath: receiptPath,
+        });
+        options?.onProgress?.(progress);
+      }
+      return selection(root, options);
+    },
+  );
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+  try {
+    const result = await runQualityChanged(ROOT, {
+      shadow: false,
+      onProgress: writeSelectionProgress,
+    });
+    expect(result).toMatchObject({
+      status: 'passed',
+      phase: 'complete',
+      selectionReceiptPath: receiptPath,
+      selection: {
+        selectionId,
+        receiptPath: 'test-results/quality/selection.json',
+        runReceiptPath: receiptPath,
+      },
+    });
+    expect(stderr.mock.calls.map(([message]) => message)).toEqual(
+      phases.map(
+        (phase) =>
+          `[e2e-selection] ${JSON.stringify({ phase, selectionId, receiptPath })}\n`,
+      ),
+    );
+    expect(stdout).not.toHaveBeenCalled();
+  } finally {
+    stderr.mockRestore();
+    stdout.mockRestore();
+  }
+});
+
+it('親receiptの段階保存に失敗したらartifact失敗として記録する', async () => {
+  const selectionId = '3'.repeat(12);
+  const receiptPath = `test-results/verification/${selectionId}/selection-receipt.json`;
+  const onProgress = vi.fn();
+  vi.mocked(writeArtifact).mockImplementation((_root, file, contents) => {
+    if (
+      file.endsWith('/quality-receipt.json') &&
+      contents.includes('"phase": "static-ledger"') &&
+      contents.includes('"status": "running"')
+    )
+      throw new Error(PRIVATE);
+  });
+  vi.mocked(runChangedVerification).mockImplementationOnce(
+    async (_root, options) => {
+      options?.onReceipt?.({
+        phase: 'static-ledger',
+        selectionId,
+        receiptPath,
+      });
+      throw new Error('親receipt保存の例外が通知元へ伝わりませんでした');
+    },
+  );
+  const result = await runQualityChanged(ROOT, { shadow: false, onProgress });
+  expect(result).toMatchObject({
+    status: 'failed',
+    phase: 'static-ledger',
+    failure: 'ARTIFACT_WRITE_FAILED',
+    selectionReceiptPath: receiptPath,
+  });
+  expect(JSON.stringify(result)).not.toContain(PRIVATE);
+  expect(onProgress).not.toHaveBeenCalled();
 });
 
 it('全件fallbackの同じrunを二重に照合しない', async () => {

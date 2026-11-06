@@ -7,6 +7,7 @@ import { runVerification, type VerificationRunOptions } from './run';
 import { runVerificationStages } from './runVerificationStages';
 import { digestVerificationPlan } from './verificationPlanDigest';
 
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   mkdir,
@@ -17,8 +18,10 @@ import {
   unlink,
   writeFile,
 } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import type { RunnerSelection } from './runnerSelection';
 
@@ -101,6 +104,47 @@ beforeEach(async () => {
   prepare.mockImplementation(preparedFor);
   stages.mockImplementation(async (input) => stageResult(input));
 });
+
+it('差分CLIは失敗時もstderrの進捗とstdoutの最終JSONを分離する', async () => {
+  const entry = fileURLToPath(new URL('./run.ts', import.meta.url));
+  const tsx = pathToFileURL(createRequire(import.meta.url).resolve('tsx')).href;
+  const env = { ...process.env };
+  for (const name of Object.keys(env))
+    if (['CI', 'GITHUB_ACTIONS', 'NODE_OPTIONS'].includes(name.toUpperCase()))
+      Reflect.deleteProperty(env, name);
+  const output = spawnSync(
+    process.execPath,
+    ['--import', tsx, entry, '--changed'],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      env,
+      timeout: 15_000,
+      windowsHide: true,
+    },
+  );
+  expect(output.error).toBeUndefined();
+  expect(output.status, output.stderr).toBe(1);
+  const result = JSON.parse(output.stdout);
+  expect(result).toMatchObject({
+    status: 'failed',
+    phase: 'preparation',
+    receiptPath: 'test-results/quality/selection.json',
+  });
+  const receiptPath = `test-results/verification/${result.selectionId}/selection-receipt.json`;
+  expect(result.runReceiptPath).toBe(receiptPath);
+  expect(output.stderr.trim()).toBe(
+    `[e2e-selection] ${JSON.stringify({
+      phase: 'preparation',
+      selectionId: result.selectionId,
+      receiptPath,
+    })}`,
+  );
+  expect(await readJson(join(root, result.runReceiptPath))).toMatchObject({
+    status: 'failed',
+    selectionId: result.selectionId,
+  });
+}, 20_000);
 
 const expectRejectedMode = async (options: VerificationRunOptions) => {
   const state = await runVerification(root, options);
