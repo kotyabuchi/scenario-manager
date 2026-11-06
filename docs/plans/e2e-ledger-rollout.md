@@ -22,15 +22,15 @@ mainに未公開の前提UI等232コミットが含まれるため、ユーザ�
 ## 前提条件
 
 - 同じ専用worktree、Sol/medium（単純調査はLuna/medium）のsubagent設定を使用する。
-- PR作成・公開と実CI受入後の必須チェック設定は今回の実施指示に含まれる。運用DBの直接変更・デプロイは行わない。
+- PR作成・公開と実CI受入後の必須チェック設定は今回の実施指示に含まれる。2026-11-06、両PRのCI受入後にユーザーが段階マージと本番デプロイを明示承認した。運用DBの直接変更は行わない。
 - 既存のcloud接続を必要とする旧workflowをそのまま実行せず、公開前に実行境界を確認する。
-- mainへのpushは現行Cloudflare workflowの本番デプロイを起動する。今回のPR作成・CI検証ではmergeを行わず、mergeとデプロイの扱いは具体的なPRと結果を揃えてから確定する。
+- mainへのpushは現行Cloudflare workflowの本番デプロイを起動する。承認された順序は、PR #6をmergeしてデプロイを確認し、PR #7をmain向けに再検証・必須check設定してからmergeする。履歴を保つmerge commitを使用する。
 - core437 / UI658の既存不足を成功扱いにしない。移行史の書き換え・無条件rebaseline・blanket skipは禁止。
 
 ## 進捗
 
 - [x] Batch 1: フォント安定化
-- [ ] Batch 2: PR分離と実CI受入
+- [x] Batch 2: PR分離と実CI受入
 - [ ] Batch 3: 必須チェック設定
 - [ ] Batch 4: 進捗・診断の改善
 - [ ] Batch 5: 同一入力の解析再利用
@@ -160,3 +160,11 @@ Codex再起動を待つ手順は撤回し、固定値を `e2e/isolatedRuntime.ts
 履歴再生はLinux実機で成功し、独立した旧CLI実行とsnapshot・baseline・移行記録・pendingの各digestが一致した（snapshot `405f781b18d08229dd9247264295c86dc717351e13b66ab810ba69c09c8f2228`）。親側の依存を探索させないため旧checkoutはプロジェクト外の所有一時領域へ置き、Gitの警告は判定用stdoutから分離した。実機の中断検査でも所有する親・子・process groupの消滅を確認し、一時領域を回収した。これは固定旧移行の検証結果であり、現在のPR全体のhosted成功とは区別する。
 
 実PR条件で、公開baseには台帳がないため既存の契約変更記録2件が新規の無関係な移行と判定されることも確認した。検証済みの導入コミットを契約・旧test・移行履歴の継続比較元にし、導入時に新設したUI契約の実行条件も保護する。公開base側に既存台帳がある曖昧な状態は置き換えず拒否し、通常baseの比較条件や履歴原本は維持する。
+
+## Batch 2 完了と本番反映の承認（2026-11-06）
+
+品質PR #7のhead `84f1201c9cd1d6a777e539cf4d2d48dbc7fb01ea`、base `f835e025bfc00a2dae88056f46b49dff8d3d64a6` に対する [hosted run 42182265275](https://github.com/kotyabuchi/scenario-manager/actions/runs/42182265275) / attempt 1は全6 jobsが成功した。Ubuntu/Windowsの各364 fixtures、planner、required、legacy-local、集約を受入。必須55成功・旧E2E312登録と7 stagesの終了・cleanupを照合した。既存skip9/fixme2は成功数に含めず、core437/UI658の不足を維持する。
+
+取得したplan・両shard・集約成果物を実際のrun/attempt・固定Git・外部承認で独立に再検証し、集約receiptと完全一致した。manifest digestは `02cda10d33ea2a4e501be0e63908d56a94d4f605a83aa761803057ca280431ad`、required verificationは `2835845cb3ff`、legacy-localは `8208d967f061`。前提PR #6も前述のhosted runで受入済みで、両PRをready for reviewにした。
+
+ユーザーは両PRの段階マージと本番デプロイを承認した。PR #6は `a270fbdbd7bc23844ead4ad551732d6f6046aa14` でmainへmerge済み。Cloudflare deploy run `42186359422` を確認中。品質PR #7はこのmainを祖先として取り込み、承認tupleとbaseを更新して全hosted jobsを再検証する。旧base向けの成功を新base向けの成功として読み替えない。必須checkの設定とPR #7のmergeは新base向け受入後に行う。
