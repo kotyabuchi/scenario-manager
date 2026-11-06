@@ -81,16 +81,29 @@ test.describe('セッションフロー', () => {
       await expect(detailPage.editButton).toBeVisible();
     });
 
-    test('募集中フェーズでGM用アクションが表示される', async ({ page }) => {
-      // 申請管理リンク
-      await expect(page.getByRole('link', { name: '申請管理' })).toBeVisible();
+    test('募集中フェーズでGM用アクションが表示される', async ({
+      page,
+      isMobile,
+    }) => {
+      const detailPage = new SessionDetailPage(page);
+      const { sessionHeader } = detailPage;
 
-      // 日程調整リンク
-      await expect(page.getByRole('link', { name: '日程調整' })).toBeVisible();
+      if (isMobile) await detailPage.clickMoreActionsMenu();
+      for (const name of ['申請管理', 'スケジュールを提出']) {
+        await expect(
+          sessionHeader.getByRole(isMobile ? 'menuitem' : 'link', {
+            name,
+            exact: true,
+          }),
+        ).toBeVisible();
+      }
 
-      // キャンセルボタン
+      if (!isMobile) await detailPage.clickMoreActionsMenu();
       await expect(
-        page.getByRole('button', { name: 'キャンセル' }),
+        sessionHeader.getByRole('menuitem', {
+          name: 'キャンセル',
+          exact: true,
+        }),
       ).toBeVisible();
     });
 
@@ -133,7 +146,7 @@ test.describe('セッションフロー', () => {
       const detailPage = new SessionDetailPage(page);
       await detailPage.goto(createdSessionId ?? '');
       await detailPage.clickScheduleLink();
-      await expect(page).toHaveURL(/\/schedule$/);
+      await expect(page).toHaveURL(/\/schedule\/availability$/);
     });
   });
 
@@ -152,10 +165,9 @@ test.describe('セッションフロー', () => {
       await detailPage.clickCancelSessionButton();
       await expect(detailPage.cancelSessionDialog).toBeVisible();
 
-      // ダイアログ内のキャンセルボタンで閉じる
+      // セッションを取り消さず、継続する操作でダイアログだけを閉じる
       await detailPage.cancelSessionDialog
-        .getByRole('button', { name: 'キャンセル' })
-        .first()
+        .getByRole('button', { name: '継続する', exact: true })
         .click();
       await expect(detailPage.cancelSessionDialog).not.toBeVisible();
     });

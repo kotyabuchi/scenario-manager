@@ -45,20 +45,24 @@ test.describe('シナリオ詳細 認証済みアクション', () => {
     const fabButton = page.getByRole('button', { name: 'メニューを開く' });
     // FABは右下fixed要素で、開発時のagentationツールバーと重なるためdispatchEventを使用
     await fabButton.dispatchEvent('click');
-    // メニュー項目が表示される（menuitemロールで限定）
+    const actions = page.getByRole('region', { name: 'クイック操作' });
     await expect(
-      page.getByRole('menuitem', { name: 'セッション募集' }),
+      actions.getByRole('button', { name: 'セッション募集', exact: true }),
     ).toBeVisible();
     await expect(
-      page.getByRole('menuitem', { name: 'シナリオ検索' }),
+      actions.getByRole('button', { name: 'シナリオ検索', exact: true }),
     ).toBeVisible();
-    await expect(page.getByRole('menuitem', { name: 'シェア' })).toBeVisible();
+    await expect(
+      actions.getByRole('button', { name: 'シェア', exact: true }),
+    ).toBeVisible();
   });
 
   test('FABメニュー外クリックでメニューが閉じる', async ({ page }) => {
     const fabButton = page.getByRole('button', { name: 'メニューを開く' });
     await fabButton.dispatchEvent('click');
-    const menuItem = page.getByRole('menuitem', { name: 'セッション募集' });
+    const menuItem = page
+      .getByRole('region', { name: 'クイック操作' })
+      .getByRole('button', { name: 'セッション募集', exact: true });
     await expect(menuItem).toBeVisible();
     // メニュー外への退出操作。モバイルではパネル/ヘッダー配置でoverlayクリック座標が
     // 不安定なため、SpeedDialがサポートする Escape で閉じる（dismiss挙動を検証）

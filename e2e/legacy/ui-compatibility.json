@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+      "from": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+      "to": "3244bf81b6ef59f01a4b162c1a6e723f76fb8d98a0ecc15894e9ea624f93d571",
+      "reason": "クイック操作領域の現行ボタンに対し、募集・検索・共有の表示を検査する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+      "from": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+      "to": "216222594932c64af29550c0137b4f1e892fced452c7d4d606244ca705daafa0",
+      "reason": "クイック操作領域の現行ボタンで、既存の閉じる操作の前後を検査する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+      "from": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+      "to": "9187bdfe9c1bb9060acd76de9fc5a83889c989b0e2791e9d1b9778ce98b57da3",
+      "reason": "スケジュール提出リンクから現行のスケジュール提出画面へ遷移することを検査する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+      "from": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+      "to": "016cee798cc9c02f3120cf2a78a7c67b6ba820c8f59bacc08dfc92d75f474017",
+      "reason": "募集フェーズの申請管理・スケジュール提出・キャンセルを、デスクトップのリンクとモバイルのメニューで検査する。"
+    },
+    {
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+      "from": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+      "to": "32227c6516dc25ed9873f0f1adcfaa772a71d9fc1f32512fd9e556f9805954c6",
+      "reason": "セッションを取り消さず、継続する操作でキャンセルダイアログを閉じることを検査する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニューを開くとメニュー項目が表示される\"],0]",
+      "from": "00a27277ba87103d7327716bccd87bcdb44d3f181e1e286356aa217fbc9ead7b",
+      "to": "3244bf81b6ef59f01a4b162c1a6e723f76fb8d98a0ecc15894e9ea624f93d571",
+      "reason": "クイック操作領域の現行ボタンに対し、募集・検索・共有の表示を検査する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-detail-actions.spec.ts\",[\"シナリオ詳細 認証済みアクション\",\"FABメニュー外クリックでメニューが閉じる\"],0]",
+      "from": "fd1944d1f991276d9e5875bfc807efcb6cca7aed49e37567160c2ba53b06cc4e",
+      "to": "216222594932c64af29550c0137b4f1e892fced452c7d4d606244ca705daafa0",
+      "reason": "クイック操作領域の現行ボタンで、既存の閉じる操作の前後を検査する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"サブページへの遷移\",\"日程調整ページに遷移できる\"],0]",
+      "from": "172d71850e7fece3b1523661e1fa7eae02b4a013c9d13731e2e1ca8c3f72ae89",
+      "to": "9187bdfe9c1bb9060acd76de9fc5a83889c989b0e2791e9d1b9778ce98b57da3",
+      "reason": "スケジュール提出リンクから現行のスケジュール提出画面へ遷移することを検査する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"セッション詳細ページ（GMビュー）\",\"募集中フェーズでGM用アクションが表示される\"],0]",
+      "from": "68d791b51887dfe18a0d90f4f3687b546738b566b0e8dd6d07eb9404a26855aa",
+      "to": "016cee798cc9c02f3120cf2a78a7c67b6ba820c8f59bacc08dfc92d75f474017",
+      "reason": "募集フェーズの申請管理・スケジュール提出・キャンセルを、デスクトップのリンクとモバイルのメニューで検査する。"
+    },
+    {
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/session-flow.spec.ts\",[\"セッションフロー\",\"ダイアログ操作\",\"キャンセルダイアログが開閉できる\"],0]",
+      "from": "4738a8d33376bbb42971eff37c374010a267b22abd84c343741f5750077e6db3",
+      "to": "32227c6516dc25ed9873f0f1adcfaa772a71d9fc1f32512fd9e556f9805954c6",
+      "reason": "セッションを取り消さず、継続する操作でキャンセルダイアログを閉じることを検査する。"
+    }
+  ]
+}
