@@ -7,7 +7,11 @@ import {
 import { fixture as environment } from '../environment/ownership';
 
 /** 本文や資格情報を含まない20登録のadapter用結果fixture。 */
-export const integrationResultFixture = () => {
+export const integrationResultFixture = ({
+  includeApplication = false,
+}: {
+  includeApplication?: boolean;
+} = {}) => {
   const lease = environment().lease;
   const variants = [
     ['schedule-action-deny', 'anonymous'],
@@ -30,16 +34,33 @@ export const integrationResultFixture = () => {
     ['schedule-calendar-user-sessions', 'creator-only'],
     ['schedule-calendar-summary', 'creator-only'],
     ['schedule-calendar-unconfirmed', 'creator-only'],
+    ...(includeApplication
+      ? [
+          ['session-application-apply', 'applicant'],
+          ['session-application-apply', 'outsider-self'],
+          ['session-application-apply-deny', 'anonymous'],
+          ['session-application-apply-deny', 'confirmed-player'],
+          ['session-application-apply-invalid', 'message-too-long'],
+          ['session-application-cancel', 'applicant'],
+          ['session-application-cancel-deny', 'anonymous'],
+          ['session-application-cancel-deny', 'outsider'],
+          ['session-application-cancel-deny', 'confirmed-player'],
+          ['session-application-cancel-invalid', 'non-object'],
+        ]
+      : []),
   ];
   const entries = variants.map(([caseId, variant], index) => {
     const claim = { caseId, variant, binding: 'main' };
     const id = `task-${index}`;
     const isCalendar = caseId?.startsWith('schedule-calendar') ?? false;
-    const file = isCalendar
-      ? 'src/calendar.integration.test.ts'
-      : caseId?.startsWith('schedule-action')
-        ? 'src/actions.integration.test.ts'
-        : 'src/rpc.integration.test.ts';
+    const isApplication = caseId?.startsWith('session-application') ?? false;
+    const file = isApplication
+      ? 'src/session-application.integration.test.ts'
+      : isCalendar
+        ? 'src/calendar.integration.test.ts'
+        : caseId?.startsWith('schedule-action')
+          ? 'src/actions.integration.test.ts'
+          : 'src/rpc.integration.test.ts';
     const options = {
       mode: 'run',
       fails: false,
@@ -47,8 +68,13 @@ export const integrationResultFixture = () => {
       retry: 0,
       repeats: 0,
     };
-    const operator =
-      variant === 'anonymous'
+    const operator = isApplication
+      ? variant === 'anonymous' || variant === 'confirmed-player'
+        ? variant
+        : variant === 'outsider' || variant === 'outsider-self'
+          ? 'outsider'
+          : 'applicant'
+      : variant === 'anonymous'
         ? 'anonymous'
         : variant === 'outsider'
           ? 'outsider'
@@ -66,20 +92,28 @@ export const integrationResultFixture = () => {
           ]
         : []),
     ];
-    const target = isCalendar
-      ? 'function:src/app/(main)/sessions/adapter.ts#getCalendarSessions'
-      : file.includes('/actions')
-        ? 'action:src/actions.ts#confirm'
-        : 'rpc:replace_confirmed_schedule_time_blocks';
-    const aspects = isCalendar
-      ? ['response']
-      : caseId === 'schedule-rpc-allow'
-        ? ['persist', 'authorization']
-        : caseId?.endsWith('atomic')
-          ? ['atomicity']
-          : caseId?.endsWith('invalid')
-            ? ['validation']
-            : ['authorization'];
+    const target = isApplication
+      ? `action:src/app/(main)/sessions/[id]/actions.ts#${caseId?.includes('cancel') ? 'cancelApplicationAction' : 'applyToSessionAction'}`
+      : isCalendar
+        ? 'function:src/app/(main)/sessions/adapter.ts#getCalendarSessions'
+        : file.includes('/actions')
+          ? 'action:src/actions.ts#confirm'
+          : 'rpc:replace_confirmed_schedule_time_blocks';
+    const aspects = isApplication
+      ? caseId?.endsWith('invalid')
+        ? ['validation']
+        : caseId?.endsWith('deny')
+          ? ['authorization']
+          : ['persist', 'authorization']
+      : isCalendar
+        ? ['response']
+        : caseId === 'schedule-rpc-allow'
+          ? ['persist', 'authorization']
+          : caseId?.endsWith('atomic')
+            ? ['atomicity']
+            : caseId?.endsWith('invalid')
+              ? ['validation']
+              : ['authorization'];
     const checks = aspects.map((aspect) => ({
       target,
       aspect,
@@ -103,11 +137,11 @@ export const integrationResultFixture = () => {
       options,
       checks,
       actorBindings,
-      fixture: 'schedule',
+      fixture: isApplication ? 'session-application' : 'schedule',
     });
     const actors = [
       'creator-only',
-      'keeper-only',
+      isApplication ? 'applicant' : 'keeper-only',
       'confirmed-player',
       'outsider',
     ].map((kind, actor) => ({
@@ -129,6 +163,17 @@ export const integrationResultFixture = () => {
       caseId: id,
     };
     const ownerTag = fixtureOwnerTag(owner);
+    const participantActors = isApplication
+      ? actors.filter(
+          ({ kind }) =>
+            kind === 'creator-only' ||
+            kind === 'confirmed-player' ||
+            (caseId === 'session-application-apply' && kind === operator) ||
+            ((caseId === 'session-application-apply-invalid' ||
+              caseId?.includes('cancel')) &&
+              kind === 'applicant'),
+        )
+      : actors.slice(0, 3);
     const journal = fixtureManifestSchema.parse({
       schemaVersion: 1,
       owner,
@@ -164,7 +209,7 @@ export const integrationResultFixture = () => {
           },
           status: 'removed',
         },
-        ...actors.slice(0, 3).map((actor) => ({
+        ...participantActors.map((actor) => ({
           resource: {
             kind: 'session_participants',
             sessionId,
