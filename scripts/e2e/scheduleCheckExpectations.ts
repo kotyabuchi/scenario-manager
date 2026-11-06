@@ -9,6 +9,12 @@ import type { Ledger } from '../../e2e/ledger/schema';
 import type { DiscoveredTest } from './discoverySchema';
 
 const PROJECTS = ['chromium', 'mobile-chrome'];
+const APPLICATION_CASE = 'session-application-round-trip';
+const APPLICATION_FIXTURE = 'session-application';
+const APPLICATION_ACTIONS = [
+  'action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction',
+  'action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction',
+];
 const control = (values: { type: string }[]) =>
   values.some(({ type }) => ['skip', 'fixme', 'fail'].includes(type));
 type ScheduleExpectation = {
@@ -16,10 +22,11 @@ type ScheduleExpectation = {
   caseId: string;
   variant: string;
   binding: string;
+  fixture: 'schedule' | typeof APPLICATION_FIXTURE;
   operator: string;
   observer: string | undefined;
 };
-/** Batch 9のimplemented集合を列挙へ対応させ、最初の4条件の削減も拒否する。 */
+/** isolatedの実登録と照合し、日程4条件と申請の両projectを必須にする。 */
 export const createScheduleExpectations = (
   ledger: Ledger,
   input: unknown,
@@ -39,9 +46,9 @@ export const createScheduleExpectations = (
         ).length !== 1,
     )
   )
-    throw new Error('日程のisolated列挙設定が一致しません。');
+    throw new Error('isolatedの列挙設定が一致しません。');
   const { registrations, issues } = bindDiscovery(ledger, [discovery]);
-  if (issues.length > 0) throw new Error('日程caseの登録対応が不正です。');
+  if (issues.length > 0) throw new Error('isolated caseの登録対応が不正です。');
   const cases = ledger.scenarios
     .flatMap(({ cases }) => cases)
     .filter(
@@ -51,8 +58,27 @@ export const createScheduleExpectations = (
     );
   const expected: ScheduleExpectation[] = [];
   for (const item of cases.filter(({ status }) => status === 'implemented')) {
-    if (item.fixture !== 'schedule')
-      throw new Error('日程以外のisolated fixtureが混入しています。');
+    const fixture =
+      item.caseId === APPLICATION_CASE ? APPLICATION_FIXTURE : 'schedule';
+    if (item.fixture !== fixture)
+      throw new Error('isolated caseのfixtureが一致しません。');
+    if (
+      fixture === APPLICATION_FIXTURE &&
+      (!isDeepStrictEqual(item.testBindings, ['main']) ||
+        !isDeepStrictEqual([...item.roles].sort(), ['observer', 'operator']) ||
+        item.executions.length !== PROJECTS.length ||
+        item.checks.length !== APPLICATION_ACTIONS.length ||
+        APPLICATION_ACTIONS.some(
+          (target) =>
+            !item.checks.some(
+              (check) =>
+                check.target === target &&
+                check.aspect === 'persist' &&
+                check.layer === 'browser',
+            ),
+        ))
+    )
+      throw new Error('参加申請の登録条件または永続化の検証が不足しています。');
     for (const execution of item.executions.filter(
       ({ profile }) => profile === 'isolated',
     )) {
@@ -62,14 +88,20 @@ export const createScheduleExpectations = (
       const observer = execution.actorBindings.find(
         ({ role }) => role === 'observer',
       )?.actor;
+      const hasExpectedActors =
+        fixture === APPLICATION_FIXTURE
+          ? operator === 'applicant' &&
+            observer === 'creator-only' &&
+            execution.variant === 'applicant'
+          : ['creator-only', 'keeper-only'].includes(operator ?? '') &&
+            (isNil(observer) || observer === 'confirmed-player') &&
+            (item.caseId !== 'schedule-confirm-persist' || !isNil(observer));
       if (
-        !['creator-only', 'keeper-only'].includes(operator ?? '') ||
-        (!isNil(observer) && observer !== 'confirmed-player') ||
-        (item.caseId === 'schedule-confirm-persist' && isNil(observer)) ||
+        !hasExpectedActors ||
         execution.actorBindings.length !== (isNil(observer) ? 1 : 2) ||
         execution.runtime !== 'next-production'
       )
-        throw new Error('日程の実actor条件が不正です。');
+        throw new Error('isolatedの実actor条件が不正です。');
       for (const binding of item.testBindings) {
         const matches = registrations.filter(
           (registration) =>
@@ -93,12 +125,13 @@ export const createScheduleExpectations = (
           control(test.annotations) ||
           isNil(operator)
         )
-          throw new Error('日程の必須登録が欠落または実行不能です。');
+          throw new Error('isolatedの必須登録が欠落または実行不能です。');
         expected.push({
           test,
           caseId: item.caseId,
           variant: execution.variant,
           binding,
+          fixture,
           operator,
           observer,
         });
@@ -109,8 +142,8 @@ export const createScheduleExpectations = (
     expected.length !== discovery.tests.length ||
     new Set(expected.map(({ test }) => test.testId)).size !== expected.length
   )
-    throw new Error('日程の列挙に未知・重複・planned登録があります。');
-  for (const project of PROJECTS)
+    throw new Error('isolatedの列挙に未知・重複・planned登録があります。');
+  for (const project of PROJECTS) {
     for (const variant of ['creator-only', 'keeper-only']) {
       if (
         expected.filter(
@@ -124,6 +157,15 @@ export const createScheduleExpectations = (
       )
         throw new Error('日程確定の必要4条件が不足しています。');
     }
+    if (
+      expected.filter(
+        (entry) =>
+          entry.fixture === APPLICATION_FIXTURE &&
+          entry.test.project === project,
+      ).length !== 1
+    )
+      throw new Error('参加申請の必要2条件が不足しています。');
+  }
   return expected;
 };
 export type { ScheduleExpectation };

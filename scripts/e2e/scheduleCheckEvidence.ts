@@ -18,6 +18,19 @@ import type { ScheduleExpectation } from './scheduleCheckExpectations';
 
 const PROJECTS = ['chromium', 'mobile-chrome'];
 const ROLES = ['creator-only', 'keeper-only', 'confirmed-player', 'outsider'];
+const APPLICATION_ROLES = [
+  'creator-only',
+  'applicant',
+  'confirmed-player',
+  'outsider',
+];
+const APPLICATION_RESOURCE_KINDS = new Set([
+  'auth-user',
+  'users',
+  'scenarios',
+  'game_sessions',
+  'session_participants',
+]);
 const control = (values: { type: string }[]) =>
   values.some(({ type }) => ['skip', 'fixme', 'fail'].includes(type));
 
@@ -151,9 +164,11 @@ const checkFixture = (
     return;
   }
   const identities = actors.data.actors;
+  const roles =
+    expected.fixture === 'session-application' ? APPLICATION_ROLES : ROLES;
   if (
     identities.length !== 5 ||
-    ['anonymous', ...ROLES].some(
+    ['anonymous', ...roles].some(
       (kind) =>
         identities.filter((identity) => identity.kind === kind).length !== 1,
     )
@@ -196,6 +211,39 @@ const checkFixture = (
     )
   )
     add('SESSION_OWNER_MISMATCH', subject);
+  if (expected.fixture === 'session-application') {
+    if (
+      journal.resources.some(
+        ({ resource }) => !APPLICATION_RESOURCE_KINDS.has(resource.kind),
+      )
+    )
+      add('APPLICATION_RESOURCE_KIND_MISMATCH', subject);
+    const scenarios = journal.resources.flatMap(({ resource }) =>
+      resource.kind === 'scenarios' ? [resource] : [],
+    );
+    if (
+      scenarios.length !== 1 ||
+      scenarios[0]?.createdBy !== creator?.appUserId
+    )
+      add('APPLICATION_SCENARIO_OWNER_MISMATCH', subject);
+    const session = sessions[0]?.resource;
+    const participants = journal.resources.flatMap(({ resource }) =>
+      resource.kind === 'session_participants' ? [resource] : [],
+    );
+    const participantRoles = ['creator-only', 'confirmed-player', 'applicant'];
+    if (
+      session?.kind !== 'game_sessions' ||
+      participants.length !== participantRoles.length ||
+      participantRoles.some((kind) => {
+        const actor = authenticated.find((identity) => identity.kind === kind);
+        return !participants.some(
+          ({ sessionId, userId }) =>
+            sessionId === session.id && userId === actor?.appUserId,
+        );
+      })
+    )
+      add('APPLICATION_PARTICIPANT_RESOURCES_MISMATCH', subject);
+  }
   const used = attempt.attachments.filter(
     ({ name }) => name === 'fixture-used-actor',
   );
@@ -229,7 +277,7 @@ const checkFixture = (
     add('USED_ACTOR_MISMATCH', subject);
 };
 
-/** Batch 9専用のofficial JSONと実fixture証跡の照合。汎用reporter/fingerprintはBatch 11へ残す。 */
+/** isolatedのofficial JSONと、日程・参加申請の実fixture証跡を照合する。 */
 export const validateScheduleCheckEvidence = (input: {
   expected: ScheduleExpectation[];
   report: unknown;

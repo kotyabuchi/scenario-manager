@@ -93,6 +93,7 @@ export const ciRuntimeFixture = () => {
           caseId: 'isolated-business',
           variant: fixture.isolatedRow.execution?.variant ?? 'default',
           binding: 'main',
+          fixture: 'schedule' as const,
           operator: 'creator-only',
           observer: undefined,
         },
