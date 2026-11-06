@@ -74,9 +74,33 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(report.schemaParityPassed).toBe(false);
     expect(report.fingerprint).toBeNull();
     expect(report.passed).toBe(false);
+    expect(report.failurePhase).toBe('start');
     expect(report.cleanup?.remaining).toEqual(empty());
     expect(remove).toHaveBeenCalledTimes(1);
     expect(release).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    'CLEANUP_INCOMPLETE',
+    'CLEANUP_UNVERIFIED',
+  ] as const)('%sでも先に失敗した起動段階を保持する', async (code) => {
+    probeState.shouldFailStart = true;
+    if (code === 'CLEANUP_INCOMPLETE') remove.mockResolvedValueOnce([]);
+    else remove.mockRejectedValueOnce(new Error('synthetic cleanup failure'));
+
+    const report = await probeEnvironment(root);
+    expect(report).toMatchObject({
+      passed: false,
+      failurePhase: 'start',
+      cleanup: code === 'CLEANUP_INCOMPLETE' ? { status: 'incomplete' } : null,
+    });
+    const manifest = JSON.parse(
+      await readFile(join(workdir, 'manifest.json'), 'utf8'),
+    );
+    expect(manifest.failure).toMatchObject({ code });
+    expect(manifest.failure).not.toHaveProperty('phase');
+    expect(remove).toHaveBeenCalledTimes(1);
+    expect(release).not.toHaveBeenCalled();
   });
 
   it('CLI版不一致でlockを取得せずsignal監視を解放する', async () => {
@@ -288,6 +312,7 @@ describe('probeEnvironmentの診断と中断境界', () => {
         subject: 'columns:feedbacks.comment_count.integer',
       }),
     );
+    expect(report.failurePhase).toBe('verify');
     expect(
       JSON.parse(await readFile(join(workdir, 'catalog-check.json'), 'utf8')),
     ).toMatchObject({

@@ -13,6 +13,7 @@ import {
   validateLegacyDiscovery,
 } from './legacySelection';
 import { assertLegacySources, captureLegacySources } from './legacySourceGuard';
+import { writeProgressStderr } from './progressStderr';
 
 import { realpath } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -53,6 +54,7 @@ export const runLegacy = async (
   const state: {
     status: 'running' | 'passed' | 'partial-passed' | 'failed';
     phase: string;
+    failurePhase: string | null;
     progress: LegacyProgress | null;
     projects: Awaited<ReturnType<typeof runLegacyProject>>[];
     results: LegacyExecutionResult[] | null;
@@ -60,6 +62,7 @@ export const runLegacy = async (
   } = {
     status: 'running',
     phase: 'discovery',
+    failurePhase: null,
     progress: null,
     projects: [],
     results: null,
@@ -84,11 +87,7 @@ export const runLegacy = async (
     state.progress = progress;
     state.phase = progress.phase;
     save();
-    try {
-      process.stderr.write(`[legacy-local] ${JSON.stringify(progress)}\n`);
-    } catch {
-      /* 表示先の失敗でも所有環境の後始末は継続する。 */
-    }
+    writeProgressStderr(`[legacy-local] ${JSON.stringify(progress)}\n`);
   };
   process.once('SIGINT', interrupt);
   process.once('SIGTERM', interrupt);
@@ -139,6 +138,8 @@ export const runLegacy = async (
         verification?.(project),
       );
       state.projects.push(result);
+      if (result.status !== 'passed' && !controller.signal.aborted)
+        state.failurePhase = result.failurePhases[0] ?? result.phase;
       state.phase = 'source-check';
       assertLegacySources(worktreeRoot, sources);
       save();
@@ -156,6 +157,10 @@ export const runLegacy = async (
       state.status = 'passed';
     } else state.status = 'partial-passed';
   } catch (error) {
+    // 後続の照合段階と、project内で最初に失敗した段階を区別する。
+    state.failurePhase ??= controller.signal.aborted
+      ? 'interrupted'
+      : state.phase;
     // 生のSDKエラーや認証情報を公開receiptへ持ち込まない。
     state.failure = summarizeEnvironmentFailure(
       error,
@@ -180,6 +185,7 @@ if (
         `${JSON.stringify({
           status: result.status,
           phase: result.phase,
+          failurePhase: result.failurePhase,
           failure: result.failure,
           projects: result.projects.map((value) => ({
             project: value.project,
@@ -191,7 +197,7 @@ if (
       if (result.status === 'failed') process.exitCode = 1;
     })
     .catch(() => {
-      process.stderr.write('legacy-local実行または証跡保存に失敗しました。\n');
+      writeProgressStderr('legacy-local実行または証跡保存に失敗しました。\n');
       process.exitCode = 1;
     });
 }

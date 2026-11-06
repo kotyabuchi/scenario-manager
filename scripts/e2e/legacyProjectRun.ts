@@ -140,6 +140,7 @@ export const runLegacyProject = async (
             seed.actor,
             async (contextFile, context) => {
               const operationFailures: unknown[] = [];
+              let browserFailed = false;
               try {
                 await withIsolatedApp(
                   connection,
@@ -165,7 +166,6 @@ export const runLegacyProject = async (
                       join(root, 'package.json'),
                     ).resolve('@playwright/test/cli');
                     const sourceMaps = await playwrightSourceMapOptions(cli);
-                    let browserFailed = false;
                     try {
                       await runLocalCommand(
                         'node',
@@ -200,6 +200,7 @@ export const runLegacyProject = async (
                       );
                     } catch {
                       browserFailed = true;
+                      state.failurePhases.push('browser');
                     }
                     await verification?.checkpoint('after-tests');
                     progress('evidence');
@@ -219,7 +220,12 @@ export const runLegacyProject = async (
                   (value) => progress(value.phase),
                 );
               } catch (error) {
-                state.failurePhases.push(state.phase);
+                // ブラウザ失敗は記録済み。証跡の処理も失敗した場合は別段階として残す。
+                if (
+                  !browserFailed ||
+                  (state.phase === 'evidence' && isNil(state.results))
+                )
+                  state.failurePhases.push(state.phase);
                 operationFailures.push(error);
               } finally {
                 progress('ui-cleanup');
@@ -249,8 +255,10 @@ export const runLegacyProject = async (
             progress('fixture-cleanup');
             try {
               state.cleanup = await cleanupFixture(connection, journal);
-              if (state.cleanup.status !== 'complete')
+              if (state.cleanup.status !== 'complete') {
+                state.failurePhases.push(state.phase);
                 failures.push(new Error('legacy seedの後始末が不完全です。'));
+              }
             } catch (error) {
               state.failurePhases.push(state.phase);
               failures.push(error);
@@ -276,6 +284,9 @@ export const runLegacyProject = async (
     },
     [APP_PORT],
   );
+  // cleanup進捗で上書きせず、project固有の記録がない場合は環境側の失敗段階を引き継ぐ。
+  if (state.failurePhases.length === 0 && !isNil(environment.failurePhase))
+    state.failurePhases.push(environment.failurePhase);
   try {
     await verification?.checkpoint('after-cleanup');
   } catch {

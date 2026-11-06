@@ -25,7 +25,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import type { EnvironmentManifest } from './environmentSchema';
+import type {
+  EnvironmentManifest,
+  EnvironmentRunPhase,
+} from './environmentSchema';
 
 const PORTS = ISOLATED_SUPABASE_PORTS;
 const EXCLUDED_SERVICES = [
@@ -172,6 +175,7 @@ const probeWithSignal = async (
       check: CatalogCheck | null;
       status: 'verified' | 'mismatch' | 'not-reached';
     } = { check: null, status: 'not-reached' };
+    let failurePhase: EnvironmentRunPhase | undefined;
     isLifecycleOwner = true;
     const result = await runEnvironment(manifest, {
       docker: createDockerDriver((args) => run('docker', args)),
@@ -181,6 +185,8 @@ const probeWithSignal = async (
           relative(worktreeRoot, join(workdir, 'manifest.json')),
           `${JSON.stringify(value, null, 2)}\n`,
         );
+        // cleanupの失敗記録がmanifestを更新しても、最初の実行失敗段階を保持する。
+        failurePhase ??= value.failure?.phase;
         if (value.state === 'stopping')
           progress({ phase: 'cleanup', runId, workdir });
       },
@@ -300,6 +306,7 @@ const probeWithSignal = async (
       passed:
         result.passed && (catalogState.check?.schemaParityPassed ?? false),
       cleanup: result.manifest.cleanup,
+      ...(isNil(failurePhase) ? {} : { failurePhase }),
     };
     writeArtifact(
       worktreeRoot,
