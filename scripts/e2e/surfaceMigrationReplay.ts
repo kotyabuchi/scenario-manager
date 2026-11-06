@@ -1,3 +1,4 @@
+import { isNil } from 'ramda';
 import { z } from 'zod';
 
 import { localCommandEnvironment } from './environmentCommands';
@@ -155,7 +156,7 @@ export const replaySurfaceMigration = async (input: {
   );
   const manifest = readRevisionFile(root, introduction, 'package.json');
   const lock = readRevisionFile(root, introduction, 'pnpm-lock.yaml');
-  if (manifest === undefined || lock === undefined)
+  if (isNil(manifest) || isNil(lock))
     throw new Error('歴史再生の固定依存ファイルがありません。');
 
   await mkdir(logs, { mode: 0o700 });
@@ -198,7 +199,7 @@ export const replaySurfaceMigration = async (input: {
         cwd: checkout,
         env,
         log,
-        ...(stdoutFile === undefined ? {} : { stdoutFile }),
+        ...(isNil(stdoutFile) ? {} : { stdoutFile }),
         ...(input.signal ? { signal: input.signal } : {}),
       });
     } catch (error) {

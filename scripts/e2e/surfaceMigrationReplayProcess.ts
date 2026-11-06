@@ -1,3 +1,5 @@
+import { isNil } from 'ramda';
+
 import { spawn } from 'node:child_process';
 import { open } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -59,7 +61,7 @@ export const runSurfaceReplayProcess = async (
     if (closeFailure?.status === 'rejected') throw closeFailure.reason;
   };
   try {
-    if (options.stdoutFile !== undefined)
+    if (!isNil(options.stdoutFile))
       stdout = await open(options.stdoutFile, 'wx', 0o600);
     const child = spawn(executable, args, {
       cwd: options.cwd,
@@ -86,7 +88,7 @@ export const runSurfaceReplayProcess = async (
     try {
       const outcome = await Promise.race([closed, cancelled]);
       if (outcome === 'cancelled') {
-        if (pid !== undefined) await stopRemainingGroup(pid);
+        if (!isNil(pid)) await stopRemainingGroup(pid);
         const confirmed = await Promise.race([
           closed.then(() => true),
           delay(STOP_GRACE_MS, false, { ref: false }),
@@ -97,7 +99,7 @@ export const runSurfaceReplayProcess = async (
           );
         throw new Error('歴史再生の子processを中断しました。');
       }
-      if (pid !== undefined && signalGroup(pid, 0)) {
+      if (!isNil(pid) && signalGroup(pid, 0)) {
         await stopRemainingGroup(pid);
         throw new Error('歴史再生の子孫processが残っていました。');
       }

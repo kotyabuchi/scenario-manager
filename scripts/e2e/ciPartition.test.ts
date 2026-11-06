@@ -1,3 +1,4 @@
+import { isNil } from 'ramda';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -30,7 +31,7 @@ describe('CIの有効計画とowner分割', () => {
         validateCiPartitionManifest({
           ...input,
           manifest,
-          ...(expected === undefined
+          ...(isNil(expected)
             ? {}
             : { surfaceMigrationHistoryDigest: expected }),
         }),
