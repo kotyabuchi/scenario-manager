@@ -33,7 +33,7 @@ mainに未公開の前提UI等232コミットが含まれるため、ユーザ�
 - [x] Batch 2: PR分離と実CI受入
 - [x] Batch 3: 必須チェック設定
 - [x] Batch 4: 進捗・診断の改善
-- [ ] Batch 5: 同一入力の解析再利用
+- [x] Batch 5: 同一入力の解析再利用
 - [ ] Batch 6: 参加申請・取消の検証拡張
 
 ## Batch 1: フォント安定化
@@ -202,3 +202,13 @@ PR #7はmain `a270fbdbd7bc23844ead4ad551732d6f6046aa14` を取り込んだhead `
 固定12工程と6失敗区分だけを既知の例外型から読み、plan/static-ledgerのsafe failure JSONへ任意追加する。任意のmessage/cause/stackや模倣オブジェクトは診断として公開しない。Linuxの既存policy fixtureには固定履歴の実再生を追加し、固定保存物とproof・前後HEADを照合する。今回のJSON保存後に出すmarkerがある場合だけ安全な結果1ファイルをuploadする。古い結果が残る保存失敗も成功へ昇格させない。
 
 関連8 files/79 tests、型検査、Biome、actionlintが成功。3観点レビューの必須1件（保存失敗時の古いartifact公開）も修正・再確認済み。コードは `9f65acb`、`7f5072f`、`0cea6dd`、`345f0a8` の4コミット。GitHubの実履歴checkと全hosted gateはこれから確認し、旧attempt 2・3の実原因が同一だったとは断定しない。
+
+## PR #8の初回CI受入とBatch 5完了（2026-11-06）
+
+[PR #8](https://github.com/kotyabuchi/scenario-manager/pull/8) の初回head `aebd052889ede8692cd9e4b5780f85515c107fd3`、base `0b14ff2` に対する [run 42202106264](https://github.com/kotyabuchi/scenario-manager/actions/runs/42202106264) / attempt 1は全6 jobs成功。Linuxの固定履歴再生、Windows fixtures、planner、両runtime shard、集約を受入した。取得artifactを実run/attempt・固定Gitで独立に再集約し、manifest `ac41634dc113bf318a7a8ed02b5738d990ffab2b1491dda6f8e3a1f3bb413996` と55 required・312 extrasが一致した。旧main pushの失敗原因が同一と確定したわけではない。PRはdraftのまま、Batch 5・6を追加する。
+
+Batch 5は呼び出し内だけで、全実効path・raw bytes・物理rootが同一のInventoryを共有する。4 revision枠と依存・Panda・入力変更検査は維持する。全枠同一、一部同一、全枠相違の3条件で旧版と新版を各1回比較し、Inventory・graph・plan・selectionのdigestが一致した。builder時間は318.401→84.387秒、323.953→161.720秒、333.046→313.981秒。反復測定ではなく、RSSはプロセス累積最大なので、安定した改善率やbuilder単独メモリ量は主張しない。
+
+初回品質 `2a3cdbab496f` は実Gitの8 MiB超blob・symlink fixtureが既定5秒を超えて停止した。対象1件だけ30秒に設定し、拒否assertionとproductionの制限は維持した。再検証の品質 `524495c4959c`、selection `b0e4f28d9a39`、verification `b3c49c66e312` は成功。固定base/headは `aebd052`、unit1097成功＋既存skip8、tools143 files/2051成功、必須55成功・旧E2E312登録・全7 stagesを照合した。
+
+入力digest `6de789e030f9e795a7437ddb28ec7987f75b6a6be4c9032c4cda931d1d028210` は前後一致、28 checkpointsの差分0。独立受入で6環境のDocker資源・11 locks・専用5ポートと識別可能な子プロセスの残留0を確認した。core437/UI658とdeferred-live18は維持。レビューと測定の詳細は [Batch 5レビュー](../reviews/diff-review-2026-11-06-4.md) に記録した。
