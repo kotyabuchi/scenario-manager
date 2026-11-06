@@ -41,7 +41,7 @@ pnpm exec tsx scripts/e2e/environmentProbe.ts
 
 これは**migration復元の診断コマンド**であり、完成したE2E品質ゲートではない。catalogの取得と、その内容が必要な仕様を満たすことの検証を区別する。接続成功やcatalog取得だけではBatch 7完了にならない。
 
-診断はAPI 57321 / DB 57322 / shadow 57320を使う。他worktreeと重複すれば起動を拒否する。入力生成・ロックのAPIは別port集合を受け取るが、診断CLIの既定portを勝手に空きportへ変更しない。既存開発環境の5432x系portは専用環境の入力schemaで拒否する。
+診断はAPI 27321 / DB 27322 / shadow 27320を使う。定義は `e2e/isolatedRuntime.ts`、選定根拠と衝突時の調査は [ポート方針](./isolated-runtime-ports.md) を参照。他worktreeと重複すれば起動を拒否する。入力生成・ロックのAPIは別port集合を受け取るが、診断CLIの既定portを勝手に空きportへ変更しない。既存開発環境の5432x系portは専用環境の入力schemaで拒否する。
 
 ## 入力と接続の境界
 

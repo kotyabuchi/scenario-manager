@@ -108,7 +108,7 @@ Step 8-3の合成seed、legacy-local config/runner、旧認証・cleanup helper�
 
 ## 本番buildの分離
 
-新経路は固定app port **43100**。最初に検討した57300はOSの動的ポート範囲内で既存clientにBoundされており、起動前に拒否した。既存プロセスを停止せず、動的範囲外の固定値へ設計を変更した。実行ごとに空きportを自動選択する方式ではない。
+新経路は固定app port **23100**。初期候補57300から43100へ変更した後、Linuxの既定動的範囲も避けるため23100へ移した。定義は `e2e/isolatedRuntime.ts`、詳細は [ポート方針](./isolated-runtime-ports.md) を参照。既存プロセスを停止せず、実行ごとに空きportを自動選択する方式でもない。
 
 build出力は`.next-e2e/run-<runId>`、Nextが更新するtsconfigはrun配下の`app/tsconfig.json`へ分離する。Windows上のTurbopackは絶対drive pathのextendsを解決できなかったため、extends/include/excludeはこの設定fileからの相対pathにする。元のtsconfigは無変更。ignoredのnext-env.d.ts生成更新はapp/status.jsonへ記録する。
 
