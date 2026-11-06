@@ -97,13 +97,17 @@ describe('FilterPanelの即時適用モード', () => {
     await user.click(
       screen.getByRole('button', { name: 'フィルターをクリア' }),
     );
-    await waitFor(() => expect(screen.getByText('1人 ～ 10人+')).toBeVisible());
-    expect(screen.getByText('1h ～ 20h+')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText('1人 ～ 10人+')).toBeVisible();
+      expect(screen.getByText('1h ～ 20h+')).toBeVisible();
+    });
     await waitFor(() => expect(onUrlUpdate).toHaveBeenCalledTimes(1));
     expect(onUrlUpdate.mock.calls[0]?.[0].queryString).toBe('');
 
     navigate('?minPlayer=2&maxPlayer=4&minPlaytime=2&maxPlaytime=6');
-    await waitFor(() => expect(screen.getByText('2人 ～ 4人')).toBeVisible());
-    expect(screen.getByText('2h ～ 6h')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText('2人 ～ 4人')).toBeVisible();
+      expect(screen.getByText('2h ～ 6h')).toBeVisible();
+    });
   });
 });
