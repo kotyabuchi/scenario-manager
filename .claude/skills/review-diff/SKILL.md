@@ -399,5 +399,6 @@ REVIEW_RESULT verdict=<A|B|C|D> blocking=<必須件数> recommended=<推奨件�
 - **パラレルモード**: `security-bug-reviewer`、`design-standards-reviewer`、`ux-performance-reviewer` の3エージェントが並列に各2観点を担当
 - **シリアルモード**: 従来どおり1パスで6観点すべてを評価（小さな差分向け）
 - **`/apply-review` との互換性**: パラレル/シリアルどちらのレポートも同一フォーマットのため、`/apply-review` での修正反映にそのまま使用可能
+- セキュリティ特化の精査が必要な場合は /security-review を併用する（本スキルは全観点バランス型）
 - 同日の既存レポートファイルがある場合は連番を付与して上書きしない
 - **`ReportFindings` ツールを使わない理由（意図的な見送り）**: `ReportFindings` は「findings をテキストでも出力するな」という契約のため、本スキルの markdown レポート出力（`/apply-review` が依存）と両立しない。構造化連携は当面 markdown レポート＋`REVIEW_RESULT` 行で足りるため、`ReportFindings` 化は `/apply-review` を含めた出力契約の再設計とセットで別途検討する。

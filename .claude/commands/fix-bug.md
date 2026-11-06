@@ -339,7 +339,7 @@ z.preprocess で空文字列・null・undefinedを事前にundefinedに変換
 | ファイル | 用途 |
 |----------|------|
 | `.claude/commands/gen-test.md` | テスト生成スキル |
-| `.claude/commands/implement-tests.md` | 実装スキル |
+| `.claude/agents/tdd-implementer.md` | Green フェーズの実装エージェント |
 | `CLAUDE.md` | コーディング規約 |
 | `vitest.config.ts` | Vitest設定 |
 

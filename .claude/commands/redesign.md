@@ -208,19 +208,22 @@ Pencilの仕様に基づいて、対象部分を完全に書き換える。
 ```typescript
 // Pencil: children = [icon, text]
 <Button>
-  <ChevronDown /> {/* 1. アイコンが先 */}
-  もっと見る       {/* 2. テキストが後 */}
+  <CaretDown /> {/* 1. アイコンが先 */}
+  もっと見る     {/* 2. テキストが後 */}
 </Button>
 
 // NG: 既存実装の順序を維持（Pencilと異なる場合）
 <Button>
-  もっと見る <ChevronDown />
+  もっと見る <CaretDown />
 </Button>
 ```
 
 #### Step 3.4: 実装コード例
 
 ```typescript
+// アイコンは @phosphor-icons/react/ssr を使用（icons.md 参照）
+import { CaretDown } from '@phosphor-icons/react/ssr'
+
 // Pencil仕様に完全準拠した実装
 <Button
   variant="outline"
@@ -232,7 +235,7 @@ Pencilの仕様に基づいて、対象部分を完全に書き換える。
   })}
 >
   {/* Pencil children順序: 1.icon, 2.text */}
-  <ChevronDown
+  <CaretDown
     size={18}  // Pencil: width/height: 18
     className={css({ color: 'gray.500' })}  // Pencil: fill: #6B7280
   />
