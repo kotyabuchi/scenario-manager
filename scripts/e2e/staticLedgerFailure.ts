@@ -6,6 +6,10 @@ import {
   buildSurfacePendingDiagnostic,
   SurfacePendingSubsetError,
 } from './surfacePendingDiagnostic';
+import {
+  createSurfaceReplayDiagnosticError,
+  readSurfaceReplayDiagnostic,
+} from './surfaceReplayFailure';
 
 import type { SurfaceAnalysis } from './surfaceSchema';
 import type { resolveRevisions } from './trustedRevision';
@@ -58,5 +62,8 @@ export const recordStaticLedgerFailure = ({
       ...(isInvalidArguments ? { usage: LEDGER_CHECK_USAGE } : {}),
     })}\n`,
   );
-  return new Error(failure);
+  const surfaceReplay = readSurfaceReplayDiagnostic(error);
+  return isNil(surfaceReplay)
+    ? new Error(failure)
+    : createSurfaceReplayDiagnosticError(surfaceReplay);
 };

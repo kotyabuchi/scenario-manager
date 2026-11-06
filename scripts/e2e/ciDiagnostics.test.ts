@@ -3,6 +3,7 @@ import { expect, it } from 'vitest';
 import { advanceCiProgress, createCiFailure } from './ciDiagnostics';
 
 const verificationId = 'abcdef123456';
+const replay = { step: 'panda', processFailure: 'descendants-remained' };
 
 it('失敗段階を更新しても判明済みの検証IDと後始末を保持する', () => {
   const execution = advanceCiProgress(
@@ -75,4 +76,38 @@ it('有効なrunとattempt、固定コードと品質段階だけを公開する
       interrupted: false,
     }),
   ).not.toHaveProperty('workflow');
+});
+
+it('固定の歴史再生診断をplanの静的検査失敗だけに追加する', () => {
+  const input = {
+    job: 'plan',
+    progress: { phase: 'static-ledger' },
+    env: process.env,
+    interrupted: false,
+    surfaceReplay: replay,
+  } as const;
+  expect(createCiFailure(input)).toMatchObject({
+    code: 'CI_STATIC_LEDGER_FAILED',
+    surfaceReplay: replay,
+  });
+  expect(
+    createCiFailure({
+      ...input,
+      interrupted: true,
+      surfaceReplay: { step: 'panda', processFailure: 'aborted' },
+    }),
+  ).toMatchObject({
+    code: 'CI_INTERRUPTED',
+    surfaceReplay: { step: 'panda', processFailure: 'aborted' },
+  });
+  for (const override of [
+    { job: 'required' },
+    { progress: { phase: 'collection' } },
+    { surfaceReplay: { ...replay, step: 'private-step' } },
+    { surfaceReplay: { ...replay, processFailure: 'private-cause' } },
+    { surfaceReplay: { ...replay, path: 'private-path' } },
+  ] as const)
+    expect(createCiFailure({ ...input, ...override })).not.toHaveProperty(
+      'surfaceReplay',
+    );
 });

@@ -4,6 +4,7 @@ import { advanceCiProgress, createCiFailure } from './ciDiagnostics';
 import { ciShardIdSchema } from './ciPartitionSchema';
 import { planCiVerification } from './ciPlan';
 import { runCiShard } from './ciShard';
+import { readSurfaceReplayDiagnostic } from './surfaceReplayFailure';
 
 import { closeSync, constants, openSync, writeFileSync } from 'node:fs';
 import { realpath } from 'node:fs/promises';
@@ -71,12 +72,13 @@ export const runCiCli = async (
         onProgress,
       );
     return await runCiShard(directory, env, job, controller.signal, onProgress);
-  } catch {
+  } catch (error) {
     const report = createCiFailure({
       job,
       progress,
       env,
       interrupted: controller.signal.aborted,
+      surfaceReplay: readSurfaceReplayDiagnostic(error),
     });
     if (directory) {
       try {
