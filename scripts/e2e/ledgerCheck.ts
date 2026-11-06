@@ -1,13 +1,21 @@
+import { isNil } from 'ramda';
+
 import { writeArtifact } from './ledgerArtifacts';
 import {
   baselineDigest,
   checkStaticState,
   collectStaticState,
 } from './staticGate';
+import {
+  InvalidLedgerCheckArgumentsError,
+  recordStaticLedgerFailure,
+} from './staticLedgerFailure';
 import { resolveRevisions } from './trustedRevision';
 
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+const ARTIFACT_PATH = 'test-results/quality/static-gate.json';
 
 /** CIではeventだけを使い、ローカルは呼出者が比較baseを明示する。 */
 export const runLedgerCheck = async (
@@ -16,13 +24,12 @@ export const runLedgerCheck = async (
   env = process.env,
 ) => {
   const saveReport = (report: unknown) =>
-    writeArtifact(
-      root,
-      'test-results/quality/static-gate.json',
-      `${JSON.stringify(report, null, 2)}\n`,
-    );
+    writeArtifact(root, ARTIFACT_PATH, `${JSON.stringify(report, null, 2)}\n`);
   // 中途失敗や中断でも、前回の成功reportを今回の結果として残さない。
   saveReport({ stage: 'M1-static', status: 'running' });
+  let revisions: Awaited<ReturnType<typeof resolveRevisions>> | undefined;
+  let state: Awaited<ReturnType<typeof collectStaticState>> | undefined;
+  let result: Awaited<ReturnType<typeof checkStaticState>>;
   try {
     if (
       args.length !== 0 &&
@@ -31,16 +38,14 @@ export const runLedgerCheck = async (
         !args[1] ||
         args[1].startsWith('-'))
     )
-      throw new Error(
-        '使用法: e2e:ledger:check --base <比較ref>（CIでは引数なし）',
-      );
-    const revisions = await resolveRevisions({
+      throw new InvalidLedgerCheckArgumentsError();
+    revisions = await resolveRevisions({
       root,
       env,
       ...(args[1] ? { base: args[1] } : {}),
     });
-    const state = await collectStaticState(root);
-    const result = await checkStaticState({
+    state = await collectStaticState(root);
+    result = await checkStaticState({
       root,
       state,
       revisions,
@@ -48,29 +53,30 @@ export const runLedgerCheck = async (
         ? { bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL }
         : {}),
     });
-    const passed = result.issues.length === 0;
-    const report = {
-      stage: 'M1-static',
-      status: passed ? 'passed' : 'failed',
-      ...revisions,
-      baselineDigest: baselineDigest(state.baseline),
-      registrations: state.registrations,
-      pendingItems: state.baseline.items.length,
-      legacyTests: state.legacy.tests.length,
-      ...result,
-    };
-    saveReport(report);
-    process.stdout.write(`${JSON.stringify(report)}\n`);
-    return passed;
   } catch (error) {
-    saveReport({
+    throw recordStaticLedgerFailure({
+      root,
+      artifactPath: ARTIFACT_PATH,
+      error,
       stage: 'M1-static',
-      status: 'failed',
-      message:
-        error instanceof Error ? error.message : '静的台帳の検査に失敗しました',
+      ...(isNil(revisions) ? {} : { revisions }),
+      bindings: state?.inventory.surfaceAnalysis.bindings,
     });
-    throw error;
   }
+  const passed = result.issues.length === 0;
+  const report = {
+    stage: 'M1-static',
+    status: passed ? 'passed' : 'failed',
+    ...revisions,
+    baselineDigest: baselineDigest(state.baseline),
+    registrations: state.registrations,
+    pendingItems: state.baseline.items.length,
+    legacyTests: state.legacy.tests.length,
+    ...result,
+  };
+  saveReport(report);
+  process.stdout.write(`${JSON.stringify(report)}\n`);
+  return passed;
 };
 
 if (
@@ -81,10 +87,7 @@ if (
     .then((passed) => {
       if (!passed) process.exitCode = 1;
     })
-    .catch((error: unknown) => {
-      process.stderr.write(
-        `${error instanceof Error ? error.message : '静的台帳の検査に失敗しました'}\n`,
-      );
+    .catch(() => {
       process.exitCode = 1;
     });
 }
