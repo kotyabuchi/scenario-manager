@@ -215,12 +215,86 @@ export const checkStaticState = async ({
       bootstrapApproval,
     );
   }
-  const baseLedger = await readRevisionLedger(root, revisions.base);
-  const baseMigrationText = readRevisionFile(
+  const eventLedger = await readRevisionLedger(root, revisions.base);
+  const eventMigrationText = readRevisionFile(
     root,
     revisions.base,
     ARTIFACTS.migrations,
   );
+  const eventLegacyText = readRevisionFile(
+    root,
+    revisions.base,
+    ARTIFACTS.legacy,
+  );
+  if (
+    policy?.event === 'pull_request' &&
+    isBaselineMissing !== isNil(eventLegacyText)
+  )
+    throw new Error('PRの比較元にはbaselineとlegacy目録の両方が必要です');
+  if (!isBaselineMissing && isNil(eventLegacyText))
+    throw new Error('baseのlegacy目録が欠落しています');
+
+  const isBootstrap = isPushBootstrap || isBaselineMissing;
+  if (isNil(baseText)) {
+    // PRとローカル初回導入にも、固定した比較元・HEAD・baselineの承認が必要。
+    if (policy?.event !== 'push')
+      verifyBootstrapApproval(
+        {
+          base: revisions.base,
+          head: revisions.head,
+          digest: baselineDigest(head),
+        },
+        bootstrapApproval,
+      );
+    issues.push(
+      ...checkBaseline({ base: head, head, current: state.baseline.items }),
+    );
+  } else {
+    if (isNil(eventLedger)) throw new Error('baseの契約台帳が欠落しています');
+    issues.push(
+      ...checkBaseline({
+        base: baselineSchema.parse(parseArtifact(baseText, ARTIFACTS.baseline)),
+        head,
+        current: state.baseline.items,
+      }),
+    );
+  }
+  const surface = await checkSurfaceState({
+    root,
+    state,
+    revisions,
+    artifacts: ARTIFACTS,
+    ...(bootstrapApproval ? { bootstrapApproval } : {}),
+    ...(isNil(directory) ? {} : { directory }),
+    ...(isNil(signal) ? {} : { signal }),
+  });
+
+  const historyBase = surface.surfaceMigrationHistory?.introductionSha;
+  let baseLedger = eventLedger;
+  let baseMigrationText = eventMigrationText;
+  let baseLegacyText = eventLegacyText;
+  if (!isNil(historyBase)) {
+    // 公開比較元にある実行義務は、固定導入の履歴で上書きしない。
+    if (
+      !isBaselineMissing ||
+      !isNil(eventLedger) ||
+      !isNil(eventMigrationText) ||
+      !isNil(eventLegacyText)
+    )
+      throw new Error('履歴再生の比較元に一部のcore台帳が存在します');
+    baseLedger = await readRevisionLedger(root, historyBase);
+    baseMigrationText = readRevisionFile(
+      root,
+      historyBase,
+      ARTIFACTS.migrations,
+    );
+    baseLegacyText = readRevisionFile(root, historyBase, ARTIFACTS.legacy);
+    if (isNil(baseLedger) || isNil(baseMigrationText) || isNil(baseLegacyText))
+      throw new Error(
+        '固定導入の履歴に契約台帳・移行記録・legacy目録が必要です',
+      );
+  }
+
   const previousMigrations = isNil(baseMigrationText)
     ? { schemaVersion: 1 as const, entries: [] }
     : migrationsSchema.parse(
@@ -262,16 +336,6 @@ export const checkStaticState = async ({
   const migration = migrations.entries.find(
     (entry) => entry.base === revisions.base,
   );
-  const baseLegacyText = readRevisionFile(
-    root,
-    revisions.base,
-    ARTIFACTS.legacy,
-  );
-  if (
-    policy?.event === 'pull_request' &&
-    isBaselineMissing !== isNil(baseLegacyText)
-  )
-    throw new Error('PRの比較元にはbaselineとlegacy目録の両方が必要です');
   // 初回でも既存の契約・旧testが存在すれば比較を省略しない。
   const policyDeltas = isNil(baseLedger)
     ? []
@@ -288,42 +352,7 @@ export const checkStaticState = async ({
         ({ key, ...issue }) => ({ ...issue, subject: key }),
       ),
     );
-  } else if (!isNil(baseText))
-    throw new Error('baseのlegacy目録が欠落しています');
-  const isBootstrap = isPushBootstrap || isBaselineMissing;
-  if (isNil(baseText)) {
-    // PRとローカル初回導入にも、固定した比較元・HEAD・baselineの承認が必要。
-    if (policy?.event !== 'push')
-      verifyBootstrapApproval(
-        {
-          base: revisions.base,
-          head: revisions.head,
-          digest: baselineDigest(head),
-        },
-        bootstrapApproval,
-      );
-    issues.push(
-      ...checkBaseline({ base: head, head, current: state.baseline.items }),
-    );
-  } else {
-    if (isNil(baseLedger)) throw new Error('baseの契約台帳が欠落しています');
-    issues.push(
-      ...checkBaseline({
-        base: baselineSchema.parse(parseArtifact(baseText, ARTIFACTS.baseline)),
-        head,
-        current: state.baseline.items,
-      }),
-    );
   }
-  const surface = await checkSurfaceState({
-    root,
-    state,
-    revisions,
-    artifacts: ARTIFACTS,
-    ...(bootstrapApproval ? { bootstrapApproval } : {}),
-    ...(isNil(directory) ? {} : { directory }),
-    ...(isNil(signal) ? {} : { signal }),
-  });
   return {
     ...surface,
     issues,

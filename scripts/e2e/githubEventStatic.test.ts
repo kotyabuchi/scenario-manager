@@ -9,18 +9,25 @@ import { inventoryFixture } from './fixtures/selection';
 import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { parseGithubEvent, resolveGithubEventPolicy } from './githubEvent';
 import { serializeInventory } from './inventory';
+import { legacyKey } from './legacy';
 import {
   ARTIFACTS,
   baselineDigest,
   checkStaticState,
   type StaticState,
 } from './staticGate';
+import { checkSurfaceState } from './surfaceGate';
+import {
+  SURFACE_MIGRATION_INTRODUCTION,
+  SURFACE_MIGRATION_V1_ORIGIN,
+} from './surfaceMigrationHistory';
+import * as trustedRevision from './trustedRevision';
 
 const roots: ReturnType<typeof createGithubEventGit>[] = [];
 // イベントとcoreの比較境界。UI移行は専用の実境界testで照合する。
 vi.mock('./surfaceGate', async (original) => ({
   ...(await original<typeof import('./surfaceGate')>()),
-  checkSurfaceState: async () => surfaceLedgerFixture().receipt,
+  checkSurfaceState: vi.fn(async () => surfaceLedgerFixture().receipt),
 }));
 // UI証跡の独立照合はsurfaceReceipt.test.tsで扱う。
 vi.mock('./surfaceReceipt', async (original) => ({
@@ -28,6 +35,7 @@ vi.mock('./surfaceReceipt', async (original) => ({
   assertSurfaceReceipt: vi.fn(),
 }));
 afterEach(() => {
+  vi.restoreAllMocks();
   for (const repo of roots.splice(0)) repo.cleanup();
 });
 
@@ -266,6 +274,130 @@ describe('CI静的検査へのイベント接続', { timeout: 30_000 }, () => {
         }),
       }),
     ).rejects.toThrow('baselineとlegacy目録の両方');
+  });
+
+  it('承認済みの履歴再生から既存の移行記録・契約・旧登録を引き継ぐ', async () => {
+    const { root, commit, save, state, write } = createFixture();
+    const base = commit('ledger未導入のイベント比較元');
+    const oldTest = {
+      profile: 'app',
+      file: 'e2e/fixture.spec.ts',
+      titlePath: ['維持する旧テスト'],
+      project: 'chromium',
+      repeatEachIndex: 0,
+      expectedStatus: 'passed' as const,
+      annotations: [],
+      fingerprint: 'a'.repeat(64),
+      serialGroup: null,
+    };
+    state.legacy.tests.push({ ...oldTest, key: legacyKey('app', oldTest) });
+    const oldMigration = { base: 'd'.repeat(40), policy: [], legacy: [] };
+    const migrations = (entries: unknown[]) =>
+      write(
+        ARTIFACTS.migrations,
+        JSON.stringify({ schemaVersion: 1, entries }),
+      );
+    save(state);
+    migrations([oldMigration]);
+    const introduced = commit('UI初期移行導入時の保存物');
+    const head = commit('公開対象のHEAD');
+    const revisions = { base, head };
+    const bootstrapApproval = JSON.stringify({
+      base,
+      head,
+      digest: baselineDigest(state.baseline),
+    });
+    const { readRevisionFile, readRevisionLedger } = trustedRevision;
+    const revision = (sha: string) =>
+      sha === SURFACE_MIGRATION_INTRODUCTION ? introduced : sha;
+    const read = vi
+      .spyOn(trustedRevision, 'readRevisionFile')
+      .mockImplementation((root, sha, path) =>
+        readRevisionFile(root, revision(sha), path),
+      );
+    vi.spyOn(trustedRevision, 'readRevisionLedger').mockImplementation(
+      (root, sha) => readRevisionLedger(root, revision(sha)),
+    );
+    const receipt = surfaceLedgerFixture().receipt;
+    const digest = 'a'.repeat(64);
+    const withHistory = {
+      ...receipt,
+      surfaceMigrationHistory: {
+        schemaVersion: 1,
+        observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+        introductionSha: SURFACE_MIGRATION_INTRODUCTION,
+        snapshotDigest: digest,
+        baselineDigest: digest,
+        surfaceMigrationDigest: digest,
+        surfacePendingDigest: digest,
+      },
+    } satisfies Awaited<ReturnType<typeof checkSurfaceState>>;
+    const check = (current = state, approval = bootstrapApproval) =>
+      checkStaticState({
+        root,
+        state: current,
+        revisions,
+        bootstrapApproval: approval,
+      });
+    const checkWithHistory = (current = state) => {
+      vi.mocked(checkSurfaceState).mockResolvedValueOnce(withHistory);
+      return check(current);
+    };
+
+    expect((await check()).issues.map(({ code }) => code)).toContain(
+      'UNRELATED_MIGRATION',
+    );
+    expect(read).not.toHaveBeenCalledWith(
+      root,
+      SURFACE_MIGRATION_INTRODUCTION,
+      expect.anything(),
+    );
+    await expect(check(state, '')).rejects.toThrow('外部承認');
+    expect((await checkWithHistory()).issues).toEqual([]);
+
+    migrations([
+      {
+        ...oldMigration,
+        policy: [
+          {
+            deltaId: digest,
+            reason: '過去の理由を書き換え',
+            reference: 'docs/fixture.md',
+          },
+        ],
+      },
+    ]);
+    expect((await checkWithHistory()).issues.map(({ code }) => code)).toEqual(
+      expect.arrayContaining([
+        'UNRELATED_MIGRATION',
+        'REMOVED_MIGRATION_HISTORY',
+      ]),
+    );
+    migrations([]);
+    expect((await checkWithHistory()).issues.map(({ code }) => code)).toContain(
+      'REMOVED_MIGRATION_HISTORY',
+    );
+    migrations([
+      oldMigration,
+      { ...oldMigration, base: SURFACE_MIGRATION_INTRODUCTION },
+    ]);
+    expect((await checkWithHistory()).issues.map(({ code }) => code)).toContain(
+      'UNRELATED_MIGRATION',
+    );
+
+    const reduced = structuredClone(state);
+    reduced.ledger.contracts = [];
+    reduced.legacy.tests = [];
+    save(reduced);
+    migrations([oldMigration, { ...oldMigration, base }]);
+    expect(
+      (await checkWithHistory(reduced)).issues.map(({ code }) => code),
+    ).toEqual(
+      expect.arrayContaining(['MISSING_POLICY_MIGRATION', 'REMOVED_LEGACY']),
+    );
+    expect(
+      (await checkWithHistory(reduced)).issues.map(({ code }) => code),
+    ).not.toContain('UNRELATED_MIGRATION');
   });
 
   it('実在するbeforeのpushではheadの不足増加を拒否する', async () => {
