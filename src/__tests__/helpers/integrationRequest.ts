@@ -2,6 +2,11 @@ import { assertActorIdentity } from '../../../e2e/fixtures/authState';
 import { ISOLATED_BASE_URL } from '../../../e2e/isolatedRuntime';
 
 import type { CaseActors } from '../../../e2e/fixtures/actors';
+import type { signInFixtureActor } from '../../../e2e/fixtures/authState';
+
+type IntegrationRequestActor =
+  | Awaited<ReturnType<typeof signInFixtureActor>>
+  | CaseActors['anonymous'];
 
 let jar: Map<string, string> | null = null;
 
@@ -21,7 +26,7 @@ export const integrationCookies = () => {
 
 /** cookie経由の実認証本人確認後にActionを呼び、成否に関係なくrequestを解除する。 */
 export const withIntegrationRequest = async <T>(
-  actor: CaseActors[keyof CaseActors],
+  actor: IntegrationRequestActor,
   ownerTag: string,
   operation: () => Promise<T>,
 ): Promise<T> => {

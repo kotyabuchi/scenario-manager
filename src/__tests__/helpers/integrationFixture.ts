@@ -2,18 +2,26 @@ import { isNil } from 'ramda';
 import { ulid } from 'ulid';
 import { expect } from 'vitest';
 
-import { createCaseActors } from '../../../e2e/fixtures/actors';
+import {
+  createApplicationActors,
+  createCaseActors,
+} from '../../../e2e/fixtures/actors';
 import { assertActorIdentity } from '../../../e2e/fixtures/authState';
 import { cleanupFixture } from '../../../e2e/fixtures/fixtureCleanup';
 import { createFixtureJournal } from '../../../e2e/fixtures/fixtureManifest';
+import { createSessionApplicationFixture } from '../../../e2e/fixtures/sessionApplication';
 import { createSessionFixture } from '../../../e2e/fixtures/sessions';
 import { readEnvironmentCredentials } from '../../../scripts/e2e/environmentCredentials';
 import { integrationAttemptMetaSchema } from '../../../scripts/e2e/integrationSchema';
 import { beginIntegrationEvidence } from './integrationEvidence';
+import { withIntegrationRequest } from './integrationRequest';
 
 import type { TestContext } from 'vitest';
 import type { AvailabilityTimeBlockInput } from '@/app/(main)/sessions/[id]/schedule/availability/interface';
-import type { CaseActors } from '../../../e2e/fixtures/actors';
+import type {
+  ApplicationActors,
+  CaseActors,
+} from '../../../e2e/fixtures/actors';
 import type { FixtureJournal } from '../../../e2e/fixtures/fixtureManifest';
 import type { FixtureConnection } from '../../../scripts/e2e/environmentCredentials';
 import type { IntegrationAttemptMeta } from '../../../scripts/e2e/integrationSchema';
@@ -130,6 +138,103 @@ const createRuntimeFixture = async (
 
 type IntegrationFixture = Awaited<ReturnType<typeof createRuntimeFixture>>;
 
+const createApplicationRuntimeFixture = async (
+  connection: FixtureConnection,
+  journal: FixtureJournal,
+  options: Parameters<typeof createSessionApplicationFixture>[3],
+  evidence: IntegrationAttemptMeta,
+) => {
+  const actors = await createApplicationActors(connection, journal);
+  evidence.actors = Object.values(actors).map((actor) => actor.identity);
+  const session = await createSessionApplicationFixture(
+    connection,
+    journal,
+    actors,
+    options,
+  );
+  const snapshot = (
+    kind: Exclude<keyof ApplicationActors, 'anonymous'> = 'creator-only',
+  ) =>
+    withIntegrationRequest(actors[kind], journal.ownerTag, async () => {
+      const { createClient } = await import('@/lib/supabase/server');
+      const client = await createClient();
+      const [parent, participants] = await Promise.all([
+        client
+          .from('game_sessions')
+          .select('*')
+          .eq('game_session_id', session.sessionId)
+          .single(),
+        client
+          .from('session_participants')
+          .select('*')
+          .eq('session_id', session.sessionId)
+          .order('user_id'),
+      ]);
+      if (
+        !isNil(parent.error) ||
+        isNil(parent.data) ||
+        !isNil(participants.error) ||
+        isNil(participants.data)
+      )
+        throw new Error('利用者JWTによる申請状態の観測に失敗しました');
+      return { session: parent.data, participants: participants.data };
+    });
+
+  const initial = await snapshot();
+  expect(initial.session).toMatchObject({
+    game_session_id: session.sessionId,
+    scenario_id: session.scenarioId,
+    created_by_id: session.creatorId,
+    visibility: 'PUBLIC',
+    session_phase: 'RECRUITING',
+    remaining_seat_count: session.remainingSeatCount,
+  });
+  expect(initial.session.remaining_seat_count).toBeGreaterThan(0);
+  const expected = [
+    {
+      user_id: session.creatorId,
+      participant_type: 'SPECTATOR',
+      participant_status: 'CONFIRMED',
+    },
+    {
+      user_id: session.playerId,
+      participant_type: 'PLAYER',
+      participant_status: 'CONFIRMED',
+    },
+  ];
+  if (options?.pendingApplicant)
+    expected.push({
+      user_id: session.applicantId,
+      participant_type: 'PLAYER',
+      participant_status: 'PENDING',
+    });
+  expect(initial.participants).toHaveLength(expected.length);
+  expect(initial.participants).toEqual(
+    expect.arrayContaining(
+      expected.map((participant) =>
+        expect.objectContaining({
+          session_id: session.sessionId,
+          ...participant,
+        }),
+      ),
+    ),
+  );
+  return { actors, session, journal, snapshot, initial };
+};
+
+type ApplicationIntegrationFixture = Awaited<
+  ReturnType<typeof createApplicationRuntimeFixture>
+>;
+type IntegrationOperator = Parameters<typeof withIntegrationRequest>[0];
+type IntegrationBindings<Kind extends string> = readonly {
+  role: string;
+  kind: Kind;
+}[];
+type IntegrationOperation<Fixture> = (
+  fixture: Fixture,
+  evidence: IntegrationAttemptMeta,
+) => Promise<void>;
+
 /** fixture枠を日単位でずらし、初期値と置換値を別々に作る。 */
 export const integrationTimeBlocks = (
   block: AvailabilityTimeBlockInput,
@@ -164,14 +269,18 @@ export const seedIntegrationSchedule = async (fixture: IntegrationFixture) => {
 };
 
 /** taskごとの独立fixtureを作り、失敗時も全cleanupを待って証跡へ反映する。 */
-export const withIntegrationFixture = async (
+const withOwnedIntegrationFixture = async <
+  Kind extends string,
+  Fixture extends { actors: Record<Kind, IntegrationOperator> },
+>(
   context: TestContext,
-  bindings: readonly { role: string; kind: keyof CaseActors }[],
-  operation: (
-    fixture: IntegrationFixture,
+  bindings: IntegrationBindings<Kind>,
+  operation: IntegrationOperation<Fixture>,
+  createFixture: (
+    connection: FixtureConnection,
+    journal: FixtureJournal,
     evidence: IntegrationAttemptMeta,
-  ) => Promise<void>,
-  options: Parameters<typeof createSessionFixture>[3] = {},
+  ) => Promise<Fixture>,
 ) => {
   const connection = readIntegrationConnection();
   const journal = await createFixtureJournal(connection, {
@@ -185,12 +294,7 @@ export const withIntegrationFixture = async (
   let bodyAssertions = initialAssertions;
   const failures: unknown[] = [];
   try {
-    const fixture = await createRuntimeFixture(
-      connection,
-      journal,
-      options,
-      evidence,
-    );
+    const fixture = await createFixture(connection, journal, evidence);
     evidence.actorBindings = bindings.map(({ role, kind }) => ({
       role,
       actor: fixture.actors[kind].identity,
@@ -245,5 +349,35 @@ export const withIntegrationFixture = async (
       'integration試験またはcleanupに失敗しました',
     );
 };
+
+/** 日程integrationの既定fixtureで実行する。 */
+export const withIntegrationFixture = (
+  context: TestContext,
+  bindings: IntegrationBindings<keyof CaseActors>,
+  operation: IntegrationOperation<IntegrationFixture>,
+  options: Parameters<typeof createSessionFixture>[3] = {},
+) =>
+  withOwnedIntegrationFixture(
+    context,
+    bindings,
+    operation,
+    (connection, journal, evidence) =>
+      createRuntimeFixture(connection, journal, options, evidence),
+  );
+
+/** 申請integrationを既存の所有・認証・証跡境界で実行する。 */
+export const withApplicationIntegrationFixture = (
+  context: TestContext,
+  bindings: IntegrationBindings<keyof ApplicationActors>,
+  operation: IntegrationOperation<ApplicationIntegrationFixture>,
+  options: Parameters<typeof createSessionApplicationFixture>[3] = {},
+) =>
+  withOwnedIntegrationFixture(
+    context,
+    bindings,
+    operation,
+    (connection, journal, evidence) =>
+      createApplicationRuntimeFixture(connection, journal, options, evidence),
+  );
 
 export type { IntegrationFixture };

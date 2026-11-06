@@ -1,5 +1,9 @@
 import { isNil } from 'ramda';
 
+import {
+  APPLICATION_VARIANT_ACTORS,
+  applicationIntegrationActor,
+} from './applicationIntegrationPolicy';
 import { bindDiscovery } from './discoveryBindings';
 import {
   integrationCollectionSchema,
@@ -87,8 +91,12 @@ export const createIntegrationExpectations = (
   const expected: IntegrationExpectation[] = [];
   for (const item of scoped.scenarios.flatMap(({ cases }) => cases)) {
     if (item.status !== 'implemented') continue;
-    if (item.fixture !== 'schedule')
-      throw new Error('integrationに未対応fixtureが混入しています。');
+    const isApplication = Object.hasOwn(
+      APPLICATION_VARIANT_ACTORS,
+      item.caseId,
+    );
+    if (item.fixture !== (isApplication ? 'session-application' : 'schedule'))
+      throw new Error('integrationのcaseとfixtureが一致しません。');
     for (const execution of item.executions) {
       if (
         execution.profile !== 'integration' ||
@@ -97,6 +105,19 @@ export const createIntegrationExpectations = (
         !execution.actorBindings.some(({ role }) => role === 'operator')
       )
         throw new Error('integrationの実行条件が不正です。');
+      if (isApplication) {
+        const actor = applicationIntegrationActor({
+          caseId: item.caseId,
+          variant: execution.variant,
+        });
+        if (
+          isNil(actor) ||
+          !isDeepStrictEqual(execution.actorBindings, [
+            { role: 'operator', actor },
+          ])
+        )
+          throw new Error('申請integrationのvariantと実行主体が一致しません。');
+      }
       for (const binding of item.testBindings) {
         const matches = registrations.filter(
           (entry) =>
@@ -165,7 +186,16 @@ export const createIntegrationExpectations = (
     new Set(expected.map(({ test }) => test.testId)).size !== expected.length
   )
     throw new Error('integrationに未知・重複・planned登録があります。');
-  for (const [caseId, variants] of Object.entries(REQUIRED_VARIANTS))
+  const requiredVariants = {
+    ...REQUIRED_VARIANTS,
+    ...Object.fromEntries(
+      Object.entries(APPLICATION_VARIANT_ACTORS).map(([caseId, variants]) => [
+        caseId,
+        Object.keys(variants),
+      ]),
+    ),
+  };
+  for (const [caseId, variants] of Object.entries(requiredVariants))
     for (const variant of variants)
       if (
         expected.filter(
@@ -175,6 +205,6 @@ export const createIntegrationExpectations = (
             claim.binding === 'main',
         ).length !== 1
       )
-        throw new Error('日程integrationの初期必須条件が不足しています。');
+        throw new Error('integrationの初期必須条件が不足しています。');
   return expected;
 };
