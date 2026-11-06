@@ -31,8 +31,8 @@ mainに未公開の前提UI等232コミットが含まれるため、ユーザ�
 
 - [x] Batch 1: フォント安定化
 - [x] Batch 2: PR分離と実CI受入
-- [ ] Batch 3: 必須チェック設定
-- [ ] Batch 4: 進捗・診断の改善
+- [x] Batch 3: 必須チェック設定
+- [x] Batch 4: 進捗・診断の改善
 - [ ] Batch 5: 同一入力の解析再利用
 - [ ] Batch 6: 参加申請・取消の検証拡張
 
@@ -168,3 +168,29 @@ Codex再起動を待つ手順は撤回し、固定値を `e2e/isolatedRuntime.ts
 取得したplan・両shard・集約成果物を実際のrun/attempt・固定Git・外部承認で独立に再検証し、集約receiptと完全一致した。manifest digestは `02cda10d33ea2a4e501be0e63908d56a94d4f605a83aa761803057ca280431ad`、required verificationは `2835845cb3ff`、legacy-localは `8208d967f061`。前提PR #6も前述のhosted runで受入済みで、両PRをready for reviewにした。
 
 ユーザーは両PRの段階マージと本番デプロイを承認した。PR #6は `a270fbdbd7bc23844ead4ad551732d6f6046aa14` でmainへmerge済み。Cloudflare deploy run `42186359422` を確認中。品質PR #7はこのmainを祖先として取り込み、承認tupleとbaseを更新して全hosted jobsを再検証する。旧base向けの成功を新base向けの成功として読み替えない。必須checkの設定とPR #7のmergeは新base向け受入後に行う。
+
+## Batch 3と段階デプロイの完了（2026-11-06）
+
+PR #7はmain `a270fbdbd7bc23844ead4ad551732d6f6046aa14` を取り込んだhead `eb13ff3a133e47b1623c77fdee7530fa5a9da187` で再検証した。[run 42186792136](https://github.com/kotyabuchi/scenario-manager/actions/runs/42186792136) / attempt 1の全6 jobsが成功し、固定Git・実run/attempt・外部承認と取得artifactの独立再集約も一致した。必須55成功・extras312登録、manifest digest `5b51dc7e7b4d5244a16e7402c93c4eb7f0d8064e3bff1b3f8f79f379fea81fd0`。core437/UI658の不足は維持する。
+
+既存保護を取得した上で、[ruleset 26680579](https://github.com/kotyabuchi/scenario-manager/rules/26680579) をmainに限定して有効化した。必須checkは `E2E verification gate`、提供appはGitHub Actions（15368）、最新baseとの一致を必須とし、bypass actorは設けない。設定のread-backとPR #7のrequired check成功を確認し、通常mergeでmain `0b14ff2b5924d6b34f942561d9e573a85f6cd6e2` へ取り込んだ。mergeの両親とtreeは受入済みheadに一致する。
+
+- PR #6の[deploy 42186359422](https://github.com/kotyabuchi/scenario-manager/actions/runs/42186359422)成功。Worker version `0831654b-e004-46a3-8299-814a035b47d2`。
+- PR #7の[deploy 42189940136](https://github.com/kotyabuchi/scenario-manager/actions/runs/42189940136)成功。Worker version `2110c96a-61bd-4dd3-8a34-15318959fce8`。
+- 両デプロイ後に匿名の実ブラウザでトップ・シナリオ一覧・既存詳細のHTTP200と日本語フォントを確認。同origin WOFF2を21件取得し、Googleフォント通信0。画像付きカードを観測できなかったため、R2サムネイルの本番受入までは主張しない。
+
+初回main pushの[run 42189940054](https://github.com/kotyabuchi/scenario-manager/actions/runs/42189940054)は未受入。attempt 1は旧PR用承認値を取り込んで起動した。正しいpush tupleを設定して全jobsを再実行したattempt 2・3も `CI_STATIC_LEDGER_FAILED` で停止し、runtimeは未実行。PRの成功と本番デプロイ成功を、このpush CIの成功へ読み替えない。
+
+固定main、Node24.12.0/pnpm10.33.0、独立Linux環境で実push条件の準備全体は成功し、旧移行の固定digestも一致した。一方、別の試行はPanda段階で失敗した。正常終了後約57msで消える子プロセスを旧終了監視が誤拒否する問題は実processで再現し、250ms以内の自然終了を待つ候補を検証した。GitHubで同じ原因が発生したかは未確定であり、候補と安全なCI診断は別の限定修正として進める。
+
+## Batch 4 完了（2026-11-06）
+
+準備開始、static-ledger、collection、selectionのレシートを段階ごとに保存してから任意表示を行う。親の品質レシートと最終JSONにrun別パスを追加した。UI不足は識別子・既知診断コードを10件まで表示し、詳細全件は成果物へ保存する。任意例外の公開、既存不足の増加、承認・cleanup条件の緩和は行わない。
+
+レビューで見つかった必須4件と推奨6件を修正した。必須保存の通知失敗、stderrの非同期EPIPE、browserとevidenceの取り違え、起動とcleanupの両失敗、fixture cleanupの非throw incompleteを回帰で検証した。Sol/mediumの3観点再レビューで残件0。
+
+品質 `bfdcba603dcb`、selection `00240fce47fb`、verification `91020b7ccbec` が成功。検証時の固定比較元・HEADは `0b14ff2`、その時点の未コミット25ファイルが対象。lint/type、unit1097成功＋既存skip8、tools140 files/2013成功、必須55成功・旧E2E312登録・7 stagesとcleanupを照合した。入力digestは前後 `6f2b5f4aa79354e2b9f175183c4d0ce2df6c966cf0838d87bdd737f2b34bcfa7` で一致する。全件選択のためshadowの重複実行はない。core437/UI658は依然insufficient。
+
+検証済みコードは `04ccf3c`、`0899c5c`、`28d4fa0`、`66c2b8e`、`6f4cc49` の5つの小コミットへ依存順に分割し、通常hookを通した。次は終了監視とCI診断の限定修正を確認し、Batch 5の同一入力再利用、Batch 6の申請・取消へ進む。
+
+独立受入でも入力ファイルのbyte一致、28 checkpointsの差分0、全stageのexit0・process終了を確認した。6環境のcontainer/network/volume、記録された11個のlock、専用5ポートの残留は0。調査用Linuxコンテナと専用snapshot imageも、ID・ラベル確認後に回収した。他プロジェクトの資源とCodexのプロセスは変更していない。
