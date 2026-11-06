@@ -31,7 +31,7 @@ export const appFixture = () => {
   mkdirSync(registry);
   const hash = (value: string) =>
     createHash('sha256').update(value).digest('hex');
-  const reservations = ['port-43100', `worktree-${hash(root)}`];
+  const reservations = ['port-23100', `worktree-${hash(root)}`];
   const lockFiles = reservations.map((reservation) => {
     const path = join(registry, `${reservation}.lock`);
     const contents = JSON.stringify({
@@ -42,7 +42,7 @@ export const appFixture = () => {
       runId: connection.lease.runId,
       ownerNonce: connection.lease.ownerNonce,
       projectId: connection.lease.projectId,
-      ports: [55320, 55321, 55322, 43100],
+      ports: [55320, 55321, 55322, 23100],
       reservation,
     });
     writeFileSync(path, contents, { flag: 'wx' });
@@ -54,7 +54,7 @@ export const appFixture = () => {
       contentsHash: hash(contents),
     };
   });
-  const runtime = { additionalPorts: [43100], lockFiles };
+  const runtime = { additionalPorts: [23100], lockFiles };
   const runtimePath = join(workdir, 'runtime.json');
   const saveRuntime = () => writeFileSync(runtimePath, JSON.stringify(runtime));
   saveRuntime();

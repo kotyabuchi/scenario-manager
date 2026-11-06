@@ -155,7 +155,7 @@ export const setupLegacyProjectRun = async () => {
           runId: connection.manifest.runId,
         });
         await operation({
-          baseURL: 'http://127.0.0.1:43100',
+          baseURL: 'http://127.0.0.1:23100',
           env: {
             NODE_ENV: 'production',
             NEXT_PUBLIC_SUPABASE_URL: connection.manifest.apiUrl,

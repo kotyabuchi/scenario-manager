@@ -84,7 +84,7 @@ describe('所有Next production process', () => {
     const fixture = setup();
     const server = mockCommands();
     const operation = vi.fn(async (context) => {
-      expect(context.baseURL).toBe('http://127.0.0.1:43100');
+      expect(context.baseURL).toBe('http://127.0.0.1:23100');
       expect(context.signal.aborted).toBe(false);
       expect(context.env.NEXT_PUBLIC_SUPABASE_ANON_KEY).toBe(
         fixture.connection.anonKey,
@@ -116,7 +116,7 @@ describe('所有Next production process', () => {
           '--hostname',
           '127.0.0.1',
           '--port',
-          '43100',
+          '23100',
         ],
         expect.objectContaining({
           shouldAllowAbort: true,

@@ -32,7 +32,7 @@ vi.mock('./environmentCredentials', () => ({
   writeEnvironmentCredentials: vi.fn(),
 }));
 vi.mock('./environmentProbe', () => ({ probeEnvironment: vi.fn() }));
-vi.mock('./isolatedApp', () => ({ APP_PORT: 43100, withIsolatedApp: vi.fn() }));
+vi.mock('./isolatedApp', () => ({ APP_PORT: 23100, withIsolatedApp: vi.fn() }));
 vi.mock('./fixtureCheckEvidence', () => ({
   validateFixtureCheckEvidence: vi.fn(),
 }));
@@ -157,7 +157,7 @@ const setup = () => {
         }
         await progress?.({ phase: 'operation', runId: manifest.runId });
         await operation({
-          baseURL: 'http://127.0.0.1:43100',
+          baseURL: 'http://127.0.0.1:23100',
           env: {
             NODE_ENV: 'production',
             NEXT_PUBLIC_SUPABASE_URL: manifest.apiUrl,

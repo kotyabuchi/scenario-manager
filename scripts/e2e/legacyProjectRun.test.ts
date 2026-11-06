@@ -46,7 +46,7 @@ vi.mock('./environmentCredentials', async (original) => ({
   writeEnvironmentCredentials: vi.fn(),
 }));
 vi.mock('./environmentProbe', () => ({ probeEnvironment: vi.fn() }));
-vi.mock('./isolatedApp', () => ({ APP_PORT: 43100, withIsolatedApp: vi.fn() }));
+vi.mock('./isolatedApp', () => ({ APP_PORT: 23100, withIsolatedApp: vi.fn() }));
 vi.mock('./legacyResults', () => ({ parseLegacyProjectResults: vi.fn() }));
 vi.mock('./legacySelection', () => ({ createLegacySelection: vi.fn() }));
 
@@ -221,7 +221,7 @@ describe('legacy projectの障害伝播と後始末', () => {
       signal,
       expect.any(Function),
       expect.any(Function),
-      [43100],
+      [23100],
     );
     expect(existsSync(value.credentials)).toBe(false);
     expect(JSON.stringify(output).includes('private-credentials')).toBe(false);

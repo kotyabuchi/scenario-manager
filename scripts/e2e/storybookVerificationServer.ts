@@ -1,5 +1,6 @@
 import { isNil } from 'ramda';
 
+import { ISOLATED_STORYBOOK_PORT } from '../../e2e/isolatedRuntime';
 import {
   localCommandEnvironment,
   runLocalCommand,
@@ -74,7 +75,7 @@ export const runStorybookVerificationServer = async (
       '--host',
       '127.0.0.1',
       '--port',
-      '6007',
+      String(ISOLATED_STORYBOOK_PORT),
       '--strictPort',
     ],
     {

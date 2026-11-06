@@ -1,3 +1,4 @@
+import { ISOLATED_STORYBOOK_PORT } from '../../e2e/isolatedRuntime';
 import { verificationStagePath } from './verificationContext';
 
 import { lstatSync, mkdirSync, realpathSync, writeFileSync } from 'node:fs';
@@ -66,7 +67,12 @@ export const createStorybookVerificationWorkspace = (
       root: workspace.cwd,
       envDir: workspace.envDir,
       build: { outDir: workspace.outputDir },
-      preview: { host: '127.0.0.1', port: 6007, strictPort: true, open: false },
+      preview: {
+        host: '127.0.0.1',
+        port: ISOLATED_STORYBOOK_PORT,
+        strictPort: true,
+        open: false,
+      },
     })}\n`,
     { flag: 'wx', mode: 0o600 },
   );

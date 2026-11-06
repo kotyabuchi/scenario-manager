@@ -1345,7 +1345,7 @@ PR前の標準入口は `pnpm quality:changed --base <比較元ref>`。readonly 
 | `pnpm test:unit` / `pnpm test:e2e-tools` | DB不要のunit / 抽出・台帳・runner基盤の回帰 |
 | `pnpm e2e:ledger:staged` | index上の台帳schema・ID・参照だけを検査 |
 
-- ownerが専用local SupabaseとNext productionを起動する。Next 43100、Supabase 57321/57322、Storybook 6007を使い、既存プロセスを流用・killしない。終了後は所有runのprocess/container/network/volume/lockと認証情報を回収する。復旧は `docs/testing/e2e-environment.md` を参照。
+- ownerが専用local SupabaseとNext productionを起動する。Next 23100、Supabase 27321/27322（shadow 27320）、Storybook 6007（`e2e/isolatedRuntime.ts`で一元管理）を使い、既存プロセスを流用・killしない。終了後は所有runのprocess/container/network/volume/lockと認証情報を回収する。復旧は `docs/testing/e2e-environment.md` を参照。
 - `test:e2e` / `test:e2e:dev` / `:ui` / `:headed` は旧設定の個別調査用であり、品質ゲートの成功証拠にしない。共通ゲートに共有cloud key/email/passwordを渡さない。
 - `test-results/quality/changed.json` は最新品質サマリー。照合にはunique ID配下のplan/receipt/inputs-start/inputs-endを使い、latestの成功を流用しない。
 - skip/fixme/xfail/retry後成功/中断/登録不足/cleanup不足は必須caseの成功にしない。legacyの既存例外は明示目録の一致だけを確認し、requiredの成功件数に混ぜない。deferred-liveと旧integrationは未実行として残す。

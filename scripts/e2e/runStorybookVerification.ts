@@ -1,5 +1,6 @@
 import { isNil } from 'ramda';
 
+import { ISOLATED_STORYBOOK_PORT } from '../../e2e/isolatedRuntime';
 import {
   localCommandEnvironment,
   runLocalCommand,
@@ -21,7 +22,7 @@ import { isDeepStrictEqual } from 'node:util';
 import type { PlaywrightRunnerSelection } from './runnerSelection';
 import type { VerificationStageHooks } from './verificationContext';
 
-const STORYBOOK_PORT = 6007;
+const STORYBOOK_PORT = ISOLATED_STORYBOOK_PORT;
 const STORYBOOK_CONFIG = '.storybook/playwright.config.ts';
 
 const assertFreePort = async () => {

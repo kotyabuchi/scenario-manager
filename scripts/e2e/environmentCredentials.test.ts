@@ -47,7 +47,7 @@ describe('稼働環境内のoperationと秘密設定', () => {
       async (manifest) => {
         expect(acquireEnvironmentLock).toHaveBeenCalledWith(
           expect.objectContaining({
-            ports: [57321, 57322, 57320, 57300],
+            ports: [27321, 27322, 27320, 57300],
           }),
         );
         expect(
@@ -155,12 +155,12 @@ describe('稼働環境内のoperationと秘密設定', () => {
 
   it.each([
     { API_URL: 'https://remote.supabase.co' },
-    { DB_URL: 'postgresql://postgres:secret@remote.example:57322/postgres' },
+    { DB_URL: 'postgresql://postgres:secret@remote.example:27322/postgres' },
     { DB_URL: 'postgresql://postgres:secret@127.0.0.1:54322/postgres' },
-    { DB_URL: 'postgresql://postgres:secret@127.0.0.1:57322/other' },
+    { DB_URL: 'postgresql://postgres:secret@127.0.0.1:27322/other' },
     {
       DB_URL:
-        'postgresql://postgres:secret@127.0.0.1:57322/postgres?host=remote',
+        'postgresql://postgres:secret@127.0.0.1:27322/postgres?host=remote',
     },
     { ANON_KEY: key('service_role') },
     { SERVICE_ROLE_KEY: key('anon') },

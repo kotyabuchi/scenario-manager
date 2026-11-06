@@ -1,5 +1,6 @@
 import { isNil } from 'ramda';
 
+import { ISOLATED_SUPABASE_PORTS } from '../../e2e/isolatedRuntime';
 import { runEnvironment } from './environment';
 import {
   checkEnvironmentCatalog,
@@ -26,7 +27,7 @@ import { pathToFileURL } from 'node:url';
 
 import type { EnvironmentManifest } from './environmentSchema';
 
-const PORTS = { api: 57321, db: 57322, shadow: 57320 };
+const PORTS = ISOLATED_SUPABASE_PORTS;
 const EXCLUDED_SERVICES = [
   'realtime',
   'imgproxy',

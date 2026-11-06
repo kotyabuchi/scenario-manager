@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 import { isNil } from 'ramda';
 
+import { ISOLATED_STORYBOOK_PORT } from '../e2e/isolatedRuntime';
 import {
   playwrightVerificationReporter,
   readVerificationContext,
@@ -26,7 +27,7 @@ export default defineConfig({
     ),
   ],
   use: {
-    baseURL: 'http://127.0.0.1:6007',
+    baseURL: `http://127.0.0.1:${ISOLATED_STORYBOOK_PORT}`,
     browserName: 'chromium',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -37,8 +38,8 @@ export default defineConfig({
     // 通常のStorybookとはポートを分け、起動中の古い画面を使い回さない。
     command: isVerification
       ? 'node --import tsx scripts/e2e/storybookVerificationServer.ts'
-      : 'pnpm exec storybook build --output-dir node_modules/.cache/storybook-browser-tests --disable-telemetry && pnpm exec vite preview --outDir node_modules/.cache/storybook-browser-tests --host 127.0.0.1 --port 6007 --strictPort',
-    url: 'http://127.0.0.1:6007/index.json',
+      : `pnpm exec storybook build --output-dir node_modules/.cache/storybook-browser-tests --disable-telemetry && pnpm exec vite preview --outDir node_modules/.cache/storybook-browser-tests --host 127.0.0.1 --port ${ISOLATED_STORYBOOK_PORT} --strictPort`,
+    url: `http://127.0.0.1:${ISOLATED_STORYBOOK_PORT}/index.json`,
     reuseExistingServer: false,
     timeout: 180_000,
   },
