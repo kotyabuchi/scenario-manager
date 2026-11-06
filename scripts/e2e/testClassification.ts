@@ -11,6 +11,7 @@ const DB_MODULES = new Set([
   '@supabase/supabase-js',
   '@supabase/ssr',
   '@/lib/supabase/server',
+  '@/lib/supabase/client',
 ]);
 const DB_HELPERS = new Set([
   'src/__tests__/helpers/testClient.ts',

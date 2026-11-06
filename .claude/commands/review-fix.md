@@ -123,5 +123,5 @@ User: /review-fix src/components/
 | ファイル | 用途 |
 |----------|------|
 | `.claude/rules/coding-standards.md` | コーディング規約（レビュー基準） |
-| `.claude/rules/requirements-v1.md` | 要件定義（ビジネスロジック確認） |
+| `.claude/requirements/requirements-v1.md` | 要件定義（ビジネスロジック確認） |
 | `.claude/agents/code-reviewer.md` | code-reviewer エージェント定義 |

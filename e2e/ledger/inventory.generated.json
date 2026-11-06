@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "extractorVersion": "2",
   "source": {
-    "fingerprint": "18ec5e96518f5cf04c7c64a954899089402d904c8467f95a76d0f6e7d4b11a22",
+    "fingerprint": "4877391ccb64743b71c034f204d332d9016f95d810071ef3fe409ebf1f60e5ce",
     "files": [
       {
         "path": "node_modules/.pnpm/@tsconfig+strictest@2.0.8/node_modules/@tsconfig/strictest/tsconfig.json",
@@ -606,7 +606,7 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/applications/page.tsx",
-        "hash": "51b70d7fd92846e278cabf199fd21bba1a429f2c588278594a44f4273bc10451"
+        "hash": "40e3a74f4d5f4ab692563c67dc484beea8c239576f575a0820a2a0f711149d8f"
       },
       {
         "path": "src/app/(main)/sessions/[id]/applications/styles.ts",
@@ -678,7 +678,7 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/availability/page.tsx",
-        "hash": "4c3a42d30b38ffb7aff563e9908564433ae23e4675e8c3da19da2c0dd23d78eb"
+        "hash": "9e69ce760be3d05b09c397dcac409b55eedbfcb05528913f113ba9cc9a8beac0"
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/availability/schema.ts",
@@ -690,7 +690,7 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "hash": "f9374af5c62718b4eeda50e3ed3335f8b47e8012654a47666391bb837e072134"
+        "hash": "8aab09bf6f29bb6f8708f58440050bcdfe59bbd79173186b6a9b40649c7615c5"
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/confirm/adapter.ts",
@@ -698,7 +698,7 @@
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/confirm/page.tsx",
-        "hash": "0bb13fbd090cdd721d1db6d30ef17a10f2de64ff23a2bb7bcba746041785d6a0"
+        "hash": "4795a27ee6a6811b6fb980187429fdbda3fed36055067ecd8557062fbf0af984"
       },
       {
         "path": "src/app/(main)/sessions/[id]/schedule/confirm/schema.ts",
@@ -2595,7 +2595,7 @@
       "kind": "action",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 74,
+        "line": 83,
         "column": 14
       },
       "symbol": "getScheduleRecommendationsAction",
@@ -6796,7 +6796,7 @@
       "kind": "function",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 74,
+        "line": 83,
         "column": 49
       },
       "symbol": "getScheduleRecommendationsAction",
@@ -16988,7 +16988,7 @@
       "kind": "exports",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 74,
+        "line": 83,
         "column": 14
       }
     },
@@ -27138,7 +27138,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 56,
+        "line": 61,
         "column": 26
       }
     },
@@ -27148,7 +27148,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 45,
+        "line": 50,
         "column": 10
       }
     },
@@ -27218,16 +27218,6 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 46,
-        "column": 14
-      }
-    },
-    {
-      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
-      "to": "function:src/types/result.ts#err",
-      "kind": "calls",
-      "source": {
-        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
         "line": 51,
         "column": 14
       }
@@ -27238,7 +27228,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 62,
+        "line": 56,
         "column": 14
       }
     },
@@ -27248,7 +27238,17 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 70,
+        "line": 67,
+        "column": 14
+      }
+    },
+    {
+      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#confirmScheduleTimeBlocksAction",
+      "to": "function:src/types/result.ts#err",
+      "kind": "calls",
+      "source": {
+        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
+        "line": 77,
         "column": 12
       }
     },
@@ -27258,7 +27258,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 68,
+        "line": 75,
         "column": 12
       }
     },
@@ -27268,7 +27268,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 96,
+        "line": 105,
         "column": 12
       }
     },
@@ -27278,7 +27278,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 92,
+        "line": 101,
         "column": 10
       }
     },
@@ -27288,7 +27288,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 88,
+        "line": 97,
         "column": 32
       }
     },
@@ -27298,7 +27298,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 78,
+        "line": 87,
         "column": 26
       }
     },
@@ -27308,7 +27308,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 83,
+        "line": 92,
         "column": 33
       }
     },
@@ -27318,7 +27318,7 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 80,
+        "line": 102,
         "column": 14
       }
     },
@@ -27328,38 +27328,38 @@
       "kind": "calls",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 85,
-        "column": 14
-      }
-    },
-    {
-      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
-      "to": "function:src/types/result.ts#err",
-      "kind": "calls",
-      "source": {
-        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 90,
-        "column": 14
-      }
-    },
-    {
-      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
-      "to": "function:src/types/result.ts#err",
-      "kind": "calls",
-      "source": {
-        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 93,
-        "column": 14
-      }
-    },
-    {
-      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
-      "to": "function:src/types/result.ts#err",
-      "kind": "calls",
-      "source": {
-        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 98,
+        "line": 107,
         "column": 12
+      }
+    },
+    {
+      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
+      "to": "function:src/types/result.ts#err",
+      "kind": "calls",
+      "source": {
+        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
+        "line": 89,
+        "column": 14
+      }
+    },
+    {
+      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
+      "to": "function:src/types/result.ts#err",
+      "kind": "calls",
+      "source": {
+        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
+        "line": 94,
+        "column": 14
+      }
+    },
+    {
+      "from": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
+      "to": "function:src/types/result.ts#err",
+      "kind": "calls",
+      "source": {
+        "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
+        "line": 99,
+        "column": 14
       }
     },
     {
@@ -53598,7 +53598,7 @@
       "kind": "contains",
       "source": {
         "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-        "line": 74,
+        "line": 83,
         "column": 49
       }
     },
@@ -145157,7 +145157,7 @@
         "id": "function:src/app/(main)/sessions/[id]/schedule/confirm/actions.ts#getScheduleRecommendationsAction",
         "source": {
           "file": "src/app/(main)/sessions/[id]/schedule/confirm/actions.ts",
-          "line": 74,
+          "line": 83,
           "column": 49
         },
         "kind": "symbol"

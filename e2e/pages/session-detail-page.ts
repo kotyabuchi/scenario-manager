@@ -1,3 +1,5 @@
+import { expect } from '@playwright/test';
+
 import { BasePage } from './base-page';
 
 import type { Locator, Page } from '@playwright/test';
@@ -60,6 +62,7 @@ export class SessionDetailPage extends BasePage {
         level: 2,
         name: '基本情報',
         exact: true,
+        includeHidden: true,
       }),
     });
     this.participantsSection = page.locator('section').filter({
@@ -97,6 +100,9 @@ export class SessionDetailPage extends BasePage {
   /** セッション詳細ページに遷移 */
   async goto(sessionId: string) {
     await this.navigate(`/sessions/${sessionId}`);
+    // ストリーミング中は、表示用のセクションと非表示のコピーが一時的に共存する。
+    await this.basicInfoSection.filter({ visible: true }).waitFor();
+    await expect(this.basicInfoSection).toHaveCount(1);
   }
 
   /** 参加申請ボタンをクリック */

@@ -40,7 +40,12 @@ export const confirmScheduleTimeBlocksAction = async (
 
     const phasesResult = await getSchedulingPhases(sessionId);
     if (!phasesResult.success) {
-      return err(phasesResult.error);
+      return err({
+        message:
+          phasesResult.error.message === 'セッションが見つかりません'
+            ? 'セッションが見つかりません'
+            : '日程の状態を確認できませんでした。時間を置いて再試行してください',
+      });
     }
     if (!canConfirmScheduleInCurrentPhase(phasesResult.data.sessionPhase)) {
       return err({ message: '準備中フェーズでのみ日程を確定できます' });
@@ -59,15 +64,19 @@ export const confirmScheduleTimeBlocksAction = async (
       parsed.data.timeBlocks,
     );
     if (!result.success) {
-      return err(result.error);
+      return err({
+        message: '日程を保存できませんでした。時間を置いて再試行してください',
+      });
     }
 
     revalidatePath(`/sessions/${sessionId}`);
     revalidatePath(`/sessions/${sessionId}/schedule/confirm`);
 
     return ok(result.data);
-  } catch (e) {
-    return err(e instanceof Error ? e : new Error('Unknown error'));
+  } catch {
+    return err({
+      message: '日程を保存できませんでした。時間を置いて再試行してください',
+    });
   }
 };
 

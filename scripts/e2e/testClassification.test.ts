@@ -1,5 +1,5 @@
 import { createFilter } from 'vite';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { escapeTestPathForGlob, getTestProjects } from './testClassification';
 
@@ -132,6 +132,7 @@ describe('getTestProjects', () => {
     'import { getTestClient as client } from "@/__tests__/helpers/testClient"',
     'const fixture = await import("@/__tests__/helpers/fixtures")',
     'import { createDbClient } from "@/lib/supabase/server"',
+    'import { createClient } from "@/lib/supabase/client"',
     'import { createClient } from "@supabase/supabase-js"',
     'getTestClient()',
   ])('未登録の実DB依存を拒否する: %s', (source) => {
@@ -243,10 +244,11 @@ describe('getTestProjects', () => {
     expect(() => getTestProjects(root)).toThrow();
   });
 
-  it('基準リポジトリのDB11件とpureの例外を分類できる', () => {
+  it('基準リポジトリの旧DB11件、検証済みDB3件とpureの例外を分類できる', () => {
     const root = fileURLToPath(new URL('../..', import.meta.url));
     const projects = getTestProjects(root);
     expect(projects.integration).toHaveLength(11);
+    expect(projects['integration-verified']).toHaveLength(3);
     expect(projects.unit).toContain(
       'src/app/(main)/home/__tests__/adapter.test.ts',
     );
@@ -270,5 +272,40 @@ describe('escapeTestPathForGlob', () => {
     expect(matches(file)).toBe(true);
     expect(matches(file.replace('[id]', 'i'))).toBe(false);
     expect(matches(file.replace('(main)', 'main'))).toBe(false);
+  });
+});
+
+// 実際のpure unit setupを適用してSDK生成境界を検査する。
+beforeAll(async () => {
+  await import('../../vitest.setup');
+});
+
+describe('unitのDB境界', () => {
+  it('補助コードからのSupabase SDK client生成も通信前に拒否する', async () => {
+    const { createClient, SupabaseClient } = await import(
+      '@supabase/supabase-js'
+    );
+    const createHelperClient = () =>
+      createClient('https://unit.invalid', 'test');
+    expect(createHelperClient).toThrow(
+      'unit/componentでは実DBを使用できません',
+    );
+    expect(() => new SupabaseClient('https://unit.invalid', 'test')).toThrow(
+      'unit/componentでは実DBを使用できません',
+    );
+  });
+
+  it('SSRとbrowserのclient生成も通信前に拒否する', async () => {
+    const { createServerClient, createBrowserClient } = await import(
+      '@supabase/ssr'
+    );
+    expect(() =>
+      createServerClient('https://unit.invalid', 'test', {
+        cookies: { getAll: () => [], setAll: () => undefined },
+      }),
+    ).toThrow('unit/componentでは実DBを使用できません');
+    expect(() => createBrowserClient('https://unit.invalid', 'test')).toThrow(
+      'unit/componentでは実DBを使用できません',
+    );
   });
 });

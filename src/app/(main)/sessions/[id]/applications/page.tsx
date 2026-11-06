@@ -29,7 +29,7 @@ export default async function ApplicationsPage({ params }: PageProps) {
   // 認証チェック
   const currentUserId = await getCurrentUserId();
   if (isNil(currentUserId)) {
-    redirect('/login' as Route);
+    redirect('/');
   }
 
   // 認可チェック（GM/作成者のみアクセス可能）
