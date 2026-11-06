@@ -8,6 +8,7 @@ import {
   surfacePendingKey,
 } from './surfaceMigration';
 import { surfacePendingSchema } from './surfaceMigrationSchema';
+import { SurfacePendingSubsetError } from './surfacePendingDiagnostic';
 
 import type { SurfacePendingItem } from './surfaceMigrationSchema';
 
@@ -98,23 +99,28 @@ describe('UI不足の初期移行', () => {
   it('同じentryとanchorでも、新しい描画mountの不足は別キーになる', () => {
     const input = migrationInput();
     const migration = buildSurfaceMigrationRecord(input);
-    const next = pending(renderDiagnostic, {
+    const added = {
       ...renderDiagnostic,
       mountSiteIds: ['surface-site:other-render'],
+    };
+    const next = pending(renderDiagnostic, added);
+    const error = expect.objectContaining({
+      name: 'SurfacePendingSubsetError',
+      items: [added],
     });
     expect(() =>
       buildSurfaceMigrationRecord({
         ...input,
         current: { ...input.current, pending: next },
       }),
-    ).toThrow('存在しないUI不足');
+    ).toThrow(error);
     expect(() =>
       checkSurfacePending({
         base: { migration, pending: input.current.pending },
         head: { migration, pending: next },
         current: next,
       }),
-    ).toThrow('存在しないUI不足');
+    ).toThrow(error);
   });
 
   it('記録された旧観測・不足digest・解消キーを再計算する', () => {
@@ -183,7 +189,7 @@ describe('移行後のUI不足', () => {
         head: base,
         current: base.pending,
       }),
-    ).toThrow('存在しないUI不足');
+    ).toThrow(SurfacePendingSubsetError);
   });
 
   it('UI不足を保存から消しても観測に残る場合と移行履歴変更を拒否する', () => {

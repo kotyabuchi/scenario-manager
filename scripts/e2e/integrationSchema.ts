@@ -126,7 +126,7 @@ export const integrationExpectationSchema = z.strictObject({
   claim: integrationClaimSchema,
   options: integrationOptionsSchema,
   actorBindings: executionSchema.shape.actorBindings,
-  fixture: z.literal('schedule'),
+  fixture: z.enum(['schedule', 'session-application']),
   checks: z.array(integrationCompletedCheckSchema).min(1),
 });
 

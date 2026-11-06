@@ -7,6 +7,7 @@ import { writeArtifact } from './ledgerArtifacts';
 import { runQualityChecks } from './qualityChecks';
 import { runChangedVerification } from './runChangedVerification';
 import { selectionConsoleSummary } from './selectionConsoleSummary';
+import { writeSelectionProgress } from './selectionProgress';
 import { resolveRevisions } from './trustedRevision';
 import { parseVerificationArguments } from './verificationArguments';
 import { prepareVerificationDirectory } from './verificationContext';
@@ -19,6 +20,7 @@ import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
 
 import type { QualityCheck, QualityCheckStatus } from './qualityChecks';
+import type { SelectionProgress } from './selectionProgress';
 
 const LATEST_RECEIPT = 'test-results/quality/changed.json';
 type Selection = Awaited<ReturnType<typeof runChangedVerification>>;
@@ -37,6 +39,7 @@ type QualityOptions = {
   forceFull?: boolean;
   shadow?: boolean;
   signal?: AbortSignal;
+  onProgress?: (progress: SelectionProgress) => void | Promise<void>;
 };
 
 class InputUnstableError extends Error {}
@@ -154,6 +157,7 @@ export const runQualityChanged = async (
     snapshotDigest: string | null;
     checks: Partial<Record<QualityCheck, QualityCheckStatus>>;
     selection: ReturnType<typeof selectionConsoleSummary> | null;
+    selectionReceiptPath: string | null;
     verifiedRunIds: string[];
     failure: Failure | null;
   } = {
@@ -168,6 +172,7 @@ export const runQualityChanged = async (
     snapshotDigest: null,
     checks: {},
     selection: null,
+    selectionReceiptPath: null,
     verifiedRunIds: [],
     failure: null,
   };
@@ -265,6 +270,19 @@ export const runQualityChanged = async (
         forceFull,
         shadow,
         signal,
+        onReceipt: ({ phase, receiptPath }) => {
+          state.phase = phase;
+          state.selectionReceiptPath = receiptPath;
+          try {
+            save();
+          } catch (error) {
+            failure = 'ARTIFACT_WRITE_FAILED';
+            throw error;
+          }
+        },
+        ...(isNil(options.onProgress)
+          ? {}
+          : { onProgress: options.onProgress }),
       });
       state.selection = selectionConsoleSummary(selection);
     } finally {
@@ -322,7 +340,10 @@ if (entry && import.meta.url === pathToFileURL(resolve(entry)).href) {
     // 任意引数や例外本文はコンソールへ出さない。
   }
   const result = args
-    ? await runQualityChanged(process.cwd(), args)
+    ? await runQualityChanged(process.cwd(), {
+        ...args,
+        onProgress: writeSelectionProgress,
+      })
     : { status: 'failed', phase: 'arguments', failure: 'INVALID_ARGUMENTS' };
   process.stdout.write(`${JSON.stringify(result)}\n`);
   if (result.status !== 'passed') process.exitCode = 1;

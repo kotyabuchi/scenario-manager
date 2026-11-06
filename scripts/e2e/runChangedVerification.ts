@@ -17,6 +17,7 @@ import { runVerification } from './verificationRun';
 import { createHash, randomBytes } from 'node:crypto';
 import { realpath } from 'node:fs/promises';
 
+import type { SelectionProgress } from './selectionProgress';
 import type { SelectionDecision } from './selectionSchema';
 import type { ShadowObservation, ShadowResult } from './selectionShadow';
 
@@ -39,18 +40,21 @@ export const runChangedVerification = async (
     forceFull?: boolean;
     shadow?: boolean;
     signal?: AbortSignal;
+    onReceipt?: (progress: SelectionProgress) => undefined;
+    onProgress?: (progress: SelectionProgress) => void | Promise<void>;
   } = {},
 ) => {
   const worktreeRoot = await realpath(root);
   const selectionId = randomBytes(6).toString('hex');
   const prefix = `test-results/verification/${selectionId}`;
+  const receiptPath = `${prefix}/selection-receipt.json`;
   const controller = new AbortController();
   const interrupt = () => controller.abort();
   const state: {
     schemaVersion: 1;
     selectionId: string;
     status: 'running' | 'passed' | 'failed';
-    phase: string;
+    phase: SelectionProgress['phase'] | 'final-snapshot-check' | 'complete';
     decision: SelectionDecision | null;
     effectiveSelectionDigest: string | null;
     partial: ReturnType<typeof summary> | null;
@@ -76,13 +80,26 @@ export const runChangedVerification = async (
   let hasDirectory = false;
   const save = () => {
     const contents = `${JSON.stringify(state, null, 2)}\n`;
+    if (hasDirectory) writeArtifact(worktreeRoot, receiptPath, contents);
     writeArtifact(
       worktreeRoot,
       'test-results/quality/selection.json',
       contents,
     );
-    if (hasDirectory)
-      writeArtifact(worktreeRoot, `${prefix}/selection-receipt.json`, contents);
+  };
+  const publish = (phase: SelectionProgress['phase']) => {
+    state.phase = phase;
+    save();
+    const progress = { phase, selectionId, receiptPath };
+    // 親receiptの保存は必須。任意表示の失敗とは分けて扱う。
+    options.onReceipt?.(progress);
+    try {
+      void Promise.resolve(options.onProgress?.(progress)).catch(
+        () => undefined,
+      );
+    } catch {
+      // 表示先の失敗で検証や所有資源の解放を中断しない。
+    }
   };
   options.signal?.addEventListener('abort', interrupt, { once: true });
   if (options.signal?.aborted) interrupt();
@@ -92,12 +109,16 @@ export const runChangedVerification = async (
     save();
     prepareVerificationDirectory(worktreeRoot, selectionId);
     hasDirectory = true;
+    publish('preparation');
     controller.signal.throwIfAborted();
     const selection = await prepareChangedVerification({
       root: worktreeRoot,
       prefix,
-      ...options,
+      ...(isNil(options.base) ? {} : { base: options.base }),
+      ...(isNil(options.env) ? {} : { env: options.env }),
+      ...(isNil(options.forceFull) ? {} : { forceFull: options.forceFull }),
       signal: controller.signal,
+      onPhase: publish,
     });
     const {
       prepared,
@@ -130,7 +151,7 @@ export const runChangedVerification = async (
     };
     let partialObservation: ShadowObservation;
     if (isNil(effective)) {
-      state.phase = 'no-op';
+      publish('no-op');
       const endSnapshot = await selection.checkpoint('no-op');
       assertNoOpDecision({
         decision,
@@ -157,9 +178,7 @@ export const runChangedVerification = async (
         status: 'complete',
       });
     } else {
-      state.phase =
-        decision.mode === 'full-required' ? 'full-required' : 'partial';
-      save();
+      publish(decision.mode === 'full-required' ? 'full-required' : 'partial');
       if (
         decision.mode === 'full-required' &&
         effective.selectionDigest !== provenance.fullPlanDigest
@@ -180,7 +199,7 @@ export const runChangedVerification = async (
       });
       state.partial = summary(run);
       controller.signal.throwIfAborted();
-      state.phase = 'partial-cleanup-check';
+      publish('partial-cleanup-check');
       if (
         !isNil(run.failure) ||
         isNil(run.execution) ||
@@ -200,8 +219,7 @@ export const runChangedVerification = async (
       } else if (run.status !== 'passed') state.status = 'failed';
     }
     if (decision.mode !== 'full-required' && state.shadowRequested) {
-      state.phase = 'shadow-full';
-      save();
+      publish('shadow-full');
       await checkpoint('before-shadow');
       const full = await runVerification(worktreeRoot, {
         prepared,
@@ -251,5 +269,5 @@ export const runChangedVerification = async (
     process.removeListener('SIGTERM', interrupt);
   }
   save();
-  return state;
+  return { ...state, runReceiptPath: hasDirectory ? receiptPath : null };
 };

@@ -68,6 +68,14 @@
   ],
   "verifiedFiles": [
     {
+      "path": "src/app/(main)/sessions/[id]/__tests__/sessionApplicationApply.integration.test.ts",
+      "reason": "所有fixtureと実利用者JWTで、参加申請Actionの本人拘束、入力拒否と保存状態の再取得を検証する。"
+    },
+    {
+      "path": "src/app/(main)/sessions/[id]/__tests__/sessionApplicationCancel.integration.test.ts",
+      "reason": "所有fixtureと実利用者JWTで、参加申請取消Actionの本人行削除、拒否と他人行の保持を検証する。"
+    },
+    {
       "path": "src/app/(main)/sessions/__tests__/calendar.integration.test.ts",
       "reason": "既存カレンダー4条件を独立fixtureと利用者JWTで検証し、空結果による偽成功を防ぐ。"
     },

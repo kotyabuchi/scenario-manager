@@ -47,7 +47,7 @@ describe('日程browserの実行入口', () => {
     setup();
     expect(await runScheduleCheck('/repository')).toMatchObject({
       status: 'passed',
-      evidence: { issues: [], counts: { expected: 4, passed: 4 } },
+      evidence: { issues: [], counts: { expected: 6, passed: 6 } },
     });
     expect(discover).toHaveBeenCalledWith({
       root: '/repository',

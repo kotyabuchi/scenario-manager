@@ -5,13 +5,35 @@ import { open } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 
 import type { FileHandle } from 'node:fs/promises';
+import type { SurfaceReplayDiagnostic } from './surfaceReplayFailure';
 
 const COMMAND_TIMEOUT_MS = 8 * 60_000;
 const STOP_GRACE_MS = 3_000;
+const NATURAL_EXIT_GRACE_MS = 250;
 const GROUP_POLL_MS = 50;
 
 /** 終了を証明できない子の所有directoryを消さないための区分。 */
 export class UnsettledSurfaceReplayProcess extends Error {}
+
+type ProcessFailure = Exclude<
+  SurfaceReplayDiagnostic['processFailure'],
+  'group-unsettled'
+>;
+type StopReason = Extract<ProcessFailure, 'aborted' | 'timeout'>;
+const PROCESS_FAILURE_MESSAGES = {
+  'spawn-error': '歴史再生の子processを起動できませんでした。',
+  'exit-failed': '歴史再生の子processが失敗しました。',
+  'descendants-remained': '歴史再生の子孫processが残っていました。',
+  timeout: '歴史再生の子processを中断しました。',
+  aborted: '歴史再生の子processを中断しました。',
+} satisfies Record<ProcessFailure, string>;
+
+/** OSやコマンドの生エラーを公開せず、失敗の区分を再生側へ渡す。 */
+export class SurfaceReplayProcessError extends Error {
+  constructor(readonly processFailure: ProcessFailure) {
+    super(PROCESS_FAILURE_MESSAGES[processFailure]);
+  }
+}
 
 const signalGroup = (pid: number, signal: NodeJS.Signals | 0) => {
   try {
@@ -23,6 +45,23 @@ const signalGroup = (pid: number, signal: NodeJS.Signals | 0) => {
       '歴史再生のprocess群を確認できません。',
     );
   }
+};
+
+const hasRemainingGroupAfterGrace = async (
+  pid: number,
+  cancelled: Promise<'cancelled'>,
+) => {
+  const deadline = performance.now() + NATURAL_EXIT_GRACE_MS;
+  while (signalGroup(pid, 0)) {
+    const remaining = deadline - performance.now();
+    if (remaining <= 0) return true;
+    const outcome = await Promise.race([
+      delay(Math.min(remaining, GROUP_POLL_MS)),
+      cancelled,
+    ]);
+    if (outcome === 'cancelled') return true;
+  }
+  return false;
 };
 
 const stopRemainingGroup = async (pid: number) => {
@@ -52,7 +91,7 @@ export const runSurfaceReplayProcess = async (
     signal?: AbortSignal;
   },
 ) => {
-  options.signal?.throwIfAborted();
+  if (options.signal?.aborted) throw new SurfaceReplayProcessError('aborted');
   const log = await open(options.log, 'wx', 0o600);
   let stdout: FileHandle | undefined;
   const closeFiles = async () => {
@@ -63,12 +102,17 @@ export const runSurfaceReplayProcess = async (
   try {
     if (!isNil(options.stdoutFile))
       stdout = await open(options.stdoutFile, 'wx', 0o600);
-    const child = spawn(executable, args, {
-      cwd: options.cwd,
-      env: options.env,
-      detached: true,
-      stdio: ['ignore', stdout?.fd ?? log.fd, log.fd],
-    });
+    let child: ReturnType<typeof spawn>;
+    try {
+      child = spawn(executable, args, {
+        cwd: options.cwd,
+        env: options.env,
+        detached: true,
+        stdio: ['ignore', stdout?.fd ?? log.fd, log.fd],
+      });
+    } catch {
+      throw new SurfaceReplayProcessError('spawn-error');
+    }
     const pid = child.pid;
     let spawnFailed = false;
     child.once('error', () => {
@@ -77,17 +121,29 @@ export const runSurfaceReplayProcess = async (
     const closed = new Promise<number | null>((resolve) => {
       child.once('close', resolve);
     });
-    let stop: (() => void) | undefined;
+    let stop: ((reason: StopReason) => void) | undefined;
+    let stopReason: StopReason | undefined;
     const cancelled = new Promise<'cancelled'>((resolve) => {
-      stop = () => resolve('cancelled');
+      stop = (reason) => {
+        stopReason ??= reason;
+        resolve('cancelled');
+      };
     });
-    const timeout = setTimeout(() => stop?.(), COMMAND_TIMEOUT_MS);
-    const abort = () => stop?.();
+    const timeout = setTimeout(() => stop?.('timeout'), COMMAND_TIMEOUT_MS);
+    const abort = () => stop?.('aborted');
     options.signal?.addEventListener('abort', abort, { once: true });
     if (options.signal?.aborted) abort();
     try {
       const outcome = await Promise.race([closed, cancelled]);
-      if (outcome === 'cancelled') {
+      let hasRemainingGroup = false;
+      if (isNil(stopReason) && !isNil(pid)) {
+        // 正常終了直後だけ、同じグループの子孫が自発終了する時間を設ける。
+        hasRemainingGroup =
+          !spawnFailed && outcome === 0
+            ? await hasRemainingGroupAfterGrace(pid, cancelled)
+            : signalGroup(pid, 0);
+      }
+      if (!isNil(stopReason)) {
         if (!isNil(pid)) await stopRemainingGroup(pid);
         const confirmed = await Promise.race([
           closed.then(() => true),
@@ -97,14 +153,14 @@ export const runSurfaceReplayProcess = async (
           throw new UnsettledSurfaceReplayProcess(
             '歴史再生の子processの終了を確認できません。',
           );
-        throw new Error('歴史再生の子processを中断しました。');
+        throw new SurfaceReplayProcessError(stopReason);
       }
-      if (!isNil(pid) && signalGroup(pid, 0)) {
+      if (!isNil(pid) && hasRemainingGroup) {
         await stopRemainingGroup(pid);
-        throw new Error('歴史再生の子孫processが残っていました。');
+        throw new SurfaceReplayProcessError('descendants-remained');
       }
-      if (spawnFailed || outcome !== 0)
-        throw new Error('歴史再生の子processが失敗しました。');
+      if (spawnFailed) throw new SurfaceReplayProcessError('spawn-error');
+      if (outcome !== 0) throw new SurfaceReplayProcessError('exit-failed');
     } finally {
       clearTimeout(timeout);
       options.signal?.removeEventListener('abort', abort);

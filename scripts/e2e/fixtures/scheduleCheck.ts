@@ -17,7 +17,12 @@ const attachment = (name: string, value: unknown) => ({
 });
 export const scheduleEvidenceFixture = () => {
   const projects = ['chromium', 'mobile-chrome'];
-  const variants = ['creator-only', 'keeper-only'];
+  const variants = ['creator-only', 'keeper-only', 'applicant'];
+  const isApplication = (variant: string) => variant === 'applicant';
+  const caseId = (variant: string) =>
+    isApplication(variant)
+      ? 'session-application-round-trip'
+      : 'schedule-confirm-persist';
   const executions = variants.flatMap((variant) =>
     projects.map((project) => ({
       profile: 'isolated',
@@ -26,7 +31,10 @@ export const scheduleEvidenceFixture = () => {
       variant,
       actorBindings: [
         { role: 'operator', actor: variant },
-        { role: 'observer', actor: 'confirmed-player' },
+        {
+          role: 'observer',
+          actor: isApplication(variant) ? 'creator-only' : 'confirmed-player',
+        },
       ],
     })),
   );
@@ -52,7 +60,41 @@ export const scheduleEvidenceFixture = () => {
             checks: [
               { target: 'page:sample', aspect: 'persist', layer: 'browser' },
             ],
-            executions,
+            executions: executions.filter(
+              ({ variant }) => !isApplication(variant),
+            ),
+            testBindings: ['main'],
+          },
+        ],
+      },
+      {
+        scenarioId: 'session-application',
+        title: '参加申請',
+        cases: [
+          {
+            caseId: caseId('applicant'),
+            title: '申請と取り消し',
+            status: 'implemented',
+            layer: 'browser',
+            fixture: 'session-application',
+            roles: ['operator', 'observer'],
+            checks: [
+              {
+                target:
+                  'action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction',
+                aspect: 'persist',
+                layer: 'browser',
+              },
+              {
+                target:
+                  'action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction',
+                aspect: 'persist',
+                layer: 'browser',
+              },
+            ],
+            executions: executions.filter(({ variant }) =>
+              isApplication(variant),
+            ),
             testBindings: ['main'],
           },
         ],
@@ -71,14 +113,18 @@ export const scheduleEvidenceFixture = () => {
     })),
     tests: executions.map((execution, index) => ({
       testId: `test-${index}`,
-      file: 'e2e/isolated/schedule.spec.ts',
+      file: isApplication(execution.variant)
+        ? 'e2e/isolated/session-application.spec.ts'
+        : 'e2e/isolated/schedule.spec.ts',
       line: execution.variant === 'creator-only' ? 10 : 20,
       column: 3,
-      titlePath: ['日程', execution.variant],
+      titlePath: isApplication(execution.variant)
+        ? [execution.variant]
+        : ['日程', execution.variant],
       project: execution.project,
       repeatEachIndex: 0,
       tags: [
-        '@case:schedule-confirm-persist',
+        `@case:${caseId(execution.variant)}`,
         `@variant:${execution.variant}`,
         '@binding:main',
       ],
@@ -92,7 +138,7 @@ export const scheduleEvidenceFixture = () => {
   const data = expected.map((entry, index) => {
     const actors = [
       'creator-only',
-      'keeper-only',
+      entry.fixture === 'session-application' ? 'applicant' : 'keeper-only',
       'confirmed-player',
       'outsider',
     ].map((kind, actor) => ({
@@ -107,6 +153,7 @@ export const scheduleEvidenceFixture = () => {
       retry: 0,
       caseId: entry.test.testId,
     };
+    const sessionId = `01K${String(index + 1).padStart(23, '0')}`;
     const journal = fixtureManifestSchema.parse({
       schemaVersion: 1,
       owner,
@@ -129,11 +176,31 @@ export const scheduleEvidenceFixture = () => {
         {
           resource: {
             kind: 'game_sessions',
-            id: `01K${String(index + 1).padStart(23, '0')}`,
+            id: sessionId,
             createdBy: at(actors, 0).appUserId,
           },
           status: 'removed',
         },
+        ...(entry.fixture === 'session-application'
+          ? [
+              {
+                resource: {
+                  kind: 'scenarios',
+                  id: `01M${String(index + 1).padStart(23, '0')}`,
+                  createdBy: at(actors, 0).appUserId,
+                },
+                status: 'removed',
+              },
+              ...[0, 1, 2].map((position) => ({
+                resource: {
+                  kind: 'session_participants',
+                  sessionId,
+                  userId: at(actors, position).appUserId,
+                },
+                status: 'removed',
+              })),
+            ]
+          : []),
       ],
       cleanup: { status: 'complete', remaining: [], issues: [] },
     });
@@ -177,14 +244,12 @@ export const scheduleEvidenceFixture = () => {
     return {
       id: first.testId,
       title: variant,
-      file: 'schedule.spec.ts',
+      file: isApplication(variant)
+        ? 'session-application.spec.ts'
+        : 'schedule.spec.ts',
       line: first.line,
       column: first.column,
-      tags: [
-        'case:schedule-confirm-persist',
-        `variant:${variant}`,
-        'binding:main',
-      ],
+      tags: [`case:${caseId(variant)}`, `variant:${variant}`, 'binding:main'],
       ok: true,
       tests: entries.map(({ result }) => result),
     };
@@ -204,11 +269,19 @@ export const scheduleEvidenceFixture = () => {
         title: 'schedule.spec.ts',
         file: 'schedule.spec.ts',
         specs: [],
-        suites: [{ title: '日程', file: 'schedule.spec.ts', specs }],
+        suites: [
+          { title: '日程', file: 'schedule.spec.ts', specs: specs.slice(0, 2) },
+        ],
+      },
+      {
+        title: 'session-application.spec.ts',
+        file: 'session-application.spec.ts',
+        specs: specs.slice(2),
+        suites: [],
       },
     ],
     errors: [] as unknown[],
-    stats: { expected: 4, unexpected: 0, flaky: 0, skipped: 0 },
+    stats: { expected: expected.length, unexpected: 0, flaky: 0, skipped: 0 },
   };
   const input = {
     expected,

@@ -6,6 +6,11 @@ import {
   fixtureResourceKey,
 } from '../../../e2e/fixtures/fixtureSchema';
 import {
+  APPLICATION_VARIANT_ACTORS,
+  applicationIntegrationActor,
+  applicationIntegrationParticipants,
+} from '../applicationIntegrationPolicy';
+import {
   integrationExpectationSchema,
   integrationReportSchema,
 } from '../integrationSchema';
@@ -82,13 +87,27 @@ const checkAttempt = (
     !isDeepStrictEqual(completed, expectedChecks)
   )
     add('CHECKS_INCOMPLETE', id);
+  const isApplication = expected.fixture === 'session-application';
+  if (
+    Object.hasOwn(APPLICATION_VARIANT_ACTORS, expected.claim.caseId) !==
+    isApplication
+  )
+    add('FIXTURE_KIND_MISMATCH', id);
   const rosterKinds = [
     'anonymous',
     'creator-only',
-    'keeper-only',
+    isApplication ? 'applicant' : 'keeper-only',
     'confirmed-player',
     'outsider',
   ];
+  if (isApplication) {
+    const actor = applicationIntegrationActor(expected.claim);
+    if (
+      isNil(actor) ||
+      !isDeepStrictEqual(expected.actorBindings, [{ role: 'operator', actor }])
+    )
+      add('ACTOR_BINDINGS_MISMATCH', id);
+  }
   if (
     meta.actors.length !== rosterKinds.length ||
     rosterKinds.some(
@@ -128,14 +147,42 @@ const checkAttempt = (
     )
   )
     add('SESSION_ACTOR_MISMATCH', id);
-  const participants = journal.resources.flatMap(({ resource }) =>
-    resource.kind === 'session_participants' ? [resource.userId] : [],
+  const participantResources = journal.resources.flatMap(({ resource }) =>
+    resource.kind === 'session_participants' ? [resource] : [],
   );
+  const participantKinds = isApplication
+    ? applicationIntegrationParticipants(expected.claim)
+    : ['creator-only', 'keeper-only', 'confirmed-player'];
   const participantActors = authenticated
-    .filter((actor) => actor.kind !== 'outsider')
+    .filter((actor) => participantKinds?.includes(actor.kind))
     .map((actor) => actor.appUserId);
-  if (!isDeepStrictEqual([...participants].sort(), participantActors.sort()))
+  if (
+    isNil(participantKinds) ||
+    !isDeepStrictEqual(
+      participantResources.map(({ userId }) => userId).sort(),
+      participantActors.sort(),
+    )
+  )
     add('SESSION_ACTOR_MISMATCH', id);
+  if (isApplication) {
+    const sessionIds = journal.resources.flatMap(({ resource }) =>
+      resource.kind === 'game_sessions' ? [resource.id] : [],
+    );
+    if (
+      sessionIds.length !== 1 ||
+      participantResources.some(({ sessionId }) => sessionId !== sessionIds[0])
+    )
+      add('SESSION_ACTOR_MISMATCH', id);
+    const allowed = new Set([
+      'auth-user',
+      'users',
+      'scenarios',
+      'game_sessions',
+      'session_participants',
+    ]);
+    if (journal.resources.some(({ resource }) => !allowed.has(resource.kind)))
+      add('FIXTURE_RESOURCES_MISMATCH', id);
+  }
   const roles = new Set(meta.actorBindings.map(({ role }) => role));
   if (
     roles.size !== meta.actorBindings.length ||
@@ -199,7 +246,7 @@ const checkAttempt = (
     count('users') !== 4 ||
     count('game_sessions') !== 1 ||
     count('scenarios') !== 1 ||
-    count('session_participants') !== 3
+    count('session_participants') !== participantKinds?.length
   )
     add('FIXTURE_RESOURCES_MISMATCH', id);
 };

@@ -17,6 +17,7 @@ export const fixtureActorSchema = z.discriminatedUnion('kind', [
     kind: z.enum([
       'creator-only',
       'keeper-only',
+      'applicant',
       'confirmed-player',
       'outsider',
     ]),

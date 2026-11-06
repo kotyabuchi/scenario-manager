@@ -8,8 +8,10 @@ import {
 import { replaySurfaceMigration } from './surfaceMigrationReplay';
 import {
   runSurfaceReplayProcess,
+  SurfaceReplayProcessError,
   UnsettledSurfaceReplayProcess,
 } from './surfaceMigrationReplayProcess';
+import { readSurfaceReplayDiagnostic } from './surfaceReplayFailure';
 import { readRevisionFile } from './trustedRevision';
 
 import { existsSync, realpathSync } from 'node:fs';
@@ -240,12 +242,35 @@ describe('固定UI移行の歴史再生', () => {
       failAt: 'pnpm-install',
       error: new Error('private-token'),
     });
-    await expect(replaySurfaceMigration(value)).rejects.toThrow(
-      /^歴史再生の処理に失敗しました: pnpm-install$/,
+    const error: unknown = await replaySurfaceMigration(value).catch(
+      (error: unknown) => error,
     );
+    expect(error).toMatchObject({
+      message: '歴史再生の処理に失敗しました: pnpm-install',
+    });
+    expect(readSurfaceReplayDiagnostic(error)).toBeUndefined();
     expect(existsSync(join(value.directory, 'pnpm-install.private.log'))).toBe(
       true,
     );
+    expect(await readdir(value.temporary)).toEqual([]);
+  });
+
+  it('既知のrunner失敗は固定工程と固定区分だけを保持する', async () => {
+    const original = new SurfaceReplayProcessError('exit-failed');
+    original.message = 'private-token';
+    const value = await fixture({ failAt: 'panda', error: original });
+
+    const error: unknown = await replaySurfaceMigration(value).catch(
+      (error: unknown) => error,
+    );
+    expect(error).toMatchObject({
+      message: '歴史再生の処理に失敗しました: panda',
+    });
+    expect(error).not.toHaveProperty('cause');
+    expect(readSurfaceReplayDiagnostic(error)).toEqual({
+      step: 'panda',
+      processFailure: 'exit-failed',
+    });
     expect(await readdir(value.temporary)).toEqual([]);
   });
 
@@ -254,7 +279,14 @@ describe('固定UI移行の歴史再生', () => {
       failAt: 'panda',
       error: new UnsettledSurfaceReplayProcess('未終了'),
     });
-    await expect(replaySurfaceMigration(value)).rejects.toThrow('未終了');
+    const error: unknown = await replaySurfaceMigration(value).catch(
+      (error: unknown) => error,
+    );
+    expect(error).not.toHaveProperty('cause');
+    expect(readSurfaceReplayDiagnostic(error)).toEqual({
+      step: 'panda',
+      processFailure: 'group-unsettled',
+    });
     expect(
       existsSync(join(value.directory, 'retained-workspace.private.log')),
     ).toBe(true);

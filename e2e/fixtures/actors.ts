@@ -15,8 +15,7 @@ import type { AuthenticatedActor } from './authState';
 import type { FixtureJournal } from './fixtureManifest';
 import type { FixtureResource } from './fixtureSchema';
 
-/** case専用のAuth UUIDとapp ULIDを予約してから作り、利用者JWTの対応を確認する。 */
-export const createCaseActors = async (
+const prepareActorFactory = async (
   connection: FixtureConnection,
   journal: FixtureJournal,
 ) => {
@@ -88,11 +87,8 @@ export const createCaseActors = async (
     );
   };
   return {
-    'creator-only': await create('creator-only'),
-    'keeper-only': await create('keeper-only'),
-    'confirmed-player': await create('confirmed-player'),
-    outsider: await create('outsider'),
-    anonymous: {
+    create,
+    anonymous: () => ({
       identity: fixtureActorSchema.parse({ kind: 'anonymous' }),
       client: createClient<Database>(
         connection.manifest.apiUrl,
@@ -106,9 +102,40 @@ export const createCaseActors = async (
         },
       ),
       storageState: anonymousStorageState,
-    },
+    }),
+  };
+};
+
+/** case専用の日程用actorを作り、利用者JWTの対応を確認する。 */
+export const createCaseActors = async (
+  connection: FixtureConnection,
+  journal: FixtureJournal,
+) => {
+  const { create, anonymous } = await prepareActorFactory(connection, journal);
+  return {
+    'creator-only': await create('creator-only'),
+    'keeper-only': await create('keeper-only'),
+    'confirmed-player': await create('confirmed-player'),
+    outsider: await create('outsider'),
+    anonymous: anonymous(),
+  };
+};
+
+/** 申請者と第三者を別々の所有ユーザーとして作る。 */
+export const createApplicationActors = async (
+  connection: FixtureConnection,
+  journal: FixtureJournal,
+) => {
+  const { create, anonymous } = await prepareActorFactory(connection, journal);
+  return {
+    'creator-only': await create('creator-only'),
+    applicant: await create('applicant'),
+    'confirmed-player': await create('confirmed-player'),
+    outsider: await create('outsider'),
+    anonymous: anonymous(),
   };
 };
 
 type CaseActors = Awaited<ReturnType<typeof createCaseActors>>;
-export type { CaseActors };
+type ApplicationActors = Awaited<ReturnType<typeof createApplicationActors>>;
+export type { ApplicationActors, CaseActors };

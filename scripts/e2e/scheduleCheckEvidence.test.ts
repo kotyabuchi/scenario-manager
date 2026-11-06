@@ -18,13 +18,13 @@ const attachment = (name: string, value: unknown) => ({
 const codes = (input: Parameters<typeof validateScheduleCheckEvidence>[0]) =>
   validateScheduleCheckEvidence(input).issues.map(({ code }) => code);
 
-describe('日程browser実行の証跡', () => {
-  it('official JSONのproject統合specと@なしtagを4条件へ対応させる', () => {
+describe('日程と参加申請のbrowser実行証跡', () => {
+  it('official JSONのproject統合specと@なしtagを6条件へ対応させる', () => {
     const { input } = fixture();
     const before = structuredClone(input);
     expect(validateScheduleCheckEvidence(input)).toEqual({
       issues: [],
-      counts: { expected: 4, tests: 4, passed: 4, journals: 4 },
+      counts: { expected: 6, tests: 6, passed: 6, journals: 6 },
     });
     expect(input).toEqual(before);
   });
@@ -165,13 +165,75 @@ describe('日程browser実行の証跡', () => {
       ]),
     );
   });
+
+  it('申請caseに日程のactor rosterを流用できない', () => {
+    const { input, data } = fixture();
+    const application = at(data, 4);
+    at(application.actors, 1).kind = 'keeper-only';
+    at(application.result.results, 0).attachments[0] = attachment(
+      'fixture-actors',
+      {
+        owner: application.journal.owner,
+        actors: [...application.actors, { kind: 'anonymous' }],
+      },
+    );
+    expect(codes(input)).toEqual(
+      expect.arrayContaining(['ACTOR_ROLES_MISMATCH', 'USED_ACTOR_MISMATCH']),
+    );
+  });
+
+  it('同じセッションの第三者の行を申請者の所有行に数えない', () => {
+    const { input, data } = fixture();
+    const application = at(data, 4);
+    const applicantId = at(application.actors, 1).appUserId;
+    const participant = application.journal.resources.find(
+      ({ resource }) =>
+        resource.kind === 'session_participants' &&
+        resource.userId === applicantId,
+    )?.resource;
+    if (participant?.kind !== 'session_participants')
+      throw new Error('申請者のfixtureがありません。');
+    participant.userId = at(application.actors, 3).appUserId;
+    expect(codes(input)).toContain(
+      'APPLICATION_PARTICIPANT_RESOURCES_MISMATCH',
+    );
+  });
+
+  it('申請fixtureの主催者所有シナリオの欠落を拒否する', () => {
+    const { input, data } = fixture();
+    const { journal } = at(data, 4);
+    journal.resources = journal.resources.filter(
+      ({ resource }) => resource.kind !== 'scenarios',
+    );
+    expect(codes(input)).toEqual(['APPLICATION_SCENARIO_OWNER_MISMATCH']);
+  });
+
+  it('申請fixtureに同じ所有セッションの日程候補が混入しても拒否する', () => {
+    const { input, data } = fixture();
+    const { journal, actors } = at(data, 4);
+    const session = journal.resources.find(
+      ({ resource }) => resource.kind === 'game_sessions',
+    )?.resource;
+    if (session?.kind !== 'game_sessions')
+      throw new Error('申請fixtureのセッションがありません。');
+    journal.resources.push({
+      resource: {
+        kind: 'session_availability_time_blocks',
+        id: `01P${'0'.repeat(23)}`,
+        sessionId: session.id,
+        userId: at(actors, 0).appUserId,
+      },
+      status: 'removed',
+    });
+    expect(codes(input)).toEqual(['APPLICATION_RESOURCE_KIND_MISMATCH']);
+  });
 });
 
 describe('日程の必要登録集合', () => {
   it('必要4条件を台帳側から削っても成功にしない', () => {
     const { ledger, discovery } = fixture();
     at(at(ledger.scenarios, 0).cases, 0).executions.pop();
-    discovery.tests.pop();
+    discovery.tests.splice(3, 1);
     expect(() => createScheduleExpectations(ledger, discovery)).toThrow();
   });
   it.each([
@@ -224,7 +286,7 @@ describe('日程の必要登録集合', () => {
       });
     }
     const expected = createScheduleExpectations(ledger, discovery);
-    expect(expected).toHaveLength(6);
+    expect(expected).toHaveLength(8);
     expect(
       expected
         .filter(({ caseId }) => caseId === 'schedule-confirm-invalid-input')
@@ -245,6 +307,35 @@ describe('日程の必要登録集合', () => {
         ({ variant }) => variant === 'creator-only',
       ),
     });
+    expect(() => createScheduleExpectations(ledger, discovery)).toThrow();
+  });
+
+  it.each([
+    'case',
+    'project',
+    'fixture',
+    'observer',
+    'claim',
+    'skip',
+  ])('参加申請の %s が不足・相違する場合を拒否する', (fault) => {
+    const { ledger, discovery } = fixture();
+    const application = at(ledger.scenarios, 1);
+    const item = at(application.cases, 0);
+    if (fault === 'case') {
+      application.cases.pop();
+      discovery.tests.splice(4);
+    } else if (fault === 'project') {
+      item.executions.pop();
+      discovery.tests.pop();
+    } else if (fault === 'fixture') {
+      item.fixture = 'schedule';
+    } else if (fault === 'observer') {
+      at(at(item.executions, 0).actorBindings, 1).actor = 'outsider';
+    } else if (fault === 'claim') {
+      item.checks.pop();
+    } else {
+      at(discovery.tests, 4).annotations.push({ type: 'skip' });
+    }
     expect(() => createScheduleExpectations(ledger, discovery)).toThrow();
   });
 });

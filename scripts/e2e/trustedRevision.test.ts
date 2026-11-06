@@ -240,6 +240,7 @@ describe('Git objectからの比較元読込', () => {
     ).toThrow();
   });
 
+  // 実Gitで大きいblobとsymlinkを扱うため、他のGit fixtureと同じ上限を使う。
   it('symlink自身とその配下、directory、上限超過blobを拒否する', async () => {
     const { root, git, write, commit } = fixture();
     write('folder/item.json', '[]');
@@ -263,7 +264,7 @@ describe('Git objectからの比較元読込', () => {
     await expect(readRevisionLedger(root, linkCommit)).rejects.toThrow(
       '辿れません',
     );
-  });
+  }, 30_000);
 
   it('台帳未導入と部分欠落・壊れた台帳を区別し、base内collectionを読む', async () => {
     const { root, base, write, commit } = fixture();

@@ -1,0 +1,301 @@
+[
+  {
+    "scenarioId": "session-application",
+    "title": "参加申請・取消の本人拘束、入力境界と永続化",
+    "cases": [
+      {
+        "caseId": "session-application-apply",
+        "title": "申請者と非参加者が本人名義のPENDINGを作成して再取得する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "session-application",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+            "aspect": "persist",
+            "layer": "integration"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider-self",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "session-application-apply-deny",
+        "title": "匿名と承認済み参加者の申請を理由別に拒否して既存行を保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "session-application",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "confirmed-player",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "session-application-apply-invalid",
+        "title": "一言メッセージ201文字の入力を拒否して既存行を保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "session-application",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+            "aspect": "validation",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "message-too-long",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "session-application-cancel",
+        "title": "本人のPENDINGだけを削除し、再取得で消失を確認する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "session-application",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+            "aspect": "persist",
+            "layer": "integration"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "session-application-cancel-deny",
+        "title": "匿名・本人行なし・承認済みの取消を拒否し他人の申請を保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "session-application",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+            "aspect": "authorization",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "confirmed-player",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "session-application-cancel-invalid",
+        "title": "非objectの取消入力を拒否し本人のPENDINGを保持する",
+        "status": "implemented",
+        "layer": "integration",
+        "fixture": "session-application",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+            "aspect": "validation",
+            "layer": "integration"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "non-object",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      },
+      {
+        "caseId": "session-application-round-trip",
+        "title": "申請者の通常UIから申請と取消を行い、別の主催者contextで表示の永続化を確認する",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "session-application",
+        "roles": ["operator", "observer"],
+        "checks": [
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+            "aspect": "persist",
+            "layer": "browser"
+          },
+          {
+            "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+            "aspect": "persist",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              },
+              {
+                "role": "observer",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              },
+              {
+                "role": "observer",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
+      }
+    ]
+  }
+]

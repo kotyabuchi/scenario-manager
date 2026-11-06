@@ -227,6 +227,43 @@ describe('legacy projectの障害伝播と後始末', () => {
     expect(JSON.stringify(output).includes('private-credentials')).toBe(false);
   });
 
+  it.each([
+    ['starting', 'start'],
+    ['inspecting', 'verify'],
+  ] as const)('%sの環境失敗を後続cleanup進捗で上書きしない', async (phase, failurePhase) => {
+    const value = await setup();
+    const probe = vi.mocked(probeEnvironment).getMockImplementation();
+    if (isNil(probe)) throw new Error('環境fixtureがありません。');
+    vi.mocked(probeEnvironment).mockImplementationOnce(
+      async (root, signal, progress) => {
+        progress?.({ phase });
+        const report = await probe(root, signal, (value) => {
+          if (value.phase === 'cleanup') progress?.(value);
+        });
+        return { ...report, passed: false, failurePhase };
+      },
+    );
+
+    const onProgress = vi.fn();
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      new AbortController().signal,
+      onProgress,
+    );
+    expect(output).toMatchObject({
+      status: 'failed',
+      phase: 'cleanup',
+      failurePhases: [failurePhase],
+    });
+    expect(onProgress.mock.calls.map(([value]) => value.phase)).toEqual([
+      phase,
+      'cleanup',
+    ]);
+    expect(value.events).toEqual(['environment-open', 'environment-close']);
+    expect(runLocalCommand).not.toHaveBeenCalled();
+  });
+
   it('seed途中で失敗しても親が保持するjournalをcleanupする', async () => {
     const value = await setup();
     value.control.seedFailure = true;
@@ -268,7 +305,9 @@ describe('legacy projectの障害伝播と後始末', () => {
       new AbortController().signal,
     );
     expect(output.status).toBe('failed');
-    expect(output.failurePhases).toEqual(['evidence']);
+    expect(output.failurePhases).toEqual([
+      fault === 'browser' ? 'browser' : 'evidence',
+    ]);
     expect(output.results).toEqual(fault === 'browser' ? value.results : null);
     expect(value.events.slice(-5)).toEqual([
       'app-close',
@@ -279,6 +318,31 @@ describe('legacy projectの障害伝播と後始末', () => {
     ]);
     expect(existsSync(value.credentials)).toBe(false);
     expect(JSON.stringify(output).includes('private-')).toBe(false);
+  });
+
+  it('ブラウザ、証跡、UI cleanupがすべて失敗した段階を順に残す', async () => {
+    const value = await setup();
+    value.control.browserFailure = true;
+    value.control.report = 'missing';
+    value.control.uiFailure = true;
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      new AbortController().signal,
+    );
+    expect(output).toMatchObject({
+      status: 'failed',
+      results: null,
+      failurePhases: ['browser', 'evidence', 'ui-cleanup'],
+    });
+    expect(value.events.slice(-5)).toEqual([
+      'app-close',
+      'ui-cleanup',
+      'context-close',
+      'fixture-cleanup',
+      'environment-close',
+    ]);
+    expect(existsSync(value.credentials)).toBe(false);
   });
 
   it('build失敗でもapp終了後のUI cleanupとseed cleanupを省略しない', async () => {
@@ -318,7 +382,9 @@ describe('legacy projectの障害伝播と後始末', () => {
     );
     expect(output.status).toBe('failed');
     expect(output.environment.passed).toBe(false);
-    if (fault === 'ui') expect(output.failurePhases).toEqual(['ui-cleanup']);
+    expect(output.failurePhases).toEqual([
+      fault === 'ui' ? 'ui-cleanup' : 'fixture-cleanup',
+    ]);
     expect(value.events.slice(-4)).toEqual([
       'ui-cleanup',
       'context-close',

@@ -72,7 +72,7 @@ describe('全実行条件のverification plan', () => {
     ).toThrow();
   });
 
-  it('現行28caseの55業務登録を全profileで展開する', async () => {
+  it('現行台帳の67業務登録を全profileで展開する', async () => {
     const { ledger, collection } = await integrationLedgerFixture();
     const reports = ledger.profiles
       .filter(({ id }) => id !== 'integration')
@@ -125,7 +125,7 @@ describe('全実行条件のverification plan', () => {
       discoveries: [...reports, collection.discovery],
       integrationCollection: collection,
     });
-    expect(plan.requirements).toHaveLength(55);
+    expect(plan.requirements).toHaveLength(67);
     expect(
       Object.fromEntries(
         ['app', 'isolated', 'storybook', 'integration'].map((profile) => [
@@ -133,7 +133,7 @@ describe('全実行条件のverification plan', () => {
           plan.requirements.filter((row) => row.profile === profile).length,
         ]),
       ),
-    ).toEqual({ app: 18, isolated: 8, storybook: 9, integration: 20 });
+    ).toEqual({ app: 18, isolated: 10, storybook: 9, integration: 30 });
     const first = collection.registrations[0];
     if (first === undefined) throw new Error('fixture不足');
     first.options.repeats = 1;

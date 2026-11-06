@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ciWorkflowSchema } from './ciPartitionSchema';
+import { surfaceReplayDiagnosticSchema } from './surfaceReplayFailure';
 import { verificationContextSchema } from './verificationSchema';
 
 export const ciJobSchema = z.enum([
@@ -111,9 +112,14 @@ export const createCiFailure = (input: {
   progress: CiProgressUpdate;
   env: NodeJS.ProcessEnv;
   interrupted: boolean;
+  surfaceReplay?: unknown;
 }) => {
   const { job, env, interrupted } = input;
   const progress = advanceCiProgress({ phase: 'context' }, input.progress);
+  const surfaceReplay =
+    job === 'plan' && progress.phase === 'static-ledger'
+      ? surfaceReplayDiagnosticSchema.safeParse(input.surfaceReplay)
+      : undefined;
   const [code, message] = interrupted
     ? (['CI_INTERRUPTED', 'CI検証は中断されました。'] as const)
     : phaseFailure[progress.phase];
@@ -133,6 +139,7 @@ export const createCiFailure = (input: {
     code,
     message,
     ...progress,
+    ...(surfaceReplay?.success ? { surfaceReplay: surfaceReplay.data } : {}),
     ...(workflow.success ? { workflow: workflow.data } : {}),
   };
 };

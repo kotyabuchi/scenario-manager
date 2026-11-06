@@ -19,7 +19,11 @@ if (!isNil(entry) && import.meta.url === pathToFileURL(resolve(entry)).href) {
     const { selectionConsoleSummary } = await import(
       './selectionConsoleSummary'
     );
-    const result = await runChangedVerification(process.cwd(), args);
+    const { writeSelectionProgress } = await import('./selectionProgress');
+    const result = await runChangedVerification(process.cwd(), {
+      ...args,
+      onProgress: writeSelectionProgress,
+    });
     process.stdout.write(
       `${JSON.stringify(selectionConsoleSummary(result))}\n`,
     );

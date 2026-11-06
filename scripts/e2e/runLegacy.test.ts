@@ -103,6 +103,7 @@ const setup = async () => {
   const events: string[] = [];
   const control = {
     failedProject: '',
+    failurePhases: [] as string[],
     shouldWait: false,
     discoveryFailure: false,
     buildFailure: false,
@@ -193,6 +194,8 @@ const setup = async () => {
       return {
         project: input.project,
         status: input.project === control.failedProject ? 'failed' : 'passed',
+        phase: 'fixture-cleanup',
+        failurePhases: control.failurePhases,
         results,
         runId: `run-${signals.length}`,
       };
@@ -349,6 +352,7 @@ describe('legacy実行の集約と中断', () => {
     expect(value.receipt()).toMatchObject({
       status: 'failed',
       phase: 'source-check',
+      failurePhase: 'source-check',
       projects: [{ project: 'chromium', status: 'passed', runId: 'run-1' }],
     });
   });
@@ -385,6 +389,48 @@ describe('legacy実行の集約と中断', () => {
     });
   });
 
+  it.each([
+    'readiness',
+    'evidence',
+    'ui-cleanup',
+  ])('%sの最初の失敗を後続source-checkで上書きしない', async (failurePhase) => {
+    const value = await setup();
+    value.control.failedProject = 'chromium';
+    value.control.failurePhases = [failurePhase, 'credentials-cleanup'];
+    const result = await runLegacy(value.root);
+    expect(result).toMatchObject({
+      status: 'failed',
+      phase: 'source-check',
+      failurePhase,
+    });
+    expect(value.receipt()).toMatchObject({ failurePhase });
+    expect(runLegacyProject).toHaveBeenCalledOnce();
+    expect(aggregateLegacyResults).not.toHaveBeenCalled();
+  });
+
+  it('stderrのパイプ切断が後から届いてもprojectと証跡保存を完了する', async () => {
+    const value = await setup();
+    let wasPipeErrorHandled = false;
+    vi.mocked(process.stderr.write).mockImplementationOnce(() => {
+      queueMicrotask(() => {
+        wasPipeErrorHandled = process.stderr.emit(
+          'error',
+          Object.assign(new Error('closed pipe'), { code: 'EPIPE' }),
+        );
+      });
+      return false;
+    });
+
+    await expect(
+      runLegacy(value.root, ['--project', 'chromium']),
+    ).resolves.toMatchObject({
+      status: 'partial-passed',
+    });
+    expect(wasPipeErrorHandled).toBe(true);
+    expect(value.events.at(-1)).toBe('closed:chromium');
+    expect(value.receipt()).toMatchObject({ status: 'partial-passed' });
+  });
+
   it('SIGINT handlerは共有signalを中断しcleanup完了前に次projectへ進まない', async () => {
     const value = await setup();
     value.control.shouldWait = true;
@@ -414,7 +460,12 @@ describe('legacy実行の集約と中断', () => {
       value.pending.release();
     }
     const result = await running;
-    expect(result.status).toBe('failed');
+    expect(result).toMatchObject({
+      status: 'failed',
+      phase: 'source-check',
+      failurePhase: 'interrupted',
+    });
+    expect(value.receipt()).toMatchObject({ failurePhase: 'interrupted' });
     expect(value.events.at(-1)).toBe('closed:chromium');
     expect(runLegacyProject).toHaveBeenCalledOnce();
     expect(value.signals[0]?.aborted).toBe(true);

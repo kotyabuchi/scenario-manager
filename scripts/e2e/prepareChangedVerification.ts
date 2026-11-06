@@ -18,6 +18,7 @@ import {
   checkStaticState,
   collectStaticState,
 } from './staticGate';
+import { recordStaticLedgerFailure } from './staticLedgerFailure';
 import { surfaceSelectionBaseline } from './surfacePending';
 import { resolveRevisions } from './trustedRevision';
 
@@ -54,18 +55,30 @@ export const prepareChangedVerification = async (input: {
   const forceFull =
     input.forceFull || eventPolicy?.execution === 'full-required';
   save('static', { status: 'running', ...revisions });
-  input.onPhase?.('static-ledger');
-  const state = await collectStaticState(root);
-  const result = await checkStaticState({
-    root,
-    state,
-    revisions,
-    directory: join(root, prefix, 'surface-migration'),
-    ...(input.signal ? { signal: input.signal } : {}),
-    ...(env.E2E_LEDGER_BOOTSTRAP_APPROVAL
-      ? { bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL }
-      : {}),
-  });
+  let state: Awaited<ReturnType<typeof collectStaticState>> | undefined;
+  let result: Awaited<ReturnType<typeof checkStaticState>>;
+  try {
+    input.onPhase?.('static-ledger');
+    state = await collectStaticState(root);
+    result = await checkStaticState({
+      root,
+      state,
+      revisions,
+      directory: join(root, prefix, 'surface-migration'),
+      ...(input.signal ? { signal: input.signal } : {}),
+      ...(env.E2E_LEDGER_BOOTSTRAP_APPROVAL
+        ? { bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL }
+        : {}),
+    });
+  } catch (error) {
+    throw recordStaticLedgerFailure({
+      root,
+      artifactPath: `${prefix}/static.json`,
+      error,
+      revisions,
+      bindings: state?.inventory.surfaceAnalysis.bindings,
+    });
+  }
   const staticReport = {
     status: result.issues.length === 0 ? 'passed' : 'failed',
     ...revisions,

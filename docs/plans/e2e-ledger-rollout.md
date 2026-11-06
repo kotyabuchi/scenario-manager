@@ -31,10 +31,10 @@ mainに未公開の前提UI等232コミットが含まれるため、ユーザ�
 
 - [x] Batch 1: フォント安定化
 - [x] Batch 2: PR分離と実CI受入
-- [ ] Batch 3: 必須チェック設定
-- [ ] Batch 4: 進捗・診断の改善
-- [ ] Batch 5: 同一入力の解析再利用
-- [ ] Batch 6: 参加申請・取消の検証拡張
+- [x] Batch 3: 必須チェック設定
+- [x] Batch 4: 進捗・診断の改善
+- [x] Batch 5: 同一入力の解析再利用
+- [x] Batch 6: 参加申請・取消の検証拡張
 
 ## Batch 1: フォント安定化
 
@@ -168,3 +168,57 @@ Codex再起動を待つ手順は撤回し、固定値を `e2e/isolatedRuntime.ts
 取得したplan・両shard・集約成果物を実際のrun/attempt・固定Git・外部承認で独立に再検証し、集約receiptと完全一致した。manifest digestは `02cda10d33ea2a4e501be0e63908d56a94d4f605a83aa761803057ca280431ad`、required verificationは `2835845cb3ff`、legacy-localは `8208d967f061`。前提PR #6も前述のhosted runで受入済みで、両PRをready for reviewにした。
 
 ユーザーは両PRの段階マージと本番デプロイを承認した。PR #6は `a270fbdbd7bc23844ead4ad551732d6f6046aa14` でmainへmerge済み。Cloudflare deploy run `42186359422` を確認中。品質PR #7はこのmainを祖先として取り込み、承認tupleとbaseを更新して全hosted jobsを再検証する。旧base向けの成功を新base向けの成功として読み替えない。必須checkの設定とPR #7のmergeは新base向け受入後に行う。
+
+## Batch 3と段階デプロイの完了（2026-11-06）
+
+PR #7はmain `a270fbdbd7bc23844ead4ad551732d6f6046aa14` を取り込んだhead `eb13ff3a133e47b1623c77fdee7530fa5a9da187` で再検証した。[run 42186792136](https://github.com/kotyabuchi/scenario-manager/actions/runs/42186792136) / attempt 1の全6 jobsが成功し、固定Git・実run/attempt・外部承認と取得artifactの独立再集約も一致した。必須55成功・extras312登録、manifest digest `5b51dc7e7b4d5244a16e7402c93c4eb7f0d8064e3bff1b3f8f79f379fea81fd0`。core437/UI658の不足は維持する。
+
+既存保護を取得した上で、[ruleset 26680579](https://github.com/kotyabuchi/scenario-manager/rules/26680579) をmainに限定して有効化した。必須checkは `E2E verification gate`、提供appはGitHub Actions（15368）、最新baseとの一致を必須とし、bypass actorは設けない。設定のread-backとPR #7のrequired check成功を確認し、通常mergeでmain `0b14ff2b5924d6b34f942561d9e573a85f6cd6e2` へ取り込んだ。mergeの両親とtreeは受入済みheadに一致する。
+
+- PR #6の[deploy 42186359422](https://github.com/kotyabuchi/scenario-manager/actions/runs/42186359422)成功。Worker version `0831654b-e004-46a3-8299-814a035b47d2`。
+- PR #7の[deploy 42189940136](https://github.com/kotyabuchi/scenario-manager/actions/runs/42189940136)成功。Worker version `2110c96a-61bd-4dd3-8a34-15318959fce8`。
+- 両デプロイ後に匿名の実ブラウザでトップ・シナリオ一覧・既存詳細のHTTP200と日本語フォントを確認。同origin WOFF2を21件取得し、Googleフォント通信0。画像付きカードを観測できなかったため、R2サムネイルの本番受入までは主張しない。
+
+初回main pushの[run 42189940054](https://github.com/kotyabuchi/scenario-manager/actions/runs/42189940054)は未受入。attempt 1は旧PR用承認値を取り込んで起動した。正しいpush tupleを設定して全jobsを再実行したattempt 2・3も `CI_STATIC_LEDGER_FAILED` で停止し、runtimeは未実行。PRの成功と本番デプロイ成功を、このpush CIの成功へ読み替えない。
+
+固定main、Node24.12.0/pnpm10.33.0、独立Linux環境で実push条件の準備全体は成功し、旧移行の固定digestも一致した。一方、別の試行はPanda段階で失敗した。正常終了後約57msで消える子プロセスを旧終了監視が誤拒否する問題は実processで再現し、250ms以内の自然終了を待つ候補を検証した。GitHubで同じ原因が発生したかは未確定であり、候補と安全なCI診断は別の限定修正として進める。
+
+## Batch 4 完了（2026-11-06）
+
+準備開始、static-ledger、collection、selectionのレシートを段階ごとに保存してから任意表示を行う。親の品質レシートと最終JSONにrun別パスを追加した。UI不足は識別子・既知診断コードを10件まで表示し、詳細全件は成果物へ保存する。任意例外の公開、既存不足の増加、承認・cleanup条件の緩和は行わない。
+
+レビューで見つかった必須4件と推奨6件を修正した。必須保存の通知失敗、stderrの非同期EPIPE、browserとevidenceの取り違え、起動とcleanupの両失敗、fixture cleanupの非throw incompleteを回帰で検証した。Sol/mediumの3観点再レビューで残件0。
+
+品質 `bfdcba603dcb`、selection `00240fce47fb`、verification `91020b7ccbec` が成功。検証時の固定比較元・HEADは `0b14ff2`、その時点の未コミット25ファイルが対象。lint/type、unit1097成功＋既存skip8、tools140 files/2013成功、必須55成功・旧E2E312登録・7 stagesとcleanupを照合した。入力digestは前後 `6f2b5f4aa79354e2b9f175183c4d0ce2df6c966cf0838d87bdd737f2b34bcfa7` で一致する。全件選択のためshadowの重複実行はない。core437/UI658は依然insufficient。
+
+検証済みコードは `04ccf3c`、`0899c5c`、`28d4fa0`、`66c2b8e`、`6f4cc49` の5つの小コミットへ依存順に分割し、通常hookを通した。次は終了監視とCI診断の限定修正を確認し、Batch 5の同一入力再利用、Batch 6の申請・取消へ進む。
+
+独立受入でも入力ファイルのbyte一致、28 checkpointsの差分0、全stageのexit0・process終了を確認した。6環境のcontainer/network/volume、記録された11個のlock、専用5ポートの残留は0。調査用Linuxコンテナと専用snapshot imageも、ID・ラベル確認後に回収した。他プロジェクトの資源とCodexのプロセスは変更していない。
+
+## 履歴再生とCI診断の限定修正（2026-11-06）
+
+正常close後だけ250ms・50ms間隔で同じprocess groupの自然消滅を確認する。実Linuxで自然終了は約52ms・停止信号なしで成功、期限超過は停止後も失敗、猶予中の中断も停止確認後に失敗した。終了未確認時のscratch保持は維持し、修正候補で固定旧移行の全proofが従来と一致した。
+
+固定12工程と6失敗区分だけを既知の例外型から読み、plan/static-ledgerのsafe failure JSONへ任意追加する。任意のmessage/cause/stackや模倣オブジェクトは診断として公開しない。Linuxの既存policy fixtureには固定履歴の実再生を追加し、固定保存物とproof・前後HEADを照合する。今回のJSON保存後に出すmarkerがある場合だけ安全な結果1ファイルをuploadする。古い結果が残る保存失敗も成功へ昇格させない。
+
+関連8 files/79 tests、型検査、Biome、actionlintが成功。3観点レビューの必須1件（保存失敗時の古いartifact公開）も修正・再確認済み。コードは `9f65acb`、`7f5072f`、`0cea6dd`、`345f0a8` の4コミット。GitHubの実履歴checkと全hosted gateはこれから確認し、旧attempt 2・3の実原因が同一だったとは断定しない。
+
+## PR #8の初回CI受入とBatch 5完了（2026-11-06）
+
+[PR #8](https://github.com/kotyabuchi/scenario-manager/pull/8) の初回head `aebd052889ede8692cd9e4b5780f85515c107fd3`、base `0b14ff2` に対する [run 42202106264](https://github.com/kotyabuchi/scenario-manager/actions/runs/42202106264) / attempt 1は全6 jobs成功。Linuxの固定履歴再生、Windows fixtures、planner、両runtime shard、集約を受入した。取得artifactを実run/attempt・固定Gitで独立に再集約し、manifest `ac41634dc113bf318a7a8ed02b5738d990ffab2b1491dda6f8e3a1f3bb413996` と55 required・312 extrasが一致した。旧main pushの失敗原因が同一と確定したわけではない。PRはdraftのまま、Batch 5・6を追加する。
+
+Batch 5は呼び出し内だけで、全実効path・raw bytes・物理rootが同一のInventoryを共有する。4 revision枠と依存・Panda・入力変更検査は維持する。全枠同一、一部同一、全枠相違の3条件で旧版と新版を各1回比較し、Inventory・graph・plan・selectionのdigestが一致した。builder時間は318.401→84.387秒、323.953→161.720秒、333.046→313.981秒。反復測定ではなく、RSSはプロセス累積最大なので、安定した改善率やbuilder単独メモリ量は主張しない。
+
+初回品質 `2a3cdbab496f` は実Gitの8 MiB超blob・symlink fixtureが既定5秒を超えて停止した。対象1件だけ30秒に設定し、拒否assertionとproductionの制限は維持した。再検証の品質 `524495c4959c`、selection `b0e4f28d9a39`、verification `b3c49c66e312` は成功。固定base/headは `aebd052`、unit1097成功＋既存skip8、tools143 files/2051成功、必須55成功・旧E2E312登録・全7 stagesを照合した。
+
+入力digest `6de789e030f9e795a7437ddb28ec7987f75b6a6be4c9032c4cda931d1d028210` は前後一致、28 checkpointsの差分0。独立受入で6環境のDocker資源・11 locks・専用5ポートと識別可能な子プロセスの残留0を確認した。core437/UI658とdeferred-live18は維持。レビューと測定の詳細は [Batch 5レビュー](../reviews/diff-review-2026-11-06-4.md) に記録した。
+
+## Batch 6 完了（2026-11-06）
+
+参加申請・取消の2 Actionを、単一の公開募集中セッションと所有actorを使って検証した。利用者JWTのintegration 10条件と、Chromium／mobile-chromeで申請者・主催者が別contextを使うブラウザ2条件を登録した。正規writerで両Actionの契約不足2件だけを退役し、core 435・UI 658・deferred-live 18を維持した。未解決呼出や管理画面の独立不足は残る。
+
+先行の型検査でブラウザfixtureのactor存在確認を修正した。初回の台帳writerはVitest収集で失敗し、再実行で成功した。先行toolsの2失敗は旧登録件数・検証済みDBファイル数のassertionを新規追加分に合わせて解消した。最終の品質 `1f43a7c0543e`、selection `56904e39b167`、verification `26c8e7ed4c81` は成功。固定base/headは `35920f0cbb9bd2bcfd96deb0088cb9ffd6dafafd` で、そのHEAD時点の未コミット差分を検査した。unit 1097成功＋既存skip 8、tools 145ファイル2087成功、必須67成功（app 18、integration 30、isolated 10、Storybook 9）、旧E2E追加登録312、全7ステージを照合した。
+
+前後の入力digest `5c44d021b0a727bc871c72059121cd583a221f9a212b7d70fe5a8d764b28e1f4` は一致し、28 checkpointsの差分は0。独立受入で追加12条件の登録・actor・チェック・journalを照合し、6環境のDocker資源、11個のlock、実行IDで識別可能なホストプロセスの残留0を確認した。専用5ポートのlistenerとactive-or-boundは0（TIME_WAITを除外）。固定catalogでRLS無効の `session_participants` に対する直接DB書込の拒否、別卓の同一利用者行の保持、承認と取消の競合時の原子性、主催者の独立認可は証明範囲に含めない。
+
+検証済み差分と検証範囲文書は `a996566` から `b168000` の11コミット。Batch 5・6追加後のPR #8最終headに対するHosted CIは未実行で、今回のローカル成功とは別に確認する。指摘と証跡は [Batch 6レビュー](../reviews/diff-review-2026-11-06-5.md) に記録した。

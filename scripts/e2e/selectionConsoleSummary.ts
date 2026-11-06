@@ -8,6 +8,7 @@ export const selectionConsoleSummary = (
   phase: result.phase,
   selectionId: result.selectionId,
   receiptPath: 'test-results/quality/selection.json',
+  runReceiptPath: result.runReceiptPath,
   mode: result.decision?.mode ?? null,
   coverageStatus: result.decision?.coverageStatus ?? null,
   coverageGapCodes: [

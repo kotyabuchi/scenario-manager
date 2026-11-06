@@ -1,4 +1,9 @@
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
+
+import { runCiCli } from './ci';
+import { planCiVerification } from './ciPlan';
+import { recordStaticLedgerFailure } from './staticLedgerFailure';
+import { createSurfaceReplayDiagnosticError } from './surfaceReplayFailure';
 
 import { spawnSync } from 'node:child_process';
 import {
@@ -14,6 +19,8 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+
+vi.mock('./ciPlan', () => ({ planCiVerification: vi.fn() }));
 
 const entry = fileURLToPath(new URL('./ci.ts', import.meta.url));
 const tsx = pathToFileURL(createRequire(import.meta.url).resolve('tsx')).href;
@@ -123,3 +130,69 @@ it('実CLIは既存failureを上書きせず今回の安全な診断をstdoutに
     removeOwnedRoot(root, temp);
   }
 }, 20_000);
+
+it.each([
+  'typed',
+  'unrecognized',
+] as const)('静的検査から渡る%sな失敗をCIの公開証跡へ変換する', async (kind) => {
+  const temp = realpathSync(tmpdir());
+  const root = mkdtempSync(join(temp, 'e2e-ci-cli-'));
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  const diagnostic = {
+    step: 'panda',
+    processFailure: 'descendants-remained',
+  } as const;
+  const knownError = createSurfaceReplayDiagnosticError(diagnostic);
+  knownError.message = 'private-replay-message';
+  const unknownError = Object.assign(
+    new Error('private-error', { cause: knownError }),
+    { surfaceReplay: diagnostic },
+  );
+  const artifactPath = 'test-results/verification/fixture/static.json';
+  vi.mocked(planCiVerification).mockImplementationOnce(
+    async (cwd, _env, _signal, onProgress) => {
+      onProgress?.({ phase: 'static-ledger' });
+      throw recordStaticLedgerFailure({
+        root: cwd,
+        artifactPath,
+        error: kind === 'typed' ? knownError : unknownError,
+      });
+    },
+  );
+  try {
+    const output = join(root, 'step-output');
+    writeFileSync(output, '');
+    const report = await runCiCli(['plan'], root, {
+      ...process.env,
+      GITHUB_ACTIONS: 'true',
+      GITHUB_OUTPUT: output,
+      GITHUB_RUN_ID: '123456',
+      GITHUB_RUN_ATTEMPT: '2',
+    });
+    expect(report).toMatchObject({
+      phase: 'static-ledger',
+      code: 'CI_STATIC_LEDGER_FAILED',
+      workflow: { runId: '123456', attempt: 2 },
+    });
+    if (kind === 'typed')
+      expect(report).toHaveProperty('surfaceReplay', diagnostic);
+    else expect(report).not.toHaveProperty('surfaceReplay');
+    expect(JSON.stringify(report)).not.toContain('private-');
+    expect(
+      JSON.parse(
+        readFileSync(join(root, 'test-results/ci/plan/failure.json'), 'utf8'),
+      ),
+    ).toEqual(JSON.parse(JSON.stringify(report)));
+    expect(JSON.parse(readFileSync(join(root, artifactPath), 'utf8'))).toEqual({
+      status: 'failed',
+      failure: 'STATIC_LEDGER_CHECK_FAILED',
+    });
+    expect(stderr).toHaveBeenCalledExactlyOnceWith(
+      `[e2e-static] ${JSON.stringify({ failure: 'STATIC_LEDGER_CHECK_FAILED', artifactPath })}\n`,
+    );
+    expect(readFileSync(output, 'utf8')).toBe('diagnostic_written=true\n');
+  } finally {
+    stderr.mockRestore();
+    removeOwnedRoot(root, temp);
+  }
+});
