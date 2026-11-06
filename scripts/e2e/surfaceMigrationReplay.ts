@@ -11,8 +11,13 @@ import {
 } from './surfaceMigrationHistory';
 import {
   runSurfaceReplayProcess,
+  SurfaceReplayProcessError,
   UnsettledSurfaceReplayProcess,
 } from './surfaceMigrationReplayProcess';
+import {
+  createSurfaceReplayDiagnosticError,
+  type SurfaceReplayDiagnostic,
+} from './surfaceReplayFailure';
 import { readRevisionFile } from './trustedRevision';
 
 import {
@@ -36,6 +41,7 @@ const ORIGIN = SURFACE_MIGRATION_V1_ORIGIN;
 const NODE_VERSION = 'v24.12.0';
 const PNPM_VERSION = '10.33.0';
 const HISTORICAL_RECEIPT = 'test-results/quality/static-gate.json';
+type ReplayStep = SurfaceReplayDiagnostic['step'];
 const digest = z.string().regex(/^[a-f0-9]{64}$/u);
 const childReceiptSchema = z.object({
   stage: z.literal('M1-static'),
@@ -184,8 +190,9 @@ export const replaySurfaceMigration = async (input: {
     npm_config_userconfig: devNull,
     npm_config_globalconfig: devNull,
   });
+  let canRemove = true;
   const run = async (
-    label: string,
+    label: ReplayStep,
     executable: string,
     args: string[],
     captureStdout = false,
@@ -203,14 +210,25 @@ export const replaySurfaceMigration = async (input: {
         ...(input.signal ? { signal: input.signal } : {}),
       });
     } catch (error) {
-      if (error instanceof UnsettledSurfaceReplayProcess) throw error;
+      if (error instanceof UnsettledSurfaceReplayProcess) {
+        canRemove = false;
+        throw createSurfaceReplayDiagnosticError({
+          step: label,
+          processFailure: 'group-unsettled',
+        });
+      }
+      if (error instanceof SurfaceReplayProcessError)
+        throw createSurfaceReplayDiagnosticError({
+          step: label,
+          processFailure: error.processFailure,
+        });
       throw new Error(`歴史再生の処理に失敗しました: ${label}`, {
         cause: error,
       });
     }
     return stdoutFile ?? log;
   };
-  const git = (label: string, args: string[], captureStdout = false) =>
+  const git = (label: ReplayStep, args: string[], captureStdout = false) =>
     run(
       label,
       'git',
@@ -249,7 +267,6 @@ export const replaySurfaceMigration = async (input: {
     await assertCheckoutFile(checkout, 'package.json', manifest);
     await assertCheckoutFile(checkout, 'pnpm-lock.yaml', lock);
   };
-  let canRemove = true;
   let succeeded = false;
   try {
     for (const path of [checkout, home, temp])
@@ -320,7 +337,6 @@ export const replaySurfaceMigration = async (input: {
     succeeded = true;
     return proof;
   } catch (error) {
-    canRemove = !(error instanceof UnsettledSurfaceReplayProcess);
     if (!canRemove)
       await writeFile(
         join(logs, 'retained-workspace.private.log'),
