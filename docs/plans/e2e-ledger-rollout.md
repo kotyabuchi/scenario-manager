@@ -194,3 +194,11 @@ PR #7はmain `a270fbdbd7bc23844ead4ad551732d6f6046aa14` を取り込んだhead `
 検証済みコードは `04ccf3c`、`0899c5c`、`28d4fa0`、`66c2b8e`、`6f4cc49` の5つの小コミットへ依存順に分割し、通常hookを通した。次は終了監視とCI診断の限定修正を確認し、Batch 5の同一入力再利用、Batch 6の申請・取消へ進む。
 
 独立受入でも入力ファイルのbyte一致、28 checkpointsの差分0、全stageのexit0・process終了を確認した。6環境のcontainer/network/volume、記録された11個のlock、専用5ポートの残留は0。調査用Linuxコンテナと専用snapshot imageも、ID・ラベル確認後に回収した。他プロジェクトの資源とCodexのプロセスは変更していない。
+
+## 履歴再生とCI診断の限定修正（2026-11-06）
+
+正常close後だけ250ms・50ms間隔で同じprocess groupの自然消滅を確認する。実Linuxで自然終了は約52ms・停止信号なしで成功、期限超過は停止後も失敗、猶予中の中断も停止確認後に失敗した。終了未確認時のscratch保持は維持し、修正候補で固定旧移行の全proofが従来と一致した。
+
+固定12工程と6失敗区分だけを既知の例外型から読み、plan/static-ledgerのsafe failure JSONへ任意追加する。任意のmessage/cause/stackや模倣オブジェクトは診断として公開しない。Linuxの既存policy fixtureには固定履歴の実再生を追加し、固定保存物とproof・前後HEADを照合する。今回のJSON保存後に出すmarkerがある場合だけ安全な結果1ファイルをuploadする。古い結果が残る保存失敗も成功へ昇格させない。
+
+関連8 files/79 tests、型検査、Biome、actionlintが成功。3観点レビューの必須1件（保存失敗時の古いartifact公開）も修正・再確認済み。コードは `9f65acb`、`7f5072f`、`0cea6dd`、`345f0a8` の4コミット。GitHubの実履歴checkと全hosted gateはこれから確認し、旧attempt 2・3の実原因が同一だったとは断定しない。
