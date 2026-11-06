@@ -13,6 +13,7 @@ import { provePandaOutputs } from './pandaProvenance';
 import { buildSnapshotInventories } from './snapshotInventory';
 import { isGeneratedLibraryPath } from './sourceFiles';
 import { assertOldSurfaceLedger } from './surfaceMigration';
+import { SURFACE_MIGRATION_V1_ORIGIN } from './surfaceMigrationHistory';
 import {
   readRevisionFile,
   readRevisionLedger,
@@ -22,9 +23,7 @@ import {
 import type { InputFingerprint } from './fingerprint';
 import type { GithubEventPolicy } from './githubEventSchema';
 
-// M3受入済みv1の固定祖先。初回公開時だけ、M1外部承認の検証後に使用する。
-export const SURFACE_MIGRATION_V1_ORIGIN =
-  '8bbfed403163222a566589e56f4c83854219e56f';
+export { SURFACE_MIGRATION_V1_ORIGIN } from './surfaceMigrationHistory';
 
 type SurfaceMigrationRevisions = {
   base: string;

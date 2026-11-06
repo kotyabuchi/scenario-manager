@@ -13,9 +13,15 @@ import {
   surfacePendingDigest,
 } from './surfaceMigration';
 import {
+  assertSurfaceMigrationHistoryAncestry,
+  assertSurfaceMigrationHistoryProof,
+  SURFACE_MIGRATION_INTRODUCTION,
+} from './surfaceMigrationHistory';
+import {
   captureSurfaceMigrationInventories,
   resolveSurfaceMigrationOrigin,
 } from './surfaceMigrationObservation';
+import { replaySurfaceMigration } from './surfaceMigrationReplay';
 import {
   surfaceMigrationSchema,
   surfacePendingSchema,
@@ -34,6 +40,7 @@ import { join } from 'node:path';
 import type { PendingBaseline } from './baseline';
 import type { Inventory } from './inventorySchema';
 import type { SavedSurfaceState } from './surfaceMigration';
+import type { SurfaceMigrationHistoryProof } from './surfaceMigrationHistory';
 import type {
   SurfaceMigrationOrigin,
   SurfaceMigrationRevisions,
@@ -90,36 +97,78 @@ export const readSurfaceStateAtRevision = (root: string, revision: string) => {
   );
 };
 
+/** 導入時の保存物を、現行HEADにつながる固定履歴から読む。 */
+export const readSurfaceMigrationHistoryAtRevision = (
+  root: string,
+  head: string,
+  baselinePath: string,
+) => {
+  assertSurfaceMigrationHistoryAncestry(root, head);
+  const introduced = readSurfaceStateAtRevision(
+    root,
+    SURFACE_MIGRATION_INTRODUCTION,
+  );
+  if (isNil(introduced))
+    throw new Error('固定導入コミットにUI初期移行成果物がありません。');
+  const baseline = baselineSchema.parse(
+    parseArtifact(
+      readRevisionFile(root, SURFACE_MIGRATION_INTRODUCTION, baselinePath),
+      baselinePath,
+    ),
+  );
+  return { introduced, baseline };
+};
+
 const migrationReceipt = (
   saved: SavedSurfaceState,
   origin: SurfaceMigrationOrigin | null,
   snapshotDigest: string | null,
+  surfaceMigrationHistory?: SurfaceMigrationHistoryProof,
 ) => ({
   surfacePendingDigest: surfacePendingDigest(saved.pending),
   surfaceMigrationDigest: surfaceMigrationDigest(saved.migration),
   observationBaseSha: saved.migration.observationBaseSha,
   surfaceMigrationOrigin: origin,
   surfaceMigrationSnapshotDigest: snapshotDigest,
+  ...(isNil(surfaceMigrationHistory) ? {} : { surfaceMigrationHistory }),
 });
 
-const observeMigration = async (input: SurfaceGateInput) => {
-  const { root, artifacts, state } = input;
-  const origin = resolveSurfaceMigrationOrigin({
+const resolveMigrationOrigin = (input: SurfaceGateInput) =>
+  resolveSurfaceMigrationOrigin({
     ...input,
     coreBaselineDigest: createHash('sha256')
-      .update(serializeBaseline(state.baseline))
+      .update(serializeBaseline(input.state.baseline))
       .digest('hex'),
   });
-  const directory =
-    input.directory ??
-    join(
-      prepareVerificationDirectory(root, randomBytes(6).toString('hex')),
-      'surface-panda',
+
+const migrationDirectory = (input: SurfaceGateInput, name: string) =>
+  input.directory ??
+  join(
+    prepareVerificationDirectory(input.root, randomBytes(6).toString('hex')),
+    name,
+  );
+
+const assertInitialCoreBaseline = (
+  base: PendingBaseline,
+  head: PendingBaseline,
+  current: PendingBaseline,
+) => {
+  const issues = checkBaseline({ base, head, current: current.items });
+  if (issues.length)
+    throw new Error(
+      `UI初期移行のcore baselineが一致しません: ${JSON.stringify(issues)}`,
     );
+};
+
+const observeMigration = async (
+  input: SurfaceGateInput,
+  origin: SurfaceMigrationOrigin,
+) => {
+  const { artifacts, state } = input;
   const observed = await captureSurfaceMigrationInventories({
     ...input,
     origin,
-    directory,
+    directory: migrationDirectory(input, 'surface-panda'),
   });
   if (
     serializeInventory(observed.current) !== serializeInventory(state.inventory)
@@ -132,17 +181,8 @@ const observeMigration = async (input: SurfaceGateInput) => {
   const head = baselineSchema.parse(
     parseArtifact(readWorking(artifacts.baseline), artifacts.baseline),
   );
-  const issues = checkBaseline({
-    base: observed.oldCoreBaseline,
-    head,
-    current: state.baseline.items,
-  });
-  if (issues.length)
-    throw new Error(
-      `UI初期移行のcore baselineが一致しません: ${JSON.stringify(issues)}`,
-    );
+  assertInitialCoreBaseline(observed.oldCoreBaseline, head, state.baseline);
   return {
-    origin,
     readWorking,
     snapshotDigest: observed.snapshotDigest,
     expected: {
@@ -168,7 +208,8 @@ export const prepareSurfaceMigration = async (input: SurfaceGateInput) => {
     );
   if (!isNil(readSurfaceStateAtRevision(input.root, input.revisions.base)))
     throw new Error('UI初期移行は既に記録されています。');
-  const { expected, origin, snapshotDigest } = await observeMigration(input);
+  const origin = resolveMigrationOrigin(input);
+  const { expected, snapshotDigest } = await observeMigration(input, origin);
   const migration = buildSurfaceMigrationRecord(expected);
   const pending = expected.current.pending;
   return {
@@ -178,13 +219,57 @@ export const prepareSurfaceMigration = async (input: SurfaceGateInput) => {
   };
 };
 
+const checkHistoricalMigration = async (
+  input: SurfaceGateInput,
+  origin: SurfaceMigrationOrigin,
+) => {
+  const { root, revisions, artifacts, state, signal } = input;
+  const { introduced, baseline } = readSurfaceMigrationHistoryAtRevision(
+    root,
+    revisions.head,
+    artifacts.baseline,
+  );
+  const oldCore = baselineSchema.parse(
+    parseArtifact(
+      readRevisionFile(root, origin.observationBaseSha, artifacts.baseline),
+      artifacts.baseline,
+    ),
+  );
+  const currentCore = baselineSchema.parse(
+    parseArtifact(readArtifact(root, artifacts.baseline), artifacts.baseline),
+  );
+  assertInitialCoreBaseline(oldCore, currentCore, state.baseline);
+
+  const saved = parseSurfaceArtifacts((path) => readArtifact(root, path));
+  checkSurfacePending({
+    base: introduced,
+    head: saved,
+    current: state.surfacePending,
+  });
+  const proof = assertSurfaceMigrationHistoryProof(
+    await replaySurfaceMigration({
+      root,
+      directory: migrationDirectory(input, 'surface-history'),
+      ...(isNil(signal) ? {} : { signal }),
+    }),
+    introduced,
+    baseline,
+  );
+  return migrationReceipt(saved, origin, null, proof);
+};
+
 /** 初期移行または通常更新のUI不足を静的ゲートで検査する。 */
 export const checkSurfaceState = async (input: SurfaceGateInput) => {
   const { root, revisions, artifacts, state } = input;
   const base = readSurfaceStateAtRevision(root, revisions.base);
   if (isNil(base)) {
-    const { expected, origin, readWorking, snapshotDigest } =
-      await observeMigration(input);
+    const origin = resolveMigrationOrigin(input);
+    if (origin.kind === 'approved-bootstrap-origin')
+      return checkHistoricalMigration(input, origin);
+    const { expected, readWorking, snapshotDigest } = await observeMigration(
+      input,
+      origin,
+    );
     const saved = parseSurfaceArtifacts(readWorking);
     checkSurfaceMigration({ ...expected, saved });
     return migrationReceipt(saved, origin, snapshotDigest);

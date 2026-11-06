@@ -7,12 +7,19 @@ import { gitShaSchema } from './gitObjects';
 import { inventorySchema, inventoryV1Schema } from './inventorySchema';
 import { parseArtifact } from './ledgerArtifacts';
 import { legacyManifestSchema } from './legacy';
-import { readSurfaceStateAtRevision } from './surfaceGate';
+import {
+  readSurfaceMigrationHistoryAtRevision,
+  readSurfaceStateAtRevision,
+} from './surfaceGate';
 import {
   checkSurfacePending,
   surfaceMigrationDigest,
   surfacePendingDigest,
 } from './surfaceMigration';
+import {
+  assertSurfaceMigrationHistoryProof,
+  surfaceMigrationHistoryProofSchema,
+} from './surfaceMigrationHistory';
 import {
   captureSurfaceMigrationSnapshot,
   resolveSurfaceMigrationOrigin,
@@ -40,6 +47,7 @@ export const surfaceReceiptSchema = z.strictObject({
     })
     .nullable(),
   surfaceMigrationSnapshotDigest: digest.nullable(),
+  surfaceMigrationHistory: surfaceMigrationHistoryProofSchema.optional(),
 });
 
 type SurfaceReceipt = z.infer<typeof surfaceReceiptSchema>;
@@ -79,7 +87,8 @@ export const assertSurfaceReceipt = ({
   if (!isNil(previous)) {
     if (
       !isNil(report.surfaceMigrationOrigin) ||
-      !isNil(report.surfaceMigrationSnapshotDigest)
+      !isNil(report.surfaceMigrationSnapshotDigest) ||
+      !isNil(report.surfaceMigrationHistory)
     )
       throw new Error('移行済みの比較元をUI初期移行として扱えません。');
     if (base !== head) inventorySchema.parse(read(base, artifacts.inventory));
@@ -113,12 +122,19 @@ export const assertSurfaceReceipt = ({
   });
   if (
     !isDeepStrictEqual(origin, report.surfaceMigrationOrigin) ||
-    origin.observationBaseSha !== saved.migration.observationBaseSha ||
-    saved.migration.newObservationDigest !==
-      surfaceObservationDigest(current) ||
-    saved.migration.newPendingDigest !== pendingDigest
+    origin.observationBaseSha !== saved.migration.observationBaseSha
   )
-    throw new Error('CI初期UI移行の由来・現在の観測が一致しません。');
+    throw new Error('CI初期UI移行の由来が一致しません。');
+  if (origin.kind === 'static-base') {
+    if (!isNil(report.surfaceMigrationHistory))
+      throw new Error('通常のUI初期移行に履歴証跡を指定できません。');
+    if (
+      saved.migration.newObservationDigest !==
+        surfaceObservationDigest(current) ||
+      saved.migration.newPendingDigest !== pendingDigest
+    )
+      throw new Error('CI初期UI移行の現在の観測が一致しません。');
+  }
   inventoryV1Schema.parse(read(origin.observationBaseSha, artifacts.inventory));
   legacyManifestSchema.parse(read(origin.observationBaseSha, artifacts.legacy));
   const oldCore = baselineSchema.parse(
@@ -133,6 +149,29 @@ export const assertSurfaceReceipt = ({
     }).length
   )
     throw new Error('CI初期UI移行の旧core baselineと一致しません。');
+  if (origin.kind === 'approved-bootstrap-origin') {
+    if (
+      isNil(report.surfaceMigrationHistory) ||
+      !isNil(report.surfaceMigrationSnapshotDigest)
+    )
+      throw new Error('CI初期UI移行の履歴証跡がないか、証跡が重複しています。');
+    const { introduced, baseline } = readSurfaceMigrationHistoryAtRevision(
+      root,
+      head,
+      artifacts.baseline,
+    );
+    assertSurfaceMigrationHistoryProof(
+      report.surfaceMigrationHistory,
+      introduced,
+      baseline,
+    );
+    checkSurfacePending({
+      base: introduced,
+      head: saved,
+      current: saved.pending,
+    });
+    return;
+  }
   if (isNil(inputs) || isNil(report.surfaceMigrationSnapshotDigest))
     throw new Error('CI初期UI移行の固定snapshotがありません。');
   const { snapshot } = captureSurfaceMigrationSnapshot({

@@ -1,25 +1,42 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { assertGitCommit, gitRead } from './gitObjects';
 import { readSnapshotFile } from './gitSnapshot';
 import { gitSnapshotSchema } from './gitSnapshotSchema';
 import { inventorySchema } from './inventorySchema';
 import { readArtifact } from './ledgerArtifacts';
+import { baselineDigest } from './staticGate';
 import {
   checkSurfaceState,
   prepareSurfaceMigration,
   SURFACE_ARTIFACTS,
 } from './surfaceGate';
 import {
+  surfaceMigrationDigest,
+  surfacePendingDigest,
+} from './surfaceMigration';
+import {
+  SURFACE_MIGRATION_INTRODUCTION,
+  SURFACE_MIGRATION_V1_ORIGIN,
+} from './surfaceMigrationHistory';
+import {
   captureSurfaceMigrationInventories,
   resolveSurfaceMigrationOrigin,
 } from './surfaceMigrationObservation';
+import { replaySurfaceMigration } from './surfaceMigrationReplay';
 import { buildSurfacePending } from './surfacePending';
 import { readRevisionFile } from './trustedRevision';
 
 import type { Ledger } from '../../e2e/ledger/schema';
 import type { PendingBaseline } from './baseline';
 import type { SavedSurfaceState } from './surfaceMigration';
+import type { SurfaceMigrationHistoryProof } from './surfaceMigrationHistory';
 
+vi.mock('./gitObjects', async (original) => ({
+  ...(await original<typeof import('./gitObjects')>()),
+  assertGitCommit: vi.fn(),
+  gitRead: vi.fn(),
+}));
 vi.mock('./gitSnapshot', async (original) => ({
   ...(await original<typeof import('./gitSnapshot')>()),
   readSnapshotFile: vi.fn(),
@@ -31,6 +48,9 @@ vi.mock('./ledgerArtifacts', async (original) => ({
 vi.mock('./surfaceMigrationObservation', () => ({
   captureSurfaceMigrationInventories: vi.fn(),
   resolveSurfaceMigrationOrigin: vi.fn(),
+}));
+vi.mock('./surfaceMigrationReplay', () => ({
+  replaySurfaceMigration: vi.fn(),
 }));
 vi.mock('./trustedRevision', async (original) => ({
   ...(await original<typeof import('./trustedRevision')>()),
@@ -127,6 +147,7 @@ const input = {
 const fixedArtifacts = new Map<string, string>();
 const workingArtifacts = new Map<string, string>();
 const historicalArtifacts = new Map<string, string>();
+const introducedArtifacts = new Map<string, string>();
 const save = (saved: SavedSurfaceState, files: Map<string, string>) => {
   files.set(SURFACE_ARTIFACTS.pending, JSON.stringify(saved.pending));
   files.set(SURFACE_ARTIFACTS.migration, JSON.stringify(saved.migration));
@@ -137,10 +158,16 @@ beforeEach(() => {
   fixedArtifacts.clear();
   workingArtifacts.clear();
   historicalArtifacts.clear();
+  introducedArtifacts.clear();
   fixedArtifacts.set(artifacts.baseline, JSON.stringify(baseline));
-  vi.mocked(readRevisionFile).mockImplementation((_root, _revision, path) =>
-    historicalArtifacts.get(path),
+  vi.mocked(readRevisionFile).mockImplementation((_root, revision, path) =>
+    (revision === SURFACE_MIGRATION_INTRODUCTION
+      ? introducedArtifacts
+      : historicalArtifacts
+    ).get(path),
   );
+  vi.mocked(assertGitCommit).mockImplementation((_root, revision) => revision);
+  vi.mocked(gitRead).mockReturnValue(Buffer.alloc(0));
   vi.mocked(readArtifact).mockImplementation((_root, path) =>
     workingArtifacts.get(path),
   );
@@ -225,6 +252,88 @@ describe('UI初期移行の静的接続', () => {
     await expect(prepareSurfaceMigration(changed)).rejects.toThrow(
       'NEW_PENDING_ITEM',
     );
+  });
+});
+
+describe('承認済みUI初期移行の履歴再生', () => {
+  const historical = async () => {
+    const saved = await prepareSurfaceMigration(input);
+    const migration = {
+      ...saved.migration,
+      observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+      newObservationDigest: '0'.repeat(64),
+    };
+    const pending = { schemaVersion: 1 as const, items: [] };
+    save({ pending: saved.pending, migration }, introducedArtifacts);
+    save({ pending, migration }, workingArtifacts);
+    for (const files of [
+      historicalArtifacts,
+      introducedArtifacts,
+      workingArtifacts,
+    ])
+      files.set(artifacts.baseline, JSON.stringify(baseline));
+    const proof: SurfaceMigrationHistoryProof = {
+      schemaVersion: 1,
+      observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+      introductionSha: SURFACE_MIGRATION_INTRODUCTION,
+      snapshotDigest: digest,
+      baselineDigest: baselineDigest(baseline),
+      surfaceMigrationDigest: surfaceMigrationDigest(migration),
+      surfacePendingDigest: surfacePendingDigest(saved.pending),
+    };
+    vi.mocked(resolveSurfaceMigrationOrigin).mockReturnValue({
+      kind: 'approved-bootstrap-origin',
+      staticBaseSha: base,
+      observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+    });
+    vi.mocked(captureSurfaceMigrationInventories).mockClear();
+    vi.mocked(replaySurfaceMigration).mockResolvedValue(proof);
+    return {
+      changed: { ...input, state: { ...input.state, surfacePending: pending } },
+      proof,
+    };
+  };
+
+  it('導入時からの不足退役を許可し、現行依存で旧UIを観測しない', async () => {
+    const { changed, proof } = await historical();
+    const signal = new AbortController().signal;
+    await expect(
+      checkSurfaceState({ ...changed, signal }),
+    ).resolves.toMatchObject({
+      surfaceMigrationSnapshotDigest: null,
+      surfaceMigrationHistory: proof,
+      surfacePendingDigest: surfacePendingDigest(changed.state.surfacePending),
+    });
+    expect(replaySurfaceMigration).toHaveBeenCalledExactlyOnceWith({
+      root,
+      directory: input.directory,
+      signal,
+    });
+    expect(captureSurfaceMigrationInventories).not.toHaveBeenCalled();
+  });
+
+  it('外部承認または固定導入祖先がなければ再生しない', async () => {
+    const { changed } = await historical();
+    vi.mocked(resolveSurfaceMigrationOrigin).mockImplementationOnce(() => {
+      throw new Error('外部承認なし');
+    });
+    await expect(checkSurfaceState(changed)).rejects.toThrow('外部承認なし');
+    vi.mocked(gitRead).mockImplementationOnce(() => {
+      throw new Error('祖先なし');
+    });
+    await expect(checkSurfaceState(changed)).rejects.toThrow('祖先なし');
+    expect(replaySurfaceMigration).not.toHaveBeenCalled();
+  });
+
+  it('現行保存物の改変または再生のdigest不一致を拒否する', async () => {
+    const { changed, proof } = await historical();
+    await expect(checkSurfaceState(input)).rejects.toThrow('保存');
+    expect(replaySurfaceMigration).not.toHaveBeenCalled();
+    vi.mocked(replaySurfaceMigration).mockResolvedValueOnce({
+      ...proof,
+      baselineDigest: '0'.repeat(64),
+    });
+    await expect(checkSurfaceState(changed)).rejects.toThrow('固定導入');
   });
 });
 

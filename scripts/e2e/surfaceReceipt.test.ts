@@ -9,7 +9,11 @@ import { gitSnapshotSchema } from './gitSnapshotSchema';
 import { projectInventoryV1 } from './inventory';
 import { baselineDigest } from './staticGate';
 import { SURFACE_ARTIFACTS } from './surfaceGate';
-import { surfaceMigrationDigest } from './surfaceMigration';
+import {
+  surfaceMigrationDigest,
+  surfacePendingDigest,
+} from './surfaceMigration';
+import { SURFACE_MIGRATION_INTRODUCTION } from './surfaceMigrationHistory';
 import { SURFACE_MIGRATION_V1_ORIGIN } from './surfaceMigrationObservation';
 import { surfaceObservationDigest } from './surfacePending';
 import { assertSurfaceReceipt, surfaceReceiptSchema } from './surfaceReceipt';
@@ -18,6 +22,7 @@ import { readRevisionFile } from './trustedRevision';
 import type { InputFingerprint } from './fingerprint';
 import type { GithubEventPolicy } from './githubEventSchema';
 import type { SavedSurfaceState } from './surfaceMigration';
+import type { SurfaceMigrationHistoryProof } from './surfaceMigrationHistory';
 
 vi.mock('./gitObjects', async (original) => ({
   ...(await original<typeof import('./gitObjects')>()),
@@ -114,6 +119,23 @@ describe('移行済みbaseのCI静的証跡', () => {
       assertSurfaceReceipt({
         ...input,
         report: { ...report, surfaceMigrationSnapshotDigest: digest },
+      }),
+    ).toThrow('初期移行として');
+    expect(() =>
+      assertSurfaceReceipt({
+        ...input,
+        report: {
+          ...report,
+          surfaceMigrationHistory: {
+            schemaVersion: 1,
+            observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+            introductionSha: SURFACE_MIGRATION_INTRODUCTION,
+            snapshotDigest: digest,
+            baselineDigest: digest,
+            surfaceMigrationDigest: digest,
+            surfacePendingDigest: digest,
+          },
+        },
       }),
     ).toThrow('初期移行として');
   });
@@ -227,8 +249,38 @@ describe('初期移行のCI静的証跡', () => {
     );
   });
 
-  it('台帳未導入のPRは同じ外部承認と固定祖先を独立に検証する', () => {
-    const report = initial(SURFACE_MIGRATION_V1_ORIGIN);
+  const historical = () => {
+    const initialReport = initial(SURFACE_MIGRATION_V1_ORIGIN);
+    const migration = {
+      ...fixture.migration,
+      observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+      newObservationDigest: '0'.repeat(64),
+      newPendingDigest: surfacePendingDigest(fixture.pending),
+    };
+    save(SURFACE_MIGRATION_INTRODUCTION, { ...fixture, migration });
+    put(SURFACE_MIGRATION_INTRODUCTION, artifacts.baseline, baseline);
+    const pending = { schemaVersion: 1 as const, items: [] };
+    save(head, { pending, migration });
+    const report = {
+      ...initialReport,
+      surfacePendingDigest: surfacePendingDigest(pending),
+      surfaceMigrationDigest: surfaceMigrationDigest(migration),
+      surfaceMigrationSnapshotDigest: null,
+      surfaceMigrationHistory: {
+        schemaVersion: 1,
+        observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+        introductionSha: SURFACE_MIGRATION_INTRODUCTION,
+        snapshotDigest: digest,
+        baselineDigest: initialReport.baselineDigest,
+        surfaceMigrationDigest: surfaceMigrationDigest(migration),
+        surfacePendingDigest: surfacePendingDigest(fixture.pending),
+      } satisfies SurfaceMigrationHistoryProof,
+    };
+    return { report, migration };
+  };
+
+  it('台帳未導入のPRは外部承認・固定祖先・導入時の成果物を独立照合する', () => {
+    const { report } = historical();
     const approved = {
       ...input,
       report,
@@ -242,18 +294,75 @@ describe('初期移行のCI静的証跡', () => {
       '外部承認',
     );
     expect(() => assertSurfaceReceipt(approved)).not.toThrow();
-    expect(gitRead).toHaveBeenCalledExactlyOnceWith(root, [
+    expect(gitRead).toHaveBeenCalledWith(root, [
       'merge-base',
       '--is-ancestor',
       SURFACE_MIGRATION_V1_ORIGIN,
+      SURFACE_MIGRATION_INTRODUCTION,
+    ]);
+    expect(gitRead).toHaveBeenCalledWith(root, [
+      'merge-base',
+      '--is-ancestor',
+      SURFACE_MIGRATION_INTRODUCTION,
       head,
     ]);
-    expect(captureGitSnapshot).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        base: SURFACE_MIGRATION_V1_ORIGIN,
-        eventBase: base,
+    expect(captureGitSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('履歴証跡の欠落・snapshot重複・digest改変・固定導入祖先の欠落を拒否する', () => {
+    const { report } = historical();
+    const approved = {
+      ...input,
+      bootstrapApproval: JSON.stringify({
+        base,
+        head,
+        digest: report.baselineDigest,
       }),
+    };
+    const { surfaceMigrationHistory, ...missing } = report;
+    expect(() =>
+      assertSurfaceReceipt({ ...approved, report: missing }),
+    ).toThrow('履歴証跡');
+    expect(() =>
+      assertSurfaceReceipt({
+        ...approved,
+        report: { ...report, surfaceMigrationSnapshotDigest: digest },
+      }),
+    ).toThrow('重複');
+    expect(() =>
+      assertSurfaceReceipt({
+        ...approved,
+        report: {
+          ...report,
+          surfaceMigrationHistory: {
+            ...surfaceMigrationHistory,
+            surfacePendingDigest: '0'.repeat(64),
+          },
+        },
+      }),
+    ).toThrow('固定導入');
+    vi.mocked(gitRead).mockImplementation((_root, args) => {
+      if (args[2] === SURFACE_MIGRATION_INTRODUCTION)
+        throw new Error('祖先なし');
+      return Buffer.alloc(0);
+    });
+    expect(() => assertSurfaceReceipt({ ...approved, report })).toThrow(
+      '祖先なし',
     );
+  });
+
+  it('履歴証跡を通常の初期移行に指定できない', () => {
+    const { report: historicalReport } = historical();
+    const report = initial();
+    expect(() =>
+      assertSurfaceReceipt({
+        ...input,
+        report: {
+          ...report,
+          surfaceMigrationHistory: historicalReport.surfaceMigrationHistory,
+        },
+      }),
+    ).toThrow('通常のUI初期移行');
   });
 
   it('証跡の初期移行フィールドを省略できない', () => {
