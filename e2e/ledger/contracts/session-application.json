@@ -1,0 +1,310 @@
+[
+  {
+    "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
+    "classification": "write",
+    "requirements": [
+      {
+        "aspect": "persist",
+        "layers": ["browser", "integration"],
+        "expectation": "PUBLIC/RECRUITINGの所有卓に認証済みの本人が申請すると、本人の複合キーにPLAYER/PENDINGが1件作られる。200文字の一言、applied_at、利用者の新規リクエストからの再取得、他参加者行・親のphaseと募集席の保持、および成功時の詳細path再検証1回を確認する。ブラウザーでは通常操作後に再読込し、別の主催者contextで該当申請を観測する。",
+        "basis": [
+          "docs/plans/e2e-ledger-rollout.md#step-6-1-契約と専用fixtureを追加",
+          "docs/plans/e2e-ledger-rollout.md#step-6-2-uiとintegrationの証拠を接続",
+          "src/app/(main)/sessions/[id]/actions.ts:325",
+          "src/app/(main)/sessions/participantAdapter.ts:84"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              },
+              {
+                "role": "observer",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              },
+              {
+                "role": "observer",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider-self",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "authorization",
+        "layers": ["integration"],
+        "expectation": "ActionはCookieから解決した本人のIDだけを使用する。認証済み非参加者は、余分な他人のuserIdを持つ入力でも本人名義でのみ申請できる。匿名はログイン要求、CONFIRMEDの本人は既存参加行による重複拒否を確認し、拒否時は参加行・親状態を保持して再検証を要求しない。Action境界の観測とする。",
+        "basis": [
+          "docs/plans/e2e-ledger-rollout.md#step-6-1-契約と専用fixtureを追加",
+          "src/app/(main)/sessions/[id]/actions.ts:325",
+          "src/app/(main)/sessions/participantAdapter.ts:84"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider-self",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "confirmed-player",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "validation",
+        "layers": ["integration"],
+        "expectation": "認証済み申請者の201文字メッセージを実Actionが拒否する。新規行が作られず、既存行と親状態を保持し、再検証を要求しない。受理される200文字の境界は申請成功ケースで観測する。",
+        "basis": [
+          "docs/plans/e2e-ledger-rollout.md#step-6-1-契約と専用fixtureを追加",
+          "src/app/(main)/sessions/[id]/actions.ts:325",
+          "src/app/(main)/sessions/[id]/schema.ts:45"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "message-too-long",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  },
+  {
+    "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
+    "classification": "write",
+    "requirements": [
+      {
+        "aspect": "persist",
+        "layers": ["browser", "integration"],
+        "expectation": "所有fixture内の本人のPENDINGを複合キーで削除し、新規リクエストで消失を確認する。主催者と承認済み参加者の行、親のphaseと募集席を保持し、成功時だけ詳細path再検証を1回要求する。ブラウザーでは通常の取消後に両contextを再読込し、申請導線の復帰と管理一覧の該当カード消失を確認する。",
+        "basis": [
+          "docs/plans/e2e-ledger-rollout.md#step-6-1-契約と専用fixtureを追加",
+          "docs/plans/e2e-ledger-rollout.md#step-6-2-uiとintegrationの証拠を接続",
+          "src/app/(main)/sessions/[id]/actions.ts:401",
+          "src/app/(main)/sessions/participantAdapter.ts:407"
+        ],
+        "executions": [
+          {
+            "profile": "isolated",
+            "project": "chromium",
+            "runtime": "next-production",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              },
+              {
+                "role": "observer",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "isolated",
+            "project": "mobile-chrome",
+            "runtime": "next-production",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              },
+              {
+                "role": "observer",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "authorization",
+        "layers": ["integration"],
+        "expectation": "ActionはCookie本人のPENDINGだけを取消対象とする。別の申請者にPENDINGがある卓で、匿名、本人行のない非参加者、本人がCONFIRMEDの参加者を理由別に拒否する。非参加者が余分な他人のuserIdを渡しても対象行は変わらず、拒否前後で親と参加行が一致し再検証を要求しない。Action境界の観測とする。",
+        "basis": [
+          "docs/plans/e2e-ledger-rollout.md#step-6-1-契約と専用fixtureを追加",
+          "src/app/(main)/sessions/[id]/actions.ts:401",
+          "src/app/(main)/sessions/participantAdapter.ts:407"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "applicant",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "anonymous",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "anonymous"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "outsider",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "outsider"
+              }
+            ]
+          },
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "confirmed-player",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "confirmed-player"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "aspect": "validation",
+        "layers": ["integration"],
+        "expectation": "本人のPENDINGがある状態で非objectのwire値を実Actionへ渡し、入力拒否、本人行と比較対象の保持、再検証要求なしを確認する。正常の空objectは取消成功ケースで観測する。",
+        "basis": [
+          "docs/plans/e2e-ledger-rollout.md#step-6-1-契約と専用fixtureを追加",
+          "src/app/(main)/sessions/[id]/actions.ts:401",
+          "src/app/(main)/sessions/[id]/schema.ts:82"
+        ],
+        "executions": [
+          {
+            "profile": "integration",
+            "project": "integration",
+            "runtime": "vitest-node",
+            "variant": "non-object",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "applicant"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
+  }
+]
