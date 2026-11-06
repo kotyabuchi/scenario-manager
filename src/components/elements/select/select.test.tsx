@@ -253,8 +253,9 @@ describe('Select', () => {
       const trigger = screen.getByRole('combobox');
       await user.click(trigger);
 
+      const listbox = await screen.findByRole('listbox');
       await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeInTheDocument();
+        expect(listbox).toHaveFocus();
       });
 
       // 矢印下キーでハイライト
@@ -296,8 +297,9 @@ describe('Select', () => {
       const trigger = screen.getByRole('combobox');
       await user.click(trigger);
 
+      const listbox = await screen.findByRole('listbox');
       await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeInTheDocument();
+        expect(listbox).toHaveFocus();
       });
 
       await user.keyboard('{Escape}');
