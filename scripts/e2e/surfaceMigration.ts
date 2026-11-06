@@ -6,6 +6,7 @@ import {
   surfacePendingItemSchema,
   surfacePendingSchema,
 } from './surfaceMigrationSchema';
+import { SurfacePendingSubsetError } from './surfacePendingDiagnostic';
 
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
@@ -97,12 +98,15 @@ type SurfaceMigrationInput = {
 
 const assertPendingSubset = (base: SurfacePending, current: SurfacePending) => {
   const baseKeys = normalizePending(base).items.map(surfacePendingKey);
-  const currentKeys = new Set(
-    normalizePending(current).items.map(surfacePendingKey),
-  );
   const allowed = new Set(baseKeys);
-  if ([...currentKeys].some((key) => !allowed.has(key)))
-    throw new Error('比較元に存在しないUI不足は追加できません。');
+  const currentKeys = new Set<string>();
+  const added: SurfacePendingItem[] = [];
+  for (const item of normalizePending(current).items) {
+    const key = surfacePendingKey(item);
+    currentKeys.add(key);
+    if (!allowed.has(key)) added.push(item);
+  }
+  if (added.length) throw new SurfacePendingSubsetError(added);
   return baseKeys.filter((key) => !currentKeys.has(key));
 };
 
