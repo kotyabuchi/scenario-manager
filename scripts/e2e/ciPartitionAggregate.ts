@@ -36,6 +36,7 @@ export const aggregateCiPartition = (input: {
   ledger: Ledger;
   legacy: LegacyManifest;
   smokeReference?: CiSmokeReference;
+  surfaceMigrationHistoryDigest?: string;
   shards: Partial<Record<CiShardId, ShardArtifacts>>;
 }) => {
   const ids = ciShardIdSchema.options;

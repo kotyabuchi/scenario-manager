@@ -9,6 +9,7 @@ import {
   createCiPartitionManifest,
   validateCiPartitionManifest,
 } from './ciPartition';
+import { assertCiStaticReport, digestCiSurfaceHistory } from './ciStaticReport';
 import { ciPartitionFixture } from './fixtures/ciPartition';
 import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { assertGitCommit, gitRead } from './gitObjects';
@@ -16,6 +17,11 @@ import { loadLedger } from './ledger';
 import { readArtifact } from './ledgerArtifacts';
 import { legacyKey } from './legacy';
 import { ARTIFACTS, baselineDigest } from './staticGate';
+import {
+  SURFACE_MIGRATION_INTRODUCTION,
+  SURFACE_MIGRATION_V1_ORIGIN,
+  type SurfaceMigrationHistoryProof,
+} from './surfaceMigrationHistory';
 import { readRevisionFile } from './trustedRevision';
 import { digestVerificationPlan } from './verificationPlanDigest';
 
@@ -88,6 +94,58 @@ const setup = (isBootstrap = true) => {
 beforeEach(() => vi.resetAllMocks());
 
 describe('初回PRの固定legacy smoke比較元', () => {
+  it('履歴移行の証拠を現在のイベントとworkflow・固定入力へ結び付ける', async () => {
+    const { input, policy, report } = setup();
+    const raw = {
+      ...report,
+      surfaceMigrationHistory: {
+        schemaVersion: 1,
+        observationBaseSha: SURFACE_MIGRATION_V1_ORIGIN,
+        introductionSha: SURFACE_MIGRATION_INTRODUCTION,
+        snapshotDigest: 'd'.repeat(64),
+        baselineDigest: report.baselineDigest,
+        surfaceMigrationDigest: report.surfaceMigrationDigest,
+        surfacePendingDigest: report.surfacePendingDigest,
+      } satisfies SurfaceMigrationHistoryProof,
+    };
+    const checked = assertCiStaticReport(root, raw, policy, report);
+    const digest = digestCiSurfaceHistory(checked);
+    const ledgers = await readCiLedgers(root, policy, raw, report);
+    expect(ledgers.surfaceMigrationHistoryDigest).toBe(digest);
+    expect(digest).toMatch(/^[a-f0-9]{64}$/u);
+    expect(
+      createCiPartitionManifest({ ...input, ...ledgers }).manifest
+        .surfaceMigrationHistoryDigest,
+    ).toBe(digest);
+    for (const changed of [
+      { ...checked, workflow: { ...checked.workflow, runId: '999' } },
+      { ...checked, workflow: { ...checked.workflow, attempt: 2 } },
+      { ...checked, base: 'd'.repeat(40) },
+      { ...checked, head: 'd'.repeat(40) },
+      { ...checked, baselineDigest: 'd'.repeat(64) },
+      { ...checked, snapshotDigest: 'd'.repeat(64) },
+      { ...checked, inputsDigest: 'd'.repeat(64) },
+      {
+        ...checked,
+        eventPolicy: { ...checked.eventPolicy, repository: 'different/repo' },
+      },
+      {
+        ...checked,
+        surfaceMigrationHistory: {
+          ...raw.surfaceMigrationHistory,
+          schemaVersion: 1 as const,
+          snapshotDigest: 'e'.repeat(64),
+        },
+      },
+    ])
+      expect(digestCiSurfaceHistory(changed)).not.toBe(digest);
+    expect(
+      digestCiSurfaceHistory(
+        assertCiStaticReport(root, report, policy, report),
+      ),
+    ).toBeUndefined();
+  });
+
   it('承認済み静的証拠と固定祖先の14キーを照合し、元の差分判断を残して全件にする', async () => {
     const { input, policy, report } = setup();
     const ledgers = await readCiLedgers(root, policy, report, report);

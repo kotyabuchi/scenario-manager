@@ -148,11 +148,15 @@ export const checkStaticState = async ({
   state,
   revisions,
   bootstrapApproval,
+  directory,
+  signal,
 }: {
   root: string;
   state: StaticState;
   revisions: { base: string; head: string; eventPolicy?: GithubEventPolicy };
   bootstrapApproval?: string;
+  directory?: string;
+  signal?: AbortSignal;
 }) => {
   const policy = isNil(revisions.eventPolicy)
     ? undefined
@@ -317,6 +321,8 @@ export const checkStaticState = async ({
     revisions,
     artifacts: ARTIFACTS,
     ...(bootstrapApproval ? { bootstrapApproval } : {}),
+    ...(isNil(directory) ? {} : { directory }),
+    ...(isNil(signal) ? {} : { signal }),
   });
   return {
     ...surface,

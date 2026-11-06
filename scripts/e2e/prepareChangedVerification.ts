@@ -60,6 +60,8 @@ export const prepareChangedVerification = async (input: {
     root,
     state,
     revisions,
+    directory: join(root, prefix, 'surface-migration'),
+    ...(input.signal ? { signal: input.signal } : {}),
     ...(env.E2E_LEDGER_BOOTSTRAP_APPROVAL
       ? { bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL }
       : {}),

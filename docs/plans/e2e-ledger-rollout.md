@@ -62,6 +62,8 @@ font packageのunicode-range・参照asset・hashを確認し、アプリとStor
 
 初回bootstrapの必要tupleを実SHAから計算し、外部設定と照合。各jobの固定SHA・attempt・collection・plan・checksum・cleanupを照合して実CIを受入する。部分job再実行で証拠を混ぜず、必要時はall jobsを再実行する。失敗は保持し、機密を含むraw log/trace/stateは公開しない。
 
+初回公開の比較元にはUI台帳がなく、固定v1祖先から現在までにはフォント依存・Panda入力の変更がある。この経路だけ、外部bootstrap承認後に固定導入コミット `36ee35030c757d6492b9ca4283dabf166609f811` の独立した依存環境で、v1祖先 `8bbfed403163222a566589e56f4c83854219e56f` からの旧CLI検証を再生する。実行はLinux plannerの所有プロセス群に限定し、終了・scratch回収後の証跡を既存 `plan/static.json` に保存する。現在の移行記録は導入時の記録と同一であること、UI不足は導入時の保存集合から増えないことを検査する。静的証跡から導くdigestをmanifestに結び、後段の両shard・集約でも固定Gitと外部承認を照合する。通常の依存変更・Panda由来の検査条件と移行原本は変更しない。
+
 ## Batch 3: 必須チェック設定
 
 ### Step 3-1. 設定と検証
@@ -146,3 +148,13 @@ Codex再起動を待つ手順は撤回し、固定値を `e2e/isolatedRuntime.ts
 本番build後のStorybookとアプリで日本語400/700の実描画を確認し、ローカルWOFF2を各28/22件取得、Googleフォント通信0。フォント観測の旧/login参照は現行の公開トップ/へ修正して再確認した。証跡は品質run別 `font-acceptance.json` と画像に保存済み。Codexを再起動せずに全段階を通過した。
 
 前提PR側では、公開前の確認で見つかった保護ページ3件の古い/login redirectをトップ/へ揃えた。限定回帰3件とtypecheck成功。既存の前提unit全体1094成功＋skip8とは実行時点を区別する。前提330登録のE2Eを次に受入する。
+
+## Batch 2 実CI受入の途中経過（2026-11-06）
+
+- [前提PR #6](https://github.com/kotyabuchi/scenario-manager/pull/6): base main、head `f835e025bfc00a2dae88056f46b49dff8d3d64a6`。hosted run `42169840430` / attempt 1で静的検査・4 project・集約が成功。330登録を319成功・既存skip9/fixme2として照合し、所有資源の回収も完了。Ubuntu 26.04のブラウザ非対応はブラウザjobの24.04固定、Modal/Selectのfocus前キー操作はfocus待機で修正した。
+- [品質PR #7](https://github.com/kotyabuchi/scenario-manager/pull/7): baseは前提feature branch。祖先を保持して統合した `d3b9ab82257c1142155d99bd798fcf679cf1ea5a` のローカル全件品質ゲート `70ce295a66cf` が成功。unit1097成功＋既存skip8、tools1960成功、必須55成功・extras312登録を照合。終了後のcontainer/network/volume/lockと専用portの残留は0。
+- 品質PRの初回hosted run `42173880293` / attempt 1は失敗。Windows fixturesと初回UI移行の静的検査で停止し、両runtime jobは未実行。成功扱いにしない。
+- Windowsの短縮TEMPでは通常のrealpathが8.3 aliasを残すことを再現し、fixtureの作成・所有cleanup比較をnative realpathへ統一した。本番の物理root検査は維持し、通常TEMPの64件と実際の短縮TEMPで関連145件・型検査が成功した。
+- 初回移行は上記の固定履歴再生で対応中。PR #7の新しいheadに対する全hosted jobの成功後にBatch 2を完了する。mainへのmerge、デプロイ、必須check設定はまだ行っていない。
+
+履歴再生はLinux実機で成功し、独立した旧CLI実行とsnapshot・baseline・移行記録・pendingの各digestが一致した（snapshot `405f781b18d08229dd9247264295c86dc717351e13b66ab810ba69c09c8f2228`）。親側の依存を探索させないため旧checkoutはプロジェクト外の所有一時領域へ置き、Gitの警告は判定用stdoutから分離した。実機の中断検査でも所有する親・子・process groupの消滅を確認し、一時領域を回収した。これは固定旧移行の検証結果であり、現在のPR全体のhosted成功とは区別する。

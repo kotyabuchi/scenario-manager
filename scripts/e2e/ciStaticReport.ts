@@ -9,6 +9,7 @@ import { ARTIFACTS, baselineDigest } from './staticGate';
 import { assertSurfaceReceipt, surfaceReceiptSchema } from './surfaceReceipt';
 import { readRevisionFile } from './trustedRevision';
 
+import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 
 import type { InputFingerprint } from './fingerprint';
@@ -95,6 +96,27 @@ export const assertCiStaticReport = (
   });
   return report;
 };
+
+/** 検証済みの履歴証拠を現在のイベント・run・固定入力に結び付ける。 */
+export const digestCiSurfaceHistory = (
+  report: ReturnType<typeof assertCiStaticReport>,
+) =>
+  isNil(report.surfaceMigrationHistory)
+    ? undefined
+    : createHash('sha256')
+        .update(
+          JSON.stringify({
+            history: report.surfaceMigrationHistory,
+            workflow: report.workflow,
+            eventPolicy: report.eventPolicy,
+            base: report.base,
+            head: report.head,
+            baselineDigest: report.baselineDigest,
+            snapshotDigest: report.snapshotDigest,
+            inputsDigest: report.inputsDigest,
+          }),
+        )
+        .digest('hex');
 
 type CiStaticBinding = z.infer<typeof staticBindingSchema>;
 export type { CiStaticBinding, CiStaticReportOptions };

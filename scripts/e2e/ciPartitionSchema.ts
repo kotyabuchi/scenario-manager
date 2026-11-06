@@ -33,6 +33,7 @@ export const ciPartitionManifestSchema = z.strictObject({
   eventPolicy: githubEventPolicySchema,
   snapshotDigest: selectionDigestSchema,
   inputsDigest: selectionDigestSchema,
+  surfaceMigrationHistoryDigest: selectionDigestSchema.optional(),
   fullCollectionDigest: selectionDigestSchema,
   fullPlanDigest: selectionDigestSchema,
   effectivePlanDigest: selectionDigestSchema,

@@ -7,6 +7,7 @@ import {
   assertCiStaticReport,
   type CiStaticBinding,
   type CiStaticReportOptions,
+  digestCiSurfaceHistory,
 } from './ciStaticReport';
 import { captureInputs, compareInputs } from './fingerprint';
 import { captureGitSnapshot } from './gitSnapshot';
@@ -45,7 +46,11 @@ export const readCiLedgers = async (
     binding,
     options,
   );
+  const historyDigest = digestCiSurfaceHistory(staticReport);
   return {
+    ...(isNil(historyDigest)
+      ? {}
+      : { surfaceMigrationHistoryDigest: historyDigest }),
     ledger: await loadLedger(root),
     legacy: legacyManifestSchema.parse(
       parseArtifact(readArtifact(root, ARTIFACTS.legacy), ARTIFACTS.legacy),

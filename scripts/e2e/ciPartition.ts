@@ -38,6 +38,7 @@ type LedgerInputs = {
   ledger: Ledger;
   legacy: LegacyManifest;
   smokeReference?: CiSmokeReference;
+  surfaceMigrationHistoryDigest?: string;
 };
 
 type PartitionInput = LedgerInputs & {
@@ -326,6 +327,9 @@ export const createCiPartitionManifest = (input: PartitionInput) => {
     decisionDigest: digest(changeDecision),
     fixedSmoke,
     smokeReference,
+    ...(isNil(input.surfaceMigrationHistoryDigest)
+      ? {}
+      : { surfaceMigrationHistoryDigest: input.surfaceMigrationHistoryDigest }),
     ...(input.runnerSelectionFallback ? { runnerSelectionFallback: true } : {}),
     projectionReasons,
     shards: [describe('required'), describe('legacy-local')],
@@ -339,14 +343,22 @@ export const validateCiPartitionManifest = ({
   ledger,
   legacy,
   smokeReference,
+  surfaceMigrationHistoryDigest,
 }: LedgerInputs & { manifest: unknown }) => {
   const manifest = ciPartitionManifestSchema.parse(raw);
-  const { smokeReference: _savedReference, ...manifestInputs } = manifest;
+  const {
+    smokeReference: _savedReference,
+    surfaceMigrationHistoryDigest: _savedHistoryDigest,
+    ...manifestInputs
+  } = manifest;
   const rebuilt = createCiPartitionManifest({
     ...manifestInputs,
     ledger,
     legacy,
     ...(isNil(smokeReference) ? {} : { smokeReference }),
+    ...(isNil(surfaceMigrationHistoryDigest)
+      ? {}
+      : { surfaceMigrationHistoryDigest }),
   });
   if (!isDeepStrictEqual(manifest, rebuilt.manifest))
     throw new Error('CI manifestが全件計画からの分割と一致しません。');

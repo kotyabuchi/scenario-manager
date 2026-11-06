@@ -1,10 +1,31 @@
 import { describe, expect, it } from 'vitest';
 
+import { digestCiPartitionManifest } from './ciPartition';
 import { aggregateCiPartition } from './ciPartitionAggregate';
 import { ciPartitionArtifactsFixture } from './fixtures/ciPartitionArtifacts';
 import { verificationReportSchema } from './verificationSchema';
 
 describe('CIの分割結果の集約', () => {
+  it('履歴移行の証跡が変われば古いshardの成功を再利用しない', () => {
+    const input = ciPartitionArtifactsFixture();
+    const surfaceMigrationHistoryDigest = 'd'.repeat(64);
+    const manifest = { ...input.manifest, surfaceMigrationHistoryDigest };
+    const updated = { ...input, manifest, surfaceMigrationHistoryDigest };
+    expect(() => aggregateCiPartition(updated)).toThrow(
+      /由来またはverification ID/u,
+    );
+    const digest = digestCiPartitionManifest(manifest);
+    for (const shard of Object.values(updated.shards))
+      shard.envelope.manifestDigest = digest;
+    expect(aggregateCiPartition(updated).status).toBe('passed');
+    expect(() =>
+      aggregateCiPartition({
+        ...updated,
+        surfaceMigrationHistoryDigest: 'e'.repeat(64),
+      }),
+    ).toThrow('分割と一致しません');
+  });
+
   it('別の検証IDと作業rootを持つ両shardの証拠を照合する', () => {
     const input = ciPartitionArtifactsFixture();
     expect(aggregateCiPartition(input)).toMatchObject({

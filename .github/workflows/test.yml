@@ -78,6 +78,8 @@ jobs:
           scripts/e2e/surfaceSelection.test.ts
           scripts/e2e/surfaceMigration.test.ts
           scripts/e2e/surfaceMigrationObservation.test.ts
+          scripts/e2e/surfaceMigrationReplay.test.ts
+          scripts/e2e/surfaceMigrationReplayProcess.test.ts
           scripts/e2e/surfaceGate.test.ts
           scripts/e2e/ledgerSurfaceRefresh.test.ts
           scripts/e2e/ledgerSurfaceRecovery.test.ts

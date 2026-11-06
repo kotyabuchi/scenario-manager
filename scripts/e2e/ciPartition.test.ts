@@ -11,6 +11,40 @@ import { selectionReason } from './selectionSchema';
 import { digestVerificationPlan } from './verificationPlanDigest';
 
 describe('CIの有効計画とowner分割', () => {
+  it('履歴移行digestはmanifest自身を信用せず検証済み静的証跡と照合する', () => {
+    const input = ciPartitionFixture();
+    const surfaceMigrationHistoryDigest = 'd'.repeat(64);
+    const { manifest } = createCiPartitionManifest({
+      ...input,
+      surfaceMigrationHistoryDigest,
+    });
+    expect(() =>
+      validateCiPartitionManifest({
+        ...input,
+        manifest,
+        surfaceMigrationHistoryDigest,
+      }),
+    ).not.toThrow();
+    for (const expected of [undefined, 'e'.repeat(64)])
+      expect(() =>
+        validateCiPartitionManifest({
+          ...input,
+          manifest,
+          ...(expected === undefined
+            ? {}
+            : { surfaceMigrationHistoryDigest: expected }),
+        }),
+      ).toThrow('分割と一致しません');
+    const { surfaceMigrationHistoryDigest: _saved, ...missing } = manifest;
+    expect(() =>
+      validateCiPartitionManifest({
+        ...input,
+        manifest: missing,
+        surfaceMigrationHistoryDigest,
+      }),
+    ).toThrow('分割と一致しません');
+  });
+
   it('文書のみの変更判断を保持して固定Storybookと全legacyを追加する', () => {
     const input = ciPartitionFixture();
     const { manifest, plans } = createCiPartitionManifest(input);
