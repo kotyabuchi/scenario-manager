@@ -34,7 +34,7 @@ export default async function ScheduleConfirmPage({ params }: PageProps) {
 
   const currentUserId = await getCurrentUserId();
   if (isNil(currentUserId)) {
-    redirect('/login' as Route);
+    redirect('/');
   }
 
   const isManager = await isSessionManager(id, currentUserId);

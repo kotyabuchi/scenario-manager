@@ -55,7 +55,7 @@ export default async function AvailabilityPage({ params }: PageProps) {
 
   const currentUserId = await getCurrentUserId();
   if (isNil(currentUserId)) {
-    redirect('/login' as Route);
+    redirect('/');
   }
 
   const hasPermission = await canViewAvailabilityPage(id, currentUserId);
