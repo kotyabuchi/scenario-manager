@@ -186,34 +186,6 @@
     {
       "category": "deficiency",
       "deficiency": {
-        "target": "action:src/app/(main)/sessions/[id]/actions.ts#applyToSessionAction",
-        "aspect": "contract",
-        "layer": null,
-        "caseId": null,
-        "variant": null,
-        "actorBindings": null,
-        "profile": null,
-        "project": null,
-        "runtime": null
-      }
-    },
-    {
-      "category": "deficiency",
-      "deficiency": {
-        "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelApplicationAction",
-        "aspect": "contract",
-        "layer": null,
-        "caseId": null,
-        "variant": null,
-        "actorBindings": null,
-        "profile": null,
-        "project": null,
-        "runtime": null
-      }
-    },
-    {
-      "category": "deficiency",
-      "deficiency": {
         "target": "action:src/app/(main)/sessions/[id]/actions.ts#cancelSessionAction",
         "aspect": "contract",
         "layer": null,

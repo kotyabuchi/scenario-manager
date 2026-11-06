@@ -5400,6 +5400,23 @@
       "binding": "main"
     },
     {
+      "file": "e2e/isolated/session-application.spec.ts",
+      "titlePath": [
+        "参加申請と取り消しが申請者と主催者の再読み込みに反映される"
+      ],
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"chromium\",\"e2e/isolated/session-application.spec.ts\",[\"参加申請と取り消しが申請者と主催者の再読み込みに反映される\"],0]",
+      "profile": "isolated",
+      "fingerprint": "d55559a5064b4828cebeb9bceb93a6be39a5a7c11bebd706a1c7cb27a35c55ee",
+      "serialGroup": null,
+      "caseId": "session-application-round-trip",
+      "variant": "applicant",
+      "binding": "main"
+    },
+    {
       "file": "e2e/isolated/schedule-confirmation-errors.spec.ts",
       "titlePath": [
         "21枠の確定を実Actionが拒否し、編集候補と旧確定枠の全値を保つ"
@@ -5465,6 +5482,23 @@
       "serialGroup": null,
       "caseId": "schedule-confirm-persist",
       "variant": "keeper-only",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/isolated/session-application.spec.ts",
+      "titlePath": [
+        "参加申請と取り消しが申請者と主催者の再読み込みに反映される"
+      ],
+      "project": "mobile-chrome",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"isolated\",\"mobile-chrome\",\"e2e/isolated/session-application.spec.ts\",[\"参加申請と取り消しが申請者と主催者の再読み込みに反映される\"],0]",
+      "profile": "isolated",
+      "fingerprint": "d55559a5064b4828cebeb9bceb93a6be39a5a7c11bebd706a1c7cb27a35c55ee",
+      "serialGroup": null,
+      "caseId": "session-application-round-trip",
+      "variant": "applicant",
       "binding": "main"
     },
     {
