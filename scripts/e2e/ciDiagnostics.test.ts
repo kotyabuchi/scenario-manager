@@ -1,9 +1,84 @@
 import { expect, it } from 'vitest';
 
 import { advanceCiProgress, createCiFailure } from './ciDiagnostics';
+import { ciVerificationSummarySchema } from './ciVerificationSummary';
 
 const verificationId = 'abcdef123456';
 const replay = { step: 'panda', processFailure: 'descendants-remained' };
+const verificationSummary = ciVerificationSummarySchema.parse({
+  verificationState: 'available',
+  schemaVersion: 1,
+  issueCount: 1,
+  issueCounts: [{ code: 'REQUIRED_NOT_CLEAN_PASS', count: 1 }],
+  unknownIssueCount: 0,
+  stages: [],
+  caseIssues: [{ code: 'REQUIRED_NOT_CLEAN_PASS', keySha256: 'a'.repeat(64) }],
+  omittedCaseIssueCount: 0,
+});
+
+it('workerのreceipt以降だけに固定の検証要約を引き継ぐ', () => {
+  const receipt = advanceCiProgress(
+    { phase: 'execution' },
+    { phase: 'receipt', verificationId, issueCount: 1, verificationSummary },
+  );
+  const artifacts = advanceCiProgress(receipt, { phase: 'artifacts' });
+  for (const job of ['required', 'legacy-desktop', 'legacy-mobile'] as const) {
+    for (const progress of [receipt, artifacts]) {
+      expect(
+        createCiFailure({
+          job,
+          progress,
+          env: process.env,
+          interrupted: false,
+        }),
+      ).toMatchObject({ verificationId, issueCount: 1, verificationSummary });
+    }
+  }
+  for (const job of ['plan', 'aggregate', null] as const) {
+    expect(
+      createCiFailure({
+        job,
+        progress: artifacts,
+        env: process.env,
+        interrupted: false,
+      }),
+    ).not.toHaveProperty('verificationSummary');
+  }
+  expect(
+    createCiFailure({
+      job: 'legacy-desktop',
+      progress: { ...receipt, phase: 'execution' },
+      env: process.env,
+      interrupted: false,
+    }),
+  ).not.toHaveProperty('verificationSummary');
+});
+
+it('検証要約の未許可フィールド・語彙・件数・識別子を公開しない', () => {
+  const previous = { phase: 'execution' } as const;
+  for (const invalid of [
+    { ...verificationSummary, message: 'private-message' },
+    {
+      ...verificationSummary,
+      issueCounts: [{ code: 'private-code', count: 1 }],
+    },
+    { ...verificationSummary, stages: [{ id: 'private-stage' }] },
+    { ...verificationSummary, issueCount: -1 },
+    {
+      ...verificationSummary,
+      caseIssues: [
+        { code: 'REQUIRED_NOT_CLEAN_PASS', keySha256: 'private-key' },
+      ],
+    },
+  ]) {
+    expect(
+      advanceCiProgress(previous, {
+        phase: 'receipt',
+        verificationSummary: invalid,
+      }),
+    ).toBe(previous);
+  }
+});
 
 it('失敗段階を更新しても判明済みの検証IDと後始末を保持する', () => {
   const execution = advanceCiProgress(

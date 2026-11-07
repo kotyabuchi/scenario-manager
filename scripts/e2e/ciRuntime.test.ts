@@ -27,6 +27,8 @@ import {
 } from './verificationReceipt';
 import { runVerification } from './verificationRun';
 
+import { createHash } from 'node:crypto';
+
 vi.mock('./ciContext', () => ({
   assertCiUnchanged: vi.fn(),
   captureCiInputs: vi.fn(),
@@ -279,6 +281,14 @@ describe('CI worker', () => {
   it('後続の未起動stageがある場合は資源の残留を断定しない', async () => {
     const { receipt } = setup.fixture.shards.required.verification;
     const run = structuredClone(receipt);
+    const key =
+      setup.fixture.shards.required.verification.plan.requirements[0]?.key;
+    if (!key || !run.verification) throw new Error('検証fixtureがありません。');
+    run.verification.issues = [
+      { code: 'REQUIRED_NOT_CLEAN_PASS', subject: key },
+      { code: 'RESULT_MISSING', subject: key },
+      { code: 'private-code', subject: 'private-subject' },
+    ];
     const execution = run.execution;
     const finished = execution?.stages[0];
     if (!execution || !finished) throw new Error('実行fixtureがありません。');
@@ -312,8 +322,31 @@ describe('CI worker', () => {
         phase: 'receipt',
         verificationId: run.verificationId,
         cleanup: 'unknown',
+        verificationSummary: expect.objectContaining({
+          verificationState: 'available',
+          issueCount: 3,
+          unknownIssueCount: 1,
+          caseIssues: [
+            {
+              code: 'REQUIRED_NOT_CLEAN_PASS',
+              keySha256: createHash('sha256').update(key).digest('hex'),
+            },
+            {
+              code: 'RESULT_MISSING',
+              keySha256: createHash('sha256').update(key).digest('hex'),
+            },
+          ],
+          stages: expect.arrayContaining([
+            expect.objectContaining({
+              id: 'isolated',
+              runner: 'not-run',
+              report: 'missing',
+            }),
+          ]),
+        }),
       }),
     );
+    expect(JSON.stringify(onProgress.mock.calls)).not.toContain('private-');
     expect(vi.mocked(writeCiArtifact)).not.toHaveBeenCalled();
   });
 

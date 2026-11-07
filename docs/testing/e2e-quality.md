@@ -66,6 +66,10 @@ CI公開artifactは `test-results/ci/plan`、`required`、`legacy-desktop`、`le
 
 CIコマンドが失敗すると、Actionsログに段階と固定エラーコードを出す。分かる場合は品質チェック名、検証ID、指摘件数、後始末状態も含む。後始末の `complete` は全stageの資源解放を照合できたことを示す。`unknown` には未起動のstageや証拠不足が含まれ、資源の残留は確定していない。その実行で新規保存できた `failure.json` だけを成功判定の成果物と分け、別名のartifactで7日保存する。
 
+workerが実行結果を得た後の失敗には、任意の `verificationSummary` を追加する。固定エラー種別の件数、固定7stageの実行・report・cleanup・process状態、登録済みケースキーのSHA256（最大12件）だけを含む。検証結果の有無は `verificationState` の `available` / `unavailable` で区別し、後者の件数を検証済み0件と読まない。未知のエラー種別は件数にまとめ、エラー本文・タイトル・任意subject・注釈・環境変数は公開しない。ケース識別は同一HEADの計画に完全一致するキーだけが対象で、`RESULT_MISSING` 以外を優先し、残りの枠に欠落ケースを記録する。後続stageの未起動が多数あっても実際の失敗を先に確認できる。上限超過は省略件数で示す。
+
+stageのownerがなくても実行証拠がある場合、runner状態は `unknown` とする。reportの `timedOut` / `interrupted` は通常の `failed` と区別する。StorybookのDB cleanup不要は `not-required` で表し、process終了は別項目で確認する。この要約は原因調査用であり、成功receiptやcleanupの受入判定を代替しない。
+
 private log、認証state、DB接続情報、raw trace、`test-results` 全体はアップロードしない。調査用traceは所有runのローカル成果物として扱う。JSONのchecksumは別実行の取り違えを防ぐもので、改ざん不能な署名ではない。assertionの意味、未移行テストの網羅、業務要件の完全性は別途レビューする。
 
 ## GitHub設定

@@ -20,6 +20,7 @@ import {
   ciShardEnvelopeSchema,
 } from './ciPartitionSchema';
 import { validateCiShardArtifacts } from './ciShardArtifacts';
+import { createCiVerificationSummary } from './ciVerificationSummary';
 import { prepareVerificationDetails } from './prepareVerification';
 import { selectedPreparation } from './selectedPreparation';
 import { digestVerificationPlan } from './verificationPlanDigest';
@@ -115,6 +116,7 @@ export const runCiShard = async (
     phase: 'receipt',
     verificationId: run.verificationId,
     ...(run.verification ? { issueCount: run.verification.issues.length } : {}),
+    verificationSummary: createCiVerificationSummary(plans[shard], run),
     // 未起動stageやテスト失敗も後始末の照合条件を満たさないため、回収漏れと断定しない。
     cleanup:
       run.execution &&

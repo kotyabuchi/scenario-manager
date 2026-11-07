@@ -102,6 +102,7 @@ PR #9 完了後の直列 run と分割後 run から、runner OS・suite 集合�
 - [x] Batch1: 割当実行と結果保存の準備（quality f257bf5335a2／verification 7647f9368f10、独立照合成功）
 - [x] Batch2: CI契約の一括切替（quality 6abfabb844e4／verification 2feb1eeff6b7、独立照合成功）
 - [x] Batch3: 実装headのHosted受入・性能観測・最終レビュー・ローカル回収（記録コミットのCIはPR本文で管理）
+- [ ] 追加対応: 最終headの繰り返すdesktop失敗を安全な診断で特定し、修正後のHosted受入を完了
 ### Batch 1受入（2026-11-07）
 
 共通quality `f257bf5335a2`、selection `4e6a57a425dc`、verification `7647f9368f10` が成功。lint・型、unit1,097成功/既存skip8、tools146ファイル2,132成功、必須67・extras312を7stageで照合した。入力前後は `82764a6a6313f37b405153311def99549d838c3b611f44cad8ae014e84703e6c` で一致。保存したlegacyResultsを正本validatorへ独立に再投入し、330件（成功319・既存例外11）、project別57/57/108/108を確認。DB環境6件のcleanup complete、全7stage process終了/エラー0、native確認で専用port・テスト用Node残留0。coverageStatus=insufficientは継続する。
@@ -144,3 +145,13 @@ Hosted比較用のPR9基準はraw jobsの最初の開始からaggregate job完�
 最終ローカルgateはquality `2e4ed912d1d0`、selection `4b916061567c`、verification `20e6352d336f` で成功。lint・型、unit1,097成功/既存skip8、tools2,181成功、必須67/67・extras312を確認した。保存した330行を新consumerで各165行として再照合し、入力前後はBatch 2と同じ `8d7f7e4ed61e45353f3f9c7f97a1a7622d63de79b8787be3df58636345df92e9` で一致。6 DB cleanup complete、7 process終了/エラー0、native確認で専用port・テスト用Node・所有containerの残留0だった。作業用MCP・言語ツールはこの確認に含めない。
 
 最初のローカル再確認 `79245388aa54` はDockerエンジン停止のため、DB所有環境の作成前に失敗した。Supabase CLIは指定の2.75.0で、Docker Desktopを起動してserver29.5.3と専用port解放を確認後、新しい上記gateを最初から実行した。失敗記録を成功へ書き換えたり結果を混ぜたりしていない。gate後の追記はこの受入・進捗とレビュー記録のみ。
+
+### 最終headの繰り返す失敗と追加対応（2026-11-07）
+
+記録コミット `bbe7443e61af24e254a4be746237d7527e5efd09` のrun42362035321は、attempt1と全jobを再実行したattempt2の双方でdesktopが失敗した。planner、Windows/Ubuntu fixtures、required、mobileは両方成功し、aggregateはdesktopの失敗を受けて正しく失敗した。どちらもchromiumのbrowser実行後にreceipt照合が116件の指摘で失敗し、chromium-authは未起動だった。116は失敗テスト数ではなく、未実行結果などを含む検証指摘数である。cleanup unknownも回収漏れの断定ではない。
+
+attempt1は最初のjob開始からaggregate完了まで872秒、全job合計1,993 runner秒。attempt2は895秒、1,855 runner秒。失敗2回の合計3,848 runner秒を追加コストとして記録する。失敗試行を性能改善の成功サンプルには含めず、初回成功だけで安定性を主張しない。各attemptのrawメタデータと成果物は混ぜずに保存した。PRはDraftを維持し、本番反映はしていない。
+
+既存の公開診断には詳細な指摘種別や対象ケースがなく、原因は未特定。時刻に応じたfixture日時生成は存在するが、今回の匿名chromium失敗と結び付く証拠は得られていない。これ以上の同条件再試行より先に、workerのreceipt段階へ固定語彙・件数・登録済みキーのハッシュだけの診断を追加する。raw reportや任意エラー文は公開せず、合否・cleanup・artifactの受入条件を維持する。限定反例テスト、独立レビュー、固定baseの共通gateを経て公開し、新しいheadのHosted結果から失敗ケースを特定する。原因修正と同一head/run/attemptの再受入まで追加対応を完了扱いにしない。
+
+診断追加の限定56テスト・型・Biomeと、Sol / mediumの独立3担当レビューが成功。指摘の検証結果未取得・timeout/中断の区別、欠落ケースの低優先表示を反映した。共通quality `4d49d90c882c` / selection `35b57d4c8377` / verification `e3623baa655a` も成功し、unit1,097成功/既存skip8、tools2,192成功、必須67・extras312・全330行を再照合。入力前後は `d2da5de5614ff218626aff760c445a58179fedf6d3b3724438d1e269ee3fe10b` で一致し、6 DB cleanup・7 process終了、専用port・所有container・テスト用Node残留0を確認した。ローカルの匿名Chromium57件ではHostedの失敗は再現しなかった。詳細は[診断追加レビュー](../reviews/diff-review-2026-11-07-4.md)。次は診断を含む新しいheadのHosted結果を取得し、原因を特定する。
