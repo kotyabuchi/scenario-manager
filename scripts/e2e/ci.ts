@@ -4,10 +4,12 @@ import { advanceCiProgress, createCiFailure } from './ciDiagnostics';
 import { ciShardIdSchema } from './ciPartitionSchema';
 import { planCiVerification } from './ciPlan';
 import { runCiShard } from './ciShard';
+import { writeProgressStderr } from './progressStderr';
 import { readSurfaceReplayDiagnostic } from './surfaceReplayFailure';
 
 import { closeSync, constants, openSync, writeFileSync } from 'node:fs';
 import { realpath } from 'node:fs/promises';
+import { availableParallelism } from 'node:os';
 import { pathToFileURL } from 'node:url';
 
 import type { CiJob, CiProgress, CiProgressUpdate } from './ciDiagnostics';
@@ -45,8 +47,33 @@ export const runCiCli = async (
 ) => {
   const job = identifyJob(args);
   let progress: CiProgressUpdate = { phase: job ? 'context' : 'arguments' };
+  const shouldLogTiming = job === 'plan' && env.GITHUB_ACTIONS === 'true';
+  let phaseStartedAt = performance.now();
+  const writeTimingSpan = (endedAt: number) => {
+    // 品質チェックの区間にはログ保存と入力checkpointも含まれる。
+    const timing = {
+      phase: progress.phase,
+      qualityCheck: progress.qualityCheck,
+      elapsedMs: Math.round(endedAt - phaseStartedAt),
+    };
+    writeProgressStderr(`[ci-timing] ${JSON.stringify(timing)}\n`);
+  };
+  if (shouldLogTiming) {
+    const timing = { availableParallelism: availableParallelism() };
+    writeProgressStderr(`[ci-timing] ${JSON.stringify(timing)}\n`);
+  }
   const onProgress: CiProgress = (update) => {
-    progress = advanceCiProgress(progress, update);
+    const next = advanceCiProgress(progress, update);
+    if (
+      shouldLogTiming &&
+      (next.phase !== progress.phase ||
+        next.qualityCheck !== progress.qualityCheck)
+    ) {
+      const now = performance.now();
+      writeTimingSpan(now);
+      phaseStartedAt = now;
+    }
+    progress = next;
   };
   if (!job) return createCiFailure({ job, progress, env, interrupted: false });
 
@@ -92,6 +119,7 @@ export const runCiCli = async (
   } finally {
     process.removeListener('SIGINT', interrupt);
     process.removeListener('SIGTERM', interrupt);
+    if (shouldLogTiming) writeTimingSpan(performance.now());
   }
 };
 

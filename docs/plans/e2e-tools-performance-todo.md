@@ -36,6 +36,14 @@ fixture改善は同日の2ワーカー比較で中央値約10.9%短縮。中断�
 
 測定器v2では、PID・作成時刻による追跡、入力の前後照合、出力closeの5秒期限、実プロセスの開始・終了時刻を追加した。旧方式のメモリ比較値も同じCIMサンプルから別に計算し、終了処理の対象選択には使わない。生データは作業worktree内の `test-results/quality/performance/{baseline-w2-sampled,candidate-w2,candidate-w2-resumed,candidate-w4}/`、集合・stderr・入力の監査は `comparison-audit.json` に保存した。
 
+## CI初回の観測と追加計測
+
+[PR #9の初回CI](https://github.com/kotyabuchi/scenario-manager/actions/runs/42327439399) のPlannerは成功したが、job全体456秒、品質・静的検査・計画のstepは424秒だった。PR #8の単発観測327秒／300秒より長い。UbuntuイメージとNode/pnpmは同じで、別ジョブのUbuntu fixtureは18→17秒、native履歴検証は198→201秒、Windows fixtureは50→47秒。異なるVM上の1回ずつの観測であり、4ワーカーが原因とはまだ断定できない。現時点でCIの高速化は確認できていない。
+
+従来の成功artifactと公開ログには品質検査の内訳がないため、GitHub ActionsのPlannerだけに固定phase／qualityCheckと整数の経過ms、利用可能な並列度をstderrへ記録する。同じ区間の連続通知は統合し、成功・失敗のどちらでも最後の区間を閉じる。品質区間には子プロセスの終了、private log保存、入力checkpointも含み、純粋なVitest実行時間とは区別する。環境変数、秘密、例外本文、生の子出力は公開せず、stdoutのJSON・artifact・合否条件を維持する。
+
+前掲のローカル全件測定と品質ゲートは、この計時ログ追加前の実装に対する記録。計時ログには専用の成功／失敗・秘密除外・非対象job回帰を加え、最終headの全件検証をCIで行う。並列度の採用は追加観測後に判断する。
+
 ## 初期準備の内訳
 
 全件測定と別に、実関数へ委譲する計測wrapperで各版1回ずつ測った。基準版8件、候補版9件がすべて成功。計測用の一時テストは通常の全件検査へ混ざらないよう回収した。

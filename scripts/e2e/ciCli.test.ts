@@ -16,7 +16,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { createRequire } from 'node:module';
-import { tmpdir } from 'node:os';
+import { availableParallelism, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -24,6 +24,12 @@ vi.mock('./ciPlan', () => ({ planCiVerification: vi.fn() }));
 
 const entry = fileURLToPath(new URL('./ci.ts', import.meta.url));
 const tsx = pathToFileURL(createRequire(import.meta.url).resolve('tsx')).href;
+const timingLines = (stderr: string) =>
+  stderr
+    .split('\n')
+    .filter((line) => line.startsWith('[ci-timing] '))
+    .map((line): unknown => JSON.parse(line.slice('[ci-timing] '.length)));
+
 const removeOwnedRoot = (root: string, temp: string) => {
   if (dirname(realpathSync(root)) !== temp)
     throw new Error('CI CLI fixtureの削除先が不正です。');
@@ -80,6 +86,14 @@ it.each([
     });
     expect(result.stdout).not.toContain('fixture-private-token');
     expect(result.stderr).not.toContain('fixture-private-token');
+    if (job === 'plan') {
+      expect(timingLines(result.stderr)).toEqual([
+        { availableParallelism: expect.any(Number) },
+        { phase: 'context', elapsedMs: expect.any(Number) },
+      ]);
+    } else {
+      expect(timingLines(result.stderr)).toEqual([]);
+    }
     if (job) {
       const folder = join(cwd, 'test-results', 'ci', job);
       expect(
@@ -130,6 +144,80 @@ it('実CLIは既存failureを上書きせず今回の安全な診断をstdoutに
     removeOwnedRoot(root, temp);
   }
 }, 20_000);
+
+it.each([
+  true,
+  false,
+])('plannerの区間計測はActions実行時だけ許可済みの値をstderrへ出す: %s', async (githubActions) => {
+  let now = 10;
+  const clock = vi.spyOn(performance, 'now').mockImplementation(() => now);
+  const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+  const planned = {
+    status: 'passed',
+    phase: 'plan',
+    workflow: { runId: '123456', attempt: 2 },
+    head: 'a'.repeat(40),
+  } as const;
+  vi.mocked(planCiVerification).mockImplementationOnce(
+    async (_root, _env, _signal, onProgress) => {
+      onProgress?.({ phase: 'context' });
+      now = 15;
+      onProgress?.({ phase: 'inputs' });
+      now = 20;
+      onProgress?.({ phase: 'quality' });
+      now = 22;
+      onProgress?.({
+        phase: 'quality',
+        qualityCheck: 'typecheck',
+        verificationId: '0'.repeat(12),
+        issueCount: 7,
+      });
+      now = 40;
+      onProgress?.({ phase: 'quality', qualityCheck: 'typecheck' });
+      if (onProgress) {
+        Reflect.apply(onProgress, undefined, [
+          { phase: 'quality', qualityCheck: 'private-command' },
+        ]);
+        Reflect.apply(onProgress, undefined, [
+          { phase: 'collection', unexpected: 'private-field' },
+        ]);
+      }
+      now = 45;
+      onProgress?.({ phase: 'quality', qualityCheck: 'test:e2e-tools' });
+      now = 52;
+      onProgress?.({ phase: 'artifacts' });
+      now = 60;
+      return planned;
+    },
+  );
+  try {
+    await expect(
+      runCiCli(['plan'], process.cwd(), {
+        ...process.env,
+        GITHUB_ACTIONS: String(githubActions),
+      }),
+    ).resolves.toEqual(planned);
+    const lines = timingLines(
+      stderr.mock.calls.map(([line]) => String(line)).join(''),
+    );
+    expect(lines).toEqual(
+      githubActions
+        ? [
+            { availableParallelism: availableParallelism() },
+            { phase: 'context', elapsedMs: 5 },
+            { phase: 'inputs', elapsedMs: 5 },
+            { phase: 'quality', elapsedMs: 2 },
+            { phase: 'quality', qualityCheck: 'typecheck', elapsedMs: 23 },
+            { phase: 'quality', qualityCheck: 'test:e2e-tools', elapsedMs: 7 },
+            { phase: 'artifacts', elapsedMs: 8 },
+          ]
+        : [],
+    );
+  } finally {
+    stderr.mockRestore();
+    clock.mockRestore();
+  }
+});
 
 it.each([
   'typed',
@@ -187,9 +275,17 @@ it.each([
       status: 'failed',
       failure: 'STATIC_LEDGER_CHECK_FAILED',
     });
-    expect(stderr).toHaveBeenCalledExactlyOnceWith(
+    const stderrLines = stderr.mock.calls.map(([line]) => String(line));
+    expect(
+      stderrLines.filter((line) => line.startsWith('[e2e-static] ')),
+    ).toEqual([
       `[e2e-static] ${JSON.stringify({ failure: 'STATIC_LEDGER_CHECK_FAILED', artifactPath })}\n`,
-    );
+    ]);
+    expect(timingLines(stderrLines.join(''))).toEqual([
+      { availableParallelism: expect.any(Number) },
+      { phase: 'context', elapsedMs: expect.any(Number) },
+      { phase: 'static-ledger', elapsedMs: expect.any(Number) },
+    ]);
     expect(readFileSync(output, 'utf8')).toBe('diagnostic_written=true\n');
   } finally {
     stderr.mockRestore();
