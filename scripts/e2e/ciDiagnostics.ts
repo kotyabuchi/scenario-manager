@@ -1,13 +1,12 @@
 import { z } from 'zod';
 
-import { ciWorkflowSchema } from './ciPartitionSchema';
+import { ciShardIdSchema, ciWorkflowSchema } from './ciPartitionSchema';
 import { surfaceReplayDiagnosticSchema } from './surfaceReplayFailure';
 import { verificationContextSchema } from './verificationSchema';
 
 export const ciJobSchema = z.enum([
   'plan',
-  'required',
-  'legacy-local',
+  ...ciShardIdSchema.options,
   'aggregate',
 ]);
 const ciPhaseSchema = z.enum([

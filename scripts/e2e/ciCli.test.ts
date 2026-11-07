@@ -60,6 +60,13 @@ const launchCi = (cwd: string, output: string, args: string[]) => {
 it.each([
   { command: 'plan', args: ['plan'], job: 'plan' },
   { command: 'shard', args: ['shard', 'required'], job: 'required' },
+  {
+    command: 'desktop',
+    args: ['shard', 'legacy-desktop'],
+    job: 'legacy-desktop',
+  },
+  { command: 'mobile', args: ['shard', 'legacy-mobile'], job: 'legacy-mobile' },
+  { command: '旧shard', args: ['shard', 'legacy-local'], job: null },
   { command: 'aggregate', args: ['aggregate'], job: 'aggregate' },
   { command: '不正引数', args: ['shard', 'unknown'], job: null },
 ])('$commandの実CLIが循環せず、CIイベントのない空cwdで失敗する', ({
@@ -120,7 +127,7 @@ it('実CLIは既存failureを上書きせず今回の安全な診断をstdoutに
   const root = mkdtempSync(join(temp, 'e2e-ci-cli-'));
   try {
     const cwd = join(root, 'workspace');
-    const folder = join(cwd, 'test-results', 'ci', 'legacy-local');
+    const folder = join(cwd, 'test-results', 'ci', 'legacy-desktop');
     mkdirSync(folder, { recursive: true });
     const previous =
       '{"status":"failed","workflow":{"runId":"123456","attempt":1}}';
@@ -128,11 +135,11 @@ it('実CLIは既存failureを上書きせず今回の安全な診断をstdoutに
     writeFileSync(file, previous);
     const output = join(root, 'step-output');
     writeFileSync(output, '');
-    const result = launchCi(cwd, output, ['shard', 'legacy-local']);
+    const result = launchCi(cwd, output, ['shard', 'legacy-desktop']);
     expect(result.error).toBeUndefined();
     expect(result.status, result.stderr).toBe(1);
     expect(JSON.parse(result.stdout)).toMatchObject({
-      job: 'legacy-local',
+      job: 'legacy-desktop',
       status: 'failed',
       phase: 'context',
       code: 'CI_CONTEXT_INVALID',

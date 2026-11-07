@@ -30,10 +30,10 @@ pnpm quality:changed --base <base-ref> --no-shadow
 
 | イベント | 静的比較 | runtime |
 | --- | --- | --- |
-| PR → main/develop | eventのbase。変更影響は一意なmerge-base | 選択required＋固定smoke＋全legacy-local |
-| push → main/develop | event.before | 全required＋全legacy-local |
-| schedule | default branchのイベントSHA自身 | 全required＋全legacy-local |
-| workflow_dispatch | 選んだrefのイベントSHA自身 | 全required＋全legacy-local |
+| PR → main/develop（段階導入中は明示した前提ブランチも可） | eventのbase。変更影響は一意なmerge-base | 選択required＋固定smoke＋desktop/mobile全件 |
+| push → main/develop | event.before | 全required＋desktop/mobile全件 |
+| schedule | default branchのイベントSHA自身 | 全required＋desktop/mobile全件 |
+| workflow_dispatch | 選んだrefのイベントSHA自身 | 全required＋desktop/mobile全件 |
 
 scheduleは日曜18:30 UTC（月曜03:30 JST）。欠落・不正なイベント、shallow history、HEAD不一致、複数merge-baseは失敗する。pushでbeforeがzeroまたはGit objectとして存在しないときは、静的診断の `historicalComparison` が `unavailable` になる。beforeが存在しても比較元にbaselineが未導入なら `baseline-not-introduced` と記録する。いずれもpush専用の外部承認 `E2E_LEDGER_BOOTSTRAP_APPROVAL` が必要で、event、repository、ref、before、head、現行baseline digestを実行ごとに照合する。破損・非commit・Git実行失敗を不存在扱いしない。
 
@@ -44,20 +44,25 @@ scheduleは日曜18:30 UTC（月曜03:30 JST）。欠落・不正なイベント
 1. `planner`: 共通品質前段、M1、全登録収集、変更選択、閉包、分割manifestの作成。
 2. `fixtures`: Windows/Linuxでイベント・抽出・変更選択・分割契約を検査。
 3. `e2e-required`: manifestの非app必須登録を実行。
-4. `e2e-legacy-local`: app必須登録とlegacy extrasを専用local DBで実行。
-5. `e2e-aggregate`: 全job結果と各成果物を独立に再照合する必須check。
+4. `e2e-legacy-desktop`: `chromium`／`chromium-auth`を専用local DBで順に実行。
+5. `e2e-legacy-mobile`: `mobile-chrome`／`mobile-chrome-auth`を別のHosted runnerで順に実行。
+6. `e2e-aggregate`: 全job結果と各成果物を独立に再照合する必須check。
 
-各workerも全登録を再収集し、head・workflow run/attempt・入力・全plan・全collectionがplannerと一致したときだけ起動する。集約は片方の欠落、skip、別attempt、別verification IDの混在、requiredの失敗、資源の未回収を拒否する。
+各workerも全登録を再収集し、head・workflow run/attempt・入力・全plan・全collectionがplannerと一致したときだけ起動する。legacyは各165件（必須9・extras156）、合計330件を実行し、deferred18件は実行結果として拒否する。projectごとのDB・seed・Next build・process・cleanupは共有しない。
+
+CI manifest／envelope／aggregateはversion 2の固定3shard（required・legacy-desktop・legacy-mobile）を使い、旧legacy-local tupleや互換aliasを受け入れない。集約は欠落・余分・重複、failure/cancel/skip、別head/run/attempt、verification IDや環境owner IDの再利用、required失敗、未回収を拒否する。legacy stageの検査済み結果は必須とし、同HEADの実行正本、共通report、現/置換元fingerprint、既存skip理由、全結果の和集合を再照合する。ローカルの全4project実行と単体診断の入口は変更しない。
 
 失敗したworkflowを再実行するときはActionsの **Re-run all jobs** を選ぶ。失敗jobだけを再実行すると、新しいattemptに成功済みjobの成果物がないため照合できない。
 
-PRの固定smokeはStorybookの `scenario-search-reset` と `e2e/smoke.spec.ts` のchromium/mobile各7登録。後者は静的比較元のexact key集合とも照合し、同数の別testへの入替えを通さない。閉包後にowner境界で分け、app必須18とlegacy extras312を混同しない。全件時は非app必須37＋app必須18＋extras312、計367の物理登録になる。
+PRの固定smokeはStorybookの `scenario-search-reset` と `e2e/smoke.spec.ts` のchromium/mobile各7登録。後者は静的比較元のexact key集合とも照合し、同数の別testへの入替えを通さない。閉包後にowner境界で分け、app必須18とlegacy extras312を混同しない。2026-11-07の全件時は非app必須49＋app必須18＋extras312、計379の物理登録になる。既存skip/fixme11件はextras内の承認済み例外であり、必須67件の成功とは分ける。
 
 ## 成果物と合否の限界
 
 `test-results/quality/changed.json` は最新サマリー。根拠は `test-results/verification/<qualityId>/quality-receipt.json` と、そこから参照する独立verification IDの `plan.json` / `receipt.json` / `inputs-start.json` / `inputs-end.json` である。
 
-CI公開artifactは `test-results/ci/plan`、`required`、`legacy-local`、`aggregate` の指定JSONだけを保存し、保持期間は7日。artifact名はGitHub run IDとattemptを含む。各shardは別IDを持ち、全件実行した一つのreceiptに偽装しない。
+CI公開artifactは `test-results/ci/plan`、`required`、`legacy-desktop`、`legacy-mobile`、`aggregate` の指定JSONと既存の固定履歴検査結果だけを保存し、保持期間は7日。artifact名はGitHub run IDとattemptを含む。各shardは別IDを持ち、全件実行した一つのreceiptに偽装しない。
+
+取得時は `e2e-plan-<runId>-<attempt>`、`e2e-required-<runId>-<attempt>`、`e2e-legacy-desktop-<runId>-<attempt>`、`e2e-legacy-mobile-<runId>-<attempt>`、`e2e-aggregate-<runId>-<attempt>`、`e2e-surface-history-<runId>-<attempt>` のexact名で別directoryへ保存する。両legacyはそれぞれenvelope／plan／receipt／inputs-start／inputs-endの5 JSONを使う。別attemptやlatestの成功で欠落を補わない。
 
 CIコマンドが失敗すると、Actionsログに段階と固定エラーコードを出す。分かる場合は品質チェック名、検証ID、指摘件数、後始末状態も含む。後始末の `complete` は全stageの資源解放を照合できたことを示す。`unknown` には未起動のstageや証拠不足が含まれ、資源の残留は確定していない。その実行で新規保存できた `failure.json` だけを成功判定の成果物と分け、別名のartifactで7日保存する。
 
@@ -65,7 +70,9 @@ private log、認証state、DB接続情報、raw trace、`test-results` 全体�
 
 ## GitHub設定
 
-公開後にrequired status checkとして指定する名前は **E2E verification gate**。旧 `Static Ledger Gate` は統合された。2026-11-05の読み取り時点ではmainにbranch protection/rulesetとrequired checkは設定されていない。本実装作業では設定・push・PR作成を行わない。
+必須status名は **E2E verification gate** を維持する。旧 `Static Ledger Gate` は統合済み。2026-11-07の読み取りではmain ruleset `26680579` がactiveで、GitHub Actions（integration ID 15368）の同checkを要求し、最新mainへの追従も必須、bypassは空だった。今回の分割では設定を変更しない。
+
+PR #9未マージの段階導入ではbase `perf/e2e-tools` をworkflowとPRイベントschemaの両方へ固定追加する。未知branchと同branchへのpushは許可しない。PR #9マージ後、後続PRをmainへ切り替えて再検証する際に、この一時許可を削除する。
 
 ## M3の受入結果（2026-11-05）
 

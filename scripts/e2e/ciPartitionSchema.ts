@@ -12,7 +12,19 @@ import {
   verificationPlanSchema,
 } from './verificationSchema';
 
-export const ciShardIdSchema = z.enum(['required', 'legacy-local']);
+import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
+
+export const ciShardIdSchema = z.enum([
+  'required',
+  'legacy-desktop',
+  'legacy-mobile',
+]);
+
+/** 各legacy workerが担当するprojectと実行順を固定する。 */
+export const CI_LEGACY_PROJECTS = {
+  'legacy-desktop': ['chromium', 'chromium-auth'],
+  'legacy-mobile': ['mobile-chrome', 'mobile-chrome-auth'],
+} as const satisfies Record<CiLegacyShardId, readonly LegacyProject[]>;
 
 export const ciWorkflowSchema = z.strictObject({
   runId: z.string().regex(/^[1-9][0-9]*$/u),
@@ -28,7 +40,7 @@ const shard = z.strictObject({
 });
 
 export const ciPartitionManifestSchema = z.strictObject({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(2),
   workflow: ciWorkflowSchema,
   eventPolicy: githubEventPolicySchema,
   snapshotDigest: selectionDigestSchema,
@@ -53,12 +65,13 @@ export const ciPartitionManifestSchema = z.strictObject({
   projectionReasons: z.array(selectionReasonSchema),
   shards: z.tuple([
     shard.extend({ id: z.literal('required') }),
-    shard.extend({ id: z.literal('legacy-local') }),
+    shard.extend({ id: z.literal('legacy-desktop') }),
+    shard.extend({ id: z.literal('legacy-mobile') }),
   ]),
 });
 
 export const ciShardEnvelopeSchema = z.strictObject({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(2),
   shard: ciShardIdSchema,
   workflow: ciWorkflowSchema,
   manifestDigest: selectionDigestSchema,
@@ -68,8 +81,15 @@ export const ciShardEnvelopeSchema = z.strictObject({
 });
 
 type CiShardId = z.infer<typeof ciShardIdSchema>;
+type CiLegacyShardId = Exclude<CiShardId, 'required'>;
 type CiWorkflow = z.infer<typeof ciWorkflowSchema>;
 type CiPartitionManifest = z.infer<typeof ciPartitionManifestSchema>;
 type CiShardEnvelope = z.infer<typeof ciShardEnvelopeSchema>;
 
-export type { CiPartitionManifest, CiShardEnvelope, CiShardId, CiWorkflow };
+export type {
+  CiLegacyShardId,
+  CiPartitionManifest,
+  CiShardEnvelope,
+  CiShardId,
+  CiWorkflow,
+};

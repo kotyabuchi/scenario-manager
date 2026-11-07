@@ -46,6 +46,12 @@ fixture改善は同日の2ワーカー比較で中央値約10.9%短縮。中断�
 
 [計時追加後のrun](https://github.com/kotyabuchi/scenario-manager/actions/runs/42329131950) では利用可能並列度4を観測し、lint 3.231秒、型31.276秒、unit 83.263秒、tools 138.006秒、静的台帳41.191秒、収集39.188秒、選択69.180秒だった。これを4ワーカーの比較点として、子プロセスの負荷を考慮した2ワーカー候補を同じ入口で測った。[2ワーカーrun](https://github.com/kotyabuchi/scenario-manager/actions/runs/42329962936) も利用可能並列度4で、lint 3.481秒、型33.964秒、unit 89.721秒、tools 170.849秒、静的台帳44.997秒、収集42.869秒、選択76.201秒だった。toolsは2ワーカーの方が32.843秒長く、他区間も7～10%程度長かったため、別VMの差も混ざる。2ワーカーへ抑える利点は確認できず、上限4を採用した。どちらも品質検査は成功。比較用の旧runは新しい候補を公開した後に停止し、全体合格としては扱わない。最終コミットの全CIと証跡を別途受け入れる。単発のHosted比較をCI全体の改善率として一般化しない。
 
+### PR #9の最終受入（2026-11-07）
+
+head `0a5133d489d14e0a94c6fded66ebb656c6f8869b` の [run42330826829](https://github.com/kotyabuchi/scenario-manager/actions/runs/42330826829) は全6job成功、重複検査も成功した。5組の成果物を独立に再照合し、必須67件・extras312、固定履歴、同一head/run/attempt、入力、6 DB環境と7 stageの回収を確認した。required verification `4686a0772cf7`、legacy verification `65b153ae127a` の再計算aggregateは保存物と一致した。
+
+最終tools区間は130.174秒、planner432秒、required611秒、legacy962秒、aggregate37秒。raw jobsの最初の開始からaggregate job完了までは23分54秒（1,434秒）、job時間の合計は2,398 runner秒だった。以前の23分55秒はrunメタデータのupdated_atまでを終点としていたため、以後はjob完了時刻に揃える。PR #8の21分29秒より長く、CI全体の改善はまだ達成していない。PR #9はレビュー可能にし、支配的なlegacy直列実行の改善を[desktop／mobile分割計画](./e2e-legacy-ci-sharding.md)として別ブランチで進める。比較元をこの受入済みheadへ固定し、次段の効果とtoolsの効果を混同しない。
+
 ## 初期準備の内訳
 
 全件測定と別に、実関数へ委譲する計測wrapperで各版1回ずつ測った。基準版8件、候補版9件がすべて成功。計測用の一時テストは通常の全件検査へ混ざらないよう回収した。

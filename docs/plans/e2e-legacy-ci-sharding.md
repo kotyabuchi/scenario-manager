@@ -100,10 +100,18 @@ PR #9 完了後の直列 run と分割後 run から、runner OS・suite 集合�
 
 - [x] PR9受入、計画の独立レビューと指摘反映、専用ブランチへ分離
 - [x] Batch1: 割当実行と結果保存の準備（quality f257bf5335a2／verification 7647f9368f10、独立照合成功）
-- [ ] Batch2: CI契約の一括切替
+- [x] Batch2: CI契約の一括切替（quality 6abfabb844e4／verification 2feb1eeff6b7、独立照合成功）
 - [ ] Batch3: Hosted受入・性能判定・片付け
 ### Batch 1受入（2026-11-07）
 
 共通quality `f257bf5335a2`、selection `4e6a57a425dc`、verification `7647f9368f10` が成功。lint・型、unit1,097成功/既存skip8、tools146ファイル2,132成功、必須67・extras312を7stageで照合した。入力前後は `82764a6a6313f37b405153311def99549d838c3b611f44cad8ae014e84703e6c` で一致。保存したlegacyResultsを正本validatorへ独立に再投入し、330件（成功319・既存例外11）、project別57/57/108/108を確認。DB環境6件のcleanup complete、全7stage process終了/エラー0、native確認で専用port・テスト用Node残留0。coverageStatus=insufficientは継続する。
 
 レビューはSol / mediumの3担当で全6観点OK。scope逆順のstage/checkpoint順を修正し、公開schemaの責務をJSDocへ追記した。共通gate後に変更したのは本計画の進捗・接点整理とレビュー記録だけ。CIの契約切替と分割の実測は未実施で、次Batchへ進める。
+
+### Batch 2受入（2026-11-07）
+
+共通quality `6abfabb844e4`、selection `b790dc153481`、verification `2feb1eeff6b7` が成功。lint・型、unit91ファイル1,097成功/既存skip8、tools147ファイル2,181成功、必須67・extras312を全7stageで照合した。入力前後は `8d7f7e4ed61e45353f3f9c7f97a1a7622d63de79b8787be3df58636345df92e9` で一致。保存した330件を新しいCI consumerにもdesktop/mobile各165件として再投入し、共通reportの制御注釈を含めて独立照合した。成功319・既存例外11、project別57/57/108/108、6 DB環境cleanup complete、7 process終了/エラー0。native確認で専用portとテスト用Node残留0。MCP・言語ツールは作業用に稼働中であり、全Node残留0の意味ではない。
+
+Sol / mediumの独立3担当レビューで見つかった共通report側の制御注釈不一致を修正。理由違い・欠落・重複・余分な制御注釈をtest/attempt別に改変する10反例が、修正前に失敗し修正後に成功した。最終helper/aggregate/runtime72テスト、統合型検査、workflow lintと再レビューも成功。詳細は[Batch 2レビュー](../reviews/diff-review-2026-11-07-2.md)。gate完了後の編集は本受入記録と進捗・計時基準の補足だけで、コードは変更していない。
+
+Hosted比較用のPR9基準はraw jobsの最初の開始からaggregate job完了まで **1,434秒（23分54秒）**、全job時間の合計 **2,398 runner秒**。以前の1,435秒は最初の開始からrunメタデータのupdated_atまでの値で、job完了基準とは1秒異なる。Batch 3ではjob完了基準を揃えて比較する。

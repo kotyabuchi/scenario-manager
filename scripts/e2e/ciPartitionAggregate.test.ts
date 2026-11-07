@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { digestCiPartitionManifest } from './ciPartition';
 import { aggregateCiPartition } from './ciPartitionAggregate';
 import { ciPartitionArtifactsFixture } from './fixtures/ciPartitionArtifacts';
+import { validateVerificationArtifacts } from './verificationReceipt';
 import { verificationReportSchema } from './verificationSchema';
 
 describe('CIの分割結果の集約', () => {
@@ -41,10 +42,16 @@ describe('CIの分割結果の集約', () => {
           extras: 0,
         },
         {
-          id: 'legacy-local',
+          id: 'legacy-desktop',
           verificationId: '222222222222',
           business: 1,
-          extras: 14,
+          extras: 8,
+        },
+        {
+          id: 'legacy-mobile',
+          verificationId: '444444444444',
+          business: 1,
+          extras: 8,
         },
       ],
     });
@@ -55,7 +62,7 @@ describe('CIの分割結果の集約', () => {
     'skipped',
   ] as const)('必須jobの結果が%sなら集約しない', (status) => {
     const input = ciPartitionArtifactsFixture();
-    input.jobResults['legacy-local'] = status;
+    input.jobResults['legacy-desktop'] = status;
     expect(() => aggregateCiPartition(input)).toThrow(/必須job/u);
   });
 
@@ -88,7 +95,7 @@ describe('CIの分割結果の集約', () => {
     'verification-id',
   ] as const)('片方だけ異なる%s由来を拒否する', (field) => {
     const input = ciPartitionArtifactsFixture();
-    const envelope = input.shards['legacy-local'].envelope;
+    const envelope = input.shards['legacy-desktop'].envelope;
     if (field === 'manifest') envelope.manifestDigest = '9'.repeat(64);
     else if (field === 'collection')
       envelope.fullCollectionDigest = '9'.repeat(64);
@@ -112,7 +119,7 @@ describe('CIの分割結果の集約', () => {
 
   it('legacy側の必須業務登録をextrasとして代用できない', () => {
     const input = ciPartitionArtifactsFixture();
-    const artifacts = input.shards['legacy-local'].verification;
+    const artifacts = input.shards['legacy-desktop'].verification;
     artifacts.plan.requirements.splice(0, 1);
     expect(() => aggregateCiPartition(input)).toThrow(/計画/u);
   });
@@ -120,7 +127,7 @@ describe('CIの分割結果の集約', () => {
   it('成功の要約が残っていてもlegacy smokeのskipは再検査で拒否する', () => {
     const input = ciPartitionArtifactsFixture();
     const stage =
-      input.shards['legacy-local'].verification.receipt.execution?.stages[0];
+      input.shards['legacy-desktop'].verification.receipt.execution?.stages[0];
     if (stage === undefined) throw new Error('fixture不足');
     const report = verificationReportSchema.parse(stage.report);
     const smoke = report.tests.find(({ file }) => file === 'e2e/smoke.spec.ts');
@@ -136,7 +143,7 @@ describe('CIの分割結果の集約', () => {
   it('legacyのpartial-passedと未回収資源を成功にしない', () => {
     const input = ciPartitionArtifactsFixture();
     const execution =
-      input.shards['legacy-local'].verification.receipt.execution;
+      input.shards['legacy-desktop'].verification.receipt.execution;
     const run = execution?.runs[0];
     const cleanup = execution?.stages[0]?.cleanup;
     if (run === undefined || cleanup === undefined || cleanup === null)
@@ -152,4 +159,53 @@ describe('CIの分割結果の集約', () => {
     });
     expect(() => aggregateCiPartition(input)).toThrow(/cleanup/u);
   });
+});
+
+it.each([
+  'missing',
+  'fingerprint',
+  'origin',
+  'owner-reuse',
+  'cross-project',
+])('CIのsafe結果でも%sは成功にしない', (fault) => {
+  const input = ciPartitionArtifactsFixture();
+  const desktop = input.shards['legacy-desktop'].verification.receipt.execution;
+  const mobile = input.shards['legacy-mobile'].verification.receipt.execution;
+  const stage = desktop?.stages[0];
+  if (!desktop || !mobile || !stage) throw new Error('実行fixture不足');
+  if (fault === 'missing') delete stage.legacyResults;
+  else if (fault === 'owner-reuse') {
+    const first = desktop.runs[0];
+    const second = mobile.runs[0];
+    if (!first || !second) throw new Error('owner fixture不足');
+    second.runId = first.runId;
+  } else {
+    const row = stage.legacyResults?.[0];
+    if (!row) throw new Error('結果fixture不足');
+    if (fault === 'fingerprint') row.fingerprint = '0'.repeat(64);
+    else if (fault === 'origin') row.originFingerprint = '0'.repeat(64);
+    else stage.legacyResults = mobile.stages[0]?.legacyResults;
+  }
+  expect(() => aggregateCiPartition(input)).toThrow();
+});
+
+it('個別receiptが有効でもshard横断で同じverification IDを拒否する', () => {
+  const input = ciPartitionArtifactsFixture();
+  const mobile = input.shards['legacy-mobile'];
+  const id = input.shards['legacy-desktop'].envelope.verificationId;
+  mobile.envelope.verificationId = id;
+  mobile.verification.receipt.verificationId = id;
+  const execution = mobile.verification.receipt.execution;
+  if (!execution) throw new Error('実行fixture不足');
+  for (const stage of execution.stages) {
+    stage.context.verificationId = id;
+    stage.evidence.context.verificationId = id;
+    const report = verificationReportSchema.parse(stage.report);
+    report.context.verificationId = id;
+    stage.report = report;
+  }
+  expect(
+    validateVerificationArtifacts(mobile.verification).receipt.status,
+  ).toBe('passed');
+  expect(() => aggregateCiPartition(input)).toThrow('verification ID');
 });

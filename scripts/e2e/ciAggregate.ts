@@ -4,6 +4,7 @@ import {
   readCiArtifact,
   readCiContext,
   readCiLedgers,
+  readCiLegacyExecution,
   writeCiArtifact,
 } from './ciContext';
 import { aggregateCiPartition } from './ciPartitionAggregate';
@@ -24,7 +25,8 @@ export const aggregateCiVerification = async (
     [
       env.CI_PLANNER_RESULT,
       env.CI_REQUIRED_RESULT,
-      env.CI_LEGACY_RESULT,
+      env.CI_LEGACY_DESKTOP_RESULT,
+      env.CI_LEGACY_MOBILE_RESULT,
       env.CI_FIXTURES_RESULT,
     ].some((result) => result !== 'success')
   )
@@ -66,14 +68,17 @@ export const aggregateCiVerification = async (
     manifest,
     ...context,
     ...ledgers,
+    execution: readCiLegacyExecution(root, context.eventPolicy.head),
     jobResults: {
       planner: env.CI_PLANNER_RESULT ?? '',
       required: env.CI_REQUIRED_RESULT ?? '',
-      'legacy-local': env.CI_LEGACY_RESULT ?? '',
+      'legacy-desktop': env.CI_LEGACY_DESKTOP_RESULT ?? '',
+      'legacy-mobile': env.CI_LEGACY_MOBILE_RESULT ?? '',
     },
     shards: {
       required: shard('required'),
-      'legacy-local': shard('legacy-local'),
+      'legacy-desktop': shard('legacy-desktop'),
+      'legacy-mobile': shard('legacy-mobile'),
     },
   });
   await assertCiUnchanged(root, env, context, initial);

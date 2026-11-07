@@ -51,7 +51,12 @@ export const githubPullRequestSchema = z.object({
   pull_request: z.object({
     base: z.object({
       sha: gitShaSchema,
-      ref: z.enum(['main', 'develop', 'feat/ui-local-test-prerequisite']),
+      ref: z.enum([
+        'main',
+        'develop',
+        'feat/ui-local-test-prerequisite',
+        'perf/e2e-tools',
+      ]),
       repo: repoPayload,
     }),
     head: z.object({ sha: gitShaSchema }),
