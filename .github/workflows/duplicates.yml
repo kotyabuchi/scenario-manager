@@ -2,7 +2,7 @@ name: Code Duplication Check
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, perf/e2e-tools]
 
 permissions:
   pull-requests: write

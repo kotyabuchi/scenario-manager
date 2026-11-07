@@ -101,9 +101,9 @@ const selectionFixture = () => {
       policyDeltas: [],
       isBootstrap: false,
       baselineDigest: 'a'.repeat(64),
-      registrations: 3,
+      registrations: 4,
       pendingItems: 0,
-      legacyTests: 14,
+      legacyTests: 16,
     },
     checkpoint: vi.fn(async (phase: string) => {
       order.push(phase);
@@ -170,7 +170,8 @@ describe('CI planner', () => {
       manifest.shards.map(({ id, requiredKeys }) => [id, requiredKeys]),
     ).toEqual([
       ['required', [setup.fixture.storyRow.key]],
-      ['legacy-local', [setup.fixture.appRow.key]],
+      ['legacy-desktop', [setup.fixture.appRow.key]],
+      ['legacy-mobile', [setup.fixture.mobileAppRow.key]],
     ]);
     expect(writes[1]).toEqual([
       root,

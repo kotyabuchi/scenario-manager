@@ -280,3 +280,48 @@ describe('保存した検証結果の独立照合', () => {
     expect(() => loadVerificationArtifacts(root, id)).toThrow();
   });
 });
+
+describe('legacy公開結果のreceipt互換', () => {
+  const row = {
+    key: 'legacy-key',
+    fingerprint: 'a'.repeat(64),
+    status: 'passed',
+    expectedStatus: 'passed',
+    annotations: [],
+  } as const;
+
+  it('旧receiptを受け入れ、legacyの安全なoptional結果を保持する', () => {
+    const value = fixture();
+    const stage = value.receipt.execution?.stages[0];
+    if (!stage) throw new Error('stage fixture不足');
+    expect(stage.evidence.kind).toBe('legacy');
+    expect(validateVerificationArtifacts(value).receipt.status).toBe('passed');
+    stage.legacyResults = [{ ...row, annotations: [] }];
+    expect(
+      verificationReceiptSchema.parse(value.receipt).execution?.stages[0]
+        ?.legacyResults,
+    ).toEqual([row]);
+  });
+
+  it.each([
+    'annotation',
+    'unknown-field',
+    'non-legacy',
+  ])('受信した%sを拒否する', (fault) => {
+    const value = fixture();
+    const stage = value.receipt.execution?.stages[0];
+    if (!stage) throw new Error('stage fixture不足');
+    stage.legacyResults = [{ ...row, annotations: [] }];
+    if (fault === 'non-legacy') stage.evidence.kind = 'schedule';
+    else if (fault === 'annotation')
+      stage.legacyResults[0]?.annotations.push({
+        type: 'custom',
+        description: 'fixture-private-token',
+      });
+    else
+      Object.assign(stage.legacyResults[0] ?? {}, {
+        private: 'fixture-private-token',
+      });
+    expect(() => verificationReceiptSchema.parse(value.receipt)).toThrow();
+  });
+});

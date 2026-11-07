@@ -24,6 +24,7 @@ const mocks = vi.hoisted(() => ({
   storybook: vi.fn(),
   isolated: vi.fn(),
   legacy: vi.fn(),
+  legacyScoped: vi.fn(),
 }));
 vi.mock('./runIntegrationCheck', () => ({
   runIntegrationEnvironment: mocks.integration,
@@ -32,7 +33,10 @@ vi.mock('./runStorybookVerification', () => ({
   runStorybookVerification: mocks.storybook,
 }));
 vi.mock('./runIsolatedCheck', () => ({ runIsolatedCheck: mocks.isolated }));
-vi.mock('./runLegacy', () => ({ runLegacy: mocks.legacy }));
+vi.mock('./runLegacy', () => ({
+  runLegacy: mocks.legacy,
+  runLegacyScoped: mocks.legacyScoped,
+}));
 
 const roots: string[] = [];
 const setup = () => {
@@ -223,10 +227,54 @@ const setup = () => {
           status: 'passed',
           runId: '123456abcdef',
           environment: structuredClone(environment),
-          results: [{}],
+          results: [
+            {
+              key: project,
+              fingerprint: 'a'.repeat(64),
+              status: 'passed',
+              expectedStatus: 'passed',
+              annotations: [],
+            },
+          ],
         };
       });
-      return { status: 'passed', projects, results: [{}] };
+      const safeResults = projects.flatMap(({ results }) => results);
+      return { status: 'passed', projects, results: [{}], safeResults };
+    },
+  );
+  mocks.legacyScoped.mockImplementation(
+    async (
+      _root: string,
+      scope: readonly (typeof legacyProjectSchema.options)[number][],
+      hooks: (
+        project: (typeof legacyProjectSchema.options)[number],
+      ) => VerificationStageHooks,
+    ) => {
+      const projects = scope.map((project) => {
+        closeAndSave(hooks(project));
+        return {
+          project,
+          status: 'passed',
+          runId: '123456abcdef',
+          environment: structuredClone(environment),
+          results: [
+            {
+              key: project,
+              fingerprint: 'a'.repeat(64),
+              status: 'passed',
+              expectedStatus: 'passed',
+              annotations: [],
+            },
+          ],
+        };
+      });
+      const safeResults = projects.flatMap(({ results }) => results);
+      return {
+        status: 'scoped-passed',
+        projects,
+        results: safeResults,
+        safeResults,
+      };
     },
   );
   const input = {
@@ -462,5 +510,106 @@ describe('verification stage失敗の保持', () => {
       ),
     ).toBe(true);
     expect(mocks.integration).not.toHaveBeenCalled();
+  });
+});
+
+describe('verificationのlegacy割当', () => {
+  const scope = ['chromium-auth', 'chromium'] as const;
+  const scopedSetup = () => {
+    const value = setup();
+    value.input.prepared.plan.requirements =
+      value.input.prepared.plan.requirements.filter(
+        ({ profile, test }) =>
+          profile === 'app' &&
+          scope.some((project) => project === test.project),
+      );
+    value.input.context.selectionDigest = digestVerificationPlan(
+      value.input.prepared.plan,
+    );
+    return value;
+  };
+
+  it('planと一致する割当順で実行し、検証済み結果をproject別stageに保存する', async () => {
+    const value = scopedSetup();
+    const result = await runVerificationStages({
+      ...value.input,
+      legacyProjects: scope,
+    });
+    expect(mocks.legacy).not.toHaveBeenCalled();
+    expect(mocks.legacyScoped).toHaveBeenCalledWith(
+      value.input.root,
+      scope,
+      expect.any(Function),
+    );
+    expect(result.runs.map(({ stageId }) => stageId)).toEqual(
+      scope.map((project) => `app-${project}`),
+    );
+    expect(result.stages.map(({ context }) => context.stageId)).toEqual(
+      scope.map((project) => `app-${project}`),
+    );
+    for (const stage of result.stages) {
+      expect(stage.evidence.result.resultsChecked).toBe(true);
+      expect(stage.legacyResults).toEqual([
+        expect.objectContaining({
+          key: stage.context.stageId.slice(4),
+          annotations: [],
+        }),
+      ]);
+    }
+    expect(value.check(result.stages).issues).toEqual([]);
+  });
+
+  it.each([
+    { projects: [] },
+    { projects: ['chromium'] },
+    { projects: ['chromium', 'chromium'] },
+    { projects: ['mobile-chrome', 'chromium'] },
+  ])('不一致の割当$projectsは全profileの環境起動前に拒否する', async ({
+    projects,
+  }) => {
+    const value = setup();
+    const parsed = projects.map((project) =>
+      legacyProjectSchema.parse(project),
+    );
+    await expect(
+      runVerificationStages({ ...value.input, legacyProjects: parsed }),
+    ).rejects.toThrow();
+    expect(mocks.integration).not.toHaveBeenCalled();
+    expect(mocks.storybook).not.toHaveBeenCalled();
+    expect(mocks.isolated).not.toHaveBeenCalled();
+    expect(mocks.legacy).not.toHaveBeenCalled();
+    expect(mocks.legacyScoped).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    'status',
+    'results',
+    'safeResults',
+    'project',
+  ])('割当の%sが不完全なら検査済み結果を保存しない', async (fault) => {
+    const value = scopedSetup();
+    const operation = mocks.legacyScoped.getMockImplementation();
+    if (!operation) throw new Error('割当mockがありません。');
+    mocks.legacyScoped.mockImplementationOnce(async (...args) => {
+      const result = await operation(...args);
+      if (fault === 'status') result.status = 'partial-passed';
+      if (fault === 'results') result.results = null;
+      if (fault === 'safeResults') result.safeResults = null;
+      if (fault === 'project') {
+        const first = result.projects[0];
+        if (!first) throw new Error('project結果がありません。');
+        first.status = 'failed';
+      }
+      return result;
+    });
+    const result = await runVerificationStages({
+      ...value.input,
+      legacyProjects: scope,
+    });
+    expect(value.check(result.stages).issues.length).toBeGreaterThan(0);
+    if (fault !== 'project')
+      expect(
+        result.stages.every(({ legacyResults }) => legacyResults === undefined),
+      ).toBe(true);
   });
 });

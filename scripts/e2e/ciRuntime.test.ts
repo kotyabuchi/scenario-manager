@@ -7,8 +7,10 @@ import {
   readCiArtifact,
   readCiContext,
   readCiLedgers,
+  readCiLegacyExecution,
   writeCiArtifact,
 } from './ciContext';
+import { CI_LEGACY_PROJECTS } from './ciPartitionSchema';
 import { runCiShard } from './ciShard';
 import { assertCiStaticReport } from './ciStaticReport';
 import { ciRuntimeFixture } from './fixtures/ciRuntime';
@@ -25,12 +27,15 @@ import {
 } from './verificationReceipt';
 import { runVerification } from './verificationRun';
 
+import { createHash } from 'node:crypto';
+
 vi.mock('./ciContext', () => ({
   assertCiUnchanged: vi.fn(),
   captureCiInputs: vi.fn(),
   readCiArtifact: vi.fn(),
   readCiContext: vi.fn(),
   readCiLedgers: vi.fn(),
+  readCiLegacyExecution: vi.fn(),
   writeCiArtifact: vi.fn(),
 }));
 vi.mock('./prepareVerification', () => ({
@@ -56,7 +61,8 @@ const env = {
   CI_FIXTURES_RESULT: 'success',
   CI_PLANNER_RESULT: 'success',
   CI_REQUIRED_RESULT: 'success',
-  CI_LEGACY_RESULT: 'success',
+  CI_LEGACY_DESKTOP_RESULT: 'success',
+  CI_LEGACY_MOBILE_RESULT: 'success',
 };
 const signal = new AbortController().signal;
 const surface = surfaceLedgerFixture();
@@ -115,6 +121,7 @@ beforeEach(() => {
     return artifacts.get(path);
   });
   vi.mocked(readCiContext).mockResolvedValue(context);
+  vi.mocked(readCiLegacyExecution).mockReturnValue(fixture.execution);
   vi.mocked(readCiLedgers).mockImplementation(
     async (root, policy, report, binding, options) => {
       assertCiStaticReport(root, report, policy, binding, options);
@@ -129,7 +136,8 @@ beforeEach(() => {
 describe('CI worker', () => {
   it.each([
     'required',
-    'legacy-local',
+    'legacy-desktop',
+    'legacy-mobile',
   ] as const)('%sだけを実行し、独立IDの証拠を許可された名前だけに出す', async (shard) => {
     const { fixture } = setup;
     const { envelope, verification } = fixture.shards[shard];
@@ -166,6 +174,27 @@ describe('CI worker', () => {
         },
       }),
     );
+    const options = vi.mocked(runVerification).mock.calls[0]?.[1];
+    if (!options?.prepared) throw new Error('実行planがありません。');
+    if (shard === 'required') {
+      expect(options.legacyProjects).toBeUndefined();
+      expect(readCiLegacyExecution).not.toHaveBeenCalled();
+    } else {
+      const projects = [
+        ...new Set(
+          [
+            ...options.prepared.plan.requirements,
+            ...options.prepared.plan.allowedExtraTests,
+          ].map(({ test }) => test.project),
+        ),
+      ].sort();
+      expect(projects).toEqual([...CI_LEGACY_PROJECTS[shard]].sort());
+      expect(options.legacyProjects).toEqual(CI_LEGACY_PROJECTS[shard]);
+      expect(readCiLegacyExecution).toHaveBeenCalledExactlyOnceWith(
+        root,
+        setup.context.eventPolicy.head,
+      );
+    }
     expect(vi.mocked(assertCiUnchanged)).toHaveBeenCalledTimes(3);
     expect(
       vi.mocked(loadVerificationArtifacts),
@@ -252,6 +281,14 @@ describe('CI worker', () => {
   it('後続の未起動stageがある場合は資源の残留を断定しない', async () => {
     const { receipt } = setup.fixture.shards.required.verification;
     const run = structuredClone(receipt);
+    const key =
+      setup.fixture.shards.required.verification.plan.requirements[0]?.key;
+    if (!key || !run.verification) throw new Error('検証fixtureがありません。');
+    run.verification.issues = [
+      { code: 'REQUIRED_NOT_CLEAN_PASS', subject: key },
+      { code: 'RESULT_MISSING', subject: key },
+      { code: 'private-code', subject: 'private-subject' },
+    ];
     const execution = run.execution;
     const finished = execution?.stages[0];
     if (!execution || !finished) throw new Error('実行fixtureがありません。');
@@ -285,8 +322,31 @@ describe('CI worker', () => {
         phase: 'receipt',
         verificationId: run.verificationId,
         cleanup: 'unknown',
+        verificationSummary: expect.objectContaining({
+          verificationState: 'available',
+          issueCount: 3,
+          unknownIssueCount: 1,
+          caseIssues: [
+            {
+              code: 'REQUIRED_NOT_CLEAN_PASS',
+              keySha256: createHash('sha256').update(key).digest('hex'),
+            },
+            {
+              code: 'RESULT_MISSING',
+              keySha256: createHash('sha256').update(key).digest('hex'),
+            },
+          ],
+          stages: expect.arrayContaining([
+            expect.objectContaining({
+              id: 'isolated',
+              runner: 'not-run',
+              report: 'missing',
+            }),
+          ]),
+        }),
       }),
     );
+    expect(JSON.stringify(onProgress.mock.calls)).not.toContain('private-');
     expect(vi.mocked(writeCiArtifact)).not.toHaveBeenCalled();
   });
 
@@ -343,7 +403,8 @@ describe('CI aggregate', () => {
     'CI_FIXTURES_RESULT',
     'CI_PLANNER_RESULT',
     'CI_REQUIRED_RESULT',
-    'CI_LEGACY_RESULT',
+    'CI_LEGACY_DESKTOP_RESULT',
+    'CI_LEGACY_MOBILE_RESULT',
   ])('%sの失敗を成功artifactで代用しない', async (name) => {
     await expect(
       aggregateCiVerification(root, { ...env, [name]: 'skipped' }, signal),
@@ -352,13 +413,13 @@ describe('CI aggregate', () => {
   });
 
   it('片方のshard artifact欠落または自身の入力変化なら合格を保存しない', async () => {
-    artifacts.delete('legacy-local/receipt.json');
+    artifacts.delete('legacy-desktop/receipt.json');
     await expect(aggregateCiVerification(root, env, signal)).rejects.toThrow(
-      'legacy-local/receipt',
+      'legacy-desktop/receipt',
     );
     artifacts.set(
-      'legacy-local/receipt.json',
-      setup.fixture.shards['legacy-local'].verification.receipt,
+      'legacy-desktop/receipt.json',
+      setup.fixture.shards['legacy-desktop'].verification.receipt,
     );
     vi.mocked(assertCiUnchanged).mockRejectedValueOnce(
       new Error('集約中に入力が変化'),
@@ -420,4 +481,65 @@ describe('CI aggregate', () => {
     );
     expect(vi.mocked(writeCiArtifact)).not.toHaveBeenCalled();
   });
+});
+
+it('HEADの実行正本を取得できなければlegacy runnerも公開も開始しない', async () => {
+  vi.mocked(readCiLegacyExecution).mockImplementationOnce(() => {
+    throw new Error('HEAD execution missing');
+  });
+  await expect(runCiShard(root, env, 'legacy-desktop', signal)).rejects.toThrow(
+    'HEAD execution missing',
+  );
+  expect(runVerification).not.toHaveBeenCalled();
+  expect(writeCiArtifact).not.toHaveBeenCalled();
+});
+
+it.each([
+  undefined,
+  '{',
+  '{}',
+])('HEADの欠落または不正実行正本を拒否する: %s', async (content) => {
+  const actual =
+    await vi.importActual<typeof import('./ciContext')>('./ciContext');
+  vi.mocked(readRevisionFile).mockReturnValueOnce(content);
+  expect(() =>
+    actual.readCiLegacyExecution(root, setup.context.eventPolicy.head),
+  ).toThrow();
+  expect(readRevisionFile).toHaveBeenCalledWith(
+    root,
+    setup.context.eventPolicy.head,
+    'e2e/ledger/legacy-execution.json',
+  );
+});
+
+it('実行正本はworking copyでなく要求HEADのGit blobだけを読む', async () => {
+  const actual =
+    await vi.importActual<typeof import('./ciContext')>('./ciContext');
+  vi.mocked(readRevisionFile).mockReturnValueOnce(
+    JSON.stringify(setup.fixture.execution),
+  );
+  expect(
+    actual.readCiLegacyExecution(root, setup.context.eventPolicy.head),
+  ).toEqual(setup.fixture.execution);
+  expect(readRevisionFile).toHaveBeenCalledWith(
+    root,
+    setup.context.eventPolicy.head,
+    'e2e/ledger/legacy-execution.json',
+  );
+});
+
+it('旧receiptとして有効でもlegacyResults欠落ならworkerは公開しない', async () => {
+  const { verification } = setup.fixture.shards['legacy-desktop'];
+  const stage = verification.receipt.execution?.stages[0];
+  if (!stage) throw new Error('stage fixture不足');
+  delete stage.legacyResults;
+  expect(validateVerificationArtifacts(verification).receipt.status).toBe(
+    'passed',
+  );
+  vi.mocked(runVerification).mockResolvedValueOnce(verification.receipt);
+  vi.mocked(loadVerificationArtifacts).mockReturnValueOnce(verification);
+  await expect(runCiShard(root, env, 'legacy-desktop', signal)).rejects.toThrow(
+    '実行結果がありません',
+  );
+  expect(writeCiArtifact).not.toHaveBeenCalled();
 });
