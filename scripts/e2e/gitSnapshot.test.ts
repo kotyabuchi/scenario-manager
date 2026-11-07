@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { appendGitFixtureConfig } from './fixtures/gitFixtureConfig';
 import { gitTokens, parseGitChanges } from './gitRecords';
 import {
   captureGitSnapshot,
@@ -52,11 +53,8 @@ const fixture = (format = 'sha1') => {
       windowsHide: true,
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
-  git(['init', `--object-format=${format}`]);
-  git(['config', 'user.name', 'Snapshot fixture']);
-  git(['config', 'user.email', 'fixture@example.invalid']);
-  git(['config', 'commit.gpgsign', 'false']);
-  git(['config', 'core.autocrlf', 'false']);
+  git(['init', '--template=', `--object-format=${format}`]);
+  appendGitFixtureConfig(root, 'Snapshot fixture');
   const write = (file: string, contents: string) => {
     const target = join(root, file);
     mkdirSync(dirname(target), { recursive: true });

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { appendGitFixtureConfig } from './fixtures/gitFixtureConfig';
 import { createLedgerFixture } from './fixtures/ledger';
 import {
   readRevisionFile,
@@ -39,11 +40,8 @@ const fixture = (format = 'sha1') => {
       windowsHide: true,
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
-  git(['init', `--object-format=${format}`]);
-  git(['config', 'user.name', 'Revision fixture']);
-  git(['config', 'user.email', 'fixture@example.invalid']);
-  git(['config', 'commit.gpgsign', 'false']);
-  git(['config', 'core.autocrlf', 'false']);
+  git(['init', '--template=', `--object-format=${format}`]);
+  appendGitFixtureConfig(root, 'Revision fixture');
   const write = (file: string, contents: string) => {
     const target = join(root, file);
     mkdirSync(dirname(target), { recursive: true });

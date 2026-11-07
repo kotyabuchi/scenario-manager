@@ -1,4 +1,13 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { isNil } from 'ramda';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 import { serializeBaseline } from './baseline';
 import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
@@ -14,8 +23,9 @@ import {
 } from './staticGate';
 
 import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { lstatSync, realpathSync } from 'node:fs';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { basename, dirname, join, resolve } from 'node:path';
 
 import type { StaticState } from './staticGate';
 
@@ -28,6 +38,9 @@ vi.mock('./surfaceGate', async (original) => ({
 // Windowsの高負荷時も、複数のguard付きcollectorと後始末の完了を待つ。
 const STATIC_GATE_TIMEOUT_MS = 90_000;
 const roots: string[] = [];
+let seedRoot: string | undefined;
+let seed: Awaited<ReturnType<typeof seedFixture>>;
+let seedInitialization: Promise<void> | undefined;
 const git = (root: string, ...args: string[]) =>
   execFileSync('git', args, {
     cwd: root,
@@ -58,10 +71,12 @@ const commit = (root: string) => {
   );
   return git(root, 'rev-parse', 'HEAD');
 };
-const createFixture = async () => {
+const createFixtureRoot = async () => {
   await mkdir(resolve('test-results'), { recursive: true });
-  const root = await mkdtemp(resolve('test-results/static-gate-'));
-  roots.push(root);
+  return mkdtemp(resolve('test-results/static-gate-'));
+};
+
+const seedFixture = async (root: string) => {
   await write(root, '.gitignore', 'test-results/\n');
   await json(root, 'package.json', { type: 'module' });
   await json(root, 'scripts/e2e/db-test-files.json', {
@@ -129,13 +144,29 @@ const createFixture = async () => {
     'scenarios/home',
   ])
     await json(root, `e2e/ledger/${file}.json`, []);
-  git(root, 'init', '--quiet');
+  git(root, 'init', '--quiet', '--template=');
   const before = commit(root);
   // このfixtureの旧core成果物を作る。廃止済みv1 writerやUI初期化は実行しない。
   save(root, await collectStaticState(root));
   await json(root, ARTIFACTS.migrations, { schemaVersion: 1, entries: [] });
   const base = commit(root);
   const state = await collectStaticState(root);
+  return { root, before, base, state };
+};
+
+const createFixture = async () => {
+  const root = await createFixtureRoot();
+  roots.push(root);
+  // Git履歴と保存物はバイト単位で複製し、列挙時の一時ログは引き継がない。
+  await cp(seed.root, root, {
+    recursive: true,
+    force: false,
+    errorOnExist: true,
+    filter: (source) => source !== join(seed.root, 'test-results'),
+  });
+  const { before, base } = seed;
+  // 収集済みの値は相対位置と台帳データだけを持つ。ケースの変更は独立させる。
+  const state = structuredClone(seed.state);
   const check = (
     current: StaticState = state,
     revision = base,
@@ -159,13 +190,45 @@ const save = (root: string, state: StaticState) => {
   writeArtifact(root, ARTIFACTS.baseline, serializeBaseline(state.baseline));
 };
 
+const removeFixture = async (root: string) => {
+  const parent = resolve('test-results');
+  if (dirname(root) !== parent) throw new Error('fixture削除先が不正です');
+  // 従来のforce削除と同じく、既に回収されたrootは処理済みとする。
+  const directory = lstatSync(root, { throwIfNoEntry: false });
+  if (isNil(directory)) return;
+  const physicalRoot = realpathSync.native(root);
+  if (
+    !directory.isDirectory() ||
+    physicalRoot !== join(realpathSync.native(parent), basename(root))
+  )
+    throw new Error('fixture削除先が不正です');
+  await rm(physicalRoot, { recursive: true, force: true });
+};
+
+const initializeSeed = async () => {
+  seedRoot = await createFixtureRoot();
+  seed = await seedFixture(seedRoot);
+};
+
+beforeAll(() => {
+  seedInitialization = initializeSeed();
+  return seedInitialization;
+}, STATIC_GATE_TIMEOUT_MS);
+
+afterAll(async () => {
+  // Vitestのhook timeoutで初期化は止まらない。書込みと収集が終了するまで削除しない。
+  // 初期化の失敗はbeforeAllが報告する。こちらは回収の失敗を報告する。
+  await seedInitialization?.catch(() => undefined);
+  if (!isNil(seedRoot)) await removeFixture(seedRoot);
+}, STATIC_GATE_TIMEOUT_MS);
+
 afterEach(async () => {
   vi.restoreAllMocks();
-  for (const root of roots.splice(0)) {
-    if (dirname(root) !== resolve('test-results'))
-      throw new Error('fixture削除先が不正です');
-    await rm(root, { recursive: true, force: true });
-  }
+  const results = await Promise.allSettled(roots.splice(0).map(removeFixture));
+  const errors = results.flatMap((result) =>
+    result.status === 'rejected' ? [result.reason] : [],
+  );
+  if (errors.length > 0) throw new AggregateError(errors, 'fixture削除に失敗');
 });
 
 describe('M1静的品質ゲートの接続', { timeout: STATIC_GATE_TIMEOUT_MS }, () => {
@@ -349,6 +412,15 @@ describe('M1静的品質ゲートの接続', { timeout: STATIC_GATE_TIMEOUT_MS }
         CI: '',
       }),
     ).toBe(true);
+    const report = JSON.parse(
+      readArtifact(root, 'test-results/quality/static-gate.json') ?? '{}',
+    );
+    expect(report).toMatchObject({
+      base,
+      head: base,
+      baselineDigest: baselineDigest(state.baseline),
+      registrations: state.registrations,
+    });
     expect(
       Object.values(ARTIFACTS).map((file) => readArtifact(root, file)),
     ).toEqual(before);
@@ -483,5 +555,29 @@ describe('M1静的品質ゲートの接続', { timeout: STATIC_GATE_TIMEOUT_MS }
     expect(
       (await check(undefined, revision)).issues.map((issue) => issue.code),
     ).toContain('REMOVED_MIGRATION_HISTORY');
+  });
+
+  it('初期成果物とGit履歴を複製し、ケース間で変更を共有しない', async () => {
+    const first = await createFixture();
+    const second = await createFixture();
+    expect(
+      git(second.root, 'rev-parse', 'HEAD', 'HEAD^').split(/\r?\n/),
+    ).toEqual([seed.base, seed.before]);
+    for (const file of Object.values(ARTIFACTS)) {
+      expect(await readFile(join(second.root, file))).toEqual(
+        await readFile(join(seed.root, file)),
+      );
+    }
+
+    const file = 'src/app/page.tsx';
+    await write(first.root, file, '// 片方のコピーだけ変更');
+    expect(commit(first.root)).not.toBe(second.base);
+    first.state.legacy.tests.length = 0;
+    expect(git(second.root, 'rev-parse', 'HEAD')).toBe(second.base);
+    expect(await readFile(join(second.root, file))).toEqual(
+      await readFile(join(seed.root, file)),
+    );
+    expect(second.state.legacy.tests).toHaveLength(4);
+    expect(seed.state.legacy.tests).toHaveLength(4);
   });
 });
