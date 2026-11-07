@@ -225,15 +225,18 @@ describe('runVerification入口', () => {
   });
 
   it('appだけの部分実行は空のrunner選択と異なる全件digestを許可する', async () => {
+    const legacyProjects = ['chromium', 'chromium-auth'] as const;
     const state = await runVerification(root, {
       mode: 'partial',
       prepared: await preparedFor(root),
       selection: selection('0'.repeat(64)),
       runnerSelections: [],
+      legacyProjects,
     });
     expect(state.status).toBe('passed');
     expect(stages).toHaveBeenCalledOnce();
     expect(stages.mock.calls[0]?.[0].selections).toEqual([]);
+    expect(stages.mock.calls[0]?.[0].legacyProjects).toEqual(legacyProjects);
   });
 
   it.each([

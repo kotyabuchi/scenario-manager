@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 import { z } from 'zod';
 
+import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { discoveryTestSchema } from './discoverySchema';
 import { legacyKey, legacyManifestSchema } from './legacy';
 import { validateLegacyExecution } from './legacyExecution';
@@ -8,6 +9,7 @@ import {
   legacyExecutionResultsSchema,
   legacyExecutionSchema,
 } from './legacyExecutionSchema';
+import { legacySafeResultsSchema } from './legacySafeResults';
 import {
   createLegacySelection,
   legacyAppEntries,
@@ -15,6 +17,7 @@ import {
 } from './legacySelection';
 import { readTestTags } from './testTags';
 
+import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
 import type { LegacyExecutionResult } from './legacyExecutionSchema';
 import type { LegacySelectionInput } from './legacySelection';
 
@@ -244,4 +247,49 @@ export const aggregateLegacyResults = (
   if (validation.issues.length > 0)
     throw new Error('全体結果が旧test実行先と一致しません。');
   return results;
+};
+
+/** 全登録を照合した上で、割当projectの実結果だけを安全な公開行へ投影する。 */
+export const aggregateLegacyScopedResults = (
+  input: Omit<LegacySelectionInput, 'project'> & {
+    scope: readonly LegacyProject[];
+    projects: { project: string; results: unknown }[];
+  },
+): LegacyExecutionResult[] => {
+  const scope = z.array(legacyProjectSchema).min(1).parse(input.scope);
+  if (new Set(scope).size !== scope.length)
+    throw new Error('割当projectが重複しています。');
+  validateLegacyDiscovery(input);
+  const execution = legacyExecutionSchema.parse(input.execution);
+  const seen = new Set<string>();
+  const results: LegacyExecutionResult[] = [];
+  for (const value of input.projects) {
+    if (
+      !scope.some((project) => project === value.project) ||
+      seen.has(value.project)
+    )
+      throw new Error('割当外または重複したproject結果があります。');
+    seen.add(value.project);
+    const partial = legacyExecutionResultsSchema.parse(value.results);
+    checkProject({ ...input, project: value.project }, partial);
+    results.push(...partial);
+  }
+  if (seen.size !== scope.length)
+    throw new Error('割当projectの結果が揃っていません。');
+  const entries = new Map(execution.entries.map((entry) => [entry.key, entry]));
+  // 制御annotationの失敗は上のtrusted検査で先に拒否する。
+  return legacySafeResultsSchema.parse(
+    results.map((result) => {
+      const entry = entries.get(result.key);
+      return {
+        ...result,
+        annotations:
+          !isNil(entry) &&
+          (entry.disposition === 'existing-skip' ||
+            entry.disposition === 'existing-fixme')
+            ? [entry.expectedAnnotation]
+            : [],
+      };
+    }),
+  );
 };

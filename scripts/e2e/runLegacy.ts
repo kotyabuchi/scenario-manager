@@ -7,7 +7,10 @@ import { readArtifact, writeArtifact } from './ledgerArtifacts';
 import { buildLegacy } from './legacy';
 import { verifyLegacyOrigins } from './legacyOrigin';
 import { runLegacyProject } from './legacyProjectRun';
-import { aggregateLegacyResults } from './legacyResults';
+import {
+  aggregateLegacyResults,
+  aggregateLegacyScopedResults,
+} from './legacyResults';
 import {
   createLegacySelection,
   validateLegacyDiscovery,
@@ -42,22 +45,28 @@ export const parseLegacyArguments = (args: string[]): LegacyProject[] => {
 };
 
 /** 現在の登録を照合した上で、4 projectを別の所有環境で順に実行する。 */
-export const runLegacy = async (
+const runLegacyProjects = async (
   root: string,
-  args: string[] = [],
+  projects: readonly LegacyProject[],
+  isScoped: boolean,
   verification?: (project: LegacyProject) => VerificationStageHooks,
 ) => {
-  const projects = parseLegacyArguments(args);
   const worktreeRoot = await realpath(root);
   const controller = new AbortController();
   const interrupt = () => controller.abort();
   const state: {
-    status: 'running' | 'passed' | 'partial-passed' | 'failed';
+    status:
+      | 'running'
+      | 'passed'
+      | 'partial-passed'
+      | 'scoped-passed'
+      | 'failed';
     phase: string;
     failurePhase: string | null;
     progress: LegacyProgress | null;
     projects: Awaited<ReturnType<typeof runLegacyProject>>[];
     results: LegacyExecutionResult[] | null;
+    safeResults: LegacyExecutionResult[] | null;
     failure: ReturnType<typeof summarizeEnvironmentFailure>;
   } = {
     status: 'running',
@@ -66,6 +75,7 @@ export const runLegacy = async (
     progress: null,
     projects: [],
     results: null,
+    safeResults: null,
     failure: null,
   };
   const save = () =>
@@ -149,12 +159,16 @@ export const runLegacy = async (
     }
     controller.signal.throwIfAborted();
     state.phase = 'aggregate';
-    if (projects.length === legacyProjectSchema.options.length) {
-      state.results = aggregateLegacyResults({
+    if (isScoped || projects.length === legacyProjectSchema.options.length) {
+      state.safeResults = aggregateLegacyScopedResults({
         ...input,
+        scope: projects,
         projects: state.projects,
       });
-      state.status = 'passed';
+      state.results = isScoped
+        ? state.safeResults
+        : aggregateLegacyResults({ ...input, projects: state.projects });
+      state.status = isScoped ? 'scoped-passed' : 'passed';
     } else state.status = 'partial-passed';
   } catch (error) {
     // 後続の照合段階と、project内で最初に失敗した段階を区別する。
@@ -173,6 +187,25 @@ export const runLegacy = async (
   }
   save();
   return state;
+};
+
+/** CLIの全件成功と単独診断の部分成功を既存どおり返す。 */
+export const runLegacy = async (
+  root: string,
+  args: string[] = [],
+  verification?: (project: LegacyProject) => VerificationStageHooks,
+) => runLegacyProjects(root, parseLegacyArguments(args), false, verification);
+
+/** 指定順のprojectだけを検証し、全件成功と区別した割当成功を返す。 */
+export const runLegacyScoped = async (
+  root: string,
+  scope: readonly LegacyProject[],
+  verification?: (project: LegacyProject) => VerificationStageHooks,
+) => {
+  const projects = legacyProjectSchema.array().nonempty().parse(scope);
+  if (new Set(projects).size !== projects.length)
+    throw new Error('legacy projectの割当が重複しています。');
+  return runLegacyProjects(root, projects, true, verification);
 };
 
 if (
