@@ -2,7 +2,7 @@
 
 ## Context
 
-PR #9は `0a5133d489d14e0a94c6fded66ebb656c6f8869b` で全CIと独立artifact照合を通過した。tools区間は130.174秒まで短縮したが、CI全体は23分55秒、直列legacyは16分2秒だった。4つの既存Playwright projectを2つのHosted jobへ分け、検査集合と合否の強さを保って待ち時間を減らす。
+PR #9は `0a5133d489d14e0a94c6fded66ebb656c6f8869b` で全CIと独立artifact照合を通過した。tools区間は130.174秒まで短縮したが、CI全体は23分54秒、直列legacyは16分2秒だった。4つの既存Playwright projectを2つのHosted jobへ分け、検査集合と合否の強さを保って待ち時間を減らす。
 
 ## 決定事項
 
@@ -101,7 +101,7 @@ PR #9 完了後の直列 run と分割後 run から、runner OS・suite 集合�
 - [x] PR9受入、計画の独立レビューと指摘反映、専用ブランチへ分離
 - [x] Batch1: 割当実行と結果保存の準備（quality f257bf5335a2／verification 7647f9368f10、独立照合成功）
 - [x] Batch2: CI契約の一括切替（quality 6abfabb844e4／verification 2feb1eeff6b7、独立照合成功）
-- [ ] Batch3: Hosted受入・性能判定・片付け
+- [x] Batch3: 実装headのHosted受入・性能観測・最終レビュー・ローカル回収（記録コミットのCIはPR本文で管理）
 ### Batch 1受入（2026-11-07）
 
 共通quality `f257bf5335a2`、selection `4e6a57a425dc`、verification `7647f9368f10` が成功。lint・型、unit1,097成功/既存skip8、tools146ファイル2,132成功、必須67・extras312を7stageで照合した。入力前後は `82764a6a6313f37b405153311def99549d838c3b611f44cad8ae014e84703e6c` で一致。保存したlegacyResultsを正本validatorへ独立に再投入し、330件（成功319・既存例外11）、project別57/57/108/108を確認。DB環境6件のcleanup complete、全7stage process終了/エラー0、native確認で専用port・テスト用Node残留0。coverageStatus=insufficientは継続する。
@@ -115,3 +115,32 @@ PR #9 完了後の直列 run と分割後 run から、runner OS・suite 集合�
 Sol / mediumの独立3担当レビューで見つかった共通report側の制御注釈不一致を修正。理由違い・欠落・重複・余分な制御注釈をtest/attempt別に改変する10反例が、修正前に失敗し修正後に成功した。最終helper/aggregate/runtime72テスト、統合型検査、workflow lintと再レビューも成功。詳細は[Batch 2レビュー](../reviews/diff-review-2026-11-07-2.md)。gate完了後の編集は本受入記録と進捗・計時基準の補足だけで、コードは変更していない。
 
 Hosted比較用のPR9基準はraw jobsの最初の開始からaggregate job完了まで **1,434秒（23分54秒）**、全job時間の合計 **2,398 runner秒**。以前の1,435秒は最初の開始からrunメタデータのupdated_atまでの値で、job完了基準とは1秒異なる。Batch 3ではjob完了基準を揃えて比較する。
+
+### Batch 3のHosted受入と性能観測（2026-11-07）
+
+[PR #10](https://github.com/kotyabuchi/scenario-manager/pull/10) の実装head `58f993019e0ef36abeb9f67e4cf78883eaddfbd5`、[run42340586935 attempt1](https://github.com/kotyabuchi/scenario-manager/actions/runs/42340586935) は全7job成功、重複検査も成功。6組のartifactを取得し、同一PR/base/head/run/attempt、manifest、入力、固定履歴を独立に検証した。保存した結果を正本と再照合し、desktop/mobile各165件、全330件（成功319・既存例外11）、必須67件・extras312を確認。6 DB環境のcleanup complete・remaining空、7 stageのprocess終了・エラー0・exit code 0を確認した。required verificationは `2df6bc97dd4c`、desktopは `7b0b1edb16b2`、mobileは `fd899508f3de`。coverageStatus=insufficient、core pending435、surface pending658、deferred18を維持する。
+
+比較対象はPR9のrun42330826829 attempt1。双方ともpull_request、changed-plus-smokeで実効計画は全必須67・extras312、同じrunnerラベルを使用している。ソースと証跡の照合で検査集合の維持も確認した。以下は**各条件1回の成功観測**であり、安定した改善率や性能分布の確定ではない。
+
+| 観測区間 | PR9・直列 | PR10・分割 |
+| --- | ---: | ---: |
+| 最初のjob開始→aggregate完了 | 1,434秒（23分54秒） | 1,131秒（18分51秒） |
+| 全jobの時間の和 | 2,398 runner秒 | 2,664 runner秒 |
+| planner | 432秒 | 457秒 |
+| required | 611秒 | 543秒 |
+| legacy最長job | 962秒 | desktop635秒／mobile625秒 |
+| legacyの時間の和 | 962 runner秒 | 1,260 runner秒 |
+| aggregate | 37秒 | 35秒 |
+| Ubuntu／Windows fixtures | 230秒／126秒 | 249秒／120秒 |
+
+待ち時間は303秒（約21.1%）短縮し、runner時間は266秒（約11.1%）増加した。runner時間は観測したjob秒数の和で、課金分数ではない。worker同士の開始差は0秒、依存完了からworker開始とaggregate開始の間隔はいずれも2秒だった。この間隔を純粋なscheduler待ちとは断定しない。最長経路はplanner→desktop→aggregateで、requiredにはまだ92秒の余裕がある。
+
+公開済みの安全なplanner計時ではlint3.346秒、型34.261秒、unit85.493秒、tools145.271秒、静的台帳41.524秒、収集39.889秒、選択70.396秒。子プロセス終了・保存・入力照合を含む区間であり、Vitest単体時間とは異なる。jobとstepの時刻は保存したが、成功artifactと公開ログにはDB初回/後続、Next build、browser、cleanupを分離する時刻がなく、それらは未計測とする。ローカルのDB lifecycle全体をmigration時間へ読み替えない。
+
+独立レビューで受入を覆す指摘はなかった。時間比較の前提は今回すべて真であることを確認した。artifact APIのdigestはZIPのdigestであり、展開後のJSONを同じdigestに直接照合したものではない。出所はGitHubからの取得手順、内容は正本・receiptの独立再検証で確認している。比較対象の増加と内部区間の計測は次段へ記録し、継続的な性能改善の確定判断は保留する。詳細は[最終レビュー](../reviews/diff-review-2026-11-07-3.md)、候補は[次段の改善調査](./e2e-tools-performance-todo.md#次段の改善調査)を参照。
+
+本節は実装headの受入記録である。記録用コミットを公開した場合は、その最終headのCIと同一run/attemptの成果物を再照合してからPRをReadyにする。最終headの結果はPR本文に追記し、測定記録の追記だけで次のCIを繰り返し発火させない。本番マージとデプロイは未実施。
+
+最終ローカルgateはquality `2e4ed912d1d0`、selection `4b916061567c`、verification `20e6352d336f` で成功。lint・型、unit1,097成功/既存skip8、tools2,181成功、必須67/67・extras312を確認した。保存した330行を新consumerで各165行として再照合し、入力前後はBatch 2と同じ `8d7f7e4ed61e45353f3f9c7f97a1a7622d63de79b8787be3df58636345df92e9` で一致。6 DB cleanup complete、7 process終了/エラー0、native確認で専用port・テスト用Node・所有containerの残留0だった。作業用MCP・言語ツールはこの確認に含めない。
+
+最初のローカル再確認 `79245388aa54` はDockerエンジン停止のため、DB所有環境の作成前に失敗した。Supabase CLIは指定の2.75.0で、Docker Desktopを起動してserver29.5.3と専用port解放を確認後、新しい上記gateを最初から実行した。失敗記録を成功へ書き換えたり結果を混ぜたりしていない。gate後の追記はこの受入・進捗とレビュー記録のみ。
