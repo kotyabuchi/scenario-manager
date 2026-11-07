@@ -13,11 +13,8 @@ export default defineConfig({
     include: ['scripts/e2e/**/*.test.ts'],
     exclude: ['scripts/e2e/fixtures/**'],
     environment: 'node',
-    // 子プロセスの負荷を考慮し、並列度の半分をワーカー上限とする（最小1・最大4）。
-    maxWorkers: Math.max(
-      1,
-      Math.min(MAX_TOOL_WORKERS, Math.floor(availableParallelism() / 2)),
-    ),
+    // テストワーカーは利用可能な並列度と測定済みの4以下に抑える。
+    maxWorkers: Math.min(MAX_TOOL_WORKERS, availableParallelism()),
     passWithNoTests: false,
   },
 });
