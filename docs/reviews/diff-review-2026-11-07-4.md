@@ -28,3 +28,5 @@ Sol / mediumの3担当がセキュリティとバグ、設計と規約、運用U
 native確認でも専用port・所有container・テスト用Nodeは残留0。成果物照合を並行実行していた2つのNodeは、照合終了後の再確認で終了済みだった。既知の作業用MCP Node 11個は別に管理する。ローカル匿名Chromium57件はすべて成功し、Hostedの失敗は再現しなかった。共通gate後に変更したのは本レビューと計画の受入記録のみ。
 
 この変更だけでは繰り返すHosted desktop失敗の原因を特定・解消したことにはならない。新しいheadのCIで安全な診断を取得し、原因修正と同一head/run/attemptの全成果物再照合までPRはDraftを維持する。
+
+診断head `7064c41e9af547d10f31d0fc41e33ad18cf1c570` のrun42367955939 attempt1は全7jobと重複検査が成功。同一head/run/attemptの6組のartifactを独立再検証し、全330行、必須67・extras312、6 DB cleanup・7 process終了、固定履歴を確認した。以前の失敗はこの試行で再現せず、実際の失敗ケースと原因は依然未特定。診断の実装受入と原因解消を区別する。

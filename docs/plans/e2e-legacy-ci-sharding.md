@@ -136,9 +136,11 @@ Hosted比較用のPR9基準はraw jobsの最初の開始からaggregate job完�
 
 待ち時間は303秒（約21.1%）短縮し、runner時間は266秒（約11.1%）増加した。runner時間は観測したjob秒数の和で、課金分数ではない。worker同士の開始差は0秒、依存完了からworker開始とaggregate開始の間隔はいずれも2秒だった。この間隔を純粋なscheduler待ちとは断定しない。最長経路はplanner→desktop→aggregateで、requiredにはまだ92秒の余裕がある。
 
-公開済みの安全なplanner計時ではlint3.346秒、型34.261秒、unit85.493秒、tools145.271秒、静的台帳41.524秒、収集39.889秒、選択70.396秒。子プロセス終了・保存・入力照合を含む区間であり、Vitest単体時間とは異なる。jobとstepの時刻は保存したが、成功artifactと公開ログにはDB初回/後続、Next build、browser、cleanupを分離する時刻がなく、それらは未計測とする。ローカルのDB lifecycle全体をmigration時間へ読み替えない。
+公開済みの安全なplanner計時ではlint3.346秒、型34.261秒、unit85.493秒、tools145.271秒、静的台帳41.524秒、収集39.889秒、選択70.396秒。子プロセス終了・保存・入力照合を含む区間であり、Vitest単体時間とは異なる。成功artifactには内部所要時間の専用フィールドがないが、公開jobログの固定進捗時刻から粗区間を復元できる。「公開ログにも時刻がない」という当初の記録は再調査で訂正した。
 
-独立レビューで受入を覆す指摘はなかった。時間比較の前提は今回すべて真であることを確認した。artifact APIのdigestはZIPのdigestであり、展開後のJSONを同じdigestに直接照合したものではない。出所はGitHubからの取得手順、内容は正本・receiptの独立再検証で確認している。比較対象の増加と内部区間の計測は次段へ記録し、継続的な性能改善の確定判断は保留する。詳細は[最終レビュー](../reviews/diff-review-2026-11-07-3.md)、候補は[次段の改善調査](./e2e-tools-performance-todo.md#次段の改善調査)を参照。
+初回成功run42340586935のdesktopでは、`starting`→`inspecting` がchromium139.973秒／chromium-auth26.478秒、`build`→`readiness` が44.734秒／44.422秒、`browser`→`evidence` が76.277秒／153.456秒だった。順にSupabase環境起動、Next build、Playwright実行を中心とする区間で、CLI処理やcheckpoint等も含む。GitHubログのwall時刻に基づく粗い観測であり、migration単体・純粋なコンパイル・テスト本体の時間ではない。cleanupの開始境界はあるが、環境cleanup終了の専用markerはない。DB起動/migration/seed/catalogの各内訳、build内訳、完全cleanupの総時間は追加計測が必要。ローカルのDB lifecycle全体もmigration時間へ読み替えない。
+
+独立レビューで受入を覆す指摘はなかった。時間比較の前提は今回すべて真であることを確認した。artifact APIのdigestはZIPのdigestであり、展開後のJSONを同じdigestに直接照合したものではない。出所はGitHubからの取得手順、内容は正本・receiptの独立再検証で確認している。比較対象の増加と、既存ログでは分離できない内部の細区間計測を次段へ記録し、継続的な性能改善の確定判断は保留する。詳細は[最終レビュー](../reviews/diff-review-2026-11-07-3.md)、候補は[次段の改善調査](./e2e-tools-performance-todo.md#次段の改善調査)を参照。
 
 本節は実装headの受入記録である。記録用コミットを公開した場合は、その最終headのCIと同一run/attemptの成果物を再照合してからPRをReadyにする。最終headの結果はPR本文に追記し、測定記録の追記だけで次のCIを繰り返し発火させない。本番マージとデプロイは未実施。
 
@@ -155,3 +157,7 @@ attempt1は最初のjob開始からaggregate完了まで872秒、全job合計1,9
 既存の公開診断には詳細な指摘種別や対象ケースがなく、原因は未特定。時刻に応じたfixture日時生成は存在するが、今回の匿名chromium失敗と結び付く証拠は得られていない。これ以上の同条件再試行より先に、workerのreceipt段階へ固定語彙・件数・登録済みキーのハッシュだけの診断を追加する。raw reportや任意エラー文は公開せず、合否・cleanup・artifactの受入条件を維持する。限定反例テスト、独立レビュー、固定baseの共通gateを経て公開し、新しいheadのHosted結果から失敗ケースを特定する。原因修正と同一head/run/attemptの再受入まで追加対応を完了扱いにしない。
 
 診断追加の限定56テスト・型・Biomeと、Sol / mediumの独立3担当レビューが成功。指摘の検証結果未取得・timeout/中断の区別、欠落ケースの低優先表示を反映した。共通quality `4d49d90c882c` / selection `35b57d4c8377` / verification `e3623baa655a` も成功し、unit1,097成功/既存skip8、tools2,192成功、必須67・extras312・全330行を再照合。入力前後は `d2da5de5614ff218626aff760c445a58179fedf6d3b3724438d1e269ee3fe10b` で一致し、6 DB cleanup・7 process終了、専用port・所有container・テスト用Node残留0を確認した。ローカルの匿名Chromium57件ではHostedの失敗は再現しなかった。詳細は[診断追加レビュー](../reviews/diff-review-2026-11-07-4.md)。次は診断を含む新しいheadのHosted結果を取得し、原因を特定する。
+
+診断head `7064c41e9af547d10f31d0fc41e33ad18cf1c570` のrun42367955939 attempt1は全7jobと重複検査が成功し、同じhead/run/attemptの6組のartifactを独立再検証した。必須67・extras312、全330行、6 DB cleanup・7 process終了、固定履歴も一致。required verificationは `188ec1a5e578`、desktopは `ba1f264488a7`、mobileは `329ecd4acb31`。この試行では失敗が再現しなかったため、診断の公開経路は限定反例テストで検証済みだが、実際のHosted失敗ケースの特定・原因解消は未完了である。
+
+この成功観測の最初のjob開始→aggregate完了は1,070秒（17分50秒）、全job和は2,406 runner秒。PR9基準との差は-364秒・+8 runner秒。planner379秒、required563秒、desktop640秒、mobile452秒、aggregate47秒、Ubuntu229秒、Windows96秒だった。初回成功観測と別の試行として扱い、前述の失敗2回の合計3,848 runner秒を除外して安定性を主張しない。計時記録の訂正後の最終headでもCIと成果物を確認し、結果はPR本文へ記録する。

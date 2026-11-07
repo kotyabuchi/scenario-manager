@@ -64,7 +64,7 @@ PR9の23分54秒から18分51秒へ、待ち時間は5分3秒短縮した。job�
 
 | 順序 | 候補と現在の状態 | 実験の判定条件 |
 | --- | --- | --- |
-| 1 | **区間計測を補う。** plannerは安全な計時あり。setup内のinstall/Panda、DB起動/migration/seed/catalog、fixture/build/browser/cleanupは分離した実時間が不足。 | 固定phaseと単調時計の経過時間のみ記録し、秘密・生ログを追加公開しない。同条件の複数回、初回/再実行、cache hit/miss、wall時間とrunner時間を区別して次の優先度を決める。 |
+| 1 | **既存の区間を整理し、細区間の計測を補う。** plannerに加え、公開ログの固定進捗時刻からSupabase環境起動・Next build・browserの粗いwall区間を復元できる。setup内のinstall/Panda、DB起動/migration/seed/catalog各内訳、build内訳、環境cleanup完了時間は未分離。 | 既存ログで測れる部分に重複した計測を増やさず、必要な細区間だけ固定phaseと単調時計で記録する。秘密・生ログを追加公開しない。同条件の複数回、初回/再実行、cache hit/miss、wall時間とrunner時間を区別する。環境起動時間をmigration単体とみなしてdump化を先行しない。 |
 | 2 | **E2Eの責務と重複を整理する。** `e2e/auth/session-create.spec.ts` の必須入力はschemaテストと重なるが、空送信→resolver→error表示の連携はcomponent側で未検出。`e2e/scenarios/search.spec.ts` も一覧遷移を反復。 | 移管先のassertionと旧→新のledger対応を先に作り、作成→詳細・検索→URL/詳細など代表接続を維持する。今回の330件固定は分割の同等性条件であり、将来の適切な移管・統合による件数変更を禁止しない。 |
 | 3 | **固定500ms待ちを見直す。** `e2e/auth/feedback-detail.spec.ts` の投票、`e2e/auth/scenario-new-banner.spec.ts` の非対応URL/clearに存在。 | 状態確定やdebounce完了を観測できる条件を確認して置換する。初めから非表示のassertionだけで成功する偽陽性を避け、失敗検出とflaky率・時間を比較する。 |
 | 4 | **unit setup/collectionを調べる。** node、unit-dom、componentとDBは分離済み。共通 `vitest.setup.ts` とcomponentのStorybook setupの適用が調査対象。 | project別の壁時計時間と必要な初期化を確認する。DB access guardなどの検査境界を維持し、集計phase秒をそのまま短縮見込みにしない。 |
