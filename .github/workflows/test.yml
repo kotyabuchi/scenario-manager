@@ -65,6 +65,7 @@ jobs:
           pnpm test:e2e-tools
           scripts/e2e/githubEvent.test.ts
           scripts/e2e/githubEventStatic.test.ts
+          scripts/e2e/gitFixtureConfig.test.ts
           scripts/e2e/gitSnapshot.test.ts
           scripts/e2e/inventory.test.ts
           scripts/e2e/inventoryGraph.test.ts
