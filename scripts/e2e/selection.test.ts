@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import repositoryImpactRules from '../../e2e/ledger/impact-rules.json';
 import {
   button,
   calendarFile,
@@ -39,6 +40,33 @@ const choose = (...changes: GitChangedPath[]) => {
 };
 
 describe('差分影響選択', () => {
+  it('軽量DOM setup単独の変更を共通基盤の根拠で全必須へ広げる', () => {
+    const input = impactFixture();
+    const rawRules = JSON.stringify({
+      ...input.rules.current,
+      alwaysFull: repositoryImpactRules.alwaysFull,
+    });
+    const decision = selectImpacts({
+      ...input,
+      rules: loadImpactRules({
+        current: rawRules,
+        base: null,
+        ledger: input.ledger,
+      }),
+      snapshot: snapshotFixture([changed('.storybook/vitest.dom.setup.ts')]),
+    });
+    expect(decision.mode).toBe('full-required');
+    expect(decision.reasons).toContainEqual(
+      expect.objectContaining({
+        code: 'BROAD_CHANGE',
+        ruleIds: ['test-infrastructure'],
+      }),
+    );
+    expect(decision.reasons.map(({ code }) => code)).not.toContain(
+      'UNKNOWN_CHANGE',
+    );
+  });
+
   it('旧aliasを経由した依存を削除・rename時も失わない', () => {
     for (const change of [
       { status: 'D', origin: 'committed', oldPath: oldAdapter },

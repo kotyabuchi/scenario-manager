@@ -18,6 +18,16 @@ pnpm quality:changed --base <base-ref> --no-shadow
 
 前提はNode 24.12.0、pnpm 10.33.0、Supabase CLI 2.75.0、local Docker、Playwright Chromium。共有cloud資格情報は不要。専用環境の詳細は [環境と復旧手順](e2e-environment.md) にまとめている。
 
+### 単体テストの初期化
+
+`test:unit` の3 projectは、nodeで動く `unit`、直接DOMを検証する `unit-dom`、portable Storyを検証する `component`。すべて `vitest.setup.ts` の実DB接続拒否を通る。実DBテストは別のintegration入口を使う。
+
+DOMのmatcher・必要なブラウザAPI・各test後のReact/DOM cleanupは `.storybook/vitest.dom.setup.ts` で共有する。Storybookのannotation・a11y・preview・beforeAllは `component` に維持する。`getTestProjects` の `DIRECT_DOM_TEST_FILES` は、Storybookを使わないことを監査した直接描画テストの明示一覧。新しいTSXテストを自動的に軽量化しない。
+
+軽量化対象へStoryの実行時importを追加すると分類検査が失敗する。Storyを使うよう変更した場合は一覧から外して `component` へ戻す。間接helperにStory依存を追加した場合も同じ判断が必要で、直接参照の検査だけでは間接依存まで保証しない。
+
+Vitestの現在の設定はCSSを処理しない既定値を使うため、このjsdom検査はPandaCSSによる表示やレイアウトの証明ではない。CSSを含む実ブラウザの保証は既存のStorybook/browser入口で維持する。性能の条件と測定結果は [テスト層の改善計画](../plans/e2e-test-layer-performance.md) に記録する。
+
 ## staged hook
 
 `pnpm e2e:ledger:staged` はGit index stage 0の台帳JSONだけを読み、schema・ID・参照を検査する。working treeの未stage修正で不正なindexを救済しない。競合・symlink・検査中のindex変更を拒否する。
