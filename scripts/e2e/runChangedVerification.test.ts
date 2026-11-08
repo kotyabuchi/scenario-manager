@@ -224,6 +224,9 @@ describe('差分検証のroot入口', () => {
     });
     expect(prepareChangedVerification).not.toHaveBeenCalled();
     expect(runVerification).not.toHaveBeenCalled();
+    expect(selectionConsoleSummary(result)).not.toHaveProperty(
+      'shadowFailureClassification',
+    );
     expectLatestReceipt(result);
   });
 
@@ -296,7 +299,7 @@ describe('差分検証のroot入口', () => {
       noOp: false,
       selectedLegacyPolicy: 'legacy-local',
       integrationLegacyExecuted: false,
-      shadowFailureClassification: {
+      shadowFailureAttributionPolicy: {
         attributable: 'storybook-assertions',
         otherRunnerFailures: 'inconclusive',
       },
@@ -305,6 +308,33 @@ describe('差分検証のroot入口', () => {
         integrationLegacy: 'not-executed',
       },
     });
+  });
+
+  it.each([
+    'passed',
+    'failed',
+  ] as const)('shadow未実行の%sでも帰属可能範囲を実失敗の分類として公開しない', async (status) => {
+    prepare('supabase/migrations/new.sql');
+    vi.mocked(runVerification)
+      .mockReset()
+      .mockImplementationOnce(async (_root, options) =>
+        runResult(options, firstRunId, status),
+      );
+    const result = await runChangedVerification(repository);
+    const summary = selectionConsoleSummary(result);
+    expect(summary).toMatchObject({
+      status,
+      mode: 'full-required',
+      partial: { verificationId: firstRunId, status },
+      full: { verificationId: firstRunId, status },
+      shadow: null,
+      shadowFailureAttributionPolicy: {
+        attributable: 'storybook-assertions',
+        otherRunnerFailures: 'inconclusive',
+      },
+    });
+    expect(summary).not.toHaveProperty('shadowFailureClassification');
+    expect(runVerification).toHaveBeenCalledOnce();
   });
 
   it.each([
