@@ -195,8 +195,19 @@ export const createSessionFixture = async (
       .insert(row)
       .select('session_id, user_id, participant_type, participant_status')
       .single();
-    if (!isNil(created.error) || !isDeepStrictEqual(created.data, row))
-      throw new Error('fixtureの参加者作成または役割設定に失敗しました。');
+    if (!isNil(created.error)) {
+      // DB本文や接続情報を出さず、HTTP障害とSQL障害を切り分ける。
+      const code = /^(?:[0-9A-Z]{5}|PGRST\d{3})$/.test(created.error.code)
+        ? created.error.code
+        : 'unknown';
+      throw new Error(
+        `fixtureの参加者作成に失敗しました。status=${created.status} code=${code} type=${row.participant_type}`,
+      );
+    }
+    if (!isDeepStrictEqual(created.data, row))
+      throw new Error(
+        `fixtureの参加者の役割設定が一致しません。status=${created.status} type=${row.participant_type}`,
+      );
     await journal.record(resource);
   }
   // outsiderが参加しておらず、keeper/creator/playerの業務上の役割が別々であることを実行前に確認する。
