@@ -76,7 +76,7 @@ private log、認証state、DB接続情報、raw trace、`test-results` 全体�
 
 必須status名は **E2E verification gate** を維持する。旧 `Static Ledger Gate` は統合済み。2026-11-07の読み取りではmain ruleset `26680579` がactiveで、GitHub Actions（integration ID 15368）の同checkを要求し、最新mainへの追従も必須、bypassは空だった。今回の分割では設定を変更しない。
 
-PR #9未マージの段階導入ではbase `perf/e2e-tools` をworkflowとPRイベントschemaの両方へ固定追加する。未知branchと同branchへのpushは許可しない。PR #9マージ後、後続PRをmainへ切り替えて再検証する際に、この一時許可を削除する。
+PR #9のmain反映に伴い、段階導入用base `perf/e2e-tools` の一時許可をtest／duplicates workflowとPRイベントschemaから削除した。PR #10はmain向けの新しいhead/run/attemptで再検証する。廃止したbase・類似名・同branchへのpushは拒否する。既存の `feat/ui-local-test-prerequisite` の許可はtest workflowとschemaに維持する。
 
 ## M3の受入結果（2026-11-05）
 

@@ -161,3 +161,35 @@ attempt1は最初のjob開始からaggregate完了まで872秒、全job合計1,9
 診断head `7064c41e9af547d10f31d0fc41e33ad18cf1c570` のrun42367955939 attempt1は全7jobと重複検査が成功し、同じhead/run/attemptの6組のartifactを独立再検証した。必須67・extras312、全330行、6 DB cleanup・7 process終了、固定履歴も一致。required verificationは `188ec1a5e578`、desktopは `ba1f264488a7`、mobileは `329ecd4acb31`。この試行では失敗が再現しなかったため、診断の公開経路は限定反例テストで検証済みだが、実際のHosted失敗ケースの特定・原因解消は未完了である。
 
 この成功観測の最初のjob開始→aggregate完了は1,070秒（17分50秒）、全job和は2,406 runner秒。PR9基準との差は-364秒・+8 runner秒。planner379秒、required563秒、desktop640秒、mobile452秒、aggregate47秒、Ubuntu229秒、Windows96秒だった。初回成功観測と別の試行として扱い、前述の失敗2回の合計3,848 runner秒を除外して安定性を主張しない。計時記録の訂正後の最終headでもCIと成果物を確認し、結果はPR本文へ記録する。
+
+### PR9本番反映とPR10のmain向け再検証（2026-11-07）
+
+ユーザーがPR #9のmainマージ・本番デプロイと、PR #10のmain向け再検証を承認した。PR #9はmerge commit `e9427ba2fb1fbeb8ead90970d45bd24c47bf9fa0` で取り込まれ、Cloudflare deploy run42372091931は成功。main Test run42372091782と本番疎通を確認後、PR #10をmainへ切り替える。PR #10の本番マージは今回の承認範囲に含めない。
+
+一時base `perf/e2e-tools` を両workflowとPRイベントschemaから削除し、旧base・類似名・pushの拒否、main/developと既存前提baseの受理を回帰確認する。この再検証Batchの比較元は上記main merge commitに固定する。旧固定base `0a5133d489d14e0a94c6fded66ebb656c6f8869b` とmainのtreeは同一だが、PR event baseはmain merge commit、履歴上のmerge-baseは旧固定baseであり区別する。過去の測定・受入記録は変更しない。新しいhead/run/attemptのCI、成果物、完全cleanupを確認するまで再検証は完了扱いにしない。以前のdesktop間欠失敗の原因未特定という制限は維持する。
+
+再検証の初回quality `1ef0edde6514` はlint・型を通過したが、unit1件（AvailabilityWorkspacesの通常位置／固定バーの確定保存）で失敗した。1,096成功・既存skip8・1失敗、tools以降とDB環境起動には進んでいない。限定再現ではエラー表示後も保存中が続くことと、待機中の全画面role探索に約113〜234msかかることを観測した。単発の元失敗はDOM出力が途中で切れており原因確定とは扱わず、待機ループは安価なbuttonラベル・有効状態で確認し、成立後にアクセシブルなroleを一度照合してクリックする限定テスト修正を行う。両位置からの操作と1／2回目のエラー表示を維持し、製品処理・既定timeout・retry・skipを変更しない。失敗receiptは保存し、新しい共通gateで全体を再確認する。
+
+2026-11-08の再開時にmain Test run42372091782 attempt1の全6job成功を確認。5組のartifactはGitHub metadataとZIP SHA256を照合し、承認main revisionの未変更schema1 validatorで独立再集約した。実効計画67必須・extras312、catalog348、legacy330行（成功319・既存skip11のidentity一致）、6 DB cleanup・7 process終了、固定履歴digestを確認。required verificationは `642b74d1ab04`、legacyは `e813ff79985e`。現在のcheckout HEADをmainへ変更せず、歴史pushの固定before/headと実Git objects、取得元metadataを分けて検証した。
+
+PR #10のbaseをmainへ変更し、Draftと未マージを維持した。現在headは `eae61a7273dd60e7c29fca908973f27321c19a20` で、main向けの新しい変更headは未公開。strict status設定により現在のmergeStateStatusはBEHINDだが、PR head検証はevent baseとmerge-baseを分離して実行できる。本番マージ前のmain追従とその後の再検証は別途必要であり、今回の承認範囲に本番マージは含めない。
+
+### main向け再検証でのfixture診断（2026-11-08）
+
+再開後のquality `6108c6a505fd` / selection `3d1e90be78ff` / verification `088f45a0f397` はlint・型・unit1,097成功/既存skip8・tools2,194成功・台帳を通過。integration30件とStorybook9件は成功したが、isolatedの日程調整10件のうち `schedule-confirm-persist / keeper-only / main` が画面操作前の参加者作成で失敗し、legacy4projectには進まなかった。失敗runを成功扱いにせず保存し、所有DB cleanupと専用port・container・テスト用Node残留0を確認した。
+
+元の例外はINSERTエラーと返却row不一致をまとめていたため、保存証跡から原因を判別できなかった。両方の厳格な失敗条件を保持したまま分岐を分け、HTTP status・形式検証済みSQLSTATE/PGRST code・ローカルで決まる参加者種別だけを記録する。DB本文・接続情報・IDは出さず、timeout/retry/skipも変更しない。これは診断改善であり、原因解消を示すものではない。
+
+また、要約の固定方針 `shadowFailureClassification` が実際の失敗分類に見えるため、`shadowFailureAttributionPolicy` へ改名した。今回shadow比較は未実行で、Storybook失敗という当初の読み取りは誤りだった。実runの合否判定は変更しない。追加修正の限定50テストとBiome、[全9コードファイルの6観点レビュー](../reviews/diff-review-2026-11-08-2.md) は成功。対象の所有環境での再実行と、新しい共通qualityは別途必要。
+
+共通gate受入後、変更を通常hook付きでコミットし、固定main `e9427ba2fb1fbeb8ead90970d45bd24c47bf9fa0` を検証ブランチへ通常mergeする。merge前後のtree完全一致、merge parentと新merge-baseの固定SHA一致を確認し、一括push後の最終headで全7job・6組のartifactを再受入する。merge前のローカルreceiptとmerge後のHosted証跡を区別する。このmain追従はPR #10の本番マージではない。
+
+### main向けローカル共通gateの受入（2026-11-08）
+
+診断追加後のquality `f0187e70242a` / selection `240bd4bb92ae` / verification `306d2bf199f5` が成功した。lint・型、unit91ファイル1,097成功/既存skip8、tools148ファイル2,199成功、全台帳・登録収集・差分選択・7実行stageを通過。保存物を独立に再検証し、必須67・extras312、legacy330行（成功319・既存例外11、project別57/57/108/108）、desktop/mobileのCI consumer各165行と一致した。開始・終了のinput digestは `f5210929354adaeb7e4552dc43c39f69ca5c2a8196943dd99160adb8c4caffb0` で同一。6 DB環境のcleanup complete、7 processの終了・エラー0を確認し、ホスト側でもNodeと稼働containerの残留0を確認した。
+
+日程調整10件はすべて成功し、先の参加者INSERT/row照合失敗は再現しなかった。以前のHosted desktop失敗も含め、原因解消が証明されたとは扱わない。今回の受入はmerge前HEADと未コミット入力に対するローカル証跡であり、main追従後の最終headのHosted受入は別途必要。
+
+単独診断入口 `scheduleCheck.ts` には、画面部品由来のsurface契約を解決できない既存不整合も見つかった。discovery10件とbindingは成功するが、surface projectionを含まないinventoryによりMISSING_TARGET2件・UNEXPECTED_CHECK8件となる。surface対応済みの正規共通gateとは別経路で、今回のE2E失敗原因ではない。
+
+- [ ] 後続変更で単独scheduleCheckのinventoryをsurface対応へ揃え、surface生成をmockで省かない回帰を追加する。今回の受入では単独入口の成功や修復を主張しない。

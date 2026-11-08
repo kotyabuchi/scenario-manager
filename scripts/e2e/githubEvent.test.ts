@@ -18,10 +18,7 @@ afterEach(() => {
   for (const repo of roots.splice(0)) repo.cleanup();
 });
 
-const prerequisiteBranches = [
-  'feat/ui-local-test-prerequisite',
-  'perf/e2e-tools',
-];
+const prerequisiteBranches = ['feat/ui-local-test-prerequisite'];
 
 const pullRequest = (
   base: string,
@@ -64,15 +61,25 @@ describe('GitHubイベントのJSON契約', () => {
     });
   });
 
-  it.each(
-    prerequisiteBranches,
-  )('%sを比較元とするPRを受理する', (prerequisiteBranch) => {
+  it.each([
+    'main',
+    'develop',
+    ...prerequisiteBranches,
+  ])('%sを比較元とするPRを受理する', (prerequisiteBranch) => {
     const { base, head } = events.pull_request.payload.pull_request;
     expect(pullRequest(base.sha, head.sha, prerequisiteBranch)).toMatchObject({
       event: 'pull_request',
       base: base.sha,
       head: head.sha,
     });
+  });
+
+  it.each([
+    'perf/e2e-tools',
+    'perf/e2e-tools-other',
+  ])('廃止した一時比較元%sを拒否する', (retiredBranch) => {
+    const { base, head } = events.pull_request.payload.pull_request;
+    expect(() => pullRequest(base.sha, head.sha, retiredBranch)).toThrow();
   });
 
   it.each(
@@ -84,9 +91,10 @@ describe('GitHubイベントのJSON契約', () => {
     ).toThrow();
   });
 
-  it.each(
-    prerequisiteBranches,
-  )('%sへのpushを拒否する', (prerequisiteBranch) => {
+  it.each([
+    ...prerequisiteBranches,
+    'perf/e2e-tools',
+  ])('%sへのpushを拒否する', (prerequisiteBranch) => {
     const ref = `refs/heads/${prerequisiteBranch}`;
     expect(() =>
       parseGithubEvent({
