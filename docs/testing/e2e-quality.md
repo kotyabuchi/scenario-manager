@@ -28,6 +28,14 @@ DOMのmatcher・必要なブラウザAPI・各test後のReact/DOM cleanupは `.s
 
 Vitestの現在の設定はCSSを処理しない既定値を使うため、このjsdom検査はPandaCSSによる表示やレイアウトの証明ではない。CSSを含む実ブラウザの保証は既存のStorybook/browser入口で維持する。性能の条件と測定結果は [テスト層の改善計画](../plans/e2e-test-layer-performance.md) に記録する。
 
+### 準備処理の内訳計測
+
+Hosted plannerは既存のphase計時に加え、`[preparation-timing]`でsource解析、collector、inventory、登録検査、revisionごとの解析・再利用、選択・checkpointを記録する。ローカルでは `E2E_PREPARATION_TIMING=1` を設定して共通入口を実行すると同じ内訳を出せる。計測は診断専用で、合否・receipt・digestには含めない。固定処理名、時間、成否、固定revision、再利用有無だけを出す。
+
+各collectorは並行し、inventoryはsource解析を内包するため、内訳の合計をwallと見なさない。static→collectionでは同じ呼び出し内のraw inventoryだけを一度共有する。fresh入力、Git入口、物理ファイル・依存型・設定・存在/realpath/ディレクトリ照会が一致した場合に限り、用途ごとのcollector・登録/台帳検査・legacy・plan・終了時checkpointは毎回実行する。不一致や証拠不足ならfresh解析へ戻る。
+
+ローカルの条件・結果と残件は [準備処理の改善計画](../plans/e2e-planner-performance.md) を参照。
+
 ## staged hook
 
 `pnpm e2e:ledger:staged` はGit index stage 0の台帳JSONだけを読み、schema・ID・参照を検査する。working treeの未stage修正で不正なindexを救済しない。競合・symlink・検査中のindex変更を拒否する。

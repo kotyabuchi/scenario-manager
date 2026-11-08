@@ -5,7 +5,12 @@ import { ledgerSchema } from '../../e2e/ledger/schema';
 import { discoverySchema } from './discoverySchema';
 import { inventoryFixture } from './fixtures/selection';
 import { legacyKey } from './legacy';
-import { prepareVerification } from './prepareVerification';
+import {
+  prepareVerification,
+  prepareVerificationDetails,
+} from './prepareVerification';
+
+import type { StaticState } from './staticGate';
 
 const mocks = vi.hoisted(() => ({
   capture: vi.fn(),
@@ -22,6 +27,8 @@ const mocks = vi.hoisted(() => ({
   legacy: vi.fn(),
   selection: vi.fn(),
   plan: vi.fn(),
+  inventory: vi.fn(),
+  consume: vi.fn(),
 }));
 vi.mock('./fingerprint', () => ({
   captureInputs: mocks.capture,
@@ -34,8 +41,9 @@ vi.mock('./discoverIntegration', () => ({
 }));
 vi.mock('./discoveryBindings', () => ({ bindDiscovery: mocks.bind }));
 vi.mock('./requirements', () => ({ validateLedger: mocks.validate }));
-vi.mock('./inventory', () => ({
-  buildInventory: vi.fn(() => inventoryFixture()),
+vi.mock('./inventory', () => ({ buildInventory: mocks.inventory }));
+vi.mock('./staticGate', () => ({
+  consumeReusableStaticInventory: mocks.consume,
 }));
 vi.mock('./source', () => ({ loadSource: vi.fn(() => ({})) }));
 vi.mock('./scheduleCheckExpectations', () => ({
@@ -113,6 +121,7 @@ const fixture = () => {
   mocks.legacy.mockResolvedValue({});
   mocks.selection.mockReturnValue({ entries: [] });
   mocks.plan.mockReturnValue(plan);
+  mocks.inventory.mockImplementation(() => inventoryFixture());
   return { ledger, plan, inputs };
 };
 
@@ -121,6 +130,45 @@ beforeEach(() => {
 });
 
 describe('verification準備の失敗境界', () => {
+  it('一回限りのinventory hitでもcollectorと登録検査を省かない', async () => {
+    const { inputs } = fixture();
+    const inventory = inventoryFixture();
+    const staticState = {} as StaticState;
+    mocks.consume.mockReturnValue(inventory);
+    const prepared = await prepareVerificationDetails(
+      'fixture-root',
+      undefined,
+      staticState,
+    );
+    expect(mocks.consume).toHaveBeenCalledWith(
+      staticState,
+      'fixture-root',
+      inputs,
+      undefined,
+    );
+    expect(mocks.inventory).not.toHaveBeenCalled();
+    expect(mocks.discover).toHaveBeenCalledTimes(3);
+    expect(mocks.integration).toHaveBeenCalledOnce();
+    expect(mocks.bind).toHaveBeenCalledOnce();
+    expect(mocks.validate).toHaveBeenCalledOnce();
+    expect(mocks.plan).toHaveBeenCalledOnce();
+    expect(prepared.plan).toBe(mocks.plan.mock.results[0]?.value);
+    expect(mocks.capture).toHaveBeenCalledTimes(2);
+  });
+
+  it('inventory missでは従来のfresh解析と登録検査を行う', async () => {
+    fixture();
+    mocks.consume.mockReturnValue(undefined);
+    await prepareVerificationDetails(
+      'fixture-root',
+      undefined,
+      {} as StaticState,
+    );
+    expect(mocks.inventory).toHaveBeenCalledOnce();
+    expect(mocks.validate).toHaveBeenCalledOnce();
+    expect(mocks.plan).toHaveBeenCalledOnce();
+  });
+
   it('legacy全4projectの選択を明示extraへ保持し、実discoveryと対応させる', async () => {
     fixture();
     const tests = legacyProjectSchema.options.map((project) => ({

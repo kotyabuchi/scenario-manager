@@ -15,6 +15,7 @@ import { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 
 import type { InventoryDiagnostic, SourceManifest } from './inventorySchema';
+import type { SourceReadObserver } from './sourceReadWitness';
 
 const posix = (value: string) => value.replaceAll('\\', '/');
 const normalizeText = (value: string) => value.replace(/\r\n?/g, '\n');
@@ -94,13 +95,17 @@ const createFileAccess = (
   root: string,
   relative: (file: string) => string,
   diagnostics: InventoryDiagnostic[],
+  observeRead?: SourceReadObserver,
 ) => {
-  const physicalRoot = realpathSync(root);
+  const observe = <T>(read: () => T): T =>
+    observeRead ? observeRead(read) : read();
+  const physicalRoot = observe(() => realpathSync(root));
   const nodeModules = path.join(root, 'node_modules');
   const packageRoots = new Set([
-    realpathSync(path.dirname(ts.getDefaultLibFilePath({}))),
+    observe(() => realpathSync(path.dirname(ts.getDefaultLibFilePath({})))),
   ]);
-  if (existsSync(nodeModules)) packageRoots.add(realpathSync(nodeModules));
+  if (observe(() => existsSync(nodeModules)))
+    packageRoots.add(observe(() => realpathSync(nodeModules)));
   const packageAliases = new Map<string, string>();
   const isPackageFile = (absolute: string, physical: string) => {
     if (isInside(root, absolute)) {
@@ -109,8 +114,8 @@ const createFileAccess = (
       const parts = path.relative(nodeModules, absolute).split(path.sep);
       const length = parts[0]?.startsWith('@') ? 2 : 1;
       const packagePath = path.join(nodeModules, ...parts.slice(0, length));
-      if (existsSync(packagePath)) {
-        const physicalPackage = realpathSync(packagePath);
+      if (observe(() => existsSync(packagePath))) {
+        const physicalPackage = observe(() => realpathSync(packagePath));
         packageRoots.add(physicalPackage);
         packageAliases.set(physicalPackage, packagePath);
       }
@@ -126,8 +131,8 @@ const createFileAccess = (
     const absolute = path.resolve(file);
     const cached = checked.get(absolute);
     if (cached !== undefined) return cached;
-    if (!existsSync(absolute)) return true;
-    const physical = realpathSync(absolute);
+    if (!observe(() => existsSync(absolute))) return true;
+    const physical = observe(() => realpathSync(absolute));
     const allowed =
       isInside(physicalRoot, physical) || isPackageFile(absolute, physical);
     checked.set(absolute, allowed);
@@ -142,7 +147,7 @@ const createFileAccess = (
   };
   const readFile = (file: string) => {
     if (!isAllowed(file)) return undefined;
-    const content = ts.sys.readFile(file);
+    const content = observe(() => ts.sys.readFile(file));
     return content === undefined ? undefined : normalizeText(content);
   };
   const manifestPath = (file: string) => {
@@ -212,22 +217,61 @@ export const loadSource = (
   snapshot?: SnapshotFiles & {
     packages: ReturnType<typeof createStablePackageSystem>['system'];
   },
-  options: { entryMode?: 'product' | 'storybook' } = {},
+  options: {
+    entryMode?: 'product' | 'storybook';
+    observeRead?: SourceReadObserver;
+  } = {},
 ) => {
   const root = path.resolve(directory);
   const gitFiles = snapshot
     ? [...snapshot.files].sort(compare)
-    : listGitFiles(root);
+    : options.observeRead
+      ? options.observeRead(() => listGitFiles(root))
+      : listGitFiles(root);
   const gitFileSet = new Set(gitFiles);
   const relative = createPaths(root, gitFiles);
   const diagnostics: InventoryDiagnostic[] = [];
   const contents = new Map<string, string>();
-  const access = createFileAccess(root, relative, diagnostics);
+  const access = createFileAccess(
+    root,
+    relative,
+    diagnostics,
+    options.observeRead,
+  );
+  const observe = <T>(read: () => T): T =>
+    options.observeRead ? options.observeRead(read) : read();
+  const sysRealpath = ts.sys.realpath;
   const physical = {
     ...ts.sys,
     readFile: access.readFile,
     fileExists: (file: string) =>
-      access.isAllowed(file) && ts.sys.fileExists(file),
+      access.isAllowed(file) && observe(() => ts.sys.fileExists(file)),
+    ...(options.observeRead
+      ? {
+          directoryExists: (directory: string) =>
+            observe(() => ts.sys.directoryExists(directory)),
+          getDirectories: (directory: string) =>
+            observe(() => ts.sys.getDirectories(directory)),
+          readDirectory: (...args: Parameters<typeof ts.sys.readDirectory>) => {
+            const [directory, extensions, excludes, includes, depth] = args;
+            const savedExtensions = extensions?.slice();
+            const savedExcludes = excludes?.slice();
+            const savedIncludes = includes?.slice();
+            return observe(() =>
+              ts.sys.readDirectory(
+                directory,
+                savedExtensions?.slice(),
+                savedExcludes?.slice(),
+                savedIncludes?.slice(),
+                depth,
+              ),
+            );
+          },
+          ...(sysRealpath
+            ? { realpath: (file: string) => observe(() => sysRealpath(file)) }
+            : {}),
+        }
+      : {}),
   };
   const system = snapshot
     ? createSnapshotSystem(
@@ -270,6 +314,11 @@ export const loadSource = (
     host.directoryExists = system.directoryExists;
     host.getDirectories = system.getDirectories;
     if (system.realpath) host.realpath = system.realpath;
+  } else if (options.observeRead) {
+    host.directoryExists = physical.directoryExists;
+    host.getDirectories = physical.getDirectories;
+    if (physical.realpath) host.realpath = physical.realpath;
+    host.readDirectory = physical.readDirectory;
   }
   // 補助型の入口もGitを正本にし、buildが作るambient型を自動追加しない。
   // 実装からimport/referenceで到達する型は、hostで除外せずsnapshotへ残す。

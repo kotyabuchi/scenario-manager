@@ -14,9 +14,15 @@ import { buildLegacy, legacyKey, legacyManifestSchema } from './legacy';
 import { legacyExecutionSchema } from './legacyExecutionSchema';
 import { verifyLegacyOrigins } from './legacyOrigin';
 import { createLegacySelection } from './legacySelection';
+import {
+  measurePreparation,
+  measurePreparationSync,
+  type PreparationTimingObserver,
+} from './preparationTiming';
 import { validateLedger } from './requirements';
 import { createScheduleExpectations } from './scheduleCheckExpectations';
 import { loadSource } from './source';
+import { consumeReusableStaticInventory, type StaticState } from './staticGate';
 import { withSurfaceNodes } from './surfaceProjection';
 import { createVerificationPlan } from './verificationPlan';
 
@@ -58,44 +64,111 @@ const scopeProfile = (ledger: Ledger, profile: string): Ledger => ({
 });
 
 /** DBやアプリの起動前に全collectorの終了を待ち、実行する全集合を固定する。 */
-export const prepareVerificationDetails = async (root: string) => {
-  const inputs = await captureInputs(root);
-  const results = await Promise.allSettled([
-    loadLedger(root),
-    discover({
-      root,
-      profile: 'app',
-      config: 'playwright.legacy-local.config.ts',
-      setupProjects: [],
-    }),
-    discover({
-      root,
-      profile: 'isolated',
-      config: 'playwright.isolated.config.ts',
-      setupProjects: [],
-    }),
-    discover({
-      root,
-      profile: 'storybook',
-      config: '.storybook/playwright.config.ts',
-      setupProjects: [],
-    }),
-    discoverIntegration({ root }),
-  ]);
+export const prepareVerificationDetails = async (
+  root: string,
+  onTiming?: PreparationTimingObserver,
+  staticState?: StaticState,
+) => {
+  const inputs = await measurePreparation(
+    { phase: 'collection', operation: 'inputs' },
+    onTiming,
+    () => captureInputs(root),
+  );
+  const results = await measurePreparation(
+    { phase: 'collection', operation: 'discovery-wait' },
+    onTiming,
+    () =>
+      Promise.allSettled([
+        measurePreparation(
+          { phase: 'collection', operation: 'ledger' },
+          onTiming,
+          () => loadLedger(root),
+        ),
+        measurePreparation(
+          { phase: 'collection', operation: 'discover-app' },
+          onTiming,
+          () =>
+            discover({
+              root,
+              profile: 'app',
+              config: 'playwright.legacy-local.config.ts',
+              setupProjects: [],
+            }),
+        ),
+        measurePreparation(
+          { phase: 'collection', operation: 'discover-isolated' },
+          onTiming,
+          () =>
+            discover({
+              root,
+              profile: 'isolated',
+              config: 'playwright.isolated.config.ts',
+              setupProjects: [],
+            }),
+        ),
+        measurePreparation(
+          { phase: 'collection', operation: 'discover-storybook' },
+          onTiming,
+          () =>
+            discover({
+              root,
+              profile: 'storybook',
+              config: '.storybook/playwright.config.ts',
+              setupProjects: [],
+            }),
+        ),
+        measurePreparation(
+          { phase: 'collection', operation: 'discover-integration' },
+          onTiming,
+          () => discoverIntegration({ root }),
+        ),
+      ]),
+  );
   const ledger = fulfilled(results[0]);
   const app = fulfilled(results[1]);
   const isolated = fulfilled(results[2]);
   const storybook = fulfilled(results[3]);
   const integration = fulfilled(results[4]);
   const discoveries = [app, isolated, storybook, integration.discovery];
-  const bindings = bindDiscovery(ledger, discoveries);
-  const validation = validateLedger({
-    inventory: withSurfaceNodes(
-      buildInventory(loadSource(root), loadStorySurfaceContext(root)),
-    ),
-    ledger,
-    registrations: bindings.registrations,
-  });
+  const reusableInventory = staticState
+    ? consumeReusableStaticInventory(staticState, root, inputs, onTiming)
+    : undefined;
+  const { bindings, validation } = measurePreparationSync(
+    { phase: 'collection', operation: 'bind-validate' },
+    onTiming,
+    () => {
+      const bindings = bindDiscovery(ledger, discoveries);
+      const validation = validateLedger({
+        inventory: withSurfaceNodes(
+          measurePreparationSync(
+            {
+              phase: 'collection',
+              operation: 'inventory',
+              reused: reusableInventory !== undefined,
+            },
+            onTiming,
+            () =>
+              reusableInventory ??
+              buildInventory(
+                measurePreparationSync(
+                  { phase: 'collection', operation: 'product-source' },
+                  onTiming,
+                  () => loadSource(root),
+                ),
+                measurePreparationSync(
+                  { phase: 'collection', operation: 'story-source' },
+                  onTiming,
+                  () => loadStorySurfaceContext(root),
+                ),
+              ),
+          ),
+        ),
+        ledger,
+        registrations: bindings.registrations,
+      });
+      return { bindings, validation };
+    },
+  );
   if (bindings.issues.length > 0 || validation.issues.length > 0)
     throw new Error('統合runの台帳と実登録が一致しません。');
   const scheduleExpected = createScheduleExpectations(
@@ -106,52 +179,70 @@ export const prepareVerificationDetails = async (root: string) => {
     ledger,
     integration,
   );
-  const read = (name: string): unknown => {
-    const contents = readArtifact(root, `e2e/ledger/${name}`);
-    if (isNil(contents)) throw new Error('legacy移行台帳がありません。');
-    return JSON.parse(contents);
-  };
-  const legacy = legacyManifestSchema.parse(
-    read('legacy-tests.generated.json'),
-  );
-  const execution = legacyExecutionSchema.parse(read('legacy-execution.json'));
-  await verifyLegacyOrigins(root, execution);
-  const currentLegacy = await buildLegacy(root, [app]);
-  const byLegacyKey = new Map(
-    execution.entries.map((entry) => [entry.key, entry]),
-  );
-  const byTestKey = new Map(
-    app.tests.map((test) => [legacyKey('app', test), test]),
-  );
-  const allowedExtraTests: Omit<VerificationExtraTest, 'key'>[] = [];
-  for (const project of legacyProjectSchema.options) {
-    const selected = createLegacySelection({
-      legacy,
-      execution,
-      currentLegacy,
-      project,
-    });
-    for (const row of selected.entries) {
-      const entry = byLegacyKey.get(row.key);
-      const test = byTestKey.get(row.key);
-      if (isNil(entry) || isNil(test))
-        throw new Error('legacy実行集合の対応がありません。');
-      if (entry.disposition !== 'replacement')
-        allowedExtraTests.push({
-          profile: 'app',
-          runtime: 'next-production',
-          test,
-          legacy: entry,
+  const { legacy, allowedExtraTests } = await measurePreparation(
+    { phase: 'collection', operation: 'legacy' },
+    onTiming,
+    async () => {
+      const read = (name: string): unknown => {
+        const contents = readArtifact(root, `e2e/ledger/${name}`);
+        if (isNil(contents)) throw new Error('legacy移行台帳がありません。');
+        return JSON.parse(contents);
+      };
+      const legacy = legacyManifestSchema.parse(
+        read('legacy-tests.generated.json'),
+      );
+      const execution = legacyExecutionSchema.parse(
+        read('legacy-execution.json'),
+      );
+      await verifyLegacyOrigins(root, execution);
+      const currentLegacy = await buildLegacy(root, [app]);
+      const byLegacyKey = new Map(
+        execution.entries.map((entry) => [entry.key, entry]),
+      );
+      const byTestKey = new Map(
+        app.tests.map((test) => [legacyKey('app', test), test]),
+      );
+      const allowedExtraTests: Omit<VerificationExtraTest, 'key'>[] = [];
+      for (const project of legacyProjectSchema.options) {
+        const selected = createLegacySelection({
+          legacy,
+          execution,
+          currentLegacy,
+          project,
         });
-    }
-  }
-  const plan = createVerificationPlan({
-    ledger,
-    discoveries,
-    integrationCollection: integration,
-    allowedExtraTests,
-  });
-  const after = await captureInputs(root);
+        for (const row of selected.entries) {
+          const entry = byLegacyKey.get(row.key);
+          const test = byTestKey.get(row.key);
+          if (isNil(entry) || isNil(test))
+            throw new Error('legacy実行集合の対応がありません。');
+          if (entry.disposition !== 'replacement')
+            allowedExtraTests.push({
+              profile: 'app',
+              runtime: 'next-production',
+              test,
+              legacy: entry,
+            });
+        }
+      }
+      return { legacy, allowedExtraTests };
+    },
+  );
+  const plan = measurePreparationSync(
+    { phase: 'collection', operation: 'plan' },
+    onTiming,
+    () =>
+      createVerificationPlan({
+        ledger,
+        discoveries,
+        integrationCollection: integration,
+        allowedExtraTests,
+      }),
+  );
+  const after = await measurePreparation(
+    { phase: 'collection', operation: 'checkpoint' },
+    onTiming,
+    () => captureInputs(root),
+  );
   const changes = compareInputs(inputs, after);
   if (Object.values(changes).some((paths) => paths.length > 0))
     throw new Error('列挙中に検証入力が変化しました。');

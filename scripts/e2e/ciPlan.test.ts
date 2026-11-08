@@ -140,6 +140,17 @@ beforeEach(() => {
 });
 
 describe('CI planner', () => {
+  it('診断observerを選択準備へ渡し、計測値をreceiptへ混ぜない', async () => {
+    const onTiming = vi.fn();
+    await planCiVerification(root, env, signal, undefined, onTiming);
+    expect(vi.mocked(prepareChangedVerification)).toHaveBeenCalledWith(
+      expect.objectContaining({ onTiming }),
+    );
+    expect(vi.mocked(writeCiArtifact).mock.calls[0]?.[2]).not.toHaveProperty(
+      'onTiming',
+    );
+  });
+
   it('品質前段とNoOp検査の後に、固定smokeを含むmanifestを出す', async () => {
     const result = await planCiVerification(root, env, signal);
     expect(result).toEqual({

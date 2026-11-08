@@ -227,7 +227,13 @@ it.each([
     head: 'a'.repeat(40),
   } as const;
   vi.mocked(planCiVerification).mockImplementationOnce(
-    async (_root, _env, _signal, onProgress) => {
+    async (_root, _env, _signal, onProgress, onTiming) => {
+      onTiming?.({
+        phase: 'selection',
+        operation: 'decision',
+        elapsedMs: 3,
+        outcome: 'completed',
+      });
       onProgress?.({ phase: 'context' });
       now = 15;
       onProgress?.({ phase: 'inputs' });
@@ -278,6 +284,24 @@ it.each([
             { phase: 'quality', qualityCheck: 'typecheck', elapsedMs: 23 },
             { phase: 'quality', qualityCheck: 'test:e2e-tools', elapsedMs: 7 },
             { phase: 'artifacts', elapsedMs: 8 },
+          ]
+        : [],
+    );
+    const preparationLines = stderr.mock.calls
+      .map(([line]) => String(line))
+      .filter((line) => line.startsWith('[preparation-timing] '))
+      .map((line): unknown =>
+        JSON.parse(line.slice('[preparation-timing] '.length)),
+      );
+    expect(preparationLines).toEqual(
+      githubActions
+        ? [
+            {
+              phase: 'selection',
+              operation: 'decision',
+              elapsedMs: 3,
+              outcome: 'completed',
+            },
           ]
         : [],
     );
