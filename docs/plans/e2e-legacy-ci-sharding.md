@@ -192,4 +192,50 @@ PR #10のbaseをmainへ変更し、Draftと未マージを維持した。現在h
 
 単独診断入口 `scheduleCheck.ts` には、画面部品由来のsurface契約を解決できない既存不整合も見つかった。discovery10件とbindingは成功するが、surface projectionを含まないinventoryによりMISSING_TARGET2件・UNEXPECTED_CHECK8件となる。surface対応済みの正規共通gateとは別経路で、今回のE2E失敗原因ではない。
 
-- [ ] 後続変更で単独scheduleCheckのinventoryをsurface対応へ揃え、surface生成をmockで省かない回帰を追加する。今回の受入では単独入口の成功や修復を主張しない。
+- [x] 後続Batch 4で単独scheduleCheckのinventoryをsurface対応へ揃え、surface生成をmockで省かない回帰と単独10件を確認した。上記のmain向け受入とは別の変更・証跡である。
+
+## Batch 4: 単独診断入口と間欠失敗の追加調査（2026-11-08）
+
+ユーザーが残件の調査・修復を明示指示した。作業場所は同じ専用worktree/branch、開始時比較元は受入済みHEAD `ebafe3fd3923699492924bf89233ab0c64642660` に固定する。PR #10の本番マージは対象外。
+
+### Step 4-1. 単独scheduleCheckのsurface対応
+
+正規の品質ゲートと同じsurface context/projectionを入口で使う。最小の一時repoで実ソース解析・surface生成・台帳検査を通し、修正前のMISSING_TARGET2/UNEXPECTED_CHECK8と修正後の成功を確認する。全repo解析を毎回のunit/tools回帰へ追加しない。修正後は専用の所有環境で実10件とcleanupを確認する。
+
+### Step 4-2. 間欠失敗を証拠に基づいて調査
+
+旧Hosted desktopの2失敗attemptは、保存artifactだけでなくjobログ・check注釈・summaryを再確認する。個別ケースの証拠が保存されていなければ、その限界を記録し原因を推測で確定しない。現行の安全な診断と過去の証拠を区別する。
+
+ローカル参加者作成の失敗は、SDKが通信失敗とレスポンス解析失敗をstatus0にまとめる点を限定mockで切り分ける。fresh所有DB1環境でbaseline1件→並列2×10の上限付きfixture診断を実施し、最初の異常で新規caseを停止、進行中caseとDBを必ず回収する。記録は許可済み原因code・phase・HTTP status等に限り、DB本文・ヘッダー・URL・資格情報・actor IDを公開しない。通常台帳の受入成功と診断試行を混同しない。
+
+### Step 4-3. 共通gate・レビュー・公開後検証
+
+修復の限定回帰・単独実行・独立レビューを経て、固定baseに対する共通qualityを実行する。失敗や未回収を成功にせず、timeout/retry/skipの緩和はしない。コミット・公開後は最終head/run/attemptのHosted CIと成果物を再受入する。非再現を根本原因修正と呼ばない。
+
+### 間欠失敗の調査結果
+
+旧Hosted run42362035321のattempt1/2について、明示job IDのログ、check summary/textと注釈を再取得した。両方とも個別ケースやassertionの情報はなく、旧failure.jsonの116指摘から初発原因を一意に復元できなかった。未実行のauth分を失敗テスト数へ数えたり、cleanup進捗だけで回収漏れと判定したりしない。現行の安全なcase hash診断は次回の再発時に使うもので、過去の原因解消を証明するものではない。
+
+ローカル参加者fixtureでは、導入済みSDKがfetch拒否とHTTP成功応答のJSON解析失敗をともにstatus0へまとめることを、実fixture/SDKを通す8反例で確認した。HTTP statusだけで通信障害と断定できないため、ignored診断harnessでは応答受信有無と許可済みcause codeを別記録し、元Responseを消費・変更しない。受付停止・中断・fetch復元・並列帰属等の8テストも通過した。
+
+fresh所有DB `07612278cb2f` でbaseline1件→並列2×10件の計21独立fixtureを実行。参加者3役×21件の全63 INSERTがHTTP201/JSONで、厳密な返却行照合・参加者集合照合を含む全caseとcase cleanupが成功した。DBのcatalog一致・環境cleanup complete、専用portと所有containerの残留0も確認した。操作budget180秒・cleanup独立60秒で、retry/skip/通常E2E timeoutを変更していない。結果は `acceptanceReceipt:false / rootCause:undetermined` として通常台帳の受入とは区別する。
+
+この条件では参加者作成失敗は再現しなかった。席競合・ID重複・別case cleanup・共有auth clientを原因とする根拠は得られず、通信・応答解析・SQL/返却行のどれだったかも元証跡から確定できない。根拠のない再試行や推測の修正を追加せず、元の2種の間欠失敗は原因未確定として残す。
+
+### 単独入口の修復と実行確認
+
+正規入口と同じ `loadStorySurfaceContext` と `withSurfaceNodes` を適用した。最小一時Git fixtureの実解析・実validatorで、surface投影がない場合のMISSING_TARGET2/UNEXPECTED_CHECK8、投影後のissue0、入口の6登録を確認する。Storyを明示renderにし、実validatorのcall-through観測で解決済みstory bindingも確認する。story contextの省略は通常の合否に直接影響しないが、この観測assertによりcontextだけ省く変異もredになる。
+
+限定2ファイル5テスト、Biome、型検査が成功。回帰本体は約1.1秒で、全repoを毎回解析する約48秒の試作は残していない。独立したSol / mediumの[6観点レビュー](../reviews/diff-review-2026-11-08-3.md)は指摘0件。timeout/retry/skip、台帳の厳格失敗、所有lifecycleとcleanup判定は変更していない。
+
+修復済み単独CLIをfresh所有環境 `533bc32d5ae3` で実行し、discovery・build・browser・evidenceを通過。期待10/実行10/成功10/journal10、issue0、migration/catalog一致、cleanup completeを確認した。終了後の専用portと所有containerも0。これは単独入口の修復確認であり、間欠失敗の原因解消や全体品質ゲートの代替ではない。
+
+初回共通quality `33872a8baf99` は入口ファイルのCRLF整形差分1件で停止し、DB起動には進まなかった。変異テストからの復元後に検査対象を新testだけへ絞ったことによる見落としで、入口をLFへ正規化した。改行以外の文字列完全一致と全3ファイルのreadonly Biomeを確認し、失敗receiptは保持したまま新しい共通gateへ進む。
+
+### Batch 4の共通gate受入
+
+新quality `3c88f7f194d5` / selection `a17cdbeffeae` / verification `78ef7c20dc1f` は成功した。lint・型、unit91ファイル1,097成功/既存skip8、tools149ファイル2,200成功、全台帳・登録収集・差分選択と全7実行stageを通過。独立した保存物の再照合で必須67・extras312、legacy330行（成功319・既存例外11、project別57/57/108/108）、CI consumer各165行の整合を確認した。
+
+開始・終了のinput digestは `15c8a7cc971363d18413ee359d506efb1eaeaf39fa284401661de8d6c8627e12` で一致。6 DB cleanup complete・7 process終了/エラー0、native確認で専用port・6所有環境のcontainer残留0。固定したコード3ファイルのSHA256も検証前後で不変だった。日程調整10件と既存4構成で過去の間欠失敗は再現していないが、根本原因解消とは扱わない。
+
+gate後の変更はこの受入記録とレビュー追記のみ。通常hook付きで修復と記録をコミットし、一括push後の最終head/run/attemptでHostedを再受入する。結果はPR本文に記録し、記録だけの追記でCIを繰り返し起動しない。追加CI効率化の残件とPR #10のDraft・本番未反映は維持する。
