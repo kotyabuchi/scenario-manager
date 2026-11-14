@@ -15,7 +15,7 @@ import { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 
 import type { InventoryDiagnostic, SourceManifest } from './inventorySchema';
-import type { SourceReadObserver } from './sourceReadWitness';
+import type { SourceReadObserver, SourceReadQuery } from './sourceReadWitness';
 
 const posix = (value: string) => value.replaceAll('\\', '/');
 const normalizeText = (value: string) => value.replace(/\r\n?/g, '\n');
@@ -97,15 +97,31 @@ const createFileAccess = (
   diagnostics: InventoryDiagnostic[],
   observeRead?: SourceReadObserver,
 ) => {
-  const observe = <T>(read: () => T): T =>
-    observeRead ? observeRead(read) : read();
-  const physicalRoot = observe(() => realpathSync(root));
+  const observe = <T>(read: () => T, query: SourceReadQuery): T =>
+    observeRead ? observeRead(read, query) : read();
+  const physicalRoot = observe(() => realpathSync(root), {
+    operation: 'fs.realpath',
+    arguments: [root],
+  });
   const nodeModules = path.join(root, 'node_modules');
   const packageRoots = new Set([
-    observe(() => realpathSync(path.dirname(ts.getDefaultLibFilePath({})))),
+    observe(() => realpathSync(path.dirname(ts.getDefaultLibFilePath({}))), {
+      operation: 'fs.realpath',
+      arguments: [path.dirname(ts.getDefaultLibFilePath({}))],
+    }),
   ]);
-  if (observe(() => existsSync(nodeModules)))
-    packageRoots.add(observe(() => realpathSync(nodeModules)));
+  if (
+    observe(() => existsSync(nodeModules), {
+      operation: 'fs.exists',
+      arguments: [nodeModules],
+    })
+  )
+    packageRoots.add(
+      observe(() => realpathSync(nodeModules), {
+        operation: 'fs.realpath',
+        arguments: [nodeModules],
+      }),
+    );
   const packageAliases = new Map<string, string>();
   const isPackageFile = (absolute: string, physical: string) => {
     if (isInside(root, absolute)) {
@@ -114,8 +130,16 @@ const createFileAccess = (
       const parts = path.relative(nodeModules, absolute).split(path.sep);
       const length = parts[0]?.startsWith('@') ? 2 : 1;
       const packagePath = path.join(nodeModules, ...parts.slice(0, length));
-      if (observe(() => existsSync(packagePath))) {
-        const physicalPackage = observe(() => realpathSync(packagePath));
+      if (
+        observe(() => existsSync(packagePath), {
+          operation: 'fs.exists',
+          arguments: [packagePath],
+        })
+      ) {
+        const physicalPackage = observe(() => realpathSync(packagePath), {
+          operation: 'fs.realpath',
+          arguments: [packagePath],
+        });
         packageRoots.add(physicalPackage);
         packageAliases.set(physicalPackage, packagePath);
       }
@@ -131,8 +155,17 @@ const createFileAccess = (
     const absolute = path.resolve(file);
     const cached = checked.get(absolute);
     if (cached !== undefined) return cached;
-    if (!observe(() => existsSync(absolute))) return true;
-    const physical = observe(() => realpathSync(absolute));
+    if (
+      !observe(() => existsSync(absolute), {
+        operation: 'fs.exists',
+        arguments: [absolute],
+      })
+    )
+      return true;
+    const physical = observe(() => realpathSync(absolute), {
+      operation: 'fs.realpath',
+      arguments: [absolute],
+    });
     const allowed =
       isInside(physicalRoot, physical) || isPackageFile(absolute, physical);
     checked.set(absolute, allowed);
@@ -147,7 +180,10 @@ const createFileAccess = (
   };
   const readFile = (file: string) => {
     if (!isAllowed(file)) return undefined;
-    const content = observe(() => ts.sys.readFile(file));
+    const content = observe(() => ts.sys.readFile(file), {
+      operation: 'ts.readFile',
+      arguments: [file],
+    });
     return content === undefined ? undefined : normalizeText(content);
   };
   const manifestPath = (file: string) => {
@@ -226,7 +262,10 @@ export const loadSource = (
   const gitFiles = snapshot
     ? [...snapshot.files].sort(compare)
     : options.observeRead
-      ? options.observeRead(() => listGitFiles(root))
+      ? options.observeRead(() => listGitFiles(root), {
+          operation: 'git.listFiles',
+          arguments: [root],
+        })
       : listGitFiles(root);
   const gitFileSet = new Set(gitFiles);
   const relative = createPaths(root, gitFiles);
@@ -238,37 +277,64 @@ export const loadSource = (
     diagnostics,
     options.observeRead,
   );
-  const observe = <T>(read: () => T): T =>
-    options.observeRead ? options.observeRead(read) : read();
+  const observe = <T>(read: () => T, query: SourceReadQuery): T =>
+    options.observeRead ? options.observeRead(read, query) : read();
   const sysRealpath = ts.sys.realpath;
   const physical = {
     ...ts.sys,
     readFile: access.readFile,
     fileExists: (file: string) =>
-      access.isAllowed(file) && observe(() => ts.sys.fileExists(file)),
+      access.isAllowed(file) &&
+      observe(() => ts.sys.fileExists(file), {
+        operation: 'ts.fileExists',
+        arguments: [file],
+      }),
     ...(options.observeRead
       ? {
           directoryExists: (directory: string) =>
-            observe(() => ts.sys.directoryExists(directory)),
+            observe(() => ts.sys.directoryExists(directory), {
+              operation: 'ts.directoryExists',
+              arguments: [directory],
+            }),
           getDirectories: (directory: string) =>
-            observe(() => ts.sys.getDirectories(directory)),
+            observe(() => ts.sys.getDirectories(directory), {
+              operation: 'ts.getDirectories',
+              arguments: [directory],
+            }),
           readDirectory: (...args: Parameters<typeof ts.sys.readDirectory>) => {
             const [directory, extensions, excludes, includes, depth] = args;
             const savedExtensions = extensions?.slice();
             const savedExcludes = excludes?.slice();
             const savedIncludes = includes?.slice();
-            return observe(() =>
-              ts.sys.readDirectory(
-                directory,
-                savedExtensions?.slice(),
-                savedExcludes?.slice(),
-                savedIncludes?.slice(),
-                depth,
-              ),
+            return observe(
+              () =>
+                ts.sys.readDirectory(
+                  directory,
+                  savedExtensions?.slice(),
+                  savedExcludes?.slice(),
+                  savedIncludes?.slice(),
+                  depth,
+                ),
+              {
+                operation: 'ts.readDirectory',
+                arguments: [
+                  directory,
+                  savedExtensions,
+                  savedExcludes,
+                  savedIncludes,
+                  depth,
+                ],
+              },
             );
           },
           ...(sysRealpath
-            ? { realpath: (file: string) => observe(() => sysRealpath(file)) }
+            ? {
+                realpath: (file: string) =>
+                  observe(() => sysRealpath(file), {
+                    operation: 'ts.realpath',
+                    arguments: [file],
+                  }),
+              }
             : {}),
         }
       : {}),

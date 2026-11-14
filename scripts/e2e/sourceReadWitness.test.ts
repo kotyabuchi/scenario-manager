@@ -66,6 +66,102 @@ afterEach(() => {
 });
 
 describe('source read witness', () => {
+  it('初回readを省略せず同じqueryだけを初出順に再読し、次の照合でもfreshに読む', () => {
+    const witness = createSourceReadWitness();
+    const calls: string[] = [];
+    const read = (name: string) => () => {
+      calls.push(name);
+      return name;
+    };
+    const first = { operation: 'ts.readFile', arguments: ['first'] } as const;
+    const second = { operation: 'fs.exists', arguments: ['second'] } as const;
+    witness.observe(read('first'), first);
+    witness.observe(read('second'), second);
+    witness.observe(read('first'), first);
+    expect(calls).toEqual(['first', 'second', 'first']);
+    calls.length = 0;
+    expect(witness.matches()).toBe(true);
+    expect(calls).toEqual(['first', 'second']);
+    calls.length = 0;
+    expect(witness.matches()).toBe(true);
+    expect(calls).toEqual(['first', 'second']);
+  });
+
+  it('同じqueryの初回観測値が揺れたら最初の値へ戻っても共有を拒否する', () => {
+    const witness = createSourceReadWitness();
+    let value = 'before';
+    const query = { operation: 'ts.readFile', arguments: ['same'] } as const;
+    witness.observe(() => value, query);
+    value = 'after';
+    witness.observe(() => value, query);
+    value = 'before';
+    expect(witness.matches()).toBe(false);
+  });
+
+  it('operation・rootを含むパス・全列挙引数の相違を共有しない', () => {
+    const witness = createSourceReadWitness();
+    const queries = [
+      { operation: 'ts.readFile', arguments: ['/root/a'] },
+      { operation: 'ts.fileExists', arguments: ['/root/a'] },
+      { operation: 'ts.readFile', arguments: ['/other/a'] },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', ['.ts'], undefined, ['a'], 1],
+      },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', ['.tsx'], undefined, ['a'], 1],
+      },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', ['.ts'], ['skip'], ['a'], 1],
+      },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', ['.ts'], undefined, ['b'], 1],
+      },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', ['.ts'], undefined, ['a'], 2],
+      },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', undefined, undefined, undefined, undefined],
+      },
+      {
+        operation: 'ts.readDirectory',
+        arguments: ['/root', [], [], [], undefined],
+      },
+    ] as const;
+    const values = queries.map(() => 'before');
+    for (const [index, query] of queries.entries()) {
+      witness.observe(() => values[index], query);
+    }
+    expect(witness.matches()).toBe(true);
+    for (const index of values.keys()) {
+      values[index] = 'after';
+      expect(witness.matches()).toBe(false);
+      values[index] = 'before';
+    }
+  });
+
+  it('queryなしのreadは共有せず、再照合中のread例外を成功に変換しない', () => {
+    const witness = createSourceReadWitness();
+    let count = 0;
+    let shouldFail = false;
+    const read = () => {
+      count += 1;
+      if (shouldFail) throw new Error('read-failed');
+      return 'stable';
+    };
+    witness.observe(read);
+    witness.observe(read);
+    expect(witness.matches()).toBe(true);
+    expect(count).toBe(4);
+    shouldFail = true;
+    expect(witness.matches()).toBe(false);
+  });
+
   it('空・直列化不能・元read例外を安全に扱い、値のidentityを保つ', () => {
     expect(createSourceReadWitness().matches()).toBe(false);
     const witness = createSourceReadWitness();

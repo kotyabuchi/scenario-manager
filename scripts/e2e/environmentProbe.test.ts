@@ -32,6 +32,50 @@ vi.mock('./environmentInputs', () => ({ prepareEnvironmentInputs: vi.fn() }));
 vi.mock('./environmentLock', () => ({ acquireEnvironmentLock: vi.fn() }));
 
 describe('probeEnvironmentの診断と中断境界', () => {
+  it('lockからcatalogと解放までを固定operationだけで順に計測する', async () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    try {
+      const report = await probeEnvironment(root);
+      expect(report.passed).toBe(true);
+      const lines = stderr.mock.calls
+        .map(([value]) => String(value))
+        .filter((line) => line.startsWith('[cli-timing] '));
+      const timings = lines.map((line) =>
+        JSON.parse(line.replace('[cli-timing] ', '')),
+      );
+      expect(timings.map((timing) => timing.operation)).toEqual([
+        'docker-context',
+        'supabase-version',
+        'docker-info',
+        'git-head',
+        'git-common-dir',
+        'environment-lock',
+        'environment-inputs',
+        'environment-preflight',
+        'environment-start',
+        'environment-inspect',
+        'environment-catalog',
+        'environment-cleanup-record',
+        'environment-cleanup-plan',
+        'environment-cleanup-remove',
+        'environment-cleanup-remaining',
+        'environment-release',
+      ]);
+      for (const timing of timings)
+        expect(timing).toEqual({
+          operation: expect.any(String),
+          elapsedMs: expect.any(Number),
+          outcome: 'completed',
+        });
+      expect(lines.join('')).not.toContain(workdir);
+      expect(lines.join('')).not.toContain(ENVIRONMENT_CATALOG_QUERY);
+    } finally {
+      stderr.mockRestore();
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('replay成功・catalog一致・認可未検証を区別して記録する', async () => {
     const report = await probeEnvironment(root);
     expect(report.migrationReplayPassed).toBe(true);

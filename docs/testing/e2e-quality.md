@@ -46,6 +46,10 @@ Supabase CLIは2.75.0に固定する。CI Linux/x64では公式release archive�
 
 一次根拠、制御proxy実験と検証範囲は [CLI改善計画](../plans/e2e-cli-performance.md) を参照。
 
+同じ `[cli-timing]` は所有環境の準備・cleanupも計る。operationはすべて `environment-` 接頭辞で、`lock` / `inputs` / `preflight` / `start` / `inspect` / `catalog` / `cleanup-record` / `cleanup-plan` / `cleanup-remove` / `cleanup-remaining` / `release` を記録する。startには所有lease・config・通知cacheの検査とSupabase startによるmigration/seedを含み、catalogは取得処理を計る。cleanup-removeには所有identityの再確認・除去・不存在検査を含む。
+
+`completed` は呼出が正常に戻った意味であり、返されたissuesによる論理失敗は従来どおり `cleanup.status` で確認する。計時ログは成功receiptの代替ではない。外側のCI phaseと内側のspanは重なるため合計しない。時計・出力に障害があってもcleanupと元の結果を保つ。
+
 ## staged hook
 
 `pnpm e2e:ledger:staged` はGit index stage 0の台帳JSONだけを読み、schema・ID・参照を検査する。working treeの未stage修正で不正なindexを救済しない。競合・symlink・検査中のindex変更を拒否する。

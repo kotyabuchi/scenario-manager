@@ -122,26 +122,30 @@ const probeWithSignal = async (
   const projectId = `sm-e2e-${runId}`;
   signal.throwIfAborted();
   progress({ phase: 'locking', runId });
-  const lock = await acquireEnvironmentLock({
-    registryRoot: join(
-      await realpath(tmpdir()),
-      'scenario-manager-e2e-locks-v1',
-    ),
-    repoKey: repoRoot,
-    worktreeRoot,
-    runId,
-    ownerNonce,
-    projectId,
-    ports: [...Object.values(PORTS), ...additionalPorts],
-  });
+  const lock = await measureCliStep('environment-lock', async () =>
+    acquireEnvironmentLock({
+      registryRoot: join(
+        await realpath(tmpdir()),
+        'scenario-manager-e2e-locks-v1',
+      ),
+      repoKey: repoRoot,
+      worktreeRoot,
+      runId,
+      ownerNonce,
+      projectId,
+      ports: [...Object.values(PORTS), ...additionalPorts],
+    }),
+  );
   let isLifecycleOwner = false;
   try {
     signal.throwIfAborted();
     progress({ phase: 'preparing-inputs', runId });
-    const prepared = await prepareEnvironmentInputs(worktreeRoot, {
-      runId,
-      ports: PORTS,
-    });
+    const prepared = await measureCliStep('environment-inputs', () =>
+      prepareEnvironmentInputs(worktreeRoot, {
+        runId,
+        ports: PORTS,
+      }),
+    );
     signal.throwIfAborted();
     const { workdir, inputHashes } = prepared;
     progress({ phase: 'preparing-inputs', runId, workdir });
@@ -249,22 +253,24 @@ const probeWithSignal = async (
         );
         if (isNil(database))
           throw new Error('所有DB containerが確認できません。');
-        const catalog = await runChecked('docker', [
-          'exec',
-          database.id,
-          'psql',
-          '-X',
-          '-U',
-          'postgres',
-          '-d',
-          'postgres',
-          '-t',
-          '-A',
-          '-v',
-          'ON_ERROR_STOP=1',
-          '-c',
-          ENVIRONMENT_CATALOG_QUERY,
-        ]);
+        const catalog = await measureCliStep('environment-catalog', () =>
+          runChecked('docker', [
+            'exec',
+            database.id,
+            'psql',
+            '-X',
+            '-U',
+            'postgres',
+            '-d',
+            'postgres',
+            '-t',
+            '-A',
+            '-v',
+            'ON_ERROR_STOP=1',
+            '-c',
+            ENVIRONMENT_CATALOG_QUERY,
+          ]),
+        );
         catalogState.status = 'mismatch';
         await writeFile(join(workdir, 'catalog.json'), catalog, {
           flag: 'wx',
@@ -333,7 +339,8 @@ const probeWithSignal = async (
     );
     return report;
   } finally {
-    if (!isLifecycleOwner) await lock.release();
+    if (!isLifecycleOwner)
+      await measureCliStep('environment-release', () => lock.release());
   }
 };
 

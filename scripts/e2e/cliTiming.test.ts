@@ -7,9 +7,42 @@ vi.mock('./progressStderr', () => ({ writeProgressStderr: vi.fn() }));
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.resetAllMocks();
+  vi.restoreAllMocks();
 });
 
-describe('CLI事前検査の計時', () => {
+describe('CLI事前検査と所有環境の計時', () => {
+  it('壁時計によらず単調時計の差分を丸めて出力する', async () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    vi.spyOn(performance, 'now')
+      .mockReturnValueOnce(123.2)
+      .mockReturnValueOnce(166.8);
+    vi.spyOn(Date, 'now').mockImplementation(() => {
+      throw new Error('wall clock must not be read');
+    });
+    await measureCliStep('environment-start', async () => 'ok');
+    expect(writeProgressStderr).toHaveBeenCalledWith(
+      '[cli-timing] {"operation":"environment-start","elapsedMs":44,"outcome":"completed"}\n',
+    );
+  });
+
+  it.each([
+    true,
+    false,
+  ])('時計の診断失敗で本来の成功と例外を変えない: %s', async (shouldFail) => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    vi.spyOn(performance, 'now').mockImplementation(() => {
+      throw new Error('private-clock-failure');
+    });
+    const failure = new Error('original');
+    const operation = measureCliStep('environment-release', async () => {
+      if (shouldFail) throw failure;
+      return 'ok';
+    });
+    if (shouldFail) await expect(operation).rejects.toBe(failure);
+    else await expect(operation).resolves.toBe('ok');
+    expect(writeProgressStderr).not.toHaveBeenCalled();
+  });
+
   it('成功値を変えず固定項目だけを出力する', async () => {
     vi.stubEnv('E2E_CLI_TIMING', '1');
     const secret = { password: 'private-value' };
