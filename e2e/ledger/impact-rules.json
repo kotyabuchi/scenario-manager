@@ -128,6 +128,7 @@
         { "kind": "file", "path": ".storybook/preview.ts" },
         { "kind": "file", "path": ".storybook/playwright.config.ts" },
         { "kind": "file", "path": ".storybook/vitest.setup.ts" },
+        { "kind": "file", "path": ".storybook/vitest.dom.setup.ts" },
         { "kind": "file", "path": ".storybook/AgentationCanvas.tsx" },
         { "kind": "file", "path": ".storybook/storybookAgentationPaths.ts" },
         { "kind": "directory", "path": "scripts" },

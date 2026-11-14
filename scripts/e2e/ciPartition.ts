@@ -10,10 +10,12 @@ import {
   smokeControlAnnotations,
 } from './ciBootstrap';
 import {
+  CI_LEGACY_PROJECTS,
   type CiPartitionManifest,
   type CiShardId,
   type CiWorkflow,
   ciPartitionManifestSchema,
+  ciShardIdSchema,
 } from './ciPartitionSchema';
 import { type LegacyManifest, legacyKey } from './legacy';
 import { projectSelection } from './projectSelection';
@@ -163,7 +165,23 @@ const partitionPlans = (
   plan: VerificationPlan,
   fullPlan: VerificationPlan,
   ledger: Ledger,
+  legacy: LegacyManifest,
 ) => {
+  const app: VerificationPlan = {
+    schemaVersion: 1,
+    requirements: plan.requirements.filter(({ profile }) => profile === 'app'),
+    allowedExtraTests: plan.allowedExtraTests,
+  };
+  assertAppRegistrations(app, legacy);
+  const legacyPlan = (projects: readonly string[]): VerificationPlan => ({
+    schemaVersion: 1,
+    requirements: app.requirements.filter(({ test }) =>
+      projects.includes(test.project),
+    ),
+    allowedExtraTests: app.allowedExtraTests.filter(({ test }) =>
+      projects.includes(test.project),
+    ),
+  });
   const plans: Record<CiShardId, VerificationPlan> = {
     required: {
       schemaVersion: 1,
@@ -172,14 +190,30 @@ const partitionPlans = (
       ),
       allowedExtraTests: [],
     },
-    'legacy-local': {
-      schemaVersion: 1,
-      requirements: plan.requirements.filter(
-        ({ profile }) => profile === 'app',
-      ),
-      allowedExtraTests: plan.allowedExtraTests,
-    },
+    'legacy-desktop': legacyPlan(CI_LEGACY_PROJECTS['legacy-desktop']),
+    'legacy-mobile': legacyPlan(CI_LEGACY_PROJECTS['legacy-mobile']),
   };
+  const assignedProjects = Object.values(CI_LEGACY_PROJECTS).flat();
+  if (
+    new Set(assignedProjects).size !== assignedProjects.length ||
+    [...app.requirements, ...app.allowedExtraTests].some(
+      ({ test }) =>
+        !assignedProjects.some((project) => project === test.project),
+    ) ||
+    Object.entries(CI_LEGACY_PROJECTS).some(([id, projects]) => {
+      const shard = plans[ciShardIdSchema.parse(id)];
+      const planned = new Set(
+        [...shard.requirements, ...shard.allowedExtraTests].map(
+          ({ test }) => test.project,
+        ),
+      );
+      return (
+        planned.size !== projects.length ||
+        projects.some((project) => !planned.has(project))
+      );
+    })
+  )
+    throw new Error('legacy projectの固定割当と実行計画が一致しません。');
   const keys = [...plan.requirements, ...plan.allowedExtraTests].map(
     ({ key }) => key,
   );
@@ -187,10 +221,10 @@ const partitionPlans = (
     new Set(keys).size !== keys.length ||
     plan.allowedExtraTests.some(({ profile }) => profile !== 'app') ||
     !isDeepStrictEqual(
-      plans['legacy-local'].requirements,
+      app.requirements,
       fullPlan.requirements.filter(({ profile }) => profile === 'app'),
     ) ||
-    !isDeepStrictEqual(plan.allowedExtraTests, fullPlan.allowedExtraTests)
+    !isDeepStrictEqual(app.allowedExtraTests, fullPlan.allowedExtraTests)
   )
     throw new Error('全app業務登録と全legacy extrasを一意に分割できません。');
 
@@ -305,8 +339,7 @@ export const createCiPartitionManifest = (input: PartitionInput) => {
   } else if (!isNil(changeDecision) || input.runnerSelectionFallback)
     throw new Error('全件イベントに差分判断を指定できません。');
 
-  const plans = partitionPlans(plan, fullPlan, input.ledger);
-  assertAppRegistrations(plans['legacy-local'], input.legacy);
+  const plans = partitionPlans(plan, fullPlan, input.ledger, input.legacy);
   const describe = (id: CiShardId) => ({
     id,
     planDigest: digestVerificationPlan(plans[id]),
@@ -314,7 +347,7 @@ export const createCiPartitionManifest = (input: PartitionInput) => {
     extraKeys: plans[id].allowedExtraTests.map(({ key }) => key).sort(),
   });
   const manifest = ciPartitionManifestSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     workflow,
     eventPolicy,
     snapshotDigest,
@@ -332,7 +365,11 @@ export const createCiPartitionManifest = (input: PartitionInput) => {
       : { surfaceMigrationHistoryDigest: input.surfaceMigrationHistoryDigest }),
     ...(input.runnerSelectionFallback ? { runnerSelectionFallback: true } : {}),
     projectionReasons,
-    shards: [describe('required'), describe('legacy-local')],
+    shards: [
+      describe('required'),
+      describe('legacy-desktop'),
+      describe('legacy-mobile'),
+    ],
   });
   return { manifest, plans };
 };

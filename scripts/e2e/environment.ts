@@ -1,5 +1,6 @@
 import { isNil } from 'ramda';
 
+import { measureCliStep } from './cliTiming';
 import {
   assertOwnedConnection,
   planOwnedCleanup,
@@ -63,17 +64,21 @@ export const runEnvironment = async (
   let phase: EnvironmentRunPhase = 'preflight';
   try {
     await operations.save(manifest);
-    await operations.docker.assertFreshProject(manifest.projectId);
-    const existing = await operations.docker.observe(manifest.projectId);
+    const existing = await measureCliStep('environment-preflight', async () => {
+      await operations.docker.assertFreshProject(manifest.projectId);
+      return operations.docker.observe(manifest.projectId);
+    });
     if (Object.values(existing).some((resources) => resources.length > 0))
       throw new Error('既存project resourceを再利用することはできません。');
     await update({ type: 'preflight', at: now(), existingResourceCount: 0 });
     hasStarted = true;
     phase = 'start';
-    await operations.start();
+    await measureCliStep('environment-start', () => operations.start());
     phase = 'observe-resources';
     const observedAt = now();
-    const resources = await operations.docker.observe(manifest.projectId);
+    const resources = await measureCliStep('environment-inspect', () =>
+      operations.docker.observe(manifest.projectId),
+    );
     phase = 'record-resources';
     await update({ type: 'resources-recorded', at: observedAt, resources });
     phase = 'check-connection';
@@ -103,17 +108,30 @@ export const runEnvironment = async (
         await update({
           type: 'resources-recorded',
           at: now(),
-          resources: await operations.docker.observe(manifest.projectId),
+          resources: await measureCliStep('environment-cleanup-record', () =>
+            operations.docker.observe(manifest.projectId),
+          ),
         });
-        const plan = planOwnedCleanup(
-          manifest,
-          await operations.docker.observe(manifest.projectId),
-          await operations.readLease(),
+        const plan = await measureCliStep(
+          'environment-cleanup-plan',
+          async () =>
+            planOwnedCleanup(
+              manifest,
+              await operations.docker.observe(manifest.projectId),
+              await operations.readLease(),
+            ),
         );
         cleanupIssues.push(...plan.issues);
         await update({ type: 'stopping', at: now() });
-        cleanupIssues.push(...(await operations.docker.remove(plan.resources)));
-        const remaining = await operations.docker.observe(manifest.projectId);
+        cleanupIssues.push(
+          ...(await measureCliStep('environment-cleanup-remove', () =>
+            operations.docker.remove(plan.resources),
+          )),
+        );
+        const remaining = await measureCliStep(
+          'environment-cleanup-remaining',
+          () => operations.docker.observe(manifest.projectId),
+        );
         const at = now();
         await update({
           type: 'cleanup-recorded',
@@ -139,7 +157,7 @@ export const runEnvironment = async (
     // 残留・観測失敗時は占有ロックとjournalを残し、次の実行で上書きしない。
     if (!hasStarted || manifest.cleanup?.status === 'complete') {
       try {
-        await operations.release();
+        await measureCliStep('environment-release', () => operations.release());
       } catch {
         didFail = true;
         // stoppedは終端なのでmanifestを書き換えず、呼出元へrelease失敗を伝える。

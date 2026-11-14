@@ -451,6 +451,7 @@ describe('変更選択の準備境界', () => {
     expect(vi.mocked(buildSnapshotInventories)).toHaveBeenCalledExactlyOnceWith(
       capture,
       status === 'proven' ? [generated] : [],
+      undefined,
     );
     expect(
       result.decision.reasons

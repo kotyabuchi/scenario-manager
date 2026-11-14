@@ -2,6 +2,8 @@ import { expect, it, vi } from 'vitest';
 
 import { runCiCli } from './ci';
 import { planCiVerification } from './ciPlan';
+import { runCiShard } from './ciShard';
+import { ciVerificationSummarySchema } from './ciVerificationSummary';
 import { recordStaticLedgerFailure } from './staticLedgerFailure';
 import { createSurfaceReplayDiagnosticError } from './surfaceReplayFailure';
 
@@ -21,6 +23,65 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 vi.mock('./ciPlan', () => ({ planCiVerification: vi.fn() }));
+vi.mock('./ciShard', () => ({ runCiShard: vi.fn() }));
+
+it('workerの失敗ファイルへ固定要約だけを保存し成功成果物は作らない', async () => {
+  const temp = realpathSync(tmpdir());
+  const root = mkdtempSync(join(temp, 'e2e-ci-cli-'));
+  const verificationSummary = ciVerificationSummarySchema.parse({
+    verificationState: 'available',
+    schemaVersion: 1,
+    issueCount: 2,
+    issueCounts: [{ code: 'REQUIRED_NOT_CLEAN_PASS', count: 1 }],
+    unknownIssueCount: 1,
+    stages: [],
+    caseIssues: [
+      { code: 'REQUIRED_NOT_CLEAN_PASS', keySha256: 'a'.repeat(64) },
+    ],
+    omittedCaseIssueCount: 0,
+  });
+  vi.mocked(runCiShard).mockImplementationOnce(
+    async (_root, _env, _shard, _signal, onProgress) => {
+      onProgress?.({
+        phase: 'receipt',
+        verificationId: 'a'.repeat(12),
+        issueCount: 2,
+        cleanup: 'unknown',
+        verificationSummary,
+      });
+      throw new Error('private-runner-error');
+    },
+  );
+  try {
+    const output = join(root, 'step-output');
+    writeFileSync(output, '');
+    const result = await runCiCli(['shard', 'legacy-desktop'], root, {
+      ...process.env,
+      GITHUB_ACTIONS: 'true',
+      GITHUB_OUTPUT: output,
+      GITHUB_RUN_ID: '123456',
+      GITHUB_RUN_ATTEMPT: '3',
+      E2E_LEDGER_BOOTSTRAP_APPROVAL: 'private-token',
+    });
+    expect(result).toMatchObject({
+      status: 'failed',
+      code: 'CI_RECEIPT_INVALID',
+      job: 'legacy-desktop',
+      phase: 'receipt',
+      workflow: { runId: '123456', attempt: 3 },
+      verificationSummary,
+    });
+    const folder = join(root, 'test-results/ci/legacy-desktop');
+    const saved = readFileSync(join(folder, 'failure.json'), 'utf8');
+    expect(JSON.parse(saved)).toEqual(JSON.parse(JSON.stringify(result)));
+    expect(saved).not.toContain('private-');
+    expect(existsSync(join(folder, 'receipt.json'))).toBe(false);
+    expect(existsSync(join(folder, 'manifest.json'))).toBe(false);
+    expect(readFileSync(output, 'utf8')).toBe('diagnostic_written=true\n');
+  } finally {
+    removeOwnedRoot(root, temp);
+  }
+});
 
 const entry = fileURLToPath(new URL('./ci.ts', import.meta.url));
 const tsx = pathToFileURL(createRequire(import.meta.url).resolve('tsx')).href;
@@ -60,6 +121,13 @@ const launchCi = (cwd: string, output: string, args: string[]) => {
 it.each([
   { command: 'plan', args: ['plan'], job: 'plan' },
   { command: 'shard', args: ['shard', 'required'], job: 'required' },
+  {
+    command: 'desktop',
+    args: ['shard', 'legacy-desktop'],
+    job: 'legacy-desktop',
+  },
+  { command: 'mobile', args: ['shard', 'legacy-mobile'], job: 'legacy-mobile' },
+  { command: '旧shard', args: ['shard', 'legacy-local'], job: null },
   { command: 'aggregate', args: ['aggregate'], job: 'aggregate' },
   { command: '不正引数', args: ['shard', 'unknown'], job: null },
 ])('$commandの実CLIが循環せず、CIイベントのない空cwdで失敗する', ({
@@ -120,7 +188,7 @@ it('実CLIは既存failureを上書きせず今回の安全な診断をstdoutに
   const root = mkdtempSync(join(temp, 'e2e-ci-cli-'));
   try {
     const cwd = join(root, 'workspace');
-    const folder = join(cwd, 'test-results', 'ci', 'legacy-local');
+    const folder = join(cwd, 'test-results', 'ci', 'legacy-desktop');
     mkdirSync(folder, { recursive: true });
     const previous =
       '{"status":"failed","workflow":{"runId":"123456","attempt":1}}';
@@ -128,11 +196,11 @@ it('実CLIは既存failureを上書きせず今回の安全な診断をstdoutに
     writeFileSync(file, previous);
     const output = join(root, 'step-output');
     writeFileSync(output, '');
-    const result = launchCi(cwd, output, ['shard', 'legacy-local']);
+    const result = launchCi(cwd, output, ['shard', 'legacy-desktop']);
     expect(result.error).toBeUndefined();
     expect(result.status, result.stderr).toBe(1);
     expect(JSON.parse(result.stdout)).toMatchObject({
-      job: 'legacy-local',
+      job: 'legacy-desktop',
       status: 'failed',
       phase: 'context',
       code: 'CI_CONTEXT_INVALID',
@@ -159,7 +227,13 @@ it.each([
     head: 'a'.repeat(40),
   } as const;
   vi.mocked(planCiVerification).mockImplementationOnce(
-    async (_root, _env, _signal, onProgress) => {
+    async (_root, _env, _signal, onProgress, onTiming) => {
+      onTiming?.({
+        phase: 'selection',
+        operation: 'decision',
+        elapsedMs: 3,
+        outcome: 'completed',
+      });
       onProgress?.({ phase: 'context' });
       now = 15;
       onProgress?.({ phase: 'inputs' });
@@ -210,6 +284,24 @@ it.each([
             { phase: 'quality', qualityCheck: 'typecheck', elapsedMs: 23 },
             { phase: 'quality', qualityCheck: 'test:e2e-tools', elapsedMs: 7 },
             { phase: 'artifacts', elapsedMs: 8 },
+          ]
+        : [],
+    );
+    const preparationLines = stderr.mock.calls
+      .map(([line]) => String(line))
+      .filter((line) => line.startsWith('[preparation-timing] '))
+      .map((line): unknown =>
+        JSON.parse(line.slice('[preparation-timing] '.length)),
+      );
+    expect(preparationLines).toEqual(
+      githubActions
+        ? [
+            {
+              phase: 'selection',
+              operation: 'decision',
+              elapsedMs: 3,
+              outcome: 'completed',
+            },
           ]
         : [],
     );

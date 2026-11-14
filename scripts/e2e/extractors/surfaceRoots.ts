@@ -10,6 +10,7 @@ import { runtimeExports } from './exports';
 import type { InventoryNode } from '../inventorySchema';
 import type { SourceContext } from '../source';
 import type { SourceIndex } from '../sourceIndex';
+import type { SourceReadObserver } from '../sourceReadWitness';
 import type { SurfaceDiagnostic, SurfaceEntry } from '../surfaceSchema';
 import type { EntryRoot } from './surfaceTypes';
 
@@ -17,7 +18,12 @@ import type { EntryRoot } from './surfaceTypes';
 export const loadStorySurfaceContext = (
   root: string,
   snapshot?: Parameters<typeof loadSource>[1],
-) => loadSource(root, snapshot, { entryMode: 'storybook' });
+  observeRead?: SourceReadObserver,
+) =>
+  loadSource(root, snapshot, {
+    entryMode: 'storybook',
+    ...(observeRead ? { observeRead } : {}),
+  });
 
 const rootDiagnostics = (index: SourceIndex) => {
   const anchor = createDiagnosticAnchors(index);

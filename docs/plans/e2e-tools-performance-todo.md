@@ -46,7 +46,34 @@ fixture改善は同日の2ワーカー比較で中央値約10.9%短縮。中断�
 
 [計時追加後のrun](https://github.com/kotyabuchi/scenario-manager/actions/runs/42329131950) では利用可能並列度4を観測し、lint 3.231秒、型31.276秒、unit 83.263秒、tools 138.006秒、静的台帳41.191秒、収集39.188秒、選択69.180秒だった。これを4ワーカーの比較点として、子プロセスの負荷を考慮した2ワーカー候補を同じ入口で測った。[2ワーカーrun](https://github.com/kotyabuchi/scenario-manager/actions/runs/42329962936) も利用可能並列度4で、lint 3.481秒、型33.964秒、unit 89.721秒、tools 170.849秒、静的台帳44.997秒、収集42.869秒、選択76.201秒だった。toolsは2ワーカーの方が32.843秒長く、他区間も7～10%程度長かったため、別VMの差も混ざる。2ワーカーへ抑える利点は確認できず、上限4を採用した。どちらも品質検査は成功。比較用の旧runは新しい候補を公開した後に停止し、全体合格としては扱わない。最終コミットの全CIと証跡を別途受け入れる。単発のHosted比較をCI全体の改善率として一般化しない。
 
-## 初期準備の内訳
+### PR #9の最終受入（2026-11-07）
+
+head `0a5133d489d14e0a94c6fded66ebb656c6f8869b` の [run42330826829](https://github.com/kotyabuchi/scenario-manager/actions/runs/42330826829) は全6job成功、重複検査も成功した。5組の成果物を独立に再照合し、必須67件・extras312、固定履歴、同一head/run/attempt、入力、6 DB環境と7 stageの回収を確認した。required verification `4686a0772cf7`、legacy verification `65b153ae127a` の再計算aggregateは保存物と一致した。
+
+最終tools区間は130.174秒、planner432秒、required611秒、legacy962秒、aggregate37秒。raw jobsの最初の開始からaggregate job完了までは23分54秒（1,434秒）、job時間の合計は2,398 runner秒だった。以前の23分55秒はrunメタデータのupdated_atまでを終点としていたため、以後はjob完了時刻に揃える。PR #8の21分29秒より長く、CI全体の改善はまだ達成していない。PR #9はレビュー可能にし、支配的なlegacy直列実行の改善を[desktop／mobile分割計画](./e2e-legacy-ci-sharding.md)として別ブランチで進める。比較元をこの受入済みheadへ固定し、次段の効果とtoolsの効果を混同しない。
+
+## 後続PR #10の観測
+
+[PR #10の実装headのCI](https://github.com/kotyabuchi/scenario-manager/actions/runs/42340586935) は全7jobと重複検査が成功し、同一head/run/attemptの6組の成果物も独立受入を通過した。legacyをdesktop/mobileへ分割し、必須67件・extras312と全330行の結果、6 DB cleanup・7 process終了を維持した。
+
+PR9の23分54秒から18分51秒へ、待ち時間は5分3秒短縮した。job時間の和は2,398から2,664 runner秒へ増えた。各条件1回の観測であり、恒常的な改善率や課金額の比較ではない。詳細な区間、計測できていない項目、最終headの受入手順は[分割計画のBatch 3記録](./e2e-legacy-ci-sharding.md#batch-3のhosted受入と性能観測2026-11-07)を参照。PR9とPR10の本番マージは未実施。
+
+## 次段の改善調査
+
+ユーザーから追加された[CI短縮の事例記事](https://zenn.dev/edash_tech_blog/articles/5b90aa33bd8d49)を参考に、現コードとの差分を棚卸しした。当初は調査・実験候補としPR10へ追加しなかったが、2026-11-08の高速化継続指示を受け、[テスト層の改善計画](e2e-test-layer-performance.md)として小Batchで進める。記事のVitest 4.1に対し、このプロジェクトの正本ログはVitest 3.2.4。記事の速度改善率や設定をそのまま適用しない。
+
+| 順序 | 候補と現在の状態 | 実験の判定条件 |
+| --- | --- | --- |
+| 1 | **既存の区間を整理し、細区間の計測を補う。** plannerに加え、公開ログの固定進捗時刻からSupabase環境起動・Next build・browserの粗いwall区間を復元できる。setup内のinstall/Panda、DB起動/migration/seed/catalog各内訳、build内訳、環境cleanup完了時間は未分離。 | 既存ログで測れる部分に重複した計測を増やさず、必要な細区間だけ固定phaseと単調時計で記録する。秘密・生ログを追加公開しない。同条件の複数回、初回/再実行、cache hit/miss、wall時間とrunner時間を区別する。環境起動時間をmigration単体とみなしてdump化を先行しない。 |
+| 2 | **E2Eの責務と重複を整理する。** `e2e/auth/session-create.spec.ts` の必須入力はschemaテストと重なるが、空送信→resolver→error表示の連携はcomponent側で未検出。`e2e/scenarios/search.spec.ts` も一覧遷移を反復。 | 移管先のassertionと旧→新のledger対応を先に作り、作成→詳細・検索→URL/詳細など代表接続を維持する。今回の330件固定は分割の同等性条件であり、将来の適切な移管・統合による件数変更を禁止しない。 |
+| 3 | **固定500ms待ちを見直す。** `e2e/auth/feedback-detail.spec.ts` の投票、`e2e/auth/scenario-new-banner.spec.ts` の非対応URL/clearに存在。 | 状態確定やdebounce完了を観測できる条件を確認して置換する。初めから非表示のassertionだけで成功する偽陽性を避け、失敗検出とflaky率・時間を比較する。 |
+| 4 | **unit setup/collectionを調べる。** node、unit-dom、componentとDBは分離済み。共通 `vitest.setup.ts` とcomponentのStorybook setupの適用が調査対象。 | project別の壁時計時間と必要な初期化を確認する。DB access guardなどの検査境界を維持し、集計phase秒をそのまま短縮見込みにしない。 |
+| 条件付き | **pristine DB dumpを新規所有DBへ復元する。** 現在は毎回fresh DBでmigration/固定seedを全再生。dump cacheは未実装。 | replayが最長経路を支配すると計測できたら優先する。CLI・DB image/extension・生成設定・全migration順序/内容・固定seed・dumpの出所と完全性をキーと照合へ含める。API/Auth等を含む起動手順を固定CLIで検証。動的Auth/fixture前を保存境界とし、実行中DB/volume/認証情報を共有しない。失敗時は回収後に別fresh runで全再生し、全migration replay自体の検証を維持する。 |
+| 後順位 | **node_modules cacheを比較する。** pnpm store cache、frozen install、Panda生成は既にある。 | install/Panda節約と圧縮・転送・復元・容量の費用を比較し、OS/Node/pnpm/lockfile/ネイティブ依存の不一致とmissを検証する。生成処理の一律省略は採用しない。 |
+
+ローカルの正本quality `6abfabb844e4` はunit91ファイル・1,097成功・既存skip8、100.87秒、tools147ファイル・2,181成功、213.44秒。unitのsetup154.97秒・collect818.38秒等はworker間で重なる集計で、100.87秒へ足したり、そのまま節約可能時間にしたりしない。別runのログを混ぜない。HostedのPR9 setup compositeはLinuxで21～25秒、Windowsで63秒だが、installとPandaの内訳は不明。PR10の計測結果を基準に、次の実装計画を決める。
+
+## 初期準備の内訳（ローカル実験）
 
 全件測定と別に、実関数へ委譲する計測wrapperで各版1回ずつ測った。基準版8件、候補版9件がすべて成功。計測用の一時テストは通常の全件検査へ混ざらないよう回収した。
 
@@ -96,7 +123,7 @@ node node_modules/vitest/vitest.mjs run --config scripts/e2e/vitest.config.ts --
 
 - `reporters/results.test.ts`（実起動7回）、`runnerSelection.test.ts`（13回）、`discoverIntegration.test.ts`（12回）は個別起動を維持。早期終了、出力失敗、公開preflightでの再収集、各副作用を単独で拒否する境界を検証している。副作用6種をまとめてmarkerを照合する案では、集約拒否だけで各種の単独拒否を保証できないため採用しない。
 - Ubuntu fixtureの重複検査は観測したrunで18秒、CIの最長経路には入らなかった。Windows固有の検査と固定履歴のnative replay、必須gateとの結び付きを維持し、削除しない。
-- [PR #8のCI run](https://github.com/kotyabuchi/scenario-manager/actions/runs/42221448685) はplanner327秒→legacy-local913秒→aggregate44秒が最長経路（待ち時間込み1,289秒）。legacyは4プロジェクトを直列実行し、各回のDB起動とNext buildを含む。次の改善候補はdesktop／mobileの2ジョブへの分割。330件の非deferred結果の和集合、必須18件、全登録catalog、同一head/run/attempt、cleanup証跡を維持する設計を別段階で行う。
+- [PR #8のCI run](https://github.com/kotyabuchi/scenario-manager/actions/runs/42221448685) はplanner327秒→legacy-local913秒→aggregate44秒が最長経路（待ち時間込み1,289秒）。PR9受入時には、各回のDB起動とNext buildを含むlegacy4プロジェクトの直列実行を次の改善対象とした。desktop／mobileの2ジョブへの分割は後続PR10で実施し、330件の非deferred結果の和集合、必須18件、全登録catalog、同一head/run/attempt、cleanup証跡を維持した受入結果を前掲節に記録した。
 - Next buildは所有run IDとローカルSupabase設定を含むため、別runの生成物を無条件に共有しない。
 
 2026-11-07の停止時も用途を確認したNode.jsを終了し、残存0と専用ポート解放を確認した。再開時には保存した2,173ファイルのSHA-256がすべて一致した。必要なツールだけを起動し、テストごとの後始末を継続して確認する。
@@ -144,3 +171,20 @@ node node_modules/vitest/vitest.mjs run --config scripts/e2e/vitest.config.ts --
 静的ゲートの初期fixtureは、8ケースそれぞれで同じ初期化をし、成果物を書き出す前と初期コミットを作った後に1回ずつ `collectStaticState` を呼ぶ。1回の収集はTypeScriptのinventory構築に加え、app、Storybook、isolatedの3つのPlaywright登録収集を起動する。初期fixtureのDBテスト一覧は空で、integration収集は早期returnする。したがって、変更後の収集やCLI検証を除いた初期準備だけで、ソース解析16回とPlaywrightの登録収集48回が発生する。
 
 最初の比較実験は、現行の初期化をそのまま1回だけ行い、その状態をケース専用ディレクトリに複製する案に絞る。コピーしたfixtureで同一のbase/head、保存物のバイト列、登録キー、ソース位置が得られることを確認し、キャッシュされたパスや可変オブジェクトが他ケースへ漏れない形で初期状態を渡す。この案なら準備の登録収集は計算上48回から6回まで減らせる。これは呼び出し数の見込みで、秒数の削減量は未計測。改変後の収集とCLIの起動は現行どおり行う。絶対パスなどの制約で収集済み状態を移せない場合は、初期Gitリポジトリだけを複製し、各コピーで収集を1回行う案を比較する。
+
+## 追加CI効率化の実施状況（2026-11-08）
+
+サイドチャットから追加されたCI短縮記事に基づく残件は、[テスト層の改善計画](e2e-test-layer-performance.md)へ実施順と判定条件を集約した。2026-11-08に両記事の本文を取得し、単独診断修復の受入後、初期化の軽量化から実装を再開した。全候補の実装完了ではない。
+
+| 項目 | 現在の状態 |
+| --- | --- |
+| PR9: toolsの共通fixture再利用・Git起動削減・最大4worker | 実装・検証・main反映済み |
+| PR10: legacyのdesktop/mobile分割 | 実装・ローカル/Hosted受入済み、Draft・本番未反映 |
+| 細区間の追加計測 | 既存公開ログの粗区間は整理済み、細区間の計測実装は未実施 |
+| E2Eの責務移管・重複整理 | 未実施。移管先assertionと旧→新の台帳対応が先決 |
+| 固定500ms待ちの置換 | 未実施 |
+| unit setup/collectionの最適化 | 初期化分離とSSRアイコンのbundleを実装、同19ファイルのwall中央値91.361→46.479秒。全91ファイル・共通quality成功。Hosted結果はPR10で管理 |
+| CIのPanda生成重複 | install内prepareの実行を固定Hostedログで確認し、明示prepareの重複stepを除去 |
+| pristine DB dump・node_modules cache | 未実施。内訳の計測と採用条件の確認後に判断 |
+
+最新の既受入head7226ebc、run42448751791 attempt1は18分55秒、PR9比較元23分54秒より4分59秒短縮し、runner時間和は2,398→2,593秒（+195秒）だった。これは分割までの一観測で、追加候補の実装成果ではない。単独診断入口は修復・受入済み。旧Hostedとローカル参加者作成の間欠失敗は原因未確定で、再現しなかったことを修正済みとは扱わない。

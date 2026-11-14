@@ -1,11 +1,14 @@
+import { isNil } from 'ramda';
 import { describe, expect, it } from 'vitest';
 
 import { legacyManifestSchema } from './legacy';
 import { legacyExecutionSchema } from './legacyExecutionSchema';
 import {
   aggregateLegacyResults,
+  aggregateLegacyScopedResults,
   parseLegacyProjectResults,
 } from './legacyResults';
+import { legacySafeResultsSchema } from './legacySafeResults';
 import { createLegacySelection } from './legacySelection';
 
 import { readFileSync } from 'node:fs';
@@ -15,6 +18,7 @@ import type {
   JSONReportSuite,
   JSONReportTest,
 } from 'playwright/types/testReporter';
+import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
 
 const legacy = legacyManifestSchema.parse(
   JSON.parse(readFileSync('e2e/ledger/legacy-tests.generated.json', 'utf8')),
@@ -401,5 +405,189 @@ describe('旧test公式JSON結果の照合', () => {
     expect(() => parseLegacyProjectResults({ ...value, report })).toThrow(
       'deferred',
     );
+  });
+});
+
+const scopedFixture = (
+  scope: readonly LegacyProject[] = ['chromium', 'chromium-auth'],
+) => {
+  const projects: {
+    project: string;
+    results: ReturnType<typeof parseLegacyProjectResults>;
+  }[] = scope.map((project) => ({
+    project,
+    results: parseLegacyProjectResults({
+      ...input(),
+      project,
+      report: reportFor(project).report,
+    }),
+  }));
+  return { ...input(), scope, projects };
+};
+
+describe('割当projectの安全な公開結果', () => {
+  it('全4projectの公開行も既存の全件結果と同じidentityを保持する', () => {
+    const value = scopedFixture([
+      'chromium',
+      'mobile-chrome',
+      'chromium-auth',
+      'mobile-chrome-auth',
+    ]);
+    const full = aggregateLegacyResults(value);
+    const safe = aggregateLegacyScopedResults(value);
+    expect(safe.map((row) => ({ ...row, annotations: [] }))).toEqual(
+      full.map((row) => ({ ...row, annotations: [] })),
+    );
+  });
+  it('実結果を先に検査し、任意注釈を落として承認済みskip理由だけ残す', () => {
+    const value = scopedFixture();
+    for (const project of value.projects)
+      for (const row of project.results)
+        row.annotations.push({
+          type: 'custom',
+          description: 'fixture-private-token',
+        });
+    const rows = aggregateLegacyScopedResults(value);
+    expect(rows).toHaveLength(
+      value.projects.flatMap(({ results }) => results).length,
+    );
+    expect(JSON.stringify(rows)).not.toContain('fixture-private-token');
+    expect(rows.some(({ status }) => status === 'skipped')).toBe(true);
+    for (const row of rows) {
+      const disposition = execution.entries.find(({ key }) => key === row.key);
+      expect(row.annotations).toEqual(
+        !isNil(disposition) && 'expectedAnnotation' in disposition
+          ? [disposition.expectedAnnotation]
+          : [],
+      );
+    }
+    expect(() => aggregateLegacyResults(value)).toThrow('全project');
+  });
+
+  const faults: [string, (value: ReturnType<typeof scopedFixture>) => void][] =
+    [
+      [
+        'missing project',
+        (v) => {
+          v.projects.pop();
+        },
+      ],
+      [
+        'extra project',
+        (v) => {
+          v.projects.push({ project: 'mobile-chrome', results: [] });
+        },
+      ],
+      [
+        'duplicate project',
+        (v) => {
+          v.projects.push(...v.projects.slice(0, 1));
+        },
+      ],
+      [
+        'wrong project rows',
+        (v) => {
+          const [first, second] = v.projects;
+          if (isNil(first) || isNil(second))
+            throw new Error('project fixture不足');
+          [first.results, second.results] = [second.results, first.results];
+        },
+      ],
+      [
+        'missing row',
+        (v) => {
+          v.projects[0]?.results.pop();
+        },
+      ],
+      [
+        'duplicate row',
+        (v) => {
+          const project = v.projects[0];
+          if (project) project.results.push(...project.results.slice(0, 1));
+        },
+      ],
+      [
+        'unknown row',
+        (v) => {
+          const row = v.projects[0]?.results[0];
+          if (row) row.key = 'unknown';
+        },
+      ],
+      [
+        'fingerprint',
+        (v) => {
+          const row = v.projects[0]?.results[0];
+          if (row) row.fingerprint = '0'.repeat(64);
+        },
+      ],
+      [
+        'origin fingerprint',
+        (v) => {
+          const row = v.projects
+            .flatMap(({ results }) => results)
+            .find((r) => !isNil(r.originFingerprint));
+          if (!row) throw new Error('置換fixture不足');
+          row.originFingerprint = '0'.repeat(64);
+        },
+      ],
+      [
+        'skip reason',
+        (v) => {
+          const row = v.projects
+            .flatMap(({ results }) => results)
+            .find((r) => r.status === 'skipped');
+          if (!row) throw new Error('skip fixture不足');
+          row.annotations = [{ type: 'skip', description: 'wrong' }];
+        },
+      ],
+      [
+        'control annotation',
+        (v) => {
+          const row = v.projects[0]?.results.find((r) => r.status === 'passed');
+          row?.annotations.push({ type: 'fail' });
+        },
+      ],
+    ];
+  it.each(faults)('%sを公開用投影の前に拒否する', (_name, mutate) => {
+    const value = scopedFixture();
+    mutate(value);
+    expect(() => aggregateLegacyScopedResults(value)).toThrow();
+  });
+
+  it.each(
+    [[], ['chromium', 'chromium'], ['unknown'], ['mobile-chrome']].map(
+      (scope) => ({ scope }),
+    ),
+  )('不正scope $scopeを拒否する', ({ scope }) => {
+    expect(() =>
+      Reflect.apply(aggregateLegacyScopedResults, undefined, [
+        { ...scopedFixture(), scope },
+      ]),
+    ).toThrow();
+  });
+
+  it('割当外projectのdiscovery改変も拒否する', () => {
+    const value = scopedFixture();
+    value.currentLegacy.tests = value.currentLegacy.tests.filter(
+      ({ project }) => project !== 'mobile-chrome',
+    );
+    expect(() => aggregateLegacyScopedResults(value)).toThrow();
+  });
+
+  it('受信側schemaは任意注釈、失敗状態、余分な属性、重複を拒否する', () => {
+    const rows = aggregateLegacyScopedResults(scopedFixture());
+    const row = rows.find(({ status }) => status === 'passed');
+    if (!row) throw new Error('成功fixture不足');
+    expect(() => legacySafeResultsSchema.parse(rows)).not.toThrow();
+    for (const invalid of [
+      {
+        ...row,
+        annotations: [{ type: 'custom', description: 'fixture-private-token' }],
+      },
+      { ...row, status: 'failed' },
+      { ...row, private: 'fixture-private-token' },
+    ])
+      expect(() => legacySafeResultsSchema.parse([invalid])).toThrow();
+    expect(() => legacySafeResultsSchema.parse([row, row])).toThrow();
   });
 });

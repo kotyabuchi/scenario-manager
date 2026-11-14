@@ -14,6 +14,7 @@ import { verifyResults } from './verifyResults';
 import { randomBytes } from 'node:crypto';
 import { realpath } from 'node:fs/promises';
 
+import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
 import type { InputFingerprint } from './fingerprint';
 import type { RunnerSelection } from './runnerSelection';
 import type { VerificationReceipt } from './verificationReceiptSchema';
@@ -27,6 +28,8 @@ export type VerificationRunOptions = {
   >;
   /** 部分実行の非app profileごとに一つ。appのみなら空配列を渡す。 */
   runnerSelections?: readonly RunnerSelection[];
+  /** CIの割当project。省略時は従来の全project実行を使う。 */
+  legacyProjects?: readonly LegacyProject[];
   continueAfterFailure?: boolean;
   signal?: AbortSignal;
   mode?: 'full-required' | 'partial';
@@ -148,6 +151,9 @@ export const runVerification = async (
       ...(options.runnerSelections
         ? { selections: options.runnerSelections }
         : {}),
+      ...(isNil(options.legacyProjects)
+        ? {}
+        : { legacyProjects: options.legacyProjects }),
       context: { verificationId, selectionDigest, inputDigest: inputs.digest },
       signal: controller.signal,
       ...(options.continueAfterFailure ? { continueAfterFailure: true } : {}),

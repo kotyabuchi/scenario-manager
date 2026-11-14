@@ -1,7 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { runEnvironment } from './environment';
 import { createEnvironmentPlan } from './environmentOwnership';
+import { writeProgressStderr } from './progressStderr';
+
+vi.mock('./progressStderr', () => ({ writeProgressStderr: vi.fn() }));
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.mocked(writeProgressStderr).mockReset();
+});
 
 import type {
   EnvironmentIssue,
@@ -132,6 +139,70 @@ const fixture = () => {
 };
 
 describe('runEnvironmentの所有環境ライフサイクル', () => {
+  it('所有環境の起動と後始末を固定名で計測する', async () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    const { manifest, operations } = fixture();
+    expect((await runEnvironment(manifest, operations)).passed).toBe(true);
+    const timings = vi
+      .mocked(writeProgressStderr)
+      .mock.calls.map(([line]) =>
+        JSON.parse(line.replace('[cli-timing] ', '')),
+      );
+    expect(timings.map((timing) => timing.operation)).toEqual([
+      'environment-preflight',
+      'environment-start',
+      'environment-inspect',
+      'environment-cleanup-record',
+      'environment-cleanup-plan',
+      'environment-cleanup-remove',
+      'environment-cleanup-remaining',
+      'environment-release',
+    ]);
+    for (const timing of timings)
+      expect(timing).toEqual({
+        operation: expect.any(String),
+        elapsedMs: expect.any(Number),
+        outcome: 'completed',
+      });
+    expect(JSON.stringify(timings)).not.toContain(manifest.projectId);
+    expect(JSON.stringify(timings)).not.toContain(manifest.ownerNonce);
+  });
+
+  it('中断した起動の失敗計時後もcleanupとlock解放を完了する', async () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    const { manifest, operations } = fixture();
+    operations.start.mockRejectedValueOnce(
+      new DOMException('private-abort-detail', 'AbortError'),
+    );
+    const result = await runEnvironment(manifest, operations);
+    expect(result.passed).toBe(false);
+    expect(result.manifest.cleanup?.status).toBe('complete');
+    expect(operations.release).toHaveBeenCalledTimes(1);
+    const output = vi.mocked(writeProgressStderr).mock.calls.flat().join('');
+    expect(output).toContain('"operation":"environment-start"');
+    expect(output).toContain('"outcome":"failed"');
+    expect(output).toContain('"operation":"environment-release"');
+    expect(output).not.toContain('private-abort-detail');
+  });
+
+  it('計時出力が失敗してもcleanup不完全時のlock保持を維持する', async () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    vi.mocked(writeProgressStderr).mockImplementation(() => {
+      throw new Error('private-sink-failure');
+    });
+    const { manifest, operations, resources } = fixture();
+    operations.docker.remove.mockResolvedValueOnce([
+      { code: 'REMOVE_FAILED', subject: 'owned', message: '削除失敗' },
+    ]);
+    const result = await runEnvironment(manifest, operations);
+    expect(result.passed).toBe(false);
+    expect(result.manifest.cleanup).toMatchObject({
+      status: 'incomplete',
+      remaining: resources,
+    });
+    expect(operations.release).not.toHaveBeenCalled();
+  });
+
   it('事前名前衝突はstart/removeへ進まずlockを解放する', async () => {
     const { manifest, operations } = fixture();
     operations.docker.assertFreshProject.mockRejectedValueOnce(

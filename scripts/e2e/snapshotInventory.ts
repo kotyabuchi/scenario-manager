@@ -8,6 +8,10 @@ import {
   getSnapshotFiles,
 } from './gitSnapshot';
 import { buildInventory } from './inventory';
+import {
+  measurePreparationSync,
+  type PreparationTimingObserver,
+} from './preparationTiming';
 import { loadSource } from './source';
 import { isGeneratedLibraryPath } from './sourceFiles';
 import { createStablePackageSystem } from './sourceSnapshotSystem';
@@ -50,6 +54,7 @@ const snapshotInputDigest = (
 export const buildSnapshotInventories = (
   capture: GitSnapshotCapture,
   provenRuntimeInputPaths: readonly string[] = [],
+  onTiming?: PreparationTimingObserver,
 ) => {
   if (
     capture.snapshot.reasons.some(
@@ -79,16 +84,38 @@ export const buildSnapshotInventories = (
     ReturnType<typeof buildInventory>
   >();
   const build = (revision: GitSnapshotRevision) => {
-    const input = getSnapshotFiles(capture, revision);
-    input.preload?.();
-    const files = new Set([...input.files, ...generated.keys()]);
-    if (generated.size) assertGitFilePaths(files);
-    const readBytes = (path: string) => input.read(path) ?? generated.get(path);
-    const digest = snapshotInputDigest(input.root, files, readBytes);
+    const { input, files, readBytes } = measurePreparationSync(
+      { phase: 'selection', operation: 'revision-inputs', revision },
+      onTiming,
+      () => {
+        const input = getSnapshotFiles(capture, revision);
+        input.preload?.();
+        const files = new Set([...input.files, ...generated.keys()]);
+        if (generated.size) assertGitFilePaths(files);
+        const readBytes = (path: string) =>
+          input.read(path) ?? generated.get(path);
+        return { input, files, readBytes };
+      },
+    );
+    const digest = measurePreparationSync(
+      { phase: 'selection', operation: 'inventory-digest', revision },
+      onTiming,
+      () => snapshotInputDigest(input.root, files, readBytes),
+    );
     // 参照先の欠落を空ファイルと同一視せず、従来の解析に委ねる。
     if (!isNil(digest)) {
       const cached = inventoriesByInput.get(digest);
-      if (!isNil(cached)) return cached;
+      if (!isNil(cached))
+        return measurePreparationSync(
+          {
+            phase: 'selection',
+            operation: 'inventory',
+            revision,
+            reused: true,
+          },
+          onTiming,
+          () => cached,
+        );
     }
     const snapshot = {
       files,
@@ -98,9 +125,22 @@ export const buildSnapshotInventories = (
         return bytes === undefined ? undefined : decodeSource(bytes);
       },
     };
-    const inventory = buildInventory(
-      loadSource(input.root, snapshot),
-      loadStorySurfaceContext(input.root, snapshot),
+    const inventory = measurePreparationSync(
+      { phase: 'selection', operation: 'inventory', revision, reused: false },
+      onTiming,
+      () =>
+        buildInventory(
+          measurePreparationSync(
+            { phase: 'selection', operation: 'product-source', revision },
+            onTiming,
+            () => loadSource(input.root, snapshot),
+          ),
+          measurePreparationSync(
+            { phase: 'selection', operation: 'story-source', revision },
+            onTiming,
+            () => loadStorySurfaceContext(input.root, snapshot),
+          ),
+        ),
     );
     if (!isNil(digest)) inventoriesByInput.set(digest, inventory);
     return inventory;
@@ -111,6 +151,10 @@ export const buildSnapshotInventories = (
     index: build('index'),
     working: build('working'),
   };
-  packages.assertUnchanged();
+  measurePreparationSync(
+    { phase: 'selection', operation: 'package-check' },
+    onTiming,
+    () => packages.assertUnchanged(),
+  );
   return inventories;
 };

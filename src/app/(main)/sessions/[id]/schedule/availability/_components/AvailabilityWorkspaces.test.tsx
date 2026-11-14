@@ -67,16 +67,23 @@ describe('ConfirmAvailabilityWorkspace', () => {
     const user = userEvent.setup();
     render(<ConfirmSaveError />);
 
-    // 保存遷移後の再描画を待ち、現在のボタンをクリックする。
+    // エラー表示後も保存遷移は続くため、ラベルと有効状態の復帰を待つ。
     for (const index of [0, 1]) {
-      const button = await waitFor(() => {
-        const buttons = screen.getAllByRole('button', { name: '日程を確定' });
+      await waitFor(() => {
+        const buttons = screen.getAllByText(
+          (_, element) => element?.textContent === '日程を確定',
+          { selector: 'button' },
+        );
         expect(buttons).toHaveLength(2);
         const current = buttons[index];
         if (!current) throw new Error('確定ボタンがありません');
         expect(current).toBeEnabled();
-        return current;
       });
+      const buttons = screen.getAllByRole('button', { name: '日程を確定' });
+      expect(buttons).toHaveLength(2);
+      const button = buttons[index];
+      if (!button) throw new Error('確定ボタンがありません');
+      expect(button).toBeEnabled();
       await user.click(button);
       await screen.findAllByText(`保存に失敗しました（${index + 1}回目）`);
     }

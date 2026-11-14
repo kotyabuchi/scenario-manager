@@ -41,11 +41,11 @@ export class SessionsPage extends BasePage {
     this.resultCount = page
       .getByText(/\d+件のセッションが見つかりました/)
       .filter({ visible: true });
-    // ソートのArkUI Select（「並び替え」ラベルの隣にあるSelectに限定し、フィルタ用Selectと区別）
-    const sortArea = page.getByText('並び替え').locator('..');
-    this.sortTrigger = sortArea.locator(
-      '[data-scope="select"][data-part="trigger"]',
-    );
+    // ストリーミング中に残る非表示のSSR要素を除き、可視ソートを名前で特定する。
+    this.sortTrigger = page.getByRole('combobox', {
+      name: '並び替え',
+      exact: true,
+    });
 
     // LoginPrompt
     this.loginPromptText = page.getByText(/ログインが必要です/);

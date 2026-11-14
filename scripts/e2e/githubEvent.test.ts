@@ -18,7 +18,7 @@ afterEach(() => {
   for (const repo of roots.splice(0)) repo.cleanup();
 });
 
-const prerequisiteBranch = 'feat/ui-local-test-prerequisite';
+const prerequisiteBranches = ['feat/ui-local-test-prerequisite'];
 
 const pullRequest = (
   base: string,
@@ -61,7 +61,11 @@ describe('GitHubイベントのJSON契約', () => {
     });
   });
 
-  it('前提ブランチを比較元とするPRを受理する', () => {
+  it.each([
+    'main',
+    'develop',
+    ...prerequisiteBranches,
+  ])('%sを比較元とするPRを受理する', (prerequisiteBranch) => {
     const { base, head } = events.pull_request.payload.pull_request;
     expect(pullRequest(base.sha, head.sha, prerequisiteBranch)).toMatchObject({
       event: 'pull_request',
@@ -70,14 +74,27 @@ describe('GitHubイベントのJSON契約', () => {
     });
   });
 
-  it('前提ブランチに似た別のfeatureブランチを比較元とするPRを拒否する', () => {
+  it.each([
+    'perf/e2e-tools',
+    'perf/e2e-tools-other',
+  ])('廃止した一時比較元%sを拒否する', (retiredBranch) => {
+    const { base, head } = events.pull_request.payload.pull_request;
+    expect(() => pullRequest(base.sha, head.sha, retiredBranch)).toThrow();
+  });
+
+  it.each(
+    prerequisiteBranches,
+  )('%sに似た別の比較元ブランチを拒否する', (prerequisiteBranch) => {
     const { base, head } = events.pull_request.payload.pull_request;
     expect(() =>
       pullRequest(base.sha, head.sha, `${prerequisiteBranch}-other`),
     ).toThrow();
   });
 
-  it('前提ブランチへのpushを拒否する', () => {
+  it.each([
+    ...prerequisiteBranches,
+    'perf/e2e-tools',
+  ])('%sへのpushを拒否する', (prerequisiteBranch) => {
     const ref = `refs/heads/${prerequisiteBranch}`;
     expect(() =>
       parseGithubEvent({

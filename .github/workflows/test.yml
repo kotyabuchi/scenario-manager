@@ -116,15 +116,8 @@ jobs:
           name: e2e-plan-${{ github.run_id }}-${{ github.run_attempt }}
           path: test-results/ci/plan
       - &setup-supabase
-        uses: supabase/setup-cli@v3
-        with:
-          version: '2.75.0'
-      - &verify-supabase
-        name: Verify native Supabase CLI
-        run: |
-          binary="$(command -v supabase)"
-          test "$(head -c 4 "$binary" | od -An -tx1 | tr -d '[:space:]')" = 7f454c46
-          test "$(supabase --version)" = 2.75.0
+        name: Install verified Supabase CLI
+        uses: ./.github/actions/setup-supabase
       - &install-chromium
         run: pnpm exec playwright install --with-deps chromium
       - id: verify
@@ -155,8 +148,8 @@ jobs:
         if: ${{ failure() && github.run_attempt > 1 }}
         run: echo '::notice::Artifacts must come from the same attempt. If you retried only failed jobs, choose Re-run all jobs.'
 
-  e2e-legacy-local:
-    name: E2E legacy-local
+  e2e-legacy-desktop:
+    name: E2E legacy-desktop
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: planner
@@ -165,29 +158,64 @@ jobs:
       - *setup
       - *download-plan
       - *setup-supabase
-      - *verify-supabase
       - *install-chromium
       - id: verify
-        run: pnpm e2e:ci shard legacy-local
+        run: pnpm e2e:ci shard legacy-desktop
         env:
           E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
       - uses: actions/upload-artifact@v4
         with:
-          name: e2e-legacy-local-${{ github.run_id }}-${{ github.run_attempt }}
+          name: e2e-legacy-desktop-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            test-results/ci/legacy-local/envelope.json
-            test-results/ci/legacy-local/plan.json
-            test-results/ci/legacy-local/receipt.json
-            test-results/ci/legacy-local/inputs-start.json
-            test-results/ci/legacy-local/inputs-end.json
+            test-results/ci/legacy-desktop/envelope.json
+            test-results/ci/legacy-desktop/plan.json
+            test-results/ci/legacy-desktop/receipt.json
+            test-results/ci/legacy-desktop/inputs-start.json
+            test-results/ci/legacy-desktop/inputs-end.json
           if-no-files-found: error
           retention-days: 7
-      - name: Upload safe legacy-local failure
+      - name: Upload safe legacy-desktop failure
         if: ${{ always() && steps.verify.outputs.diagnostic_written == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-legacy-local-failure-${{ github.run_id }}-${{ github.run_attempt }}
-          path: test-results/ci/legacy-local/failure.json
+          name: e2e-legacy-desktop-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/legacy-desktop/failure.json
+          if-no-files-found: warn
+          retention-days: 7
+      - *rerun-guidance
+
+  e2e-legacy-mobile:
+    name: E2E legacy-mobile
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    needs: planner
+    steps:
+      - *checkout
+      - *setup
+      - *download-plan
+      - *setup-supabase
+      - *install-chromium
+      - id: verify
+        run: pnpm e2e:ci shard legacy-mobile
+        env:
+          E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-legacy-mobile-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/ci/legacy-mobile/envelope.json
+            test-results/ci/legacy-mobile/plan.json
+            test-results/ci/legacy-mobile/receipt.json
+            test-results/ci/legacy-mobile/inputs-start.json
+            test-results/ci/legacy-mobile/inputs-end.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload safe legacy-mobile failure
+        if: ${{ always() && steps.verify.outputs.diagnostic_written == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-legacy-mobile-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/legacy-mobile/failure.json
           if-no-files-found: warn
           retention-days: 7
       - *rerun-guidance
@@ -197,7 +225,7 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [planner, fixtures, e2e-required, e2e-legacy-local]
+    needs: [planner, fixtures, e2e-required, e2e-legacy-desktop, e2e-legacy-mobile]
     steps:
       - *checkout
       - *setup
@@ -211,11 +239,16 @@ jobs:
         with:
           name: e2e-required-${{ github.run_id }}-${{ github.run_attempt }}
           path: test-results/ci/required
-      - if: needs.e2e-legacy-local.result == 'success'
+      - if: needs.e2e-legacy-desktop.result == 'success'
         uses: actions/download-artifact@v4
         with:
-          name: e2e-legacy-local-${{ github.run_id }}-${{ github.run_attempt }}
-          path: test-results/ci/legacy-local
+          name: e2e-legacy-desktop-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/legacy-desktop
+      - if: needs.e2e-legacy-mobile.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-legacy-mobile-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci/legacy-mobile
       - name: Verify job outcomes and shard artifacts
         id: verify
         if: ${{ always() && steps.setup.outcome == 'success' }}
@@ -224,7 +257,8 @@ jobs:
           E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
           CI_PLANNER_RESULT: ${{ needs.planner.result }}
           CI_REQUIRED_RESULT: ${{ needs.e2e-required.result }}
-          CI_LEGACY_RESULT: ${{ needs.e2e-legacy-local.result }}
+          CI_LEGACY_DESKTOP_RESULT: ${{ needs.e2e-legacy-desktop.result }}
+          CI_LEGACY_MOBILE_RESULT: ${{ needs.e2e-legacy-mobile.result }}
           CI_FIXTURES_RESULT: ${{ needs.fixtures.result }}
       - uses: actions/upload-artifact@v4
         with:
