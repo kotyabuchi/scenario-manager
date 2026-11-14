@@ -116,15 +116,8 @@ jobs:
           name: e2e-plan-${{ github.run_id }}-${{ github.run_attempt }}
           path: test-results/ci/plan
       - &setup-supabase
-        uses: supabase/setup-cli@v3
-        with:
-          version: '2.75.0'
-      - &verify-supabase
-        name: Verify native Supabase CLI
-        run: |
-          binary="$(command -v supabase)"
-          test "$(head -c 4 "$binary" | od -An -tx1 | tr -d '[:space:]')" = 7f454c46
-          test "$(supabase --version)" = 2.75.0
+        name: Install verified Supabase CLI
+        uses: ./.github/actions/setup-supabase
       - &install-chromium
         run: pnpm exec playwright install --with-deps chromium
       - id: verify
@@ -165,7 +158,6 @@ jobs:
       - *setup
       - *download-plan
       - *setup-supabase
-      - *verify-supabase
       - *install-chromium
       - id: verify
         run: pnpm e2e:ci shard legacy-desktop
@@ -202,7 +194,6 @@ jobs:
       - *setup
       - *download-plan
       - *setup-supabase
-      - *verify-supabase
       - *install-chromium
       - id: verify
         run: pnpm e2e:ci shard legacy-mobile

@@ -149,6 +149,7 @@ pnpm quality:changed --base <固定した比較元SHA>
 | --- | --- | --- |
 | 1・ローカル受入済み | 本Batchの初期化分離・SSRアイコン読込・CI重複生成除去 | 複数回実測と共通quality成功。新headのHosted結果はPR本文で管理 |
 | 2・plannerローカル受入済み | planner/runnerの不足区間だけ計測 | [選択・収集の内訳と解析共有](e2e-planner-performance.md)は各3回で中央値268.310→248.802秒。共通quality・独立照合が成功し、新headのHostedはPR本文で管理。runnerのDB準備/cleanupは残件 |
+| 2a・CLIローカル受入済み | CIのCLI導入・確認の通信待ちを除去 | [固定CLIの導入・版確認](e2e-cli-performance.md)は制御proxy・共通quality・独立照合が成功。新headのHosted結果と工程時間はPR本文で管理 |
 | 3 | SessionFormの下位保証と単体の重複を整理 | 実空送信→resolverの2エラー＋submit未呼出を追加し、同一最小送信2件をpayload検証1件へ統合。errors配線切断で失敗を確認 |
 | 4 | E2E統合・層移管の台帳契約 | 現1:1移行とは別に旧identity/assert→保持先・層・実行証拠を保存。未実行先や無断skipを拒否。契約完成前にbrowser削除しない |
 | 5 | 実際のE2E統合 | 検索のtitle/card/countを実検索journeyへ集約、直URL復元2→1、セッション成功2→1を小Batch化。実API/DB/Next/authの接続を保持 |

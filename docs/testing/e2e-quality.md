@@ -36,6 +36,16 @@ Hosted plannerは既存のphase計時に加え、`[preparation-timing]`でsource
 
 ローカルの条件・結果と残件は [準備処理の改善計画](../plans/e2e-planner-performance.md) を参照。
 
+### CLI導入・確認の内訳計測
+
+Supabase CLIは2.75.0に固定する。CI Linux/x64では公式release archiveを固定SHA256で照合し、単一の通常file・native実体・版の厳密一致と正常終了を確認してからPATHへ追加する。downloadは接続10秒・全体120秒を上限とし、取得・照合・展開・版確認を別stepで記録する。
+
+単独の版確認は `pnpm exec tsx scripts/e2e/checkSupabaseCli.ts`。ローカルで `E2E_CLI_TIMING=1` を設定すると、共通入口でも `[cli-timing]` にCLI版確認・Docker context/info・Git head/common-dirの所要時間と成否を出す。GitHub Actionsでは自動で有効になる。path・引数・環境変数・例外本文は記録せず、診断出力の失敗は本来の合否を変えない。
+
+固定版の `--version` は出力後に更新確認の通信を行うため、所有temp cwdのfresh `supabase/.temp/cli-latest` と `--help` の先頭行で版を確認する。正常終了・abort・所有tempのcleanup完了までを必須とする。テスト用の所有workdirにもfresh cacheを置き、通常start/statusの更新通知を避ける。これは2.75.0の内部cache（10時間）に依存するため、CLI更新時は版schema・installer URL/SHA・この挙動を一緒に再検証する。共有checkoutや利用者のCLI cacheは変更しない。
+
+一次根拠、制御proxy実験と検証範囲は [CLI改善計画](../plans/e2e-cli-performance.md) を参照。
+
 ## staged hook
 
 `pnpm e2e:ledger:staged` はGit index stage 0の台帳JSONだけを読み、schema・ID・参照を検査する。working treeの未stage修正で不正なindexを救済しない。競合・symlink・検査中のindex変更を拒否する。

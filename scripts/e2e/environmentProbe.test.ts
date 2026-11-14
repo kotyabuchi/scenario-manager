@@ -20,7 +20,7 @@ import {
 } from './fixtures/environment/probe';
 
 import { getEventListeners } from 'node:events';
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 vi.mock('./environmentCommands', async (original) => ({
@@ -109,6 +109,31 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(acquireEnvironmentLock).not.toHaveBeenCalled();
     expect(release).not.toHaveBeenCalled();
     expect(startCalls()).toHaveLength(0);
+  });
+
+  it('所有workdirのcache衝突では既存内容を残しstart前に失敗する', async () => {
+    const prepare = vi.mocked(prepareEnvironmentInputs).getMockImplementation();
+    if (isNil(prepare)) throw new Error('fixtureが未初期化です。');
+    vi.mocked(prepareEnvironmentInputs).mockImplementationOnce(
+      async (...args) => {
+        const prepared = await prepare(...args);
+        await mkdir(join(prepared.workdir, 'supabase/.temp'));
+        await writeFile(
+          join(prepared.workdir, 'supabase/.temp/cli-latest'),
+          'existing',
+        );
+        return prepared;
+      },
+    );
+    const report = await probeEnvironment(root);
+    expect(report.passed).toBe(false);
+    expect(report.failurePhase).toBe('start');
+    expect(report.cleanup?.status).toBe('complete');
+    expect(startCalls()).toHaveLength(0);
+    expect(release).toHaveBeenCalledTimes(1);
+    expect(
+      await readFile(join(workdir, 'supabase/.temp/cli-latest'), 'utf8'),
+    ).toBe('existing');
   });
 
   it('lock取得失敗で入力作成も起動も行わない', async () => {
