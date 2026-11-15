@@ -37,6 +37,7 @@ import type {
 
 const PORTS = ISOLATED_SUPABASE_PORTS;
 const EXCLUDED_SERVICES = [
+  'storage-api',
   'realtime',
   'imgproxy',
   'mailpit',
