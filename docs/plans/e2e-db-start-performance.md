@@ -71,3 +71,13 @@ quality `6357a31f1a2b` / selection `b9dccdb760e3` / verification `3e7e64304bec` 
 前回成功 `7b454032703a` とplan全項目が一致し、必須67・extras312・legacy330 unique行（319成功・既存例外11）、入力前後digest一致、6 DB cleanup・7 process終了/error0を独立照合した。実装10ファイルのhashは開始時から不変。今回の全体再実行は接続間欠失敗なく完了したが、過去の間欠失敗の根本原因解消とは扱わない。
 
 所要1,871.496秒はローカル全体検証の観測で、CIの短縮値には使わない。正本はignored `db-start-quality-acceptance.json` / `db-start-quality-pins.json`。候補headのHosted受入結果と性能比較はPR #10本文に保存する。
+
+## GHCR候補の実測と取得先の調整
+
+head `b8e77f223bedc086e0a558051ae614b9985c3655`、run43670799178 attempt1は全7job・重複検査が成功し、6artifactのdigestと必須67・extras312・legacy330行・6 DB cleanup・7 process終了の独立照合も成功した。しかし準備＋初回commandはrequired70.268秒、desktop122.839秒、mobile126.981秒で、基準96.386 / 95.284 / 94.888秒に対し後2jobが退行した。
+
+全5imageの先読みは成功しfallbackなし。PostgreSQLのpullは42.736 / 96.740 / 100.754秒、Chromiumは約39.2 / 29.7 / 31.7秒。DB startは25.268 / 24.839 / 24.981秒へ短縮したが、待ちを含めると一律の改善ではない。全体wall820秒・job時間和1,948秒であり、planner等の変動も含むためこれだけで採用しない。旧111〜129秒もimage取得の変動で説明できる可能性はあるが、旧runの内部計時がないため断定しない。
+
+次の候補は、従来の実startが使っていたECRを3workerの共通job envで明示し、先読みの固定5imageもECRに揃える。setupは指定済みregistryを保持するため、他jobの既定値は変更しない。registry環境変数の継承、並行化、timeout/fallback、取消・終了待ちは維持する。GHCRが常に遅いと断定する変更ではなく、取得先を基準と揃えて並行化を評価するための調整である。
+
+registryとworkflow指定だけの追補は限定回帰・readonly lint・型検査・YAML解析・独立レビュー後に、最終headのHosted全体検証とartifact独立照合を実施する。直前候補のローカル全体受入と最終headの検証を混同せずPR本文に併記する。

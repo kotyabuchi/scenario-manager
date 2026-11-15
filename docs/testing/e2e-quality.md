@@ -54,7 +54,7 @@ startの下位には `environment-start-prepare`（所有marker/config確認）�
 
 command開始→databaseにはimage取得以外にconfig・JWT準備等も含まれる。schema→globalsはサービス内部schema、migrations→seedはプロジェクトmigrationの目安となる。欠測や順序不整合を補完して区間を作らず、到達点同士の差を使う場合は固定版sourceと実ログで順序を確認する。rawログは公開せず、行の上限を超えた入力は捨てる。CLI版変更時はマーカーも再確認する。[初回DB起動の調査](../plans/e2e-db-start-performance.md)を参照。
 
-CI workerの `Prepare Chromium and DB images` はChromium導入と固定5imageの先読みを並行する。GHCR/Linux/x64だけを先読み対象とし、有効Docker contextがローカルsocketであることを確認する。取得済みimageは再取得せず、先読みだけの120秒deadline・通常失敗は既存CLIへのfallback、Chromium失敗・取消は全体失敗とする。全commandのcloseを待ち、別stepへ背景処理を持ち越さない。
+CI workerの `Prepare Chromium and DB images` はChromium導入と固定5imageの先読みを並行する。3workerの共通job envで従来の取得先ECRを明示し、ECR/Linux/x64だけを先読み対象とする。有効Docker contextがローカルsocketであることを確認する。取得済みimageは再取得せず、先読みだけの120秒deadline・通常失敗は既存CLIへのfallback、Chromium失敗・取消は全体失敗とする。全commandのcloseを待ち、別stepへ背景処理を持ち越さない。
 
 `SUPABASE_INTERNAL_IMAGE_REGISTRY` は子CLIへ保持する。共有DBの接続先・資格情報は従来どおり除外する。別registryを指定した場合は先読みをskipし、その指定を実startへ渡す。`[ci-runtime]` の固定JSONにはscope/status/elapsedMsと固定image名を出す。pulling→pulledの差はimage取得のcommand区間、runtime全体は並行準備のwallであり、image別時間を合算しない。image一覧はCLI版・PG major・enabled/excludeの契約テストと一緒に更新する。
 

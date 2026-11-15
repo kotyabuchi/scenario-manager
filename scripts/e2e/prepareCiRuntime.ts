@@ -16,13 +16,13 @@ import { pathToFileURL } from 'node:url';
 export const CI_RUNTIME_IMAGES = {
   cliVersion: '2.75.0',
   postgresMajor: 17,
-  registry: 'ghcr.io',
+  registry: 'public.ecr.aws',
   images: [
-    'ghcr.io/supabase/postgres:17.6.1.075',
-    'ghcr.io/supabase/kong:2.8.1',
-    'ghcr.io/supabase/postgrest:v14.3',
-    'ghcr.io/supabase/gotrue:v2.186.0',
-    'ghcr.io/supabase/storage-api:v1.35.3',
+    'public.ecr.aws/supabase/postgres:17.6.1.075',
+    'public.ecr.aws/supabase/kong:2.8.1',
+    'public.ecr.aws/supabase/postgrest:v14.3',
+    'public.ecr.aws/supabase/gotrue:v2.186.0',
+    'public.ecr.aws/supabase/storage-api:v1.35.3',
   ],
 } as const;
 

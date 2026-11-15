@@ -15,3 +15,9 @@
 ここでの性能評価は設計の妥当性であり、速度改善の実証ではない。先読みtimeout時は最大120秒と終了待ちを費やした後に元の取得へ戻る。採否はHostedの準備＋start全体で判断する。registry変更と基準CIで28〜29秒だったChromium導入を重ねる効果を区別する。
 
 終了保証は既存runLocalCommandの直接childと継承pipeのcloseまでで、pipeを切り離す孫processまでの終了証明はしない。新たなdetached processは作成しない。UI変更はない。詳細な3報告はignored `test-results/quality/db-start-candidate-{security,design,performance}-review.md` に保持する。
+
+## ECR指定の追補レビュー
+
+GHCR候補のHostedは成功したが2workerの準備時間が退行したため、従来のECRを3workerの共通job envで明示する追補を実施。変更はworkflowの4行追加と固定registry/image・fixtureの置換だけで、制御フローは不変。実装者とは別のSol / mediumエージェントによる再レビューは必須・推奨0件。
+
+ECR設定は3workerだけに適用され、setupは非空の指定値を保持する。先読みとstartのregistryは一致し、他jobへ漏れない。remote Docker拒否・資格情報非出力・abort伝播・全close待機・timer/listener解放の不変を確認した。限定21テスト、readonly Biome、YAML展開による3worker継承とstep上書きなしの検査が成功。最終headのHosted実測・全体検証・artifact独立照合はPR本文に記録する。

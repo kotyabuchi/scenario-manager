@@ -104,6 +104,8 @@ jobs:
 
   e2e-required:
     name: E2E required
+    env: &e2e-runtime-env
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: public.ecr.aws
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     needs: planner
@@ -151,6 +153,7 @@ jobs:
 
   e2e-legacy-desktop:
     name: E2E legacy-desktop
+    env: *e2e-runtime-env
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: planner
@@ -187,6 +190,7 @@ jobs:
 
   e2e-legacy-mobile:
     name: E2E legacy-mobile
+    env: *e2e-runtime-env
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: planner

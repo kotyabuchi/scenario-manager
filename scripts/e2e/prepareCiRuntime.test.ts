@@ -33,7 +33,7 @@ const ENV: NodeJS.ProcessEnv = {
   NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1',
   NEXT_PUBLIC_SUPABASE_ANON_KEY: 'synthetic-test-key',
   PATH: process.env.PATH,
-  SUPABASE_INTERNAL_IMAGE_REGISTRY: 'ghcr.io',
+  SUPABASE_INTERNAL_IMAGE_REGISTRY: 'public.ecr.aws',
   PRIVATE_TEST_VALUE: 'secret-must-not-escape',
 };
 const run = vi.mocked(runLocalCommand);
@@ -174,7 +174,7 @@ describe('CI runtime準備', () => {
   });
 
   it.each([
-    { env: { ...ENV, SUPABASE_INTERNAL_IMAGE_REGISTRY: 'public.ecr.aws' } },
+    { env: { ...ENV, SUPABASE_INTERNAL_IMAGE_REGISTRY: 'ghcr.io' } },
     { env: { ...ENV, SUPABASE_INTERNAL_IMAGE_REGISTRY: undefined } },
     { platform: 'win32' as const },
     { arch: 'arm64' },
