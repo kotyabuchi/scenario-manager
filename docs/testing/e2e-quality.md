@@ -48,6 +48,8 @@ Supabase CLIは2.75.0に固定する。CI Linux/x64では公式release archive�
 
 同じ `[cli-timing]` は所有環境の準備・cleanupも計る。operationはすべて `environment-` 接頭辞で、`lock` / `inputs` / `preflight` / `start` / `inspect` / `catalog` / `cleanup-record` / `cleanup-plan` / `cleanup-remove` / `cleanup-remaining` / `release` を記録する。startには所有lease・config・通知cacheの検査とSupabase startによるmigration/seedを含み、catalogは取得処理を計る。cleanup-removeには所有identityの再確認・除去・不存在検査を含む。
 
+LinuxでCLI timingが有効な場合、`[supabase-host-pressure]` は所有start前後のホスト全体CPU tickとI/O pressure totalの差分・親時計の読取窓を補助的に記録する。欠測はnullとし、特定processやimageの負荷・転送／展開時間とは扱わない。前後reader待ちは `environment-start-command` の外だが外側の `environment-start` には含まれ、既存start markerとの原点も別である。Windowsとtiming無効時はreaderを起動しない。[診断の範囲](../plans/e2e-host-pressure-diagnostics.md)を参照。
+
 `completed` は呼出が正常に戻った意味であり、返されたissuesによる論理失敗は従来どおり `cleanup.status` で確認する。計時ログは成功receiptの代替ではない。外側のCI phaseと内側のspanは重なるため合計しない。時計・出力に障害があってもcleanupと元の結果を保つ。
 
 startの下位には `environment-start-prepare`（所有marker/config確認）、`environment-start-cache`（更新通知cache）、`environment-start-command`（CLI起動からclose・private log保存まで）がある。`[supabase-start-timing]` は固定CLIのstderrに現れた `database` / `schema` / `globals` / `migrations` / `seed` / `containers` / `health` / `ready` 到達点を、command開始からの経過msで記録する。到達点であり区間完了やhealth成功の証明ではない。

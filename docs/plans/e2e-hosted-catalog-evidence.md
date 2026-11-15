@@ -42,3 +42,7 @@
 ## 実装時の検証記録
 
 stage 証拠、旧 receipt と CI v3 の境界、固定期待 catalog の既存正規化からの期待 fingerprint、shard/aggregate の保存を実装。関連5 test files の159件、追加した CI partition・CLI・runtime・aggregate の4 files の106件、対象ファイルの Biome、型検査は成功した。CI の不正 catalog 証拠について、SQL・URL・JWT・path・例外の sentinel が failure artifact と公開 stderr に出ないことを検査した。`quality:changed`、固定 commit、Hosted 検証は未実施であり、ここで成功とは扱わない。
+
+### 固定 HEAD の受入結果
+
+上記は実装時点の記録。後に固定した HEAD `215fce880b7329ac43b8361b5799ff55bac37756` でローカル quality `faf510a6b591`、selection `575c74ee252e`、verification `b6c4991d2882` は passed。通常 shadow を有効にし、67必須・312 extras、6 DB cleanup・7 process終了を独立照合した。Hosted [run 43705607375 attempt 1](https://github.com/kotyabuchi/scenario-manager/actions/runs/43705607375/attempts/1) は全7 job成功。同じ head/run/attempt の実 artifact で6 DB stageの指紋保存を独立受入し、コピーに加えた6件の欠落・owner/hash改変も拒否した。所有対象の残留は確認されていない。catalog の意味・認可の限界は変わらず、旧 artifact の値を補完したものではない。

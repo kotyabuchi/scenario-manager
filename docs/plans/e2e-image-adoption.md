@@ -71,7 +71,7 @@ CLIバイナリ導入stepは72 E2E jobで2–3秒、中央値3秒。Docker image
 
 | 優先度 | 残件 | 次の判定条件 |
 |---|---|---|
-| 高 | Hosted catalog fingerprintの証拠契約 | 実装・限定検査済み。固定HEADの全体quality・Hostedで6 DB stageの保存と独立受入を確認する。過去artifactの欠測は補完しない |
+| 完了 | Hosted catalog fingerprintの証拠契約 | 固定HEAD `215fce8` の全体qualityとHosted 6 DB stage・改変拒否を独立受入。過去artifactの欠測は補完しない。詳細は[計画](e2e-hosted-catalog-evidence.md) |
 | 高 | fallback直接理由とlayer別の転送/展開/I/O観測 | 秘密を含む生ログを公開せず、重複区間や欠測を残す |
 | 中 | 既存の間欠失敗の原因調査 | 過去失敗と新HEAD成功を区別し、再現・反例で検証する |
 | 中 | E2E責務移管・重複整理、固定500ms待機 | [テスト層の計画](e2e-test-layer-performance.md)の旧→新台帳契約・接続保証を先に満たす |

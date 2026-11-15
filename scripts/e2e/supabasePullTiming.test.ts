@@ -125,6 +125,40 @@ describe('pull表示の限定観測', () => {
     );
   });
 
+  it('ECRとGHCRの固定roleのretryだけを観測し未知の行を公開しない', () => {
+    const timing = createSupabasePullTiming();
+    for (const line of [
+      'Retrying after 4s: ghcr.io/supabase/postgres:17.6.1.075',
+      'Retrying after 8s: ghcr.io/supabase/gotrue:v2.186.0',
+      'Retrying after 4s: public.ecr.aws/supabase/postgrest:v14.3',
+    ]) {
+      expect(timing.matchesLine(line)).toBe(true);
+      timing.observeLine(line, 10);
+    }
+    for (const line of [
+      'Retrying after 4s: ghcr.io/secret/postgres:v1',
+      'Retrying after 4s: ghcr.io/supabase/private:v1',
+      'Retrying after 4s: ghcr.io/supabase/postgres:v1?secret=private',
+      'Retrying after 4s: ghcr.io.evil/supabase/postgres:v1',
+      'Retrying after 16s: ghcr.io/supabase/postgres:v1',
+    ]) {
+      expect(timing.matchesLine(line)).toBe(false);
+      timing.observeLine(line, 20);
+    }
+    timing.close();
+    const summary = readSummary();
+    expect(
+      summary.contexts[0]?.images.map(({ role, stage }) => [role, stage]),
+    ).toEqual([
+      ['postgres', 'retry-4s'],
+      ['gotrue', 'retry-8s'],
+      ['postgrest', 'retry-4s'],
+    ]);
+    expect(JSON.stringify(summary)).not.toMatch(
+      /ghcr|ecr|secret|private|17\.6/,
+    );
+  });
+
   it('未知行・巨大行・secret混在を捨てエラー本文は固定分類へ縮約する', () => {
     const timing = createSupabasePullTiming();
     for (const line of [

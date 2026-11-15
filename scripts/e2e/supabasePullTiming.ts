@@ -91,7 +91,7 @@ const imagePattern = new RegExp(
   `^(${rolePattern}|${servicePattern}) (Pulling|Pulled|Skipped - Image is already present locally|Error)(?: (.*))?$`,
 );
 const retryPattern = new RegExp(
-  `^Retrying after (4|8)s: (?:public\\.ecr\\.aws/supabase/|supabase/)?(${rolePattern}):[A-Za-z0-9._-]+$`,
+  `^Retrying after (4|8)s: (?:public\\.ecr\\.aws/supabase/|ghcr\\.io/supabase/|supabase/)?(${rolePattern}):[A-Za-z0-9._-]+$`,
 );
 const layerPattern = new RegExp(
   `^([a-f0-9]{12,64})(:)? (${statePattern})(?: (.*))?$`,

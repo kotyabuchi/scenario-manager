@@ -18,6 +18,7 @@ import { prepareEnvironmentInputs } from './environmentInputs';
 import { acquireEnvironmentLock } from './environmentLock';
 import { createEnvironmentPlan } from './environmentOwnership';
 import { environmentLeaseSchema } from './environmentSchema';
+import { createHostPressureTiming } from './hostPressureTiming';
 import { collectImageObservation } from './imageObservation';
 import { writeArtifact } from './ledgerArtifacts';
 import { seedSupabaseUpdateCache, verifySupabaseCli } from './supabaseCli';
@@ -239,26 +240,39 @@ const probeWithSignal = async (
           seedSupabaseUpdateCache(workdir),
         );
         signal.throwIfAborted();
-        await measureCliStep('environment-start-command', async () => {
-          const timing = createSupabaseStartTiming();
-          databaseTiming.start();
-          try {
-            await runLocalCommand(
-              'supabase',
-              ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
-              {
-                cwd: workdir,
-                env,
-                signal,
-                log: join(workdir, 'start.private.log'),
-                onStderr: timing.observe,
-              },
-            );
-          } finally {
-            databaseTiming.finish();
-            timing.close();
-          }
+        const hostPressure = createHostPressureTiming({
+          root: worktreeRoot,
+          cwd: workdir,
+          env,
+          signal,
         });
+        await hostPressure.prepare();
+        try {
+          await measureCliStep('environment-start-command', async () => {
+            const timing = createSupabaseStartTiming();
+            hostPressure.start();
+            databaseTiming.start();
+            try {
+              await runLocalCommand(
+                'supabase',
+                ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
+                {
+                  cwd: workdir,
+                  env,
+                  signal,
+                  log: join(workdir, 'start.private.log'),
+                  onStderr: timing.observe,
+                  onClose: hostPressure.onClose,
+                },
+              );
+            } finally {
+              databaseTiming.finish();
+              timing.close();
+            }
+          });
+        } finally {
+          await hostPressure.finish();
+        }
         // startがseedまで完了した事実を、後続検査やcleanupの成否から分離する。
         hasReplayedMigrations = true;
       },
