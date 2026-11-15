@@ -1,3 +1,4 @@
+import { isNil } from 'ramda';
 import { z } from 'zod';
 
 import {
@@ -14,6 +15,7 @@ import {
   integrationOptionsSchema,
 } from './integrationSchema';
 import { legacyExecutionEntrySchema } from './legacyExecutionSchema';
+import { legacySafeResultsSchema } from './legacySafeResults';
 
 const text = z.string().min(1);
 const digest = z.string().regex(/^[a-f0-9]{64}$/);
@@ -94,29 +96,38 @@ export const verificationPlanSchema = z.strictObject({
   allowedExtraTests: z.array(verificationExtraTestSchema),
 });
 
-export const verificationStageResultSchema = z.strictObject({
-  context: verificationContextSchema,
-  requiredKeys: z.array(text),
-  extraKeys: z.array(text),
-  report: z.unknown(),
-  exitCode: z.number().int().nullable(),
-  signal: z.string().nullable(),
-  evidence: z.strictObject({
-    kind: z.enum(['legacy', 'schedule', 'integration', 'storybook']),
+export const verificationStageResultSchema = z
+  .strictObject({
     context: verificationContextSchema,
-    checkedKeys: z.array(text),
-    result: z.object({
-      issues: z.array(z.object({ code: text })),
-      counts: z.record(z.string(), z.number().nonnegative()),
-      resultsChecked: z.boolean().optional(),
+    requiredKeys: z.array(text),
+    extraKeys: z.array(text),
+    report: z.unknown(),
+    exitCode: z.number().int().nullable(),
+    signal: z.string().nullable(),
+    evidence: z.strictObject({
+      kind: z.enum(['legacy', 'schedule', 'integration', 'storybook']),
+      context: verificationContextSchema,
+      checkedKeys: z.array(text),
+      result: z.object({
+        issues: z.array(z.object({ code: text })),
+        counts: z.record(z.string(), z.number().nonnegative()),
+        resultsChecked: z.boolean().optional(),
+      }),
     }),
-  }),
-  cleanup: environmentCleanupSchema.nullable(),
-  processCleanup: z.strictObject({
-    exited: z.boolean(),
-    errorCount: z.number().int().nonnegative(),
-  }),
-});
+    legacyResults: legacySafeResultsSchema.optional(),
+    cleanup: environmentCleanupSchema.nullable(),
+    processCleanup: z.strictObject({
+      exited: z.boolean(),
+      errorCount: z.number().int().nonnegative(),
+    }),
+  })
+  .superRefine((stage, context) => {
+    if (!isNil(stage.legacyResults) && stage.evidence.kind !== 'legacy')
+      context.addIssue({
+        code: 'custom',
+        message: '非legacy stageにlegacy結果があります。',
+      });
+  });
 type VerificationStageResult = z.infer<typeof verificationStageResultSchema>;
 type VerificationContext = z.infer<typeof verificationContextSchema>;
 type VerificationAttempt = z.infer<typeof verificationAttemptSchema>;

@@ -5,10 +5,17 @@ import {
   createCiPartitionManifest,
   validateCiPartitionManifest,
 } from './ciPartition';
+import {
+  CI_LEGACY_PROJECTS,
+  ciPartitionManifestSchema,
+  ciShardEnvelopeSchema,
+} from './ciPartitionSchema';
 import { ciPartitionFixture } from './fixtures/ciPartition';
 import { githubEventPolicySchema } from './githubEventSchema';
 import { legacyKey } from './legacy';
+import { validateLegacyExecution } from './legacyExecution';
 import { selectionReason } from './selectionSchema';
+import { verificationTestKey } from './verificationPlan';
 import { digestVerificationPlan } from './verificationPlanDigest';
 
 describe('CIの有効計画とowner分割', () => {
@@ -56,12 +63,19 @@ describe('CIの有効計画とowner分割', () => {
     );
     expect(plans.required.requirements).toEqual([input.storyRow]);
     expect(plans.required.allowedExtraTests).toEqual([]);
-    expect(plans['legacy-local'].requirements).toEqual([input.appRow]);
-    expect(plans['legacy-local'].allowedExtraTests).toEqual(
-      input.fullPlan.allowedExtraTests,
-    );
+    expect(plans['legacy-desktop'].requirements).toEqual([input.appRow]);
+    expect(plans['legacy-mobile'].requirements).toEqual([input.mobileAppRow]);
+    for (const id of ['legacy-desktop', 'legacy-mobile'] as const)
+      expect(plans[id].allowedExtraTests).toEqual(
+        input.fullPlan.allowedExtraTests.filter(({ test }) =>
+          CI_LEGACY_PROJECTS[id].some((project) => project === test.project),
+        ),
+      );
     expect(manifest.fixedSmoke.legacyKeys).toEqual(
-      input.smokeReference.legacy.tests.map(({ key }) => key).sort(),
+      input.smokeReference.legacy.tests
+        .filter(({ file }) => file === 'e2e/smoke.spec.ts')
+        .map(({ key }) => key)
+        .sort(),
     );
     expect(validateCiPartitionManifest({ ...input, manifest })).toEqual({
       manifest,
@@ -113,7 +127,8 @@ describe('CIの有効計画とowner分割', () => {
       input.storyRow,
       input.isolatedRow,
     ]);
-    expect(plans['legacy-local'].requirements).toEqual([input.appRow]);
+    expect(plans['legacy-desktop'].requirements).toEqual([input.appRow]);
+    expect(plans['legacy-mobile'].requirements).toEqual([input.mobileAppRow]);
     expect(manifest.changeDecision?.requestedRequiredKeys).toEqual([
       input.appRow.key,
     ]);
@@ -156,13 +171,17 @@ describe('CIの有効計画とowner分割', () => {
       legacyKeys: [],
     });
     expect(
-      [...plans.required.requirements, ...plans['legacy-local'].requirements]
+      Object.values(plans)
+        .flatMap(({ requirements }) => requirements)
         .map(({ key }) => key)
         .sort(),
     ).toEqual(input.fullPlan.requirements.map(({ key }) => key).sort());
-    expect(plans['legacy-local'].allowedExtraTests).toEqual(
-      input.fullPlan.allowedExtraTests,
-    );
+    for (const id of ['legacy-desktop', 'legacy-mobile'] as const)
+      expect(plans[id].allowedExtraTests).toEqual(
+        input.fullPlan.allowedExtraTests.filter(({ test }) =>
+          CI_LEGACY_PROJECTS[id].some((project) => project === test.project),
+        ),
+      );
   });
 
   it('app必須のreplacementが移行目録から消えた場合は失敗する', () => {
@@ -227,7 +246,10 @@ describe('CI固定smokeの完全性', () => {
     input.changeDecision.fullPlanDigest = digestVerificationPlan(
       input.fullPlan,
     );
-    expect(input.legacy.tests).toHaveLength(14);
+    expect(input.legacy.tests).toHaveLength(16);
+    expect(
+      input.legacy.tests.filter(({ file }) => file === 'e2e/smoke.spec.ts'),
+    ).toHaveLength(14);
     expect(() => createCiPartitionManifest(input)).toThrow(/exact key/u);
   });
 
@@ -250,5 +272,173 @@ describe('CI固定smokeの完全性', () => {
       input.fullPlan,
     );
     expect(() => createCiPartitionManifest(input)).toThrow(/exact key/u);
+  });
+});
+
+describe('固定legacy projectの分割契約', () => {
+  it('各scopeの2projectと正当な実行先を保持し、全キーを一度だけ割り当てる', () => {
+    const input = ciPartitionFixture(true);
+    expect(CI_LEGACY_PROJECTS).toEqual({
+      'legacy-desktop': ['chromium', 'chromium-auth'],
+      'legacy-mobile': ['mobile-chrome', 'mobile-chrome-auth'],
+    });
+    expect(
+      validateLegacyExecution({
+        legacy: input.legacy,
+        execution: input.execution,
+      }).issues,
+    ).toEqual([]);
+    const { manifest, plans } = createCiPartitionManifest(input);
+    expect(manifest.schemaVersion).toBe(2);
+    expect(manifest.shards.map(({ id }) => id)).toEqual([
+      'required',
+      'legacy-desktop',
+      'legacy-mobile',
+    ]);
+    expect(manifest.fixedSmoke.legacyKeys).toHaveLength(14);
+    for (const id of ['legacy-desktop', 'legacy-mobile'] as const) {
+      const plan = plans[id];
+      expect(plan.requirements).toHaveLength(1);
+      expect(plan.allowedExtraTests).toHaveLength(8);
+      expect(
+        [
+          ...new Set(
+            [...plan.requirements, ...plan.allowedExtraTests].map(
+              ({ test }) => test.project,
+            ),
+          ),
+        ].sort(),
+      ).toEqual([...CI_LEGACY_PROJECTS[id]].sort());
+    }
+    const actual = Object.values(plans)
+      .flatMap(({ requirements, allowedExtraTests }) => [
+        ...requirements,
+        ...allowedExtraTests,
+      ])
+      .map(({ key }) => key)
+      .sort();
+    const expected = [
+      ...input.fullPlan.requirements,
+      ...input.fullPlan.allowedExtraTests,
+    ]
+      .map(({ key }) => key)
+      .sort();
+    expect(actual).toEqual(expected);
+    expect(new Set(actual).size).toBe(actual.length);
+  });
+
+  it('planと正本に存在しても固定scope外のprojectを拒否する', () => {
+    const input = ciPartitionFixture();
+    const extra = input.fullPlan.allowedExtraTests.find(
+      ({ test }) => test.project === 'chromium-auth',
+    );
+    const saved = input.legacy.tests.find(
+      ({ key }) => key === extra?.legacy.key,
+    );
+    if (isNil(extra) || isNil(saved))
+      throw new Error('認証extraがありません。');
+    extra.test.project = 'unknown-project';
+    extra.legacy.key = legacyKey('app', extra.test);
+    extra.key = verificationTestKey('app', extra.test);
+    saved.project = extra.test.project;
+    saved.key = extra.legacy.key;
+    input.changeDecision.fullPlanDigest = digestVerificationPlan(
+      input.fullPlan,
+    );
+    expect(() => createCiPartitionManifest(input)).toThrow('固定割当');
+  });
+
+  it('認証projectを全planと正本から削除しても固定scopeの欠落として拒否する', () => {
+    const input = ciPartitionFixture();
+    input.fullPlan.allowedExtraTests = input.fullPlan.allowedExtraTests.filter(
+      ({ test }) => test.project !== 'mobile-chrome-auth',
+    );
+    input.legacy.tests = input.legacy.tests.filter(
+      ({ project }) => project !== 'mobile-chrome-auth',
+    );
+    input.changeDecision.fullPlanDigest = digestVerificationPlan(
+      input.fullPlan,
+    );
+    expect(() => createCiPartitionManifest(input)).toThrow('固定割当');
+  });
+
+  it('同じextraの二重割当を拒否する', () => {
+    const input = ciPartitionFixture();
+    const extra = input.fullPlan.allowedExtraTests[0];
+    if (isNil(extra)) throw new Error('extraがありません。');
+    input.fullPlan.allowedExtraTests.push(structuredClone(extra));
+    input.changeDecision.fullPlanDigest = digestVerificationPlan(
+      input.fullPlan,
+    );
+    expect(() => createCiPartitionManifest(input)).toThrow();
+  });
+
+  it('desktopからmobileへのrunner依存を拒否する', () => {
+    const input = ciPartitionFixture();
+    input.appRow.dependencies.push(input.mobileAppRow.key);
+    input.changeDecision.fullPlanDigest = digestVerificationPlan(
+      input.fullPlan,
+    );
+    expect(() => createCiPartitionManifest(input)).toThrow('runner依存');
+  });
+
+  it('app以外のextraが混入した計画を拒否する', () => {
+    const input = ciPartitionFixture();
+    const extra = input.fullPlan.allowedExtraTests[0];
+    if (isNil(extra)) throw new Error('extraがありません。');
+    extra.profile = 'storybook';
+    input.changeDecision.fullPlanDigest = digestVerificationPlan(
+      input.fullPlan,
+    );
+    expect(() => createCiPartitionManifest(input)).toThrow();
+  });
+
+  it('旧版と未知・重複・欠損shardのmanifestを拒否する', () => {
+    const input = ciPartitionFixture();
+    const { manifest } = createCiPartitionManifest(input);
+    expect(
+      ciPartitionManifestSchema.safeParse({ ...manifest, schemaVersion: 1 })
+        .success,
+    ).toBe(false);
+    expect(
+      ciPartitionManifestSchema.safeParse({
+        ...manifest,
+        shards: manifest.shards.slice(0, 2),
+      }).success,
+    ).toBe(false);
+    expect(
+      ciPartitionManifestSchema.safeParse({
+        ...manifest,
+        shards: [manifest.shards[0], manifest.shards[1], manifest.shards[1]],
+      }).success,
+    ).toBe(false);
+    expect(
+      ciPartitionManifestSchema.safeParse({
+        ...manifest,
+        shards: [
+          manifest.shards[0],
+          manifest.shards[1],
+          { ...manifest.shards[2], id: 'legacy-unknown' },
+        ],
+      }).success,
+    ).toBe(false);
+    const envelope = {
+      schemaVersion: 2,
+      shard: 'legacy-desktop',
+      workflow: manifest.workflow,
+      manifestDigest: 'a'.repeat(64),
+      fullCollectionDigest: manifest.fullCollectionDigest,
+      fullPlanDigest: manifest.fullPlanDigest,
+      verificationId: '012345abcdef',
+    };
+    expect(ciShardEnvelopeSchema.safeParse(envelope).success).toBe(true);
+    expect(
+      ciShardEnvelopeSchema.safeParse({ ...envelope, schemaVersion: 1 })
+        .success,
+    ).toBe(false);
+    expect(
+      ciShardEnvelopeSchema.safeParse({ ...envelope, shard: 'legacy-local' })
+        .success,
+    ).toBe(false);
   });
 });

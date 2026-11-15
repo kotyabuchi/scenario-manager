@@ -2,6 +2,7 @@ import { isNil } from 'ramda';
 
 import { discover } from './discover';
 import { bindDiscovery } from './discoveryBindings';
+import { loadStorySurfaceContext } from './extractors/surfaceRoots';
 import { buildInventory } from './inventory';
 import { loadLedger } from './ledger';
 import { writeArtifact } from './ledgerArtifacts';
@@ -10,6 +11,7 @@ import { runIsolatedCheck } from './runIsolatedCheck';
 import { validateScheduleCheckEvidence } from './scheduleCheckEvidence';
 import { createScheduleExpectations } from './scheduleCheckExpectations';
 import { loadSource } from './source';
+import { withSurfaceNodes } from './surfaceProjection';
 
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -62,7 +64,9 @@ export const prepareScheduleCheck = async (root: string) => {
   };
   const bindings = bindDiscovery(scoped, [discovery]);
   const validation = validateLedger({
-    inventory: buildInventory(loadSource(root)),
+    inventory: withSurfaceNodes(
+      buildInventory(loadSource(root), loadStorySurfaceContext(root)),
+    ),
     ledger: scoped,
     registrations: bindings.registrations,
   });

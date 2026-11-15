@@ -11,6 +11,11 @@ import { discover } from './discover';
 import { discoverIntegration } from './discoverIntegration';
 import { bindDiscovery } from './discoveryBindings';
 import { loadStorySurfaceContext } from './extractors/surfaceRoots';
+import {
+  captureInputs,
+  compareInputs,
+  type InputFingerprint,
+} from './fingerprint';
 import { verifyGithubPushBootstrapApproval } from './githubEvent';
 import {
   type GithubEventPolicy,
@@ -30,8 +35,14 @@ import {
   policyMigrationSchema,
   validatePolicyMigrations,
 } from './policy';
+import {
+  measurePreparation,
+  measurePreparationSync,
+  type PreparationTimingObserver,
+} from './preparationTiming';
 import { validateLedger } from './requirements';
 import { loadSource } from './source';
+import { createSourceReadWitness } from './sourceReadWitness';
 import { checkSurfaceState } from './surfaceGate';
 import { buildSurfacePending } from './surfacePending';
 import { withSurfaceNodes } from './surfaceProjection';
@@ -42,6 +53,7 @@ import {
 } from './trustedRevision';
 
 import { createHash } from 'node:crypto';
+import { resolve } from 'node:path';
 
 import type { LedgerIssue } from '../../e2e/ledger/schema';
 
@@ -64,33 +76,110 @@ export const migrationsSchema = z.strictObject({
 });
 const serialize = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 
+type ReusableStaticInventory = {
+  root: string;
+  inputDigest: string;
+  inventory: ReturnType<typeof buildInventory>;
+  readWitness: ReturnType<typeof createSourceReadWitness>;
+};
+
+const reusableStaticInventories = new WeakMap<
+  object,
+  ReusableStaticInventory
+>();
+
 /** M1の固定runnerを列挙する。ブラウザ・DB・test bodyは実行しない。 */
-export const collectStaticState = async (root: string) => {
-  const inventory = buildInventory(
-    loadSource(root),
-    loadStorySurfaceContext(root),
+export const collectStaticState = async (
+  root: string,
+  onTiming?: PreparationTimingObserver,
+  { shouldPrepareReuse = false }: { shouldPrepareReuse?: boolean } = {},
+) => {
+  const reuseInputs = shouldPrepareReuse
+    ? await captureInputs(root)
+    : undefined;
+  const readWitness = shouldPrepareReuse
+    ? createSourceReadWitness()
+    : undefined;
+  const inventory = measurePreparationSync(
+    { phase: 'static-ledger', operation: 'inventory' },
+    onTiming,
+    () =>
+      buildInventory(
+        measurePreparationSync(
+          { phase: 'static-ledger', operation: 'product-source' },
+          onTiming,
+          () =>
+            loadSource(
+              root,
+              undefined,
+              readWitness ? { observeRead: readWitness.observe } : {},
+            ),
+        ),
+        measurePreparationSync(
+          { phase: 'static-ledger', operation: 'story-source' },
+          onTiming,
+          () => loadStorySurfaceContext(root, undefined, readWitness?.observe),
+        ),
+      ),
   );
+  if (reuseInputs) {
+    const afterInventory = await captureInputs(root);
+    if (
+      Object.values(compareInputs(reuseInputs, afterInventory)).some(
+        (paths) => paths.length > 0,
+      )
+    )
+      throw new Error('静的inventory解析中に実行入力が変化しました。');
+  }
   const [
     ledgerResult,
     appResult,
     storybookResult,
     isolatedResult,
     integrationResult,
-  ] = await Promise.allSettled([
-    loadLedger(root),
-    discover({ root, profile: 'app', config: 'playwright.config.ts' }),
-    discover({
-      root,
-      profile: 'storybook',
-      config: '.storybook/playwright.config.ts',
-    }),
-    discover({
-      root,
-      profile: 'isolated',
-      config: 'playwright.isolated.config.ts',
-    }),
-    discoverIntegration({ root }),
-  ]);
+  ] = await measurePreparation(
+    { phase: 'static-ledger', operation: 'discovery-wait' },
+    onTiming,
+    () =>
+      Promise.allSettled([
+        measurePreparation(
+          { phase: 'static-ledger', operation: 'ledger' },
+          onTiming,
+          () => loadLedger(root),
+        ),
+        measurePreparation(
+          { phase: 'static-ledger', operation: 'discover-app' },
+          onTiming,
+          () =>
+            discover({ root, profile: 'app', config: 'playwright.config.ts' }),
+        ),
+        measurePreparation(
+          { phase: 'static-ledger', operation: 'discover-storybook' },
+          onTiming,
+          () =>
+            discover({
+              root,
+              profile: 'storybook',
+              config: '.storybook/playwright.config.ts',
+            }),
+        ),
+        measurePreparation(
+          { phase: 'static-ledger', operation: 'discover-isolated' },
+          onTiming,
+          () =>
+            discover({
+              root,
+              profile: 'isolated',
+              config: 'playwright.isolated.config.ts',
+            }),
+        ),
+        measurePreparation(
+          { phase: 'static-ledger', operation: 'discover-integration' },
+          onTiming,
+          () => discoverIntegration({ root }),
+        ),
+      ]),
+  );
   // 失敗時も他の列挙子を残さず、すべての終了を待ってから返す。
   if (ledgerResult.status === 'rejected') throw ledgerResult.reason;
   if (appResult.status === 'rejected') throw appResult.reason;
@@ -103,15 +192,22 @@ export const collectStaticState = async (root: string) => {
     storybookResult.value,
     isolatedResult.value,
   ];
-  const bindings = bindDiscovery(ledger, [
-    ...reports,
-    integrationResult.value.discovery,
-  ]);
-  const validation = validateLedger({
-    inventory: withSurfaceNodes(inventory),
-    ledger,
-    registrations: bindings.registrations,
-  });
+  const { bindings, validation } = measurePreparationSync(
+    { phase: 'static-ledger', operation: 'bind-validate' },
+    onTiming,
+    () => {
+      const bindings = bindDiscovery(ledger, [
+        ...reports,
+        integrationResult.value.discovery,
+      ]);
+      const validation = validateLedger({
+        inventory: withSurfaceNodes(inventory),
+        ledger,
+        registrations: bindings.registrations,
+      });
+      return { bindings, validation };
+    },
+  );
   const issues = [...bindings.issues, ...validation.issues];
   if (issues.length)
     throw new Error(`静的台帳の整合エラー: ${JSON.stringify(issues)}`);
@@ -124,8 +220,12 @@ export const collectStaticState = async (root: string) => {
       inventory.diagnostics,
     ),
   });
-  const legacy = await buildLegacy(root, reports);
-  return {
+  const legacy = await measurePreparation(
+    { phase: 'static-ledger', operation: 'legacy' },
+    onTiming,
+    () => buildLegacy(root, reports),
+  );
+  const state = {
     inventory,
     ledger,
     baseline,
@@ -136,6 +236,46 @@ export const collectStaticState = async (root: string) => {
       ...validation.excepted,
     ]),
   };
+  if (reuseInputs && readWitness) {
+    const protectedInventory = measurePreparationSync(
+      { phase: 'static-ledger', operation: 'inventory-proof' },
+      onTiming,
+      () => structuredClone(inventory),
+    );
+    reusableStaticInventories.set(state, {
+      root: resolve(root),
+      inputDigest: reuseInputs.digest,
+      inventory: protectedInventory,
+      readWitness,
+    });
+  }
+  return state;
+};
+
+/** 固定されたstatic stateに結び付くinventoryだけを、一回限りで取り出す。 */
+export const consumeReusableStaticInventory = (
+  state: StaticState,
+  root: string,
+  inputs: InputFingerprint,
+  onTiming?: PreparationTimingObserver,
+): ReturnType<typeof buildInventory> | undefined => {
+  const entry = reusableStaticInventories.get(state);
+  reusableStaticInventories.delete(state);
+  return measurePreparationSync(
+    { phase: 'collection', operation: 'inventory-proof' },
+    onTiming,
+    () => {
+      if (
+        !entry ||
+        entry.root !== resolve(root) ||
+        entry.root !== inputs.root ||
+        entry.inputDigest !== inputs.digest ||
+        !entry.readWitness.matches()
+      )
+        return undefined;
+      return entry.inventory;
+    },
+  );
 };
 
 /** 初期不足の内容を固定headと合わせてレビューするためのdigest。 */

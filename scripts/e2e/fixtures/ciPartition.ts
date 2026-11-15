@@ -4,6 +4,7 @@ import { ledgerSchema } from '../../../e2e/ledger/schema';
 import { BOOTSTRAP_SMOKE_REVISION } from '../ciBootstrap';
 import { githubEventPolicySchema } from '../githubEventSchema';
 import { legacyKey, legacyManifestSchema } from '../legacy';
+import { legacyExecutionSchema } from '../legacyExecutionSchema';
 import { selectionDecisionSchema, selectionReason } from '../selectionSchema';
 import { verificationTestKey } from '../verificationPlan';
 import { digestVerificationPlan } from '../verificationPlanDigest';
@@ -40,6 +41,7 @@ export const ciPartitionFixture = (isBootstrap = false) => {
   if (isNil(template) || isNil(template.execution) || isNil(item))
     throw new Error('fixture不足');
   const appExecution = { ...template.execution, project: 'chromium' };
+  const mobileExecution = { ...appExecution, project: 'mobile-chrome' };
   const storyExecution = {
     profile: 'storybook',
     project: '',
@@ -85,6 +87,13 @@ export const ciPartitionFixture = (isBootstrap = false) => {
     };
   };
   const appRow = row(item.caseId, 'e2e/app.spec.ts', appExecution, 'browser');
+  const mobileAppRow = row(
+    item.caseId,
+    'e2e/app.spec.ts',
+    mobileExecution,
+    'browser',
+  );
+  const appRows = [appRow, mobileAppRow];
   const storyRow = row(
     storyCaseId,
     '.storybook/tests/smoke.spec.ts',
@@ -100,7 +109,11 @@ export const ciPartitionFixture = (isBootstrap = false) => {
   const ledger = ledgerSchema.parse({
     ...existing.ledger,
     profiles: [
-      { id: 'app', layer: 'browser', executions: [appExecution] },
+      {
+        id: 'app',
+        layer: 'browser',
+        executions: [appExecution, mobileExecution],
+      },
       { id: 'storybook', layer: 'storybook', executions: [storyExecution] },
       { id: 'isolated', layer: 'browser', executions: [isolatedExecution] },
     ].map(({ executions, ...profile }) => ({
@@ -118,7 +131,7 @@ export const ciPartitionFixture = (isBootstrap = false) => {
           {
             ...item,
             checks: appRow.checks,
-            executions: [appExecution],
+            executions: [appExecution, mobileExecution],
             testBindings: ['main'],
           },
           {
@@ -167,6 +180,28 @@ export const ciPartitionFixture = (isBootstrap = false) => {
         };
       }),
   );
+  // 認証projectにも正当な実行行を持たせ、固定2project scopeと一致させる。
+  for (const project of ['chromium-auth', 'mobile-chrome-auth']) {
+    const test = {
+      ...appRow.test,
+      testId: `${project}-auth-extra`,
+      file: 'e2e/auth/fixture.spec.ts',
+      titlePath: ['auth-extra'],
+      project,
+      tags: [],
+    };
+    extras.push({
+      key: verificationTestKey('app', test),
+      profile: 'app',
+      runtime: 'next-production',
+      test,
+      legacy: {
+        key: legacyKey('app', test),
+        disposition: 'local',
+        fingerprint: 'a'.repeat(64),
+      },
+    });
+  }
   const legacy = legacyManifestSchema.parse({
     schemaVersion: 1,
     tests: extras.map(({ test, profile, legacy }) => ({
@@ -181,29 +216,49 @@ export const ciPartitionFixture = (isBootstrap = false) => {
       expectedStatus: test.expectedStatus,
       annotations: test.annotations,
     })),
-    registered: [
-      {
+    registered: appRows.map(({ test, claim }) => {
+      if (isNil(claim)) throw new Error('app claimがありません。');
+      return {
         profile: 'app',
-        key: legacyKey('app', appRow.test),
+        key: legacyKey('app', test),
         fingerprint: 'b'.repeat(64),
         serialGroup: null,
-        file: appRow.test.file,
-        titlePath: appRow.test.titlePath,
-        project: appRow.test.project,
-        repeatEachIndex: appRow.test.repeatEachIndex,
-        expectedStatus: appRow.test.expectedStatus,
-        annotations: appRow.test.annotations,
-        caseId: item.caseId,
-        variant: appExecution.variant,
-        binding: 'main',
-      },
-    ],
+        file: test.file,
+        titlePath: test.titlePath,
+        project: test.project,
+        repeatEachIndex: test.repeatEachIndex,
+        expectedStatus: test.expectedStatus,
+        annotations: test.annotations,
+        ...claim,
+      };
+    }),
     setups: [],
     groups: [],
   });
+  const execution = legacyExecutionSchema.parse({
+    schemaVersion: 1,
+    entries: [
+      ...legacy.tests.map(({ key, fingerprint }) => ({
+        key,
+        fingerprint,
+        disposition: 'local',
+      })),
+      ...legacy.registered.map(({ caseId, variant, binding, ...entry }) => {
+        const origin = { ...entry, fingerprint: 'c'.repeat(64) };
+        return {
+          key: entry.key,
+          fingerprint: origin.fingerprint,
+          disposition: 'replacement',
+          reason: 'fixtureの既存登録を業務契約へ移行',
+          origin: { revision: 'a'.repeat(40), registration: origin },
+          replacement: { caseId, variant, binding },
+        };
+      }),
+    ],
+  });
   const fullPlan: VerificationPlan = {
     schemaVersion: 1,
-    requirements: [appRow, storyRow, isolatedRow],
+    requirements: [appRow, mobileAppRow, storyRow, isolatedRow],
     allowedExtraTests: extras,
   };
   const staticBaseSha = 'a'.repeat(40);
@@ -258,7 +313,10 @@ export const ciPartitionFixture = (isBootstrap = false) => {
       isBootstrap,
       legacy: structuredClone(legacy),
     },
+    execution,
     appRow,
+    mobileAppRow,
+    appRows,
     storyRow,
     isolatedRow,
   };
