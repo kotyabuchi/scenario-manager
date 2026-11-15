@@ -22,6 +22,8 @@ const ENVIRONMENT_KEYS = new Set([
   'APPDATA',
   'LOCALAPPDATA',
   'HOME',
+  // image取得先だけを引き継ぎ、共有DBの接続情報・資格情報は引き続き除外する。
+  'SUPABASE_INTERNAL_IMAGE_REGISTRY',
 ]);
 
 /** cloud資格情報・DB URL・実験flagを子プロセスへ継承しない。 */

@@ -96,6 +96,27 @@ beforeEach(() => {
 });
 
 describe('ローカルコマンドの環境変数境界', () => {
+  it.each([
+    'ghcr.io',
+    'public.ecr.aws',
+    'registry.example.invalid',
+  ])('明示したimage取得先 %s だけを保持する', (registry) => {
+    const source = environment({
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: registry,
+      SUPABASE_ACCESS_TOKEN: SECRET,
+      SUPABASE_DB_PASSWORD: SECRET,
+      SUPABASE_SERVICE_ROLE_KEY: SECRET,
+      SUPABASE_PROJECT_ID: SECRET,
+    });
+    const original = { ...source };
+    expect(localCommandEnvironment(source, UNIX_SOCKET)).toEqual({
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: registry,
+      DOCKER_HOST: UNIX_SOCKET,
+      NO_COLOR: '1',
+    });
+    expect(source).toEqual(original);
+  });
+
   it('Docker不要の起動でも秘密・remote設定を除去し親envを変更しない', () => {
     const source = environment({
       PATH: '/bin',
