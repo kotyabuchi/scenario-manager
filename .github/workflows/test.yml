@@ -121,8 +121,7 @@ jobs:
         name: Install verified Supabase CLI
         uses: ./.github/actions/setup-supabase
       - &install-chromium
-        name: Prepare Chromium and DB images
-        run: pnpm exec tsx scripts/e2e/prepareCiRuntime.ts
+        run: pnpm exec playwright install --with-deps chromium
       - id: verify
         run: pnpm e2e:ci shard required
         env:

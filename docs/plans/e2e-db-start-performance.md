@@ -81,3 +81,19 @@ head `b8e77f223bedc086e0a558051ae614b9985c3655`、run43670799178 attempt1は全7
 次の候補は、従来の実startが使っていたECRを3workerの共通job envで明示し、先読みの固定5imageもECRに揃える。setupは指定済みregistryを保持するため、他jobの既定値は変更しない。registry環境変数の継承、並行化、timeout/fallback、取消・終了待ちは維持する。GHCRが常に遅いと断定する変更ではなく、取得先を基準と揃えて並行化を評価するための調整である。
 
 registryとworkflow指定だけの追補は限定回帰・readonly lint・型検査・YAML解析・独立レビュー後に、最終headのHosted全体検証とartifact独立照合を実施する。直前候補のローカル全体受入と最終headの検証を混同せずPR本文に併記する。
+
+## 採否: 先読みは撤去、計測と取得先明示を採用
+
+ECR先読みのhead `c25d40d8fd369658ecbb4f64a84742dbdcb55995`、run43672190393 attempt1も全7job・重複検査・artifact独立照合は成功した。しかしrequiredは先読み開始26.067秒でfallbackし、既存startが120.012秒（database到達前93.864秒、DB health11.287秒、内部schema2.904秒、project migration0.170秒、最終health11.076秒）になった。準備を含めると159.012秒である。先読みの直接の失敗理由は公開診断では未分類。終了していない2imageのどちらが失敗し、どちらが取消されたかも断定しない。
+
+| 構成 | required | desktop | mobile | 3worker平均 | 最大 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 基準 | 96.386 | 95.284 | 94.888 | 95.519 | 96.386 |
+| GHCR先読み | 70.268 | 122.839 | 126.981 | 106.696 | 126.981 |
+| ECR先読み | 159.012 | 68.742 | 116.721 | 114.825 | 159.012 |
+
+単位は秒、準備stepと初回start commandの非重複区間を合計した観測。ECRのPostgreSQL pullはdesktop43.366秒/mobile91.389秒で、取得先を戻しても変動が残った。pullにはdownloadと展開の両方を含む。ECR候補の全体wall910秒・job時間和2,009秒も基準801秒・2,002秒を改善していない。個別の速い結果だけでは採用しない。
+
+両候補を不採用としてChromium導入の直呼びへ戻し、不要になった先読みwrapperと専用21テストも撤去する。残す変更はDB startの内訳計測、registry環境変数の尊重、従来の実取得先ECRの3workerへの明示。migration・health・テスト集合・cleanupを削って短縮しない。今回、CI高速化の安定した効果は達成していない。
+
+次の改善を選ぶ前に、取得/展開の区別と失敗種別を資格情報を出さず分類し、同じ取得先・条件で基準と比較する必要がある。image tar cacheも保存/復元費用を未計測のまま採用しない。撤去後の最終headは限定回帰・型・readonly lint・YAML・レビューとHosted全体検証で確認し、その結果はPR #10本文に保存する。

@@ -21,3 +21,11 @@
 GHCR候補のHostedは成功したが2workerの準備時間が退行したため、従来のECRを3workerの共通job envで明示する追補を実施。変更はworkflowの4行追加と固定registry/image・fixtureの置換だけで、制御フローは不変。実装者とは別のSol / mediumエージェントによる再レビューは必須・推奨0件。
 
 ECR設定は3workerだけに適用され、setupは非空の指定値を保持する。先読みとstartのregistryは一致し、他jobへ漏れない。remote Docker拒否・資格情報非出力・abort伝播・全close待機・timer/listener解放の不変を確認した。限定21テスト、readonly Biome、YAML展開による3worker継承とstep上書きなしの検査が成功。最終headのHosted実測・全体検証・artifact独立照合はPR本文に記録する。
+
+## 実測後の採否レビュー
+
+GHCR・ECRの両候補は全チェック・独立照合に成功したが、準備＋初回startの3worker平均は基準95.519秒に対して106.696 / 114.825秒、最大も退行した。ECRでは先読みfallbackが発生し直接原因は未分類。性能担当は既定CIからの先読み撤去を推奨し、親が証跡を照合して採用した。都合のよい再実行や一部workerの短縮だけでは採否を覆さない。
+
+最終実装は既存Playwright install直呼びへ戻し、先読みwrapperと専用テストを撤去する。内訳計測・registry尊重・従来ECRの明示は維持する。本報告の先読み実装レビューは不採用候補の検討記録であり、現在の稼働仕様ではない。
+
+撤去後の独立再レビューは必須・推奨0件。固定baseとの実効差分が安全な起動計測・registry限定継承・3worker限定ECRに収束し、secret非出力・observer障害隔離・abort/close/cleanupが維持されることを確認した。残る計測・command境界の78テストとreadonly Biomeが成功した。

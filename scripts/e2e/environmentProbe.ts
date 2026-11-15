@@ -34,7 +34,7 @@ import type {
 } from './environmentSchema';
 
 const PORTS = ISOLATED_SUPABASE_PORTS;
-export const EXCLUDED_SERVICES = [
+const EXCLUDED_SERVICES = [
   'realtime',
   'imgproxy',
   'mailpit',
