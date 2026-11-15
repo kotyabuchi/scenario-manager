@@ -191,7 +191,10 @@ export const runLegacyProject = async (
                             SCENARIO_E2E_LEGACY_PROJECT: input.project,
                           },
                           signal: app.signal,
-                          onClose: verification?.onExit,
+                          onClose: (result) => {
+                            app.recordBrowserClose(result);
+                            verification?.onExit(result);
+                          },
                           log: join(
                             manifest.workdir,
                             'legacy-browser.private.log',
@@ -210,6 +213,7 @@ export const runLegacyProject = async (
                     );
                     if (isNil(report))
                       throw new Error('legacy browser結果がありません。');
+                    app.recordBrowserReport(report);
                     state.results = parseLegacyProjectResults({
                       ...input,
                       report: JSON.parse(report),

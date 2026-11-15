@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { ISOLATED_APP_PORT } from '../../e2e/isolatedRuntime';
 import { runLocalCommand } from './environmentCommands';
 import { assertFixtureConnection } from './environmentCredentials';
+import { normalizeNextEnv } from './fingerprintNextEnv';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
 
 import { createHash } from 'node:crypto';
@@ -22,6 +23,8 @@ const BUILD_TIMEOUT_MS = 20 * 60_000;
 const READINESS_TIMEOUT_MS = 90_000;
 const OPERATION_TIMEOUT_MS = 20 * 60_000;
 const REQUEST_TIMEOUT_MS = 2_000;
+const MAX_DIAGNOSTIC_EVENTS = 8;
+const MAX_DIAGNOSTIC_REPORT_CHARS = 2_000_000;
 const POLL_INTERVAL_MS = 250;
 const OS_KEYS = new Set([
   'PATH',
@@ -66,6 +69,37 @@ type AppContext = {
   baseURL: string;
   env: NodeJS.ProcessEnv;
   signal: AbortSignal;
+  recordBrowserReport: (report: string) => void;
+  recordBrowserClose: (result: {
+    exitCode: number | null;
+    signal: string | null;
+  }) => void;
+};
+
+type CloseResult = { exitCode: number | null; signal: string | null };
+
+const closeOutcome = ({ exitCode, signal }: CloseResult) =>
+  !isNil(signal)
+    ? 'signal'
+    : exitCode === 0
+      ? 'zero'
+      : isNil(exitCode)
+        ? 'unknown'
+        : 'nonzero';
+
+/** 値を保存せず、既知templateかどうかと固定長hashだけを診断に残す。 */
+const nextEnvEvidence = (value: string | undefined) => {
+  if (isNil(value)) return { status: 'missing' as const };
+  try {
+    const normalized = normalizeNextEnv(Buffer.from(value));
+    return {
+      status: 'known' as const,
+      hash: hash(value),
+      normalizedHash: hash(normalized.toString('utf8')),
+    };
+  } catch {
+    return { status: 'unknown-template' as const };
+  }
 };
 
 /** build/server/testへはOS起動条件と明示したlocal公開設定だけを渡す。 */
@@ -223,6 +257,33 @@ export const withIsolatedApp = async (
   let hasCapturedInputs = false;
   let nextEnvChanged: boolean | null = null;
   const failures: string[] = [];
+  const diagnosticEvents: {
+    event: string;
+    at: string;
+    elapsedMs: number;
+    phase: string;
+    serverCloseObserved: boolean;
+    outcome?: string;
+  }[] = [];
+  const diagnosticOrigin = process.hrtime.bigint();
+  let serverCloseObserved = false;
+  let beforeNextEnv: ReturnType<typeof nextEnvEvidence> | null = null;
+  const record = (event: string, outcome?: string) => {
+    try {
+      if (diagnosticEvents.length < MAX_DIAGNOSTIC_EVENTS)
+        diagnosticEvents.push({
+          event,
+          at: new Date().toISOString(),
+          elapsedMs:
+            Number(process.hrtime.bigint() - diagnosticOrigin) / 1_000_000,
+          phase,
+          serverCloseObserved,
+          ...(isNil(outcome) ? {} : { outcome }),
+        });
+    } catch {
+      // 診断の記録失敗で本来の処理を変更しない。
+    }
+  };
   const controller = new AbortController();
   const serverController = new AbortController();
   const abort = () => {
@@ -304,6 +365,11 @@ export const withIsolatedApp = async (
     );
     nextEnvBefore = readArtifact(manifest.worktreeRoot, 'next-env.d.ts');
     hasCapturedInputs = true;
+    try {
+      beforeNextEnv = nextEnvEvidence(nextEnvBefore);
+    } catch {
+      // 診断の計算失敗は欠測として扱う。
+    }
     const env = isolatedAppEnvironment(connection);
     phase = 'build';
     save('running');
@@ -321,6 +387,7 @@ export const withIsolatedApp = async (
     phase = 'readiness';
     save('running');
     notify('readiness');
+    record('server-start-requested');
     serverResult = runLocalCommand(
       'node',
       [nextCLI, 'start', '--hostname', '127.0.0.1', '--port', String(APP_PORT)],
@@ -329,6 +396,10 @@ export const withIsolatedApp = async (
         env,
         signal: serverController.signal,
         shouldAllowAbort: true,
+        onClose: (result) => {
+          serverCloseObserved = true;
+          record('server-close', closeOutcome(result));
+        },
         log: join(appDirectory, 'server.private.log'),
       },
     ).then(
@@ -351,6 +422,17 @@ export const withIsolatedApp = async (
       baseURL: BASE_URL,
       env,
       signal: controller.signal,
+      recordBrowserClose: (result) =>
+        record('browser-close', closeOutcome(result)),
+      recordBrowserReport: (report) =>
+        record(
+          'browser-report-read',
+          report.length > MAX_DIAGNOSTIC_REPORT_CHARS
+            ? 'unknown'
+            : report.includes('ERR_CONNECTION_FAILED')
+              ? 'connection-failed-text'
+              : 'not-observed',
+        ),
     });
     await operationResult;
     controller.signal.throwIfAborted();
@@ -359,6 +441,7 @@ export const withIsolatedApp = async (
   } finally {
     clearTimeout(deadline);
     isStopping = true;
+    record('stop-requested');
     controller.abort();
     serverController.abort();
     // operationへ中断を伝えた後も、子test終了前にstack cleanupへ進めない。
@@ -366,6 +449,26 @@ export const withIsolatedApp = async (
     if (!isNil(serverResult) && !(await serverResult))
       failures.push('server-stop');
     signal.removeEventListener('abort', abort);
+    record('server-cleanup-finished');
+    if (!isNil(statusFile)) {
+      try {
+        const after = hasCapturedInputs
+          ? nextEnvEvidence(
+              readArtifact(manifest.worktreeRoot, 'next-env.d.ts'),
+            )
+          : null;
+        writeArtifact(
+          manifest.worktreeRoot,
+          relative(
+            manifest.worktreeRoot,
+            join(manifest.workdir, 'app', 'diagnostic.json'),
+          ),
+          `${JSON.stringify({ schemaVersion: 1, runId: manifest.runId, clock: 'wall-utc', events: diagnosticEvents, nextEnv: { before: beforeNextEnv, after } }, null, 2)}\n`,
+        );
+      } catch {
+        // 診断の保存失敗は既存の成功判定やcleanupを変えない。
+      }
+    }
     phase = 'finished';
     try {
       if (hasCapturedInputs)

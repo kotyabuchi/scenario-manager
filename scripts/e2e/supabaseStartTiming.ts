@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 
 import { writeProgressStderr } from './progressStderr';
+import { createSupabasePullDiagnostics } from './supabasePullDiagnostics';
 import { createSupabasePullTiming } from './supabasePullTiming';
 
 import { stripVTControlCharacters } from 'node:util';
@@ -31,6 +32,7 @@ export const createSupabaseStartTiming = () => {
       },
     };
   const pullTiming = createSupabasePullTiming();
+  const diagnostics = createSupabasePullDiagnostics();
   let startedAt: number | undefined;
   try {
     const now = performance.now();
@@ -46,6 +48,14 @@ export const createSupabaseStartTiming = () => {
     try {
       if (isDiscarding || isNil(startedAt)) return;
       const clean = stripVTControlCharacters(line).trim();
+      if (diagnostics.matchesLine(clean)) {
+        const elapsedForDiagnostics = performance.now() - startedAt;
+        if (
+          Number.isFinite(elapsedForDiagnostics) &&
+          elapsedForDiagnostics >= 0
+        )
+          diagnostics.observeLine(clean, Math.round(elapsedForDiagnostics));
+      }
       const marker = START_MARKERS.find(([, pattern]) => pattern.test(clean));
       const isNewMarker = !isNil(marker) && !seen.has(marker[0]);
       if (!isNewMarker && !pullTiming.matchesLine(clean)) return;
@@ -83,6 +93,7 @@ export const createSupabaseStartTiming = () => {
       isClosed = true;
       flush();
       pullTiming.close();
+      diagnostics.close();
     },
   };
 };

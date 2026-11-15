@@ -47,3 +47,15 @@ CLI呼出前後の時計を保持し、既存verifyで所有ID/labelの一致を
 「0」はその固定 parser が対象表示を記録した件数が0であり、処理・通信・retryや失敗がなかった証明ではない。特に当時のretry parserは `ghcr.io/supabase/` を認識せず、GHCR 18起動のretry件数は欠測として扱う。ECRでも非TTY出力の省略・解析対象外・summaryの上限があり、観測されないretryやエラーの不存在は証明できない。保存済み summary の固定エラー分類には該当表示がなかったが、成功と推定しない。開始欠落は対応する完了表示を認識したlayerのうち開始表示を見なかったというフラグであり、全layerの正確な時間ではない。layerとimageの対応、転送・展開・I/Oの排他的な時間、fallbackの直接原因は引き続き不明。
 
 本修正では今後の `ghcr.io/supabase/` と既存 `public.ecr.aws/supabase/` の固定roleに限り4秒・8秒retry表示を同じ安全な列挙値へ縮約する。tag・registry・生行・未知roleは公開しない。既存のエラー分類を追加・変更せず、欠測を0へ変換しない。旧summaryを新parserで取得した証拠に書き換えず、修正後の実環境で新たに確認する必要がある。
+
+## 2026-11-16: fallbackの直接原因を絞る追加診断
+
+固定CLI 2.75.0はCompose 2.40.3を内包し、ImagePullのAPI直後エラーをrole付きprogressにする一方、開始済みstreamのdecode/errorはprogressなしで返し、IgnoreFailuresにより個別エラーが破棄される。`--debug`はDocker独立transportのstream errorを復元しない。daemon 28.0.4の一部layer error/retryはjournalへ出るため、Hosted Linuxで `GITHUB_ACTIONS=true` のstart直後にだけ固定docker.service・現在boot・同start壁時計窓のread-only journalctlを限定採取する。固定 `/usr/bin/journalctl --no-pager` を直接所有childとして起動し、sudoへのfallbackは行わない。子プロセス所有、2秒で終了要求し実closeまで待機、5秒後追加終了要求。出力256KiB・512行・1行16KiB上限、未知/空/unit不明/時計不整合/権限不足/timeout/超過はunknown。raw journal・任意error・URL・layer IDは出さず、許可event enumと時刻だけ、全てunattributed。他imageの並行pullやdaemon全体の影響を区別できず、表示ゼロは失敗不在の証明ではない。reader時間はstart command計測と別記し、診断失敗で起動結果/cleanupを変えない。daemon設定・Docker Desktop操作・追加pullは行わない。
+
+通常CLI stderrではComposeのrole付きInterruptedとMobyの匿名layer `Retrying in Ns` だけ別markerで観測する。layer IDを保存せず、非TTYのparent情報欠落によりroleは不明、retry表示は最終失敗を意味しない。非Linux/Hosted外ではjournal childを起動しない。固定範囲の純粋testと所有child abort/上限testで安全性を確認し、実journal可用性は新しいHosted実行まで未検証とする。参照: [Compose pull](https://github.com/docker/compose/blob/v2.40.3/pkg/compose/pull.go)、[Moby download](https://github.com/moby/moby/blob/v28.0.4/distribution/xfer/download.go)、[systemd時間形式](https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html)。
+
+## 2026-11-16 継続診断の実装・検証境界
+
+所有serverの開始要求、実close、停止要求、browser実closeを親の単調経過とUTCで記録する。next-envは既知templateの前後hash・欠測・不明を区別し復元しない。Playwright reportの固定文字列検出は同文字列の存在のみを示し、request発生時刻やtransport原因を証明しない。traceと壁時計の原点は未較正で、close未観測はrequest瞬間の健康状態を保証しない。
+
+Docker journalの同窓診断はLinux Hosted限定、固定対象・出力上限・子の実closeを維持し、情報取得不能はunknownとして本処理の判定に混ぜない。daemon全体の未帰属情報であり該当pullの原因とは限らない。関連239テスト、型検査、Biome、ledger検査は成功。固定HEADの全体quality、実browserとLinux Hosted実journal取得・独立受入は未実施。

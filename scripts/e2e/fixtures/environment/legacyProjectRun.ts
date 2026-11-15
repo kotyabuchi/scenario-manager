@@ -162,6 +162,8 @@ export const setupLegacyProjectRun = async () => {
             NEXT_PUBLIC_SUPABASE_ANON_KEY: connection.anonKey,
           },
           signal,
+          recordBrowserClose: vi.fn(),
+          recordBrowserReport: vi.fn(),
         });
       } finally {
         events.push('app-close');

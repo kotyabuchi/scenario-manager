@@ -3,6 +3,7 @@ import { isNil } from 'ramda';
 import { ISOLATED_SUPABASE_PORTS } from '../../e2e/isolatedRuntime';
 import { measureCliStep } from './cliTiming';
 import { createDatabaseLifecycleTiming } from './databaseLifecycleTiming';
+import { createDockerJournalTiming } from './dockerJournalTiming';
 import { runEnvironment } from './environment';
 import {
   checkEnvironmentCatalog,
@@ -246,11 +247,13 @@ const probeWithSignal = async (
           env,
           signal,
         });
+        const dockerJournal = createDockerJournalTiming({ signal });
         await hostPressure.prepare();
         try {
           await measureCliStep('environment-start-command', async () => {
             const timing = createSupabaseStartTiming();
             hostPressure.start();
+            dockerJournal.start();
             databaseTiming.start();
             try {
               await runLocalCommand(
@@ -262,7 +265,10 @@ const probeWithSignal = async (
                   signal,
                   log: join(workdir, 'start.private.log'),
                   onStderr: timing.observe,
-                  onClose: hostPressure.onClose,
+                  onClose: () => {
+                    hostPressure.onClose();
+                    dockerJournal.onClose();
+                  },
                 },
               );
             } finally {
@@ -272,6 +278,7 @@ const probeWithSignal = async (
           });
         } finally {
           await hostPressure.finish();
+          await dockerJournal.finish();
         }
         // startがseedまで完了した事実を、後続検査やcleanupの成否から分離する。
         hasReplayedMigrations = true;
