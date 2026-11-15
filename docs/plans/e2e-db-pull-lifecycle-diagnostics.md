@@ -67,3 +67,11 @@ Docker journalの同窓診断はLinux Hosted限定、固定対象・出力上限
 ## 2026-11-16: checkpoint失敗の分類
 
 停止markerによる入力checkpoint失敗がbrowser phaseと記録されたため、before/after-testsの失敗をinput-checkとして区別する。実browser失敗が同時に起きた場合も保持し、構造化した所有app失敗からserver-exit・server-stop・reportの独立した失敗も失わない。入力検査・失敗判定・実close・cleanupは従来どおり。before-environment失敗は元例外を再throwして環境を作らない。実appおよび複合失敗を含むnative限定6 suite・117 testsとBiomeは成功。最新変更の全体quality・Hosted検証は未実施。
+
+## 2026-11-16: 所有manifest保存のEPERM
+
+固定HEAD `4f2c9bf` のlocal quality `71a332bbf9b8` はauth環境の `mark-running` で systemCode `EPERM`、browser起動・catalog照合前に失敗した。5所有DBのcleanupはcomplete。旧receiptには対象syscallが残らず、当時のrename失敗や原因は確定できない。別途、同じFSの新しい所有一時領域で有限回の書込を行い、旧実装・候補の両方でrenameのEPERMを直接観測したが、過去のsyscallの証明ではない。
+
+保存helperは固定operationと許可systemCodeだけを診断に残し、primary失敗と一時file cleanup失敗を区別する。排他作成成功とidentityを確認した一時fileだけをcleanupし、置換・不明なら触れない。environment manifest保存のみWindowsのrename EPERM/EBUSYに限定して最大5回、25/50/100/200/400ms後の再試行を許可する。初回前に親・targetのownership snapshotを採り、snapshotが取得できなければ従来の初回renameのみ、失敗後の再試行は禁止する。retry前に親・target・temporaryのidentityと必要な内容を再照合し不一致なら元の失敗を維持する。確認とrenameの間は原子的なCASではなく競合は残る。同期待機の合計最大775ms中はevent loopとabort通知も待つ。他のartifactやsidecarはretryせず、既存manifest/receiptのstrict schemaは変更しない。実行前には固定HEADの全体quality・Hostedと所有cleanupを改めて受入する。
+
+統合時、関連4 suiteの98 testsとBiomeは成功。全体型検査はBigInt表記・テスト戻り値を修正後に成功し、修正後のartifact 18 testsも成功。台帳checkはその意味不変の型互換修正前に69登録・issues/policy delta 0で成功、コミットhookと固定後qualityでも確認する。同FS・各600回の単発比較では旧1,433ms、対象retry opt-in 2,184msで候補側に待機1回・最終例外0。固定順・小標本であり、性能差や再発率、旧ownerの原因・根治を証明しない。3独立レビューで未解消必須・推奨0。旧71a試行は未受入のまま、新固定HEADの全体quality・Hostedはまだ未実施。

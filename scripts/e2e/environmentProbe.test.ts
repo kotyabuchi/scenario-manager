@@ -19,6 +19,7 @@ import {
   startCalls,
   workdir,
 } from './fixtures/environment/probe';
+import { ArtifactWriteError, writeArtifact } from './ledgerArtifacts';
 
 import { getEventListeners } from 'node:events';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -38,8 +39,58 @@ vi.mock('./databaseLifecycleTiming', () => ({
 vi.mock('./environmentDocker', () => ({ createDockerDriver: vi.fn() }));
 vi.mock('./environmentInputs', () => ({ prepareEnvironmentInputs: vi.fn() }));
 vi.mock('./environmentLock', () => ({ acquireEnvironmentLock: vi.fn() }));
+vi.mock('./ledgerArtifacts', async (original) => {
+  const actual = await original<typeof import('./ledgerArtifacts')>();
+  return { ...actual, writeArtifact: vi.fn(actual.writeArtifact) };
+});
 
 describe('probeEnvironmentの診断と中断境界', () => {
+  it('manifest保存のprimaryとcleanup失敗をsidecarに残して所有cleanupする', async () => {
+    const actual =
+      await vi.importActual<typeof import('./ledgerArtifacts')>(
+        './ledgerArtifacts',
+      );
+    let failed = false;
+    vi.mocked(writeArtifact).mockImplementation(
+      (base, path, contents, options) => {
+        if (
+          !failed &&
+          path.endsWith('manifest.json') &&
+          JSON.parse(contents).state === 'running'
+        ) {
+          failed = true;
+          expect(options).toEqual({ allowWindowsManifestRenameRetry: true });
+          throw new ArtifactWriteError({ operation: 'rename', code: 'EPERM' }, [
+            { operation: 'remove', code: 'EBUSY' },
+          ]);
+        }
+        return actual.writeArtifact(base, path, contents, options);
+      },
+    );
+    try {
+      const report = await probeEnvironment(root);
+      expect(report.passed).toBe(false);
+      expect(report.failurePhase).toBe('mark-running');
+      expect(report.cleanup?.status).toBe('complete');
+      const diagnostic = JSON.parse(
+        await readFile(join(workdir, 'artifact-write-diagnostic.json'), 'utf8'),
+      );
+      expect(diagnostic).toEqual({
+        schemaVersion: 1,
+        runId: report.runId,
+        failures: [
+          {
+            state: 'running',
+            primary: { operation: 'rename', code: 'EPERM' },
+            cleanup: [{ operation: 'remove', code: 'EBUSY' }],
+          },
+        ],
+      });
+      expect(release).toHaveBeenCalledOnce();
+    } finally {
+      vi.mocked(writeArtifact).mockImplementation(actual.writeArtifact);
+    }
+  });
   it('所有DBの有限診断が終了するまでcatalogとcleanupへ進まない', async () => {
     let finishCollection = () => {};
     let notifyCollection = () => {};

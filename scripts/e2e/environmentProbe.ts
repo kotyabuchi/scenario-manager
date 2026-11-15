@@ -21,7 +21,7 @@ import { createEnvironmentPlan } from './environmentOwnership';
 import { environmentLeaseSchema } from './environmentSchema';
 import { createHostPressureTiming } from './hostPressureTiming';
 import { collectImageObservation } from './imageObservation';
-import { writeArtifact } from './ledgerArtifacts';
+import { ArtifactWriteError, writeArtifact } from './ledgerArtifacts';
 import { seedSupabaseUpdateCache, verifySupabaseCli } from './supabaseCli';
 import { createSupabaseStartTiming } from './supabaseStartTiming';
 
@@ -38,6 +38,7 @@ import type {
 } from './environmentSchema';
 
 const PORTS = ISOLATED_SUPABASE_PORTS;
+const MAX_ARTIFACT_FAILURES = 8;
 const EXCLUDED_SERVICES = [
   'storage-api',
   'realtime',
@@ -202,15 +203,34 @@ const probeWithSignal = async (
       status: 'verified' | 'mismatch' | 'not-reached';
     } = { check: null, status: 'not-reached' };
     let failurePhase: EnvironmentRunPhase | undefined;
+    const artifactFailures: {
+      state: EnvironmentManifest['state'];
+      primary: ArtifactWriteError['primary'];
+      cleanup: ArtifactWriteError['cleanup'];
+    }[] = [];
     isLifecycleOwner = true;
     const result = await runEnvironment(manifest, {
       docker: createDockerDriver((args) => run('docker', args)),
       save: async (value) => {
-        writeArtifact(
-          worktreeRoot,
-          relative(worktreeRoot, join(workdir, 'manifest.json')),
-          `${JSON.stringify(value, null, 2)}\n`,
-        );
+        try {
+          writeArtifact(
+            worktreeRoot,
+            relative(worktreeRoot, join(workdir, 'manifest.json')),
+            `${JSON.stringify(value, null, 2)}\n`,
+            { allowWindowsManifestRenameRetry: true },
+          );
+        } catch (error) {
+          if (
+            error instanceof ArtifactWriteError &&
+            artifactFailures.length < MAX_ARTIFACT_FAILURES
+          )
+            artifactFailures.push({
+              state: value.state,
+              primary: error.primary,
+              cleanup: error.cleanup,
+            });
+          throw error;
+        }
         // cleanupの失敗記録がmanifestを更新しても、最初の実行失敗段階を保持する。
         failurePhase ??= value.failure?.phase;
         if (value.state === 'stopping')
@@ -368,6 +388,20 @@ const probeWithSignal = async (
         }
       },
       release: () => lock.release(),
+    }).finally(() => {
+      if (artifactFailures.length === 0) return;
+      try {
+        writeArtifact(
+          worktreeRoot,
+          relative(
+            worktreeRoot,
+            join(workdir, 'artifact-write-diagnostic.json'),
+          ),
+          `${JSON.stringify({ schemaVersion: 1, runId, failures: artifactFailures }, null, 2)}\n`,
+        );
+      } catch {
+        // 診断自体の書込失敗は元の失敗やcleanup結果を変更しない。
+      }
     });
     const report = {
       runId,
