@@ -186,7 +186,7 @@ node node_modules/vitest/vitest.mjs run --config scripts/e2e/vitest.config.ts --
 | PR10: legacyのdesktop/mobile分割 | 実装・ローカル/Hosted受入済み、Draft・本番未反映 |
 | 細区間の追加計測 | 既存公開ログの粗区間は整理済み、細区間の計測実装は未実施 |
 | E2Eの責務移管・重複整理 | 未実施。移管先assertionと旧→新の台帳対応が先決 |
-| 固定500ms待ちの置換 | 未実施 |
+| 固定500ms待ちの置換 | BOOTH clear の2 project を状態同期へ移行、全体・Hosted検証待ち。他の固定待ちは残る |
 | unit setup/collectionの最適化 | 初期化分離とSSRアイコンのbundleを実装、同19ファイルのwall中央値91.361→46.479秒。全91ファイル・共通quality成功。Hosted結果はPR10で管理 |
 | CIのPanda生成重複 | install内prepareの実行を固定Hostedログで確認し、明示prepareの重複stepを除去 |
 | pristine DB dump・node_modules cache | 未実施。内訳の計測と採用条件の確認後に判断 |

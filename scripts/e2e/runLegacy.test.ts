@@ -24,6 +24,7 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
+import { realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -268,7 +269,10 @@ describe('legacy実行の集約と中断', () => {
     );
     const result = await runLegacy(value.root);
     expect(result.status).toBe('failed');
-    expect(verifyLegacyOrigins).toHaveBeenCalledWith(value.root, execution);
+    expect(verifyLegacyOrigins).toHaveBeenCalledWith(
+      await realpath(value.root),
+      execution,
+    );
     expect(discover).not.toHaveBeenCalled();
     expect(runLegacyProject).not.toHaveBeenCalled();
     expect(aggregateLegacyResults).not.toHaveBeenCalled();
@@ -311,7 +315,7 @@ describe('legacy実行の集約と中断', () => {
       ]),
     ]);
     expect(discover).toHaveBeenCalledWith({
-      root: value.root,
+      root: await realpath(value.root),
       profile: 'app',
       config: 'playwright.legacy-local.config.ts',
       setupProjects: [],
@@ -347,7 +351,10 @@ describe('legacy実行の集約と中断', () => {
     );
     const result = await runLegacy(value.root);
     expect(result.status).toBe('failed');
-    expect(captureLegacySources).toHaveBeenCalledWith(value.root, legacy);
+    expect(captureLegacySources).toHaveBeenCalledWith(
+      await realpath(value.root),
+      legacy,
+    );
     expect(runLegacyProject).toHaveBeenCalledOnce();
     expect(aggregateLegacyResults).not.toHaveBeenCalled();
     expect(value.receipt()).toMatchObject({

@@ -175,7 +175,7 @@ describe('旧test公式JSON結果の照合', () => {
     const replaced = results.filter(
       (result) => result.originFingerprint !== undefined,
     );
-    expect(replaced).toHaveLength(9);
+    expect(replaced).toHaveLength(10);
     for (const result of replaced) {
       expect(result.fingerprint).not.toBe(result.originFingerprint);
       expect(

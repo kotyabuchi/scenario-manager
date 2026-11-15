@@ -271,5 +271,44 @@
       }
     ],
     "notApplicable": []
+  },
+  {
+    "target": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm",
+    "classification": "support",
+    "requirements": [
+      {
+        "aspect": "render",
+        "layers": ["browser"],
+        "expectation": "BOOTH URLで誘導バナーが表示された後、入力をクリアするとバナーが非表示になる。",
+        "basis": ["e2e/auth/scenario-new-banner.spec.ts"],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "clear",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "clear",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notApplicable": []
   }
 ]

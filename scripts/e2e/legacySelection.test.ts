@@ -29,12 +29,22 @@ const input = () => ({
 });
 
 describe('旧testのexact選択', () => {
-  it('移行済み5caseをauth projectごとの実行対象へ保つ', () => {
+  it('移行済みcaseをauth projectごとの実行対象へ保つ', () => {
     for (const project of ['chromium-auth', 'mobile-chrome-auth']) {
       const selection = createLegacySelection({ ...input(), project });
       expect(
         selection.entries.filter((entry) => 'caseId' in entry),
-      ).toHaveLength(9);
+      ).toHaveLength(10);
+      expect(selection.entries).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            caseId: 'legacy-banner-clear',
+            variant: 'clear',
+            binding: 'main',
+            project,
+          }),
+        ]),
+      );
       expect(selection.keys).toHaveLength(108);
     }
   });
@@ -56,8 +66,8 @@ describe('旧testのexact選択', () => {
   });
   it('全348登録を照合したうえで4projectの非deferred330件だけを選択する', () => {
     const value = input();
-    expect(value.currentLegacy.tests).toHaveLength(330);
-    expect(value.currentLegacy.registered).toHaveLength(18);
+    expect(value.currentLegacy.tests).toHaveLength(328);
+    expect(value.currentLegacy.registered).toHaveLength(20);
     const selections = [
       ...new Set(legacy.tests.map((entry) => entry.project)),
     ].map((project) => createLegacySelection({ ...value, project }));

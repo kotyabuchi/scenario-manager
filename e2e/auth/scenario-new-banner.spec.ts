@@ -69,18 +69,22 @@ test.describe('シナリオ新規登録 - インポート誘導バナー', () =>
     );
   });
 
-  test('BOOTH URLを入力後に削除するとバナーが消える', async ({ page }) => {
-    const urlInput = page.locator('#distributeUrl');
-    await urlInput.fill('https://booth.pm/ja/items/12345');
+  test(
+    'BOOTH URLを入力後に削除するとバナーが消える',
+    {
+      tag: ['@case:legacy-banner-clear', '@variant:clear', '@binding:main'],
+    },
+    async ({ page }) => {
+      const urlInput = page.locator('#distributeUrl');
+      await urlInput.fill('https://booth.pm/ja/items/12345');
 
-    const banner = page.getByRole('note');
-    await expect(banner).toBeVisible({ timeout: 5_000 });
+      const banner = page.getByRole('note');
+      await expect(banner).toBeVisible({ timeout: 5_000 });
 
-    // URLをクリアする
-    await urlInput.clear();
+      // URLをクリアする
+      await urlInput.clear();
 
-    // デバウンス完了を待つ
-    await page.waitForTimeout(500);
-    await expect(banner).not.toBeVisible();
-  });
+      await expect(banner).not.toBeVisible();
+    },
+  );
 });
