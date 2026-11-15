@@ -22,6 +22,8 @@ const ENVIRONMENT_KEYS = new Set([
   'APPDATA',
   'LOCALAPPDATA',
   'HOME',
+  // image取得先だけを引き継ぎ、共有DBの接続情報・資格情報は引き続き除外する。
+  'SUPABASE_INTERNAL_IMAGE_REGISTRY',
 ]);
 
 /** cloud資格情報・DB URL・実験flagを子プロセスへ継承しない。 */
@@ -54,6 +56,7 @@ export const runLocalCommand = async (
     log?: string;
     signal?: AbortSignal;
     shouldAllowAbort?: boolean;
+    onStderr?: (chunk: string) => void;
     onClose?:
       | ((result: { exitCode: number | null; signal: string | null }) => void)
       | undefined;
@@ -118,6 +121,14 @@ export const runLocalCommand = async (
       fail();
       return;
     }
+    const observeStderr = (chunk: Buffer | string) => {
+      try {
+        options.onStderr?.(chunk.toString());
+      } catch {
+        // 診断observerの失敗はcommandの結果や終了確認に影響させない。
+      }
+    };
+    if (!isNil(options.onStderr)) child.stderr?.on('data', observeStderr);
     const forceStop = () => {
       if (hasClosed || !isNil(child.exitCode) || !isNil(child.signalCode))
         return;
@@ -141,6 +152,7 @@ export const runLocalCommand = async (
     if (options.signal?.aborted) armForceStop();
     child.once('close', (exitCode, signal) => {
       hasClosed = true;
+      child.stderr?.removeListener('data', observeStderr);
       try {
         options.onClose?.({ exitCode, signal });
       } catch {

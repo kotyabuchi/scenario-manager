@@ -8,6 +8,11 @@ import { writeArtifact } from './ledgerArtifacts';
 import { IMPACT_RULES_PATH, loadImpactRules } from './loadImpactRules';
 import { provePandaOutputs } from './pandaProvenance';
 import { PlaywrightSelectionRepresentationError } from './playwrightTestList';
+import {
+  measurePreparation,
+  measurePreparationSync,
+  writePreparationTiming,
+} from './preparationTiming';
 import { prepareVerificationDetails } from './prepareVerification';
 import { projectSelection, selectImpacts } from './select';
 import { selectedPreparation } from './selectedPreparation';
@@ -24,6 +29,8 @@ import { resolveRevisions } from './trustedRevision';
 
 import { join } from 'node:path';
 
+import type { PreparationTimingObserver } from './preparationTiming';
+
 /** 全体整合を検査した後で、固定された旧・現ソースから実行集合を選ぶ。 */
 export const prepareChangedVerification = async (input: {
   root: string;
@@ -33,23 +40,36 @@ export const prepareChangedVerification = async (input: {
   forceFull?: boolean;
   deferRunnerSelection?: boolean;
   onPhase?: (phase: 'static-ledger' | 'collection' | 'selection') => void;
+  onTiming?: PreparationTimingObserver;
   signal?: AbortSignal;
 }) => {
   const { root, prefix } = input;
   const env = input.env ?? process.env;
+  const onTiming =
+    input.onTiming ??
+    (env.E2E_PREPARATION_TIMING === '1' ? writePreparationTiming : undefined);
   const save = (name: string, value: unknown) =>
     writeArtifact(
       root,
       `${prefix}/${name}.json`,
       `${JSON.stringify(value, null, 2)}\n`,
     );
-  const initial = await captureInputs(root);
+  const initial = await measurePreparation(
+    { phase: 'static-ledger', operation: 'inputs' },
+    onTiming,
+    () => captureInputs(root),
+  );
   input.signal?.throwIfAborted();
-  const revisions = await resolveRevisions({
-    root,
-    env,
-    ...(input.base ? { base: input.base } : {}),
-  });
+  const revisions = await measurePreparation(
+    { phase: 'static-ledger', operation: 'revisions' },
+    onTiming,
+    () =>
+      resolveRevisions({
+        root,
+        env,
+        ...(input.base ? { base: input.base } : {}),
+      }),
+  );
   const eventPolicy =
     revisions.mode === 'ci' ? revisions.eventPolicy : undefined;
   const forceFull =
@@ -59,17 +79,25 @@ export const prepareChangedVerification = async (input: {
   let result: Awaited<ReturnType<typeof checkStaticState>>;
   try {
     input.onPhase?.('static-ledger');
-    state = await collectStaticState(root);
-    result = await checkStaticState({
-      root,
-      state,
-      revisions,
-      directory: join(root, prefix, 'surface-migration'),
-      ...(input.signal ? { signal: input.signal } : {}),
-      ...(env.E2E_LEDGER_BOOTSTRAP_APPROVAL
-        ? { bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL }
-        : {}),
+    const collectedState = await collectStaticState(root, onTiming, {
+      shouldPrepareReuse: true,
     });
+    state = collectedState;
+    result = await measurePreparation(
+      { phase: 'static-ledger', operation: 'static-check' },
+      onTiming,
+      () =>
+        checkStaticState({
+          root,
+          state: collectedState,
+          revisions,
+          directory: join(root, prefix, 'surface-migration'),
+          ...(input.signal ? { signal: input.signal } : {}),
+          ...(env.E2E_LEDGER_BOOTSTRAP_APPROVAL
+            ? { bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL }
+            : {}),
+        }),
+    );
   } catch (error) {
     throw recordStaticLedgerFailure({
       root,
@@ -93,7 +121,7 @@ export const prepareChangedVerification = async (input: {
     throw new Error('変更選択前の全体静的検査に失敗しました。');
   input.signal?.throwIfAborted();
   input.onPhase?.('collection');
-  const prepared = await prepareVerificationDetails(root);
+  const prepared = await prepareVerificationDetails(root, onTiming, state);
   if (
     Object.values(compareInputs(initial, prepared.inputs)).some(
       (paths) => paths.length > 0,
@@ -112,26 +140,41 @@ export const prepareChangedVerification = async (input: {
       : ciSnapshotOptions(eventPolicy)),
     runtimeInputPaths: prepared.inputs.files.map(({ path }) => path),
   };
-  const capture = captureGitSnapshot(captureOptions);
+  const capture = measurePreparationSync(
+    { phase: 'selection', operation: 'snapshot' },
+    onTiming,
+    () => captureGitSnapshot(captureOptions),
+  );
   save('git-start', capture.snapshot);
   const currentRules = readSnapshotFile(capture, 'working', IMPACT_RULES_PATH);
   if (isNil(currentRules)) throw new Error('変更影響規則がありません。');
-  const rules = loadImpactRules({
-    current: currentRules.toString('utf8'),
-    base:
-      readSnapshotFile(capture, 'base', IMPACT_RULES_PATH)?.toString('utf8') ??
-      null,
-    ledger: prepared.ledger,
-  });
+  const rules = measurePreparationSync(
+    { phase: 'selection', operation: 'rules' },
+    onTiming,
+    () =>
+      loadImpactRules({
+        current: currentRules.toString('utf8'),
+        base:
+          readSnapshotFile(capture, 'base', IMPACT_RULES_PATH)?.toString(
+            'utf8',
+          ) ?? null,
+        ledger: prepared.ledger,
+      }),
+  );
   const proof = forceFull
     ? null
-    : await provePandaOutputs({
-        root,
-        directory: join(root, prefix, 'panda'),
-        capture,
-        inputs: prepared.inputs,
-        ...(input.signal ? { signal: input.signal } : {}),
-      });
+    : await measurePreparation(
+        { phase: 'selection', operation: 'panda-proof' },
+        onTiming,
+        () =>
+          provePandaOutputs({
+            root,
+            directory: join(root, prefix, 'panda'),
+            capture,
+            inputs: prepared.inputs,
+            ...(input.signal ? { signal: input.signal } : {}),
+          }),
+      );
   save('generated-inputs', proof);
   const unversioned = new Set(
     capture.snapshot.reasons
@@ -144,8 +187,15 @@ export const prepareChangedVerification = async (input: {
       : [];
   let graph: ReturnType<typeof mergeImpactGraphs>;
   try {
-    graph = mergeImpactGraphs(
-      buildSnapshotInventories(capture, provenUnversionedPaths),
+    const inventories = measurePreparationSync(
+      { phase: 'selection', operation: 'snapshot-inventories' },
+      onTiming,
+      () => buildSnapshotInventories(capture, provenUnversionedPaths, onTiming),
+    );
+    graph = measurePreparationSync(
+      { phase: 'selection', operation: 'graph' },
+      onTiming,
+      () => mergeImpactGraphs(inventories),
     );
   } catch {
     // 現行依存で旧graphを再現できない場合、由来を偽装せず全件へ戻す。
@@ -162,55 +212,76 @@ export const prepareChangedVerification = async (input: {
     provenUnversionedPaths,
     ...(forceFull ? { forceFull: true } : {}),
   };
-  let decision = selectImpacts(selectionInput);
-  let effective = projectSelection({
-    decision,
-    fullPlan: prepared.plan,
-    ledger: prepared.ledger,
-    legacy: prepared.legacy,
-  });
-  if (
-    !input.deferRunnerSelection &&
-    decision.mode === 'partial' &&
-    !isNil(effective)
-  ) {
-    try {
-      selectedPreparation(prepared, effective);
-    } catch (error) {
-      if (!(error instanceof PlaywrightSelectionRepresentationError))
-        throw error;
-      decision = selectImpacts({ ...selectionInput, forceFull: true });
-      decision.reasons.push(
-        selectionReason('RUNNER_SELECTION_UNREPRESENTABLE'),
-      );
-      effective = projectSelection({
+  const { decision, effective } = measurePreparationSync(
+    { phase: 'selection', operation: 'decision' },
+    onTiming,
+    () => {
+      let decision = selectImpacts(selectionInput);
+      let effective = projectSelection({
         decision,
         fullPlan: prepared.plan,
         ledger: prepared.ledger,
         legacy: prepared.legacy,
       });
-    }
-  }
+      if (
+        !input.deferRunnerSelection &&
+        decision.mode === 'partial' &&
+        !isNil(effective)
+      ) {
+        try {
+          selectedPreparation(prepared, effective);
+        } catch (error) {
+          if (!(error instanceof PlaywrightSelectionRepresentationError))
+            throw error;
+          decision = selectImpacts({ ...selectionInput, forceFull: true });
+          decision.reasons.push(
+            selectionReason('RUNNER_SELECTION_UNREPRESENTABLE'),
+          );
+          effective = projectSelection({
+            decision,
+            fullPlan: prepared.plan,
+            ledger: prepared.ledger,
+            legacy: prepared.legacy,
+          });
+        }
+      }
+      return { decision, effective };
+    },
+  );
   save('decision', decision);
   save('effective-selection', effective);
-  const checkpoint = async (phase: string) => {
-    input.signal?.throwIfAborted();
-    const currentInputs = await captureInputs(root);
-    if (
-      Object.values(compareInputs(initial, currentInputs)).some(
-        (paths) => paths.length > 0,
-      )
-    )
-      throw new Error('変更選択後に実行入力が変化しました。');
-    const current = captureGitSnapshot({
-      ...captureOptions,
-      runtimeInputPaths: currentInputs.files.map(({ path }) => path),
-    });
-    save('git-end', { phase, ...current.snapshot });
-    if (current.snapshot.digest !== capture.snapshot.digest)
-      throw new Error('変更選択後にGit snapshotが変化しました。');
-    return current.snapshot;
-  };
+  const checkpoint = (phase: string) =>
+    measurePreparation(
+      { phase: 'selection', operation: 'checkpoint' },
+      onTiming,
+      async () => {
+        input.signal?.throwIfAborted();
+        const currentInputs = await measurePreparation(
+          { phase: 'selection', operation: 'checkpoint-inputs' },
+          onTiming,
+          () => captureInputs(root),
+        );
+        if (
+          Object.values(compareInputs(initial, currentInputs)).some(
+            (paths) => paths.length > 0,
+          )
+        )
+          throw new Error('変更選択後に実行入力が変化しました。');
+        const current = measurePreparationSync(
+          { phase: 'selection', operation: 'checkpoint-snapshot' },
+          onTiming,
+          () =>
+            captureGitSnapshot({
+              ...captureOptions,
+              runtimeInputPaths: currentInputs.files.map(({ path }) => path),
+            }),
+        );
+        save('git-end', { phase, ...current.snapshot });
+        if (current.snapshot.digest !== capture.snapshot.digest)
+          throw new Error('変更選択後にGit snapshotが変化しました。');
+        return current.snapshot;
+      },
+    );
   await checkpoint('selection-ready');
   return {
     revisions,

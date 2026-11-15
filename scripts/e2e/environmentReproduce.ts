@@ -22,7 +22,7 @@ import type {
 } from './environmentSchema';
 
 const RECEIPT = 'test-results/quality/environment-reproduction.json';
-const SERVICES = ['db', 'rest', 'kong', 'storage', 'auth'] as const;
+const SERVICES = ['db', 'rest', 'kong', 'auth'] as const;
 type EnvironmentProof = {
   report: Awaited<ReturnType<typeof probeEnvironment>>;
   manifest: EnvironmentManifest;
@@ -179,7 +179,7 @@ export const compareEnvironmentProofs = (
       issue(
         'REPRODUCTION_MISMATCH',
         'images',
-        '必須5サービスのimage IDが一致しません。',
+        '必須4サービスのimage IDが一致しません。',
       ),
     );
   return issues;

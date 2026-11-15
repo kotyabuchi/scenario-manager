@@ -178,10 +178,47 @@ describe('case所有のsession fixture', () => {
     ).catch((value: unknown) => value);
     expect(error).toBeInstanceOf(Error);
     expect(String(error)).not.toContain('private-db-connection');
+    if (table === 'session_participants') {
+      expect(String(error)).toContain('status=400 code=unknown type=SPECTATOR');
+      expect(String(error)).not.toContain('code=failure');
+    }
     expect(context.journal.snapshot().resources).toContainEqual({
       resource: expect.objectContaining({ kind: table }),
       status: 'reserved',
     });
+  });
+
+  it.each([
+    '23505',
+    'PGRST116',
+    'private-db-code',
+  ])('参加者INSERTの診断code=%sを検証して機密本文を出さない', async (code) => {
+    const context = fixtureContext();
+    const api = mockFixtureApi();
+    const actors = await createCaseActors(context.connection, context.journal);
+    api.controls.intercept = ({ url, method }) =>
+      url.pathname === '/rest/v1/session_participants' && method === 'POST'
+        ? api.json(
+            {
+              code,
+              message: 'private-db-message',
+              details: 'private-db-details',
+              hint: 'private-db-hint',
+            },
+            409,
+          )
+        : undefined;
+    const error = await createSessionFixture(
+      context.connection,
+      context.journal,
+      actors,
+      { startAt: START_AT },
+    ).catch((value: unknown) => value);
+    expect(error).toBeInstanceOf(Error);
+    expect(String(error)).toContain(
+      `status=409 code=${code === 'private-db-code' ? 'unknown' : code} type=SPECTATOR`,
+    );
+    expect(String(error)).not.toContain('private-db');
   });
 
   it('reserve保存失敗ならINSERTを開始せず、record保存失敗なら予約を保持する', async () => {

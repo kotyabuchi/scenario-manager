@@ -1,12 +1,18 @@
 import { isNil } from 'ramda';
 
+import { validateCiLegacyResults } from './ciLegacyResults';
 import { digestCiPartitionManifest } from './ciPartition';
-import { ciShardEnvelopeSchema } from './ciPartitionSchema';
+import { CI_LEGACY_PROJECTS, ciShardEnvelopeSchema } from './ciPartitionSchema';
 import { validateVerificationArtifacts } from './verificationReceipt';
 
 import { isDeepStrictEqual } from 'node:util';
 
 import type { CiPartitionManifest, CiShardId } from './ciPartitionSchema';
+import type { LegacyManifest } from './legacy';
+import type {
+  LegacyExecution,
+  LegacyExecutionResult,
+} from './legacyExecutionSchema';
 import type { VerificationPlan } from './verificationSchema';
 
 /** workerの公開前とaggregateの両方で、同じshardの完全な証拠を照合する。 */
@@ -16,6 +22,7 @@ export const validateCiShardArtifacts = (input: {
   expectedPlan: VerificationPlan;
   envelope: unknown;
   verification: Parameters<typeof validateVerificationArtifacts>[0];
+  legacyEvidence?: { legacy: LegacyManifest; execution: LegacyExecution };
 }) => {
   const { manifest, shard: id, expectedPlan } = input;
   const shard = manifest.shards.find(({ id: candidate }) => candidate === id);
@@ -39,7 +46,7 @@ export const validateCiShardArtifacts = (input: {
     receipt.selectionDigest !== shard.planDigest ||
     inputsStart.digest !== manifest.inputsDigest ||
     inputsEnd.digest !== manifest.inputsDigest ||
-    receipt.legacyLocalRequested !== (id === 'legacy-local') ||
+    receipt.legacyLocalRequested !== (id !== 'required') ||
     !isDeepStrictEqual(receipt.selection, {
       snapshotDigest: manifest.snapshotDigest,
       fullPlanDigest: manifest.fullPlanDigest,
@@ -49,7 +56,24 @@ export const validateCiShardArtifacts = (input: {
     throw new Error(
       'CI分割実行の計画、固定入力、または選択由来が一致しません。',
     );
+  if (isNil(receipt.execution)) throw new Error('CI実行記録がありません。');
+  const legacyResults: LegacyExecutionResult[] = [];
+  if (id !== 'required') {
+    if (isNil(input.legacyEvidence))
+      throw new Error('legacy実行正本がありません。');
+    legacyResults.push(
+      ...validateCiLegacyResults({
+        ...input.legacyEvidence,
+        scope: CI_LEGACY_PROJECTS[id],
+        stages: receipt.execution.stages,
+      }),
+    );
+  }
   return {
+    ownerRunIds: receipt.execution.runs.flatMap(({ runId }) =>
+      isNil(runId) ? [] : [runId],
+    ),
+    legacyResults,
     id,
     verificationId: receipt.verificationId,
     planDigest: shard.planDigest,
