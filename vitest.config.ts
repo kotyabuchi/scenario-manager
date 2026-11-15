@@ -17,6 +17,12 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   esbuild: { jsx: 'automatic' },
   test: {
+    // 多数のSSRアイコンmoduleをjsdom用に束ね、収集時の読込を減らす。
+    deps: {
+      optimizer: {
+        web: { enabled: true, include: ['@phosphor-icons/react/ssr'] },
+      },
+    },
     projects: [
       {
         extends: true,
@@ -33,7 +39,7 @@ export default defineConfig({
           name: 'unit-dom',
           include: projects['unit-dom'].map(escapeTestPathForGlob),
           environment: 'jsdom',
-          setupFiles: ['vitest.setup.ts'],
+          setupFiles: ['vitest.setup.ts', '.storybook/vitest.dom.setup.ts'],
         },
       },
       {

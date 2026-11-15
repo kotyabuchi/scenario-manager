@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { ciWorkflowSchema } from './ciPartitionSchema';
+import { ciShardIdSchema, ciWorkflowSchema } from './ciPartitionSchema';
+import { ciVerificationSummarySchema } from './ciVerificationSummary';
 import { surfaceReplayDiagnosticSchema } from './surfaceReplayFailure';
 import { verificationContextSchema } from './verificationSchema';
 
 export const ciJobSchema = z.enum([
   'plan',
-  'required',
-  'legacy-local',
+  ...ciShardIdSchema.options,
   'aggregate',
 ]);
 const ciPhaseSchema = z.enum([
@@ -35,6 +35,7 @@ const ciProgressSchema = z.strictObject({
   qualityCheck: qualityCheckSchema.optional(),
   verificationId: verificationContextSchema.shape.verificationId.optional(),
   issueCount: z.number().int().nonnegative().optional(),
+  verificationSummary: ciVerificationSummarySchema.optional(),
   // 確認できた場合だけcompleteとする。unknownは回収漏れの断定を含まない。
   cleanup: z.enum(['complete', 'unknown']).optional(),
 });
@@ -97,12 +98,15 @@ export const advanceCiProgress = (
   if (!next.success) return previous;
   const { phase, qualityCheck, verificationId, issueCount, cleanup } =
     next.data;
+  const verificationSummary =
+    next.data.verificationSummary ?? previous.verificationSummary;
   return {
     phase,
     ...(phase === 'quality' && qualityCheck ? { qualityCheck } : {}),
     verificationId: verificationId ?? previous.verificationId,
     issueCount: issueCount ?? previous.issueCount,
     cleanup: cleanup ?? previous.cleanup,
+    ...(verificationSummary ? { verificationSummary } : {}),
   };
 };
 
@@ -116,6 +120,11 @@ export const createCiFailure = (input: {
 }) => {
   const { job, env, interrupted } = input;
   const progress = advanceCiProgress({ phase: 'context' }, input.progress);
+  const { verificationSummary, ...publicProgress } = progress;
+  // 検証の固定診断は、workerの実行が終わった段階だけに公開する。
+  const canPublishVerificationSummary =
+    ciShardIdSchema.safeParse(job).success &&
+    (progress.phase === 'receipt' || progress.phase === 'artifacts');
   const surfaceReplay =
     job === 'plan' && progress.phase === 'static-ledger'
       ? surfaceReplayDiagnosticSchema.safeParse(input.surfaceReplay)
@@ -138,7 +147,10 @@ export const createCiFailure = (input: {
     job,
     code,
     message,
-    ...progress,
+    ...publicProgress,
+    ...(canPublishVerificationSummary && verificationSummary
+      ? { verificationSummary }
+      : {}),
     ...(surfaceReplay?.success ? { surfaceReplay: surfaceReplay.data } : {}),
     ...(workflow.success ? { workflow: workflow.data } : {}),
   };
