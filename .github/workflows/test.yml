@@ -105,7 +105,7 @@ jobs:
   e2e-required:
     name: E2E required
     env: &e2e-runtime-env
-      SUPABASE_INTERNAL_IMAGE_REGISTRY: public.ecr.aws
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: ghcr.io
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     needs: planner
