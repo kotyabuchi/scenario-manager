@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 import { describe, expect, it, vi } from 'vitest';
 
+import { createDatabaseLifecycleTiming } from './databaseLifecycleTiming';
 import { ENVIRONMENT_CATALOG_QUERY } from './environmentCatalog';
 import { EXPECTED_ENVIRONMENT_CATALOG } from './environmentCatalogExpected';
 import { runLocalCommand } from './environmentCommands';
@@ -27,11 +28,50 @@ vi.mock('./environmentCommands', async (original) => ({
   ...(await original<typeof import('./environmentCommands')>()),
   runLocalCommand: vi.fn(),
 }));
+vi.mock('./databaseLifecycleTiming', () => ({
+  createDatabaseLifecycleTiming: vi.fn(() => ({
+    start: vi.fn(),
+    finish: vi.fn(),
+    collect: vi.fn(async () => {}),
+  })),
+}));
 vi.mock('./environmentDocker', () => ({ createDockerDriver: vi.fn() }));
 vi.mock('./environmentInputs', () => ({ prepareEnvironmentInputs: vi.fn() }));
 vi.mock('./environmentLock', () => ({ acquireEnvironmentLock: vi.fn() }));
 
 describe('probeEnvironmentの診断と中断境界', () => {
+  it('所有DBの有限診断が終了するまでcatalogとcleanupへ進まない', async () => {
+    let finishCollection = () => {};
+    let notifyCollection = () => {};
+    const collected = new Promise<void>((resolve) => {
+      notifyCollection = resolve;
+    });
+    const collection = new Promise<void>((resolve) => {
+      finishCollection = resolve;
+    });
+    vi.mocked(createDatabaseLifecycleTiming).mockReturnValueOnce({
+      start: vi.fn(),
+      finish: vi.fn(),
+      collect: vi.fn(async () => {
+        notifyCollection();
+        await collection;
+      }),
+    });
+    const pending = probeEnvironment(root);
+    await collected;
+    expect(
+      vi
+        .mocked(runLocalCommand)
+        .mock.calls.some(
+          ([tool, args]) => tool === 'docker' && args[0] === 'exec',
+        ),
+    ).toBe(false);
+    expect(remove).not.toHaveBeenCalled();
+    expect(release).not.toHaveBeenCalled();
+    finishCollection();
+    expect((await pending).passed).toBe(true);
+    expect(release).toHaveBeenCalledOnce();
+  });
   it('lockからcatalogと解放までを固定operationだけで順に計測する', async () => {
     vi.stubEnv('E2E_CLI_TIMING', '1');
     const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
@@ -89,6 +129,24 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(report.passed).toBe(true);
     expect(report).not.toHaveProperty('catalogVerified');
     expect(report.cleanup?.status).toBe('complete');
+    const timing = vi.mocked(createDatabaseLifecycleTiming).mock.results[0]
+      ?.value;
+    expect(timing?.start).toHaveBeenCalledOnce();
+    expect(timing?.finish).toHaveBeenCalledOnce();
+    expect(timing?.collect).toHaveBeenCalledOnce();
+    expect(timing?.collect).toHaveBeenCalledWith({
+      databaseId: expect.any(String),
+      projectId: expect.stringMatching(/^sm-e2e-[a-f0-9]{12}$/),
+      cwd: workdir,
+      env: expect.any(Object),
+      signal: expect.any(AbortSignal),
+    });
+    expect(timing?.start.mock.invocationCallOrder[0]).toBeLessThan(
+      timing?.finish.mock.invocationCallOrder[0],
+    );
+    expect(timing?.finish.mock.invocationCallOrder[0]).toBeLessThan(
+      timing?.collect.mock.invocationCallOrder[0],
+    );
     expect(
       JSON.parse(await readFile(join(workdir, 'replay.json'), 'utf8')),
     ).toEqual(report);
@@ -122,6 +180,10 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(report.fingerprint).toBeNull();
     expect(report.passed).toBe(false);
     expect(report.failurePhase).toBe('start');
+    const timing = vi.mocked(createDatabaseLifecycleTiming).mock.results[0]
+      ?.value;
+    expect(timing?.finish).toHaveBeenCalledOnce();
+    expect(timing?.collect).not.toHaveBeenCalled();
     expect(report.cleanup?.remaining).toEqual(empty());
     expect(remove).toHaveBeenCalledTimes(1);
     expect(release).toHaveBeenCalledTimes(1);

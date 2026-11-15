@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 
 import { writeProgressStderr } from './progressStderr';
+import { createSupabasePullTiming } from './supabasePullTiming';
 
 import { stripVTControlCharacters } from 'node:util';
 
@@ -29,6 +30,7 @@ export const createSupabaseStartTiming = () => {
         // 有効性は作成時に固定する。
       },
     };
+  const pullTiming = createSupabasePullTiming();
   let startedAt: number | undefined;
   try {
     const now = performance.now();
@@ -45,10 +47,13 @@ export const createSupabaseStartTiming = () => {
       if (isDiscarding || isNil(startedAt)) return;
       const clean = stripVTControlCharacters(line).trim();
       const marker = START_MARKERS.find(([, pattern]) => pattern.test(clean));
-      if (isNil(marker) || seen.has(marker[0])) return;
-      seen.add(marker[0]);
+      const isNewMarker = !isNil(marker) && !seen.has(marker[0]);
+      if (!isNewMarker && !pullTiming.matchesLine(clean)) return;
+      if (isNewMarker && !isNil(marker)) seen.add(marker[0]);
       const elapsed = performance.now() - startedAt;
       if (!Number.isFinite(elapsed) || elapsed < 0) return;
+      pullTiming.observeLine(clean, Math.round(elapsed));
+      if (!isNewMarker || isNil(marker)) return;
       // 到達点の観測であり、処理区間の成功やhealth検査成功を表さない。
       writeProgressStderr(
         `[supabase-start-timing] ${JSON.stringify({ milestone: marker[0], elapsedMs: Math.round(elapsed) })}\n`,
@@ -77,6 +82,7 @@ export const createSupabaseStartTiming = () => {
       if (isClosed) return;
       isClosed = true;
       flush();
+      pullTiming.close();
     },
   };
 };

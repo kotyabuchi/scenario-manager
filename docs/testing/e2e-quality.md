@@ -54,6 +54,12 @@ startの下位には `environment-start-prepare`（所有marker/config確認）�
 
 command開始→databaseにはimage取得以外にconfig・JWT準備等も含まれる。schema→globalsはサービス内部schema、migrations→seedはプロジェクトmigrationの目安となる。欠測や順序不整合を補完して区間を作らず、到達点同士の差を使う場合は固定版sourceと実ログで順序を確認する。rawログは公開せず、行の上限を超えた入力は捨てる。CLI版変更時はマーカーも再確認する。[初回DB起動の調査](../plans/e2e-db-start-performance.md)を参照。
 
+`[supabase-pull-timing]` は取得・展開などのlayer状態と固定image役割の到達点を、Compose/fallback・databaseマーカー前後で分けて集約する。件数は同じ区間で観測したlayerの重複を除き、最初/最後の観測時刻を出す。非TTYでは親imageの対応や途中のprogressが失われるため、image別の正確なdownload/extract所要時間ではない。並列窓を合算せず、開始未観測フラグや上限到達も確認する。
+
+`[supabase-db-lifecycle]` は所有確認済みDBだけのinspectと有限eventsを読み、作成→起動、CLI呼出→作成、起動→healthyの観測を分ける。healthyイベントは秒精度のため上下限を出す。startイベントの発行はStartedAtより遅れ得る。同一秒を要求しない。履歴はdaemon全体の直近256件で、欠落を不健康・ゼロ秒・成功と扱わない。再起動等の曖昧さ、時計や所有の不整合、収集失敗は固定statusで示す。追加読取は共通2秒で中断を要求し、子processのcloseまで待ってcleanupへ進む。
+
+`database`→`schema`には、Composeで取得に失敗したimageの再pull・4/8秒のretry、network/volume/container準備、DB初期化・health・接続待ちも入り得る。DB healthだけの時間と解釈しない。通常の計測有効条件は上と同じで、秘密・ID・絶対時刻・raw出力は公開しない。[取得・展開と97秒待ちの調査](../plans/e2e-db-pull-lifecycle-diagnostics.md)を参照。
+
 CI workerはChromium導入後、従来どおりSupabase CLIで必要imageを取得する。Chromiumとimage先読みを重ねる候補は、GHCR・ECRの両方で準備＋初回startの平均・最大時間が退行したため不採用とした。wrapperと専用テストも撤去済み。計測と採否は [DB起動性能計画](../plans/e2e-db-start-performance.md) を参照。
 
 `SUPABASE_INTERNAL_IMAGE_REGISTRY` は子CLIへ保持する。共有DBの接続先・資格情報は従来どおり除外する。3workerの共通job envには、元の実startが使っていたECRを明示して取得先を維持する。setupは指定済みの非空値を上書きしない。他jobの既定値は変更しない。

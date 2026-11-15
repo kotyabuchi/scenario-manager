@@ -2,6 +2,7 @@ import { isNil } from 'ramda';
 
 import { ISOLATED_SUPABASE_PORTS } from '../../e2e/isolatedRuntime';
 import { measureCliStep } from './cliTiming';
+import { createDatabaseLifecycleTiming } from './databaseLifecycleTiming';
 import { runEnvironment } from './environment';
 import {
   checkEnvironmentCatalog,
@@ -191,6 +192,7 @@ const probeWithSignal = async (
       );
     signal.throwIfAborted();
     let hasReplayedMigrations = false;
+    const databaseTiming = createDatabaseLifecycleTiming();
     const catalogState: {
       check: CatalogCheck | null;
       status: 'verified' | 'mismatch' | 'not-reached';
@@ -237,6 +239,7 @@ const probeWithSignal = async (
         signal.throwIfAborted();
         await measureCliStep('environment-start-command', async () => {
           const timing = createSupabaseStartTiming();
+          databaseTiming.start();
           try {
             await runLocalCommand(
               'supabase',
@@ -250,6 +253,7 @@ const probeWithSignal = async (
               },
             );
           } finally {
+            databaseTiming.finish();
             timing.close();
           }
         });
@@ -266,6 +270,13 @@ const probeWithSignal = async (
         );
         if (isNil(database))
           throw new Error('所有DB containerが確認できません。');
+        await databaseTiming.collect({
+          databaseId: database.id,
+          projectId,
+          cwd: workdir,
+          env,
+          signal,
+        });
         const catalog = await measureCliStep('environment-catalog', () =>
           runChecked('docker', [
             'exec',

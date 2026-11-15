@@ -132,3 +132,69 @@ describe('Supabase起動の安全な到達点計時', () => {
     expect(writeProgressStderr).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('pull計時の統合', () => {
+  it('無効時はpull行からも時計・出力を発生させない', () => {
+    vi.stubEnv('GITHUB_ACTIONS', 'false');
+    vi.stubEnv('E2E_CLI_TIMING', '0');
+    const clock = vi.spyOn(performance, 'now');
+    const timing = createSupabaseStartTiming();
+    timing.observe('postgres Pulling\naaaaaaaaaaaa Download complete\n');
+    timing.close();
+    expect(clock).not.toHaveBeenCalled();
+    expect(writeProgressStderr).not.toHaveBeenCalled();
+  });
+
+  it('未知行と既知markerの重複で既存の時計読取位置を増やさない', () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    const clock = vi
+      .spyOn(performance, 'now')
+      .mockReturnValueOnce(100)
+      .mockReturnValue(140);
+    const timing = createSupabaseStartTiming();
+    timing.observe(
+      'private text\nStarting database...\nStarting database...\n',
+    );
+    timing.close();
+    expect(clock).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(writeProgressStderr).mock.calls[0]?.[0]).toContain(
+      '"elapsedMs":40',
+    );
+  });
+  it('ANSI・CRLF・分割chunkとclose時の末尾行を同じ起点で観測する', () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    let now = 100;
+    vi.spyOn(performance, 'now').mockImplementation(() => now);
+    const timing = createSupabaseStartTiming();
+    now = 120;
+    timing.observe('\u001b[32mpost');
+    timing.observe('gres Pulling\u001b[0m\r\n');
+    now = 140;
+    timing.observe('Starting database...\n');
+    now = 160;
+    timing.observe('aaaaaaaaaaaa: Download complete');
+    timing.close();
+    const lines = vi
+      .mocked(writeProgressStderr)
+      .mock.calls.map(([line]) => line);
+    expect(lines).toHaveLength(2);
+    expect(lines[0]).toContain('"elapsedMs":40');
+    expect(lines[1]).toContain('"firstObservedMs":20');
+    expect(lines[1]).toContain('"firstObservedMs":60');
+    expect(lines[1]).toContain('"phase":"after-database"');
+    expect(lines[1]).not.toContain('aaaaaaaaaaaa');
+  });
+
+  it('巨大行のpull suffixを捨て後続の正規行だけを公開する', () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    const timing = createSupabaseStartTiming();
+    timing.observe('x'.repeat(100_000));
+    timing.observe('postgres Pulling\n');
+    timing.observe('kong Pulling\n');
+    timing.close();
+    expect(writeProgressStderr).toHaveBeenCalledTimes(1);
+    const line = vi.mocked(writeProgressStderr).mock.calls[0]?.[0] ?? '';
+    expect(line).toContain('"role":"kong"');
+    expect(line).not.toContain('postgres');
+  });
+});
