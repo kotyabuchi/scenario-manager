@@ -233,6 +233,17 @@ const ready = async (runId: string, signal: AbortSignal) => {
   throw new Error('appのreadiness期限を超過または中断しました。');
 };
 
+/** 所有app内部の失敗段階を構造化して保持する。 */
+export class IsolatedAppError extends Error {
+  readonly failurePhases: readonly string[];
+
+  constructor(failures: readonly string[]) {
+    const phases = [...new Set(failures)];
+    super(`専用appの処理に失敗しました: ${phases.join(', ')}`);
+    this.failurePhases = phases;
+  }
+}
+
 /** 予約済み所有環境で本番build/startを行い、operationとserverの終了確認後だけ返す。 */
 export const withIsolatedApp = async (
   connection: FixtureConnection,
@@ -480,10 +491,7 @@ export const withIsolatedApp = async (
       failures.push('report');
     }
   }
-  if (failures.length > 0)
-    throw new Error(
-      `専用appの処理に失敗しました: ${[...new Set(failures)].join(', ')}`,
-    );
+  if (failures.length > 0) throw new IsolatedAppError(failures);
 };
 
 export type { AppContext, AppProgress };

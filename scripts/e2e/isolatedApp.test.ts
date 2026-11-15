@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runLocalCommand } from './environmentCommands';
 import { normalizeNextEnv } from './fingerprintNextEnv';
 import { appFixture } from './fixtures/isolatedApp';
-import { withIsolatedApp } from './isolatedApp';
+import { IsolatedAppError, withIsolatedApp } from './isolatedApp';
 
 import { EventEmitter } from 'node:events';
 import {
@@ -342,6 +342,9 @@ describe('所有Next production process', () => {
         throw new Error('private-operation-secret');
       },
     ).catch((value: unknown) => value);
+    expect(error).toBeInstanceOf(IsolatedAppError);
+    if (!(error instanceof IsolatedAppError)) throw new Error('app error不足');
+    expect(error.failurePhases).toEqual(['operation', 'server-stop']);
     expect(String(error)).toContain('operation, server-stop');
     expect(String(error)).not.toContain('secret');
     expect(fixture.readStatus()).toMatchObject({
