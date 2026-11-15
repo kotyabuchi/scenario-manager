@@ -11,8 +11,23 @@ type Kind =
   | 'layer-init-error'
   | 'layer-checksum-error'
   | 'download-retrying'
-  | 'download-failed';
+  | 'download-failed'
+  | 'pull-next-endpoint'
+  | 'pull-not-continuing';
 type Event = { kind: Kind; elapsedMs: number; attribution: 'unattributed' };
+
+/** logrusのmsgだけを取り、error等の別フィールドを分類対象にしない。 */
+const outerMessage = (message: string) => {
+  if (!/^[A-Za-z_][A-Za-z0-9_.-]*=/.test(message)) return message;
+  const fields = [
+    ...message.matchAll(
+      /(?:^|\s)([A-Za-z_][A-Za-z0-9_.-]*)=(?:"((?:\\.|[^"\\])*)"|(\S+))/g,
+    ),
+  ];
+  const matches = fields.filter((field) => field[1] === 'msg');
+  if (matches.length !== 1) return '';
+  return matches[0]?.[2] ?? matches[0]?.[3] ?? '';
+};
 
 /** journal本文は外部に返さず、固定のdaemon log分類だけに縮約する。 */
 export const classifyDockerJournal = (
@@ -49,20 +64,21 @@ export const classifyDockerJournal = (
       timestamp > end
     )
       continue;
+    const outer = outerMessage(message);
     let kind: Kind | undefined;
-    if (/\bError initiating layer download:/.test(message))
+    if (/^Attempting next endpoint for pull after error: /.test(outer))
+      kind = 'pull-next-endpoint';
+    else if (outer === 'Not continuing with pull after error')
+      kind = 'pull-not-continuing';
+    else if (/\bError initiating layer download:/.test(outer))
       kind = 'layer-init-error';
-    else if (
-      /\bfilesystem layer verification failed for digest\b/.test(message)
-    )
+    else if (/\bfilesystem layer verification failed for digest\b/.test(outer))
       kind = 'layer-checksum-error';
     else if (
-      /\bDownload failed, retrying \([1-9]\d{0,2}\/[1-9]\d{0,2}\):/.test(
-        message,
-      )
+      /\bDownload failed, retrying \([1-9]\d{0,2}\/[1-9]\d{0,2}\):/.test(outer)
     )
       kind = 'download-retrying';
-    else if (/\bDownload failed after [1-9]\d{0,2} attempts:/.test(message))
+    else if (/\bDownload failed after [1-9]\d{0,2} attempts:/.test(outer))
       kind = 'download-failed';
     if (kind)
       events.push({

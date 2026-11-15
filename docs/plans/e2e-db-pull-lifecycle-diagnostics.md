@@ -52,10 +52,18 @@ CLI呼出前後の時計を保持し、既存verifyで所有ID/labelの一致を
 
 固定CLI 2.75.0はCompose 2.40.3を内包し、ImagePullのAPI直後エラーをrole付きprogressにする一方、開始済みstreamのdecode/errorはprogressなしで返し、IgnoreFailuresにより個別エラーが破棄される。`--debug`はDocker独立transportのstream errorを復元しない。daemon 28.0.4の一部layer error/retryはjournalへ出るため、Hosted Linuxで `GITHUB_ACTIONS=true` のstart直後にだけ固定docker.service・現在boot・同start壁時計窓のread-only journalctlを限定採取する。固定 `/usr/bin/journalctl --no-pager` を直接所有childとして起動し、sudoへのfallbackは行わない。子プロセス所有、2秒で終了要求し実closeまで待機、5秒後追加終了要求。出力256KiB・512行・1行16KiB上限、未知/空/unit不明/時計不整合/権限不足/timeout/超過はunknown。raw journal・任意error・URL・layer IDは出さず、許可event enumと時刻だけ、全てunattributed。他imageの並行pullやdaemon全体の影響を区別できず、表示ゼロは失敗不在の証明ではない。reader時間はstart command計測と別記し、診断失敗で起動結果/cleanupを変えない。daemon設定・Docker Desktop操作・追加pullは行わない。
 
-通常CLI stderrではComposeのrole付きInterruptedとMobyの匿名layer `Retrying in Ns` だけ別markerで観測する。layer IDを保存せず、非TTYのparent情報欠落によりroleは不明、retry表示は最終失敗を意味しない。非Linux/Hosted外ではjournal childを起動しない。固定範囲の純粋testと所有child abort/上限testで安全性を確認し、実journal可用性は新しいHosted実行まで未検証とする。参照: [Compose pull](https://github.com/docker/compose/blob/v2.40.3/pkg/compose/pull.go)、[Moby download](https://github.com/moby/moby/blob/v28.0.4/distribution/xfer/download.go)、[systemd時間形式](https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html)。
+通常CLI stderrではComposeのrole付きInterruptedとMobyの匿名layer `Retrying in Ns` だけ別markerで観測する。layer IDを保存せず、非TTYのparent情報欠落によりroleは不明、retry表示は最終失敗を意味しない。非Linux/Hosted外ではjournal childを起動しない。固定範囲の純粋testと所有child abort/上限testで安全性を確認した。当時は実journal可用性が未検証だった。参照: [Compose pull](https://github.com/docker/compose/blob/v2.40.3/pkg/compose/pull.go)、[Moby download](https://github.com/moby/moby/blob/v28.0.4/distribution/xfer/download.go)、[systemd時間形式](https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html)。
 
 ## 2026-11-16 継続診断の実装・検証境界
 
 所有serverの開始要求、実close、停止要求、browser実closeを親の単調経過とUTCで記録する。next-envは既知templateの前後hash・欠測・不明を区別し復元しない。Playwright reportの固定文字列検出は同文字列の存在のみを示し、request発生時刻やtransport原因を証明しない。traceと壁時計の原点は未較正で、close未観測はrequest瞬間の健康状態を保証しない。
 
-Docker journalの同窓診断はLinux Hosted限定、固定対象・出力上限・子の実closeを維持し、情報取得不能はunknownとして本処理の判定に混ぜない。daemon全体の未帰属情報であり該当pullの原因とは限らない。関連239テスト、型検査、Biome、ledger検査は成功。固定HEADの全体quality、実browserとLinux Hosted実journal取得・独立受入は未実施。
+Docker journalの同窓診断はLinux Hosted限定、固定対象・出力上限・子の実closeを維持し、情報取得不能はunknownとして本処理の判定に混ぜない。daemon全体の未帰属情報であり該当pullの原因とは限らない。導入時点で関連239テスト、型検査、Biome、ledger検査は成功した。後に固定HEAD `2a804f3` のHosted Test run `43729605534` は独立受入済み（69 required / 310 extras / legacy 330、catalog・cleanupを照合）。local quality `b18c369c9d2c` はユーザー指定の安全停止に伴う入力変更で未合格。今回の追加enumとcheckpoint分類は別HEADであり、そのfull qualityとHostedはこれから検証する。
+
+## 2026-11-16: journalの2種類の追加分類
+
+固定Moby v28.0.4の `distribution/pull.go:124-135` は、endpointを次へ進める際のinfoと、pull継続を打ち切る際のinfo/errorを出す経路を持つ。`dockerJournalTiming` のversion 1出力に `pull-next-endpoint` / `pull-not-continuing` の固定enumを加え、同一窓の相対時刻と `unattributed` だけ記録する。log messageの固定形式だけに一致させ、URL・任意error・識別子を公開しない。旧4 enumとfieldsを維持し、検索対象は外側msgに限定して従来の部分一致を適用する。別error field内の文言は分類しない。列挙値を閉じていた旧consumerは新値を拒否するため受入collector側も更新する。旧runの原記録は変更せず、新分類を過去の空eventsへ遡及しない。出力0は両messageやerrorが存在しなかった証明ではなく、記録されても別imageの並行pullと区別できない。sudo/daemon変更・追加pullや品質/cleanupの緩和は行わない。
+
+## 2026-11-16: checkpoint失敗の分類
+
+停止markerによる入力checkpoint失敗がbrowser phaseと記録されたため、before/after-testsの失敗をinput-checkとして区別する。実browser失敗が同時に起きた場合も保持し、構造化した所有app失敗からserver-exit・server-stop・reportの独立した失敗も失わない。入力検査・失敗判定・実close・cleanupは従来どおり。before-environment失敗は元例外を再throwして環境を作らない。実appおよび複合失敗を含むnative限定6 suite・117 testsとBiomeは成功。最新変更の全体quality・Hosted検証は未実施。

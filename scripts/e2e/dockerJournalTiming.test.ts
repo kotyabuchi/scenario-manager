@@ -90,6 +90,114 @@ describe('docker journalの限定観測', () => {
       ),
     ).toEqual([]);
   });
+  it('固定Moby messageだけを分類し、errorとURLを捨てる', () => {
+    const parsed = classifyDockerJournal(
+      [
+        row(
+          'time="2026-11-16T00:00:00Z" level=info msg="Attempting next endpoint for pull after error: private-secret https://example.invalid/token"',
+        ),
+        row(
+          'time="2026-11-16T00:00:00Z" level=error msg="Not continuing with pull after error" error="private-secret"',
+        ),
+        row(
+          'time="2026-11-16T00:00:00Z" level=info msg="Attempting next endpoint for pull after errors: private-secret"',
+        ),
+        row(
+          'time="2026-11-16T00:00:00Z" level=error msg="Not continuing with pull after errors"',
+        ),
+        row(
+          'time="2026-11-16T00:00:00Z" level=error error="Not continuing with pull after error"',
+        ),
+        row(
+          'time="2026-11-16T00:00:00Z" level=error msg="Not continuing with pull after error"',
+          '900000',
+        ),
+      ].join('\n'),
+      1000,
+      2000,
+    );
+    expect(parsed).toEqual([
+      {
+        kind: 'pull-next-endpoint',
+        elapsedMs: 500,
+        attribution: 'unattributed',
+      },
+      {
+        kind: 'pull-not-continuing',
+        elapsedMs: 500,
+        attribution: 'unattributed',
+      },
+    ]);
+    expect(JSON.stringify(parsed)).not.toMatch(
+      /private|secret|example|token|error=/,
+    );
+  });
+  it('外側msgを優先し、error本文の別messageへ誤分類しない', () => {
+    const parsed = classifyDockerJournal(
+      [
+        row(
+          'level=info msg="Attempting next endpoint for pull after error: Download failed after 5 attempts: secret"',
+        ),
+        row(
+          'level=error msg="Not continuing with pull after error" error="Download failed after 5 attempts: secret"',
+        ),
+        row(
+          'level=error msg="Download failed after 5 attempts: Attempting next endpoint for pull after error: secret"',
+        ),
+        row(
+          'level=error msg="unrelated" error="Download failed after 5 attempts: secret"',
+        ),
+        row(
+          'level=error msg="unrelated" error="Not continuing with pull after error"',
+        ),
+        row(
+          'level=error msg="unrelated" error="inner msg=\\"Not continuing with pull after error\\""',
+        ),
+        row(
+          'level=error msg="Not continuing with pull after error" msg="unrelated"',
+        ),
+      ].join('\n'),
+      1000,
+      2000,
+    );
+    expect(parsed).toEqual([
+      {
+        kind: 'pull-next-endpoint',
+        elapsedMs: 500,
+        attribution: 'unattributed',
+      },
+      {
+        kind: 'pull-not-continuing',
+        elapsedMs: 500,
+        attribution: 'unattributed',
+      },
+      { kind: 'download-failed', elapsedMs: 500, attribution: 'unattributed' },
+    ]);
+    expect(JSON.stringify(parsed)).not.toContain('secret');
+  });
+  it('外側msg内の旧4種類はprefix付きでも検出する', () => {
+    const parsed = classifyDockerJournal(
+      [
+        row('level=error msg="prefix Error initiating layer download: secret"'),
+        row(
+          'level=error msg="prefix filesystem layer verification failed for digest secret"',
+        ),
+        row('level=info msg="prefix Download failed, retrying (1/5): secret"'),
+        row(
+          'level=error msg="prefix Download failed after 5 attempts: secret"',
+        ),
+      ].join('\n'),
+      1000,
+      2000,
+    );
+    expect(parsed?.map((event) => event.kind)).toEqual([
+      'layer-init-error',
+      'layer-checksum-error',
+      'download-retrying',
+      'download-failed',
+    ]);
+    expect(JSON.stringify(parsed)).not.toContain('secret');
+  });
   it('closeまで待ち、固定unitと固定時刻引数だけを使う', async () => {
     vi.spyOn(Date, 'now').mockReturnValueOnce(1000).mockReturnValueOnce(2000);
     vi.spyOn(performance, 'now')
