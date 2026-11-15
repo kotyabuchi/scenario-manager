@@ -54,6 +54,7 @@ export const runLocalCommand = async (
     log?: string;
     signal?: AbortSignal;
     shouldAllowAbort?: boolean;
+    onStderr?: (chunk: string) => void;
     onClose?:
       | ((result: { exitCode: number | null; signal: string | null }) => void)
       | undefined;
@@ -118,6 +119,14 @@ export const runLocalCommand = async (
       fail();
       return;
     }
+    const observeStderr = (chunk: Buffer | string) => {
+      try {
+        options.onStderr?.(chunk.toString());
+      } catch {
+        // 診断observerの失敗はcommandの結果や終了確認に影響させない。
+      }
+    };
+    if (!isNil(options.onStderr)) child.stderr?.on('data', observeStderr);
     const forceStop = () => {
       if (hasClosed || !isNil(child.exitCode) || !isNil(child.signalCode))
         return;
@@ -141,6 +150,7 @@ export const runLocalCommand = async (
     if (options.signal?.aborted) armForceStop();
     child.once('close', (exitCode, signal) => {
       hasClosed = true;
+      child.stderr?.removeListener('data', observeStderr);
       try {
         options.onClose?.({ exitCode, signal });
       } catch {

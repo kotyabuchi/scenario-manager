@@ -19,6 +19,7 @@ import { createEnvironmentPlan } from './environmentOwnership';
 import { environmentLeaseSchema } from './environmentSchema';
 import { writeArtifact } from './ledgerArtifacts';
 import { seedSupabaseUpdateCache, verifySupabaseCli } from './supabaseCli';
+import { createSupabaseStartTiming } from './supabaseStartTiming';
 
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -213,33 +214,45 @@ const probeWithSignal = async (
       start: async () => {
         signal.throwIfAborted();
         progress({ phase: 'starting', runId, workdir });
-        const actual = await readLease();
-        if (
-          Object.entries(lease).some(
-            ([key, value]) => Reflect.get(actual, key) !== value,
+        await measureCliStep('environment-start-prepare', async () => {
+          const actual = await readLease();
+          if (
+            Object.entries(lease).some(
+              ([key, value]) => Reflect.get(actual, key) !== value,
+            )
           )
-        )
-          throw new Error('所有markerが一致しません。');
-        const config = await readFile(join(workdir, 'supabase/config.toml'));
-        if (
-          createHash('sha256').update(config).digest('hex') !==
-          inputHashes.config
-        )
-          throw new Error('起動前にconfigが変更されました。');
-        signal.throwIfAborted();
+            throw new Error('所有markerが一致しません。');
+          const config = await readFile(join(workdir, 'supabase/config.toml'));
+          if (
+            createHash('sha256').update(config).digest('hex') !==
+            inputHashes.config
+          )
+            throw new Error('起動前にconfigが変更されました。');
+          signal.throwIfAborted();
+        });
         // 固定版の更新通知だけを所有workdir内で抑制し、startの検査は維持する。
-        await seedSupabaseUpdateCache(workdir);
-        signal.throwIfAborted();
-        await runLocalCommand(
-          'supabase',
-          ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
-          {
-            cwd: workdir,
-            env,
-            signal,
-            log: join(workdir, 'start.private.log'),
-          },
+        await measureCliStep('environment-start-cache', () =>
+          seedSupabaseUpdateCache(workdir),
         );
+        signal.throwIfAborted();
+        await measureCliStep('environment-start-command', async () => {
+          const timing = createSupabaseStartTiming();
+          try {
+            await runLocalCommand(
+              'supabase',
+              ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
+              {
+                cwd: workdir,
+                env,
+                signal,
+                log: join(workdir, 'start.private.log'),
+                onStderr: timing.observe,
+              },
+            );
+          } finally {
+            timing.close();
+          }
+        });
         // startがseedまで完了した事実を、後続検査やcleanupの成否から分離する。
         hasReplayedMigrations = true;
       },

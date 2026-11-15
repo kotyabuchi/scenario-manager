@@ -50,6 +50,10 @@ Supabase CLIは2.75.0に固定する。CI Linux/x64では公式release archive�
 
 `completed` は呼出が正常に戻った意味であり、返されたissuesによる論理失敗は従来どおり `cleanup.status` で確認する。計時ログは成功receiptの代替ではない。外側のCI phaseと内側のspanは重なるため合計しない。時計・出力に障害があってもcleanupと元の結果を保つ。
 
+startの下位には `environment-start-prepare`（所有marker/config確認）、`environment-start-cache`（更新通知cache）、`environment-start-command`（CLI起動からclose・private log保存まで）がある。`[supabase-start-timing]` は固定CLIのstderrに現れた `database` / `schema` / `globals` / `migrations` / `seed` / `containers` / `health` / `ready` 到達点を、command開始からの経過msで記録する。到達点であり区間完了やhealth成功の証明ではない。
+
+command開始→databaseにはimage取得以外にconfig・JWT準備等も含まれる。schema→globalsはサービス内部schema、migrations→seedはプロジェクトmigrationの目安となる。欠測や順序不整合を補完して区間を作らず、到達点同士の差を使う場合は固定版sourceと実ログで順序を確認する。rawログは公開せず、行の上限を超えた入力は捨てる。CLI版変更時はマーカーも再確認する。[初回DB起動の調査](../plans/e2e-db-start-performance.md)を参照。
+
 ## staged hook
 
 `pnpm e2e:ledger:staged` はGit index stage 0の台帳JSONだけを読み、schema・ID・参照を検査する。working treeの未stage修正で不正なindexを救済しない。競合・symlink・検査中のindex変更を拒否する。

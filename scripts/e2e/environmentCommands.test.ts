@@ -45,6 +45,7 @@ type CommandCallback = (
 const fakeChild = (hasStdin = true) =>
   Object.assign(new EventEmitter(), {
     stdin: hasStdin ? { end: mocks.end } : null,
+    stderr: new EventEmitter(),
     exitCode: null,
     signalCode: null,
     kill: mocks.kill,
@@ -239,6 +240,37 @@ describe('資格情報を公開しないコマンド実行', () => {
     expect(await result).toBe(exitCode === 0 ? 'passed' : 'failed');
     expect(onClose).toHaveBeenCalledExactlyOnceWith({ exitCode, signal });
   });
+  it('stderr観測の例外を隔離しclose後にlistenerを解放する', async () => {
+    const child = fakeChild();
+    let callback: CommandCallback = () => {};
+    mocks.execFile.mockImplementation(
+      (
+        _tool: unknown,
+        _args: unknown,
+        _options: unknown,
+        finish: CommandCallback,
+      ) => {
+        callback = finish;
+        return child;
+      },
+    );
+    const onStderr = vi.fn(() => {
+      throw new Error(SECRET);
+    });
+    const command = runLocalCommand('node', [], {
+      ...commandOptions(),
+      onStderr,
+    });
+    expect(() =>
+      child.stderr.emit('data', Buffer.from('private stderr')),
+    ).not.toThrow();
+    expect(onStderr).toHaveBeenCalledExactlyOnceWith('private stderr');
+    callback(null, 'result', 'private stderr');
+    child.emit('close', 0, null);
+    await expect(command).resolves.toBe('result');
+    expect(child.stderr.listenerCount('data')).toBe(0);
+  });
+
   it('stdoutを呼出元に返し、shellを介さずstdinを直ちに閉じる', async () => {
     const options = commandOptions();
     const executable = 'C:\\owned-native\\git.exe';
