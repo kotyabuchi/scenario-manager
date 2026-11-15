@@ -10,6 +10,7 @@ import {
 } from 'vitest';
 
 import { serializeBaseline } from './baseline';
+import { captureInputs } from './fingerprint';
 import { surfaceLedgerFixture } from './fixtures/surfaceLedger';
 import { serializeInventory } from './inventory';
 import { readArtifact, writeArtifact } from './ledgerArtifacts';
@@ -20,6 +21,7 @@ import {
   baselineDigest,
   checkStaticState,
   collectStaticState,
+  consumeReusableStaticInventory,
 } from './staticGate';
 
 import { execFileSync } from 'node:child_process';
@@ -232,6 +234,53 @@ afterEach(async () => {
 });
 
 describe('M1静的品質ゲートの接続', { timeout: STATIC_GATE_TIMEOUT_MS }, () => {
+  it('opt-in inventoryを独立cloneで一度だけ共有し、偽stateを拒否する', async () => {
+    const { root } = await createFixture();
+    const state = await collectStaticState(root, undefined, {
+      shouldPrepareReuse: true,
+    });
+    const inputs = await captureInputs(root);
+    const expected = structuredClone(state.inventory);
+    expect(
+      consumeReusableStaticInventory(structuredClone(state), root, inputs),
+    ).toBeUndefined();
+    state.inventory.nodes.length = 0;
+    expect(consumeReusableStaticInventory(state, root, inputs)).toEqual(
+      expected,
+    );
+    expect(consumeReusableStaticInventory(state, root, inputs)).toBeUndefined();
+  });
+
+  it('rootと入力digestの不一致、およびGit入口変更を共有しない', async () => {
+    const { root } = await createFixture();
+    const inputs = await captureInputs(root);
+    const wrongRoot = await collectStaticState(root, undefined, {
+      shouldPrepareReuse: true,
+    });
+    expect(
+      consumeReusableStaticInventory(wrongRoot, join(root, 'other'), inputs),
+    ).toBeUndefined();
+    const wrongDigest = await collectStaticState(root, undefined, {
+      shouldPrepareReuse: true,
+    });
+    expect(
+      consumeReusableStaticInventory(wrongDigest, root, {
+        ...inputs,
+        digest: '0'.repeat(64),
+      }),
+    ).toBeUndefined();
+    const changedGitEntry = await collectStaticState(root, undefined, {
+      shouldPrepareReuse: true,
+    });
+    git(root, 'rm', '--cached', '--', 'src/app/page.tsx');
+    await write(root, '.git/info/exclude', 'src/app/page.tsx\n');
+    const sameInputs = await captureInputs(root);
+    expect(sameInputs.digest).toBe(inputs.digest);
+    expect(
+      consumeReusableStaticInventory(changedGitEntry, root, sameInputs),
+    ).toBeUndefined();
+  });
+
   it('integrationのclaimを同じ台帳へ接続し、claim削除を拒否する', async () => {
     const { root } = await createFixture();
     const target = 'page:src/app/page.tsx';

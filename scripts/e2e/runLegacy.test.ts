@@ -15,7 +15,7 @@ import {
   validateLegacyDiscovery,
 } from './legacySelection';
 import { assertLegacySources, captureLegacySources } from './legacySourceGuard';
-import { parseLegacyArguments, runLegacy } from './runLegacy';
+import { parseLegacyArguments, runLegacy, runLegacyScoped } from './runLegacy';
 
 import {
   mkdirSync,
@@ -295,6 +295,7 @@ describe('legacy実行の集約と中断', () => {
     ).toEqual(verification.mock.results.map(({ value }) => value));
     expect(result.status).toBe('passed');
     expect(result.results).toHaveLength(330);
+    expect(result.safeResults).toHaveLength(330);
     expect(result.projects.map((project) => project.runId)).toEqual([
       'run-1',
       'run-2',
@@ -530,5 +531,125 @@ describe('legacy実行の集約と中断', () => {
     expect(
       JSON.stringify(value.receipt()).includes('existing-private-value'),
     ).toBe(false);
+  });
+});
+
+describe('legacy割当実行', () => {
+  const scope = ['chromium-auth', 'chromium'] as const;
+  it('指定した順に2projectだけ実行し、全登録を検査して安全な165結果を返す', async () => {
+    const value = await setup();
+    const result = await runLegacyScoped(value.root, scope);
+    expect(result.status).toBe('scoped-passed');
+    expect(result.projects.map(({ project }) => project)).toEqual(scope);
+    expect(result.results).toHaveLength(165);
+    expect(result.results).toEqual(result.safeResults);
+    expect(aggregateLegacyResults).not.toHaveBeenCalled();
+    expect(
+      vi
+        .mocked(createLegacySelection)
+        .mock.calls.slice(0, 4)
+        .map(([input]) => input.project),
+    ).toEqual(legacyProjectSchema.options);
+    expect(value.receipt()).toMatchObject({
+      status: 'scoped-passed',
+      requestedProjects: scope,
+    });
+  });
+
+  it.each([
+    { input: [] },
+    { input: ['chromium', 'chromium'] },
+  ])('空または重複する割当$inputを環境起動前に拒否する', async ({ input }) => {
+    const value = await setup();
+    const projects = input.map((project) => legacyProjectSchema.parse(project));
+    await expect(runLegacyScoped(value.root, projects)).rejects.toThrow();
+    expect(discover).not.toHaveBeenCalled();
+    expect(runLegacyProject).not.toHaveBeenCalled();
+  });
+
+  it('型境界を越えた未知projectを環境起動前に拒否する', async () => {
+    const value = await setup();
+    const projects = [legacyProjectSchema.parse('chromium')];
+    Object.defineProperty(projects, 0, { value: 'unknown-project' });
+    await expect(runLegacyScoped(value.root, projects)).rejects.toThrow();
+    expect(runLegacyProject).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    'missing',
+    'duplicate',
+    'outside',
+  ])('実結果の%sを割当成功として返さない', async (fault) => {
+    const value = await setup();
+    const operation = vi
+      .mocked(runLegacyProject, { partial: true })
+      .getMockImplementation();
+    if (!operation) throw new Error('project mockがありません。');
+    vi.mocked(runLegacyProject, { partial: true }).mockImplementationOnce(
+      async (...args) => {
+        const result = await operation(...args);
+        const first = result.results?.[0];
+        if (!first) throw new Error('実結果がありません。');
+        const rows = result.results ?? [];
+        return {
+          ...result,
+          results:
+            fault === 'missing'
+              ? rows.slice(1)
+              : fault === 'duplicate'
+                ? [...rows, first]
+                : [...rows, { ...first, key: 'unknown-project-result' }],
+        };
+      },
+    );
+    const result = await runLegacyScoped(value.root, scope);
+    expect(result).toMatchObject({
+      status: 'failed',
+      results: null,
+      safeResults: null,
+    });
+  });
+
+  it('先行projectのcleanup失敗で次projectを起動しない', async () => {
+    const value = await setup();
+    value.control.failedProject = 'chromium-auth';
+    value.control.failurePhases = ['fixture-cleanup'];
+    const result = await runLegacyScoped(value.root, scope);
+    expect(result).toMatchObject({
+      status: 'failed',
+      failurePhase: 'fixture-cleanup',
+      results: null,
+    });
+    expect(runLegacyProject).toHaveBeenCalledOnce();
+  });
+
+  it('中断後もcleanupの完了を待って割当を失敗にし、次projectを起動しない', async () => {
+    const value = await setup();
+    value.control.shouldWait = true;
+    const running = runLegacyScoped(value.root, scope);
+    await Promise.race([
+      value.started.promise,
+      running.then(() => {
+        throw new Error('project開始前に終了しました。');
+      }),
+    ]);
+    try {
+      const handler = vi
+        .mocked(process.once)
+        .mock.calls.find(([event]) => event === 'SIGINT')?.[1];
+      if (!handler) throw new Error('中断handlerがありません。');
+      handler();
+      expect(value.signals[0]?.aborted).toBe(true);
+      expect(value.events).not.toContain('closed:chromium-auth');
+    } finally {
+      value.pending.release();
+    }
+    await expect(running).resolves.toMatchObject({
+      status: 'failed',
+      failurePhase: 'interrupted',
+      results: null,
+      safeResults: null,
+    });
+    expect(runLegacyProject).toHaveBeenCalledOnce();
   });
 });

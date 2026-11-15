@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { discover } from './discover';
+import { createSourceFixture } from './fixtures/createSource';
 import { scheduleEvidenceFixture } from './fixtures/scheduleCheck';
+import { buildInventory } from './inventory';
 import { loadLedger } from './ledger';
 import { writeArtifact } from './ledgerArtifacts';
 import { validateLedger } from './requirements';
@@ -11,13 +13,22 @@ import { runScheduleCheck } from './scheduleCheck';
 vi.mock('./discover', () => ({ discover: vi.fn() }));
 vi.mock('./ledger', () => ({ loadLedger: vi.fn() }));
 vi.mock('./inventory', () => ({ buildInventory: vi.fn() }));
+vi.mock('./extractors/surfaceRoots', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./extractors/surfaceRoots')>()),
+  loadStorySurfaceContext: vi.fn(),
+}));
 vi.mock('./source', () => ({ loadSource: vi.fn() }));
 vi.mock('./requirements', () => ({ validateLedger: vi.fn() }));
 vi.mock('./ledgerArtifacts', () => ({ writeArtifact: vi.fn() }));
 vi.mock('./runIsolatedCheck', () => ({ runIsolatedCheck: vi.fn() }));
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.resetAllMocks();
+  const original =
+    await vi.importActual<typeof import('./inventory')>('./inventory');
+  vi.mocked(buildInventory).mockReturnValue(
+    original.buildInventory(createSourceFixture({})),
+  );
 });
 
 describe('日程browserの実行入口', () => {

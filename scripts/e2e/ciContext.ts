@@ -14,8 +14,9 @@ import { captureGitSnapshot } from './gitSnapshot';
 import { loadLedger } from './ledger';
 import { parseArtifact, readArtifact, writeArtifact } from './ledgerArtifacts';
 import { legacyManifestSchema } from './legacy';
+import { legacyExecutionSchema } from './legacyExecutionSchema';
 import { ARTIFACTS } from './staticGate';
-import { resolveRevisions } from './trustedRevision';
+import { readRevisionFile, resolveRevisions } from './trustedRevision';
 
 import { isDeepStrictEqual } from 'node:util';
 
@@ -59,6 +60,17 @@ export const readCiLedgers = async (
       ? { smokeReference: readCiSmokeReference(root, policy, staticReport) }
       : {}),
   };
+};
+
+/** legacy jobだけが、実イベントで確定したHEADから実行正本を取得する。 */
+export const readCiLegacyExecution = (root: string, head: string) => {
+  const content = readRevisionFile(
+    root,
+    head,
+    'e2e/ledger/legacy-execution.json',
+  );
+  if (isNil(content)) throw new Error('HEADのlegacy実行正本がありません。');
+  return legacyExecutionSchema.parse(JSON.parse(content));
 };
 
 export const readCiArtifact = (root: string, path: string) =>
