@@ -27,6 +27,8 @@ jobs:
       - &setup
         id: setup
         uses: ./.github/actions/setup
+      - name: Test image cache validation
+        run: python3 -B -m unittest discover -s scripts/e2e -p experimentImageCache_test.py
       - name: Quality, static ledger and E2E plan
         id: verify
         run: pnpm e2e:ci plan
@@ -122,10 +124,52 @@ jobs:
         uses: ./.github/actions/setup-supabase
       - &install-chromium
         run: pnpm exec playwright install --with-deps chromium
+      - name: Compute experiment image cache key
+        id: image_cache_key
+        shell: bash
+        run: |
+          generation=$(( (GITHUB_RUN_ATTEMPT - 1) / 2 ))
+          echo "key=e2e-image-cache-v1-${{ github.run_id }}-${generation}-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-cli-2.75.0-${{ hashFiles('scripts/e2e/experimentImageCache.py', 'supabase/config.toml') }}-end" >> "$GITHUB_OUTPUT"
+      - name: Restore image archive
+        id: image_cache_restore
+        uses: actions/cache/restore@v4
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/e2e-image-cache/images.tar
+          key: ${{ steps.image_cache_key.outputs.key }}
+      - name: Record cache restore outcome
+        env:
+          CACHE_OUTCOME: ${{ steps.image_cache_restore.outcome }}
+          CACHE_HIT: ${{ steps.image_cache_restore.outputs.cache-hit }}
+        run: python3 -c 'import json,os; print("E2E_IMAGE_CACHE " + json.dumps({"phase":"restore_action","outcome":os.environ["CACHE_OUTCOME"],"hit":os.environ["CACHE_HIT"]}))'
+      - name: Validate and load restored images
+        timeout-minutes: 15
+        if: ${{ steps.image_cache_restore.outcome == 'success' && steps.image_cache_restore.outputs.cache-hit == 'true' }}
+        run: python3 scripts/e2e/experimentImageCache.py load
       - id: verify
         run: pnpm e2e:ci shard required
         env:
           E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - name: Save validated image archive
+        id: image_cache_archive
+        timeout-minutes: 15
+        if: ${{ steps.image_cache_restore.outputs.cache-hit != 'true' }}
+        continue-on-error: true
+        run: python3 scripts/e2e/experimentImageCache.py save
+      - name: Upload image archive to cache
+        id: image_cache_upload
+        if: ${{ steps.image_cache_restore.outputs.cache-hit != 'true' && steps.image_cache_archive.outcome == 'success' }}
+        uses: actions/cache/save@v4
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/e2e-image-cache/images.tar
+          key: ${{ steps.image_cache_key.outputs.key }}
+      - name: Record cache save outcome
+        if: ${{ always() && !cancelled() }}
+        env:
+          ARCHIVE_OUTCOME: ${{ steps.image_cache_archive.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.image_cache_upload.outcome }}
+        run: python3 -c 'import json,os; print("E2E_IMAGE_CACHE " + json.dumps({"phase":"save_action","archive":os.environ["ARCHIVE_OUTCOME"],"upload":os.environ["UPLOAD_OUTCOME"]}))'
       - uses: actions/upload-artifact@v4
         with:
           name: e2e-required-${{ github.run_id }}-${{ github.run_attempt }}
@@ -162,10 +206,52 @@ jobs:
       - *download-plan
       - *setup-supabase
       - *install-chromium
+      - name: Compute experiment image cache key
+        id: image_cache_key
+        shell: bash
+        run: |
+          generation=$(( (GITHUB_RUN_ATTEMPT - 1) / 2 ))
+          echo "key=e2e-image-cache-v1-${{ github.run_id }}-${generation}-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-cli-2.75.0-${{ hashFiles('scripts/e2e/experimentImageCache.py', 'supabase/config.toml') }}-end" >> "$GITHUB_OUTPUT"
+      - name: Restore image archive
+        id: image_cache_restore
+        uses: actions/cache/restore@v4
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/e2e-image-cache/images.tar
+          key: ${{ steps.image_cache_key.outputs.key }}
+      - name: Record cache restore outcome
+        env:
+          CACHE_OUTCOME: ${{ steps.image_cache_restore.outcome }}
+          CACHE_HIT: ${{ steps.image_cache_restore.outputs.cache-hit }}
+        run: python3 -c 'import json,os; print("E2E_IMAGE_CACHE " + json.dumps({"phase":"restore_action","outcome":os.environ["CACHE_OUTCOME"],"hit":os.environ["CACHE_HIT"]}))'
+      - name: Validate and load restored images
+        timeout-minutes: 15
+        if: ${{ steps.image_cache_restore.outcome == 'success' && steps.image_cache_restore.outputs.cache-hit == 'true' }}
+        run: python3 scripts/e2e/experimentImageCache.py load
       - id: verify
         run: pnpm e2e:ci shard legacy-desktop
         env:
           E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - name: Save validated image archive
+        id: image_cache_archive
+        timeout-minutes: 15
+        if: ${{ steps.image_cache_restore.outputs.cache-hit != 'true' }}
+        continue-on-error: true
+        run: python3 scripts/e2e/experimentImageCache.py save
+      - name: Upload image archive to cache
+        id: image_cache_upload
+        if: ${{ steps.image_cache_restore.outputs.cache-hit != 'true' && steps.image_cache_archive.outcome == 'success' }}
+        uses: actions/cache/save@v4
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/e2e-image-cache/images.tar
+          key: ${{ steps.image_cache_key.outputs.key }}
+      - name: Record cache save outcome
+        if: ${{ always() && !cancelled() }}
+        env:
+          ARCHIVE_OUTCOME: ${{ steps.image_cache_archive.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.image_cache_upload.outcome }}
+        run: python3 -c 'import json,os; print("E2E_IMAGE_CACHE " + json.dumps({"phase":"save_action","archive":os.environ["ARCHIVE_OUTCOME"],"upload":os.environ["UPLOAD_OUTCOME"]}))'
       - uses: actions/upload-artifact@v4
         with:
           name: e2e-legacy-desktop-${{ github.run_id }}-${{ github.run_attempt }}
@@ -199,10 +285,52 @@ jobs:
       - *download-plan
       - *setup-supabase
       - *install-chromium
+      - name: Compute experiment image cache key
+        id: image_cache_key
+        shell: bash
+        run: |
+          generation=$(( (GITHUB_RUN_ATTEMPT - 1) / 2 ))
+          echo "key=e2e-image-cache-v1-${{ github.run_id }}-${generation}-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-cli-2.75.0-${{ hashFiles('scripts/e2e/experimentImageCache.py', 'supabase/config.toml') }}-end" >> "$GITHUB_OUTPUT"
+      - name: Restore image archive
+        id: image_cache_restore
+        uses: actions/cache/restore@v4
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/e2e-image-cache/images.tar
+          key: ${{ steps.image_cache_key.outputs.key }}
+      - name: Record cache restore outcome
+        env:
+          CACHE_OUTCOME: ${{ steps.image_cache_restore.outcome }}
+          CACHE_HIT: ${{ steps.image_cache_restore.outputs.cache-hit }}
+        run: python3 -c 'import json,os; print("E2E_IMAGE_CACHE " + json.dumps({"phase":"restore_action","outcome":os.environ["CACHE_OUTCOME"],"hit":os.environ["CACHE_HIT"]}))'
+      - name: Validate and load restored images
+        timeout-minutes: 15
+        if: ${{ steps.image_cache_restore.outcome == 'success' && steps.image_cache_restore.outputs.cache-hit == 'true' }}
+        run: python3 scripts/e2e/experimentImageCache.py load
       - id: verify
         run: pnpm e2e:ci shard legacy-mobile
         env:
           E2E_LEDGER_BOOTSTRAP_APPROVAL: ${{ vars.E2E_LEDGER_BOOTSTRAP_APPROVAL }}
+      - name: Save validated image archive
+        id: image_cache_archive
+        timeout-minutes: 15
+        if: ${{ steps.image_cache_restore.outputs.cache-hit != 'true' }}
+        continue-on-error: true
+        run: python3 scripts/e2e/experimentImageCache.py save
+      - name: Upload image archive to cache
+        id: image_cache_upload
+        if: ${{ steps.image_cache_restore.outputs.cache-hit != 'true' && steps.image_cache_archive.outcome == 'success' }}
+        uses: actions/cache/save@v4
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/e2e-image-cache/images.tar
+          key: ${{ steps.image_cache_key.outputs.key }}
+      - name: Record cache save outcome
+        if: ${{ always() && !cancelled() }}
+        env:
+          ARCHIVE_OUTCOME: ${{ steps.image_cache_archive.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.image_cache_upload.outcome }}
+        run: python3 -c 'import json,os; print("E2E_IMAGE_CACHE " + json.dumps({"phase":"save_action","archive":os.environ["ARCHIVE_OUTCOME"],"upload":os.environ["UPLOAD_OUTCOME"]}))'
       - uses: actions/upload-artifact@v4
         with:
           name: e2e-legacy-mobile-${{ github.run_id }}-${{ github.run_attempt }}
