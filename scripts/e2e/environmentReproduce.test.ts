@@ -59,15 +59,13 @@ const proofFor = (root: string, runId = '012345abcdef'): EnvironmentProof => {
     at: at(3),
     resources: {
       ...empty(),
-      containers: ['db', 'rest', 'kong', 'storage', 'auth'].map(
-        (service, index) => ({
-          id: String(index + 1).repeat(64),
-          name: `supabase_${service}_${manifest.projectId}`,
-          projectLabel: manifest.projectId,
-          createdAt: at(2),
-          imageId: `sha256:${String(index + 2).repeat(64)}`,
-        }),
-      ),
+      containers: ['db', 'rest', 'kong', 'auth'].map((service, index) => ({
+        id: String(index + 1).repeat(64),
+        name: `supabase_${service}_${manifest.projectId}`,
+        projectLabel: manifest.projectId,
+        createdAt: at(2),
+        imageId: `sha256:${String(index + 2).repeat(64)}`,
+      })),
     },
   });
   manifest = transitionEnvironment(manifest, { type: 'running', at: at(4) });

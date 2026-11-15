@@ -23,7 +23,8 @@ export const selectionConsoleSummary = (
   },
   integrationLegacyExecuted: false,
   shadowRequested: result.shadowRequested,
-  shadowFailureClassification: {
+  // 静的な帰属可能範囲。今回の実行で観測した失敗原因を表すものではない。
+  shadowFailureAttributionPolicy: {
     attributable: 'storybook-assertions',
     otherRunnerFailures: 'inconclusive',
   },

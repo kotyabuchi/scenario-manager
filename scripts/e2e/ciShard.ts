@@ -1,9 +1,12 @@
+import { isNil } from 'ramda';
+
 import {
   assertCiUnchanged,
   captureCiInputs,
   readCiArtifact,
   readCiContext,
   readCiLedgers,
+  readCiLegacyExecution,
   writeCiArtifact,
 } from './ciContext';
 import {
@@ -12,10 +15,12 @@ import {
   validateCiPartitionManifest,
 } from './ciPartition';
 import {
+  CI_LEGACY_PROJECTS,
   ciPartitionManifestSchema,
   ciShardEnvelopeSchema,
 } from './ciPartitionSchema';
 import { validateCiShardArtifacts } from './ciShardArtifacts';
+import { createCiVerificationSummary } from './ciVerificationSummary';
 import { prepareVerificationDetails } from './prepareVerification';
 import { selectedPreparation } from './selectedPreparation';
 import { digestVerificationPlan } from './verificationPlanDigest';
@@ -52,18 +57,19 @@ export const runCiShard = async (
   )
     throw new Error('CI workerのイベント・入力がplannerと一致しません。');
   onProgress?.({ phase: 'manifest' });
+  const ledgers = await readCiLedgers(
+    root,
+    context.eventPolicy,
+    readCiArtifact(root, 'plan/static.json'),
+    rawManifest,
+    {
+      bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL,
+      inputs: initial.inputs,
+    },
+  );
   const { manifest, plans } = validateCiPartitionManifest({
     manifest: rawManifest,
-    ...(await readCiLedgers(
-      root,
-      context.eventPolicy,
-      readCiArtifact(root, 'plan/static.json'),
-      rawManifest,
-      {
-        bootstrapApproval: env.E2E_LEDGER_BOOTSTRAP_APPROVAL,
-        inputs: initial.inputs,
-      },
-    )),
+    ...ledgers,
   });
   onProgress?.({ phase: 'collection' });
   const prepared = await prepareVerificationDetails(root);
@@ -80,6 +86,13 @@ export const runCiShard = async (
     assertCiUnchanged(root, env, context, initial).then(() => {});
   await checkpoint();
   signal.throwIfAborted();
+  const legacyEvidence =
+    shard === 'required'
+      ? undefined
+      : {
+          legacy: ledgers.legacy,
+          execution: readCiLegacyExecution(root, context.eventPolicy.head),
+        };
   onProgress?.({ phase: 'execution' });
   const run = await runVerification(root, {
     ...selectedPreparation(
@@ -87,6 +100,9 @@ export const runCiShard = async (
       { plan: plans[shard] },
       { shouldAllowFullProfile: true },
     ),
+    ...(shard === 'required'
+      ? {}
+      : { legacyProjects: CI_LEGACY_PROJECTS[shard] }),
     mode: 'partial',
     signal,
     checkpoint,
@@ -100,6 +116,7 @@ export const runCiShard = async (
     phase: 'receipt',
     verificationId: run.verificationId,
     ...(run.verification ? { issueCount: run.verification.issues.length } : {}),
+    verificationSummary: createCiVerificationSummary(plans[shard], run),
     // 未起動stageやテスト失敗も後始末の照合条件を満たさないため、回収漏れと断定しない。
     cleanup:
       run.execution &&
@@ -112,7 +129,7 @@ export const runCiShard = async (
   await checkpoint();
   signal.throwIfAborted();
   const envelope = ciShardEnvelopeSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     shard,
     workflow: context.workflow,
     manifestDigest: digestCiPartitionManifest(manifest),
@@ -126,6 +143,7 @@ export const runCiShard = async (
     expectedPlan: plans[shard],
     envelope,
     verification: verified,
+    ...(isNil(legacyEvidence) ? {} : { legacyEvidence }),
   });
   onProgress?.({ phase: 'artifacts', verificationId: run.verificationId });
   for (const [file, value] of Object.entries({
