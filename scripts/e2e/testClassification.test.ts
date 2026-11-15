@@ -1,7 +1,11 @@
 import { createFilter } from 'vite';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import { escapeTestPathForGlob, getTestProjects } from './testClassification';
+import {
+  DIRECT_DOM_TEST_FILES,
+  escapeTestPathForGlob,
+  getTestProjects,
+} from './testClassification';
 
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -244,9 +248,66 @@ describe('getTestProjects', () => {
     expect(() => getTestProjects(root)).toThrow();
   });
 
+  it.each([
+    'import "./example.stories"',
+    'export * from "./example.stories.tsx"',
+    'const stories = import("./example.stories")',
+    'const stories = require("./example.stories")',
+    'import { composeStories } from "@storybook/react"',
+    'export { composeStories } from "@storybook/react"',
+    'import "storybook/test"',
+    'const preview = import("@storybook/addon-a11y/preview")',
+    'const preview = require("@storybook/react")',
+    'const stories = import(path)',
+    'const stories = require(path)',
+  ])('軽量DOMへのStory実行時参照や不明な読込を拒否する: %s', (source) => {
+    const root = createFixture();
+    const file = DIRECT_DOM_TEST_FILES[0];
+    if (!file) throw new Error('軽量DOM対象がありません');
+    writeFile(root, file, source);
+    expect(() => getTestProjects(root)).toThrow('軽量DOM対象');
+  });
+
+  it('軽量DOMの型参照は許可し、新しいtsxを自動で軽量化しない', () => {
+    const root = createFixture();
+    const file = DIRECT_DOM_TEST_FILES[0];
+    if (!file) throw new Error('軽量DOM対象がありません');
+    writeFile(
+      root,
+      file,
+      `
+      import type { Meta } from '@storybook/react';
+      import { type StoryObj } from '@storybook/react';
+      export type { Meta } from '@storybook/react';
+      export { type StoryObj } from '@storybook/react';
+    `,
+    );
+    const newFile = 'src/new.test.tsx';
+    writeFile(root, newFile);
+    const projects = getTestProjects(root);
+    expect(projects['unit-dom']).toEqual([file]);
+    expect(projects.component).toEqual([newFile]);
+  });
+
+  it('実在する軽量DOMのDB所属への変更を拒否する', () => {
+    const root = createFixture();
+    const file = DIRECT_DOM_TEST_FILES[0];
+    if (!file) throw new Error('軽量DOM対象がありません');
+    writeFile(root, file);
+    writeManifest(root, [file]);
+    expect(() => getTestProjects(root)).toThrow('軽量DOM対象と実DB対象');
+    writeManifest(root, [], [], [file]);
+    expect(() => getTestProjects(root)).toThrow('軽量DOM対象と実DB対象');
+  });
+
   it('基準リポジトリの旧DB11件、検証済みDB5件とpureの例外を分類できる', () => {
     const root = fileURLToPath(new URL('../..', import.meta.url));
     const projects = getTestProjects(root);
+    expect(
+      DIRECT_DOM_TEST_FILES.every((file) =>
+        projects['unit-dom'].includes(file),
+      ),
+    ).toBe(true);
     expect(projects.integration).toHaveLength(11);
     expect(projects['integration-verified']).toHaveLength(5);
     expect(projects.unit).toContain(

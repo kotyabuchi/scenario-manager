@@ -7,6 +7,28 @@ import path from 'node:path';
 const TEST_FILE_PATTERN = /\.test\.tsx?$/;
 const UNIT_DOM_PATTERN =
   /^src\/components\/blocks\/SpeedDialFAB\/__tests__\/[^/]+\.test\.ts$/;
+// Storybook注釈を使わないことを監査済みの直接描画テストだけを明示する。
+export const DIRECT_DOM_TEST_FILES: readonly string[] = [
+  'src/app/(main)/scenarios/_components/ScenarioFilters/ScenarioFilters.test.tsx',
+  'src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailHead.test.tsx',
+  'src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.test.tsx',
+  'src/app/(main)/sessions/_components/SessionTabs.test.tsx',
+  'src/app/(main)/sessions/[id]/_components/ParticipantsSection/ParticipantsSection.test.tsx',
+  'src/app/(main)/sessions/new/_components/ParticipantsSection/MemberSearchInput.test.tsx',
+  'src/app/(main)/sessions/new/_components/ScenarioSelectSection/ScenarioSearchModal.test.tsx',
+  'src/components/blocks/AuthPrompt/AuthPromptDialog.test.tsx',
+  'src/components/blocks/FilterPanel/FilterPanel.test.tsx',
+  'src/components/blocks/GlobalHeader/GlobalHeader.test.tsx',
+  'src/components/blocks/SideMenu/SideMenu.test.tsx',
+  'src/components/elements/combobox/combobox.test.tsx',
+  'src/components/elements/date-picker/date-picker.test.tsx',
+  'src/components/elements/Divider/Divider.test.tsx',
+  'src/components/elements/file-upload/file-upload.test.tsx',
+  'src/components/elements/number-input/number-input.test.tsx',
+  'src/components/elements/radio-group/radio-group.test.tsx',
+  'src/components/elements/select/select.test.tsx',
+  'src/components/elements/slider/slider.test.tsx',
+];
 const DB_MODULES = new Set([
   '@supabase/supabase-js',
   '@supabase/ssr',
@@ -190,6 +212,71 @@ const findDbDependency = (
   return undefined;
 };
 
+/** 軽量DOM対象の直接Story参照と不明な動的読込を拒否する。間接依存は監査対象とする。 */
+const assertDirectDomImports = (root: string, file: string) => {
+  const source = ts.createSourceFile(
+    file,
+    readFileSync(path.join(root, file), 'utf8'),
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  const check = (specifier: string) => {
+    if (
+      /\.stories(?:[./?#]|$)/.test(specifier) ||
+      specifier.startsWith('@storybook/') ||
+      specifier === 'storybook' ||
+      specifier.startsWith('storybook/')
+    )
+      throw new Error(`軽量DOM対象にStorybookの実行時参照があります: ${file}`);
+  };
+  const visit = (node: ts.Node) => {
+    if (
+      ts.isImportDeclaration(node) &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      const clause = node.importClause;
+      if (
+        !clause?.isTypeOnly &&
+        (!clause ||
+          clause.name ||
+          !clause.namedBindings ||
+          ts.isNamespaceImport(clause.namedBindings) ||
+          clause.namedBindings.elements.length === 0 ||
+          clause.namedBindings.elements.some((element) => !element.isTypeOnly))
+      )
+        check(node.moduleSpecifier.text);
+    }
+    if (
+      ts.isExportDeclaration(node) &&
+      !node.isTypeOnly &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      const clause = node.exportClause;
+      if (
+        !clause ||
+        ts.isNamespaceExport(clause) ||
+        clause.elements.length === 0 ||
+        clause.elements.some((element) => !element.isTypeOnly)
+      )
+        check(node.moduleSpecifier.text);
+    }
+    if (
+      ts.isCallExpression(node) &&
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) &&
+          node.expression.text === 'require'))
+    ) {
+      const specifier = node.arguments[0];
+      if (!specifier || !ts.isStringLiteralLike(specifier))
+        throw new Error(`軽量DOM対象の動的読込先が不明です: ${file}`);
+      check(specifier.text);
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+};
+
 /** 全srcテストを一意に分類し、未登録の実DB依存と登録の不整合を拒否する。 */
 export const getTestProjects = (root: string): TestProjects => {
   const tests = findTestFiles(root).sort();
@@ -197,6 +284,16 @@ export const getTestProjects = (root: string): TestProjects => {
     root,
     new Set(tests),
   );
+  const directDomFiles = new Set(DIRECT_DOM_TEST_FILES);
+  if (directDomFiles.size !== DIRECT_DOM_TEST_FILES.length)
+    throw new Error('軽量DOM対象の登録が重複しています');
+  for (const file of directDomFiles) {
+    // 小さい検査fixtureも扱う。基準repoでの登録対象の存在は分類回帰で検査する。
+    if (!tests.includes(file)) continue;
+    if (dbFiles.has(file) || verifiedFiles.has(file))
+      throw new Error(`軽量DOM対象と実DB対象の所属が重複しています: ${file}`);
+    assertDirectDomImports(root, file);
+  }
   const projects: TestProjects = {
     unit: [],
     'unit-dom': [],
@@ -222,7 +319,8 @@ export const getTestProjects = (root: string): TestProjects => {
         `未登録のDB依存テストです: ${file} → ${dependency}。db-test-files.jsonのfiles（legacy実DB）、verifiedFiles（case別実DB）またはmockedFiles（mock境界）へ理由付きで登録してください。`,
       );
     }
-    if (UNIT_DOM_PATTERN.test(file)) projects['unit-dom'].push(file);
+    if (UNIT_DOM_PATTERN.test(file) || directDomFiles.has(file))
+      projects['unit-dom'].push(file);
     else if (file.endsWith('.test.tsx') && !file.includes('/__tests__/')) {
       projects.component.push(file);
     } else projects.unit.push(file);

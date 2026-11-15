@@ -1,0 +1,101 @@
+name: Setup fixed native Supabase CLI
+description: Verify and install the fixed Linux x64 CLI without update checks
+runs:
+  using: composite
+  steps:
+    - name: Prepare owned installation directory
+      id: prepare
+      shell: bash
+      run: |
+        set -euo pipefail
+        test "$RUNNER_OS" = Linux
+        test "$RUNNER_ARCH" = X64
+        test "$(uname -s)" = Linux
+        test "$(uname -m)" = x86_64
+        root="$(mktemp -d "$RUNNER_TEMP/supabase-cli.XXXXXXXX")"
+        printf 'root=%s\n' "$root" >> "$GITHUB_OUTPUT"
+        mkdir -m 700 "$root/download" "$root/bin"
+    - name: Download fixed release archive
+      shell: bash
+      env:
+        SETUP_ROOT: ${{ steps.prepare.outputs.root }}
+      run: |
+        set -euo pipefail
+        SECONDS=0
+        curl --fail --location --silent --show-error \
+          --proto '=https' --proto-redir '=https' \
+          --connect-timeout 10 --max-time 120 \
+          --output "$SETUP_ROOT/download/supabase.tar.gz" \
+          'https://github.com/supabase/cli/releases/download/v2.75.0/supabase_linux_amd64.tar.gz'
+        printf 'download_seconds=%s\n' "$SECONDS"
+    - name: Verify fixed release checksum
+      shell: bash
+      env:
+        SETUP_ROOT: ${{ steps.prepare.outputs.root }}
+      run: |
+        set -euo pipefail
+        SECONDS=0
+        # 公式 v2.75.0 の supabase_2.75.0_checksums.txt と asset digest を照合済み。
+        printf '%s  %s\n' \
+          e5597462f865d5ac72af0453358e37ecb0d85962ad6914a114a53de847303bde \
+          "$SETUP_ROOT/download/supabase.tar.gz" | sha256sum --check --status
+        printf 'checksum_seconds=%s\n' "$SECONDS"
+    - name: Extract verified native executable
+      shell: bash
+      env:
+        SETUP_ROOT: ${{ steps.prepare.outputs.root }}
+      run: |
+        set -euo pipefail
+        SECONDS=0
+        archive="$SETUP_ROOT/download/supabase.tar.gz"
+        # 指定 member が単一の通常ファイルである場合だけ展開する。
+        member="$(tar --list --verbose --gzip --file "$archive" -- supabase)"
+        test "${member:0:1}" = '-'
+        test "$(printf '%s\n' "$member" | wc -l)" -eq 1
+        tar --extract --gzip --file "$archive" --directory "$SETUP_ROOT/bin" \
+          --no-same-owner --no-same-permissions -- supabase
+        binary="$SETUP_ROOT/bin/supabase"
+        test -f "$binary"
+        test ! -L "$binary"
+        test "$(head -c 4 "$binary" | od -An -tx1 | tr -d '[:space:]')" = 7f454c46
+        chmod 700 "$binary"
+        printf 'extract_seconds=%s\n' "$SECONDS"
+    - name: Verify fixed CLI without update communication
+      shell: bash
+      env:
+        SETUP_ROOT: ${{ steps.prepare.outputs.root }}
+      run: |
+        set -euo pipefail
+        SECONDS=0
+        pnpm exec tsx scripts/e2e/checkSupabaseCli.ts "$SETUP_ROOT/bin"
+        printf 'verify_seconds=%s\n' "$SECONDS"
+    - name: Activate verified native CLI
+      id: activate
+      shell: bash
+      env:
+        SETUP_ROOT: ${{ steps.prepare.outputs.root }}
+      run: |
+        set -euo pipefail
+        printf '%s\n' "$SETUP_ROOT/bin" >> "$GITHUB_PATH"
+        if test -z "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-}"; then
+          printf 'SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io\n' >> "$GITHUB_ENV"
+        fi
+    - name: Clean owned installation scratch
+      if: ${{ always() && steps.prepare.outputs.root != '' }}
+      shell: bash
+      env:
+        SETUP_ROOT: ${{ steps.prepare.outputs.root }}
+        SETUP_ACTIVATED: ${{ steps.activate.outcome == 'success' }}
+      run: |
+        set -euo pipefail
+        # 削除先は、この action が作った RUNNER_TEMP 直下に限定する。
+        test "$(dirname "$SETUP_ROOT")" = "$RUNNER_TEMP"
+        case "$(basename "$SETUP_ROOT")" in
+          supabase-cli.*) ;;
+          *) exit 1 ;;
+        esac
+        if test "$SETUP_ACTIVATED" = true; then
+          rm -rf -- "$SETUP_ROOT/download"
+        else
+          rm -rf -- "$SETUP_ROOT"
+        fi

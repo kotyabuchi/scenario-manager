@@ -1,6 +1,8 @@
 import { isNil } from 'ramda';
 
 import { ISOLATED_SUPABASE_PORTS } from '../../e2e/isolatedRuntime';
+import { measureCliStep } from './cliTiming';
+import { createDatabaseLifecycleTiming } from './databaseLifecycleTiming';
 import { runEnvironment } from './environment';
 import {
   checkEnvironmentCatalog,
@@ -16,7 +18,10 @@ import { prepareEnvironmentInputs } from './environmentInputs';
 import { acquireEnvironmentLock } from './environmentLock';
 import { createEnvironmentPlan } from './environmentOwnership';
 import { environmentLeaseSchema } from './environmentSchema';
+import { collectImageObservation } from './imageObservation';
 import { writeArtifact } from './ledgerArtifacts';
+import { seedSupabaseUpdateCache, verifySupabaseCli } from './supabaseCli';
+import { createSupabaseStartTiming } from './supabaseStartTiming';
 
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -32,6 +37,7 @@ import type {
 
 const PORTS = ISOLATED_SUPABASE_PORTS;
 const EXCLUDED_SERVICES = [
+  'storage-api',
   'realtime',
   'imgproxy',
   'mailpit',
@@ -74,10 +80,12 @@ const probeWithSignal = async (
   const worktreeRoot = await realpath(root);
   signal.throwIfAborted();
   const dockerHost = (
-    await runLocalCommand(
-      'docker',
-      ['context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'],
-      { cwd: worktreeRoot, env: process.env, signal },
+    await measureCliStep('docker-context', () =>
+      runLocalCommand(
+        'docker',
+        ['context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'],
+        { cwd: worktreeRoot, env: process.env, signal },
+      ),
     )
   ).trim();
   const env = localCommandEnvironment(process.env, dockerHost);
@@ -88,17 +96,28 @@ const probeWithSignal = async (
     signal.throwIfAborted();
     return runLocalCommand(tool, args, { cwd: worktreeRoot, env, signal });
   };
-  if ((await runChecked('supabase', ['--version'])).trim() !== '2.75.0')
-    throw new Error('Supabase CLI 2.75.0が必要です。');
+  await measureCliStep('supabase-version', () =>
+    verifySupabaseCli(env, signal),
+  );
   const dockerVersion = (
-    await runChecked('docker', ['info', '--format', '{{.ServerVersion}}'])
+    await measureCliStep('docker-info', () =>
+      runChecked('docker', ['info', '--format', '{{.ServerVersion}}']),
+    )
   ).trim();
-  const commit = (await runChecked('git', ['rev-parse', 'HEAD'])).trim();
+  const commit = (
+    await measureCliStep('git-head', () =>
+      runChecked('git', ['rev-parse', 'HEAD']),
+    )
+  ).trim();
   const repoRoot = dirname(
     await realpath(
       resolve(
         worktreeRoot,
-        (await runChecked('git', ['rev-parse', '--git-common-dir'])).trim(),
+        (
+          await measureCliStep('git-common-dir', () =>
+            runChecked('git', ['rev-parse', '--git-common-dir']),
+          )
+        ).trim(),
       ),
     ),
   );
@@ -107,26 +126,30 @@ const probeWithSignal = async (
   const projectId = `sm-e2e-${runId}`;
   signal.throwIfAborted();
   progress({ phase: 'locking', runId });
-  const lock = await acquireEnvironmentLock({
-    registryRoot: join(
-      await realpath(tmpdir()),
-      'scenario-manager-e2e-locks-v1',
-    ),
-    repoKey: repoRoot,
-    worktreeRoot,
-    runId,
-    ownerNonce,
-    projectId,
-    ports: [...Object.values(PORTS), ...additionalPorts],
-  });
+  const lock = await measureCliStep('environment-lock', async () =>
+    acquireEnvironmentLock({
+      registryRoot: join(
+        await realpath(tmpdir()),
+        'scenario-manager-e2e-locks-v1',
+      ),
+      repoKey: repoRoot,
+      worktreeRoot,
+      runId,
+      ownerNonce,
+      projectId,
+      ports: [...Object.values(PORTS), ...additionalPorts],
+    }),
+  );
   let isLifecycleOwner = false;
   try {
     signal.throwIfAborted();
     progress({ phase: 'preparing-inputs', runId });
-    const prepared = await prepareEnvironmentInputs(worktreeRoot, {
-      runId,
-      ports: PORTS,
-    });
+    const prepared = await measureCliStep('environment-inputs', () =>
+      prepareEnvironmentInputs(worktreeRoot, {
+        runId,
+        ports: PORTS,
+      }),
+    );
     signal.throwIfAborted();
     const { workdir, inputHashes } = prepared;
     progress({ phase: 'preparing-inputs', runId, workdir });
@@ -171,6 +194,7 @@ const probeWithSignal = async (
       );
     signal.throwIfAborted();
     let hasReplayedMigrations = false;
+    const databaseTiming = createDatabaseLifecycleTiming();
     const catalogState: {
       check: CatalogCheck | null;
       status: 'verified' | 'mismatch' | 'not-reached';
@@ -194,30 +218,47 @@ const probeWithSignal = async (
       start: async () => {
         signal.throwIfAborted();
         progress({ phase: 'starting', runId, workdir });
-        const actual = await readLease();
-        if (
-          Object.entries(lease).some(
-            ([key, value]) => Reflect.get(actual, key) !== value,
+        await measureCliStep('environment-start-prepare', async () => {
+          const actual = await readLease();
+          if (
+            Object.entries(lease).some(
+              ([key, value]) => Reflect.get(actual, key) !== value,
+            )
           )
-        )
-          throw new Error('所有markerが一致しません。');
-        const config = await readFile(join(workdir, 'supabase/config.toml'));
-        if (
-          createHash('sha256').update(config).digest('hex') !==
-          inputHashes.config
-        )
-          throw new Error('起動前にconfigが変更されました。');
-        signal.throwIfAborted();
-        await runLocalCommand(
-          'supabase',
-          ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
-          {
-            cwd: workdir,
-            env,
-            signal,
-            log: join(workdir, 'start.private.log'),
-          },
+            throw new Error('所有markerが一致しません。');
+          const config = await readFile(join(workdir, 'supabase/config.toml'));
+          if (
+            createHash('sha256').update(config).digest('hex') !==
+            inputHashes.config
+          )
+            throw new Error('起動前にconfigが変更されました。');
+          signal.throwIfAborted();
+        });
+        // 固定版の更新通知だけを所有workdir内で抑制し、startの検査は維持する。
+        await measureCliStep('environment-start-cache', () =>
+          seedSupabaseUpdateCache(workdir),
         );
+        signal.throwIfAborted();
+        await measureCliStep('environment-start-command', async () => {
+          const timing = createSupabaseStartTiming();
+          databaseTiming.start();
+          try {
+            await runLocalCommand(
+              'supabase',
+              ['start', '--workdir', workdir, '--exclude', EXCLUDED_SERVICES],
+              {
+                cwd: workdir,
+                env,
+                signal,
+                log: join(workdir, 'start.private.log'),
+                onStderr: timing.observe,
+              },
+            );
+          } finally {
+            databaseTiming.finish();
+            timing.close();
+          }
+        });
         // startがseedまで完了した事実を、後続検査やcleanupの成否から分離する。
         hasReplayedMigrations = true;
       },
@@ -231,22 +272,38 @@ const probeWithSignal = async (
         );
         if (isNil(database))
           throw new Error('所有DB containerが確認できません。');
-        const catalog = await runChecked('docker', [
-          'exec',
-          database.id,
-          'psql',
-          '-X',
-          '-U',
-          'postgres',
-          '-d',
-          'postgres',
-          '-t',
-          '-A',
-          '-v',
-          'ON_ERROR_STOP=1',
-          '-c',
-          ENVIRONMENT_CATALOG_QUERY,
-        ]);
+        await collectImageObservation({
+          projectId,
+          containers: running.resources.containers,
+          cwd: workdir,
+          env,
+          signal,
+        });
+        await databaseTiming.collect({
+          databaseId: database.id,
+          projectId,
+          cwd: workdir,
+          env,
+          signal,
+        });
+        const catalog = await measureCliStep('environment-catalog', () =>
+          runChecked('docker', [
+            'exec',
+            database.id,
+            'psql',
+            '-X',
+            '-U',
+            'postgres',
+            '-d',
+            'postgres',
+            '-t',
+            '-A',
+            '-v',
+            'ON_ERROR_STOP=1',
+            '-c',
+            ENVIRONMENT_CATALOG_QUERY,
+          ]),
+        );
         catalogState.status = 'mismatch';
         await writeFile(join(workdir, 'catalog.json'), catalog, {
           flag: 'wx',
@@ -315,7 +372,8 @@ const probeWithSignal = async (
     );
     return report;
   } finally {
-    if (!isLifecycleOwner) await lock.release();
+    if (!isLifecycleOwner)
+      await measureCliStep('environment-release', () => lock.release());
   }
 };
 

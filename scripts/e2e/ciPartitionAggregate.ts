@@ -15,12 +15,17 @@ import {
   type GithubEventPolicy,
   githubEventPolicySchema,
 } from './githubEventSchema';
+import { validateLegacyExecution } from './legacyExecution';
 
 import { isDeepStrictEqual } from 'node:util';
 
 import type { Ledger } from '../../e2e/ledger/schema';
 import type { CiSmokeReference } from './ciBootstrap';
 import type { LegacyManifest } from './legacy';
+import type {
+  LegacyExecution,
+  LegacyExecutionResult,
+} from './legacyExecutionSchema';
 
 type ShardArtifacts = {
   envelope: unknown;
@@ -35,6 +40,7 @@ export const aggregateCiPartition = (input: {
   jobResults: Record<'planner' | CiShardId, string>;
   ledger: Ledger;
   legacy: LegacyManifest;
+  execution: LegacyExecution;
   smokeReference?: CiSmokeReference;
   surfaceMigrationHistoryDigest?: string;
   shards: Partial<Record<CiShardId, ShardArtifacts>>;
@@ -67,6 +73,8 @@ export const aggregateCiPartition = (input: {
     );
   const manifestDigest = digestCiPartitionManifest(manifest);
   const seen = new Set<string>();
+  const owners = new Set<string>();
+  const results: LegacyExecutionResult[] = [];
   const shards = manifest.shards.map((shard) => {
     const { id } = shard;
     const artifacts = input.shards[id];
@@ -76,14 +84,37 @@ export const aggregateCiPartition = (input: {
       shard: id,
       expectedPlan: plans[id],
       ...artifacts,
+      ...(id === 'required'
+        ? {}
+        : {
+            legacyEvidence: {
+              legacy: input.legacy,
+              execution: input.execution,
+            },
+          }),
     });
     if (seen.has(verified.verificationId))
       throw new Error('CI分割実行の由来またはverification IDが一致しません。');
     seen.add(verified.verificationId);
-    return verified;
+    const { ownerRunIds, legacyResults, ...summary } = verified;
+    for (const owner of ownerRunIds) {
+      if (owners.has(owner))
+        throw new Error('CI分割実行のowner run IDが重複しています。');
+      owners.add(owner);
+    }
+    results.push(...legacyResults);
+    return summary;
   });
+  if (
+    validateLegacyExecution({
+      legacy: input.legacy,
+      execution: input.execution,
+      results,
+    }).issues.length > 0
+  )
+    throw new Error('legacy全体の実行結果が正本と一致しません。');
   return {
-    schemaVersion: 1 as const,
+    schemaVersion: 2 as const,
     status: 'passed' as const,
     workflow: manifest.workflow,
     eventPolicy: manifest.eventPolicy,

@@ -8,6 +8,7 @@ import {
   ciShardEnvelopeSchema,
 } from '../ciPartitionSchema';
 import { inputFingerprintSchema } from '../fingerprint';
+import { legacyKey } from '../legacy';
 import { digestVerificationPlan } from '../verificationPlanDigest';
 import { verificationReceiptSchema } from '../verificationReceiptSchema';
 import {
@@ -18,12 +19,21 @@ import {
 import { verifyResults } from '../verifyResults';
 import { ciPartitionFixture, fixtureInputDigest } from './ciPartition';
 
+import type { LegacyExecution } from '../legacyExecutionSchema';
+
 const shardArtifacts = (
   id: CiShardId,
   manifest: CiPartitionManifest,
   plan: VerificationPlan,
+  execution: LegacyExecution,
+  legacy: ReturnType<typeof ciPartitionFixture>['legacy'],
 ) => {
-  const verificationId = id === 'required' ? '111111111111' : '222222222222';
+  const verificationId = {
+    required: '111111111111',
+    'legacy-desktop': '222222222222',
+    'legacy-mobile': '444444444444',
+  }[id];
+  const byKey = new Map(execution.entries.map((entry) => [entry.key, entry]));
   const selectionDigest = digestVerificationPlan(plan);
   const rows = [...plan.requirements, ...plan.allowedExtraTests];
   const stageIds = new Set(
@@ -93,6 +103,33 @@ const shardArtifacts = (
                 counts: { expected: total, tests: total, passed: total },
               },
       },
+      ...(kind === 'legacy'
+        ? {
+            legacyResults: rows.filter(matches).map(({ test }) => {
+              const key = legacyKey('app', test);
+              const disposition = byKey.get(key);
+              if (!disposition)
+                throw new Error('実行fixtureの正本がありません。');
+              return {
+                key,
+                fingerprint:
+                  disposition.disposition === 'replacement'
+                    ? legacy.registered.find((entry) => entry.key === key)
+                        ?.fingerprint
+                    : disposition.fingerprint,
+                ...(disposition.disposition === 'replacement'
+                  ? { originFingerprint: disposition.fingerprint }
+                  : {}),
+                status: test.expectedStatus,
+                expectedStatus: test.expectedStatus,
+                annotations:
+                  'expectedAnnotation' in disposition
+                    ? [disposition.expectedAnnotation]
+                    : [],
+              };
+            }),
+          }
+        : {}),
       cleanup:
         kind === 'legacy'
           ? {
@@ -157,16 +194,19 @@ const shardArtifacts = (
       runs: stages.map(({ context, evidence }, index) => ({
         stageId: context.stageId,
         status: 'passed',
-        runId: evidence.kind === 'legacy' ? `33333333333${index}` : null,
+        runId:
+          evidence.kind === 'legacy'
+            ? `${id === 'legacy-desktop' ? '33333333333' : '55555555555'}${index}`
+            : null,
       })),
     },
     verification,
     failure: null,
-    legacyLocalRequested: id === 'legacy-local',
+    legacyLocalRequested: id !== 'required',
     integrationLegacyExecuted: false,
   });
   const envelope = ciShardEnvelopeSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     shard: id,
     workflow: manifest.workflow,
     verificationId,
@@ -194,14 +234,30 @@ export const ciPartitionArtifactsFixture = () => {
     jobResults: {
       planner: 'success',
       required: 'success',
-      'legacy-local': 'success',
+      'legacy-desktop': 'success',
+      'legacy-mobile': 'success',
     },
     shards: {
-      required: shardArtifacts('required', manifest, plans.required),
-      'legacy-local': shardArtifacts(
-        'legacy-local',
+      required: shardArtifacts(
+        'required',
         manifest,
-        plans['legacy-local'],
+        plans.required,
+        input.execution,
+        input.legacy,
+      ),
+      'legacy-desktop': shardArtifacts(
+        'legacy-desktop',
+        manifest,
+        plans['legacy-desktop'],
+        input.execution,
+        input.legacy,
+      ),
+      'legacy-mobile': shardArtifacts(
+        'legacy-mobile',
+        manifest,
+        plans['legacy-mobile'],
+        input.execution,
+        input.legacy,
       ),
     },
   };

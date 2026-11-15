@@ -86,8 +86,8 @@ beforeEach(async () => {
     if (tool === 'docker' && args[0] === 'context')
       return 'npipe:////./pipe/docker_engine';
     if (tool === 'docker' && args[0] === 'info') return '28.0.0';
-    if (tool === 'supabase' && args[0] === '--version')
-      return probeState.version;
+    if (tool === 'supabase' && args[0] === '--help')
+      return `Supabase CLI ${probeState.version}\n\nUsage:\n`;
     if (tool === 'git' && args[1] === 'HEAD') return 'a'.repeat(40);
     if (tool === 'git' && args[1] === '--git-common-dir')
       return join(root, '.git');
