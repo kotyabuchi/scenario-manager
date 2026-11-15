@@ -79,7 +79,7 @@ enable_confirmations = false
 enable_signup = false
 
 [storage]
-enabled = true
+enabled = false
 file_size_limit = "50MiB"
 
 [storage.image_transformation]
