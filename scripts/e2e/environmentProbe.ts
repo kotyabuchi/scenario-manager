@@ -18,6 +18,7 @@ import { prepareEnvironmentInputs } from './environmentInputs';
 import { acquireEnvironmentLock } from './environmentLock';
 import { createEnvironmentPlan } from './environmentOwnership';
 import { environmentLeaseSchema } from './environmentSchema';
+import { collectImageObservation } from './imageObservation';
 import { writeArtifact } from './ledgerArtifacts';
 import { seedSupabaseUpdateCache, verifySupabaseCli } from './supabaseCli';
 import { createSupabaseStartTiming } from './supabaseStartTiming';
@@ -36,6 +37,7 @@ import type {
 
 const PORTS = ISOLATED_SUPABASE_PORTS;
 const EXCLUDED_SERVICES = [
+  'storage-api',
   'realtime',
   'imgproxy',
   'mailpit',
@@ -270,6 +272,13 @@ const probeWithSignal = async (
         );
         if (isNil(database))
           throw new Error('所有DB containerが確認できません。');
+        await collectImageObservation({
+          projectId,
+          containers: running.resources.containers,
+          cwd: workdir,
+          env,
+          signal,
+        });
         await databaseTiming.collect({
           databaseId: database.id,
           projectId,

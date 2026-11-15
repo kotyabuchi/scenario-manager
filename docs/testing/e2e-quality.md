@@ -120,6 +120,12 @@ private log、認証state、DB接続情報、raw trace、`test-results` 全体�
 
 ## GitHub設定
 
+### 隔離環境のStorage対象範囲
+
+隔離E2E用に生成するSupabase設定ではStorageを無効化し、常駐サービスと初期化用imageの準備を省く。通常開発・本番設定は変更しない。固定対象の直接参照検索と既存検査ではStorage使用を確認していないが、動的・間接利用の完全な不在、Storage API/schemaや認可全体を証明したものではない。Storageを使うテストを追加する場合は、有効化した専用環境と必要な検査対象を設計し、テストをskipして対応しない。
+
+DB / PostgREST / Kong / GoTrueの4サービスは再現検査でimage IDを照合する。既存の入力・catalog期待値・認証・DB所有権・cleanup検査を維持する。image観測は起動結果の診断用で、観測失敗を必須検査の合格に置換しない。[比較結果と残件](../plans/e2e-image-adoption.md)を参照。
+
 必須status名は **E2E verification gate** を維持する。旧 `Static Ledger Gate` は統合済み。2026-11-07の読み取りではmain ruleset `26680579` がactiveで、GitHub Actions（integration ID 15368）の同checkを要求し、最新mainへの追従も必須、bypassは空だった。今回の分割では設定を変更しない。
 
 PR #9のmain反映に伴い、段階導入用base `perf/e2e-tools` の一時許可をtest／duplicates workflowとPRイベントschemaから削除した。PR #10はmain向けの新しいhead/run/attemptで再検証する。廃止したbase・類似名・同branchへのpushは拒否する。既存の `feat/ui-local-test-prerequisite` の許可はtest workflowとschemaに維持する。

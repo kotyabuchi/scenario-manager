@@ -54,6 +54,8 @@ head `0a5133d489d14e0a94c6fded66ebb656c6f8869b` の [run42330826829](https://git
 
 ## 後続PR #10の観測
 
+2026-11-15更新: Supabase/Docker image準備の独立比較24試行を完了し、ユーザー承認でA2（隔離E2EのStorage無効化）をPR #10へ取り込む。共通image観測を維持し、registryはECRのまま。tar/save/load cacheは不採用、GHCR単独・組合せは保留。[比較結果・採用範囲・検証と残件](e2e-image-adoption.md)を最新の整理とする。各試行のrunner条件が混在するため、全体中央値をそのまま改善率にはしない。以下の過去観測を取り込み後の最終HEAD成功と読み替えない。最終の受入結果はPR #10本文で管理し、Draft・未マージ・本番未反映を維持する。
+
 [PR #10の実装headのCI](https://github.com/kotyabuchi/scenario-manager/actions/runs/42340586935) は全7jobと重複検査が成功し、同一head/run/attemptの6組の成果物も独立受入を通過した。legacyをdesktop/mobileへ分割し、必須67件・extras312と全330行の結果、6 DB cleanup・7 process終了を維持した。
 
 PR9の23分54秒から18分51秒へ、待ち時間は5分3秒短縮した。job時間の和は2,398から2,664 runner秒へ増えた。各条件1回の観測であり、恒常的な改善率や課金額の比較ではない。詳細な区間、計測できていない項目、最終headの受入手順は[分割計画のBatch 3記録](./e2e-legacy-ci-sharding.md#batch-3のhosted受入と性能観測2026-11-07)を参照。PR9とPR10の本番マージは未実施。
