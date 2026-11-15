@@ -129,7 +129,7 @@ export const runCiShard = async (
   await checkpoint();
   signal.throwIfAborted();
   const envelope = ciShardEnvelopeSchema.parse({
-    schemaVersion: 2,
+    schemaVersion: 3,
     shard,
     workflow: context.workflow,
     manifestDigest: digestCiPartitionManifest(manifest),

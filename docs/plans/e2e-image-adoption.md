@@ -56,7 +56,7 @@ CLIバイナリ導入stepは72 E2E jobで2–3秒、中央値3秒。Docker image
 
 全24試行でhead/base/run/attempt、7 job成功、6組artifactの集合・SHA256を独立照合。required67/extras312/legacy330行/既存例外11、3 planDigest、migration25+metadata3+seed1の29入力が各shard開始/終了で一致した。DB cleanup144件・process exit168件・image観測144回を確認。テスト結果9,096記録はexpected8,832/既存skip264、記録上のretry/flaky/不明0。fixture内部の通信retryは別である。
 
-Hosted実行時catalog fingerprintはartifactに未保存。固定期待値検査の成功は確認できるが直接fingerprint比較と同一視しない。coverageStatus=insufficient、pending core435/UI658、Storage API/schema・認可全体の未証明を維持する。A2のnative2回は最終コミット前の2行差分で実行したため、最終HEADのnative証拠とは扱わない。PR #10への取り込み後は新しい固定HEADで別途検証する。
+この24試行のHosted実行時catalog fingerprintはartifactに未保存。固定期待値検査の成功は確認できるが直接fingerprint比較と同一視しない。coverageStatus=insufficient、pending core435/UI658、Storage API/schema・認可全体の未証明を維持する。A2のnative2回は最終コミット前の2行差分で実行したため、最終HEADのnative証拠とは扱わない。PR #10への取り込み後は新しい固定HEADで別途検証する。
 
 実装・検証・専門レビューはTerra/high、親が受入・比較・採否を判断した。ローカル詳細証跡は元worktreeの `test-results/quality/image-experiments/`、公開結果は各Draft PR本文に保持する。実験の成功反復を、従来のNext.js chunk取得等の間欠失敗の根治と解釈しない。
 
@@ -71,7 +71,7 @@ Hosted実行時catalog fingerprintはartifactに未保存。固定期待値検�
 
 | 優先度 | 残件 | 次の判定条件 |
 |---|---|---|
-| 高 | Hosted catalog fingerprintを安全なartifactへ保存 | 実行時値を同じ定義で比較し、入力hashや固定期待値と区別する |
+| 高 | Hosted catalog fingerprintの証拠契約 | 実装・限定検査済み。固定HEADの全体quality・Hostedで6 DB stageの保存と独立受入を確認する。過去artifactの欠測は補完しない |
 | 高 | fallback直接理由とlayer別の転送/展開/I/O観測 | 秘密を含む生ログを公開せず、重複区間や欠測を残す |
 | 中 | 既存の間欠失敗の原因調査 | 過去失敗と新HEAD成功を区別し、再現・反例で検証する |
 | 中 | E2E責務移管・重複整理、固定500ms待機 | [テスト層の計画](e2e-test-layer-performance.md)の旧→新台帳契約・接続保証を先に満たす |

@@ -71,7 +71,7 @@ export const ciPartitionManifestSchema = z.strictObject({
 });
 
 export const ciShardEnvelopeSchema = z.strictObject({
-  schemaVersion: z.literal(2),
+  schemaVersion: z.literal(3),
   shard: ciShardIdSchema,
   workflow: ciWorkflowSchema,
   manifestDigest: selectionDigestSchema,

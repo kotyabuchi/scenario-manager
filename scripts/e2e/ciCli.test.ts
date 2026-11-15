@@ -1,9 +1,11 @@
 import { expect, it, vi } from 'vitest';
 
 import { runCiCli } from './ci';
+import { aggregateCiPartition } from './ciPartitionAggregate';
 import { planCiVerification } from './ciPlan';
 import { runCiShard } from './ciShard';
 import { ciVerificationSummarySchema } from './ciVerificationSummary';
+import { ciPartitionArtifactsFixture } from './fixtures/ciPartitionArtifacts';
 import { recordStaticLedgerFailure } from './staticLedgerFailure';
 import { createSurfaceReplayDiagnosticError } from './surfaceReplayFailure';
 
@@ -24,6 +26,50 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 vi.mock('./ciPlan', () => ({ planCiVerification: vi.fn() }));
 vi.mock('./ciShard', () => ({ runCiShard: vi.fn() }));
+
+it.each([
+  'PRIVATE_SQL_BODY',
+  'https://private.invalid',
+  'PRIVATE_JWT',
+  'C:/private/path',
+  'PRIVATE_EXCEPTION',
+])('不正catalog証拠 %s を失敗artifactや公開出力へ漏らさない', async (sentinel) => {
+  const temp = realpathSync(tmpdir());
+  const root = mkdtempSync(join(temp, 'e2e-ci-catalog-'));
+  const stderr = vi
+    .spyOn(process.stderr, 'write')
+    .mockImplementation(() => true);
+  const input = ciPartitionArtifactsFixture();
+  const stage =
+    input.shards['legacy-desktop'].verification.receipt.execution?.stages[0];
+  if (!stage?.catalogEvidence) throw new Error('catalog fixture不足');
+  stage.catalogEvidence.fingerprint = sentinel;
+  vi.mocked(runCiShard).mockImplementationOnce(
+    async (_root, _env, _shard, _signal, onProgress) => {
+      onProgress?.({ phase: 'receipt' });
+      aggregateCiPartition(input);
+      throw new Error('不正catalog証拠を拒否できませんでした');
+    },
+  );
+  try {
+    const result = await runCiCli(['shard', 'legacy-desktop'], root, {
+      ...process.env,
+      GITHUB_ACTIONS: 'true',
+      GITHUB_RUN_ID: '123456',
+      GITHUB_RUN_ATTEMPT: '1',
+    });
+    const folder = join(root, 'test-results/ci/legacy-desktop');
+    const saved = readFileSync(join(folder, 'failure.json'), 'utf8');
+    expect(result.status).toBe('failed');
+    expect(saved).not.toContain(sentinel);
+    expect(JSON.stringify(result)).not.toContain(sentinel);
+    expect(JSON.stringify(stderr.mock.calls)).not.toContain(sentinel);
+    expect(existsSync(join(folder, 'receipt.json'))).toBe(false);
+  } finally {
+    stderr.mockRestore();
+    removeOwnedRoot(root, temp);
+  }
+});
 
 it('workerの失敗ファイルへ固定要約だけを保存し成功成果物は作らない', async () => {
   const temp = realpathSync(tmpdir());

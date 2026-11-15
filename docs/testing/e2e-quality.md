@@ -96,7 +96,9 @@ scheduleは日曜18:30 UTC（月曜03:30 JST）。欠落・不正なイベント
 
 各workerも全登録を再収集し、head・workflow run/attempt・入力・全plan・全collectionがplannerと一致したときだけ起動する。legacyは各165件（必須9・extras156）、合計330件を実行し、deferred18件は実行結果として拒否する。projectごとのDB・seed・Next build・process・cleanupは共有しない。
 
-CI manifest／envelope／aggregateはversion 2の固定3shard（required・legacy-desktop・legacy-mobile）を使い、旧legacy-local tupleや互換aliasを受け入れない。集約は欠落・余分・重複、failure/cancel/skip、別head/run/attempt、verification IDや環境owner IDの再利用、required失敗、未回収を拒否する。legacy stageの検査済み結果は必須とし、同HEADの実行正本、共通report、現/置換元fingerprint、既存skip理由、全結果の和集合を再照合する。ローカルの全4project実行と単体診断の入口は変更しない。
+CI manifestはversion 2、shard envelope／aggregateはversion 3の固定3shard（required・legacy-desktop・legacy-mobile）を使い、旧legacy-local tupleや互換aliasを受け入れない。集約は欠落・余分・重複、failure/cancel/skip、別head/run/attempt、verification IDや環境owner IDの再利用、required失敗、未回収を拒否する。legacy stageの検査済み結果は必須とし、同HEADの実行正本、共通report、現/置換元fingerprint、既存skip理由、全結果の和集合を再照合する。ローカルの全4project実行と単体診断の入口は変更しない。
+
+CI v3は実行planが要求する各DB stageの既存catalog fingerprintをstage・owner run IDとともにreceiptへ保存し、shardとaggregateで固定期待catalogの同じ正規化結果と照合する。現在のfull planでは6 DB stageが対象で、DBを使わないStorybookは対象外。旧ローカルreceiptの欠測は未記録として扱い、値が存在する場合は検証する。旧CI v2 artifactは当時の契約で保持し、新v3の証拠として補完しない。このfingerprintは対象metadataのhashでありseed行は含まない。seedは別guardで検査し、全DB行・Storage・認可全体の正しさは証明しない。
 
 失敗したworkflowを再実行するときはActionsの **Re-run all jobs** を選ぶ。失敗jobだけを再実行すると、新しいattemptに成功済みjobの成果物がないため照合できない。
 

@@ -114,6 +114,17 @@ export const verificationStageResultSchema = z
         resultsChecked: z.boolean().optional(),
       }),
     }),
+    catalogEvidence: z
+      .strictObject({
+        schemaVersion: z.literal(1),
+        stageId: verificationContextSchema.shape.stageId,
+        runId: verificationContextSchema.shape.verificationId,
+        fingerprint: digest,
+        catalogStatus: z.literal('verified'),
+        schemaParityPassed: z.literal(true),
+        migrationReplayPassed: z.literal(true),
+      })
+      .optional(),
     legacyResults: legacySafeResultsSchema.optional(),
     cleanup: environmentCleanupSchema.nullable(),
     processCleanup: z.strictObject({

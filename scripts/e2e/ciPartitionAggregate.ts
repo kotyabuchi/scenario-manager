@@ -114,7 +114,7 @@ export const aggregateCiPartition = (input: {
   )
     throw new Error('legacy全体の実行結果が正本と一致しません。');
   return {
-    schemaVersion: 2 as const,
+    schemaVersion: 3 as const,
     status: 'passed' as const,
     workflow: manifest.workflow,
     eventPolicy: manifest.eventPolicy,

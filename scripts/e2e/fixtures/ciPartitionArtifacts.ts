@@ -7,6 +7,7 @@ import {
   type CiShardId,
   ciShardEnvelopeSchema,
 } from '../ciPartitionSchema';
+import { expectedEnvironmentCatalogFingerprint } from '../environmentCatalog';
 import { inputFingerprintSchema } from '../fingerprint';
 import { legacyKey } from '../legacy';
 import { digestVerificationPlan } from '../verificationPlanDigest';
@@ -41,7 +42,7 @@ const shardArtifacts = (
       profile === 'app' ? `app-${test.project}` : profile,
     ),
   );
-  const stages = [...stageIds].map((stageId) => {
+  const stages = [...stageIds].map((stageId, index) => {
     const matches = ({ profile, test }: (typeof rows)[number]) =>
       (profile === 'app' ? `app-${test.project}` : profile) === stageId;
     const requiredKeys = plan.requirements
@@ -130,6 +131,19 @@ const shardArtifacts = (
             }),
           }
         : {}),
+      ...(kind === 'legacy'
+        ? {
+            catalogEvidence: {
+              schemaVersion: 1,
+              stageId,
+              runId: `${id === 'legacy-desktop' ? '33333333333' : '55555555555'}${index}`,
+              fingerprint: expectedEnvironmentCatalogFingerprint(),
+              catalogStatus: 'verified',
+              schemaParityPassed: true,
+              migrationReplayPassed: true,
+            },
+          }
+        : {}),
       cleanup:
         kind === 'legacy'
           ? {
@@ -206,7 +220,7 @@ const shardArtifacts = (
     integrationLegacyExecuted: false,
   });
   const envelope = ciShardEnvelopeSchema.parse({
-    schemaVersion: 2,
+    schemaVersion: 3,
     shard: id,
     workflow: manifest.workflow,
     verificationId,

@@ -17,6 +17,7 @@ import { verificationReportSchema } from './verificationSchema';
 import { relative } from 'node:path';
 
 import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
+import type { probeEnvironment } from './environmentProbe';
 import type { prepareVerification } from './prepareVerification';
 import type {
   PlaywrightRunnerSelection,
@@ -34,6 +35,33 @@ type Preparation = Pick<
   'plan' | 'inputs' | 'scheduleExpected' | 'integrationExpected'
 >;
 type RootContext = Omit<VerificationContext, 'stageId'>;
+
+const catalogEvidenceFor = (
+  stageId: string,
+  environment: Awaited<ReturnType<typeof probeEnvironment>> | null,
+): VerificationStageResult['catalogEvidence'] => {
+  if (
+    isNil(environment) ||
+    !environment.passed ||
+    !environment.migrationReplayPassed ||
+    !environment.schemaParityPassed ||
+    environment.catalogStatus !== 'verified' ||
+    isNil(environment.fingerprint) ||
+    !/^[a-f0-9]{64}$/.test(environment.fingerprint) ||
+    !/^[a-f0-9]{12}$/.test(environment.runId) ||
+    !/^[a-z][a-z0-9-]{0,63}$/.test(stageId)
+  )
+    return undefined;
+  return {
+    schemaVersion: 1,
+    stageId,
+    runId: environment.runId,
+    fingerprint: environment.fingerprint,
+    catalogStatus: 'verified',
+    schemaParityPassed: true,
+    migrationReplayPassed: true,
+  };
+};
 
 /** 全stageを先に確保し、未起動・途中停止したstageも結果から消さない。 */
 export const runVerificationStages = async (input: {
@@ -186,6 +214,10 @@ export const runVerificationStages = async (input: {
       );
       readReport(integration);
       integration.cleanup = integrationResult.environment?.cleanup ?? null;
+      integration.catalogEvidence = catalogEvidenceFor(
+        integration.context.stageId,
+        integrationResult.environment,
+      );
       if (!isNil(integrationResult.evidence))
         integration.evidence.result = integrationResult.evidence;
       runs.push({
@@ -267,6 +299,10 @@ export const runVerificationStages = async (input: {
       });
       readReport(isolated);
       isolated.cleanup = isolatedResult.environment?.cleanup ?? null;
+      isolated.catalogEvidence = catalogEvidenceFor(
+        isolated.context.stageId,
+        isolatedResult.environment,
+      );
       if (!isNil(isolatedResult.evidence))
         isolated.evidence.result = isolatedResult.evidence;
       runs.push({
@@ -297,6 +333,10 @@ export const runVerificationStages = async (input: {
         const stage = stageFor(`app-${project.project}`);
         readReport(stage);
         stage.cleanup = project.environment.cleanup;
+        stage.catalogEvidence = catalogEvidenceFor(
+          stage.context.stageId,
+          project.environment,
+        );
         stage.evidence.result = {
           issues:
             project.status === 'passed' && isVerified

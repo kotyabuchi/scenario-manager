@@ -4,6 +4,7 @@ import {
   catalogSqlTokens,
   checkEnvironmentCatalog,
   ENVIRONMENT_CATALOG_QUERY,
+  expectedEnvironmentCatalogFingerprint,
 } from './environmentCatalog';
 import { EXPECTED_ENVIRONMENT_CATALOG } from './environmentCatalogExpected';
 
@@ -38,6 +39,7 @@ describe('固定catalogとのschema再現性', () => {
       'replace_availability_time_blocks',
     );
     expect(report.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+    expect(report.fingerprint).toBe(expectedEnvironmentCatalogFingerprint());
   });
 
   it('欠落・空metadataを新規baselineとして承認しない', () => {

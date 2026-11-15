@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { expectedEnvironmentCatalogFingerprint } from './environmentCatalog';
 import { inputFingerprintSchema } from './fingerprint';
 import { verificationFixture } from './fixtures/verification';
 import { writeArtifact } from './ledgerArtifacts';
@@ -89,6 +90,54 @@ const fixture = () => {
 };
 
 describe('保存した検証結果の独立照合', () => {
+  it('旧receiptの欠測を許し、存在するcatalog証拠を照合する', () => {
+    const value = fixture();
+    expect(() => validateVerificationArtifacts(value)).not.toThrow();
+    const stage = value.receipt.execution?.stages[0];
+    if (stage === undefined) throw new Error('fixture不足');
+    stage.catalogEvidence = {
+      schemaVersion: 1,
+      stageId: stage.context.stageId,
+      runId: 'abcdef012345',
+      fingerprint: expectedEnvironmentCatalogFingerprint(),
+      catalogStatus: 'verified',
+      schemaParityPassed: true,
+      migrationReplayPassed: true,
+    };
+    expect(() => validateVerificationArtifacts(value)).not.toThrow();
+  });
+
+  it.each([
+    'stage',
+    'owner',
+    'fingerprint',
+    'status',
+    'storybook',
+  ] as const)('存在するcatalog証拠の%s不正を拒否する', (fault) => {
+    const value = fixture();
+    const stage = value.receipt.execution?.stages[0];
+    if (stage === undefined) throw new Error('fixture不足');
+    const evidence = {
+      schemaVersion: 1 as const,
+      stageId: fault === 'stage' ? 'wrong' : stage.context.stageId,
+      runId: fault === 'owner' ? '111111111111' : 'abcdef012345',
+      fingerprint:
+        fault === 'fingerprint'
+          ? '0'.repeat(64)
+          : expectedEnvironmentCatalogFingerprint(),
+      catalogStatus: fault === 'status' ? 'mismatch' : 'verified',
+      schemaParityPassed: true,
+      migrationReplayPassed: true,
+    };
+    if (fault === 'storybook') stage.evidence.kind = 'storybook';
+    const raw = structuredClone(value.receipt);
+    const rawStage = raw.execution?.stages[0];
+    if (rawStage === undefined) throw new Error('fixture不足');
+    Object.assign(rawStage, { catalogEvidence: evidence });
+    expect(() =>
+      validateVerificationArtifacts({ ...value, receipt: raw }),
+    ).toThrow();
+  });
   it('全runner結果と集計を照合する', () => {
     const input = fixture();
     expect(

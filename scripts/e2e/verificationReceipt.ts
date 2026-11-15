@@ -1,5 +1,6 @@
 import { isNil } from 'ramda';
 
+import { expectedEnvironmentCatalogFingerprint } from './environmentCatalog';
 import { compareInputs, inputFingerprintSchema } from './fingerprint';
 import { parseArtifact, readArtifact } from './ledgerArtifacts';
 import { digestVerificationPlan } from './verificationPlanDigest';
@@ -89,6 +90,21 @@ export const validateVerificationArtifacts = (input: {
     )
   )
     throw new Error('検証artifactのrunner実行記録が一致しません。');
+
+  for (const stage of stages) {
+    const evidence = stage.catalogEvidence;
+    if (isNil(evidence)) continue;
+    const owner = runs.find(({ stageId }) => stageId === stage.context.stageId);
+    if (
+      stage.evidence.kind === 'storybook' ||
+      evidence.stageId !== stage.context.stageId ||
+      isNil(owner) ||
+      owner.runId !== evidence.runId ||
+      owner.status !== 'passed' ||
+      evidence.fingerprint !== expectedEnvironmentCatalogFingerprint()
+    )
+      throw new Error('catalog証拠のstage・所有者・指紋が一致しません。');
+  }
 
   const verification = verifyResults({
     plan,

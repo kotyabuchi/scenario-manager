@@ -423,7 +423,7 @@ describe('固定legacy projectの分割契約', () => {
       }).success,
     ).toBe(false);
     const envelope = {
-      schemaVersion: 2,
+      schemaVersion: 3,
       shard: 'legacy-desktop',
       workflow: manifest.workflow,
       manifestDigest: 'a'.repeat(64),
@@ -432,10 +432,10 @@ describe('固定legacy projectの分割契約', () => {
       verificationId: '012345abcdef',
     };
     expect(ciShardEnvelopeSchema.safeParse(envelope).success).toBe(true);
-    expect(
-      ciShardEnvelopeSchema.safeParse({ ...envelope, schemaVersion: 1 })
-        .success,
-    ).toBe(false);
+    for (const schemaVersion of [1, 2])
+      expect(
+        ciShardEnvelopeSchema.safeParse({ ...envelope, schemaVersion }).success,
+      ).toBe(false);
     expect(
       ciShardEnvelopeSchema.safeParse({ ...envelope, shard: 'legacy-local' })
         .success,

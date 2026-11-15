@@ -373,6 +373,50 @@ describe('CI worker', () => {
   });
 });
 
+describe('catalog証拠のCI公開境界', () => {
+  it.each([
+    'missing',
+    'modified',
+    'private-sentinel',
+  ] as const)('%sのDB stageをworkerは公開しない', async (fault) => {
+    const { verification } = setup.fixture.shards['legacy-desktop'];
+    const stage = verification.receipt.execution?.stages[0];
+    if (!stage?.catalogEvidence) throw new Error('catalog fixture不足');
+    if (fault === 'missing') delete stage.catalogEvidence;
+    else if (fault === 'modified')
+      stage.catalogEvidence.fingerprint = '0'.repeat(64);
+    else stage.catalogEvidence.runId = 'private-sentinel';
+    vi.mocked(runVerification).mockResolvedValueOnce(verification.receipt);
+    vi.mocked(loadVerificationArtifacts).mockReturnValueOnce(verification);
+    const progress = vi.fn();
+    const error = await runCiShard(
+      root,
+      env,
+      'legacy-desktop',
+      signal,
+      progress,
+    ).then(
+      () => undefined,
+      (failure: unknown) => failure,
+    );
+    expect(error).toBeDefined();
+    expect(String(error)).not.toContain('private-sentinel');
+    expect(writeCiArtifact).not.toHaveBeenCalled();
+    expect(JSON.stringify(progress.mock.calls)).not.toContain(
+      'private-sentinel',
+    );
+  });
+
+  it('catalog証拠のない成功shardをaggregateが保存しない', async () => {
+    const receipt = setup.fixture.shards['legacy-mobile'].verification.receipt;
+    const stage = receipt.execution?.stages[0];
+    if (!stage?.catalogEvidence) throw new Error('catalog fixture不足');
+    delete stage.catalogEvidence;
+    await expect(aggregateCiVerification(root, env, signal)).rejects.toThrow();
+    expect(writeCiArtifact).not.toHaveBeenCalled();
+  });
+});
+
 describe('CI aggregate', () => {
   it('plan manifestが読めないときはmanifest段階を報告する', async () => {
     artifacts.delete('plan/manifest.json');

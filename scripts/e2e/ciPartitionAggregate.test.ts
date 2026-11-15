@@ -7,6 +7,87 @@ import { validateVerificationArtifacts } from './verificationReceipt';
 import { verificationReportSchema } from './verificationSchema';
 
 describe('CIの分割結果の集約', () => {
+  it('選択されたDB stageの証拠を集約しStorybookには付与しない', () => {
+    const input = ciPartitionArtifactsFixture();
+    const result = aggregateCiPartition(input);
+    expect(result.schemaVersion).toBe(3);
+    const records = result.shards.flatMap((shard) => shard.catalogEvidence);
+    expect(records).toHaveLength(4);
+    expect(records.map(({ stageId }) => stageId).sort()).toEqual([
+      'app-chromium',
+      'app-chromium-auth',
+      'app-mobile-chrome',
+      'app-mobile-chrome-auth',
+    ]);
+    expect(
+      records.every(({ catalogStatus }) => catalogStatus === 'verified'),
+    ).toBe(true);
+  });
+
+  it.each([
+    'missing',
+    'altered-hash',
+    'stage',
+    'owner',
+    'duplicate-owner',
+    'storybook',
+  ] as const)('catalog証拠の%sを集約時に拒否する', (fault) => {
+    const input = ciPartitionArtifactsFixture();
+    const desktop =
+      input.shards['legacy-desktop'].verification.receipt.execution;
+    const mobile = input.shards['legacy-mobile'].verification.receipt.execution;
+    const required = input.shards.required.verification.receipt.execution;
+    const stage = desktop?.stages[0];
+    const record = stage?.catalogEvidence;
+    if (!desktop || !mobile || !required || !stage || !record)
+      throw new Error('catalog fixture不足');
+    if (fault === 'missing') delete stage.catalogEvidence;
+    else if (fault === 'altered-hash') record.fingerprint = '0'.repeat(64);
+    else if (fault === 'stage') record.stageId = 'app-chromium-auth';
+    else if (fault === 'owner') record.runId = 'f'.repeat(12);
+    else if (fault === 'duplicate-owner') {
+      const other = mobile.stages[0]?.catalogEvidence;
+      const run = mobile.runs[0];
+      if (!other || !run) throw new Error('owner fixture不足');
+      other.runId = record.runId;
+      run.runId = record.runId;
+    } else {
+      const story = required.stages.find(
+        (item) => item.evidence.kind === 'storybook',
+      );
+      if (!story) throw new Error('storybook fixture不足');
+      story.catalogEvidence = { ...record, stageId: story.context.stageId };
+    }
+    expect(() => aggregateCiPartition(input)).toThrow();
+  });
+
+  it.each([
+    'runId',
+    'attempt',
+  ] as const)('別workflow %sのshard証拠を拒否する', (field) => {
+    const input = ciPartitionArtifactsFixture();
+    const workflow = input.shards['legacy-desktop'].envelope.workflow;
+    if (field === 'runId') workflow.runId = '999';
+    else workflow.attempt += 1;
+    expect(() => aggregateCiPartition(input)).toThrow();
+  });
+
+  it('v2 envelopeをv3成功証拠として受け入れない', () => {
+    const input = ciPartitionArtifactsFixture();
+    const required = input.shards.required;
+    expect(() =>
+      aggregateCiPartition({
+        ...input,
+        shards: {
+          ...input.shards,
+          required: {
+            ...required,
+            envelope: { ...required.envelope, schemaVersion: 2 },
+          },
+        },
+      }),
+    ).toThrow();
+  });
   it('履歴移行の証跡が変われば古いshardの成功を再利用しない', () => {
     const input = ciPartitionArtifactsFixture();
     const surfaceMigrationHistoryDigest = 'd'.repeat(64);

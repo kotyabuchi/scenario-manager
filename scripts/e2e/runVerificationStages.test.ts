@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
+import { expectedEnvironmentCatalogFingerprint } from './environmentCatalog';
 import { verificationFixture } from './fixtures/verification';
 import { runVerificationStages } from './runVerificationStages';
 import {
@@ -175,7 +176,15 @@ const setup = () => {
     issues: [],
     counts: { expected: 1, tests: 1, passed: 1 },
   };
-  const environment = { cleanup: structuredClone(base.stage.cleanup) };
+  const environment = {
+    cleanup: structuredClone(base.stage.cleanup),
+    passed: true,
+    migrationReplayPassed: true,
+    schemaParityPassed: true,
+    catalogStatus: 'verified',
+    fingerprint: expectedEnvironmentCatalogFingerprint(),
+    runId: '123456abcdef',
+  };
   const result = () => ({
     status: 'passed',
     runId: '123456abcdef',
@@ -307,6 +316,62 @@ afterEach(() => {
 });
 
 describe('verification stage失敗の保持', () => {
+  it('6 DB stageのcatalog証拠を保持しStorybookには付けない', async () => {
+    const fixture = setup();
+    const { stages } = await runVerificationStages(fixture.input);
+    const database = stages.filter(
+      ({ evidence }) => evidence.kind !== 'storybook',
+    );
+    expect(database).toHaveLength(6);
+    for (const stage of database)
+      expect(stage.catalogEvidence).toEqual({
+        schemaVersion: 1,
+        stageId: stage.context.stageId,
+        runId: '123456abcdef',
+        fingerprint: expectedEnvironmentCatalogFingerprint(),
+        catalogStatus: 'verified',
+        schemaParityPassed: true,
+        migrationReplayPassed: true,
+      });
+    expect(
+      stages.find(({ evidence }) => evidence.kind === 'storybook')
+        ?.catalogEvidence,
+    ).toBeUndefined();
+  });
+
+  it('不正fingerprintや環境の秘密を公開証拠に含めない', async () => {
+    const fixture = setup();
+    const sentinels = [
+      'PRIVATE_SQL_BODY',
+      'https://private.invalid',
+      'PRIVATE_JWT',
+      'C:/private/path',
+      'PRIVATE_EXCEPTION',
+    ];
+    Object.assign(fixture.environment, {
+      fingerprint: sentinels[0],
+      sql: sentinels[0],
+      url: sentinels[1],
+      jwt: sentinels[2],
+      path: sentinels[3],
+      error: sentinels[4],
+    });
+    const { stages } = await runVerificationStages(fixture.input);
+    expect(
+      stages.every(({ catalogEvidence }) => catalogEvidence === undefined),
+    ).toBe(true);
+    for (const sentinel of sentinels)
+      expect(JSON.stringify(stages)).not.toContain(sentinel);
+  });
+
+  it('失敗した環境から成功catalog証拠を作らない', async () => {
+    const fixture = setup();
+    fixture.environment.passed = false;
+    const { stages } = await runVerificationStages(fixture.input);
+    expect(
+      stages.every(({ catalogEvidence }) => catalogEvidence === undefined),
+    ).toBe(true);
+  });
   it('7stageを事前確保し各標準report・実close・境界結果を最終checkerへ接続する', async () => {
     const fixture = setup();
     const { stages, runs } = await runVerificationStages(fixture.input);

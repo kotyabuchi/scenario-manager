@@ -57,6 +57,12 @@ export const validateCiShardArtifacts = (input: {
       'CI分割実行の計画、固定入力、または選択由来が一致しません。',
     );
   if (isNil(receipt.execution)) throw new Error('CI実行記録がありません。');
+  const catalogEvidence = receipt.execution.stages.flatMap((stage) => {
+    if (stage.evidence.kind === 'storybook') return [];
+    if (isNil(stage.catalogEvidence))
+      throw new Error('CIのcatalog証拠がありません。');
+    return [stage.catalogEvidence];
+  });
   const legacyResults: LegacyExecutionResult[] = [];
   if (id !== 'required') {
     if (isNil(input.legacyEvidence))
@@ -70,6 +76,7 @@ export const validateCiShardArtifacts = (input: {
     );
   }
   return {
+    catalogEvidence,
     ownerRunIds: receipt.execution.runs.flatMap(({ runId }) =>
       isNil(runId) ? [] : [runId],
     ),
