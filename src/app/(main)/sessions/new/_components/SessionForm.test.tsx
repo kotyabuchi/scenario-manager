@@ -38,7 +38,7 @@ describe('SessionForm', () => {
 
   // US-S102: GMとして、日程未定でもセッションを募集できる
   describe('S102: 日程未定での募集', () => {
-    it('S102-01: 日程未選択でフォームが送信できる', async () => {
+    it('S102-01/S103-01: 日程・人数未指定でフォームが送信できる', async () => {
       const user = userEvent.setup();
       const handleSubmit = vi.fn();
       render(<Default onSubmit={handleSubmit} />);
@@ -56,7 +56,18 @@ describe('SessionForm', () => {
       );
 
       await waitFor(() => {
-        expect(handleSubmit).toHaveBeenCalled();
+        expect(handleSubmit).toHaveBeenCalledTimes(1);
+        expect(handleSubmit).toHaveBeenCalledWith(
+          expect.objectContaining({
+            sessionName: 'テストセッション',
+            sessionDescription: 'テスト説明',
+            scenarioId: null,
+            scheduleType: 'later',
+            scheduledAt: null,
+            scheduleCandidates: [],
+            recruitedPlayerCount: 0,
+          }),
+        );
       });
     });
 
@@ -82,28 +93,6 @@ describe('SessionForm', () => {
 
   // US-S103: GMとして、人数未定でもセッションを募集できる
   describe('S103: 人数未定での募集', () => {
-    it('S103-01: 人数未指定でフォームが送信できる', async () => {
-      const user = userEvent.setup();
-      const handleSubmit = vi.fn();
-      render(<Default onSubmit={handleSubmit} />);
-
-      // 必須項目のみ入力（人数なし）
-      await user.type(
-        screen.getByLabelText(/セッション名/i),
-        'テストセッション',
-      );
-      await user.type(screen.getByLabelText(/募集文/i), 'テスト説明');
-
-      // 送信
-      await user.click(
-        screen.getByRole('button', { name: /セッションを作成/i }),
-      );
-
-      await waitFor(() => {
-        expect(handleSubmit).toHaveBeenCalled();
-      });
-    });
-
     it('S103-02: 人数を指定できる', async () => {
       render(<Default />);
 
@@ -183,6 +172,24 @@ describe('SessionForm', () => {
       await waitFor(() => {
         expect(handleSubmit).toHaveBeenCalled();
       });
+    });
+
+    it('必須項目が空の送信では両方のエラーを表示して送信しない', async () => {
+      const user = userEvent.setup();
+      const handleSubmit = vi.fn();
+      render(<Default onSubmit={handleSubmit} />);
+
+      await user.click(
+        screen.getByRole('button', { name: /セッションを作成/i }),
+      );
+
+      expect(
+        await screen.findByText('セッション名を入力してください'),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByText('募集文を入力してください'),
+      ).toBeInTheDocument();
+      expect(handleSubmit).not.toHaveBeenCalled();
     });
 
     it('FORM-07: バリデーションエラー時にエラー表示', () => {
