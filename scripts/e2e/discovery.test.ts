@@ -42,6 +42,45 @@ afterEach(async () => {
 });
 
 describe('Playwright実登録の安全な列挙', () => {
+  it.each([
+    [
+      'commonjs',
+      "const { Module } = require('node:module'); try { Module.enableCompileCache(DEST); } catch {}",
+    ],
+    [
+      'module',
+      "import { enableCompileCache } from 'node:module'; try { enableCompileCache(DEST); } catch {}",
+    ],
+  ])(
+    '%sのcompile cache有効化がcatchされても列挙を拒否する',
+    async (mode, effect) => {
+      await mkdir(resolve('test-results'), { recursive: true });
+      const outside = await mkdtemp(
+        join(resolve('test-results'), 'discovery-outside-'),
+      );
+      roots.push(outside);
+      const cache = join(outside, 'cache');
+      const root = await createFixture(
+        `import { test } from '@playwright/test'; ${effect.replace('DEST', JSON.stringify(cache))} test('listed', async () => {});`,
+      );
+      if (mode === 'commonjs')
+        await writeFile(join(root, 'package.json'), '{"type":"commonjs"}');
+      await expect(
+        discover({ root, profile: 'fixture', config: 'playwright.config.ts' }),
+      ).rejects.toThrow('副作用');
+      const output = join(root, 'test-results/discovery');
+      const runs = await readdir(output);
+      expect(runs).toHaveLength(1);
+      const marker = await readFile(
+        join(output, runs[0] ?? '', 'violations.jsonl'),
+        'utf8',
+      );
+      expect(marker).toContain('"operation":"module.enableCompileCache"');
+      expect(await readdir(outside)).toEqual([]);
+    },
+    30_000,
+  );
+
   it('body・hook・setup・webServerを実行せずproject/loop/repeatを保存する', async () => {
     const root = await createFixture(
       `
