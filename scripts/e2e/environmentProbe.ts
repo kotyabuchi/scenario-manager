@@ -207,6 +207,7 @@ const probeWithSignal = async (
       state: EnvironmentManifest['state'];
       primary: ArtifactWriteError['primary'];
       cleanup: ArtifactWriteError['cleanup'];
+      published: boolean;
     }[] = [];
     isLifecycleOwner = true;
     const result = await runEnvironment(manifest, {
@@ -228,6 +229,7 @@ const probeWithSignal = async (
               state: value.state,
               primary: error.primary,
               cleanup: error.cleanup,
+              published: error.published,
             });
           throw error;
         }

@@ -5,6 +5,7 @@ import { environmentSystemCodeSchema } from './environmentSchema';
 import { createHash, randomUUID } from 'node:crypto';
 import {
   closeSync,
+  constants,
   existsSync,
   fstatSync,
   lstatSync,
@@ -65,6 +66,8 @@ type ArtifactOperation =
   | 'path'
   | 'mkdir'
   | 'create'
+  | 'guard-open'
+  | 'guard-close'
   | 'identity'
   | 'write'
   | 'close'
@@ -92,6 +95,20 @@ const artifactFailure = (
 
 /** 生の例外・pathを公開せず保存とcleanupの失敗を区別する。 */
 const MANIFEST_RENAME_DELAYS_MS = [25, 50, 100, 200, 400] as const;
+
+/** POSIXではFIFOやsymlinkへの差替えでopenが停止しない条件を必須とする。 */
+const safeReadFlags = () => {
+  if (process.platform === 'win32') return 'r';
+  const { O_RDONLY, O_NONBLOCK, O_NOFOLLOW } = constants;
+  if (
+    typeof O_NONBLOCK !== 'number' ||
+    O_NONBLOCK === 0 ||
+    typeof O_NOFOLLOW !== 'number' ||
+    O_NOFOLLOW === 0
+  )
+    throw new Error('safe read flags unavailable');
+  return O_RDONLY | O_NONBLOCK | O_NOFOLLOW;
+};
 const MAX_RETRY_TARGET_BYTES = 1_048_576;
 
 const statIdentity = (stat: BigIntStats) => ({
@@ -118,7 +135,7 @@ const captureRetryTarget = (target: string) => {
     before.size > BigInt(MAX_RETRY_TARGET_BYTES)
   )
     throw new Error('target identity unavailable');
-  const fd = openSync(target, 'r');
+  const fd = openSync(target, safeReadFlags());
   try {
     const opened = fstatSync(fd, { bigint: true });
     if (
@@ -167,6 +184,7 @@ export class ArtifactWriteError extends Error {
   constructor(
     readonly primary: ArtifactFailure | null,
     readonly cleanup: readonly ArtifactFailure[],
+    readonly published = false,
   ) {
     super('artifactの保存に失敗しました。');
     this.code = primary?.code ?? cleanup[0]?.code ?? 'unknown';
@@ -185,22 +203,42 @@ export const writeArtifact = (
   const cleanup: ArtifactFailure[] = [];
   let target: string | undefined;
   let temporary: string | undefined;
-  let descriptor: number | undefined;
+  let writer: number | undefined;
+  let guard: number | undefined;
   let identity: { dev: bigint; ino: bigint } | undefined;
   let created = false;
-  let renamed = false;
-  const assertTemporary = () => {
-    if (isNil(temporary) || isNil(identity))
+  let guardVerified = false;
+  let cleanupAttempted = false;
+  let published = false;
+  const assertPinned = (descriptor: number | undefined) => {
+    if (isNil(temporary) || isNil(identity) || isNil(descriptor))
       throw new Error('identity unavailable');
+    const pinned = fstatSync(descriptor, { bigint: true });
     const current = lstatSync(temporary, { bigint: true });
     if (
+      !pinned.isFile() ||
+      pinned.nlink !== BigInt(1) ||
       !current.isFile() ||
       current.isSymbolicLink() ||
       current.nlink !== BigInt(1) ||
+      pinned.dev !== identity.dev ||
+      pinned.ino !== identity.ino ||
       current.dev !== identity.dev ||
       current.ino !== identity.ino
     )
       throw new Error('identity mismatch');
+  };
+  const cleanupTemporary = (descriptor: number | undefined) => {
+    if (!created || published) return;
+    cleanupAttempted = true;
+    let stage: ArtifactOperation = 'identity';
+    try {
+      assertPinned(descriptor);
+      stage = 'remove';
+      if (!isNil(temporary)) rmSync(temporary);
+    } catch (error) {
+      cleanup.push(artifactFailure(stage, error));
+    }
   };
   try {
     target = artifactPath(root, file);
@@ -208,21 +246,33 @@ export const writeArtifact = (
     mkdirSync(dirname(target), { recursive: true });
     temporary = `${target}.${randomUUID()}.tmp`;
     operation = 'create';
-    descriptor = openSync(temporary, 'wx');
+    writer = openSync(temporary, 'wx');
     created = true;
     operation = 'identity';
-    const initial = fstatSync(descriptor, { bigint: true });
-    if (!initial.isFile() || initial.nlink !== BigInt(1))
+    const initial = fstatSync(writer, { bigint: true });
+    if (
+      !initial.isFile() ||
+      initial.nlink !== BigInt(1) ||
+      initial.ino === BigInt(0)
+    )
       throw new Error('temporary identity unavailable');
     identity = { dev: initial.dev, ino: initial.ino };
     operation = 'write';
-    writeFileSync(descriptor, contents, 'utf8');
+    writeFileSync(writer, contents, 'utf8');
+    operation = 'guard-open';
+    guard = openSync(temporary, safeReadFlags());
+    operation = 'identity';
+    assertPinned(guard);
+    assertPinned(writer);
+    guardVerified = true;
   } catch (error) {
     primary = artifactFailure(operation, error);
   } finally {
-    if (!isNil(descriptor)) {
+    // guardが未確認ならwriterを閉じる前だけ所有tmpを後始末できる。
+    if (!guardVerified) cleanupTemporary(writer);
+    if (!isNil(writer)) {
       try {
-        closeSync(descriptor);
+        closeSync(writer);
       } catch (error) {
         cleanup.push(artifactFailure('close', error));
       }
@@ -231,12 +281,13 @@ export const writeArtifact = (
   if (
     isNil(primary) &&
     cleanup.length === 0 &&
+    guardVerified &&
     !isNil(temporary) &&
     !isNil(target)
   ) {
     operation = 'identity';
     try {
-      assertTemporary();
+      assertPinned(guard);
       const shouldRetry =
         process.platform === 'win32' &&
         options?.allowWindowsManifestRenameRetry === true;
@@ -251,28 +302,27 @@ export const writeArtifact = (
             target: captureRetryTarget(target),
           };
         } catch {
-          // 確認不能なら従来の初回renameだけを行い、retryしない。
+          /* 確認不能なら従来の初回renameだけを行い、retryしない。 */
         }
       }
       let previousError: unknown;
       for (let attempt = 0; ; attempt += 1) {
         if (attempt > 0 && !isNil(snapshot)) {
           try {
-            assertTemporary();
+            assertPinned(guard);
             if (
               !isDeepStrictEqual(snapshot.parent, captureRetryParent(target)) ||
               !isDeepStrictEqual(snapshot.target, captureRetryTarget(target))
             )
               throw new Error('retry ownership changed');
           } catch {
-            // retryを拒否し、元のrename失敗を維持する。
             throw previousError;
           }
         }
         operation = 'rename';
         try {
           renameSync(temporary, target);
-          renamed = true;
+          published = true;
           break;
         } catch (error) {
           const code = artifactFailure('rename', error).code;
@@ -292,18 +342,16 @@ export const writeArtifact = (
       primary = artifactFailure(operation, error);
     }
   }
-  if (!renamed && created) {
-    operation = 'identity';
+  if (!cleanupAttempted) cleanupTemporary(guardVerified ? guard : undefined);
+  if (!isNil(guard)) {
     try {
-      assertTemporary();
-      operation = 'remove';
-      if (!isNil(temporary)) rmSync(temporary);
+      closeSync(guard);
     } catch (error) {
-      cleanup.push(artifactFailure(operation, error));
+      cleanup.push(artifactFailure('guard-close', error));
     }
   }
   if (!isNil(primary) || cleanup.length > 0)
-    throw new ArtifactWriteError(primary, cleanup);
+    throw new ArtifactWriteError(primary, cleanup, published);
 };
 
 /** JSONの欠落・破損には対象名を付けて失敗させる。 */

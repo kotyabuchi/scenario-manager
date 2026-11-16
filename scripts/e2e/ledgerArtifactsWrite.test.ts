@@ -4,6 +4,8 @@ import { ArtifactWriteError, writeArtifact } from './ledgerArtifacts';
 
 import {
   closeSync,
+  constants,
+  fstatSync,
   lstatSync,
   mkdtempSync,
   openSync,
@@ -20,7 +22,13 @@ vi.mock('node:fs', async (original) => {
   const fs = await original<typeof import('node:fs')>();
   return {
     ...fs,
+    constants: {
+      ...fs.constants,
+      O_NONBLOCK: fs.constants.O_NONBLOCK ?? 2048,
+      O_NOFOLLOW: fs.constants.O_NOFOLLOW ?? 131072,
+    },
     openSync: vi.fn(fs.openSync),
+    fstatSync: vi.fn(fs.fstatSync),
     writeFileSync: vi.fn(fs.writeFileSync),
     closeSync: vi.fn(fs.closeSync),
     renameSync: vi.fn(fs.renameSync),
@@ -120,6 +128,16 @@ describe('artifact atomic write', () => {
       value: platformName,
     });
     const wait = vi.spyOn(Atomics, 'wait').mockReturnValue('timed-out');
+    const originalOpen = vi.mocked(openSync).getMockImplementation();
+    if (!originalOpen) throw new Error('missing open');
+    if (platformName === 'linux') {
+      expect(constants.O_NONBLOCK).toBeGreaterThan(0);
+      expect(constants.O_NOFOLLOW).toBeGreaterThan(0);
+    }
+    if (platform.value === 'win32' && platformName === 'linux')
+      vi.mocked(openSync).mockImplementation((path, flags, mode) =>
+        originalOpen(path, typeof flags === 'number' ? 'r' : flags, mode),
+      );
     try {
       vi.mocked(renameSync).mockImplementationOnce(() => {
         throw failure(platformName === 'linux' ? 'EPERM' : 'EACCES');
@@ -132,6 +150,7 @@ describe('artifact atomic write', () => {
       expect(renameSync).toHaveBeenCalledTimes(1);
       expect(wait).not.toHaveBeenCalled();
     } finally {
+      vi.mocked(openSync).mockImplementation(originalOpen);
       wait.mockRestore();
       Object.defineProperty(process, 'platform', platform);
     }
@@ -273,6 +292,174 @@ describe('artifact atomic write', () => {
       wait.mockRestore();
       Object.defineProperty(process, 'platform', platform);
     }
+  });
+
+  it('POSIX安全open flags未対応ではguard取得をfail closedする', () => {
+    const root = setup();
+    const platform = Object.getOwnPropertyDescriptor(process, 'platform');
+    const nofollow = Object.getOwnPropertyDescriptor(constants, 'O_NOFOLLOW');
+    if (!platform || !nofollow) throw new Error('descriptor missing');
+    Object.defineProperty(process, 'platform', { ...platform, value: 'linux' });
+    Object.defineProperty(constants, 'O_NOFOLLOW', { ...nofollow, value: 0 });
+    try {
+      let result: unknown;
+      try {
+        writeArtifact(root, 'record.json', 'after');
+      } catch (error) {
+        result = error;
+      }
+      if (!(result instanceof ArtifactWriteError))
+        throw new Error('missing error');
+      expect(result.primary).toEqual({
+        operation: 'guard-open',
+        code: 'unknown',
+      });
+      expect(result.published).toBe(false);
+      expect(renameSync).not.toHaveBeenCalled();
+      expect(readFileSync(join(root, 'record.json'), 'utf8')).toBe('before');
+    } finally {
+      Object.defineProperty(constants, 'O_NOFOLLOW', nofollow);
+      Object.defineProperty(process, 'platform', platform);
+    }
+  });
+
+  it('inodeが0で所有性を識別できないtmpをpublishや削除しない', () => {
+    const root = setup();
+    const fd = openSync(join(root, 'record.json'), 'r');
+    const stat = fstatSync(fd, { bigint: true });
+    closeSync(fd);
+    Object.defineProperty(stat, 'ino', { value: BigInt(0) });
+    vi.clearAllMocks();
+    vi.mocked(fstatSync).mockReturnValueOnce(stat);
+    let result: unknown;
+    try {
+      writeArtifact(root, 'record.json', 'after');
+    } catch (error) {
+      result = error;
+    }
+    if (!(result instanceof ArtifactWriteError))
+      throw new Error('missing error');
+    expect(result.primary).toEqual({ operation: 'identity', code: 'unknown' });
+    expect(result.cleanup).toEqual([
+      { operation: 'identity', code: 'unknown' },
+    ]);
+    expect(result.published).toBe(false);
+    expect(renameSync).not.toHaveBeenCalled();
+    expect(rmSync).not.toHaveBeenCalled();
+    expect(readFileSync(join(root, 'record.json'), 'utf8')).toBe('before');
+  });
+
+  it('guard取得失敗時はwriterをpinしたまま所有tmpを片付ける', () => {
+    const root = setup();
+    const originalOpen = vi.mocked(openSync).getMockImplementation();
+    if (!originalOpen) throw new Error('missing open');
+    vi.mocked(openSync)
+      .mockImplementationOnce(originalOpen)
+      .mockImplementationOnce(() => {
+        throw failure('EACCES');
+      });
+    let result: unknown;
+    try {
+      writeArtifact(root, 'record.json', 'after');
+    } catch (error) {
+      result = error;
+    }
+    if (!(result instanceof ArtifactWriteError))
+      throw new Error('missing error');
+    expect(result.primary).toEqual({ operation: 'guard-open', code: 'EACCES' });
+    expect(result.cleanup).toEqual([]);
+    expect(result.published).toBe(false);
+    expect(vi.mocked(rmSync).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(closeSync).mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(readFileSync(join(root, 'record.json'), 'utf8')).toBe('before');
+  });
+
+  it('guard照合失敗とcleanup失敗を保持し未所有tmpを削除しない', async () => {
+    const fs = await vi.importActual<typeof import('node:fs')>('node:fs');
+    const root = setup();
+    const originalOpen = vi.mocked(openSync).getMockImplementation();
+    if (!originalOpen) throw new Error('missing open');
+    vi.mocked(openSync)
+      .mockImplementationOnce(originalOpen)
+      .mockImplementationOnce((path, flags, mode) => {
+        fs.unlinkSync(path);
+        fs.writeFileSync(path, 'other');
+        return fs.openSync(path, flags, mode);
+      });
+    let result: unknown;
+    try {
+      writeArtifact(root, 'record.json', 'after');
+    } catch (error) {
+      result = error;
+    }
+    if (!(result instanceof ArtifactWriteError))
+      throw new Error('missing error');
+    expect(result.primary).toEqual({ operation: 'identity', code: 'unknown' });
+    expect(result.cleanup).toEqual([
+      { operation: 'identity', code: 'unknown' },
+    ]);
+    expect(result.published).toBe(false);
+    expect(rmSync).not.toHaveBeenCalled();
+    expect(renameSync).not.toHaveBeenCalled();
+    const name = fs.readdirSync(root).find((value) => value.endsWith('.tmp'));
+    if (!name) throw new Error('tmp missing');
+    expect(fs.readFileSync(join(root, name), 'utf8')).toBe('other');
+  });
+
+  it('publish後のguard close失敗はpublished=trueで失敗を返す', () => {
+    const root = setup();
+    const originalClose = vi.mocked(closeSync).getMockImplementation();
+    if (!originalClose) throw new Error('missing close');
+    vi.mocked(closeSync)
+      .mockImplementationOnce(originalClose)
+      .mockImplementationOnce((fd) => {
+        originalClose(fd);
+        throw failure('EBUSY');
+      });
+    let result: unknown;
+    try {
+      writeArtifact(root, 'record.json', 'after');
+    } catch (error) {
+      result = error;
+    }
+    if (!(result instanceof ArtifactWriteError))
+      throw new Error('missing error');
+    expect(result.primary).toBeNull();
+    expect(result.cleanup).toEqual([
+      { operation: 'guard-close', code: 'EBUSY' },
+    ]);
+    expect(result.published).toBe(true);
+    expect(readFileSync(join(root, 'record.json'), 'utf8')).toBe('after');
+  });
+
+  it('rename失敗とguard close失敗を両方保持する', () => {
+    const root = setup();
+    const originalClose = vi.mocked(closeSync).getMockImplementation();
+    if (!originalClose) throw new Error('missing close');
+    vi.mocked(closeSync)
+      .mockImplementationOnce(originalClose)
+      .mockImplementationOnce((fd) => {
+        originalClose(fd);
+        throw failure('EBUSY');
+      });
+    vi.mocked(renameSync).mockImplementationOnce(() => {
+      throw failure('EPERM');
+    });
+    let result: unknown;
+    try {
+      writeArtifact(root, 'record.json', 'after');
+    } catch (error) {
+      result = error;
+    }
+    if (!(result instanceof ArtifactWriteError))
+      throw new Error('missing error');
+    expect(result.primary).toEqual({ operation: 'rename', code: 'EPERM' });
+    expect(result.cleanup).toEqual([
+      { operation: 'guard-close', code: 'EBUSY' },
+    ]);
+    expect(result.published).toBe(false);
+    expect(readFileSync(join(root, 'record.json'), 'utf8')).toBe('before');
   });
 
   it('成功時は内容を置換する', () => {

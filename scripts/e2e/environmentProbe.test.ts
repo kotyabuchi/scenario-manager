@@ -45,7 +45,10 @@ vi.mock('./ledgerArtifacts', async (original) => {
 });
 
 describe('probeEnvironmentの診断と中断境界', () => {
-  it('manifest保存のprimaryとcleanup失敗をsidecarに残して所有cleanupする', async () => {
+  it.each([
+    false,
+    true,
+  ])('manifest保存失敗のpublished=%sをsidecarに残して所有cleanupする', async (published) => {
     const actual =
       await vi.importActual<typeof import('./ledgerArtifacts')>(
         './ledgerArtifacts',
@@ -60,9 +63,16 @@ describe('probeEnvironmentの診断と中断境界', () => {
         ) {
           failed = true;
           expect(options).toEqual({ allowWindowsManifestRenameRetry: true });
-          throw new ArtifactWriteError({ operation: 'rename', code: 'EPERM' }, [
-            { operation: 'remove', code: 'EBUSY' },
-          ]);
+          throw new ArtifactWriteError(
+            published ? null : { operation: 'rename', code: 'EPERM' },
+            [
+              {
+                operation: published ? 'guard-close' : 'remove',
+                code: 'EBUSY',
+              },
+            ],
+            published,
+          );
         }
         return actual.writeArtifact(base, path, contents, options);
       },
@@ -81,8 +91,14 @@ describe('probeEnvironmentの診断と中断境界', () => {
         failures: [
           {
             state: 'running',
-            primary: { operation: 'rename', code: 'EPERM' },
-            cleanup: [{ operation: 'remove', code: 'EBUSY' }],
+            primary: published ? null : { operation: 'rename', code: 'EPERM' },
+            cleanup: [
+              {
+                operation: published ? 'guard-close' : 'remove',
+                code: 'EBUSY',
+              },
+            ],
+            published,
           },
         ],
       });
