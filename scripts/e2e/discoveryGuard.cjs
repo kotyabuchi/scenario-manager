@@ -287,6 +287,7 @@ block(
   'child_process',
 );
 block(childProcess.ChildProcess.prototype, ['spawn'], 'child_process');
+block(moduleApi, ['enableCompileCache'], 'module');
 moduleApi.syncBuiltinESMExports();
 
 // factory未使用のSDK importは許すが、列挙中のclient生成は呼出時に失敗させる。

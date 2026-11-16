@@ -58,6 +58,30 @@ const run = (
 
 describe('列挙前の副作用guard', () => {
   it.each([
+    [
+      'commonjs',
+      "const { Module } = require('node:module'); try { Module.enableCompileCache(DEST); } catch {}",
+    ],
+    [
+      'module',
+      "import { enableCompileCache } from 'node:module'; try { enableCompileCache(DEST); } catch {}",
+    ],
+  ] as const)('%sのcompile cache有効化はcatchされても違反を記録する', (mode, source) => {
+    const { directory, outside } = fixture();
+    const result = run(
+      directory,
+      source.replace('DEST', JSON.stringify(outside)),
+      mode,
+    );
+    expect(result.error).toBeUndefined();
+    expect(result.status, result.stderr).toBe(1);
+    expect(readFileSync(join(directory, 'violations.jsonl'), 'utf8')).toContain(
+      'module.enableCompileCache',
+    );
+    expect(existsSync(outside)).toBe(false);
+  });
+
+  it.each([
     'commonjs',
     'module',
   ] as const)('%sの未使用SDK importとdotenv/configを安全に列挙できる', (mode) => {

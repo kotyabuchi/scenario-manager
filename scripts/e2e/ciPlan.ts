@@ -20,6 +20,7 @@ import { randomBytes } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 
 import type { CiProgress } from './ciDiagnostics';
+import type { PreparationTimingObserver } from './preparationTiming';
 
 /** 品質前段と全体M1を完了してから、同じ入力に対する分割manifestを公開する。 */
 export const planCiVerification = async (
@@ -27,6 +28,7 @@ export const planCiVerification = async (
   env: NodeJS.ProcessEnv,
   signal: AbortSignal,
   onProgress?: CiProgress,
+  onTiming?: PreparationTimingObserver,
 ) => {
   onProgress?.({ phase: 'context' });
   const context = await readCiContext(root, env);
@@ -43,6 +45,9 @@ export const planCiVerification = async (
     signal,
     env,
     checkpoint,
+    toolsCandidatePaths: initial.snapshot.indexEntries
+      .filter(({ mode }) => mode === '100644' || mode === '100755')
+      .map(({ path }) => path),
     onStage: (qualityCheck) => onProgress?.({ phase: 'quality', qualityCheck }),
   });
   onProgress?.({ phase: 'static-ledger' });
@@ -51,6 +56,7 @@ export const planCiVerification = async (
     prefix: `test-results/verification/${id}`,
     deferRunnerSelection: true,
     onPhase: (phase) => onProgress?.({ phase }),
+    ...(onTiming ? { onTiming } : {}),
     env,
     signal,
   });

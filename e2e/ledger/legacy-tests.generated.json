@@ -1794,21 +1794,6 @@
       "file": "e2e/auth/scenario-new-banner.spec.ts",
       "titlePath": [
         "シナリオ新規登録 - インポート誘導バナー",
-        "BOOTH URLを入力後に削除するとバナーが消える"
-      ],
-      "project": "chromium-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
-      "profile": "app",
-      "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/scenario-new-banner.spec.ts",
-      "titlePath": [
-        "シナリオ新規登録 - インポート誘導バナー",
         "TALTO URLを入力するとインポート誘導バナーが表示される"
       ],
       "project": "chromium-auth",
@@ -4291,21 +4276,6 @@
       "file": "e2e/auth/scenario-new-banner.spec.ts",
       "titlePath": [
         "シナリオ新規登録 - インポート誘導バナー",
-        "BOOTH URLを入力後に削除するとバナーが消える"
-      ],
-      "project": "mobile-chrome-auth",
-      "repeatEachIndex": 0,
-      "expectedStatus": "passed",
-      "annotations": [],
-      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
-      "profile": "app",
-      "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
-      "serialGroup": null
-    },
-    {
-      "file": "e2e/auth/scenario-new-banner.spec.ts",
-      "titlePath": [
-        "シナリオ新規登録 - インポート誘導バナー",
         "TALTO URLを入力するとインポート誘導バナーが表示される"
       ],
       "project": "mobile-chrome-auth",
@@ -5034,6 +5004,24 @@
       "binding": "main"
     },
     {
+      "file": "e2e/auth/scenario-new-banner.spec.ts",
+      "titlePath": [
+        "シナリオ新規登録 - インポート誘導バナー",
+        "BOOTH URLを入力後に削除するとバナーが消える"
+      ],
+      "project": "chromium-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
+      "profile": "app",
+      "fingerprint": "84e83a5811c935d0a81b0e9dc7e26bc01058dc17269a0804a032472e26b82ec3",
+      "serialGroup": null,
+      "caseId": "legacy-banner-clear",
+      "variant": "clear",
+      "binding": "main"
+    },
+    {
       "file": "e2e/auth/session-create.spec.ts",
       "titlePath": [
         "セッション作成",
@@ -5198,6 +5186,24 @@
       "serialGroup": null,
       "caseId": "legacy-fab-dismiss",
       "variant": "default",
+      "binding": "main"
+    },
+    {
+      "file": "e2e/auth/scenario-new-banner.spec.ts",
+      "titlePath": [
+        "シナリオ新規登録 - インポート誘導バナー",
+        "BOOTH URLを入力後に削除するとバナーが消える"
+      ],
+      "project": "mobile-chrome-auth",
+      "repeatEachIndex": 0,
+      "expectedStatus": "passed",
+      "annotations": [],
+      "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
+      "profile": "app",
+      "fingerprint": "84e83a5811c935d0a81b0e9dc7e26bc01058dc17269a0804a032472e26b82ec3",
+      "serialGroup": null,
+      "caseId": "legacy-banner-clear",
+      "variant": "clear",
       "binding": "main"
     },
     {

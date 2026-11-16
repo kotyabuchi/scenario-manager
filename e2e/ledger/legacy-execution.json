@@ -669,7 +669,31 @@
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
       "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "固定待機を可視状態からの非表示遷移へ変更し、旧登録の実行義務を同じprojectのcaseへ一対一で維持する。",
+      "origin": {
+        "revision": "8fef59b92b98823b142922dbb57c05f927dac51d",
+        "registration": {
+          "file": "e2e/auth/scenario-new-banner.spec.ts",
+          "titlePath": [
+            "シナリオ新規登録 - インポート誘導バナー",
+            "BOOTH URLを入力後に削除するとバナーが消える"
+          ],
+          "project": "chromium-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
+          "profile": "app",
+          "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-banner-clear",
+        "variant": "clear",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"chromium-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"TALTO URLを入力するとインポート誘導バナーが表示される\"],0]",
@@ -1818,7 +1842,31 @@
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
       "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
-      "disposition": "local"
+      "disposition": "replacement",
+      "reason": "固定待機を可視状態からの非表示遷移へ変更し、旧登録の実行義務を同じprojectのcaseへ一対一で維持する。",
+      "origin": {
+        "revision": "8fef59b92b98823b142922dbb57c05f927dac51d",
+        "registration": {
+          "file": "e2e/auth/scenario-new-banner.spec.ts",
+          "titlePath": [
+            "シナリオ新規登録 - インポート誘導バナー",
+            "BOOTH URLを入力後に削除するとバナーが消える"
+          ],
+          "project": "mobile-chrome-auth",
+          "repeatEachIndex": 0,
+          "expectedStatus": "passed",
+          "annotations": [],
+          "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"BOOTH URLを入力後に削除するとバナーが消える\"],0]",
+          "profile": "app",
+          "fingerprint": "487d5245f92a330558cef32c7e23bc51877137c69be3a0922c6a4e7be17ae5cb",
+          "serialGroup": null
+        }
+      },
+      "replacement": {
+        "caseId": "legacy-banner-clear",
+        "variant": "clear",
+        "binding": "main"
+      }
     },
     {
       "key": "[\"app\",\"mobile-chrome-auth\",\"e2e/auth/scenario-new-banner.spec.ts\",[\"シナリオ新規登録 - インポート誘導バナー\",\"TALTO URLを入力するとインポート誘導バナーが表示される\"],0]",

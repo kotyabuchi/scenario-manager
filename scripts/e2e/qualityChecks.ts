@@ -4,6 +4,11 @@ import {
   localCommandEnvironment,
   runLocalCommand,
 } from './environmentCommands';
+import { writeProgressStderr } from './progressStderr';
+import {
+  captureQualityToolsDirectory,
+  qualityToolsFailureSummary,
+} from './qualityToolsFailure';
 
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -37,6 +42,7 @@ export const runQualityChecks = async (input: {
   signal: AbortSignal;
   env?: NodeJS.ProcessEnv;
   checkpoint?: (name: QualityCheck) => Promise<void>;
+  toolsCandidatePaths?: readonly string[];
   onStage?: (name: QualityCheck, status: QualityCheckStatus) => void;
 }) => {
   const { root, directory, signal, checkpoint, onStage } = input;
@@ -54,12 +60,46 @@ export const runQualityChecks = async (input: {
     onStage?.(name, 'running');
     try {
       try {
-        await runLocalCommand('node', [require.resolve(entry), ...args], {
-          cwd: root,
-          env,
-          signal,
-          log: join(directory, `${name.replace(':', '-')}.log`),
-        });
+        let close:
+          | { exitCode: number | null; signal: string | null }
+          | undefined;
+        const owner =
+          name === 'test:e2e-tools' && input.toolsCandidatePaths
+            ? await captureQualityToolsDirectory(directory)
+            : undefined;
+        try {
+          await runLocalCommand('node', [require.resolve(entry), ...args], {
+            cwd: root,
+            env,
+            signal,
+            log: join(directory, `${name.replace(':', '-')}.log`),
+            ...(name === 'test:e2e-tools' && input.toolsCandidatePaths
+              ? {
+                  onClose: (result: {
+                    exitCode: number | null;
+                    signal: string | null;
+                  }) => {
+                    close = result;
+                  },
+                }
+              : {}),
+          });
+        } catch (error) {
+          if (name === 'test:e2e-tools' && input.toolsCandidatePaths) {
+            try {
+              const summary = await qualityToolsFailureSummary(
+                directory,
+                input.toolsCandidatePaths,
+                close,
+                owner,
+              );
+              writeProgressStderr(`${JSON.stringify(summary)}\n`);
+            } catch {
+              // 診断失敗は元のquality失敗を変更しない。
+            }
+          }
+          throw error;
+        }
       } finally {
         signal.throwIfAborted();
         await checkpoint?.(name);

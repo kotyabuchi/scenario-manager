@@ -45,6 +45,7 @@ type CommandCallback = (
 const fakeChild = (hasStdin = true) =>
   Object.assign(new EventEmitter(), {
     stdin: hasStdin ? { end: mocks.end } : null,
+    stderr: new EventEmitter(),
     exitCode: null,
     signalCode: null,
     kill: mocks.kill,
@@ -95,6 +96,27 @@ beforeEach(() => {
 });
 
 describe('ローカルコマンドの環境変数境界', () => {
+  it.each([
+    'ghcr.io',
+    'public.ecr.aws',
+    'registry.example.invalid',
+  ])('明示したimage取得先 %s だけを保持する', (registry) => {
+    const source = environment({
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: registry,
+      SUPABASE_ACCESS_TOKEN: SECRET,
+      SUPABASE_DB_PASSWORD: SECRET,
+      SUPABASE_SERVICE_ROLE_KEY: SECRET,
+      SUPABASE_PROJECT_ID: SECRET,
+    });
+    const original = { ...source };
+    expect(localCommandEnvironment(source, UNIX_SOCKET)).toEqual({
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: registry,
+      DOCKER_HOST: UNIX_SOCKET,
+      NO_COLOR: '1',
+    });
+    expect(source).toEqual(original);
+  });
+
   it('Docker不要の起動でも秘密・remote設定を除去し親envを変更しない', () => {
     const source = environment({
       PATH: '/bin',
@@ -239,6 +261,37 @@ describe('資格情報を公開しないコマンド実行', () => {
     expect(await result).toBe(exitCode === 0 ? 'passed' : 'failed');
     expect(onClose).toHaveBeenCalledExactlyOnceWith({ exitCode, signal });
   });
+  it('stderr観測の例外を隔離しclose後にlistenerを解放する', async () => {
+    const child = fakeChild();
+    let callback: CommandCallback = () => {};
+    mocks.execFile.mockImplementation(
+      (
+        _tool: unknown,
+        _args: unknown,
+        _options: unknown,
+        finish: CommandCallback,
+      ) => {
+        callback = finish;
+        return child;
+      },
+    );
+    const onStderr = vi.fn(() => {
+      throw new Error(SECRET);
+    });
+    const command = runLocalCommand('node', [], {
+      ...commandOptions(),
+      onStderr,
+    });
+    expect(() =>
+      child.stderr.emit('data', Buffer.from('private stderr')),
+    ).not.toThrow();
+    expect(onStderr).toHaveBeenCalledExactlyOnceWith('private stderr');
+    callback(null, 'result', 'private stderr');
+    child.emit('close', 0, null);
+    await expect(command).resolves.toBe('result');
+    expect(child.stderr.listenerCount('data')).toBe(0);
+  });
+
   it('stdoutを呼出元に返し、shellを介さずstdinを直ちに閉じる', async () => {
     const options = commandOptions();
     const executable = 'C:\\owned-native\\git.exe';

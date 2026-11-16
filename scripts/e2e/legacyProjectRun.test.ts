@@ -10,6 +10,7 @@ import {
   cleanupLegacyProjectRuns,
   setupLegacyProjectRun as setup,
 } from './fixtures/environment/legacyProjectRun';
+import { IsolatedAppError, withIsolatedApp } from './isolatedApp';
 import { runLegacyProject } from './legacyProjectRun';
 
 import { existsSync } from 'node:fs';
@@ -46,7 +47,10 @@ vi.mock('./environmentCredentials', async (original) => ({
   writeEnvironmentCredentials: vi.fn(),
 }));
 vi.mock('./environmentProbe', () => ({ probeEnvironment: vi.fn() }));
-vi.mock('./isolatedApp', () => ({ APP_PORT: 23100, withIsolatedApp: vi.fn() }));
+vi.mock('./isolatedApp', async (original) => ({
+  ...(await original<typeof import('./isolatedApp')>()),
+  withIsolatedApp: vi.fn(),
+}));
 vi.mock('./legacyResults', () => ({ parseLegacyProjectResults: vi.fn() }));
 vi.mock('./legacySelection', () => ({ createLegacySelection: vi.fn() }));
 
@@ -54,6 +58,32 @@ beforeEach(() => vi.resetAllMocks());
 afterEach(cleanupLegacyProjectRuns);
 
 describe('legacy projectの障害伝播と後始末', () => {
+  it('環境作成前のcheckpoint失敗をinput-checkとして通知し起動しない', async () => {
+    const value = await setup();
+    const signal = new AbortController().signal;
+    const progress = vi.fn();
+    const error = new Error('private-input-changed');
+    await expect(
+      runLegacyProject(value.root, value.input, signal, progress, {
+        context: {
+          verificationId: '123456abcdef',
+          stageId: 'legacy',
+          selectionDigest: 'a'.repeat(64),
+          inputDigest: 'b'.repeat(64),
+        },
+        signal,
+        checkpoint: async () => {
+          throw error;
+        },
+        onExit: vi.fn(),
+      }),
+    ).rejects.toBe(error);
+    expect(progress).toHaveBeenCalledWith(
+      expect.objectContaining({ phase: 'input-check' }),
+    );
+    expect(probeEnvironment).not.toHaveBeenCalled();
+    expect(runLocalCommand).not.toHaveBeenCalled();
+  });
   it('外側AbortSignal単独の中断を伝え、実close前に後始末へ進まない', async () => {
     const value = await setup();
     const primary = new AbortController();
@@ -118,9 +148,11 @@ describe('legacy projectの障害伝播と後始末', () => {
     'after-tests',
     'after-cleanup',
     'runner',
+    'runner-after-tests',
   ])('verification %sも実closeと全cleanup後のfailedを保持する', async (fault) => {
     const value = await setup();
-    value.control.browserFailure = fault === 'runner';
+    value.control.browserFailure =
+      fault === 'runner' || fault === 'runner-after-tests';
     const command = vi.mocked(runLocalCommand).getMockImplementation();
     if (isNil(command)) throw new Error('command mock不足');
     vi.mocked(runLocalCommand).mockImplementation(
@@ -156,7 +188,11 @@ describe('legacy projectの障害伝播と後始末', () => {
         expect(value.events.at(-1)).toBe('environment-close');
         expect(existsSync(value.credentials)).toBe(false);
       }
-      if (phase === fault) throw new Error('private-input-changed');
+      if (
+        phase === fault ||
+        (fault === 'runner-after-tests' && phase === 'after-tests')
+      )
+        throw new Error('private-input-changed');
     });
     const output = await runLegacyProject(
       value.root,
@@ -166,6 +202,21 @@ describe('legacy projectの障害伝播と後始末', () => {
       { context, signal, checkpoint, onExit },
     );
     expect(output.status).toBe(fault === 'none' ? 'passed' : 'failed');
+    expect(output.failurePhases).toEqual(
+      fault === 'none'
+        ? []
+        : fault === 'runner'
+          ? ['browser']
+          : fault === 'runner-after-tests'
+            ? ['browser', 'input-check']
+            : ['input-check'],
+    );
+    expect(output.results).toEqual(
+      fault === 'none' || fault === 'runner' || fault === 'after-cleanup'
+        ? value.results
+        : null,
+    );
+    expect(output.cleanup?.status).toBe('complete');
     expect(value.events.slice(-5)).toEqual([
       'app-close',
       'ui-cleanup',
@@ -190,11 +241,59 @@ describe('legacy projectの障害伝播と後始末', () => {
         E2E_DISCOVERY_PLAYWRIGHT_PACKAGE: 'mock-playwright',
       });
       expect(onExit).toHaveBeenCalledExactlyOnceWith({
-        exitCode: fault === 'runner' ? 7 : 0,
+        exitCode: value.control.browserFailure ? 7 : 0,
         signal: null,
       });
     }
   });
+  it.each([
+    'server-stop',
+    'server-exit',
+    'report',
+  ] as const)('入力checkpoint失敗と%sを別々に保持してcleanupする', async (appFailure) => {
+    const value = await setup();
+    const isolated = vi.mocked(withIsolatedApp).getMockImplementation();
+    if (isNil(isolated)) throw new Error('app mock不足');
+    vi.mocked(withIsolatedApp).mockImplementation(async (...args) => {
+      try {
+        return await isolated(...args);
+      } catch {
+        throw new IsolatedAppError(['operation', appFailure]);
+      }
+    });
+    const signal = new AbortController().signal;
+    const output = await runLegacyProject(
+      value.root,
+      value.input,
+      signal,
+      undefined,
+      {
+        context: {
+          verificationId: '123456abcdef',
+          stageId: 'legacy',
+          selectionDigest: 'a'.repeat(64),
+          inputDigest: 'b'.repeat(64),
+        },
+        signal,
+        checkpoint: async (phase) => {
+          if (phase === 'after-tests') throw new Error('private-input-changed');
+        },
+        onExit: vi.fn(),
+      },
+    );
+    expect(output.status).toBe('failed');
+    expect(output.failurePhases).toEqual(['input-check', appFailure]);
+    expect(output.cleanup?.status).toBe('complete');
+    expect(value.events.slice(-5)).toEqual([
+      'app-close',
+      'ui-cleanup',
+      'context-close',
+      'fixture-cleanup',
+      'environment-close',
+    ]);
+    expect(JSON.stringify(output)).not.toContain('private-input-changed');
+  });
+
   it('app終了→UI行→context/state→seed→credentials→環境の順序で片付けて成功する', async () => {
     const value = await setup();
     const signal = new AbortController().signal;

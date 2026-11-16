@@ -380,6 +380,48 @@
           }
         ],
         "testBindings": ["main"]
+      },
+      {
+        "caseId": "legacy-banner-clear",
+        "title": "BOOTH URLを入力後に削除するとバナーが消える",
+        "status": "implemented",
+        "layer": "browser",
+        "fixture": "legacy-seed",
+        "roles": ["operator"],
+        "checks": [
+          {
+            "target": "function:src/app/(main)/scenarios/new/_components/ScenarioForm.tsx#ScenarioForm",
+            "aspect": "render",
+            "layer": "browser"
+          }
+        ],
+        "executions": [
+          {
+            "profile": "app",
+            "project": "chromium-auth",
+            "runtime": "next-production",
+            "variant": "clear",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          },
+          {
+            "profile": "app",
+            "project": "mobile-chrome-auth",
+            "runtime": "next-production",
+            "variant": "clear",
+            "actorBindings": [
+              {
+                "role": "operator",
+                "actor": "creator-only"
+              }
+            ]
+          }
+        ],
+        "testBindings": ["main"]
       }
     ]
   }

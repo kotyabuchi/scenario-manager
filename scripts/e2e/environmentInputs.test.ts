@@ -93,7 +93,7 @@ describe('専用Supabase設定', () => {
       '[db.seed]\nenabled = true\nsql_paths = ["./seed.sql"]',
     );
     expect(config).toContain('[auth]\nenabled = true');
-    expect(config).toContain('[storage]\nenabled = true');
+    expect(config).toContain('[storage]\nenabled = false');
     for (const service of [
       'db.pooler',
       'realtime',

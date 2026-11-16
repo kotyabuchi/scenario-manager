@@ -4,6 +4,7 @@ import { advanceCiProgress, createCiFailure } from './ciDiagnostics';
 import { ciShardIdSchema } from './ciPartitionSchema';
 import { planCiVerification } from './ciPlan';
 import { runCiShard } from './ciShard';
+import { writePreparationTiming } from './preparationTiming';
 import { writeProgressStderr } from './progressStderr';
 import { readSurfaceReplayDiagnostic } from './surfaceReplayFailure';
 
@@ -90,6 +91,7 @@ export const runCiCli = async (
         env,
         controller.signal,
         onProgress,
+        shouldLogTiming ? writePreparationTiming : undefined,
       );
     if (job === 'aggregate')
       return await aggregateCiVerification(

@@ -2,7 +2,15 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { discoverIntegration } from './discoverIntegration';
 
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 const roots: string[] = [];
@@ -41,6 +49,30 @@ afterEach(() => {
 });
 
 describe('VitestのDB無しguarded collection', () => {
+  it('compile cacheの有効化がcatchされても列挙を拒否する', async () => {
+    mkdirSync(resolve('test-results'), { recursive: true });
+    const outside = mkdtempSync(resolve('test-results/integration-outside-'));
+    roots.push(outside);
+    const cache = join(outside, 'cache');
+    const root = fixture(
+      `import {test} from 'vitest'; import {enableCompileCache} from 'node:module'; try {enableCompileCache(${JSON.stringify(cache)})} catch {} test('case',${claim},()=>{});`,
+    );
+    await expect(discoverIntegration({ root })).rejects.toThrow('副作用');
+    const output = join(root, 'test-results/discovery');
+    const runs = readdirSync(output);
+    expect(runs).toHaveLength(1);
+    const run = join(output, runs[0] ?? '');
+    const markers = readdirSync(run)
+      .filter((name) => /^worker-\d+$/.test(name))
+      .map((name) => join(run, name, 'violations.jsonl'))
+      .filter(existsSync)
+      .map((path) => readFileSync(path, 'utf8'));
+    expect(markers.join('')).toContain(
+      '"operation":"module.enableCompileCache"',
+    );
+    expect(existsSync(cache)).toBe(false);
+  }, 45_000);
+
   it('TS/ループの登録metadataとID/座標を収集し、bodyを実行しない', async () => {
     const root = fixture(`import {test} from 'vitest';
 type Row={name:string}; const rows:Row[]=[{name:'one'},{name:'two'}];

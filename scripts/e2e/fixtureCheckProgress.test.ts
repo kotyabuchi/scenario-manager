@@ -164,6 +164,8 @@ const setup = () => {
             NEXT_PUBLIC_SUPABASE_ANON_KEY: fixture.connection.anonKey,
           },
           signal,
+          recordBrowserClose: vi.fn(),
+          recordBrowserReport: vi.fn(),
         });
       } finally {
         state.hasAppClosed = true;

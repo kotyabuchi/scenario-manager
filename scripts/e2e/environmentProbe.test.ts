@@ -1,6 +1,7 @@
 import { isNil } from 'ramda';
 import { describe, expect, it, vi } from 'vitest';
 
+import { createDatabaseLifecycleTiming } from './databaseLifecycleTiming';
 import { ENVIRONMENT_CATALOG_QUERY } from './environmentCatalog';
 import { EXPECTED_ENVIRONMENT_CATALOG } from './environmentCatalogExpected';
 import { runLocalCommand } from './environmentCommands';
@@ -18,20 +19,173 @@ import {
   startCalls,
   workdir,
 } from './fixtures/environment/probe';
+import { ArtifactWriteError, writeArtifact } from './ledgerArtifacts';
 
 import { getEventListeners } from 'node:events';
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 vi.mock('./environmentCommands', async (original) => ({
   ...(await original<typeof import('./environmentCommands')>()),
   runLocalCommand: vi.fn(),
 }));
+vi.mock('./databaseLifecycleTiming', () => ({
+  createDatabaseLifecycleTiming: vi.fn(() => ({
+    start: vi.fn(),
+    finish: vi.fn(),
+    collect: vi.fn(async () => {}),
+  })),
+}));
 vi.mock('./environmentDocker', () => ({ createDockerDriver: vi.fn() }));
 vi.mock('./environmentInputs', () => ({ prepareEnvironmentInputs: vi.fn() }));
 vi.mock('./environmentLock', () => ({ acquireEnvironmentLock: vi.fn() }));
+vi.mock('./ledgerArtifacts', async (original) => {
+  const actual = await original<typeof import('./ledgerArtifacts')>();
+  return { ...actual, writeArtifact: vi.fn(actual.writeArtifact) };
+});
 
 describe('probeEnvironmentの診断と中断境界', () => {
+  it.each([
+    false,
+    true,
+  ])('manifest保存失敗のpublished=%sをsidecarに残して所有cleanupする', async (published) => {
+    const actual =
+      await vi.importActual<typeof import('./ledgerArtifacts')>(
+        './ledgerArtifacts',
+      );
+    let failed = false;
+    vi.mocked(writeArtifact).mockImplementation(
+      (base, path, contents, options) => {
+        if (
+          !failed &&
+          path.endsWith('manifest.json') &&
+          JSON.parse(contents).state === 'running'
+        ) {
+          failed = true;
+          expect(options).toEqual({ allowWindowsManifestRenameRetry: true });
+          throw new ArtifactWriteError(
+            published ? null : { operation: 'rename', code: 'EPERM' },
+            [
+              {
+                operation: published ? 'guard-close' : 'remove',
+                code: 'EBUSY',
+              },
+            ],
+            published,
+          );
+        }
+        return actual.writeArtifact(base, path, contents, options);
+      },
+    );
+    try {
+      const report = await probeEnvironment(root);
+      expect(report.passed).toBe(false);
+      expect(report.failurePhase).toBe('mark-running');
+      expect(report.cleanup?.status).toBe('complete');
+      const diagnostic = JSON.parse(
+        await readFile(join(workdir, 'artifact-write-diagnostic.json'), 'utf8'),
+      );
+      expect(diagnostic).toEqual({
+        schemaVersion: 1,
+        runId: report.runId,
+        failures: [
+          {
+            state: 'running',
+            primary: published ? null : { operation: 'rename', code: 'EPERM' },
+            cleanup: [
+              {
+                operation: published ? 'guard-close' : 'remove',
+                code: 'EBUSY',
+              },
+            ],
+            published,
+          },
+        ],
+      });
+      expect(release).toHaveBeenCalledOnce();
+    } finally {
+      vi.mocked(writeArtifact).mockImplementation(actual.writeArtifact);
+    }
+  });
+  it('所有DBの有限診断が終了するまでcatalogとcleanupへ進まない', async () => {
+    let finishCollection = () => {};
+    let notifyCollection = () => {};
+    const collected = new Promise<void>((resolve) => {
+      notifyCollection = resolve;
+    });
+    const collection = new Promise<void>((resolve) => {
+      finishCollection = resolve;
+    });
+    vi.mocked(createDatabaseLifecycleTiming).mockReturnValueOnce({
+      start: vi.fn(),
+      finish: vi.fn(),
+      collect: vi.fn(async () => {
+        notifyCollection();
+        await collection;
+      }),
+    });
+    const pending = probeEnvironment(root);
+    await collected;
+    expect(
+      vi
+        .mocked(runLocalCommand)
+        .mock.calls.some(
+          ([tool, args]) => tool === 'docker' && args[0] === 'exec',
+        ),
+    ).toBe(false);
+    expect(remove).not.toHaveBeenCalled();
+    expect(release).not.toHaveBeenCalled();
+    finishCollection();
+    expect((await pending).passed).toBe(true);
+    expect(release).toHaveBeenCalledOnce();
+  });
+  it('lockからcatalogと解放までを固定operationだけで順に計測する', async () => {
+    vi.stubEnv('E2E_CLI_TIMING', '1');
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    try {
+      const report = await probeEnvironment(root);
+      expect(report.passed).toBe(true);
+      const lines = stderr.mock.calls
+        .map(([value]) => String(value))
+        .filter((line) => line.startsWith('[cli-timing] '));
+      const timings = lines.map((line) =>
+        JSON.parse(line.replace('[cli-timing] ', '')),
+      );
+      expect(timings.map((timing) => timing.operation)).toEqual([
+        'docker-context',
+        'supabase-version',
+        'docker-info',
+        'git-head',
+        'git-common-dir',
+        'environment-lock',
+        'environment-inputs',
+        'environment-preflight',
+        'environment-start-prepare',
+        'environment-start-cache',
+        'environment-start-command',
+        'environment-start',
+        'environment-inspect',
+        'environment-catalog',
+        'environment-cleanup-record',
+        'environment-cleanup-plan',
+        'environment-cleanup-remove',
+        'environment-cleanup-remaining',
+        'environment-release',
+      ]);
+      for (const timing of timings)
+        expect(timing).toEqual({
+          operation: expect.any(String),
+          elapsedMs: expect.any(Number),
+          outcome: 'completed',
+        });
+      expect(lines.join('')).not.toContain(workdir);
+      expect(lines.join('')).not.toContain(ENVIRONMENT_CATALOG_QUERY);
+    } finally {
+      stderr.mockRestore();
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('replay成功・catalog一致・認可未検証を区別して記録する', async () => {
     const report = await probeEnvironment(root);
     expect(report.migrationReplayPassed).toBe(true);
@@ -42,6 +196,24 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(report.passed).toBe(true);
     expect(report).not.toHaveProperty('catalogVerified');
     expect(report.cleanup?.status).toBe('complete');
+    const timing = vi.mocked(createDatabaseLifecycleTiming).mock.results[0]
+      ?.value;
+    expect(timing?.start).toHaveBeenCalledOnce();
+    expect(timing?.finish).toHaveBeenCalledOnce();
+    expect(timing?.collect).toHaveBeenCalledOnce();
+    expect(timing?.collect).toHaveBeenCalledWith({
+      databaseId: expect.any(String),
+      projectId: expect.stringMatching(/^sm-e2e-[a-f0-9]{12}$/),
+      cwd: workdir,
+      env: expect.any(Object),
+      signal: expect.any(AbortSignal),
+    });
+    expect(timing?.start.mock.invocationCallOrder[0]).toBeLessThan(
+      timing?.finish.mock.invocationCallOrder[0],
+    );
+    expect(timing?.finish.mock.invocationCallOrder[0]).toBeLessThan(
+      timing?.collect.mock.invocationCallOrder[0],
+    );
     expect(
       JSON.parse(await readFile(join(workdir, 'replay.json'), 'utf8')),
     ).toEqual(report);
@@ -75,6 +247,10 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(report.fingerprint).toBeNull();
     expect(report.passed).toBe(false);
     expect(report.failurePhase).toBe('start');
+    const timing = vi.mocked(createDatabaseLifecycleTiming).mock.results[0]
+      ?.value;
+    expect(timing?.finish).toHaveBeenCalledOnce();
+    expect(timing?.collect).not.toHaveBeenCalled();
     expect(report.cleanup?.remaining).toEqual(empty());
     expect(remove).toHaveBeenCalledTimes(1);
     expect(release).toHaveBeenCalledTimes(1);
@@ -109,6 +285,31 @@ describe('probeEnvironmentの診断と中断境界', () => {
     expect(acquireEnvironmentLock).not.toHaveBeenCalled();
     expect(release).not.toHaveBeenCalled();
     expect(startCalls()).toHaveLength(0);
+  });
+
+  it('所有workdirのcache衝突では既存内容を残しstart前に失敗する', async () => {
+    const prepare = vi.mocked(prepareEnvironmentInputs).getMockImplementation();
+    if (isNil(prepare)) throw new Error('fixtureが未初期化です。');
+    vi.mocked(prepareEnvironmentInputs).mockImplementationOnce(
+      async (...args) => {
+        const prepared = await prepare(...args);
+        await mkdir(join(prepared.workdir, 'supabase/.temp'));
+        await writeFile(
+          join(prepared.workdir, 'supabase/.temp/cli-latest'),
+          'existing',
+        );
+        return prepared;
+      },
+    );
+    const report = await probeEnvironment(root);
+    expect(report.passed).toBe(false);
+    expect(report.failurePhase).toBe('start');
+    expect(report.cleanup?.status).toBe('complete');
+    expect(startCalls()).toHaveLength(0);
+    expect(release).toHaveBeenCalledTimes(1);
+    expect(
+      await readFile(join(workdir, 'supabase/.temp/cli-latest'), 'utf8'),
+    ).toBe('existing');
   });
 
   it('lock取得失敗で入力作成も起動も行わない', async () => {

@@ -4,7 +4,7 @@ import { legacyProjectSchema } from '../../e2e/fixtures/legacySchema';
 import { readArtifact } from './ledgerArtifacts';
 import { runIntegrationEnvironment } from './runIntegrationCheck';
 import { runIsolatedCheck } from './runIsolatedCheck';
-import { runLegacy } from './runLegacy';
+import { runLegacy, runLegacyScoped } from './runLegacy';
 import { runStorybookVerification } from './runStorybookVerification';
 import { validateScheduleCheckEvidence } from './scheduleCheckEvidence';
 import {
@@ -16,6 +16,8 @@ import { verificationReportSchema } from './verificationSchema';
 
 import { relative } from 'node:path';
 
+import type { LegacyProject } from '../../e2e/fixtures/legacySchema';
+import type { probeEnvironment } from './environmentProbe';
 import type { prepareVerification } from './prepareVerification';
 import type {
   PlaywrightRunnerSelection,
@@ -34,6 +36,33 @@ type Preparation = Pick<
 >;
 type RootContext = Omit<VerificationContext, 'stageId'>;
 
+const catalogEvidenceFor = (
+  stageId: string,
+  environment: Awaited<ReturnType<typeof probeEnvironment>> | null,
+): VerificationStageResult['catalogEvidence'] => {
+  if (
+    isNil(environment) ||
+    !environment.passed ||
+    !environment.migrationReplayPassed ||
+    !environment.schemaParityPassed ||
+    environment.catalogStatus !== 'verified' ||
+    isNil(environment.fingerprint) ||
+    !/^[a-f0-9]{64}$/.test(environment.fingerprint) ||
+    !/^[a-f0-9]{12}$/.test(environment.runId) ||
+    !/^[a-z][a-z0-9-]{0,63}$/.test(stageId)
+  )
+    return undefined;
+  return {
+    schemaVersion: 1,
+    stageId,
+    runId: environment.runId,
+    fingerprint: environment.fingerprint,
+    catalogStatus: 'verified',
+    schemaParityPassed: true,
+    migrationReplayPassed: true,
+  };
+};
+
 /** 全stageを先に確保し、未起動・途中停止したstageも結果から消さない。 */
 export const runVerificationStages = async (input: {
   root: string;
@@ -42,14 +71,18 @@ export const runVerificationStages = async (input: {
   signal: AbortSignal;
   checkpoint: VerificationStageHooks['checkpoint'];
   selections?: readonly RunnerSelection[];
+  legacyProjects?: readonly LegacyProject[];
   continueAfterFailure?: boolean;
 }) => {
   const { root, prepared, signal, checkpoint } = input;
+  const legacyProjects = isNil(input.legacyProjects)
+    ? undefined
+    : legacyProjectSchema.array().nonempty().parse(input.legacyProjects);
   const definitions = [
     { id: 'integration', profile: 'integration', kind: 'integration' as const },
     { id: 'storybook', profile: 'storybook', kind: 'storybook' as const },
     { id: 'isolated', profile: 'isolated', kind: 'schedule' as const },
-    ...legacyProjectSchema.options.map((project) => ({
+    ...(legacyProjects ?? legacyProjectSchema.options).map((project) => ({
       id: `app-${project}`,
       profile: 'app',
       kind: 'legacy' as const,
@@ -64,6 +97,21 @@ export const runVerificationStages = async (input: {
           entry.test.project === definition.project),
     ),
   );
+  // 割当とplanの差は、他profileを含めて環境を作る前に拒否する。
+  if (!isNil(legacyProjects)) {
+    const scope = legacyProjects;
+    const planned = new Set(
+      [...prepared.plan.requirements, ...prepared.plan.allowedExtraTests]
+        .filter(({ profile }) => profile === 'app')
+        .map(({ test }) => test.project),
+    );
+    if (
+      new Set(scope).size !== scope.length ||
+      planned.size !== scope.length ||
+      scope.some((project) => !planned.has(project))
+    )
+      throw new Error('legacy projectの割当と実行計画が一致しません。');
+  }
   const integrationSelection = input.selections?.find(
     (selection): selection is VitestRunnerSelection =>
       selection.kind === 'vitest' &&
@@ -166,6 +214,10 @@ export const runVerificationStages = async (input: {
       );
       readReport(integration);
       integration.cleanup = integrationResult.environment?.cleanup ?? null;
+      integration.catalogEvidence = catalogEvidenceFor(
+        integration.context.stageId,
+        integrationResult.environment,
+      );
       if (!isNil(integrationResult.evidence))
         integration.evidence.result = integrationResult.evidence;
       runs.push({
@@ -247,6 +299,10 @@ export const runVerificationStages = async (input: {
       });
       readReport(isolated);
       isolated.cleanup = isolatedResult.environment?.cleanup ?? null;
+      isolated.catalogEvidence = catalogEvidenceFor(
+        isolated.context.stageId,
+        isolatedResult.environment,
+      );
       if (!isNil(isolatedResult.evidence))
         isolated.evidence.result = isolatedResult.evidence;
       runs.push({
@@ -263,21 +319,42 @@ export const runVerificationStages = async (input: {
 
     if (stages.some(({ context }) => context.stageId.startsWith('app-'))) {
       announce('app');
-      const legacy = await runLegacy(root, [], (project) =>
-        hooksFor(stageFor(`app-${project}`)),
-      );
+      const verification = (project: LegacyProject) =>
+        hooksFor(stageFor(`app-${project}`));
+      const legacy = isNil(legacyProjects)
+        ? await runLegacy(root, [], verification)
+        : await runLegacyScoped(root, legacyProjects, verification);
+      const isVerified =
+        legacy.status ===
+          (isNil(legacyProjects) ? 'passed' : 'scoped-passed') &&
+        !isNil(legacy.results) &&
+        !isNil(legacy.safeResults);
       for (const project of legacy.projects) {
         const stage = stageFor(`app-${project.project}`);
         readReport(stage);
         stage.cleanup = project.environment.cleanup;
+        stage.catalogEvidence = catalogEvidenceFor(
+          stage.context.stageId,
+          project.environment,
+        );
         stage.evidence.result = {
           issues:
-            project.status === 'passed' && legacy.status === 'passed'
+            project.status === 'passed' && isVerified
               ? []
               : [{ code: 'LEGACY_FAILED' }],
           counts: { total: project.results?.length ?? 0 },
-          resultsChecked: legacy.status === 'passed' && !isNil(legacy.results),
+          resultsChecked: isVerified && project.status === 'passed',
         };
+        if (
+          isVerified &&
+          project.status === 'passed' &&
+          !isNil(legacy.safeResults)
+        ) {
+          const keys = new Set(project.results?.map(({ key }) => key));
+          stage.legacyResults = legacy.safeResults.filter(({ key }) =>
+            keys.has(key),
+          );
+        }
         if (project.status !== 'passed') stage.processCleanup.errorCount++;
         runs.push({
           stageId: stage.context.stageId,

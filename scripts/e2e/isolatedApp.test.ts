@@ -2,11 +2,18 @@ import { isNil } from 'ramda';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { runLocalCommand } from './environmentCommands';
+import { normalizeNextEnv } from './fingerprintNextEnv';
 import { appFixture } from './fixtures/isolatedApp';
-import { withIsolatedApp } from './isolatedApp';
+import { IsolatedAppError, withIsolatedApp } from './isolatedApp';
 
 import { EventEmitter } from 'node:events';
-import { readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -52,7 +59,9 @@ const mockCommands = () => {
       if (args[1] === 'build') return '';
       return new Promise<string>((resolve) => {
         state.finishServer = () => {
+          if (state.didClose) return;
           state.didClose = true;
+          options.onClose?.({ exitCode: 0, signal: null });
           resolve('');
         };
         options.signal?.addEventListener('abort', state.finishServer, {
@@ -80,6 +89,105 @@ afterEach(() => {
 });
 
 describe('所有Next production process', () => {
+  it('browserとserverの実closeを停止順に安全な診断へ保存する', async () => {
+    const fixture = setup();
+    writeFileSync(join(fixture.root, 'next-env.d.ts'), normalizeNextEnv());
+    vi.mocked(runLocalCommand).mockImplementation(
+      async (_tool, args, options) => {
+        if (args[1] === 'build') return '';
+        return new Promise<string>((resolve) =>
+          options.signal?.addEventListener(
+            'abort',
+            () => {
+              options.onClose?.({ exitCode: null, signal: 'secret-signal' });
+              resolve('');
+            },
+            { once: true },
+          ),
+        );
+      },
+    );
+    await withIsolatedApp(
+      fixture.connection,
+      new AbortController().signal,
+      async (app) => {
+        app.recordBrowserClose({ exitCode: 7, signal: null });
+        app.recordBrowserReport('private-secret ERR_CONNECTION_FAILED');
+      },
+    );
+    const text = readFileSync(
+      join(fixture.workdir, 'app', 'diagnostic.json'),
+      'utf8',
+    );
+    const diagnostic = JSON.parse(text);
+    expect(text).not.toContain('secret-signal');
+    expect(
+      diagnostic.events.map((event: { event: string }) => event.event),
+    ).toEqual([
+      'server-start-requested',
+      'browser-close',
+      'browser-report-read',
+      'stop-requested',
+      'server-close',
+      'server-cleanup-finished',
+    ]);
+    expect(diagnostic.events[1]).toMatchObject({
+      serverCloseObserved: false,
+      outcome: 'nonzero',
+    });
+    expect(diagnostic.events[2]).toMatchObject({
+      outcome: 'connection-failed-text',
+    });
+    expect(diagnostic.events[4]).toMatchObject({
+      serverCloseObserved: true,
+      outcome: 'signal',
+    });
+    expect(text).not.toContain('private-secret');
+    expect(diagnostic.nextEnv.before).toMatchObject({
+      status: 'known',
+      hash: expect.stringMatching(/^[a-f0-9]{64}$/),
+      normalizedHash: expect.stringMatching(/^[a-f0-9]{64}$/),
+    });
+    expect(diagnostic.nextEnv.after).toEqual(diagnostic.nextEnv.before);
+  });
+
+  it('未知のnext-env内容を公開せずtemplate不明として残す', async () => {
+    const fixture = setup();
+    writeFileSync(join(fixture.root, 'next-env.d.ts'), 'private-secret');
+    mockCommands();
+    await withIsolatedApp(
+      fixture.connection,
+      new AbortController().signal,
+      async () => {},
+    );
+    const text = readFileSync(
+      join(fixture.workdir, 'app', 'diagnostic.json'),
+      'utf8',
+    );
+    expect(text).not.toContain('private-secret');
+    expect(JSON.parse(text).nextEnv).toEqual({
+      before: { status: 'unknown-template' },
+      after: { status: 'unknown-template' },
+    });
+  });
+
+  it('診断ファイルの書込失敗や未知templateでも本来の成功とcleanupを変えない', async () => {
+    const fixture = setup();
+    writeFileSync(join(fixture.root, 'next-env.d.ts'), 'private-secret');
+    const server = mockCommands();
+    await withIsolatedApp(
+      fixture.connection,
+      new AbortController().signal,
+      async () => {
+        mkdirSync(join(fixture.workdir, 'app', 'diagnostic.json'));
+      },
+    );
+    expect(server.didClose).toBe(true);
+    expect(fixture.readStatus()).toMatchObject({ status: 'passed' });
+    expect(JSON.stringify(fixture.readStatus())).not.toContain(
+      'private-secret',
+    );
+  });
   it('build後に固定host/portで起動し、利用者公開envとsignalだけをoperationへ渡す', async () => {
     const fixture = setup();
     const server = mockCommands();
@@ -234,6 +342,9 @@ describe('所有Next production process', () => {
         throw new Error('private-operation-secret');
       },
     ).catch((value: unknown) => value);
+    expect(error).toBeInstanceOf(IsolatedAppError);
+    if (!(error instanceof IsolatedAppError)) throw new Error('app error不足');
+    expect(error.failurePhases).toEqual(['operation', 'server-stop']);
     expect(String(error)).toContain('operation, server-stop');
     expect(String(error)).not.toContain('secret');
     expect(fixture.readStatus()).toMatchObject({
@@ -266,6 +377,22 @@ describe('所有Next production process', () => {
       ),
     ).rejects.toThrow('server-exit');
     expect(hasOperationClosed).toBe(true);
+    const diagnostic = JSON.parse(
+      readFileSync(join(fixture.workdir, 'app', 'diagnostic.json'), 'utf8'),
+    );
+    expect(
+      diagnostic.events.map((event: { event: string }) => event.event),
+    ).toEqual([
+      'server-start-requested',
+      'server-close',
+      'stop-requested',
+      'server-cleanup-finished',
+    ]);
+    expect(diagnostic.events[1]).toMatchObject({
+      phase: 'operation',
+      serverCloseObserved: true,
+      outcome: 'zero',
+    });
   });
 
   it('build失敗ではstartせず、秘密を含む子errorを段階に置き換える', async () => {

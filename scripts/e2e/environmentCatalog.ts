@@ -158,6 +158,10 @@ export const ENVIRONMENT_AUTHORIZATION_GAPS = [
   'replace_confirmed_schedule_time_blocksのphase等の業務条件は、このmetadata一致では認可成功と認定しない。',
 ];
 
+/** 固定期待metadataを実測と同じ正規化で指紋化する。 */
+export const expectedEnvironmentCatalogFingerprint = () =>
+  hash(stable(canonical(EXPECTED_ENVIRONMENT_CATALOG)));
+
 /** 固定期待値との再現性だけを判定する。既存認可の弱さを安全性の証拠へ変換しない。 */
 export const checkEnvironmentCatalog = (input: unknown) => {
   const actual = environmentCatalogSchema.parse(input);

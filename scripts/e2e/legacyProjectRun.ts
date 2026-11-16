@@ -15,7 +15,7 @@ import {
   writeEnvironmentCredentials,
 } from './environmentCredentials';
 import { probeEnvironment } from './environmentProbe';
-import { APP_PORT, withIsolatedApp } from './isolatedApp';
+import { APP_PORT, IsolatedAppError, withIsolatedApp } from './isolatedApp';
 import { readArtifact } from './ledgerArtifacts';
 import { parseLegacyProjectResults } from './legacyResults';
 import { createLegacySelection } from './legacySelection';
@@ -93,7 +93,12 @@ export const runLegacyProject = async (
       // 表示失敗で所有stackの後始末を中断しない。
     }
   };
-  await verification?.checkpoint('before-environment');
+  try {
+    await verification?.checkpoint('before-environment');
+  } catch (error) {
+    progress('input-check');
+    throw error;
+  }
   const environment = await probeEnvironment(
     root,
     isNil(verification)
@@ -141,6 +146,20 @@ export const runLegacyProject = async (
             async (contextFile, context) => {
               const operationFailures: unknown[] = [];
               let browserFailed = false;
+              let inputCheckFailed = false;
+              let inputCheckError: unknown;
+              const checkpoint = async (
+                phase: 'before-tests' | 'after-tests',
+              ) => {
+                try {
+                  await verification?.checkpoint(phase);
+                } catch (error) {
+                  inputCheckFailed = true;
+                  inputCheckError = error;
+                  state.failurePhases.push('input-check');
+                  throw error;
+                }
+              };
               try {
                 await withIsolatedApp(
                   connection,
@@ -160,7 +179,7 @@ export const runLegacyProject = async (
                       flag: 'wx',
                       mode: 0o600,
                     });
-                    await verification?.checkpoint('before-tests');
+                    await checkpoint('before-tests');
                     progress('browser');
                     const cli = createRequire(
                       join(root, 'package.json'),
@@ -191,7 +210,10 @@ export const runLegacyProject = async (
                             SCENARIO_E2E_LEGACY_PROJECT: input.project,
                           },
                           signal: app.signal,
-                          onClose: verification?.onExit,
+                          onClose: (result) => {
+                            app.recordBrowserClose(result);
+                            verification?.onExit(result);
+                          },
                           log: join(
                             manifest.workdir,
                             'legacy-browser.private.log',
@@ -202,7 +224,7 @@ export const runLegacyProject = async (
                       browserFailed = true;
                       state.failurePhases.push('browser');
                     }
-                    await verification?.checkpoint('after-tests');
+                    await checkpoint('after-tests');
                     progress('evidence');
                     const report = readArtifact(
                       root,
@@ -210,6 +232,7 @@ export const runLegacyProject = async (
                     );
                     if (isNil(report))
                       throw new Error('legacy browser結果がありません。');
+                    app.recordBrowserReport(report);
                     state.results = parseLegacyProjectResults({
                       ...input,
                       report: JSON.parse(report),
@@ -221,9 +244,21 @@ export const runLegacyProject = async (
                 );
               } catch (error) {
                 // ブラウザ失敗は記録済み。証跡の処理も失敗した場合は別段階として残す。
+                if (inputCheckFailed) {
+                  if (error instanceof IsolatedAppError) {
+                    state.failurePhases.push(
+                      ...error.failurePhases.filter(
+                        (phase) => phase !== 'operation',
+                      ),
+                    );
+                  } else if (error !== inputCheckError) {
+                    state.failurePhases.push('app');
+                  }
+                }
                 if (
-                  !browserFailed ||
-                  (state.phase === 'evidence' && isNil(state.results))
+                  !inputCheckFailed &&
+                  (!browserFailed ||
+                    (state.phase === 'evidence' && isNil(state.results)))
                 )
                   state.failurePhases.push(state.phase);
                 operationFailures.push(error);
