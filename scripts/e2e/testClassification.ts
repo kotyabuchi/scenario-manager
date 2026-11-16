@@ -9,6 +9,7 @@ const UNIT_DOM_PATTERN =
   /^src\/components\/blocks\/SpeedDialFAB\/__tests__\/[^/]+\.test\.ts$/;
 // Storybook注釈を使わないことを監査済みの直接描画テストだけを明示する。
 export const DIRECT_DOM_TEST_FILES: readonly string[] = [
+  'src/app/(main)/scenarios/new/_components/ScenarioForm.test.tsx',
   'src/app/(main)/scenarios/_components/ScenarioFilters/ScenarioFilters.test.tsx',
   'src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailHead.test.tsx',
   'src/app/(main)/scenarios/[id]/_components/ScenarioDetailPanel/ScenarioDetailPanel.test.tsx',
