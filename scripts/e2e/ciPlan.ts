@@ -45,6 +45,9 @@ export const planCiVerification = async (
     signal,
     env,
     checkpoint,
+    toolsCandidatePaths: initial.snapshot.indexEntries
+      .filter(({ mode }) => mode === '100644' || mode === '100755')
+      .map(({ path }) => path),
     onStage: (qualityCheck) => onProgress?.({ phase: 'quality', qualityCheck }),
   });
   onProgress?.({ phase: 'static-ledger' });

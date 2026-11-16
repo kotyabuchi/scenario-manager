@@ -193,3 +193,11 @@ Vitestのcollect集計は変更前3回目189.62秒、bundle2回目26.21秒だっ
 保存した成果物を独立に再照合し、必須67・extras312、legacy330行（319成功・既存例外11）、6 DB cleanup complete、7 stageのprocess終了/エラー0を確認。input digestは前後とも `a4c4585bdda9e219d84d5914baf623cdb6a9e849c960299c78cb37cd5c5eaf24`。共通ゲート全体のlocal wallは1,844.94秒であり、局所ベンチの49.1%をこの時間へ外挿しない。
 
 終了後の所有quality process、専用5ポートのlistener、running containerは0。Docker Desktopや別チャットのNodeは停止していない。`coverageStatus=insufficient`、旧integration未実行、既存pendingは維持。今回非再現だった旧間欠失敗の原因が特定された意味にはならない。
+
+## CI tools失敗の限定診断
+
+固定HEAD `4f483a9` のlocal共通qualityは全7 stage成功・独立受入済み。一方、Hosted Test `43775373198` はplannerの `test:e2e-tools` で失敗し、private子logの非公開と失敗artifactに検査名だけがある制約から、失敗原因はunknownである。local成功をHosted成功や新HEADの成功と混同しない。
+
+後続の同段階失敗時は、初期Git snapshotのtracked test pathに完全一致するlog由来の候補だけを上限付きでCI stderrへ表示する。候補は失敗したtestの証明ではなく、未取得・途中欠落・対象外形式等はunknownまたはtruncated。任意のlog本文、test title、絶対path、error本文は表示せず、合否、checkpointとcleanupを変えない。Linux上の所有logを限定readし、それ以外はunknown。成功時の追加はplannerでsnapshotのpath配列を選ぶ処理とLinuxでowner directoryのlstat 1回のみ。
+
+変更後はWindowsの限定結合tests、型、Biome、diff checkで検証。Linux nativeのFIFO差替え・hard link・close失敗の3ケースはWindowsではskipしており、新HEADのHosted tools suiteでの実行確認が必要。このfailure-only変更では重いlocal全体を再実行せず、新HEADのHosted全体とLinux native testを確認する。いずれも原因特定や修正済みを意味しない。
